@@ -73,11 +73,15 @@ const ProfileSection = ({ username, handleLogout }) => {
                         ...theme.typography.commonAvatar,
                         ...theme.typography.mediumAvatar,
                         transition: 'all .2s ease-in-out',
-                        background: theme.palette.secondary.light,
-                        color: theme.palette.secondary.dark,
+                        // background: theme.palette.secondary.light,
+                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                        // color: theme.palette.secondary.dark,
+                        color: '#fff',
                         '&:hover': {
-                            background: theme.palette.secondary.dark,
-                            color: theme.palette.secondary.light
+                            // background: theme.palette.secondary.dark,
+                            background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                            // color: theme.palette.secondary.light
+                            color: '#fff'
                         }
                     }}
                     onClick={handleToggle}
@@ -145,7 +149,7 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                     <ListItemIcon>
                                                         <IconInfoCircle stroke={1.5} size='1.3rem' />
                                                     </ListItemIcon>
-                                                    <ListItemText primary={<Typography variant='body2'>About Flowise</Typography>} />
+                                                    <ListItemText primary={<Typography variant='body2'>About THub</Typography>} />
                                                 </ListItemButton>
                                                 {localStorage.getItem('username') && localStorage.getItem('password') && (
                                                     <ListItemButton

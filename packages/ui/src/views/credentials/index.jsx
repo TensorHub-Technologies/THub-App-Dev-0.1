@@ -4,12 +4,9 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 import moment from 'moment'
 
 // material-ui
-import { styled } from '@mui/material/styles'
-import { tableCellClasses } from '@mui/material/TableCell'
 import {
     Button,
     Box,
-    Skeleton,
     Stack,
     Table,
     TableBody,
@@ -19,8 +16,12 @@ import {
     TableRow,
     Paper,
     IconButton,
-    useTheme
+    Toolbar,
+    TextField,
+    InputAdornment,
+    ButtonGroup
 } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
@@ -46,42 +47,20 @@ import CredentialEmptySVG from '@/assets/images/credential_empty.svg'
 // const
 import { baseURL } from '@/store/constant'
 import { SET_COMPONENT_CREDENTIALS } from '@/store/actions'
-import ViewHeader from '@/layout/MainLayout/ViewHeader'
-import ErrorBoundary from '@/ErrorBoundary'
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    borderColor: theme.palette.grey[900] + 25,
-    padding: '6px 16px',
-
-    [`&.${tableCellClasses.head}`]: {
-        color: theme.palette.grey[900]
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        height: 64
-    }
-}))
-
-const StyledTableRow = styled(TableRow)(() => ({
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0
-    }
-}))
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 
 // ==============================|| Credentials ||============================== //
 
 const Credentials = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+
     const dispatch = useDispatch()
     useNotifier()
 
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
-    const [isLoading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
     const [showCredentialListDialog, setShowCredentialListDialog] = useState(false)
     const [credentialListDialogProps, setCredentialListDialogProps] = useState({})
     const [showSpecificCredentialDialog, setShowSpecificCredentialDialog] = useState(false)
@@ -98,6 +77,9 @@ const Credentials = () => {
     const onSearchChange = (event) => {
         setSearch(event.target.value)
     }
+
+    const [isInputFocused, setInputFocused] = useState(false)
+
     function filterCredentials(data) {
         return data.credentialName.toLowerCase().indexOf(search.toLowerCase()) > -1
     }
@@ -161,10 +143,9 @@ const Credentials = () => {
                     onConfirm()
                 }
             } catch (error) {
+                const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
                 enqueueSnackbar({
-                    message: `Failed to delete Credential: ${
-                        typeof error.response.data === 'object' ? error.response.data.message : error.response.data
-                    }`,
+                    message: `Failed to delete Credential: ${errorData}`,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -199,20 +180,10 @@ const Credentials = () => {
     }, [])
 
     useEffect(() => {
-        setLoading(getAllCredentialsApi.loading)
-    }, [getAllCredentialsApi.loading])
-
-    useEffect(() => {
         if (getAllCredentialsApi.data) {
             setCredentials(getAllCredentialsApi.data)
         }
     }, [getAllCredentialsApi.data])
-
-    useEffect(() => {
-        if (getAllCredentialsApi.error) {
-            setError(getAllCredentialsApi.error)
-        }
-    }, [getAllCredentialsApi.error])
 
     useEffect(() => {
         if (getAllComponentsCredentialsApi.data) {
@@ -223,163 +194,184 @@ const Credentials = () => {
 
     return (
         <>
-            <MainCard>
-                {error ? (
-                    <ErrorBoundary error={error} />
-                ) : (
-                    <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader
-                            onSearchChange={onSearchChange}
-                            search={true}
-                            searchPlaceholder='Search Credentials'
-                            title='Credentials'
+            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '' }}>
+                <Stack flexDirection='row'>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Toolbar
+                            disableGutters={true}
+                            style={{
+                                margin: 1,
+                                padding: 1,
+                                paddingBottom: 10,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%'
+                            }}
                         >
-                            <StyledButton
+                            {/*<h1>Credentials&nbsp;</h1>*/}
+                            {/*<TextField*/}
+                            {/*    size='small'*/}
+                            {/*    sx={{ display: { xs: 'none', sm: 'block' }, ml: 3 }}*/}
+                            {/*    variant='outlined'*/}
+                            {/*    placeholder='Search credential name'*/}
+                            {/*    onChange={onSearchChange}*/}
+                            {/*    InputProps={{*/}
+                            {/*        startAdornment: (*/}
+                            {/*            <InputAdornment position='start'>*/}
+                            {/*                <IconSearch />*/}
+                            {/*            </InputAdornment>*/}
+                            {/*        )*/}
+                            {/*    }}*/}
+                            {/*/>*/}
+                            <h1
+                                style={{
+                                    background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    color: 'transparent',
+                                    fontSize: '24px',
+                                    lineHeight: '1.3'
+                                }}
+                            >
+                                Credentials
+                            </h1>
+                            <TextField
+                                size='small'
+                                sx={{
+                                    display: { xs: 'none', sm: 'block' },
+                                    ml: 3,
+                                    transition: 'all .2s ease-in-out',
+                                    '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                    '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                    '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                    '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                    '&:hover': {
+                                        '& .MuiInput-underline:before': {
+                                            borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                        }
+                                    }
+                                }}
+                                variant='standard'
+                                placeholder='Search name or category'
+                                onChange={onSearchChange}
+                                onFocus={() => setInputFocused(true)}
+                                onBlur={() => setInputFocused(false)}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position='start'>
+                                            {/*<IconSearch/>*/}
+                                            <SearchOutlinedIcon
+                                                sx={{
+                                                    cursor: 'default',
+                                                    color: customization?.isDarkMode ? '#fff' : '#fff',
+                                                    background: isInputFocused
+                                                        ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
+                                                        : customization?.isDarkMode
+                                                        ? '#E22A90'
+                                                        : '#3C5BA4',
+                                                    borderRadius: '20%',
+                                                    padding: '2px',
+                                                    mb: 1
+                                                }}
+                                            />
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                            <Box sx={{ flexGrow: 1 }} />
+                            <ButtonGroup
+                                sx={{ maxHeight: 40 }}
+                                disableElevation
                                 variant='contained'
-                                sx={{ borderRadius: 2, height: '100%' }}
-                                onClick={listCredential}
-                                startIcon={<IconPlus />}
+                                aria-label='outlined primary button group'
                             >
-                                Add Credential
-                            </StyledButton>
-                        </ViewHeader>
-                        {!isLoading && credentials.length <= 0 ? (
-                            <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                                <Box sx={{ p: 2, height: 'auto' }}>
-                                    <img
-                                        style={{ objectFit: 'cover', height: '16vh', width: 'auto' }}
-                                        src={CredentialEmptySVG}
-                                        alt='CredentialEmptySVG'
-                                    />
-                                </Box>
-                                <div>No Credentials Yet</div>
-                            </Stack>
-                        ) : (
-                            <TableContainer
-                                sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}
-                                component={Paper}
-                            >
-                                <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-                                    <TableHead
-                                        sx={{
-                                            backgroundColor: customization.isDarkMode
-                                                ? theme.palette.common.black
-                                                : theme.palette.grey[100],
-                                            height: 56
-                                        }}
+                                <ButtonGroup disableElevation aria-label='outlined primary button group'>
+                                    <StyledButton
+                                        variant='contained'
+                                        sx={{ color: 'white', mr: 1, height: 37 }}
+                                        onClick={listCredential}
+                                        startIcon={<IconPlus />}
                                     >
-                                        <TableRow>
-                                            <StyledTableCell>Name</StyledTableCell>
-                                            <StyledTableCell>Last Updated</StyledTableCell>
-                                            <StyledTableCell>Created</StyledTableCell>
-                                            <StyledTableCell> </StyledTableCell>
-                                            <StyledTableCell> </StyledTableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {isLoading ? (
-                                            <>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                            </>
-                                        ) : (
-                                            <>
-                                                {credentials.filter(filterCredentials).map((credential, index) => (
-                                                    <StyledTableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                        <StyledTableCell scope='row'>
-                                                            <Box
-                                                                sx={{
-                                                                    display: 'flex',
-                                                                    flexDirection: 'row',
-                                                                    alignItems: 'center',
-                                                                    gap: 1
-                                                                }}
-                                                            >
-                                                                <Box
-                                                                    sx={{
-                                                                        width: 35,
-                                                                        height: 35,
-                                                                        borderRadius: '50%',
-                                                                        backgroundColor: customization.isDarkMode
-                                                                            ? theme.palette.common.white
-                                                                            : theme.palette.grey[300] + 75
-                                                                    }}
-                                                                >
-                                                                    <img
-                                                                        style={{
-                                                                            width: '100%',
-                                                                            height: '100%',
-                                                                            padding: 5,
-                                                                            objectFit: 'contain'
-                                                                        }}
-                                                                        alt={credential.credentialName}
-                                                                        src={`${baseURL}/api/v1/components-credentials-icon/${credential.credentialName}`}
-                                                                    />
-                                                                </Box>
-                                                                {credential.name}
-                                                            </Box>
-                                                        </StyledTableCell>
-                                                        <StyledTableCell>
-                                                            {moment(credential.updatedDate).format('MMMM Do, YYYY')}
-                                                        </StyledTableCell>
-                                                        <StyledTableCell>
-                                                            {moment(credential.createdDate).format('MMMM Do, YYYY')}
-                                                        </StyledTableCell>
-                                                        <StyledTableCell>
-                                                            <IconButton title='Edit' color='primary' onClick={() => edit(credential)}>
-                                                                <IconEdit />
-                                                            </IconButton>
-                                                        </StyledTableCell>
-                                                        <StyledTableCell>
-                                                            <IconButton
-                                                                title='Delete'
-                                                                color='error'
-                                                                onClick={() => deleteCredential(credential)}
-                                                            >
-                                                                <IconTrash />
-                                                            </IconButton>
-                                                        </StyledTableCell>
-                                                    </StyledTableRow>
-                                                ))}
-                                            </>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        )}
+                                        Add Credential
+                                    </StyledButton>
+                                </ButtonGroup>
+                            </ButtonGroup>
+                        </Toolbar>
+                    </Box>
+                </Stack>
+                {credentials.length <= 0 && (
+                    <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
+                        <Box sx={{ p: 2, height: 'auto' }}>
+                            <img
+                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                src={CredentialEmptySVG}
+                                alt='CredentialEmptySVG'
+                            />
+                        </Box>
+                        <div>No Credentials Yet</div>
                     </Stack>
+                )}
+                {credentials.length > 0 && (
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Last Updated</TableCell>
+                                    <TableCell>Created</TableCell>
+                                    <TableCell> </TableCell>
+                                    <TableCell> </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {credentials.filter(filterCredentials).map((credential, index) => (
+                                    <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                        <TableCell component='th' scope='row'>
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center'
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        width: 25,
+                                                        height: 25,
+                                                        marginRight: 10,
+                                                        borderRadius: '50%'
+                                                    }}
+                                                >
+                                                    <img
+                                                        style={{
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            borderRadius: '50%',
+                                                            objectFit: 'contain'
+                                                        }}
+                                                        alt={credential.credentialName}
+                                                        src={`${baseURL}/api/v1/components-credentials-icon/${credential.credentialName}`}
+                                                    />
+                                                </div>
+                                                {credential.name}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{moment(credential.updatedDate).format('DD-MMM-YY')}</TableCell>
+                                        <TableCell>{moment(credential.createdDate).format('DD-MMM-YY')}</TableCell>
+                                        <TableCell>
+                                            <IconButton title='Edit' color='primary' onClick={() => edit(credential)}>
+                                                <IconEdit />
+                                            </IconButton>
+                                        </TableCell>
+                                        <TableCell>
+                                            <IconButton title='Delete' color='error' onClick={() => deleteCredential(credential)}>
+                                                <IconTrash />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 )}
             </MainCard>
             <CredentialListDialog
@@ -393,7 +385,6 @@ const Credentials = () => {
                 dialogProps={specificCredentialDialogProps}
                 onCancel={() => setShowSpecificCredentialDialog(false)}
                 onConfirm={onConfirm}
-                setError={setError}
             ></AddEditCredentialDialog>
             <ConfirmDialog />
         </>

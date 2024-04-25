@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import { Avatar, Chip, ListItemButton, ListItemIcon, ListItemText, Typography, useMediaQuery } from '@mui/material'
+import { Avatar, Box, Chip, ListItemButton, ListItemIcon, ListItemText, Typography, useMediaQuery } from '@mui/material'
 
 // project imports
 import { MENU_OPEN, SET_MENU } from '@/store/actions'
@@ -24,7 +24,23 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
 
     const Icon = item.icon
     const itemIcon = item?.icon ? (
-        <Icon stroke={1.5} size='1.3rem' />
+        <Icon
+            className='icon-hover'
+            stroke={1.5}
+            size='1.3rem'
+            sx={{
+                width: '36px',
+                height: '36px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '8px',
+                background: 'transparent !important',
+                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                borderRadius: '20%',
+                padding: '1px'
+            }}
+        />
     ) : (
         <FiberManualRecordIcon
             sx={{
@@ -96,46 +112,99 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
     }, [navType])
 
     return (
-        <ListItemButton
-            {...listItemProps}
-            disabled={item.disabled}
+        <Box
             sx={{
                 borderRadius: `${customization.borderRadius}px`,
-                mb: 0.5,
-                alignItems: 'flex-start',
+                p: 0.1,
+                mb: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
-                py: level > 1 ? 1 : 1.25,
-                pl: `${level * 24}px`
+                '&:hover': {
+                    background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
+                    '& .MuiListItemButton-root': {
+                        backgroundColor: theme.palette.background.default,
+                        color: customization?.isDarkMode ? '#fff' : '#000',
+                        '& .icon-hover': {
+                            color: customization?.isDarkMode ? '#fff' : '#000'
+                        }
+                    }
+                },
+                ...(customization.isOpen.findIndex((id) => id === item.id) > -1 && {
+                    background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
+                })
             }}
-            selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
-            onClick={() => itemHandler(item.id)}
         >
-            {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
-            <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
-            <ListItemText
-                primary={
-                    <Typography variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'} color='inherit'>
-                        {item.title}
-                    </Typography>
-                }
-                secondary={
-                    item.caption && (
-                        <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
-                            {item.caption}
-                        </Typography>
-                    )
-                }
-            />
-            {item.chip && (
-                <Chip
-                    color={item.chip.color}
-                    variant={item.chip.variant}
-                    size={item.chip.size}
-                    label={item.chip.label}
-                    avatar={item.chip.avatar && <Avatar>{item.chip.avatar}</Avatar>}
-                />
-            )}
-        </ListItemButton>
+            <ListItemButton
+                {...listItemProps}
+                disabled={item.disabled}
+                // sx={{
+                //     borderRadius: `${customization.borderRadius}px`,
+                //     mb: 0.5,
+                //     alignItems: 'flex-start',
+                //     backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
+                //     py: level > 1 ? 1 : 1.25,
+                //     pl: `${level * 24}px`
+                // }}
+                sx={{
+                    borderRadius: `${customization.borderRadius}px`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: theme.palette.background.default,
+                    color: customization?.isDarkMode ? '#fff' : '#000',
+                    '&.Mui-selected': {
+                        backgroundColor: theme.palette.background.default,
+                        color: customization?.isDarkMode ? '#fff' : '#000',
+                        '& .icon-hover': {
+                            color: customization?.isDarkMode ? '#fff' : '#000'
+                        },
+                        '&:hover': {
+                            backgroundColor: theme.palette.background.default,
+                            '& .icon-hover': {
+                                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                            }
+                        }
+                    }
+                }}
+                selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
+                onClick={() => itemHandler(item.id)}
+            >
+                {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
+
+                <Box display='flex' flexDirection='column' alignItems='center'>
+                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 36 : 36 }}>{itemIcon}</ListItemIcon>
+                    <ListItemText
+                        primary={
+                            <Typography
+                                sx={{ fontWeight: 'semibold !important' }}
+                                variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'}
+                                color='inherit'
+                            >
+                                {item.title}
+                            </Typography>
+                        }
+                        secondary={
+                            item.caption && (
+                                <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
+                                    {item.caption}
+                                </Typography>
+                            )
+                        }
+                    />
+                </Box>
+                {item.chip && (
+                    <Chip
+                        color={item.chip.color}
+                        variant={item.chip.variant}
+                        size={item.chip.size}
+                        label={item.chip.label}
+                        avatar={item.chip.avatar && <Avatar>{item.chip.avatar}</Avatar>}
+                    />
+                )}
+            </ListItemButton>
+        </Box>
     )
 }
 

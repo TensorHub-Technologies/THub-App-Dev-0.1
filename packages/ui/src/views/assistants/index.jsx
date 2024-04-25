@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 // material-ui
-import { Box, Stack, Button, Skeleton } from '@mui/material'
+import { Grid, Box, Stack, Button } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
@@ -19,17 +21,16 @@ import assistantsApi from '@/api/assistants'
 import useApi from '@/hooks/useApi'
 
 // icons
-import { IconPlus, IconFileUpload } from '@tabler/icons'
-import ViewHeader from '@/layout/MainLayout/ViewHeader'
-import ErrorBoundary from '@/ErrorBoundary'
+import { IconPlus, IconFileImport } from '@tabler/icons'
 
 // ==============================|| CHATFLOWS ||============================== //
 
 const Assistants = () => {
+    const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
+
     const getAllAssistantsApi = useApi(assistantsApi.getAllAssistants)
 
-    const [isLoading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
     const [showLoadDialog, setShowLoadDialog] = useState(false)
@@ -84,75 +85,67 @@ const Assistants = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    useEffect(() => {
-        setLoading(getAllAssistantsApi.loading)
-    }, [getAllAssistantsApi.loading])
-
-    useEffect(() => {
-        if (getAllAssistantsApi.error) {
-            setError(getAllAssistantsApi.error)
-        }
-    }, [getAllAssistantsApi.error])
-
     return (
         <>
-            <MainCard>
-                {error ? (
-                    <ErrorBoundary error={error} />
-                ) : (
-                    <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader title='OpenAI Assistants'>
+            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '' }}>
+                <Stack flexDirection='row'>
+                    <Grid sx={{ mb: 1.25 }} container direction='row'>
+                        <h1
+                            style={{
+                                background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                                WebkitBackgroundClip: 'text',
+                                color: 'transparent',
+                                fontSize: '24px',
+                                lineHeight: '1.3'
+                            }}
+                        >
+                            OpenAI Assistants
+                        </h1>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <Grid item>
                             <Button
                                 variant='outlined'
+                                sx={{
+                                    mr: 2,
+                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                    borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                    '&:hover': {
+                                        borderColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                    }
+                                }}
                                 onClick={loadExisting}
-                                startIcon={<IconFileUpload />}
-                                sx={{ borderRadius: 2, height: 40 }}
+                                startIcon={<IconFileImport />}
                             >
                                 Load
                             </Button>
-                            <StyledButton
-                                variant='contained'
-                                sx={{ borderRadius: 2, height: 40 }}
-                                onClick={addNew}
-                                startIcon={<IconPlus />}
-                            >
+                            <StyledButton variant='contained' sx={{ color: 'white' }} onClick={addNew} startIcon={<IconPlus />}>
                                 Add
                             </StyledButton>
-                        </ViewHeader>
-                        {isLoading ? (
-                            <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                <Skeleton variant='rounded' height={160} />
-                                <Skeleton variant='rounded' height={160} />
-                                <Skeleton variant='rounded' height={160} />
-                            </Box>
-                        ) : (
-                            <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                {getAllAssistantsApi.data &&
-                                    getAllAssistantsApi.data.map((data, index) => (
-                                        <ItemCard
-                                            data={{
-                                                name: JSON.parse(data.details)?.name,
-                                                description: JSON.parse(data.details)?.instructions,
-                                                iconSrc: data.iconSrc
-                                            }}
-                                            key={index}
-                                            onClick={() => edit(data)}
-                                        />
-                                    ))}
-                            </Box>
-                        )}
-                        {!isLoading && (!getAllAssistantsApi.data || getAllAssistantsApi.data.length === 0) && (
-                            <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                                <Box sx={{ p: 2, height: 'auto' }}>
-                                    <img
-                                        style={{ objectFit: 'cover', height: '16vh', width: 'auto' }}
-                                        src={ToolEmptySVG}
-                                        alt='ToolEmptySVG'
-                                    />
-                                </Box>
-                                <div>No Assistants Added Yet</div>
-                            </Stack>
-                        )}
+                        </Grid>
+                    </Grid>
+                </Stack>
+                <Grid container spacing={gridSpacing}>
+                    {!getAllAssistantsApi.loading &&
+                        getAllAssistantsApi.data &&
+                        getAllAssistantsApi.data.map((data, index) => (
+                            <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
+                                <ItemCard
+                                    data={{
+                                        name: JSON.parse(data.details)?.name,
+                                        description: JSON.parse(data.details)?.instructions,
+                                        iconSrc: data.iconSrc
+                                    }}
+                                    onClick={() => edit(data)}
+                                />
+                            </Grid>
+                        ))}
+                </Grid>
+                {!getAllAssistantsApi.loading && (!getAllAssistantsApi.data || getAllAssistantsApi.data.length === 0) && (
+                    <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
+                        <Box sx={{ p: 2, height: 'auto' }}>
+                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={ToolEmptySVG} alt='ToolEmptySVG' />
+                        </Box>
+                        <div>No Assistants Added Yet</div>
                     </Stack>
                 )}
             </MainCard>
@@ -161,14 +154,12 @@ const Assistants = () => {
                 dialogProps={loadDialogProps}
                 onCancel={() => setShowLoadDialog(false)}
                 onAssistantSelected={onAssistantSelected}
-                setError={setError}
             ></LoadAssistantDialog>
             <AssistantDialog
                 show={showDialog}
                 dialogProps={dialogProps}
                 onCancel={() => setShowDialog(false)}
                 onConfirm={onConfirm}
-                setError={setError}
             ></AssistantDialog>
         </>
     )

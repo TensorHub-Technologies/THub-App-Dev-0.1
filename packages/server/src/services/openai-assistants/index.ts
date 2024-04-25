@@ -59,9 +59,9 @@ const getSingleOpenaiAssistant = async (credentialId: string, assistantId: strin
         const dbResponse = await openai.beta.assistants.retrieve(assistantId)
         const resp = await openai.files.list()
         const existingFiles = resp.data ?? []
-        if (dbResponse.file_ids && dbResponse.file_ids.length) {
-            ;(dbResponse as any).files = existingFiles.filter((file) => dbResponse.file_ids.includes(file.id))
-        }
+        // if (dbResponse.file_ids && dbResponse.file_ids.length) {
+        //     ;(dbResponse as any).files = existingFiles.filter((file) => dbResponse.file_ids.includes(file.id))
+        // }
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(

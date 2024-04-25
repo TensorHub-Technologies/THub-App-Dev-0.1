@@ -28,7 +28,7 @@ import {
 import { useTheme } from '@mui/material/styles'
 import DatePicker from 'react-datepicker'
 
-import robotPNG from '@/assets/images/robot.png'
+import Logo from '@/assets/images/THub_icon_colorful_logo.png'
 import userPNG from '@/assets/images/account.png'
 import msgEmptySVG from '@/assets/images/message_empty.svg'
 import { IconFileExport, IconEraser, IconX, IconDownload } from '@tabler/icons'
@@ -697,7 +697,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                                             {message.type === 'apiMessage' ? (
                                                                 <img
                                                                     style={{ marginLeft: '10px' }}
-                                                                    src={robotPNG}
+                                                                    src={Logo}
                                                                     alt='AI'
                                                                     width='25'
                                                                     height='25'

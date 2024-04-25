@@ -53,9 +53,7 @@ export const MultiDropdown = ({ name, value, options, onSelect, formControlSx = 
                     onSelect(value)
                 }}
                 PopperComponent={StyledPopper}
-                renderInput={(params) => (
-                    <TextField {...params} value={internalValue} sx={{ height: '100%', '& .MuiInputBase-root': { height: '100%' } }} />
-                )}
+                renderInput={(params) => <TextField {...params} value={internalValue} />}
                 renderOption={(props, option) => (
                     <Box component='li' {...props}>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -66,7 +64,6 @@ export const MultiDropdown = ({ name, value, options, onSelect, formControlSx = 
                         </div>
                     </Box>
                 )}
-                sx={{ height: '100%' }}
             />
         </FormControl>
     )
