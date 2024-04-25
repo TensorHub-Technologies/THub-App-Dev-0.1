@@ -24,8 +24,8 @@ import {
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { IconCircleDot, IconDownload, IconSend, IconMicrophone, IconPhotoPlus, IconTrash, IconX, IconTool } from '@tabler/icons'
-import robotPNG from '@/assets/images/robot.png'
-import userPNG from '@/assets/images/account.png'
+import Logo from '@/assets/images/THub_icon_colorful_logo.png'
+import userPNG from '@/assets/images/user.png'
 import audioUploadSVG from '@/assets/images/wave-sound.jpg'
 
 // project import
@@ -768,7 +768,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                 >
                                     {/* Display the correct icon depending on the message type */}
                                     {message.type === 'apiMessage' ? (
-                                        <img src={robotPNG} alt='AI' width='30' height='30' className='boticon' />
+                                        <img src={Logo} alt='AI' width='30' height='30' className='boticon' />
                                     ) : (
                                         <img src={userPNG} alt='Me' width='30' height='30' className='usericon' />
                                     )}

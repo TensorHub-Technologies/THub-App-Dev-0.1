@@ -38,12 +38,14 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
             },
             '& + .MuiSwitch-track': {
                 opacity: 1,
-                backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be'
+                // backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be'
+                backgroundColor: theme.palette.mode === 'dark' ? '#3C5BA4' : '#E22A90'
             }
         }
     },
     '& .MuiSwitch-thumb': {
-        backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
+        // backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
+        background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
         width: 32,
         height: 32,
         '&:before': {
@@ -62,7 +64,8 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     },
     '& .MuiSwitch-track': {
         opacity: 1,
-        backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
+        // backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
+        backgroundColor: theme.palette.mode === 'dark' ? '#E22A90' : '#3C5BA4',
         borderRadius: 20 / 2
     }
 }))
@@ -94,36 +97,43 @@ const Header = ({ handleLeftDrawerToggle }) => {
             {/* logo & toggler button */}
             <Box
                 sx={{
-                    width: 228,
+                    width: 200,
                     display: 'flex',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
                     }
                 }}
             >
+                <Box sx={{ mt: 1 }}>
+                    <ButtonBase sx={{ borderRadius: '20%', overflow: 'hidden' }}>
+                        <Avatar
+                            variant='rounded'
+                            sx={{
+                                ...theme.typography.commonAvatar,
+                                ...theme.typography.mediumAvatar,
+                                transition: 'all .2s ease-in-out',
+                                // background: theme.palette.secondary.light,
+                                background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                // color: theme.palette.secondary.dark,
+                                color: '#fff',
+                                '&:hover': {
+                                    // background: theme.palette.secondary.dark,
+                                    background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                                    // color: theme.palette.secondary.light
+                                    color: '#fff'
+                                }
+                            }}
+                            onClick={handleLeftDrawerToggle}
+                            color='inherit'
+                        >
+                            <IconMenu2 stroke={1.5} size='1.3rem' />
+                        </Avatar>
+                    </ButtonBase>
+                </Box>
+                <Box sx={{ ml: 2 }}></Box>
                 <Box component='span' sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
                     <LogoSection />
                 </Box>
-                <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>
-                    <Avatar
-                        variant='rounded'
-                        sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.mediumAvatar,
-                            transition: 'all .2s ease-in-out',
-                            background: theme.palette.secondary.light,
-                            color: theme.palette.secondary.dark,
-                            '&:hover': {
-                                background: theme.palette.secondary.dark,
-                                color: theme.palette.secondary.light
-                            }
-                        }}
-                        onClick={handleLeftDrawerToggle}
-                        color='inherit'
-                    >
-                        <IconMenu2 stroke={1.5} size='1.3rem' />
-                    </Avatar>
-                </ButtonBase>
             </Box>
             <Box sx={{ flexGrow: 1 }} />
             <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />

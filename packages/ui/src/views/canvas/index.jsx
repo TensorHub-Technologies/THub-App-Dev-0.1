@@ -23,7 +23,6 @@ import CanvasNode from './CanvasNode'
 import ButtonEdge from './ButtonEdge'
 import StickyNote from './StickyNote'
 import CanvasHeader from './CanvasHeader'
-import AddNodes from './AddNodes'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { ChatPopUp } from '@/views/chatmessage/ChatPopUp'
 import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
@@ -46,6 +45,7 @@ import useNotifier from '@/utils/useNotifier'
 
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
+import AddNodes from '@/views/canvas/AddNodes'
 
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
 const edgeTypes = { buttonedge: ButtonEdge }
@@ -87,7 +87,7 @@ const Canvas = () => {
 
     const reactFlowWrapper = useRef(null)
 
-    // ==============================|| Chatflow API ||============================== //
+    // ==============================|| Workflow API ||============================== //
 
     const getNodesApi = useApi(nodesApi.getAllNodes)
     const createNewChatflowApi = useApi(chatflowsApi.createNewChatflow)
@@ -172,8 +172,9 @@ const Canvas = () => {
                 localStorage.removeItem(`${chatflow.id}_INTERNAL`)
                 navigate('/')
             } catch (error) {
+                const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
                 enqueueSnackbar({
-                    message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                    message: errorData,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -265,7 +266,7 @@ const Canvas = () => {
             }
 
             nodeData = JSON.parse(nodeData)
-
+            //
             const position = reactFlowInstance.project({
                 x: event.clientX - reactFlowBounds.left - 100,
                 y: event.clientY - reactFlowBounds.top - 50
@@ -308,7 +309,7 @@ const Canvas = () => {
     const saveChatflowSuccess = () => {
         dispatch({ type: REMOVE_DIRTY })
         enqueueSnackbar({
-            message: 'Chatflow saved',
+            message: 'Workspace saved',
             options: {
                 key: new Date().getTime() + Math.random(),
                 variant: 'success',
@@ -358,7 +359,9 @@ const Canvas = () => {
             setEdges(initialFlow.edges || [])
             dispatch({ type: SET_CHATFLOW, chatflow })
         } else if (getSpecificChatflowApi.error) {
-            errorFailed(`Failed to retrieve chatflow: ${getSpecificChatflowApi.error.response.data.message}`)
+            const error = getSpecificChatflowApi.error
+            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
+            errorFailed(`Failed to retrieve workspace: ${errorData}`)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -372,7 +375,9 @@ const Canvas = () => {
             saveChatflowSuccess()
             window.history.replaceState(null, null, `/canvas/${chatflow.id}`)
         } else if (createNewChatflowApi.error) {
-            errorFailed(`Failed to save chatflow: ${createNewChatflowApi.error.response.data.message}`)
+            const error = createNewChatflowApi.error
+            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
+            errorFailed(`Failed to save workspace: ${errorData}`)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -384,7 +389,9 @@ const Canvas = () => {
             dispatch({ type: SET_CHATFLOW, chatflow: updateChatflowApi.data })
             saveChatflowSuccess()
         } else if (updateChatflowApi.error) {
-            errorFailed(`Failed to save chatflow: ${updateChatflowApi.error.response.data.message}`)
+            const error = updateChatflowApi.error
+            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
+            errorFailed(`Failed to save workspace: ${errorData}`)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -394,7 +401,7 @@ const Canvas = () => {
     useEffect(() => {
         if (testChatflowApi.error) {
             enqueueSnackbar({
-                message: 'Test chatflow failed',
+                message: 'Test workspace failed',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -434,7 +441,7 @@ const Canvas = () => {
             dispatch({
                 type: SET_CHATFLOW,
                 chatflow: {
-                    name: 'Untitled chatflow'
+                    name: 'Untitled Workspace'
                 }
             })
         }
@@ -490,7 +497,8 @@ const Canvas = () => {
                     color='inherit'
                     elevation={1}
                     sx={{
-                        bgcolor: theme.palette.background.default
+                        bgcolor: theme.palette.background.default,
+                        height: '70px'
                     }}
                 >
                     <Toolbar>
@@ -502,41 +510,46 @@ const Canvas = () => {
                         />
                     </Toolbar>
                 </AppBar>
-                <Box sx={{ pt: '70px', height: '100vh', width: '100%' }}>
-                    <div className='reactflow-parent-wrapper'>
-                        <div className='reactflow-wrapper' ref={reactFlowWrapper}>
-                            <ReactFlow
-                                nodes={nodes}
-                                edges={edges}
-                                onNodesChange={onNodesChange}
-                                onNodeClick={onNodeClick}
-                                onEdgesChange={onEdgesChange}
-                                onDrop={onDrop}
-                                onDragOver={onDragOver}
-                                onNodeDragStop={setDirty}
-                                nodeTypes={nodeTypes}
-                                edgeTypes={edgeTypes}
-                                onConnect={onConnect}
-                                onInit={setReactFlowInstance}
-                                fitView
-                                deleteKeyCode={canvas.canvasDialogShow ? null : ['Delete']}
-                                minZoom={0.1}
-                            >
-                                <Controls
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        left: '50%',
-                                        transform: 'translate(-50%, -50%)'
-                                    }}
-                                />
-                                <Background color='#aaa' gap={16} />
-                                <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
-                                {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />}
-                                <ChatPopUp chatflowid={chatflowId} />
-                            </ReactFlow>
+                <Box sx={{ display: 'flex', mt: '70px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
+                    <Box sx={{ width: '350px' }}>
+                        <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
+                    </Box>
+                    <Box sx={{ width: '100%' }}>
+                        <div className='reactflow-parent-wrapper'>
+                            <div className='reactflow-wrapper' ref={reactFlowWrapper}>
+                                <ReactFlow
+                                    nodes={nodes}
+                                    edges={edges}
+                                    onNodesChange={onNodesChange}
+                                    onNodeClick={onNodeClick}
+                                    onEdgesChange={onEdgesChange}
+                                    onDrop={onDrop}
+                                    onDragOver={onDragOver}
+                                    onNodeDragStop={setDirty}
+                                    nodeTypes={nodeTypes}
+                                    edgeTypes={edgeTypes}
+                                    onConnect={onConnect}
+                                    onInit={setReactFlowInstance}
+                                    fitView
+                                    deleteKeyCode={canvas.canvasDialogShow ? null : ['Delete']}
+                                    minZoom={0.1}
+                                >
+                                    <Controls
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%)'
+                                        }}
+                                    />
+                                    <Background color='#aaa' gap={16} />
+
+                                    {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />}
+                                    <ChatPopUp chatflowid={chatflowId} />
+                                </ReactFlow>
+                            </div>
                         </div>
-                    </div>
+                    </Box>
                 </Box>
                 <ConfirmDialog />
             </Box>

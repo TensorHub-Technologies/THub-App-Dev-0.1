@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import { styled, alpha } from '@mui/material/styles'
@@ -16,7 +16,6 @@ import ThumbsUpDownOutlinedIcon from '@mui/icons-material/ThumbsUpDownOutlined'
 import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
 import Button from '@mui/material/Button'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { IconX } from '@tabler/icons'
 
 import chatflowsApi from '@/api/chatflows'
@@ -35,7 +34,13 @@ import useNotifier from '@/utils/useNotifier'
 import ChatFeedbackDialog from '../dialog/ChatFeedbackDialog'
 import AllowedDomainsDialog from '../dialog/AllowedDomainsDialog'
 import SpeechToTextDialog from '../dialog/SpeechToTextDialog'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import IconButton from '@mui/material/IconButton'
+import { MoreHoriz } from '@mui/icons-material'
 
+const useCustomization = () => {
+    return useSelector((state) => state.customization)
+}
 const StyledMenu = styled((props) => (
     <Menu
         elevation={0}
@@ -62,8 +67,10 @@ const StyledMenu = styled((props) => (
         '& .MuiMenuItem-root': {
             '& .MuiSvgIcon-root': {
                 fontSize: 18,
-                color: theme.palette.text.secondary,
-                marginRight: theme.spacing(1.5)
+                // color: theme.palette.text.secondary,
+                marginRight: theme.spacing(1.5),
+                color: useCustomization().isDarkMode ? '#E22A90' : '#3C5BA4',
+                background: 'transparent'
             },
             '&:active': {
                 backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
@@ -72,7 +79,7 @@ const StyledMenu = styled((props) => (
     }
 }))
 
-export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
+export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
@@ -147,15 +154,15 @@ export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
     const saveFlowRename = async (chatflowName) => {
         const updateBody = {
             name: chatflowName,
-            chatflow
+            chatflow: chatflow
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
             await updateFlowsApi.request()
         } catch (error) {
-            setError(error)
+            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
             enqueueSnackbar({
-                message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                message: errorData,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -186,15 +193,15 @@ export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
         const categoryTags = categories.join(';')
         const updateBody = {
             category: categoryTags,
-            chatflow
+            chatflow: chatflow
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
             await updateFlowsApi.request()
         } catch (error) {
-            setError(error)
+            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
             enqueueSnackbar({
-                message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                message: errorData,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -213,7 +220,7 @@ export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
         setAnchorEl(null)
         const confirmPayload = {
             title: `Delete`,
-            description: `Delete chatflow ${chatflow.name}?`,
+            description: `Delete Workspace ${chatflow.name}?`,
             confirmButtonName: 'Delete',
             cancelButtonName: 'Cancel'
         }
@@ -224,9 +231,9 @@ export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
                 await chatflowsApi.deleteChatflow(chatflow.id)
                 await updateFlowsApi.request()
             } catch (error) {
-                setError(error)
+                const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
                 enqueueSnackbar({
-                    message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                    message: errorData,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -259,7 +266,7 @@ export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
             let dataStr = JSON.stringify(generateExportFlowData(flowData), null, 2)
             let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
 
-            let exportFileDefaultName = `${chatflow.name} Chatflow.json`
+            let exportFileDefaultName = `${chatflow.name} Workflow.json`
 
             let linkElement = document.createElement('a')
             linkElement.setAttribute('href', dataUri)
@@ -272,17 +279,36 @@ export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
 
     return (
         <div>
-            <Button
-                id='demo-customized-button'
-                aria-controls={open ? 'demo-customized-menu' : undefined}
-                aria-haspopup='true'
-                aria-expanded={open ? 'true' : undefined}
-                disableElevation
-                onClick={handleClick}
-                endIcon={<KeyboardArrowDownIcon />}
-            >
-                Options
-            </Button>
+            {localStorage.getItem('flowDisplayStyle') === 'list' ? (
+                <IconButton
+                    id='demo-customized-button'
+                    aria-controls={open ? 'demo-customized-menu' : undefined}
+                    aria-haspopup='true'
+                    aria-expanded={open ? 'true' : undefined}
+                    disableElevation
+                    onClick={handleClick}
+                >
+                    <MoreHoriz sx={{ p: 0, background: 'transparent' }} />
+                </IconButton>
+            ) : (
+                <IconButton
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 5,
+                        zIndex: 1
+                    }}
+                    id='demo-customized-button'
+                    aria-controls={open ? 'demo-customized-menu' : undefined}
+                    aria-haspopup='true'
+                    aria-expanded={open ? 'true' : undefined}
+                    disableElevation
+                    onClick={handleClick}
+                >
+                    <MoreVertIcon sx={{ p: 0, background: 'transparent' }} />
+                </IconButton>
+            )}
+
             <StyledMenu
                 id='demo-customized-menu'
                 MenuListProps={{
@@ -334,7 +360,7 @@ export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
             <SaveChatflowDialog
                 show={flowDialogOpen}
                 dialogProps={{
-                    title: `Rename Chatflow`,
+                    title: `Rename Workflow`,
                     confirmButtonName: 'Rename',
                     cancelButtonName: 'Cancel'
                 }}
@@ -373,6 +399,5 @@ export default function FlowListMenu({ chatflow, setError, updateFlowsApi }) {
 
 FlowListMenu.propTypes = {
     chatflow: PropTypes.object,
-    setError: PropTypes.func,
     updateFlowsApi: PropTypes.object
 }

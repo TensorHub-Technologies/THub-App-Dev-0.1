@@ -36,11 +36,11 @@ const MainRoutes = {
             element: <Chatflows />
         },
         {
-            path: '/chatflows',
+            path: '/workflows',
             element: <Chatflows />
         },
         {
-            path: '/marketplaces',
+            path: '/templates',
             element: <Marketplaces />
         },
         {

@@ -49,24 +49,105 @@ const MarketplaceCanvasNode = ({ data }) => {
         setShowDialog(true)
     }
 
+    const NodeBorder = () => {
+        if (data.category === 'Agents') {
+            return '#0066CC'
+        } else if (data.category === 'Chains') {
+            return '#009966'
+        } else if (data.category === 'Chat Models') {
+            return '#CC0033'
+        } else if (data.category === 'Document Loaders') {
+            return '#9933CC'
+        } else if (data.category === 'Embeddings') {
+            return '#FFCC00'
+        } else if (data.category === 'LLMs') {
+            return '#333333'
+        } else if (data.category === 'Memory') {
+            return '#999999'
+        } else if (data.category === 'Prompts') {
+            return '#33CCCC'
+        } else if (data.category === 'Retrievers') {
+            return '#FF9933'
+        } else if (data.category === 'Text Splitters') {
+            return '#FF66B2'
+        } else if (data.category === 'Tools') {
+            return '#33CC99'
+        } else if (data.category === 'Vector Stores') {
+            return '#990033'
+        } else if (data.category === 'Cache') {
+            return '#c65102'
+        } else if (data.category === 'Output Parsers') {
+            return '#702963'
+        } else if (data.category === 'Moderation') {
+            return '#702963'
+        }
+        return '#000000'
+    }
+
+    const NodeHeader = () => {
+        if (data.category === 'Agents') {
+            return '#66B2FF'
+        } else if (data.category === 'Chains') {
+            return '#66FFB2'
+        } else if (data.category === 'Chat Models') {
+            return '#FF6688'
+        } else if (data.category === 'Document Loaders') {
+            return '#CC99FF'
+        } else if (data.category === 'Embeddings') {
+            return '#FFFF99'
+        } else if (data.category === 'LLMs') {
+            return '#B2B2B2'
+        } else if (data.category === 'Memory') {
+            return '#D9D9D9'
+        } else if (data.category === 'Prompts') {
+            return '#99E6E6'
+        } else if (data.category === 'Retrievers') {
+            return '#FFCC99'
+        } else if (data.category === 'Text Splitters') {
+            return '#FF99CC'
+        } else if (data.category === 'Tools') {
+            return '#99FFCC'
+        } else if (data.category === 'Vector Stores') {
+            return '#FF99B2'
+        } else if (data.category === 'Cache') {
+            return '#FFA500'
+        } else if (data.category === 'Output Parsers') {
+            return '#BF40BF'
+        } else if (data.category === 'Moderation') {
+            return '#C63287'
+        }
+        return '#000000'
+    }
+
     return (
         <>
             <CardWrapper
                 content={false}
                 sx={{
                     padding: 0,
-                    borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary
+                    // borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary
+                    borderColor: data.selected ? NodeHeader : NodeBorder,
+                    '&:hover': {
+                        borderColor: data.selected ? NodeBorder : NodeHeader
+                    }
                 }}
                 border={false}
             >
                 <Box>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: data.selected ? NodeHeader(data) : NodeBorder(data)
+                        }}
+                    >
                         <Box style={{ width: 50, marginRight: 10, padding: 5 }}>
                             <div
                                 style={{
                                     ...theme.typography.commonAvatar,
                                     ...theme.typography.largeAvatar,
-                                    borderRadius: '50%',
+                                    borderRadius: '20%',
                                     backgroundColor: 'white',
                                     cursor: 'grab'
                                 }}
@@ -98,7 +179,12 @@ const MarketplaceCanvasNode = ({ data }) => {
                                     }}
                                 >
                                     <img
-                                        style={{ width: '25px', height: '25px', borderRadius: '50%', objectFit: 'contain' }}
+                                        style={{
+                                            width: '25px',
+                                            height: '25px',
+                                            borderRadius: '50%',
+                                            objectFit: 'contain'
+                                        }}
                                         src={LlamaindexPNG}
                                         alt='LlamaIndex'
                                     />
@@ -129,16 +215,7 @@ const MarketplaceCanvasNode = ({ data }) => {
                         <NodeInputHandler disabled={true} key={index} inputParam={inputParam} data={data} />
                     ))}
                     {data.inputParams.find((param) => param.additionalParams) && (
-                        <div
-                            style={{
-                                textAlign: 'center',
-                                marginTop:
-                                    data.inputParams.filter((param) => param.additionalParams).length ===
-                                    data.inputParams.length + data.inputAnchors.length
-                                        ? 20
-                                        : 0
-                            }}
-                        >
+                        <div style={{ textAlign: 'center' }}>
                             <Button sx={{ borderRadius: 25, width: '90%', mb: 2 }} variant='outlined' onClick={onDialogClicked}>
                                 Additional Parameters
                             </Button>

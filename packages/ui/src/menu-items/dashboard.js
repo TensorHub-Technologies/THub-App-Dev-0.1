@@ -1,8 +1,21 @@
 // assets
-import { IconHierarchy, IconBuildingStore, IconKey, IconTool, IconLock, IconRobot, IconVariable } from '@tabler/icons'
+import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined' // AI Workspace
+import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined' // Templates
+import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined' //Tools
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined' // Assistants
+import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined' // Credentials
+import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
+import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
 
-// constant
-const icons = { IconHierarchy, IconBuildingStore, IconKey, IconTool, IconLock, IconRobot, IconVariable }
+const icons = {
+    AppsOutlinedIcon,
+    DynamicFeedOutlinedIcon,
+    ConstructionOutlinedIcon,
+    SmartToyOutlinedIcon,
+    InventoryOutlinedIcon,
+    HttpsOutlinedIcon,
+    VpnKeyOutlinedIcon
+}
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -12,19 +25,19 @@ const dashboard = {
     type: 'group',
     children: [
         {
-            id: 'chatflows',
-            title: 'Chatflows',
+            id: 'workflows',
+            title: 'AI Workspace',
             type: 'item',
-            url: '/chatflows',
-            icon: icons.IconHierarchy,
+            url: '/workflows',
+            icon: icons.AppsOutlinedIcon,
             breadcrumbs: true
         },
         {
             id: 'marketplaces',
-            title: 'Marketplaces',
+            title: 'Templates',
             type: 'item',
-            url: '/marketplaces',
-            icon: icons.IconBuildingStore,
+            url: '/templates',
+            icon: icons.DynamicFeedOutlinedIcon,
             breadcrumbs: true
         },
         {
@@ -32,7 +45,7 @@ const dashboard = {
             title: 'Tools',
             type: 'item',
             url: '/tools',
-            icon: icons.IconTool,
+            icon: icons.ConstructionOutlinedIcon,
             breadcrumbs: true
         },
         {
@@ -40,7 +53,7 @@ const dashboard = {
             title: 'Assistants',
             type: 'item',
             url: '/assistants',
-            icon: icons.IconRobot,
+            icon: icons.SmartToyOutlinedIcon,
             breadcrumbs: true
         },
         {
@@ -48,7 +61,7 @@ const dashboard = {
             title: 'Credentials',
             type: 'item',
             url: '/credentials',
-            icon: icons.IconLock,
+            icon: icons.HttpsOutlinedIcon,
             breadcrumbs: true
         },
         {
@@ -56,7 +69,7 @@ const dashboard = {
             title: 'Variables',
             type: 'item',
             url: '/variables',
-            icon: icons.IconVariable,
+            icon: icons.InventoryOutlinedIcon,
             breadcrumbs: true
         },
         {
@@ -64,7 +77,7 @@ const dashboard = {
             title: 'API Keys',
             type: 'item',
             url: '/apikey',
-            icon: icons.IconKey,
+            icon: icons.VpnKeyOutlinedIcon,
             breadcrumbs: true
         }
     ]

@@ -13,10 +13,12 @@ import { useTheme } from '@mui/material/styles'
 import MarketplaceCanvasNode from './MarketplaceCanvasNode'
 import MarketplaceCanvasHeader from './MarketplaceCanvasHeader'
 import StickyNote from '../canvas/StickyNote'
+import ButtonEdge from '../canvas/ButtonEdge'
 
 const nodeTypes = { customNode: MarketplaceCanvasNode, stickyNote: StickyNote }
-const edgeTypes = { buttonedge: '' }
+// const edgeTypes = { buttonedge: '' }
 
+const edgeTypes = { buttonedge: ButtonEdge }
 // ==============================|| CANVAS ||============================== //
 
 const MarketplaceCanvas = () => {

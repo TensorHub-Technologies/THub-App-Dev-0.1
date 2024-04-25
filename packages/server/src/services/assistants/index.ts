@@ -83,8 +83,8 @@ const createAssistant = async (requestBody: any): Promise<any> => {
                     description: assistantDetails.description,
                     instructions: assistantDetails.instructions,
                     model: assistantDetails.model,
-                    tools,
-                    file_ids: (assistantDetails.files ?? []).map((file: OpenAI.Files.FileObject) => file.id)
+                    tools
+                    // file_ids: (assistantDetails.files ?? []).map((file: OpenAI.Files.FileObject) => file.id)
                 })
                 assistantDetails.id = newAssistant.id
             } else {
@@ -97,11 +97,11 @@ const createAssistant = async (requestBody: any): Promise<any> => {
                     description: assistantDetails.description ?? '',
                     instructions: assistantDetails.instructions ?? '',
                     model: assistantDetails.model,
-                    tools: filteredTools,
-                    file_ids: uniqWith(
-                        [...retrievedAssistant.file_ids, ...(assistantDetails.files ?? []).map((file: OpenAI.Files.FileObject) => file.id)],
-                        isEqual
-                    )
+                    tools: filteredTools
+                    // file_ids: uniqWith(
+                    //     [...retrievedAssistant.file_ids, ...(assistantDetails.files ?? []).map((file: OpenAI.Files.FileObject) => file.id)],
+                    //     isEqual
+                    // )
                 })
             }
 
@@ -292,11 +292,11 @@ const updateAssistant = async (assistantId: string, requestBody: any): Promise<a
                 description: assistantDetails.description,
                 instructions: assistantDetails.instructions,
                 model: assistantDetails.model,
-                tools: filteredTools,
-                file_ids: uniqWith(
-                    [...retrievedAssistant.file_ids, ...(assistantDetails.files ?? []).map((file: OpenAI.Files.FileObject) => file.id)],
-                    isEqual
-                )
+                tools: filteredTools
+                // file_ids: uniqWith(
+                //     [...retrievedAssistant.file_ids, ...(assistantDetails.files ?? []).map((file: OpenAI.Files.FileObject) => file.id)],
+                //     isEqual
+                // )
             })
 
             const newAssistantDetails = {
