@@ -94,7 +94,7 @@ class SubQuestionQueryEngine_LlamaIndex implements INode {
             const stream = await queryEngine.query({ query: input, stream: true })
             for await (const chunk of stream) {
                 text += chunk.response
-                if (chunk.sourceNodes) sourceNodes = chunk.sourceNodes.map((node) => node.node)
+                if (chunk.sourceNodes) sourceNodes = chunk.sourceNodes
                 if (!isStreamingStarted) {
                     isStreamingStarted = true
                     options.socketIO.to(options.socketIOClientId).emit('start', chunk.response)
@@ -110,7 +110,7 @@ class SubQuestionQueryEngine_LlamaIndex implements INode {
         } else {
             const response = await queryEngine.query({ query: input })
             text = response?.response
-            sourceDocuments = reformatSourceDocuments(response?.sourceNodes?.map((node) => node.node) ?? [])
+            sourceDocuments = reformatSourceDocuments(response?.sourceNodes ?? [])
         }
 
         if (returnSourceDocuments) return { text, sourceDocuments }
