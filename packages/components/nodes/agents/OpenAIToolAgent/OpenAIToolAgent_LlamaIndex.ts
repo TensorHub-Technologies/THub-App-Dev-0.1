@@ -95,8 +95,8 @@ class OpenAIFunctionAgent_LlamaIndex_Agents implements INode {
         const agent = new OpenAIAgent({
             tools,
             llm: model,
-            prefixMessages: chatHistory
-            // verbose: process.env.DEBUG === 'true' ? true : false
+            prefixMessages: chatHistory,
+            verbose: process.env.DEBUG === 'true' ? true : false
         })
 
         let text = ''
