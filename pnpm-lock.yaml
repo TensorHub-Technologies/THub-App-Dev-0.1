@@ -294,7 +294,7 @@ importers:
                 specifier: ^3.0.0
                 version: 3.0.0
             openai:
-                specifier: ^4.32.1
+                specifier: ^4.38.3
                 version: 4.38.3(encoding@0.1.13)
             pdf-parse:
                 specifier: ^1.1.1
