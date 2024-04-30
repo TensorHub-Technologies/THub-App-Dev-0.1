@@ -20,7 +20,6 @@ import {
     Tab,
     Tabs,
     TextField,
-    Chip,
     Tooltip
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -75,10 +74,10 @@ const AddNodes = ({ nodesData, node }) => {
             else newNodes.push(vsNode)
         }
         delete obj['Vector Stores']
-        if (deprecatingNodes.length) {
-            obj['Vector Stores;DEPRECATING'] = deprecatingNodes
-            accordianCategories['Vector Stores;DEPRECATING'] = isFilter ? true : false
-        }
+        // if (deprecatingNodes.length) {
+        //     obj['Vector Stores;DEPRECATING'] = deprecatingNodes
+        //     accordianCategories['Vector Stores;DEPRECATING'] = isFilter ? true : false
+        // }
         if (newNodes.length) {
             obj['Vector Stores;NEW'] = newNodes
             accordianCategories['Vector Stores;NEW'] = isFilter ? true : false
@@ -495,7 +494,7 @@ const AddNodes = ({ nodesData, node }) => {
                                                             }}
                                                         >
                                                             <Typography variant='h5'>{category.split(';')[0]}</Typography>
-                                                            &nbsp;
+                                                            {/* &nbsp;
                                                             <Chip
                                                                 sx={{
                                                                     width: 'max-content',
@@ -509,14 +508,14 @@ const AddNodes = ({ nodesData, node }) => {
                                                                 }}
                                                                 size='small'
                                                                 label={category.split(';')[1]}
-                                                            />
+                                                            /> */}
                                                         </div>
                                                     ) : (
                                                         <Typography variant='h5'>{category}</Typography>
                                                     )}
                                                 </AccordionSummary>
 
-                                                {/*                            <img*/}
+                                                {/* <img*/}
                                                 {/*                                style={{*/}
                                                 {/*                                    width: '100%',*/}
                                                 {/*                                    height: '100%',*/}
@@ -568,7 +567,7 @@ const AddNodes = ({ nodesData, node }) => {
                                                 {/*            {index === nodes[category].length - 1 ? null : <Divider />}*/}
                                                 {/*        </div>*/}
                                                 {/*    ))}*/}
-                                                {/*</AccordionDetails>*/}
+                                                {/*</AccordionDetails> */}
 
                                                 <AccordionDetails>
                                                     <List>
