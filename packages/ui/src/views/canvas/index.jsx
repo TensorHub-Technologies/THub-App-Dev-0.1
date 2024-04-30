@@ -23,6 +23,7 @@ import CanvasNode from './CanvasNode'
 import ButtonEdge from './ButtonEdge'
 import StickyNote from './StickyNote'
 import CanvasHeader from './CanvasHeader'
+import AddNodes from './AddNodes'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { ChatPopUp } from '@/views/chatmessage/ChatPopUp'
 import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
@@ -45,7 +46,6 @@ import useNotifier from '@/utils/useNotifier'
 
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
-import AddNodes from '@/views/canvas/AddNodes'
 
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
 const edgeTypes = { buttonedge: ButtonEdge }
@@ -172,9 +172,8 @@ const Canvas = () => {
                 localStorage.removeItem(`${chatflow.id}_INTERNAL`)
                 navigate('/')
             } catch (error) {
-                const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
                 enqueueSnackbar({
-                    message: errorData,
+                    message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -266,7 +265,7 @@ const Canvas = () => {
             }
 
             nodeData = JSON.parse(nodeData)
-            //
+
             const position = reactFlowInstance.project({
                 x: event.clientX - reactFlowBounds.left - 100,
                 y: event.clientY - reactFlowBounds.top - 50
@@ -309,7 +308,7 @@ const Canvas = () => {
     const saveChatflowSuccess = () => {
         dispatch({ type: REMOVE_DIRTY })
         enqueueSnackbar({
-            message: 'Workspace saved',
+            message: 'Workflow saved',
             options: {
                 key: new Date().getTime() + Math.random(),
                 variant: 'success',
@@ -359,9 +358,7 @@ const Canvas = () => {
             setEdges(initialFlow.edges || [])
             dispatch({ type: SET_CHATFLOW, chatflow })
         } else if (getSpecificChatflowApi.error) {
-            const error = getSpecificChatflowApi.error
-            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
-            errorFailed(`Failed to retrieve workspace: ${errorData}`)
+            errorFailed(`Failed to retrieve workspace: ${getSpecificChatflowApi.error.response.data.message}`)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -375,9 +372,7 @@ const Canvas = () => {
             saveChatflowSuccess()
             window.history.replaceState(null, null, `/canvas/${chatflow.id}`)
         } else if (createNewChatflowApi.error) {
-            const error = createNewChatflowApi.error
-            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
-            errorFailed(`Failed to save workspace: ${errorData}`)
+            errorFailed(`Failed to save workspace: ${createNewChatflowApi.error.response.data.message}`)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -389,9 +384,7 @@ const Canvas = () => {
             dispatch({ type: SET_CHATFLOW, chatflow: updateChatflowApi.data })
             saveChatflowSuccess()
         } else if (updateChatflowApi.error) {
-            const error = updateChatflowApi.error
-            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
-            errorFailed(`Failed to save workspace: ${errorData}`)
+            errorFailed(`Failed to save workspace: ${updateChatflowApi.error.response.data.message}`)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -441,7 +434,7 @@ const Canvas = () => {
             dispatch({
                 type: SET_CHATFLOW,
                 chatflow: {
-                    name: 'Untitled Workspace'
+                    name: 'Untitled workspace'
                 }
             })
         }
