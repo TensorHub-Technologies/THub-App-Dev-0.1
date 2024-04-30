@@ -34,7 +34,7 @@ const MarketplaceCanvasHeader = ({ flowName, flowData, onChatflowCopy }) => {
                     }
                 }}
                 role='button'
-                tabIndex={0} // This makes the element focusable
+                tabIndex={0}
             >
                 <img src={Logo} alt='THub_Logo' width={130} />
             </Box>
