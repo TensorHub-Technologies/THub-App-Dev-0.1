@@ -1,11 +1,11 @@
 {
-    "name": "flowise",
-    "version": "1.6.5",
+    "name": "thub",
+    "version": "1.6.6",
     "private": true,
     "homepage": "https://flowiseai.com",
     "workspaces": [
         "packages/*",
-        "flowise",
+        "thub",
         "ui",
         "components"
     ],

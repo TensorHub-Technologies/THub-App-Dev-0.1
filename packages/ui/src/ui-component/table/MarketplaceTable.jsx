@@ -80,9 +80,6 @@ export const MarketplaceTable = ({
                             <StyledTableCell style={{ width: '35%' }} key='3'>
                                 Nodes
                             </StyledTableCell>
-                            <StyledTableCell component='th' scope='row' style={{ width: '5%' }} key='4'>
-                                &nbsp;
-                            </StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -180,7 +177,7 @@ export const MarketplaceTable = ({
                                                             ))}
                                                 </div>
                                             </StyledTableCell>
-                                            <StyledTableCell key='4'>
+                                            {/* <StyledTableCell key='4'>
                                                 <Typography>
                                                     {row.badge &&
                                                         row.badge
@@ -195,7 +192,7 @@ export const MarketplaceTable = ({
                                                                 />
                                                             ))}
                                                 </Typography>
-                                            </StyledTableCell>
+                                            </StyledTableCell> */}
                                         </StyledTableRow>
                                     ))}
                             </>
