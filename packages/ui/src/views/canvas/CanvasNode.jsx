@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
-import { useContext, useState, useEffect } from 'react'
+import { useContext, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
 import { IconButton, Box, Typography, Divider, Button } from '@mui/material'
 import Tooltip from '@mui/material/Tooltip'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 
 // project imports
 import NodeCardWrapper from '@/ui-component/cards/NodeCardWrapper'
@@ -19,7 +20,6 @@ import NodeInfoDialog from '@/ui-component/dialog/NodeInfoDialog'
 import { baseURL } from '@/store/constant'
 import { IconTrash, IconCopy, IconInfoCircle, IconAlertTriangle } from '@tabler/icons'
 import { flowContext } from '@/store/context/ReactFlowContext'
-import LlamaindexPNG from '@/assets/images/llamaindex.png'
 
 // ===========================|| CANVAS NODE ||=========================== //
 
@@ -35,12 +35,12 @@ const CanvasNode = ({ data }) => {
     const [warningMessage, setWarningMessage] = useState('')
     const [open, setOpen] = useState(false)
 
-    const handleClose = () => {
-        setOpen(false)
-    }
+    // const handleClose = () => {
+    //     setOpen(false)
+    // }
 
     const handleOpen = () => {
-        setOpen(true)
+        setOpen(!open)
     }
 
     const NodeBorder = () => {
@@ -128,18 +128,18 @@ const CanvasNode = ({ data }) => {
         setShowDialog(true)
     }
 
-    useEffect(() => {
-        const componentNode = canvas.componentNodes.find((nd) => nd.name === data.name)
-        if (componentNode) {
-            if (!data.version) {
-                setWarningMessage(nodeVersionEmptyMessage(componentNode.version))
-            } else if (data.version && componentNode.version > data.version) {
-                setWarningMessage(nodeOutdatedMessage(data.version, componentNode.version))
-            } else if (componentNode.badge === 'DEPRECATING') {
-                setWarningMessage('This node will be deprecated in the next release. Change to a new node tagged with NEW')
-            }
-        }
-    }, [canvas.componentNodes, data.name, data.version])
+    // useEffect(() => {
+    //     const componentNode = canvas.componentNodes.find((nd) => nd.name === data.name)
+    //     if (componentNode) {
+    //         if (!data.version) {
+    //             setWarningMessage(nodeVersionEmptyMessage(componentNode.version))
+    //         } else if (data.version && componentNode.version > data.version) {
+    //             setWarningMessage(nodeOutdatedMessage(data.version, componentNode.version))
+    //         } else if (componentNode.badge === 'DEPRECATING') {
+    //             setWarningMessage('This node will be deprecated in the next release. Change to a new node tagged with NEW')
+    //         }
+    //     }
+    // }, [canvas.componentNodes, data.name, data.version])
 
     return (
         <>
@@ -155,17 +155,29 @@ const CanvasNode = ({ data }) => {
                 }}
                 border={false}
             >
+                <Tooltip
+                    open={open}
+                    // onDoubleClick={handleClose}
+                    onClick={handleOpen}
+                    style={{
+                        position: 'absolute',
+                        margin: '12px 0px 0px 260px',
+                        color: 'black',
+                        backgroundColor: 'rgb(0,0,0,0)',
+                        cursor: 'pointer'
+                    }}
+                >
+                    <MoreVertIcon />
+                </Tooltip>
                 <NodeTooltip
                     open={!canvas.canvasDialogShow && open}
-                    onClose={handleClose}
-                    onOpen={handleOpen}
                     disableFocusListener={true}
                     title={
                         <div
                             style={{
-                                background: 'transparent',
                                 display: 'flex',
-                                flexDirection: 'column'
+                                flexDirection: 'column',
+                                position: 'relative'
                             }}
                         >
                             <IconButton
@@ -251,7 +263,7 @@ const CanvasNode = ({ data }) => {
                                             padding: 15
                                         }}
                                     >
-                                        <img
+                                        {/* <img
                                             style={{
                                                 width: '25px',
                                                 height: '25px',
@@ -260,7 +272,7 @@ const CanvasNode = ({ data }) => {
                                             }}
                                             src={LlamaindexPNG}
                                             alt='LlamaIndex'
-                                        />
+                                        /> */}
                                     </div>
                                 </>
                             )}
