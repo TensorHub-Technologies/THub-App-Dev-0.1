@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { IFileUpload, convertSpeechToText, ICommonObject, addFileToStorage } from 'flowise-components'
+import { IFileUpload, convertSpeechToText, ICommonObject, addFileToStorage } from 'thub-components'
 import { StatusCodes } from 'http-status-codes'
 import { IncomingInput, IMessage, INodeData, IReactFlowObject, IReactFlowNode, IDepthQueue, chatType, IChatMessage } from '../Interface'
 import { InternalFlowiseError } from '../errors/internalFlowiseError'
