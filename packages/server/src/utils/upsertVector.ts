@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import * as fs from 'fs'
 import { cloneDeep, omit } from 'lodash'
-import { ICommonObject, IMessage } from 'flowise-components'
+import { ICommonObject, IMessage } from 'thub-components'
 import telemetryService from '../services/telemetry'
 import logger from '../utils/logger'
 import {
