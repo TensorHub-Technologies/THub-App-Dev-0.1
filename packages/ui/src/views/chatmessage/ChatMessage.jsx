@@ -25,7 +25,7 @@ import {
 import { useTheme } from '@mui/material/styles'
 import { IconCircleDot, IconDownload, IconSend, IconMicrophone, IconPhotoPlus, IconTrash, IconX, IconTool } from '@tabler/icons'
 import Logo from '@/assets/images/THub_icon_colorful_logo.png'
-import userPNG from '@/assets/images/user.png'
+import PersonIcon from '@mui/icons-material/Person'
 import audioUploadSVG from '@/assets/images/wave-sound.jpg'
 
 // project import
@@ -110,7 +110,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
         /**
          * {isImageUploadAllowed: boolean, imgUploadSizeAndTypes: Array<{ fileTypes: string[], maxUploadSize: number }>}
          */
-        let acceptFile = false
+        let acceptFile = true
         if (constraints.isImageUploadAllowed) {
             const fileType = file.type
             const sizeInMB = file.size / 1024 / 1024
@@ -781,7 +781,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                     {message.type === 'apiMessage' ? (
                                         <img src={Logo} alt='AI' width='30' height='30' className='boticon' />
                                     ) : (
-                                        <img src={userPNG} alt='Me' width='30' height='30' className='usericon' />
+                                        <PersonIcon width='30' height='30' className='usericon' style={{ color: '#A93A96' }} />
                                     )}
                                     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                                         {message.usedTools && (
@@ -1057,12 +1057,12 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                 <div className='recording-control-buttons-container'>
                                     <IconButton onClick={onRecordingCancelled} size='small'>
                                         <IconX
-                                            color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
+                                            color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? '#A93B97' : '#1e88e5'}
                                         />
                                     </IconButton>
                                     <IconButton onClick={onRecordingStopped} size='small'>
                                         <IconSend
-                                            color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
+                                            color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? '#A93B97' : '#1e88e5'}
                                         />
                                     </IconButton>
                                 </div>
@@ -1075,7 +1075,18 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                             inputRef={inputRef}
                             // eslint-disable-next-line
                             autoFocus
-                            sx={{ width: '100%' }}
+                            sx={{
+                                width: '100%',
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: customization.isDarkMode ? '#A93B97' : undefined
+                                },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: customization.isDarkMode ? '#A93B97' : undefined
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: customization.isDarkMode ? '#A93B97' : undefined
+                                }
+                            }}
                             disabled={loading || !chatflowid}
                             onKeyDown={handleEnter}
                             id='userInput'
@@ -1095,7 +1106,9 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                             edge='start'
                                         >
                                             <IconPhotoPlus
-                                                color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
+                                                color={
+                                                    loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? '#A93B97' : '#1e88e5'
+                                                }
                                             />
                                         </IconButton>
                                     </InputAdornment>
@@ -1114,7 +1127,11 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                                 <IconMicrophone
                                                     className={'start-recording-button'}
                                                     color={
-                                                        loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'
+                                                        loading || !chatflowid
+                                                            ? '#9e9e9e'
+                                                            : customization.isDarkMode
+                                                            ? '#A93B97'
+                                                            : '#1e88e5'
                                                     }
                                                 />
                                             </IconButton>
@@ -1130,7 +1147,11 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                                 // Send icon SVG in input field
                                                 <IconSend
                                                     color={
-                                                        loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'
+                                                        loading || !chatflowid
+                                                            ? '#9e9e9e'
+                                                            : customization.isDarkMode
+                                                            ? '#A93B97'
+                                                            : '#1e88e5'
                                                     }
                                                 />
                                             )}
