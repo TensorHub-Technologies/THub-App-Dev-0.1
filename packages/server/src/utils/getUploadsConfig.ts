@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { INodeParams } from 'flowise-components'
+import { INodeParams } from 'thub-components'
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { getRunningExpressApp } from '../utils/getRunningExpressApp'
 import { IUploadFileSizeAndTypes, IReactFlowNode } from '../Interface'
