@@ -110,7 +110,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
         /**
          * {isImageUploadAllowed: boolean, imgUploadSizeAndTypes: Array<{ fileTypes: string[], maxUploadSize: number }>}
          */
-        let acceptFile = false
+        let acceptFile = true
         if (constraints.isImageUploadAllowed) {
             const fileType = file.type
             const sizeInMB = file.size / 1024 / 1024
