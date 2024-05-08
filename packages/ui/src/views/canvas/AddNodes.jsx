@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
+import './Node.css'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
@@ -20,9 +21,31 @@ import {
     Tab,
     Tabs,
     TextField,
-    Tooltip
+    Tooltip,
+    Stack
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import PersonIcon from '@mui/icons-material/Person'
+import LinkIcon from '@mui/icons-material/Link'
+import CachedIcon from '@mui/icons-material/Cached'
+import ThreePIcon from '@mui/icons-material/ThreeP'
+import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned'
+import FingerprintIcon from '@mui/icons-material/Fingerprint'
+import CallMergeIcon from '@mui/icons-material/CallMerge'
+import MemoryIcon from '@mui/icons-material/Memory'
+import AddModeratorIcon from '@mui/icons-material/AddModerator'
+
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstructions'
+
+import QueryStatsIcon from '@mui/icons-material/QueryStats'
+import ContentCutIcon from '@mui/icons-material/ContentCut'
+import ContactsIcon from '@mui/icons-material/Contacts'
+import BuildIcon from '@mui/icons-material/Build'
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
+import LayersIcon from '@mui/icons-material/Layers'
+import ArchitectureIcon from '@mui/icons-material/Architecture'
+import QrCodeIcon from '@mui/icons-material/QrCode'
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -48,11 +71,42 @@ function a11yProps(index) {
     }
 }
 
+const allIconsObj = {
+    Agents: <PersonIcon />,
+    Cache: <CachedIcon />,
+    Chains: <LinkIcon />,
+    'Chat Models': <ThreePIcon />,
+    'Document Loaders': <AssignmentReturnedIcon />,
+    Embeddings: <FingerprintIcon />,
+    Memory: <MemoryIcon />,
+    LLMs: <CallMergeIcon />,
+    Moderation: <AddModeratorIcon />,
+    'Output Parsers': <ExitToAppIcon />,
+    Prompts: <IntegrationInstructionsIcon />,
+    'Record Manager': <ContactsIcon />,
+    Retrievers: <QueryStatsIcon />,
+    'Text Splitters': <ContentCutIcon />,
+    Tools: <BuildIcon />,
+    Utilities: <AutoFixHighIcon />,
+    'Vector Stores': <LayersIcon />,
+    Engine: <ArchitectureIcon />,
+    'Response Synthesizer': <QrCodeIcon />
+}
+
+const getIconWithClass = (iconName, className) => {
+    const Icon = allIconsObj[iconName]
+    if (Icon) {
+        return React.cloneElement(Icon, { className })
+    } else {
+        return null
+    }
+}
+
 const AddNodes = ({ nodesData, node }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
-
+    console.log('customization', customization)
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
     // const [open, setOpen] = useState(false)
@@ -464,209 +518,132 @@ const AddNodes = ({ nodesData, node }) => {
                             >
                                 {Object.keys(nodes)
                                     .sort()
-                                    .map((category) =>
-                                        category === 'Vector Stores' ? (
-                                            <></>
-                                        ) : (
-                                            <Accordion
-                                                expanded={categoryExpanded[category] || false}
-                                                onChange={handleAccordionChange(category)}
-                                                key={category}
-                                                disableGutters
+                                    .map((category) => (
+                                        <Accordion
+                                            expanded={categoryExpanded[category] || false}
+                                            onChange={handleAccordionChange(category)}
+                                            key={category}
+                                            disableGutters
+                                        >
+                                            <AccordionSummary
+                                                expandIcon={
+                                                    <ExpandMoreIcon
+                                                        sx={{
+                                                            background: 'transparent !important'
+                                                        }}
+                                                    />
+                                                }
+                                                aria-controls={`nodes-accordian-${category}`}
+                                                id={`nodes-accordian-header-${category}`}
                                             >
-                                                <AccordionSummary
-                                                    expandIcon={
-                                                        <ExpandMoreIcon
-                                                            sx={{
-                                                                background: 'transparent !important'
-                                                            }}
-                                                        />
-                                                    }
-                                                    aria-controls={`nodes-accordian-${category}`}
-                                                    id={`nodes-accordian-header-${category}`}
+                                                <Stack
+                                                    gap={1}
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center'
+                                                    }}
                                                 >
-                                                    {category.split(';').length > 1 ? (
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                flexDirection: 'row',
-                                                                alignItems: 'center'
-                                                            }}
-                                                        >
-                                                            <Typography variant='h5'>{category.split(';')[0]}</Typography>
-                                                            {/* &nbsp;
-                                                            <Chip
-                                                                sx={{
-                                                                    width: 'max-content',
-                                                                    fontWeight: 700,
-                                                                    fontSize: '0.65rem',
-                                                                    background:
-                                                                        category.split(';')[1] === 'DEPRECATING'
-                                                                            ? theme.palette.warning.main
-                                                                            : theme.palette.teal.main,
-                                                                    color: category.split(';')[1] !== 'DEPRECATING' ? 'white' : 'inherit'
-                                                                }}
-                                                                size='small'
-                                                                label={category.split(';')[1]}
-                                                            /> */}
-                                                        </div>
-                                                    ) : (
-                                                        <Typography variant='h5'>{category}</Typography>
+                                                    {getIconWithClass(
+                                                        category.replace(';NEW', ''),
+                                                        customization?.isDarkMode ? 'icon-dark' : 'icon-light'
                                                     )}
-                                                </AccordionSummary>
-
-                                                {/* <img*/}
-                                                {/*                                style={{*/}
-                                                {/*                                    width: '100%',*/}
-                                                {/*                                    height: '100%',*/}
-                                                {/*                                    padding: 10,*/}
-                                                {/*                                    objectFit: 'contain'*/}
-                                                {/*                                }}*/}
-                                                {/*                                alt={node.name}*/}
-                                                {/*                                src={`${baseURL}/api/v1/node-icon/${node.name}`}*/}
-                                                {/*                            />*/}
-                                                {/*                        </div>*/}
-                                                {/*                    </ListItemAvatar>*/}
-                                                {/*                    <ListItemText*/}
-                                                {/*                        sx={{ ml: 1 }}*/}
-                                                {/*                        primary={*/}
-                                                {/*                            <div*/}
-                                                {/*                                style={{*/}
-                                                {/*                                    display: 'flex',*/}
-                                                {/*                                    flexDirection: 'row',*/}
-                                                {/*                                    alignItems: 'center'*/}
-                                                {/*                                }}*/}
-                                                {/*                            >*/}
-                                                {/*                                <span>{node.label}</span>*/}
-                                                {/*                                &nbsp;*/}
-                                                {/*                                {node.badge && (*/}
-                                                {/*                                    <Chip*/}
-                                                {/*                                        sx={{*/}
-                                                {/*                                            width: 'max-content',*/}
-                                                {/*                                            fontWeight: 700,*/}
-                                                {/*                                            fontSize: '0.65rem',*/}
-                                                {/*                                            background:*/}
-                                                {/*                                                node.badge === 'DEPRECATING'*/}
-                                                {/*                                                    ? theme.palette.warning.main*/}
-                                                {/*                                                    : theme.palette.teal.main,*/}
-                                                {/*                                            color:*/}
-                                                {/*                                                node.badge !== 'DEPRECATING'*/}
-                                                {/*                                                    ? 'white'*/}
-                                                {/*                                                    : 'inherit'*/}
-                                                {/*                                        }}*/}
-                                                {/*                                        size='small'*/}
-                                                {/*                                        label={node.badge}*/}
-                                                {/*                                    />*/}
-                                                {/*                                )}*/}
-                                                {/*                            </div>*/}
-                                                {/*                        }*/}
-                                                {/*                        secondary={node.description}*/}
-                                                {/*                    />*/}
-                                                {/*                </ListItem>*/}
-                                                {/*            </ListItemButton>*/}
-                                                {/*            {index === nodes[category].length - 1 ? null : <Divider />}*/}
-                                                {/*        </div>*/}
-                                                {/*    ))}*/}
-                                                {/*</AccordionDetails> */}
-
-                                                <AccordionDetails>
-                                                    <List>
-                                                        {nodes[category].map((node, index) => (
-                                                            <Box
-                                                                key={node.name}
-                                                                onDragStart={(event) => onDragStart(event, node)}
-                                                                draggable
-                                                            >
-                                                                <Tooltip title={node.description} followCursor>
-                                                                    <Box
+                                                    <Typography variant='h5'>{category.replace(';NEW', '')}</Typography>
+                                                </Stack>
+                                            </AccordionSummary>
+                                            <AccordionDetails>
+                                                <List>
+                                                    {nodes[category].map((node, index) => (
+                                                        <Box key={node.name} onDragStart={(event) => onDragStart(event, node)} draggable>
+                                                            <Tooltip title={node.description} followCursor>
+                                                                <Box
+                                                                    sx={{
+                                                                        borderRadius: `${customization.borderRadius}px`,
+                                                                        p: 0.2,
+                                                                        mb: 1,
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        backgroundColor: 'transparent',
+                                                                        '&:hover': {
+                                                                            background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
+                                                                            '& > .MuiListItem-root': {
+                                                                                backgroundColor: theme.palette.background.default,
+                                                                                borderRadius: `${customization.borderRadius}px`
+                                                                            },
+                                                                            '& > .MuiListItem-root .MuiListItemAvatar-root': {
+                                                                                background:
+                                                                                    'linear-gradient(to left, #3C5BA4, #E22A90) !important'
+                                                                            }
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <ListItem
+                                                                        alignItems='flex-start'
                                                                         sx={{
                                                                             borderRadius: `${customization.borderRadius}px`,
-                                                                            p: 0.2,
-                                                                            mb: 1,
+                                                                            cursor: 'move',
                                                                             display: 'flex',
-                                                                            alignItems: 'center',
                                                                             justifyContent: 'center',
-                                                                            backgroundColor: 'transparent',
-                                                                            '&:hover': {
-                                                                                background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
-                                                                                '& > .MuiListItem-root': {
-                                                                                    backgroundColor: theme.palette.background.default,
-                                                                                    borderRadius: `${customization.borderRadius}px`
-                                                                                },
-                                                                                '& > .MuiListItem-root .MuiListItemAvatar-root': {
-                                                                                    background:
-                                                                                        'linear-gradient(to left, #3C5BA4, #E22A90) !important'
-                                                                                }
-                                                                            }
+                                                                            alignItems: 'center'
                                                                         }}
                                                                     >
-                                                                        <ListItem
-                                                                            alignItems='flex-start'
+                                                                        <ListItemAvatar
                                                                             sx={{
+                                                                                mt: 0,
                                                                                 borderRadius: `${customization.borderRadius}px`,
-                                                                                cursor: 'move',
+                                                                                py: 0.3,
                                                                                 display: 'flex',
+                                                                                alignItems: 'center',
                                                                                 justifyContent: 'center',
-                                                                                alignItems: 'center'
+                                                                                background: `linear-gradient(to right, #3C5BA4, #E22A90)`
                                                                             }}
                                                                         >
-                                                                            <ListItemAvatar
-                                                                                sx={{
-                                                                                    mt: 0,
-                                                                                    borderRadius: `${customization.borderRadius}px`,
-                                                                                    py: 0.3,
+                                                                            <div
+                                                                                style={{
                                                                                     display: 'flex',
-                                                                                    alignItems: 'center',
                                                                                     justifyContent: 'center',
-                                                                                    background: `linear-gradient(to right, #3C5BA4, #E22A90)`
+                                                                                    alignItems: 'center',
+                                                                                    width: 50,
+                                                                                    height: 50,
+                                                                                    borderRadius: '20%',
+                                                                                    // backgroundColor: theme.palette.background.default
+                                                                                    backgroundColor: customization.isDarkMode
+                                                                                        ? '#f0f0f0'
+                                                                                        : '#f0f0f0'
                                                                                 }}
                                                                             >
-                                                                                <div
+                                                                                <img
                                                                                     style={{
-                                                                                        display: 'flex',
-                                                                                        justifyContent: 'center',
-                                                                                        alignItems: 'center',
-                                                                                        width: 50,
-                                                                                        height: 50,
-                                                                                        borderRadius: '20%',
-                                                                                        // backgroundColor: theme.palette.background.default
-                                                                                        backgroundColor: customization.isDarkMode
-                                                                                            ? '#f0f0f0'
-                                                                                            : '#f0f0f0'
+                                                                                        width: '100%',
+                                                                                        height: '100%',
+                                                                                        padding: 5,
+                                                                                        objectFit: 'contain'
                                                                                     }}
-                                                                                >
-                                                                                    <img
-                                                                                        style={{
-                                                                                            width: '100%',
-                                                                                            height: '100%',
-                                                                                            padding: 5,
-                                                                                            objectFit: 'contain'
-                                                                                        }}
-                                                                                        alt={node.name}
-                                                                                        src={`${baseURL}/api/v1/node-icon/${node.name}`}
-                                                                                    />
-                                                                                </div>
-                                                                            </ListItemAvatar>
+                                                                                    alt={node.name}
+                                                                                    src={`${baseURL}/api/v1/node-icon/${node.name}`}
+                                                                                />
+                                                                            </div>
+                                                                        </ListItemAvatar>
 
-                                                                            <ListItemText
-                                                                                sx={{
-                                                                                    ml: 1,
-                                                                                    display: 'flex',
-                                                                                    alignItems: 'center'
-                                                                                }}
-                                                                                primary={node.label}
-                                                                            />
-                                                                        </ListItem>
-                                                                    </Box>
-                                                                </Tooltip>
-                                                                {index === nodes[category].length - 1 ? null : <Divider />}
-                                                            </Box>
-                                                        ))}
-                                                    </List>
-                                                </AccordionDetails>
-                                            </Accordion>
-                                        )
-                                    )}
+                                                                        <ListItemText
+                                                                            sx={{
+                                                                                ml: 1,
+                                                                                display: 'flex',
+                                                                                alignItems: 'center'
+                                                                            }}
+                                                                            primary={node.label}
+                                                                        />
+                                                                    </ListItem>
+                                                                </Box>
+                                                            </Tooltip>
+                                                            {index === nodes[category].length - 1 ? null : <Divider />}
+                                                        </Box>
+                                                    ))}
+                                                </List>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    ))}
                             </List>
                         </Box>
                     </PerfectScrollbar>
