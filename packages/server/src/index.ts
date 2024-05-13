@@ -155,7 +155,7 @@ export class App {
         this.app.get('/api/v1/ip', (request, response) => {
             response.send({
                 ip: request.ip,
-                msg: 'Check returned IP address in the response. If it matches your current IP address ( which you can get by going to http://ip.nfriedly.com/ or https://api.ipify.org/ ), then the number of proxies is correct and the rate limiter should now work correctly. If not, increase the number of proxies by 1 and restart Cloud-Hosted Flowise until the IP address matches your own. Visit https://docs.flowiseai.com/configuration/rate-limit#cloud-hosted-rate-limit-setup-guide for more information.'
+                msg: 'Check returned IP address in the response. If it matches your current IP address ( which you can get by going to http://ip.nfriedly.com/ or https://api.ipify.org/ ), then the number of proxies is correct and the rate limiter should now work correctly. If not, increase the number of proxies by 1 and restart Cloud-Hosted THub until the IP address matches your own. Visit https://docs.flowiseai.com/configuration/rate-limit#cloud-hosted-rate-limit-setup-guide for more information.'
             })
         })
 
@@ -163,7 +163,7 @@ export class App {
         // Serve UI static
         // ----------------------------------------
 
-        const packagePath = getNodeModulesPackagePath('flowise-ui')
+        const packagePath = getNodeModulesPackagePath('thub-ui')
         const uiBuildPath = path.join(packagePath, 'build')
         const uiHtmlPath = path.join(packagePath, 'build', 'index.html')
 
@@ -184,7 +184,7 @@ export class App {
             removePromises.push(this.telemetry.flush())
             await Promise.all(removePromises)
         } catch (e) {
-            logger.error(`❌[server]: Flowise Server shut down error: ${e}`)
+            logger.error(`❌[server]: THub Server shut down error: ${e}`)
         }
     }
 }
@@ -209,7 +209,7 @@ export async function start(): Promise<void> {
     await serverApp.config(io)
 
     server.listen(port, () => {
-        logger.info(`⚡️ [server]: Flowise Server is listening at ${port}`)
+        logger.info(`⚡️ [server]: THub Server is listening at ${port}`)
     })
 }
 
