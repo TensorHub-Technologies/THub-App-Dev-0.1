@@ -207,9 +207,6 @@ importers:
             cohere-ai:
                 specifier: ^6.2.0
                 version: 6.2.2
-            couchbase:
-                specifier: 4.3.1
-                version: 4.3.1
             crypto-js:
                 specifier: ^4.1.1
                 version: 4.2.0
@@ -23912,6 +23909,7 @@ snapshots:
             yargs: 17.7.2
         transitivePeerDependencies:
             - supports-color
+        optional: true
 
     cmd-shim@5.0.0:
         dependencies:
@@ -24226,6 +24224,7 @@ snapshots:
             '@couchbase/couchbase-win32-x64-napi': 4.3.1
         transitivePeerDependencies:
             - supports-color
+        optional: true
 
     create-require@1.1.1: {}
 
@@ -29145,7 +29144,8 @@ snapshots:
 
     lodash.isequal@4.5.0: {}
 
-    lodash.isplainobject@4.0.6: {}
+    lodash.isplainobject@4.0.6:
+        optional: true
 
     lodash.istypedarray@3.0.6: {}
 
@@ -29719,6 +29719,7 @@ snapshots:
     memory-stream@1.0.0:
         dependencies:
             readable-stream: 3.6.2
+        optional: true
 
     merge-deep@3.0.3:
         dependencies:
@@ -30315,7 +30316,8 @@ snapshots:
 
     node-addon-api@7.1.0: {}
 
-    node-api-headers@1.1.0: {}
+    node-api-headers@1.1.0:
+        optional: true
 
     node-cleanup@2.1.2: {}
 
