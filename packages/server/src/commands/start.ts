@@ -59,7 +59,7 @@ export default class Start extends Command {
         try {
             // Shut down the app after timeout if it ever stuck removing pools
             setTimeout(() => {
-                logger.info('THub was forced to shut down after 30 secs')
+                logger.info('Flowise was forced to shut down after 30 secs')
                 process.exit(processExitCode)
             }, 30000)
 

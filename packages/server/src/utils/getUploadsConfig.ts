@@ -24,7 +24,7 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<any> => 
     const flowObj = JSON.parse(chatflow.flowData)
     const imgUploadSizeAndTypes: IUploadFileSizeAndTypes[] = []
 
-    let isSpeechToTextEnabled = true
+    let isSpeechToTextEnabled = false
     if (chatflow.speechToText) {
         const speechToTextProviders = JSON.parse(chatflow.speechToText)
         for (const provider in speechToTextProviders) {
@@ -38,7 +38,7 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<any> => 
         }
     }
 
-    let isImageUploadAllowed = true
+    let isImageUploadAllowed = false
     const nodes: IReactFlowNode[] = flowObj.nodes
 
     /*
@@ -49,7 +49,7 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<any> => 
     if (!nodes.some((node) => uploadAllowedNodes.includes(node.data.name))) {
         return {
             isSpeechToTextEnabled,
-            isImageUploadAllowed: true,
+            isImageUploadAllowed: false,
             imgUploadSizeAndTypes
         }
     }
