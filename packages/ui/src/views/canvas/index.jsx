@@ -66,6 +66,7 @@ const Canvas = () => {
 
     const dispatch = useDispatch()
     const canvas = useSelector((state) => state.canvas)
+    const customization = useSelector((state) => state.customization)
     const [canvasDataStore, setCanvasDataStore] = useState(canvas)
     const [chatflow, setChatflow] = useState(null)
 
@@ -504,7 +505,7 @@ const Canvas = () => {
                     </Toolbar>
                 </AppBar>
                 <Box sx={{ display: 'flex', mt: '70px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
-                    <Box sx={{ width: '350px' }}>
+                    <Box sx={{ width: customization.menu_open ? '350px' : '100px' }}>
                         <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
                     </Box>
                     <Box sx={{ width: '100%' }}>
