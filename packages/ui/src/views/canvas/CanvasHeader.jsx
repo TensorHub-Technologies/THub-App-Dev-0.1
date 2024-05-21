@@ -8,10 +8,11 @@ import { useTheme } from '@mui/material/styles'
 import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/material'
 
 // icons
-import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode, IconMenu2 } from '@tabler/icons'
+import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons'
 
 //Logo
 import Logo from '@/assets/images/THub_Logo_Icon.png'
+import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 
 // project imports
 import Settings from '@/views/settings'
@@ -40,7 +41,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
     const navigate = useNavigate()
     const flowNameRef = useRef()
     const settingsRef = useRef()
-
+    console.log('customization', customization)
     const [isEditingFlowName, setEditingFlowName] = useState(null)
     const [flowName, setFlowName] = useState('')
     const [isSettingsOpen, setSettingsOpen] = useState(false)
@@ -187,8 +188,8 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
 
     return (
         <>
-            <Box sx={{ mr: 2 }}>
-                <ButtonBase title='Toggle' sx={{ borderRadius: '20%' }}>
+            {/* <Box sx={{ mr: 2 }}>
+                <ButtonBase title='Toggle' sx={{ borderRadius: '20%' }} onClick={()=>dispatch({ type: SHOW_MENU})}>
                     <Avatar
                         variant='rounded'
                         sx={{
@@ -210,10 +211,14 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                         <IconMenu2 stroke={1.5} size='1.3rem' />
                     </Avatar>
                 </ButtonBase>
-            </Box>
+            </Box> */}
 
             <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-                <img src={Logo} alt='THub_Logo' width={130} />
+                {customization.menu_open ? (
+                    <img src={Logo} alt='THub_Logo' width={130} />
+                ) : (
+                    <img src={ColorfulLogo} alt='THub_Logo' width={40} />
+                )}
             </Box>
             <Box>
                 <ButtonBase title='Back' sx={{ borderRadius: '20%' }}>
