@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types'
-import '../../../../../views/canvas/Node.css'
 
-// material-ui
 import { useTheme } from '@mui/material/styles'
 import { Divider, List, Typography } from '@mui/material'
 

@@ -12,7 +12,7 @@
 }
 
 .usermessage {
-    padding: 1rem 1.5rem 1rem 1.5rem;
+    /* padding: 1rem 1.5rem 1rem 1.5rem; */
 }
 
 .usermessagewaiting-light {
@@ -94,7 +94,7 @@
 
 .boticon,
 .usericon {
-    margin-top: 1rem;
+    margin-top: 10px;
     margin-right: 1rem;
     border-radius: 1rem;
 }

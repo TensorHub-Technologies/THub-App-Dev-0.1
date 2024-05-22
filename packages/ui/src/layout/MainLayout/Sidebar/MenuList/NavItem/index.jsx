@@ -174,7 +174,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
             >
                 {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
 
-                <Box display='flex' flexDirection='row' alignItems='center'>
+                <Box display='flex' flexDirection='column' alignItems='center'>
                     <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
                     {customization.menu_open && (
                         <ListItemText

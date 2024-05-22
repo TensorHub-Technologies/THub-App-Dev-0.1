@@ -189,7 +189,7 @@ export const ChatPopUp = ({ chatflowid }) => {
             >
                 {({ TransitionProps }) => (
                     <Transitions in={open} {...TransitionProps}>
-                        <Paper>
+                        <Paper sx={{ marginTop: '-58px' }}>
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MainCard
                                     border={false}

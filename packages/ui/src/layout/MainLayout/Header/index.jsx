@@ -136,9 +136,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     <LogoSection />
                 </Box> */}
                 {customization.menu_open ? (
-                    <img src={Logo} alt='THub_Logo' width={130} />
+                    <img src={Logo} alt='THub_Logo' width={110} />
                 ) : (
-                    <img src={ColorfulLogo} alt='THub_Logo' width={40} />
+                    <img src={ColorfulLogo} alt='THub_Logo' width={30} />
                 )}
             </Box>
             <Box sx={{ flexGrow: 1 }} />

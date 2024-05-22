@@ -82,7 +82,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                         }
                     }
                 }}
-                onMouseEnter={() => dispatch({ type: SHOW_MENU })}
+                // onMouseEnter={() => dispatch({ type: SHOW_MENU })}
                 onMouseLeave={() => dispatch({ type: SHOW_MENU })}
                 ModalProps={{ keepMounted: true }}
                 color='inherit'
