@@ -19,8 +19,6 @@ import {
     ListItemText,
     Paper,
     Typography,
-    Tab,
-    Tabs,
     TextField,
     Tooltip,
     Stack
@@ -30,8 +28,9 @@ import PersonIcon from '@mui/icons-material/Person'
 import LinkIcon from '@mui/icons-material/Link'
 import CachedIcon from '@mui/icons-material/Cached'
 import ThreePIcon from '@mui/icons-material/ThreeP'
-import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned'
-import FingerprintIcon from '@mui/icons-material/Fingerprint'
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
+// import FingerprintIcon from '@mui/icons-material/Fingerprint'
+import { IconAffiliate } from '@tabler/icons'
 import CallMergeIcon from '@mui/icons-material/CallMerge'
 import MemoryIcon from '@mui/icons-material/Memory'
 import AddModeratorIcon from '@mui/icons-material/AddModerator'
@@ -56,8 +55,6 @@ import MainCard from '@/ui-component/cards/MainCard'
 
 // icons
 import { IconX } from '@tabler/icons'
-import LlamaindexPNG from '@/assets/images/llamaindex.png'
-import LangChainPNG from '@/assets/images/langchain.png'
 
 // const
 import { baseURL } from '@/store/constant'
@@ -78,8 +75,8 @@ const allIconsObj = {
     Cache: <CachedIcon />,
     Chains: <LinkIcon />,
     'Chat Models': <ThreePIcon />,
-    'Document Loaders': <AssignmentReturnedIcon />,
-    Embeddings: <FingerprintIcon />,
+    'Document Loaders': <DriveFolderUploadIcon />,
+    Embeddings: <IconAffiliate />,
     Memory: <MemoryIcon />,
     LLMs: <CallMergeIcon />,
     Moderation: <AddModeratorIcon />,
@@ -225,7 +222,7 @@ const AddNodes = ({ nodesData, node }) => {
         <>
             <Paper
                 sx={{
-                    transition: 'width 0.2s, box-shadow 0.2s',
+                    // transition: 'width 0.2s, box-shadow 0.2s',
                     position: 'relative',
                     zIndex: 1000,
                     width: customization.menu_open ? '350px' : '100px',
@@ -249,34 +246,34 @@ const AddNodes = ({ nodesData, node }) => {
                     shadow={theme.shadows[16]}
                 >
                     <Box sx={{ p: 2 }}>
-                        {customization.menu_open && (
-                            <Box
+                        <Box
+                            sx={{
+                                marginLeft: '17px',
+                                display: 'flex',
+                                alignItems: 'flex-end'
+                            }}
+                        >
+                            <SearchOutlinedIcon
+                                stroke={1.5}
+                                size='1rem'
                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'flex-end'
+                                    cursor: 'default',
+                                    color: customization?.isDarkMode ? '#fff' : '#fff',
+                                    background: isInputFocused
+                                        ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
+                                        : customization?.isDarkMode
+                                        ? '#E22A90'
+                                        : '#3C5BA4',
+                                    borderRadius: '20%',
+                                    padding: '2px',
+                                    mb: 2,
+                                    mr: 1,
+                                    '&:hover': {
+                                        background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
+                                    }
                                 }}
-                            >
-                                <SearchOutlinedIcon
-                                    stroke={1.5}
-                                    size='1rem'
-                                    sx={{
-                                        cursor: 'default',
-                                        color: customization?.isDarkMode ? '#fff' : '#fff',
-                                        background: isInputFocused
-                                            ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
-                                            : customization?.isDarkMode
-                                            ? '#E22A90'
-                                            : '#3C5BA4',
-                                        borderRadius: '20%',
-                                        padding: '2px',
-                                        mb: 2,
-                                        mr: 1,
-                                        '&:hover': {
-                                            background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
-                                        }
-                                    }}
-                                />
-
+                            />
+                            {customization.menu_open && (
                                 <TextField
                                     label='Search'
                                     variant='standard'
@@ -337,9 +334,10 @@ const AddNodes = ({ nodesData, node }) => {
                                         )
                                     }}
                                 />
-                            </Box>
-                        )}
-                        {customization.menu_open && (
+                            )}
+                        </Box>
+
+                        {/* {customization.menu_open && (
                             <Tabs
                                 sx={{ position: 'relative', minHeight: '50px', height: '50px' }}
                                 variant='fullWidth'
@@ -395,7 +393,7 @@ const AddNodes = ({ nodesData, node }) => {
                                     <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>
                                 </div>
                             </Tabs>
-                        )}
+                        )} */}
                         <Divider />
                     </Box>
 
