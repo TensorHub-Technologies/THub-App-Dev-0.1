@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import './Node.css'
 
 // material-ui
+
 import { useTheme } from '@mui/material/styles'
 import {
     Accordion,
@@ -18,8 +19,6 @@ import {
     ListItemText,
     Paper,
     Typography,
-    Tab,
-    Tabs,
     TextField,
     Tooltip,
     Stack
@@ -29,8 +28,9 @@ import PersonIcon from '@mui/icons-material/Person'
 import LinkIcon from '@mui/icons-material/Link'
 import CachedIcon from '@mui/icons-material/Cached'
 import ThreePIcon from '@mui/icons-material/ThreeP'
-import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned'
-import FingerprintIcon from '@mui/icons-material/Fingerprint'
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
+// import FingerprintIcon from '@mui/icons-material/Fingerprint'
+import { IconAffiliate } from '@tabler/icons'
 import CallMergeIcon from '@mui/icons-material/CallMerge'
 import MemoryIcon from '@mui/icons-material/Memory'
 import AddModeratorIcon from '@mui/icons-material/AddModerator'
@@ -55,13 +55,12 @@ import MainCard from '@/ui-component/cards/MainCard'
 
 // icons
 import { IconX } from '@tabler/icons'
-import LlamaindexPNG from '@/assets/images/llamaindex.png'
-import LangChainPNG from '@/assets/images/langchain.png'
 
 // const
 import { baseURL } from '@/store/constant'
 import { SET_COMPONENT_NODES } from '@/store/actions'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
+import { SHOW_MENU } from '@/store/constant'
 
 // ==============================|| ADD NODES||============================== //
 function a11yProps(index) {
@@ -76,8 +75,8 @@ const allIconsObj = {
     Cache: <CachedIcon />,
     Chains: <LinkIcon />,
     'Chat Models': <ThreePIcon />,
-    'Document Loaders': <AssignmentReturnedIcon />,
-    Embeddings: <FingerprintIcon />,
+    'Document Loaders': <DriveFolderUploadIcon />,
+    Embeddings: <IconAffiliate />,
     Memory: <MemoryIcon />,
     LLMs: <CallMergeIcon />,
     Moderation: <AddModeratorIcon />,
@@ -128,10 +127,7 @@ const AddNodes = ({ nodesData, node }) => {
             else newNodes.push(vsNode)
         }
         delete obj['Vector Stores']
-        // if (deprecatingNodes.length) {
-        //     obj['Vector Stores;DEPRECATING'] = deprecatingNodes
-        //     accordianCategories['Vector Stores;DEPRECATING'] = isFilter ? true : false
-        // }
+
         if (newNodes.length) {
             obj['Vector Stores;NEW'] = newNodes
             accordianCategories['Vector Stores;NEW'] = isFilter ? true : false
@@ -206,33 +202,10 @@ const AddNodes = ({ nodesData, node }) => {
 
     const [isInputFocused, setInputFocused] = useState(false)
 
-    // const handleClose = (event) => {
-    //     if (anchorRef.current && anchorRef.current.contains(event.target)) {
-    //         return
-    //     }
-    //     setOpen(false)
-    // }
-
-    // const handleToggle = () => {
-    //     setOpen((prevOpen) => !prevOpen)
-    // }
-
     const onDragStart = (event, node) => {
         event.dataTransfer.setData('application/reactflow', JSON.stringify(node))
         event.dataTransfer.effectAllowed = 'move'
     }
-
-    // useEffect(() => {
-    //     if (prevOpen.current === true && open === false) {
-    //         anchorRef.current.focus()
-    //     }
-    //
-    //     prevOpen.current = open
-    // }, [open])
-
-    // useEffect(() => {
-    //     if (node) setOpen(false)
-    // }, [node])
 
     useEffect(() => {
         if (nodesData) {
@@ -243,51 +216,24 @@ const AddNodes = ({ nodesData, node }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nodesData, dispatch])
 
+    console.log(customization.menu_open, 'SHOW_MENU')
+
     return (
         <>
-            {/*<StyledFab*/}
-            {/*    sx={{ left: 20, top: 20 }}*/}
-            {/*    ref={anchorRef}*/}
-            {/*    size='small'*/}
-            {/*    color='primary'*/}
-            {/*    aria-label='add'*/}
-            {/*    title='Add Node'*/}
-            {/*    onClick={handleToggle}*/}
-            {/*>*/}
-            {/*    {open ? <IconMinus /> : <IconPlus />}*/}
-            {/*</StyledFab>*/}
-            {/*<Popper*/}
-            {/*    placement='bottom-end'*/}
-            {/*    open={true}*/}
-            {/*    anchorEl={anchorRef.current}*/}
-            {/*    role={undefined}*/}
-            {/*    transition*/}
-            {/*    disablePortal*/}
-            {/*    popperOptions={{*/}
-            {/*        modifiers: [*/}
-            {/*            {*/}
-            {/*                name: 'offset',*/}
-            {/*                options: {*/}
-            {/*                    offset: [-40, 14]*/}
-            {/*                }*/}
-            {/*            }*/}
-            {/*        ]*/}
-            {/*    }}*/}
-            {/*    sx={{ zIndex: 1000 }}*/}
-            {/*>*/}
-            {/*    {({ TransitionProps }) => (*/}
-            {/*        <Transitions in={open} {...TransitionProps}>*/}
             <Paper
                 sx={{
+                    // transition: 'width 0.2s, box-shadow 0.2s',
+                    position: 'relative',
                     zIndex: 1000,
-                    width: '350px',
-                    // height: 'calc(100vh - 70px)',
+                    width: customization.menu_open ? '350px' : '100px',
+                    //  height: 'calc(100vh - 70px)',
                     borderRight: `2px solid ${theme.palette.divider}`,
-                    borderRadius: '0',
+                    borderRadius: 0,
                     overflow: 'hidden'
                 }}
+                onMouseEnter={() => dispatch({ type: SHOW_MENU })}
+                onMouseLeave={() => dispatch({ type: SHOW_MENU })}
             >
-                {/*<ClickAwayListener onClickAway={handleClose}>*/}
                 <MainCard
                     sx={{
                         bgcolor: theme.palette.background.default,
@@ -300,11 +246,9 @@ const AddNodes = ({ nodesData, node }) => {
                     shadow={theme.shadows[16]}
                 >
                     <Box sx={{ p: 2 }}>
-                        {/*<Stack>*/}
-                        {/*    <Typography variant='h4'>Add Nodes</Typography>*/}
-                        {/*</Stack>*/}
                         <Box
                             sx={{
+                                marginLeft: '17px',
                                 display: 'flex',
                                 alignItems: 'flex-end'
                             }}
@@ -329,160 +273,130 @@ const AddNodes = ({ nodesData, node }) => {
                                     }
                                 }}
                             />
-
-                            <TextField
-                                label='Search'
-                                variant='standard'
-                                sx={{
-                                    width: '100%',
-                                    mb: 2,
-                                    '& .TextField-root': {
-                                        '& fieldset': {
-                                            borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                            {customization.menu_open && (
+                                <TextField
+                                    label='Search'
+                                    variant='standard'
+                                    sx={{
+                                        width: '100%',
+                                        mb: 2,
+                                        '& .TextField-root': {
+                                            '& fieldset': {
+                                                borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                            },
+                                            '&:hover fieldset': { borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                            '&.Mui-focused fieldset': { borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }
                                         },
-                                        '&:hover fieldset': { borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                        '&.Mui-focused fieldset': { borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }
-                                    },
-                                    transition: 'all .2s ease-in-out',
-                                    '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
-                                    '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                    '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                    '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                    '&:hover': {
+                                        transition: 'all .2s ease-in-out',
+                                        '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                        '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                        '& .MuiInput-underline:after': {
+                                            borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                        },
                                         '& .MuiInput-underline:before': {
-                                            borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                            borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                        },
+                                        '&:hover': {
+                                            '& .MuiInput-underline:before': {
+                                                borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                            }
                                         }
-                                    }
-                                }}
-                                id='input-search-node'
-                                value={searchValue}
-                                onChange={(e) => filterSearch(e.target.value)}
-                                onFocus={() => setInputFocused(true)}
-                                onBlur={() => setInputFocused(false)}
-                                placeholder='Search'
-                                InputProps={{
-                                    'aria-label': 'weight',
-                                    endAdornment: (
-                                        <InputAdornment
-                                            position='end'
-                                            sx={{
-                                                cursor: 'pointer',
-                                                color: theme.palette.grey[500],
-                                                '&:hover': {
-                                                    color: theme.palette.grey[900]
-                                                }
-                                            }}
-                                            title='Clear Search'
-                                        >
-                                            <IconX
-                                                stroke={1.5}
-                                                size='1rem'
-                                                onClick={() => filterSearch('')}
-                                                style={{
-                                                    cursor: 'pointer'
+                                    }}
+                                    id='input-search-node'
+                                    value={searchValue}
+                                    onChange={(e) => filterSearch(e.target.value)}
+                                    onFocus={() => setInputFocused(true)}
+                                    onBlur={() => setInputFocused(false)}
+                                    placeholder='Search1'
+                                    InputProps={{
+                                        'aria-label': 'weight',
+                                        endAdornment: (
+                                            <InputAdornment
+                                                position='end'
+                                                sx={{
+                                                    cursor: 'pointer',
+                                                    color: theme.palette.grey[500],
+                                                    '&:hover': {
+                                                        color: theme.palette.grey[900]
+                                                    }
                                                 }}
-                                            />
-                                        </InputAdornment>
-                                    )
-                                }}
-                            />
+                                                title='Clear Search'
+                                            >
+                                                <IconX
+                                                    stroke={1.5}
+                                                    size='1rem'
+                                                    onClick={() => filterSearch('')}
+                                                    style={{
+                                                        cursor: 'pointer'
+                                                    }}
+                                                />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
                         </Box>
 
-                        {/*<OutlinedInput*/}
-                        {/*    sx={{ width: '100%', pr: 2, pl: 2, my: 2 }}*/}
-                        {/*    id='input-search-node'*/}
-                        {/*    value={searchValue}*/}
-                        {/*    onChange={(e) => filterSearch(e.target.value)}*/}
-                        {/*    placeholder='Search nodes'*/}
-                        {/*    startAdornment={*/}
-                        {/*        <InputAdornment position='start'>*/}
-                        {/*            <IconSearch stroke={1.5} size='1rem' color={theme.palette.grey[500]} />*/}
-                        {/*        </InputAdornment>*/}
-                        {/*    }*/}
-                        {/*    endAdornment={*/}
-                        {/*        <InputAdornment*/}
-                        {/*            position='end'*/}
-                        {/*            sx={{*/}
-                        {/*                cursor: 'pointer',*/}
-                        {/*                color: theme.palette.grey[500],*/}
-                        {/*                '&:hover': {*/}
-                        {/*                    color: theme.palette.grey[900]*/}
-                        {/*                }*/}
-                        {/*            }}*/}
-                        {/*            title='Clear Search'*/}
-                        {/*        >*/}
-                        {/*            <IconX*/}
-                        {/*                stroke={1.5}*/}
-                        {/*                size='1rem'*/}
-                        {/*                onClick={() => filterSearch('')}*/}
-                        {/*                style={{*/}
-                        {/*                    cursor: 'pointer'*/}
-                        {/*                }}*/}
-                        {/*            />*/}
-                        {/*        </InputAdornment>*/}
-                        {/*    }*/}
-                        {/*    aria-describedby='search-helper-text'*/}
-                        {/*    inputProps={{*/}
-                        {/*        'aria-label': 'weight'*/}
-                        {/*    }}*/}
-                        {/*/>*/}
-                        <Tabs
-                            sx={{ position: 'relative', minHeight: '50px', height: '50px' }}
-                            variant='fullWidth'
-                            value={tabValue}
-                            onChange={handleTabChange}
-                            aria-label='tabs'
-                        >
-                            {['LangChain', 'LlamaIndex'].map((item, index) => (
-                                <Tab
-                                    icon={
-                                        <div
-                                            style={{
-                                                borderRadius: '50%'
-                                            }}
-                                        >
-                                            <img
-                                                style={{
-                                                    width: '25px',
-                                                    height: '25px',
-                                                    borderRadius: '50%',
-                                                    objectFit: 'contain'
-                                                }}
-                                                src={index === 0 ? LangChainPNG : LlamaindexPNG}
-                                                alt={item}
-                                            />
-                                        </div>
-                                    }
-                                    iconPosition='start'
-                                    sx={{ minHeight: '50px', height: '50px' }}
-                                    key={index}
-                                    label={item}
-                                    {...a11yProps(index)}
-                                ></Tab>
-                            ))}
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    borderRadius: 10,
-                                    background: 'rgb(254,252,191)',
-                                    padding: '1px 6px',
-                                    width: 'max-content',
-                                    position: 'absolute',
-                                    top: 0,
-                                    right: 0,
-                                    fontSize: '0.6rem',
-                                    lineHeight: '1.5',
-                                    fontWeight: 700
-                                }}
+                        {/* {customization.menu_open && (
+                            <Tabs
+                                sx={{ position: 'relative', minHeight: '50px', height: '50px' }}
+                                variant='fullWidth'
+                                value={tabValue}
+                                onChange={handleTabChange}
+                                aria-label='tabs'
                             >
-                                <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>
-                            </div>
-                        </Tabs>
+                                {['LangChain', 'LlamaIndex'].map((item, index) => (
+                                    <Tab
+                                        icon={
+                                            <div
+                                                style={{
+                                                    borderRadius: '50%'
+                                                }}
+                                            >
+                                                <img
+                                                    style={{
+                                                        width: '25px',
+                                                        height: '25px',
+                                                        borderRadius: '50%',
+                                                        objectFit: 'contain'
+                                                    }}
+                                                    src={index === 0 ? LangChainPNG : LlamaindexPNG}
+                                                    alt={item}
+                                                />
+                                            </div>
+                                        }
+                                        iconPosition='start'
+                                        sx={{ minHeight: '50px', height: '50px' }}
+                                        key={index}
+                                        label={item}
+                                        {...a11yProps(index)}
+                                    ></Tab>
+                                ))}
 
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        borderRadius: 10,
+                                        background: 'rgb(254,252,191)',
+                                        padding: '1px 6px',
+                                        width: 'max-content',
+                                        position: 'absolute',
+                                        top: 0,
+                                        right: 0,
+                                        fontSize: '0.6rem',
+                                        lineHeight: '1.5',
+                                        fontWeight: 700
+                                    }}
+                                >
+                                    <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>
+                                </div>
+                            </Tabs>
+                        )} */}
                         <Divider />
                     </Box>
+
                     <PerfectScrollbar
                         containerRef={(el) => {
                             ps.current = el
@@ -527,16 +441,20 @@ const AddNodes = ({ nodesData, node }) => {
                                         >
                                             <AccordionSummary
                                                 expandIcon={
-                                                    <ExpandMoreIcon
-                                                        sx={{
-                                                            background: 'transparent !important'
-                                                        }}
-                                                    />
+                                                    customization.menu_open && (
+                                                        <ExpandMoreIcon
+                                                            className={customization?.isDarkMode ? 'ExpandMoreIcon1' : 'ExpandMoreIcon2'}
+                                                            sx={{
+                                                                background: 'transparent !important'
+                                                            }}
+                                                        />
+                                                    )
                                                 }
                                                 aria-controls={`nodes-accordian-${category}`}
                                                 id={`nodes-accordian-header-${category}`}
                                             >
                                                 <Stack
+                                                    id='stack-icons'
                                                     gap={1}
                                                     style={{
                                                         display: 'flex',
@@ -548,9 +466,17 @@ const AddNodes = ({ nodesData, node }) => {
                                                         category.replace(';NEW', ''),
                                                         customization?.isDarkMode ? 'icon-dark' : 'icon-light'
                                                     )}
-                                                    <Typography variant='h5'>{category.replace(';NEW', '')}</Typography>
+                                                    {customization.menu_open && (
+                                                        <Typography
+                                                            className={customization?.isDarkMode ? 'stack-text1' : 'stack-text2'}
+                                                            variant='h5'
+                                                        >
+                                                            {category.replace(';NEW', '')}
+                                                        </Typography>
+                                                    )}
                                                 </Stack>
                                             </AccordionSummary>
+
                                             <AccordionDetails>
                                                 <List>
                                                     {nodes[category].map((node, index) => (
@@ -626,14 +552,18 @@ const AddNodes = ({ nodesData, node }) => {
                                                                             </div>
                                                                         </ListItemAvatar>
 
-                                                                        <ListItemText
-                                                                            sx={{
-                                                                                ml: 1,
-                                                                                display: 'flex',
-                                                                                alignItems: 'center'
-                                                                            }}
-                                                                            primary={node.label}
-                                                                        />
+                                                                        {customization.menu_open ? (
+                                                                            <ListItemText
+                                                                                sx={{
+                                                                                    ml: 1,
+                                                                                    display: 'flex',
+                                                                                    alignItems: 'center'
+                                                                                }}
+                                                                                primary={node.label}
+                                                                            />
+                                                                        ) : (
+                                                                            ''
+                                                                        )}
                                                                     </ListItem>
                                                                 </Box>
                                                             </Tooltip>
@@ -645,14 +575,37 @@ const AddNodes = ({ nodesData, node }) => {
                                         </Accordion>
                                     ))}
                             </List>
+                            <Box sx={{ mr: 2 }}>
+                                {/* <ButtonBase title='Toggle' sx={{ marginLeft: customization.menu_open ? "325px" : "75px", marginTop: customization.menu_open ? "-1200px" : "-1000px" }}
+                                    onClick={() => dispatch({ type: SHOW_MENU })}>
+                                    <Avatar className='sideAvatar'
+                                        variant='rounded'
+                                        sx={{
+                                            ...theme.typography.commonAvatar,
+                                            ...theme.typography.mediumAvatar,
+                                            transition: 'all .2s ease-in-out',
+                                            // background: theme.palette.canvasHeader.settingsLight,
+                                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            // color: theme.palette.canvasHeader.settingsDark,
+                                            color: '#fff',
+                                            '&:hover': {
+                                                // background: theme.palette.canvasHeader.settingsDark,
+                                                // background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
+                                                // color: theme.palette.canvasHeader.settingsLight
+                                                // color: '#fff'
+                                            }
+                                        }}
+                                      
+                                    >
+
+                                        <KeyboardArrowRightIcon stroke={1.5} size='1.3rem' sx={{ background: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
+                                    </Avatar>
+                                </ButtonBase> */}
+                            </Box>
                         </Box>
                     </PerfectScrollbar>
                 </MainCard>
-                {/*</ClickAwayListener>*/}
             </Paper>
-            {/*</Transitions>*/}
-            {/*    )}*/}
-            {/*</Popper>*/}
         </>
     )
 }

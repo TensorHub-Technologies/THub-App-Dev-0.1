@@ -25,6 +25,7 @@ export const REMOVE_SNACKBAR = 'REMOVE_SNACKBAR'
 export const SHOW_CONFIRM = 'SHOW_CONFIRM'
 export const HIDE_CONFIRM = 'HIDE_CONFIRM'
 
+export const SHOW_MENU = 'SHOW_MENU'
 export const enqueueSnackbar = (notification) => {
     const key = notification.options && notification.options.key
 

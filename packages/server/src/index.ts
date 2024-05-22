@@ -137,7 +137,9 @@ export class App {
                 '/api/v1/feedback',
                 '/api/v1/leads',
                 '/api/v1/get-upload-file',
-                '/api/v1/ip'
+                '/api/v1/ip',
+                '/api/v1/credentials',
+                '/api/v1/credentials/'
             ]
             this.app.use((req, res, next) => {
                 if (req.url.includes('/api/v1/')) {

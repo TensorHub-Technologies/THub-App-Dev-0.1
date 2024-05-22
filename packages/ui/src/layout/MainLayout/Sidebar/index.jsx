@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
-
+import { useSelector, useDispatch } from 'react-redux'
+import { useState } from 'react'
 // material-ui
 import { useTheme } from '@mui/material/styles'
 import { Box, Drawer, useMediaQuery } from '@mui/material'
@@ -11,7 +12,7 @@ import { BrowserView, MobileView } from 'react-device-detect'
 // project imports
 import MenuList from './MenuList'
 import LogoSection from '../LogoSection'
-import { drawerWidth } from '@/store/constant'
+import { SHOW_MENU } from '@/store/constant'
 
 // ==============================|| SIDEBAR DRAWER ||============================== //
 
@@ -19,6 +20,11 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     const theme = useTheme()
     const matchUpMd = useMediaQuery(theme.breakpoints.up('md'))
 
+    const customization = useSelector((state) => state.customization)
+
+    const [isDark, setIsDark] = useState(customization.isDarkMode)
+    const dispatch = useDispatch()
+    console.log(customization.menu_open, 'SHOW_MENU')
     const drawer = (
         <>
             <Box sx={{ display: { xs: 'block', md: 'none' } }}>
@@ -26,6 +32,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                     <LogoSection />
                 </Box>
             </Box>
+
             <BrowserView>
                 <PerfectScrollbar
                     component='div'
@@ -38,6 +45,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                     <MenuList />
                 </PerfectScrollbar>
             </BrowserView>
+
             <MobileView>
                 <Box sx={{ px: 2 }}>
                     <MenuList />
@@ -49,7 +57,11 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     const container = window !== undefined ? () => window.document.body : undefined
 
     return (
-        <Box component='nav' sx={{ flexShrink: { md: 0 }, width: matchUpMd ? drawerWidth : 'auto' }} aria-label='mailbox folders'>
+        <Box
+            component='nav'
+            sx={{ flexShrink: { md: 0 }, width: '97px', marginLeft: customization.menu_open ? '122px' : '0px' }}
+            aria-label='mailbox folders'
+        >
             <Drawer
                 container={container}
                 variant={matchUpMd ? 'persistent' : 'temporary'}
@@ -58,17 +70,20 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                 onClose={drawerToggle}
                 sx={{
                     '& .MuiDrawer-paper': {
-                        width: drawerWidth,
+                        width: customization.menu_open ? '200px' : '80px',
+                        // width: drawerWidth,
                         background: theme.palette.background.default,
                         color: theme.palette.text.primary,
                         borderRight: 'none',
                         whiteSpace: 'nowrap',
                         boxSizing: 'border-box',
                         [theme.breakpoints.up('md')]: {
-                            top: '80px'
+                            top: '75px'
                         }
                     }
                 }}
+                // onMouseEnter={() => dispatch({ type: SHOW_MENU })}
+                onMouseLeave={() => dispatch({ type: SHOW_MENU })}
                 ModalProps={{ keepMounted: true }}
                 color='inherit'
             >

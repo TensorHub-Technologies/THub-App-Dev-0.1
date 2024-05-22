@@ -131,9 +131,10 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                         }
                     }
                 },
-                ...(customization.isOpen.findIndex((id) => id === item.id) > -1 && {
-                    background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
-                })
+                ...(customization.isOpen.findIndex((id) => id === item.id) > -1 &&
+                    {
+                        // background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
+                    })
             }}
         >
             <ListItemButton
@@ -174,25 +175,27 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                 {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
 
                 <Box display='flex' flexDirection='column' alignItems='center'>
-                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 36 : 36 }}>{itemIcon}</ListItemIcon>
-                    <ListItemText
-                        primary={
-                            <Typography
-                                sx={{ fontWeight: 'semibold !important' }}
-                                variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'}
-                                color='inherit'
-                            >
-                                {item.title}
-                            </Typography>
-                        }
-                        secondary={
-                            item.caption && (
-                                <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
-                                    {item.caption}
+                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
+                    {customization.menu_open && (
+                        <ListItemText
+                            primary={
+                                <Typography
+                                    sx={{ fontWeight: 'semibold !important' }}
+                                    variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'}
+                                    color='inherit'
+                                >
+                                    {item.title}
                                 </Typography>
-                            )
-                        }
-                    />
+                            }
+                            secondary={
+                                item.caption && (
+                                    <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
+                                        {item.caption}
+                                    </Typography>
+                                )
+                            }
+                        />
+                    )}
                 </Box>
                 {item.chip && (
                     <Chip
