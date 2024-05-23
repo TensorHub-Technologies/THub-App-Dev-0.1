@@ -29,7 +29,7 @@ import useNotifier from '@/utils/useNotifier'
 import { baseURL, REDACTED_CREDENTIAL_VALUE } from '@/store/constant'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 
-const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
+const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setError = () => {} }) => {
     const portalElement = document.getElementById('portal')
 
     const dispatch = useDispatch()

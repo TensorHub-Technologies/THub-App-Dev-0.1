@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import logger from './logger'
+import { Server } from 'socket.io'
 import {
     IComponentCredentials,
     IComponentNodes,
@@ -31,7 +32,8 @@ import {
     IFileUpload
 } from 'thub-components'
 import { randomBytes } from 'crypto'
-import { AES, enc } from 'crypto-js'
+import AES from 'crypto-js/aes'
+import enc from 'crypto-js/enc-utf8'
 
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { ChatMessage } from '../database/entities/ChatMessage'
@@ -267,9 +269,10 @@ export const getEndingNodes = (
                 endingNodeData &&
                 endingNodeData.category !== 'Chains' &&
                 endingNodeData.category !== 'Agents' &&
-                endingNodeData.category !== 'Engine'
+                endingNodeData.category !== 'Engine' &&
+                endingNodeData.category !== 'Multi Agents'
             ) {
-                error = new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain or Agent`)
+                error = new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain or Agent or Engine`)
                 continue
             }
         }
@@ -443,7 +446,10 @@ export const buildFlow = async (
     cachePool?: CachePool,
     isUpsert?: boolean,
     stopNodeId?: string,
-    uploads?: IFileUpload[]
+    uploads?: IFileUpload[],
+    baseURL?: string,
+    socketIO?: Server,
+    socketIOClientId?: string
 ) => {
     const flowNodes = cloneDeep(reactFlowNodes)
 
@@ -496,7 +502,10 @@ export const buildFlow = async (
                     databaseEntities,
                     cachePool,
                     dynamicVariables,
-                    uploads
+                    uploads,
+                    baseURL,
+                    socketIO,
+                    socketIOClientId
                 })
                 if (indexResult) upsertHistory['result'] = indexResult
                 logger.debug(`[server]: Finished upserting ${reactFlowNode.data.label} (${reactFlowNode.data.id})`)
@@ -520,7 +529,10 @@ export const buildFlow = async (
                     cachePool,
                     isUpsert,
                     dynamicVariables,
-                    uploads
+                    uploads,
+                    baseURL,
+                    socketIO,
+                    socketIOClientId
                 })
 
                 // Save dynamic variables
@@ -1186,18 +1198,25 @@ export const decryptCredentialData = async (
     componentCredentialName?: string,
     componentCredentials?: IComponentCredentials
 ): Promise<ICredentialDataDecrypted> => {
-    const encryptKey = await getEncryptionKey()
-    const decryptedData = AES.decrypt(encryptedData, encryptKey)
-    const decryptedDataStr = decryptedData.toString(enc.Utf8)
-    if (!decryptedDataStr) return {}
     try {
+        const encryptKey = await getEncryptionKey()
+        const decryptedData = AES.decrypt(encryptedData, encryptKey)
+        const decryptedDataStr = decryptedData.toString(enc)
+
+        if (!decryptedDataStr) {
+            console.error('Decryption failed: empty string')
+            return {}
+        }
+
+        const plainDataObj = JSON.parse(decryptedDataStr)
+
         if (componentCredentialName && componentCredentials) {
-            const plainDataObj = JSON.parse(decryptedData.toString(enc.Utf8))
             return redactCredentialWithPasswordType(componentCredentialName, plainDataObj, componentCredentials)
         }
-        return JSON.parse(decryptedData.toString(enc.Utf8))
-    } catch (e) {
-        console.error(e)
+
+        return plainDataObj
+    } catch (error) {
+        console.error('Error during decryption:', error)
         return {}
     }
 }
