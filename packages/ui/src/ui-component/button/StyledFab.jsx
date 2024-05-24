@@ -17,7 +17,8 @@ export const StyledFab = styled(Fab)(({ theme }) => {
         color: 'white',
         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
         '&:hover': {
-            backgroundImage: 'linear-gradient(to right, #3C5BA4, #E22A90)'
+            background: 'transparent'
+            // backgroundImage: 'linear-gradient(to right, #3C5BA4, #E22A90)'
         }
     }
 })

@@ -29,7 +29,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
             stroke={1.5}
             size='1.3rem'
             sx={{
-                width: '36px',
+                width: '30px',
                 height: '36px',
                 display: 'flex',
                 justifyContent: 'center',
@@ -120,6 +120,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+
                 backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
                 '&:hover': {
                     background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
@@ -159,12 +160,12 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                         backgroundColor: theme.palette.background.default,
                         color: customization?.isDarkMode ? '#fff' : '#000',
                         '& .icon-hover': {
-                            color: customization?.isDarkMode ? '#fff' : '#000'
+                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                         },
                         '&:hover': {
                             backgroundColor: theme.palette.background.default,
                             '& .icon-hover': {
-                                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                color: customization?.isDarkMode ? '#fff' : '#000'
                             }
                         }
                     }
@@ -174,13 +175,20 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
             >
                 {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
 
-                <Box display='flex' flexDirection='column' alignItems='center'>
-                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
+                <Box
+                    display='flex'
+                    flexDirection='row'
+                    alignItems='center'
+                    justify-content='space-between'
+                    width='100%'
+                    color={customization?.isDarkMode ? '#E22A90' : '#3C5BA4'}
+                >
+                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 10 : 36, marginRight: '8px' }}>{itemIcon}</ListItemIcon>
                     {customization.menu_open && (
                         <ListItemText
                             primary={
                                 <Typography
-                                    sx={{ fontWeight: 'semibold !important' }}
+                                    sx={{ fontWeight: 'semibold !important', flex: '1', textAlign: 'left' }}
                                     variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'}
                                     color='inherit'
                                 >

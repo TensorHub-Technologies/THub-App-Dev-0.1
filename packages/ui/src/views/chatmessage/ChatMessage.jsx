@@ -77,6 +77,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
             type: 'apiMessage'
         }
     ])
+
     const [socketIOClientId, setSocketIOClientId] = useState('')
     const [isChatFlowAvailableToStream, setIsChatFlowAvailableToStream] = useState(false)
     const [isChatFlowAvailableForSpeech, setIsChatFlowAvailableForSpeech] = useState(false)
