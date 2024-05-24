@@ -215,7 +215,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
 
             <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
                 {customization.menu_open ? (
-                    <img src={Logo} alt='THub_Logo' width={130} />
+                    <img src={Logo} alt='THub_Logo' width={100} />
                 ) : (
                     <img src={ColorfulLogo} alt='THub_Logo' width={30} />
                 )}

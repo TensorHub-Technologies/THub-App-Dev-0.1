@@ -50,28 +50,28 @@ const settings = {
         },
         {
             id: 'duplicateChatflow',
-            title: 'Duplicate Chatflow',
+            title: 'Duplicate Workflow',
             type: 'item',
             url: '',
             icon: icons.IconCopy
         },
         {
             id: 'loadChatflow',
-            title: 'Load Chatflow',
+            title: 'Load Workflow',
             type: 'item',
             url: '',
             icon: icons.IconFileUpload
         },
         {
             id: 'exportChatflow',
-            title: 'Export Chatflow',
+            title: 'Export Workflow',
             type: 'item',
             url: '',
             icon: icons.IconFileExport
         },
         {
             id: 'deleteChatflow',
-            title: 'Delete Chatflow',
+            title: 'Delete Workflow',
             type: 'item',
             url: '',
             icon: icons.IconTrash

@@ -38,7 +38,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                     component='div'
                     style={{
                         height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
-                        paddingLeft: '36px',
+                        paddingLeft: '5px',
                         paddingRight: '36px'
                     }}
                 >
@@ -57,11 +57,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     const container = window !== undefined ? () => window.document.body : undefined
 
     return (
-        <Box
-            component='nav'
-            sx={{ flexShrink: { md: 0 }, width: '97px', marginLeft: customization.menu_open ? '122px' : '0px' }}
-            aria-label='mailbox folders'
-        >
+        <Box component='nav' sx={{ flexShrink: { md: 0 }, width: '100px' }} aria-label='mailbox folders'>
             <Drawer
                 container={container}
                 variant={matchUpMd ? 'persistent' : 'temporary'}
@@ -70,7 +66,8 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                 onClose={drawerToggle}
                 sx={{
                     '& .MuiDrawer-paper': {
-                        width: customization.menu_open ? '200px' : '80px',
+                        transition: 'width .2s, box-shadow .2s',
+                        width: customization.menu_open ? '300px' : '100px',
                         // width: drawerWidth,
                         background: theme.palette.background.default,
                         color: theme.palette.text.primary,
@@ -82,7 +79,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                         }
                     }
                 }}
-                // onMouseEnter={() => dispatch({ type: SHOW_MENU })}
+                onMouseEnter={() => dispatch({ type: SHOW_MENU })}
                 onMouseLeave={() => dispatch({ type: SHOW_MENU })}
                 ModalProps={{ keepMounted: true }}
                 color='inherit'

@@ -4,7 +4,9 @@ import PropTypes from 'prop-types'
 import './Node.css'
 
 // material-ui
-
+import LlamaindexPNG from '@/assets/images/llamaindex.png'
+import LangChainPNG from '@/assets/images/langchain.png'
+import { Tabs, Tab } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import {
     Accordion,
@@ -222,7 +224,7 @@ const AddNodes = ({ nodesData, node }) => {
         <>
             <Paper
                 sx={{
-                    // transition: 'width 0.2s, box-shadow 0.2s',
+                    transition: 'width .2s, box-shadow .2s',
                     position: 'relative',
                     zIndex: 1000,
                     width: customization.menu_open ? '350px' : '100px',
@@ -236,7 +238,7 @@ const AddNodes = ({ nodesData, node }) => {
             >
                 <MainCard
                     sx={{
-                        bgcolor: theme.palette.background.default,
+                        // bgcolor: theme.palette.background.default,
                         borderRadius: '0 !important'
                     }}
                     border={false}
@@ -258,19 +260,20 @@ const AddNodes = ({ nodesData, node }) => {
                                 size='1rem'
                                 sx={{
                                     cursor: 'default',
-                                    color: customization?.isDarkMode ? '#fff' : '#fff',
-                                    background: isInputFocused
-                                        ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
-                                        : customization?.isDarkMode
-                                        ? '#E22A90'
-                                        : '#3C5BA4',
+                                    // color: customization?.isDarkMode ? '#fff' : '#fff',
+                                    // background: isInputFocused
+                                    //     ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
+                                    //     : customization?.isDarkMode
+                                    //     ? '#E22A90'
+                                    //     : '#3C5BA4',
                                     borderRadius: '20%',
                                     padding: '2px',
                                     mb: 2,
-                                    mr: 1,
-                                    '&:hover': {
-                                        background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
-                                    }
+                                    mr: 1
+
+                                    // '&:hover': {
+                                    //     background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
+                                    // }
                                 }}
                             />
                             {customization.menu_open && (
@@ -278,7 +281,7 @@ const AddNodes = ({ nodesData, node }) => {
                                     label='Search'
                                     variant='standard'
                                     sx={{
-                                        width: '100%',
+                                        width: '80%',
                                         mb: 2,
                                         '& .TextField-root': {
                                             '& fieldset': {
@@ -337,9 +340,9 @@ const AddNodes = ({ nodesData, node }) => {
                             )}
                         </Box>
 
-                        {/* {customization.menu_open && (
+                        {customization.menu_open && (
                             <Tabs
-                                sx={{ position: 'relative', minHeight: '50px', height: '50px' }}
+                                sx={{ position: 'relative', minHeight: '50px', height: '50px', marginLeft: '-10px' }}
                                 variant='fullWidth'
                                 value={tabValue}
                                 onChange={handleTabChange}
@@ -393,7 +396,7 @@ const AddNodes = ({ nodesData, node }) => {
                                     <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>
                                 </div>
                             </Tabs>
-                        )} */}
+                        )}
                         <Divider />
                     </Box>
 
