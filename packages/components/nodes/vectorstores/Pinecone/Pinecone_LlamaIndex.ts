@@ -2,9 +2,7 @@ import {
     BaseNode,
     Document,
     Metadata,
-    IEmbedModel,
-    VectorStoreBase,
-    VectorStoreNoEmbedModel,
+    VectorStore,
     VectorStoreQuery,
     VectorStoreQueryResult,
     serviceContextFromDefaults,
@@ -125,8 +123,7 @@ class PineconeLlamaIndex_VectorStores implements INode {
             const pcvs = new PineconeVectorStore({
                 indexName,
                 apiKey: pineconeApiKey,
-                namespace: pineconeNamespace,
-                embedModel: embeddings
+                namespace: pineconeNamespace
             })
 
             const flattenDocs = docs && docs.length ? flatten(docs) : []
@@ -168,8 +165,7 @@ class PineconeLlamaIndex_VectorStores implements INode {
 
         const obj: PineconeParams = {
             indexName,
-            apiKey: pineconeApiKey,
-            embedModel: embeddings
+            apiKey: pineconeApiKey
         }
 
         if (pineconeNamespace) obj.namespace = pineconeNamespace
@@ -215,9 +211,9 @@ type PineconeParams = {
     namespace?: string
     chunkSize?: number
     queryFilter?: object
-} & IEmbedModel
+}
 
-class PineconeVectorStore extends VectorStoreBase implements VectorStoreNoEmbedModel {
+class PineconeVectorStore implements VectorStore {
     storesText: boolean = true
     db?: Pinecone
     indexName: string
@@ -227,7 +223,6 @@ class PineconeVectorStore extends VectorStoreBase implements VectorStoreNoEmbedM
     queryFilter?: object
 
     constructor(params: PineconeParams) {
-        super(params?.embedModel)
         this.indexName = params?.indexName
         this.apiKey = params?.apiKey
         this.namespace = params?.namespace ?? ''

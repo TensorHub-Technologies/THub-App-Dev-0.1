@@ -1,9 +1,9 @@
 import { flatten } from 'lodash'
-import { MessageContentTextDetail, ChatMessage, AnthropicAgent, Anthropic } from 'llamaindex'
-import { getBaseClasses } from '../../../../src/utils'
-import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, IUsedTool } from '../../../../src/Interface'
+import { ChatMessage, OpenAI, OpenAIAgent } from 'llamaindex'
+import { getBaseClasses } from '../../../src/utils'
+import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, IUsedTool } from '../../../src/Interface'
 
-class AnthropicAgent_LlamaIndex_Agents implements INode {
+class OpenAIFunctionAgent_LlamaIndex_Agents implements INode {
     label: string
     name: string
     version: number
@@ -18,15 +18,16 @@ class AnthropicAgent_LlamaIndex_Agents implements INode {
     badge?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Anthropic Agent'
-        this.name = 'anthropicAgentLlamaIndex'
+        this.label = 'OpenAI Tool Agent'
+        this.name = 'openAIToolAgentLlamaIndex'
         this.version = 1.0
-        this.type = 'AnthropicAgent'
+        this.type = 'OpenAIToolAgent'
         this.category = 'Agents'
-        this.icon = 'Anthropic.svg'
-        this.description = `Agent that uses Anthropic Claude Function Calling to pick the tools and args to call using LlamaIndex`
-        this.baseClasses = [this.type, ...getBaseClasses(AnthropicAgent)]
+        this.icon = 'function.svg'
+        this.description = `Agent that uses OpenAI Function Calling to pick the tools and args to call using LlamaIndex`
+        this.baseClasses = [this.type, ...getBaseClasses(OpenAIAgent)]
         this.tags = ['LlamaIndex']
+        this.badge = 'NEW'
         this.inputs = [
             {
                 label: 'Tools',
@@ -40,7 +41,7 @@ class AnthropicAgent_LlamaIndex_Agents implements INode {
                 type: 'BaseChatMemory'
             },
             {
-                label: 'Anthropic Claude Model',
+                label: 'OpenAI/Azure Chat Model',
                 name: 'model',
                 type: 'BaseChatModel_LlamaIndex'
             },
@@ -62,7 +63,7 @@ class AnthropicAgent_LlamaIndex_Agents implements INode {
 
     async run(nodeData: INodeData, input: string, options: ICommonObject): Promise<string | ICommonObject> {
         const memory = nodeData.inputs?.memory as FlowiseMemory
-        const model = nodeData.inputs?.model as Anthropic
+        const model = nodeData.inputs?.model as OpenAI
         const systemMessage = nodeData.inputs?.systemMessage as string
         const prependMessages = options?.prependMessages
 
@@ -93,33 +94,31 @@ class AnthropicAgent_LlamaIndex_Agents implements INode {
             }
         }
 
-        const agent = new AnthropicAgent({
+        const agent = new OpenAIAgent({
             tools,
             llm: model,
-            chatHistory: chatHistory,
+            prefixMessages: chatHistory,
             verbose: process.env.DEBUG === 'true' ? true : false
         })
 
         let text = ''
         const usedTools: IUsedTool[] = []
 
-        const response = await agent.chat({ message: input, chatHistory, verbose: process.env.DEBUG === 'true' ? true : false })
+        const response = await agent.chat({
+            message: input
+        })
 
         if (response.sources.length) {
             for (const sourceTool of response.sources) {
                 usedTools.push({
-                    tool: sourceTool.tool?.metadata.name ?? '',
-                    toolInput: sourceTool.input,
-                    toolOutput: sourceTool.output as any
+                    tool: sourceTool.toolName,
+                    toolInput: sourceTool.rawInput,
+                    toolOutput: sourceTool.rawOutput
                 })
             }
         }
 
-        if (Array.isArray(response.response.message.content) && response.response.message.content.length > 0) {
-            text = (response.response.message.content[0] as MessageContentTextDetail).text
-        } else {
-            text = response.response.message.content as string
-        }
+        text = String(response)
 
         await memory.addChatMessages(
             [
@@ -139,4 +138,4 @@ class AnthropicAgent_LlamaIndex_Agents implements INode {
     }
 }
 
-module.exports = { nodeClass: AnthropicAgent_LlamaIndex_Agents }
+module.exports = { nodeClass: OpenAIFunctionAgent_LlamaIndex_Agents }

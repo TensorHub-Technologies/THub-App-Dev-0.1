@@ -6,8 +6,8 @@ import {
     TreeSummarize,
     Refine,
     SimpleResponseBuilder,
-    Metadata,
-    NodeWithScore
+    BaseNode,
+    Metadata
 } from 'llamaindex'
 import { reformatSourceDocuments } from '../EngineUtils'
 
@@ -69,7 +69,7 @@ class QueryEngine_LlamaIndex implements INode {
 
         let text = ''
         let sourceDocuments: ICommonObject[] = []
-        let sourceNodes: NodeWithScore<Metadata>[] = []
+        let sourceNodes: BaseNode<Metadata>[] = []
         let isStreamingStarted = false
         const isStreamingEnabled = options.socketIO && options.socketIOClientId
 

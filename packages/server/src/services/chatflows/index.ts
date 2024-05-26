@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { ChatflowType, IChatFlow } from '../../Interface'
+import { IChatFlow } from '../../Interface'
 import { ChatFlow } from '../../database/entities/ChatFlow'
 import { getAppVersion, getTelemetryFlowObj, isFlowValidForStream, constructGraphs, getEndingNodes } from '../../utils'
 import logger from '../../utils/logger'
@@ -45,11 +45,6 @@ const checkIfChatflowIsValidForStreaming = async (chatflowId: string): Promise<a
                 return { isStreaming: false }
             }
             isStreaming = isFlowValidForStream(nodes, endingNodeData)
-        }
-
-        // If it is a Multi Agents, always enable streaming
-        if (endingNodes.filter((node) => node.data.category === 'Multi Agents').length > 0) {
-            return { isStreaming: true }
         }
 
         const dbResponse = { isStreaming: isStreaming }
@@ -104,14 +99,11 @@ const deleteChatflow = async (chatflowId: string): Promise<any> => {
     }
 }
 
-const getAllChatflows = async (type?: ChatflowType): Promise<IChatFlow[]> => {
+const getAllChatflows = async (): Promise<IChatFlow[]> => {
     try {
         const appServer = getRunningExpressApp()
         const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).find()
-        if (type === 'MULTIAGENT') {
-            return dbResponse.filter((chatflow) => chatflow.type === type)
-        }
-        return dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
+        return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
@@ -122,7 +114,6 @@ const getAllChatflows = async (type?: ChatflowType): Promise<IChatFlow[]> => {
 
 const getChatflowByApiKey = async (apiKeyId: string): Promise<any> => {
     try {
-        // Here we only get chatflows that are bounded by the apikeyid and chatflows that are not bounded by any apikey
         const appServer = getRunningExpressApp()
         const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow)
             .createQueryBuilder('cf')

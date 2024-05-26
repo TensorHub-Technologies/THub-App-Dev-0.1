@@ -660,8 +660,6 @@ export const convertSchemaToZod = (schema: string | object): ICommonObject => {
 export const flattenObject = (obj: ICommonObject, parentKey?: string) => {
     let result: any = {}
 
-    if (!obj) return result
-
     Object.keys(obj).forEach((key) => {
         const value = obj[key]
         const _key = parentKey ? parentKey + '.' + key : key

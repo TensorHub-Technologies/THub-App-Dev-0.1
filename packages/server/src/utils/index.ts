@@ -32,7 +32,8 @@ import {
     IFileUpload
 } from 'thub-components'
 import { randomBytes } from 'crypto'
-import { AES, enc } from 'crypto-js'
+import AES from 'crypto-js/aes'
+import enc from 'crypto-js/enc-utf8'
 
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { ChatMessage } from '../database/entities/ChatMessage'
@@ -780,7 +781,7 @@ export const getVariableValue = (
             const variableValue = variableDict[path]
             // Replace all occurrence
             if (typeof variableValue === 'object') {
-                returnVal = returnVal.split(path).join(JSON.stringify(variableValue).replaceAll('"', '\\"').replaceAll('\\n', '\\\\n'))
+                returnVal = returnVal.split(path).join(JSON.stringify(variableValue).replace(/"/g, '\\"'))
             } else {
                 returnVal = returnVal.split(path).join(variableValue)
             }
@@ -1059,6 +1060,7 @@ export const findAvailableConfigs = (reactFlowNodes: IReactFlowNode[], component
             }
         }
     }
+
     return configs
 }
 
@@ -1078,16 +1080,12 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
             'chatAnthropic',
             'chatAnthropic_LlamaIndex',
             'chatOllama',
-            'chatOllama_LlamaIndex',
             'awsChatBedrock',
             'chatMistralAI',
-            'chatMistral_LlamaIndex',
             'groqChat',
-            'chatGroq_LlamaIndex',
             'chatCohere',
             'chatGoogleGenerativeAI',
-            'chatTogetherAI',
-            'chatTogetherAI_LlamaIndex'
+            'chatTogetherAI'
         ],
         LLMs: ['azureOpenAI', 'openAI', 'ollama']
     }
@@ -1116,8 +1114,7 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
             'airtableAgent',
             'conversationalRetrievalAgent',
             'openAIToolAgent',
-            'toolAgent',
-            'openAIToolAgentLlamaIndex'
+            'toolAgent'
         ]
         isValidChainOrAgent = whitelistAgents.includes(endingNodeData.name)
 
@@ -1201,18 +1198,25 @@ export const decryptCredentialData = async (
     componentCredentialName?: string,
     componentCredentials?: IComponentCredentials
 ): Promise<ICredentialDataDecrypted> => {
-    const encryptKey = await getEncryptionKey()
-    const decryptedData = AES.decrypt(encryptedData, encryptKey)
-    const decryptedDataStr = decryptedData.toString(enc.Utf8)
-    if (!decryptedDataStr) return {}
     try {
+        const encryptKey = await getEncryptionKey()
+        const decryptedData = AES.decrypt(encryptedData, encryptKey)
+        const decryptedDataStr = decryptedData.toString(enc)
+
+        if (!decryptedDataStr) {
+            console.error('Decryption failed: empty string')
+            return {}
+        }
+
+        const plainDataObj = JSON.parse(decryptedDataStr)
+
         if (componentCredentialName && componentCredentials) {
-            const plainDataObj = JSON.parse(decryptedData.toString(enc.Utf8))
             return redactCredentialWithPasswordType(componentCredentialName, plainDataObj, componentCredentials)
         }
-        return JSON.parse(decryptedData.toString(enc.Utf8))
-    } catch (e) {
-        console.error(e)
+
+        return plainDataObj
+    } catch (error) {
+        console.error('Error during decryption:', error)
         return {}
     }
 }

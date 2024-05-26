@@ -5,7 +5,6 @@ import { createRateLimiter } from '../../utils/rateLimit'
 import { getApiKey } from '../../utils/apiKey'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
-import { ChatflowType } from '../../Interface'
 
 const checkIfChatflowIsValidForStreaming = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -51,7 +50,7 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllChatflows = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await chatflowsService.getAllChatflows(req.query?.type as ChatflowType)
+        const apiResponse = await chatflowsService.getAllChatflows()
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -61,17 +60,17 @@ const getAllChatflows = async (req: Request, res: Response, next: NextFunction) 
 // Get specific chatflow via api key
 const getChatflowByApiKey = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (typeof req.params === 'undefined' || !req.params.apikey) {
+        if (typeof req.params === 'undefined' || !req.params.apiKey) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
-                `Error: chatflowsRouter.getChatflowByApiKey - apikey not provided!`
+                `Error: chatflowsRouter.getChatflowByApiKey - apiKey not provided!`
             )
         }
-        const apikey = await getApiKey(req.params.apikey)
-        if (!apikey) {
+        const apiKey = await getApiKey(req.params.apiKey)
+        if (!apiKey) {
             return res.status(401).send('Unauthorized')
         }
-        const apiResponse = await chatflowsService.getChatflowByApiKey(apikey.id)
+        const apiResponse = await chatflowsService.getChatflowByApiKey(apiKey.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

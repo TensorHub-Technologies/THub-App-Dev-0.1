@@ -1,5 +1,5 @@
 import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { Metadata, BaseRetriever, LLM, ContextChatEngine, ChatMessage, NodeWithScore } from 'llamaindex'
+import { BaseNode, Metadata, BaseRetriever, LLM, ContextChatEngine, ChatMessage } from 'llamaindex'
 import { reformatSourceDocuments } from '../EngineUtils'
 
 class ContextChatEngine_LlamaIndex implements INode {
@@ -102,7 +102,7 @@ class ContextChatEngine_LlamaIndex implements INode {
         let text = ''
         let isStreamingStarted = false
         let sourceDocuments: ICommonObject[] = []
-        let sourceNodes: NodeWithScore<Metadata>[] = []
+        let sourceNodes: BaseNode<Metadata>[] = []
         const isStreamingEnabled = options.socketIO && options.socketIOClientId
 
         if (isStreamingEnabled) {

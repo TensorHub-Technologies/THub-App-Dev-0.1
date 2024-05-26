@@ -10,9 +10,9 @@ import {
     QueryEngineTool,
     LLMQuestionGenerator,
     SubQuestionQueryEngine,
+    BaseNode,
     Metadata,
-    serviceContextFromDefaults,
-    NodeWithScore
+    serviceContextFromDefaults
 } from 'llamaindex'
 import { reformatSourceDocuments } from '../EngineUtils'
 
@@ -86,7 +86,7 @@ class SubQuestionQueryEngine_LlamaIndex implements INode {
 
         let text = ''
         let sourceDocuments: ICommonObject[] = []
-        let sourceNodes: NodeWithScore<Metadata>[] = []
+        let sourceNodes: BaseNode<Metadata>[] = []
         let isStreamingStarted = false
         const isStreamingEnabled = options.socketIO && options.socketIOClientId
 

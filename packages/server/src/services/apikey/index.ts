@@ -46,7 +46,7 @@ const deleteApiKey = async (id: string) => {
     }
 }
 
-const verifyApiKey = async (paramApiKey: string): Promise<string> => {
+const verifyApiKey = async (paramApiKey: string): Promise<any> => {
     try {
         const apiKey = await getApiKey(paramApiKey)
         if (!apiKey) {

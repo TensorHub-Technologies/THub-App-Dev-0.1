@@ -36,7 +36,7 @@ class ChatAnthropic_LlamaIndex_ChatModels implements INode {
             {
                 label: 'Model Name',
                 name: 'modelName',
-                type: 'asyncOptions',
+                type: 'options',
                 loadMethod: 'listModels',
                 default: 'claude-3-haiku'
             },
