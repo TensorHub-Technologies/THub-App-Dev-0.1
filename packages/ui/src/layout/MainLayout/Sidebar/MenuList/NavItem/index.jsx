@@ -36,7 +36,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                 alignItems: 'center',
                 marginBottom: '8px',
                 background: 'transparent !important',
-                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                color: customization?.isDarkMode ? '#fff' : '#000',
                 borderRadius: '20%',
                 padding: '1px'
             }}
@@ -128,7 +128,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                         backgroundColor: theme.palette.background.default,
                         color: customization?.isDarkMode ? '#fff' : '#000',
                         '& .icon-hover': {
-                            color: customization?.isDarkMode ? '#fff' : '#000'
+                            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
                         }
                     }
                 },
@@ -160,12 +160,12 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                         backgroundColor: theme.palette.background.default,
                         color: customization?.isDarkMode ? '#fff' : '#000',
                         '& .icon-hover': {
-                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                            color: customization?.isDarkMode ? '#fff' : '#000'
                         },
                         '&:hover': {
                             backgroundColor: theme.palette.background.default,
                             '& .icon-hover': {
-                                color: customization?.isDarkMode ? '#fff' : '#000'
+                                color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
                             }
                         }
                     }
@@ -181,14 +181,19 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                     alignItems='center'
                     justify-content='space-between'
                     width='100%'
-                    color={customization?.isDarkMode ? '#E22A90' : '#3C5BA4'}
+                    color={customization?.isDarkMode ? '#fff' : '#000'}
                 >
                     <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 10 : 36, marginRight: '8px' }}>{itemIcon}</ListItemIcon>
                     {customization.menu_open && (
                         <ListItemText
                             primary={
                                 <Typography
-                                    sx={{ fontWeight: 'semibold !important', flex: '1', textAlign: 'left' }}
+                                    sx={{
+                                        fontWeight: 'semibold !important',
+
+                                        flex: '1',
+                                        textAlign: 'left'
+                                    }}
                                     variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'}
                                     color='inherit'
                                 >
@@ -202,6 +207,11 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                                     </Typography>
                                 )
                             }
+                            sx={{
+                                '&:hover': {
+                                    color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                }
+                            }}
                         />
                     )}
                 </Box>
