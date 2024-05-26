@@ -502,13 +502,13 @@ const Marketplace = () => {
                                                 // badgeContent={data.badge}
                                                 color={data.badge === 'POPULAR' ? 'primary' : 'error'}
                                             >
-                                                {data.type === 'Chatflow' && (
+                                                {(data.type === 'Chatflow' || data.type === 'Agentflow') && (
                                                     <ItemCard onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
                                                 )}
                                                 {data.type === 'Tool' && <ItemCard data={data} onClick={() => goToTool(data)} />}
                                             </Badge>
                                         )}
-                                        {!data.badge && data.type === 'Chatflow' && (
+                                        {!data.badge && (data.type === 'Chatflow' || data.type === 'Agentflow') && (
                                             <ItemCard onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
                                         )}
                                         {!data.badge && data.type === 'Tool' && <ItemCard data={data} onClick={() => goToTool(data)} />}

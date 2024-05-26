@@ -309,7 +309,7 @@ const AddNodes = ({ nodesData, node }) => {
                                     onChange={(e) => filterSearch(e.target.value)}
                                     onFocus={() => setInputFocused(true)}
                                     onBlur={() => setInputFocused(false)}
-                                    placeholder='Search1'
+                                    placeholder='Search'
                                     InputProps={{
                                         'aria-label': 'weight',
                                         endAdornment: (
