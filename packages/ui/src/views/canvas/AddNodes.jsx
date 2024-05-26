@@ -238,7 +238,7 @@ const AddNodes = ({ nodesData, node }) => {
             >
                 <MainCard
                     sx={{
-                        // bgcolor: theme.palette.background.default,
+                        bgcolor: theme.palette.background.default,
                         borderRadius: '0 !important'
                     }}
                     border={false}
@@ -340,42 +340,49 @@ const AddNodes = ({ nodesData, node }) => {
                             )}
                         </Box>
 
-                        {customization.menu_open && (
-                            <Tabs
-                                sx={{ position: 'relative', minHeight: '50px', height: '50px', marginLeft: '-10px' }}
-                                variant='fullWidth'
-                                value={tabValue}
-                                onChange={handleTabChange}
-                                aria-label='tabs'
-                            >
-                                {['LangChain', 'LlamaIndex'].map((item, index) => (
-                                    <Tab
-                                        icon={
-                                            <div
+                        <Tabs
+                            sx={{
+                                position: 'relative',
+                                minHeight: '50px',
+                                height: '50px',
+                                marginLeft: customization.menu_open ? '12px' : '232px'
+                            }}
+                            // variant='fullWidth'
+                            value={tabValue}
+                            onChange={handleTabChange}
+                            aria-label='tabs'
+                        >
+                            {['LangChain', 'LlamaIndex'].map((item, index) => (
+                                <Tab
+                                    icon={
+                                        <div
+                                            style={{
+                                                // marginLeft: customization.menu_open ? '-12px' : '232px',
+                                                borderRadius: '50%'
+                                            }}
+                                        >
+                                            <img
                                                 style={{
-                                                    borderRadius: '50%'
+                                                    display: customization.menu_open ? 'block' : 'none',
+                                                    marginLeft: customization.menu_open ? '-12px' : '232px',
+                                                    width: '25px',
+                                                    height: '25px',
+                                                    borderRadius: '50%',
+                                                    objectFit: 'contain'
                                                 }}
-                                            >
-                                                <img
-                                                    style={{
-                                                        width: '25px',
-                                                        height: '25px',
-                                                        borderRadius: '50%',
-                                                        objectFit: 'contain'
-                                                    }}
-                                                    src={index === 0 ? LangChainPNG : LlamaindexPNG}
-                                                    alt={item}
-                                                />
-                                            </div>
-                                        }
-                                        iconPosition='start'
-                                        sx={{ minHeight: '50px', height: '50px' }}
-                                        key={index}
-                                        label={item}
-                                        {...a11yProps(index)}
-                                    ></Tab>
-                                ))}
-
+                                                src={index === 0 ? LangChainPNG : LlamaindexPNG}
+                                                alt={item}
+                                            />
+                                        </div>
+                                    }
+                                    iconPosition='start'
+                                    sx={{ minHeight: '50px', height: '50px' }}
+                                    key={index}
+                                    label={item}
+                                    {...a11yProps(index)}
+                                ></Tab>
+                            ))}
+                            {customization.menu_open && (
                                 <div
                                     style={{
                                         display: 'flex',
@@ -393,10 +400,13 @@ const AddNodes = ({ nodesData, node }) => {
                                         fontWeight: 700
                                     }}
                                 >
-                                    <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>
+                                    {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>}
                                 </div>
-                            </Tabs>
-                        )}
+                            )}
+                        </Tabs>
+
+                        {/* )} */}
+
                         <Divider />
                     </Box>
 
@@ -437,6 +447,7 @@ const AddNodes = ({ nodesData, node }) => {
                                     .sort()
                                     .map((category) => (
                                         <Accordion
+                                            style={{ background: customization.isDarkMode ? '#191b1f' : '#fff' }}
                                             expanded={categoryExpanded[category] || false}
                                             onChange={handleAccordionChange(category)}
                                             key={category}
