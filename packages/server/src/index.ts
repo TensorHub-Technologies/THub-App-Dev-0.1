@@ -162,7 +162,7 @@ export class App {
         // Serve UI static
         // ----------------------------------------
 
-        const packagePath = getNodeModulesPackagePath('flowise-ui')
+        const packagePath = getNodeModulesPackagePath('thub-ui')
         const uiBuildPath = path.join(packagePath, 'build')
         const uiHtmlPath = path.join(packagePath, 'build', 'index.html')
 
