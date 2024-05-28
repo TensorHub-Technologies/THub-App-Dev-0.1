@@ -94,6 +94,7 @@
 
 .boticon,
 .usericon {
+    margin-left: 10px;
     margin-top: 10px;
     margin-right: 1rem;
     border-radius: 1rem;

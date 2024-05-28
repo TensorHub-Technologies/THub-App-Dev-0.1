@@ -11,7 +11,8 @@ import { styled } from '@mui/material/styles'
 
 // project imports
 import ProfileSection from './ProfileSection'
-import Logo from '@/assets/images/THub_Logo_Icon.png'
+// import logo from '@/assets/images/THub_logo_dark.png'
+import logo from '@/assets/images/THub_Logo_resize.png'
 
 // assets
 
@@ -135,11 +136,23 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     
                     <LogoSection />
                 </Box> */}
-                {customization.menu_open ? (
+                {/* {customization.menu_open ? (
                     <img src={Logo} alt='THub_Logo' width={110} />
                 ) : (
                     <img src={ColorfulLogo} alt='THub_Logo' width={30} />
-                )}
+                )} */}
+
+                {/* <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+
+                {customization.menu_open ? (
+                    <img src={logo} alt='THub_Logo' width={70} height={35} style={{}}/>
+                ) : (
+                    ""
+                )} */}
+
+                <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+
+                {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} /> : ''}
             </Box>
             <Box sx={{ flexGrow: 1 }} />
             <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />

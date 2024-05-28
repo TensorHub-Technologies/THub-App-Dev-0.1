@@ -114,6 +114,8 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
     return (
         <Box
             sx={{
+                transition: 'width .4s, box-shadow .4s',
+
                 borderRadius: `${customization.borderRadius}px`,
                 p: 0.1,
                 mb: 1,
@@ -183,7 +185,9 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                     width='100%'
                     color={customization?.isDarkMode ? '#fff' : '#000'}
                 >
-                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 10 : 36, marginRight: '8px' }}>{itemIcon}</ListItemIcon>
+                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 10 : 36, marginRight: '8px', marginLeft: '3px' }}>
+                        {itemIcon}
+                    </ListItemIcon>
                     {customization.menu_open && (
                         <ListItemText
                             primary={

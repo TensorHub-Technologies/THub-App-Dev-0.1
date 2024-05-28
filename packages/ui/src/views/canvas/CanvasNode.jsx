@@ -294,7 +294,7 @@ const CanvasNode = ({ data }) => {
                                         sx={{
                                             fontWeight: 500,
                                             textAlign: 'center',
-                                            color: '#2F5597'
+                                            color: '#fff'
                                         }}
                                     >
                                         Inputs
