@@ -77,6 +77,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
             type: 'apiMessage'
         }
     ])
+
     const [socketIOClientId, setSocketIOClientId] = useState('')
     const [isChatFlowAvailableToStream, setIsChatFlowAvailableToStream] = useState(false)
     const [isChatFlowAvailableForSpeech, setIsChatFlowAvailableForSpeech] = useState(false)
@@ -630,7 +631,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
             setLoading(false)
             setMessages([
                 {
-                    message: 'Hi there! How can I help?',
+                    message: '',
                     type: 'apiMessage'
                 }
             ])
@@ -761,194 +762,206 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                         messages.map((message, index) => {
                             return (
                                 // The latest message sent by the user will be animated while waiting for a response
-                                <Box
-                                    sx={{
-                                        background: message.type === 'apiMessage' ? theme.palette.asyncSelect.main : ''
-                                    }}
-                                    key={index}
-                                    style={{ display: 'flex' }}
-                                    className={
-                                        message.type === 'userMessage' && loading && index === messages.length - 1
-                                            ? customization.isDarkMode
-                                                ? 'usermessagewaiting-dark'
-                                                : 'usermessagewaiting-light'
-                                            : message.type === 'usermessagewaiting'
-                                            ? 'apimessage'
-                                            : 'usermessage'
-                                    }
-                                >
-                                    {/* Display the correct icon depending on the message type */}
-                                    {message.type === 'apiMessage' ? (
-                                        <img src={Logo} alt='AI' width='30' height='30' className='boticon' />
-                                    ) : (
-                                        <PersonIcon width='30' height='30' className='usericon' style={{ color: '#A93A96' }} />
-                                    )}
-                                    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                                        {message.usedTools && (
-                                            <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
-                                                {message.usedTools.map((tool, index) => {
-                                                    return (
-                                                        <Chip
-                                                            size='small'
-                                                            key={index}
-                                                            label={tool.tool}
-                                                            component='a'
-                                                            sx={{ mr: 1, mt: 1 }}
-                                                            variant='outlined'
-                                                            clickable
-                                                            icon={<IconTool size={15} />}
-                                                            onClick={() => onSourceDialogClick(tool, 'Used Tools')}
-                                                        />
-                                                    )
-                                                })}
-                                            </div>
+                                <>
+                                    <Box
+                                        sx={{
+                                            background: message.type === 'apiMessage' ? theme.palette.asyncSelect.main : ''
+                                        }}
+                                        key={index}
+                                        style={{ display: 'flex' }}
+                                        className={
+                                            message.type === 'userMessage' && loading && index === messages.length - 1
+                                                ? customization.isDarkMode
+                                                    ? 'usermessagewaiting-dark'
+                                                    : 'usermessagewaiting-light'
+                                                : message.type === 'usermessagewaiting'
+                                                ? 'apimessage'
+                                                : 'usermessage'
+                                        }
+                                    >
+                                        {/* Display the correct icon depending on the message type */}
+                                        {message.type === 'apiMessage' ? (
+                                            <img src={Logo} alt='AI' width='30' height='30' className='boticon' />
+                                        ) : (
+                                            <PersonIcon width='30' height='30' className='usericon' style={{ color: '#A93A96' }} />
                                         )}
-                                        {message.fileUploads && message.fileUploads.length > 0 && (
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    flexWrap: 'wrap',
-                                                    flexDirection: 'column',
-                                                    width: '100%',
-                                                    gap: '8px'
-                                                }}
-                                            >
-                                                {message.fileUploads.map((item, index) => {
-                                                    return (
-                                                        <>
-                                                            {item.mime.startsWith('image/') ? (
-                                                                <Card
+                                        <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                                            {message.usedTools && (
+                                                <>
+                                                    <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
+                                                        {message.usedTools.map((tool, index) => {
+                                                            return (
+                                                                <Chip
+                                                                    size='small'
                                                                     key={index}
-                                                                    sx={{
-                                                                        p: 0,
-                                                                        m: 0,
-                                                                        maxWidth: 128,
-                                                                        marginRight: '10px',
-                                                                        flex: '0 0 auto'
-                                                                    }}
-                                                                >
-                                                                    <CardMedia
-                                                                        component='img'
-                                                                        image={item.data}
-                                                                        sx={{ height: 64 }}
-                                                                        alt={'preview'}
-                                                                        style={messageImageStyle}
-                                                                    />
-                                                                </Card>
-                                                            ) : (
-                                                                // eslint-disable-next-line jsx-a11y/media-has-caption
-                                                                <audio controls='controls'>
-                                                                    Your browser does not support the &lt;audio&gt; tag.
-                                                                    <source src={item.data} type={item.mime} />
-                                                                </audio>
-                                                            )}
-                                                        </>
-                                                    )
-                                                })}
-                                            </div>
-                                        )}
-                                        <div className='markdownanswer'>
-                                            {/* Messages are being rendered in Markdown format */}
-                                            <MemoizedReactMarkdown
-                                                remarkPlugins={[remarkGfm, remarkMath]}
-                                                rehypePlugins={[rehypeMathjax, rehypeRaw]}
-                                                components={{
-                                                    code({ inline, className, children, ...props }) {
-                                                        const match = /language-(\w+)/.exec(className || '')
-                                                        return !inline ? (
-                                                            <CodeBlock
-                                                                key={Math.random()}
-                                                                chatflowid={chatflowid}
-                                                                isDialog={isDialog}
-                                                                language={(match && match[1]) || ''}
-                                                                value={String(children).replace(/\n$/, '')}
-                                                                {...props}
-                                                            />
-                                                        ) : (
-                                                            <code className={className} {...props}>
-                                                                {children}
-                                                            </code>
+                                                                    label={tool.tool}
+                                                                    component='a'
+                                                                    sx={{ mr: 1, mt: 1 }}
+                                                                    variant='outlined'
+                                                                    clickable
+                                                                    icon={<IconTool size={15} />}
+                                                                    onClick={() => onSourceDialogClick(tool, 'Used Tools')}
+                                                                />
+                                                            )
+                                                        })}
+                                                    </div>
+                                                </>
+                                            )}
+                                            {message.fileUploads && message.fileUploads.length > 0 && (
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexWrap: 'wrap',
+                                                        flexDirection: 'column',
+                                                        width: '100%',
+                                                        gap: '8px'
+                                                    }}
+                                                >
+                                                    {message.fileUploads.map((item, index) => {
+                                                        return (
+                                                            <>
+                                                                {item.mime.startsWith('image/') ? (
+                                                                    <Card
+                                                                        key={index}
+                                                                        sx={{
+                                                                            p: 0,
+                                                                            m: 0,
+                                                                            maxWidth: 128,
+                                                                            marginRight: '10px',
+                                                                            flex: '0 0 auto'
+                                                                        }}
+                                                                    >
+                                                                        <CardMedia
+                                                                            component='img'
+                                                                            image={item.data}
+                                                                            sx={{ height: 64 }}
+                                                                            alt={'preview'}
+                                                                            style={messageImageStyle}
+                                                                        />
+                                                                    </Card>
+                                                                ) : (
+                                                                    // eslint-disable-next-line jsx-a11y/media-has-caption
+                                                                    <audio controls='controls'>
+                                                                        Your browser does not support the &lt;audio&gt; tag.
+                                                                        <source src={item.data} type={item.mime} />
+                                                                    </audio>
+                                                                )}
+                                                            </>
                                                         )
-                                                    }
-                                                }}
-                                            >
-                                                {message.message}
-                                            </MemoizedReactMarkdown>
+                                                    })}
+                                                </div>
+                                            )}
+                                            <div className='markdownanswer'>
+                                                {/* Messages are being rendered in Markdown format */}
+                                                <MemoizedReactMarkdown
+                                                    remarkPlugins={[remarkGfm, remarkMath]}
+                                                    rehypePlugins={[rehypeMathjax, rehypeRaw]}
+                                                    components={{
+                                                        code({ inline, className, children, ...props }) {
+                                                            const match = /language-(\w+)/.exec(className || '')
+                                                            return !inline ? (
+                                                                <CodeBlock
+                                                                    key={Math.random()}
+                                                                    chatflowid={chatflowid}
+                                                                    isDialog={isDialog}
+                                                                    language={(match && match[1]) || ''}
+                                                                    value={String(children).replace(/\n$/, '')}
+                                                                    {...props}
+                                                                />
+                                                            ) : (
+                                                                <code className={className} {...props}>
+                                                                    {children}
+                                                                </code>
+                                                            )
+                                                        }
+                                                    }}
+                                                >
+                                                    {message.message}
+                                                </MemoizedReactMarkdown>
+                                            </div>
+                                            {message.type === 'apiMessage' && message.id && chatFeedbackStatus ? (
+                                                <>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1 }}>
+                                                        <CopyToClipboardButton onClick={() => copyMessageToClipboard(message.message)} />
+                                                        {!message.feedback ||
+                                                        message.feedback.rating === '' ||
+                                                        message.feedback.rating === 'THUMBS_UP' ? (
+                                                            <ThumbsUpButton
+                                                                isDisabled={message.feedback && message.feedback.rating === 'THUMBS_UP'}
+                                                                rating={message.feedback ? message.feedback.rating : ''}
+                                                                onClick={() => onThumbsUpClick(message.id)}
+                                                            />
+                                                        ) : null}
+                                                        {!message.feedback ||
+                                                        message.feedback.rating === '' ||
+                                                        message.feedback.rating === 'THUMBS_DOWN' ? (
+                                                            <ThumbsDownButton
+                                                                isDisabled={message.feedback && message.feedback.rating === 'THUMBS_DOWN'}
+                                                                rating={message.feedback ? message.feedback.rating : ''}
+                                                                onClick={() => onThumbsDownClick(message.id)}
+                                                            />
+                                                        ) : null}
+                                                    </Box>
+                                                </>
+                                            ) : null}
+                                            {message.fileAnnotations && (
+                                                <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
+                                                    {message.fileAnnotations.map((fileAnnotation, index) => {
+                                                        return (
+                                                            <Button
+                                                                sx={{ fontSize: '0.85rem', textTransform: 'none', mb: 1 }}
+                                                                key={index}
+                                                                variant='outlined'
+                                                                onClick={() => downloadFile(fileAnnotation)}
+                                                                endIcon={<IconDownload color={theme.palette.primary.main} />}
+                                                            >
+                                                                {fileAnnotation.fileName}
+                                                            </Button>
+                                                        )
+                                                    })}
+                                                </div>
+                                            )}
+                                            {message.sourceDocuments && (
+                                                <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
+                                                    {removeDuplicateURL(message).map((source, index) => {
+                                                        const URL =
+                                                            source.metadata && source.metadata.source
+                                                                ? isValidURL(source.metadata.source)
+                                                                : undefined
+                                                        return (
+                                                            <Chip
+                                                                size='small'
+                                                                key={index}
+                                                                label={
+                                                                    URL
+                                                                        ? URL.pathname.substring(0, 15) === '/'
+                                                                            ? URL.host
+                                                                            : `${URL.pathname.substring(0, 15)}...`
+                                                                        : `${source.pageContent.substring(0, 15)}...`
+                                                                }
+                                                                component='a'
+                                                                sx={{ mr: 1, mb: 1 }}
+                                                                variant='outlined'
+                                                                clickable
+                                                                onClick={() =>
+                                                                    URL ? onURLClick(source.metadata.source) : onSourceDialogClick(source)
+                                                                }
+                                                            />
+                                                        )
+                                                    })}
+                                                </div>
+                                            )}
                                         </div>
-                                        {message.type === 'apiMessage' && message.id && chatFeedbackStatus ? (
-                                            <>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1 }}>
-                                                    <CopyToClipboardButton onClick={() => copyMessageToClipboard(message.message)} />
-                                                    {!message.feedback ||
-                                                    message.feedback.rating === '' ||
-                                                    message.feedback.rating === 'THUMBS_UP' ? (
-                                                        <ThumbsUpButton
-                                                            isDisabled={message.feedback && message.feedback.rating === 'THUMBS_UP'}
-                                                            rating={message.feedback ? message.feedback.rating : ''}
-                                                            onClick={() => onThumbsUpClick(message.id)}
-                                                        />
-                                                    ) : null}
-                                                    {!message.feedback ||
-                                                    message.feedback.rating === '' ||
-                                                    message.feedback.rating === 'THUMBS_DOWN' ? (
-                                                        <ThumbsDownButton
-                                                            isDisabled={message.feedback && message.feedback.rating === 'THUMBS_DOWN'}
-                                                            rating={message.feedback ? message.feedback.rating : ''}
-                                                            onClick={() => onThumbsDownClick(message.id)}
-                                                        />
-                                                    ) : null}
-                                                </Box>
-                                            </>
-                                        ) : null}
-                                        {message.fileAnnotations && (
-                                            <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
-                                                {message.fileAnnotations.map((fileAnnotation, index) => {
-                                                    return (
-                                                        <Button
-                                                            sx={{ fontSize: '0.85rem', textTransform: 'none', mb: 1 }}
-                                                            key={index}
-                                                            variant='outlined'
-                                                            onClick={() => downloadFile(fileAnnotation)}
-                                                            endIcon={<IconDownload color={theme.palette.primary.main} />}
-                                                        >
-                                                            {fileAnnotation.fileName}
-                                                        </Button>
-                                                    )
-                                                })}
-                                            </div>
-                                        )}
-                                        {message.sourceDocuments && (
-                                            <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
-                                                {removeDuplicateURL(message).map((source, index) => {
-                                                    const URL =
-                                                        source.metadata && source.metadata.source
-                                                            ? isValidURL(source.metadata.source)
-                                                            : undefined
-                                                    return (
-                                                        <Chip
-                                                            size='small'
-                                                            key={index}
-                                                            label={
-                                                                URL
-                                                                    ? URL.pathname.substring(0, 15) === '/'
-                                                                        ? URL.host
-                                                                        : `${URL.pathname.substring(0, 15)}...`
-                                                                    : `${source.pageContent.substring(0, 15)}...`
-                                                            }
-                                                            component='a'
-                                                            sx={{ mr: 1, mb: 1 }}
-                                                            variant='outlined'
-                                                            clickable
-                                                            onClick={() =>
-                                                                URL ? onURLClick(source.metadata.source) : onSourceDialogClick(source)
-                                                            }
-                                                        />
-                                                    )
-                                                })}
-                                            </div>
-                                        )}
+                                    </Box>
+                                    <div
+                                        style={{ background: 'transparent', marginTop: '-8px', height: 'auto', marginLeft: '10px' }}
+                                        className='MuiBox-root css-v512oj'
+                                    >
+                                        <p className='MuiTypography-root MuiTypography-body1 css-1dddwi4-MuiTypography-root'>
+                                            Hi there! How can I help?
+                                        </p>
                                     </div>
-                                </Box>
+                                </>
                             )
                         })}
                 </div>

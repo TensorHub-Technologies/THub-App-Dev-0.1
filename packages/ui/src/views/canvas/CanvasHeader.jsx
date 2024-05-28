@@ -11,7 +11,8 @@ import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/mate
 import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons'
 
 //Logo
-import Logo from '@/assets/images/THub_Logo_Icon.png'
+// import logo from '@/assets/images/THub_logo_dark.png'
+import logo from '@/assets/images/THub_Logo_resize.png'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 
 // project imports
@@ -213,15 +214,35 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 </ButtonBase>
             </Box> */}
 
-            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-                {customization.menu_open ? (
-                    <img src={Logo} alt='THub_Logo' width={130} />
-                ) : (
-                    <img src={ColorfulLogo} alt='THub_Logo' width={30} />
-                )}
-            </Box>
+            {/* <img src={ColorfulLogo} alt='THub_Logo' width={30} style={{  marginRight: customization.menu_open ? '190px' : '46px'}} />
+
+            {customization.menu_open ? (
+                <img src={logo} alt='THub_Logo' width={80} height={30} style={{ marginLeft: "6px" ,marginRight:"16px"}} />
+            ) : (
+                ""
+            )} */}
+            {/* <img src={ColorfulLogo} alt='THub_Logo' width={30} />
+
+{customization.menu_open ? (
+    <img src={logo} alt='THub_Logo' width={80} height={30}  />
+) : (
+    ""
+)} */}
+
+            {/* <img src={ColorfulLogo} alt='THub_Logo' width={customization.menu_open ? '40px' : '40px'  }/>
+
+{customization.menu_open ? (
+    <img src={newLogo} alt='THub_Logo' width={40} height={40} 
+    />
+) : (
+    ""
+)} */}
+
+            <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+
+            {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''}
             <Box>
-                <ButtonBase title='Back' sx={{ borderRadius: '20%' }}>
+                <ButtonBase title='Back' sx={{ borderRadius: '20%', marginLeft: customization.menu_open ? '198px' : '37px' }}>
                     <Avatar
                         variant='rounded'
                         sx={{

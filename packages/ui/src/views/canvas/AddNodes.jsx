@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
-import './Node.css'
-
 // material-ui
-
+import LlamaindexPNG from '@/assets/images/llamaindex.png'
+import LangChainPNG from '@/assets/images/langchain.png'
+import { Tabs, Tab } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import {
     Accordion,
@@ -31,7 +31,8 @@ import ThreePIcon from '@mui/icons-material/ThreeP'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
 // import FingerprintIcon from '@mui/icons-material/Fingerprint'
 import { IconAffiliate } from '@tabler/icons'
-import CallMergeIcon from '@mui/icons-material/CallMerge'
+import ViewInArIcon from '@mui/icons-material/ViewInAr'
+// import CallMergeIcon from '@mui/icons-material/CallMerge'
 import MemoryIcon from '@mui/icons-material/Memory'
 import AddModeratorIcon from '@mui/icons-material/AddModerator'
 
@@ -61,6 +62,7 @@ import { baseURL } from '@/store/constant'
 import { SET_COMPONENT_NODES } from '@/store/actions'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import { SHOW_MENU } from '@/store/constant'
+import './Node.css'
 
 // ==============================|| ADD NODES||============================== //
 function a11yProps(index) {
@@ -78,7 +80,7 @@ const allIconsObj = {
     'Document Loaders': <DriveFolderUploadIcon />,
     Embeddings: <IconAffiliate />,
     Memory: <MemoryIcon />,
-    LLMs: <CallMergeIcon />,
+    LLMs: <ViewInArIcon />,
     Moderation: <AddModeratorIcon />,
     'Output Parsers': <ExitToAppIcon />,
     Prompts: <IntegrationInstructionsIcon />,
@@ -222,7 +224,7 @@ const AddNodes = ({ nodesData, node }) => {
         <>
             <Paper
                 sx={{
-                    // transition: 'width 0.2s, box-shadow 0.2s',
+                    transition: 'width .6s, box-shadow .6s',
                     position: 'relative',
                     zIndex: 1000,
                     width: customization.menu_open ? '350px' : '100px',
@@ -258,19 +260,21 @@ const AddNodes = ({ nodesData, node }) => {
                                 size='1rem'
                                 sx={{
                                     cursor: 'default',
-                                    color: customization?.isDarkMode ? '#fff' : '#fff',
-                                    background: isInputFocused
-                                        ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
-                                        : customization?.isDarkMode
-                                        ? '#E22A90'
-                                        : '#3C5BA4',
+                                    // color: customization?.isDarkMode ? '#fff' : '#fff',
+                                    // background: isInputFocused
+                                    //     ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
+                                    //     : customization?.isDarkMode
+                                    //     ? '#E22A90'
+                                    //     : '#3C5BA4',
                                     borderRadius: '20%',
                                     padding: '2px',
                                     mb: 2,
                                     mr: 1,
-                                    '&:hover': {
-                                        background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
-                                    }
+                                    marginTop: customization.menu_open ? '' : '21px'
+
+                                    // '&:hover': {
+                                    //     background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
+                                    // }
                                 }}
                             />
                             {customization.menu_open && (
@@ -278,7 +282,7 @@ const AddNodes = ({ nodesData, node }) => {
                                     label='Search'
                                     variant='standard'
                                     sx={{
-                                        width: '100%',
+                                        width: '80%',
                                         mb: 2,
                                         '& .TextField-root': {
                                             '& fieldset': {
@@ -307,7 +311,7 @@ const AddNodes = ({ nodesData, node }) => {
                                     onChange={(e) => filterSearch(e.target.value)}
                                     onFocus={() => setInputFocused(true)}
                                     onBlur={() => setInputFocused(false)}
-                                    placeholder='Search1'
+                                    placeholder='Search'
                                     InputProps={{
                                         'aria-label': 'weight',
                                         endAdornment: (
@@ -337,42 +341,49 @@ const AddNodes = ({ nodesData, node }) => {
                             )}
                         </Box>
 
-                        {/* {customization.menu_open && (
-                            <Tabs
-                                sx={{ position: 'relative', minHeight: '50px', height: '50px' }}
-                                variant='fullWidth'
-                                value={tabValue}
-                                onChange={handleTabChange}
-                                aria-label='tabs'
-                            >
-                                {['LangChain', 'LlamaIndex'].map((item, index) => (
-                                    <Tab
-                                        icon={
-                                            <div
+                        <Tabs
+                            sx={{
+                                position: 'relative',
+                                minHeight: '50px',
+                                height: '50px',
+                                marginLeft: customization.menu_open ? '12px' : '232px'
+                            }}
+                            // variant='fullWidth'
+                            value={tabValue}
+                            onChange={handleTabChange}
+                            aria-label='tabs'
+                        >
+                            {['LangChain', 'LlamaIndex'].map((item, index) => (
+                                <Tab
+                                    icon={
+                                        <div
+                                            style={{
+                                                // marginLeft: customization.menu_open ? '-12px' : '232px',
+                                                borderRadius: '50%'
+                                            }}
+                                        >
+                                            <img
                                                 style={{
-                                                    borderRadius: '50%'
+                                                    display: customization.menu_open ? 'block' : 'none',
+                                                    marginLeft: customization.menu_open ? '-12px' : '232px',
+                                                    width: '25px',
+                                                    height: '25px',
+                                                    borderRadius: '50%',
+                                                    objectFit: 'contain'
                                                 }}
-                                            >
-                                                <img
-                                                    style={{
-                                                        width: '25px',
-                                                        height: '25px',
-                                                        borderRadius: '50%',
-                                                        objectFit: 'contain'
-                                                    }}
-                                                    src={index === 0 ? LangChainPNG : LlamaindexPNG}
-                                                    alt={item}
-                                                />
-                                            </div>
-                                        }
-                                        iconPosition='start'
-                                        sx={{ minHeight: '50px', height: '50px' }}
-                                        key={index}
-                                        label={item}
-                                        {...a11yProps(index)}
-                                    ></Tab>
-                                ))}
-
+                                                src={index === 0 ? LangChainPNG : LlamaindexPNG}
+                                                alt={item}
+                                            />
+                                        </div>
+                                    }
+                                    iconPosition='start'
+                                    sx={{ minHeight: '50px', height: '50px' }}
+                                    key={index}
+                                    label={item}
+                                    {...a11yProps(index)}
+                                ></Tab>
+                            ))}
+                            {customization.menu_open && (
                                 <div
                                     style={{
                                         display: 'flex',
@@ -390,10 +401,13 @@ const AddNodes = ({ nodesData, node }) => {
                                         fontWeight: 700
                                     }}
                                 >
-                                    <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>
+                                    {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>}
                                 </div>
-                            </Tabs>
-                        )} */}
+                            )}
+                        </Tabs>
+
+                        {/* )} */}
+
                         <Divider />
                     </Box>
 
@@ -408,6 +422,7 @@ const AddNodes = ({ nodesData, node }) => {
                                 p: 2,
                                 pt: 0,
                                 height: '100%'
+                                // marginTop:customization.menu_open ? "" :"21px"
                             }}
                         >
                             <List
@@ -434,6 +449,7 @@ const AddNodes = ({ nodesData, node }) => {
                                     .sort()
                                     .map((category) => (
                                         <Accordion
+                                            style={{ background: customization.isDarkMode ? '#191b1f' : '#fff' }}
                                             expanded={categoryExpanded[category] || false}
                                             onChange={handleAccordionChange(category)}
                                             key={category}
@@ -459,7 +475,8 @@ const AddNodes = ({ nodesData, node }) => {
                                                     style={{
                                                         display: 'flex',
                                                         flexDirection: 'row',
-                                                        alignItems: 'center'
+                                                        alignItems: 'center',
+                                                        position: 'fixed'
                                                     }}
                                                 >
                                                     {getIconWithClass(

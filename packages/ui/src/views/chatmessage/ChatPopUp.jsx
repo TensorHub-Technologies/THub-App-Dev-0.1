@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 
 import { ClickAwayListener, Paper, Popper, Button } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
@@ -46,7 +47,7 @@ export const ChatPopUp = ({ chatflowid }) => {
         }
         setOpen(false)
     }
-
+    const customization = useSelector((state) => state.customization)
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen)
     }
@@ -134,7 +135,14 @@ export const ChatPopUp = ({ chatflowid }) => {
     return (
         <>
             <StyledFab
-                sx={{ position: 'absolute', right: 20, top: 20 }}
+                sx={{
+                    position: 'absolute',
+                    right: 20,
+                    top: 20,
+                    background: 'transparent',
+                    boxShadow: '0',
+                    color: customization.isDarkMode ? 'white' : 'black'
+                }}
                 ref={anchorRef}
                 size='small'
                 color='secondary'
@@ -146,7 +154,14 @@ export const ChatPopUp = ({ chatflowid }) => {
             </StyledFab>
             {open && (
                 <StyledFab
-                    sx={{ position: 'absolute', right: 80, top: 20 }}
+                    sx={{
+                        position: 'absolute',
+                        right: 55,
+                        top: 20,
+                        background: 'transparent',
+                        boxShadow: '0',
+                        color: customization.isDarkMode ? 'white' : 'black'
+                    }}
                     onClick={clearChat}
                     size='small'
                     color='error'
@@ -158,7 +173,14 @@ export const ChatPopUp = ({ chatflowid }) => {
             )}
             {open && (
                 <StyledFab
-                    sx={{ position: 'absolute', right: 140, top: 20 }}
+                    sx={{
+                        position: 'absolute',
+                        right: 90,
+                        top: 20,
+                        background: 'transparent',
+                        boxShadow: '0',
+                        color: customization.isDarkMode ? 'white' : 'black'
+                    }}
                     onClick={expandChat}
                     size='small'
                     color='primary'
@@ -213,6 +235,8 @@ export const ChatPopUp = ({ chatflowid }) => {
                 onCancel={() => setShowExpandDialog(false)}
                 previews={previews}
                 setPreviews={setPreviews}
+                open={open}
+                setShowExpandDialog={setShowExpandDialog}
             ></ChatExpandDialog>
         </>
     )

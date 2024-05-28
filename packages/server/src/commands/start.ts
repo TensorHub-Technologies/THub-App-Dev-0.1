@@ -55,7 +55,7 @@ export default class Start extends Command {
     }
 
     async stopProcess() {
-        logger.info('Shutting down THub...')
+        logger.info('Shutting down Flowise...')
         try {
             // Shut down the app after timeout if it ever stuck removing pools
             setTimeout(() => {
@@ -67,7 +67,7 @@ export default class Start extends Command {
             const serverApp = Server.getInstance()
             if (serverApp) await serverApp.stopApp()
         } catch (error) {
-            logger.error('There was an error shutting down THub...', error)
+            logger.error('There was an error shutting down Flowise...', error)
         }
         process.exit(processExitCode)
     }
@@ -150,11 +150,11 @@ export default class Start extends Command {
 
         await (async () => {
             try {
-                logger.info('Starting THub...')
+                logger.info('Starting Flowise...')
                 await DataSource.init()
                 await Server.start()
             } catch (error) {
-                logger.error('There was an error starting THub...', error)
+                logger.error('There was an error starting Flowise...', error)
                 processExitCode = EXIT_CODE.FAILED
                 // @ts-ignore
                 process.emit('SIGINT')
