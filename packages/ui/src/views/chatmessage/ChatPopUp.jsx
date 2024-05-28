@@ -235,6 +235,8 @@ export const ChatPopUp = ({ chatflowid }) => {
                 onCancel={() => setShowExpandDialog(false)}
                 previews={previews}
                 setPreviews={setPreviews}
+                open={open}
+                setShowExpandDialog={setShowExpandDialog}
             ></ChatExpandDialog>
         </>
     )

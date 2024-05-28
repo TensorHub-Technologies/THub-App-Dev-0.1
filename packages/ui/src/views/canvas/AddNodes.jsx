@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
-import './Node.css'
 // material-ui
 import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import LangChainPNG from '@/assets/images/langchain.png'
@@ -32,7 +31,8 @@ import ThreePIcon from '@mui/icons-material/ThreeP'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
 // import FingerprintIcon from '@mui/icons-material/Fingerprint'
 import { IconAffiliate } from '@tabler/icons'
-import CallMergeIcon from '@mui/icons-material/CallMerge'
+import ViewInArIcon from '@mui/icons-material/ViewInAr'
+// import CallMergeIcon from '@mui/icons-material/CallMerge'
 import MemoryIcon from '@mui/icons-material/Memory'
 import AddModeratorIcon from '@mui/icons-material/AddModerator'
 
@@ -62,6 +62,7 @@ import { baseURL } from '@/store/constant'
 import { SET_COMPONENT_NODES } from '@/store/actions'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import { SHOW_MENU } from '@/store/constant'
+import './Node.css'
 
 // ==============================|| ADD NODES||============================== //
 function a11yProps(index) {
@@ -79,7 +80,7 @@ const allIconsObj = {
     'Document Loaders': <DriveFolderUploadIcon />,
     Embeddings: <IconAffiliate />,
     Memory: <MemoryIcon />,
-    LLMs: <CallMergeIcon />,
+    LLMs: <ViewInArIcon />,
     Moderation: <AddModeratorIcon />,
     'Output Parsers': <ExitToAppIcon />,
     Prompts: <IntegrationInstructionsIcon />,
@@ -223,7 +224,7 @@ const AddNodes = ({ nodesData, node }) => {
         <>
             <Paper
                 sx={{
-                    transition: 'width .2s, box-shadow .2s',
+                    transition: 'width .6s, box-shadow .6s',
                     position: 'relative',
                     zIndex: 1000,
                     width: customization.menu_open ? '350px' : '100px',
@@ -268,7 +269,8 @@ const AddNodes = ({ nodesData, node }) => {
                                     borderRadius: '20%',
                                     padding: '2px',
                                     mb: 2,
-                                    mr: 1
+                                    mr: 1,
+                                    marginTop: customization.menu_open ? '' : '21px'
 
                                     // '&:hover': {
                                     //     background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
@@ -420,6 +422,7 @@ const AddNodes = ({ nodesData, node }) => {
                                 p: 2,
                                 pt: 0,
                                 height: '100%'
+                                // marginTop:customization.menu_open ? "" :"21px"
                             }}
                         >
                             <List
@@ -472,7 +475,8 @@ const AddNodes = ({ nodesData, node }) => {
                                                     style={{
                                                         display: 'flex',
                                                         flexDirection: 'row',
-                                                        alignItems: 'center'
+                                                        alignItems: 'center',
+                                                        position: 'fixed'
                                                     }}
                                                 >
                                                     {getIconWithClass(
