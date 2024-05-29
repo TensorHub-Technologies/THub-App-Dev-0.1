@@ -216,8 +216,6 @@ const AddNodes = ({ nodesData, node }) => {
             groupByCategory(nodesData)
             dispatch({ type: SET_COMPONENT_NODES, componentNodes: nodesData })
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nodesData, dispatch])
 
     console.log(customization.menu_open, 'SHOW_MENU')
@@ -552,7 +550,6 @@ const AddNodes = ({ nodesData, node }) => {
                                                                                     width: 50,
                                                                                     height: 50,
                                                                                     borderRadius: '20%',
-                                                                                    // backgroundColor: theme.palette.background.default
                                                                                     backgroundColor: customization.isDarkMode
                                                                                         ? '#f0f0f0'
                                                                                         : '#f0f0f0'
