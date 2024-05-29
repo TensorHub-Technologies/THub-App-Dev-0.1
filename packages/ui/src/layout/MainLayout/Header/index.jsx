@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // material-ui
@@ -78,7 +78,14 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
     const [isDark, setIsDark] = useState(customization.isDarkMode)
     const dispatch = useDispatch()
-
+    useEffect(() => {
+        let url = new URL(window.location.href)
+        let params = new URLSearchParams(url.search)
+        const isDarkTheme = params.get('theme') === 'dark'
+        setIsDark(isDarkTheme)
+        dispatch({ type: SET_DARKMODE, isDarkMode: isDarkTheme })
+        localStorage.setItem('isDarkMode', isDarkTheme)
+    }, [])
     const changeDarkMode = () => {
         dispatch({ type: SET_DARKMODE, isDarkMode: !isDark })
         setIsDark((isDark) => !isDark)

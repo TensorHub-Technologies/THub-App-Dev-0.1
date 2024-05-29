@@ -7,6 +7,8 @@ import { useTheme } from '@mui/material/styles'
 import { IconButton, Box, Typography, Divider, Button } from '@mui/material'
 import Tooltip from '@mui/material/Tooltip'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import CallMadeIcon from '@mui/icons-material/CallMade'
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
 
 // project imports
 import NodeCardWrapper from '@/ui-component/cards/NodeCardWrapper'
@@ -34,11 +36,17 @@ const CanvasNode = ({ data }) => {
     const [infoDialogProps, setInfoDialogProps] = useState({})
     const [warningMessage, setWarningMessage] = useState('')
     const [open, setOpen] = useState(false)
+    const [minMax, setMinMax] = useState('true')
 
     // const handleClose = () => {
     //     setOpen(false)
     // }
-
+    const handleMin = () => {
+        setMinMax(!minMax)
+    }
+    // const handleMax=()=>{
+    //     setMinMax(true)
+    // }
     const handleOpen = () => {
         setOpen(!open)
     }
@@ -143,215 +151,226 @@ const CanvasNode = ({ data }) => {
 
     return (
         <>
-            <NodeCardWrapper
-                content={false}
-                sx={{
-                    padding: 0,
-                    // borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary
-                    borderColor: data.selected ? NodeHeader : NodeBorder,
-                    '&:hover': {
-                        borderColor: data.selected ? NodeBorder : NodeHeader
-                    }
-                }}
-                border={false}
-            >
-                <Tooltip
-                    open={open}
-                    // onDoubleClick={handleClose}
-                    onClick={handleOpen}
-                    style={{
-                        position: 'absolute',
-                        margin: '12px 0px 0px 260px',
-                        color: 'black',
-                        backgroundColor: 'rgb(0,0,0,0)',
-                        cursor: 'pointer'
+            <>
+                <NodeCardWrapper
+                    content={false}
+                    sx={{
+                        padding: 0,
+                        borderColor: data.selected ? NodeHeader : NodeBorder,
+                        '&:hover': {
+                            borderColor: data.selected ? NodeBorder : NodeHeader
+                        }
                     }}
+                    border={false}
                 >
-                    <MoreVertIcon />
-                </Tooltip>
-                <NodeTooltip
-                    open={!canvas.canvasDialogShow && open}
-                    disableFocusListener={true}
-                    title={
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                position: 'relative'
-                            }}
-                        >
-                            <IconButton
-                                title='Duplicate'
-                                onClick={() => {
-                                    duplicateNode(data.id)
-                                }}
-                                sx={{ height: '35px', width: '35px', '&:hover': { color: theme?.palette.primary.main } }}
-                                color={theme?.customization?.isDarkMode ? theme.colors?.paper : 'inherit'}
-                            >
-                                <IconCopy />
-                            </IconButton>
-                            <IconButton
-                                title='Delete'
-                                onClick={() => {
-                                    deleteNode(data.id)
-                                }}
-                                sx={{ height: '35px', width: '35px', '&:hover': { color: 'red' } }}
-                                color={theme?.customization?.isDarkMode ? theme.colors?.paper : 'inherit'}
-                            >
-                                <IconTrash />
-                            </IconButton>
-                            <IconButton
-                                title='Info'
-                                onClick={() => {
-                                    setInfoDialogProps({ data })
-                                    setShowInfoDialog(true)
-                                }}
-                                sx={{ height: '35px', width: '35px', '&:hover': { color: theme?.palette.secondary.main } }}
-                                color={theme?.customization?.isDarkMode ? theme.colors?.paper : 'inherit'}
-                            >
-                                <IconInfoCircle />
-                            </IconButton>
-                        </div>
-                    }
-                    placement='right-start'
-                >
-                    <Box>
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: data.selected ? NodeHeader(data) : NodeBorder(data)
-                            }}
-                        >
-                            <Box style={{ width: 50, marginRight: 10, padding: 5 }}>
-                                <div
-                                    style={{
-                                        ...theme.typography.commonAvatar,
-                                        ...theme.typography.largeAvatar,
-                                        borderRadius: '20%',
-                                        backgroundColor: 'white',
-                                        // backgroundColor: data.selected ? NodeHeader(data) : NodeBorder(data),
-                                        cursor: 'grab'
-                                    }}
-                                >
-                                    <img
-                                        style={{ width: '100%', height: '100%', padding: 5, objectFit: 'contain' }}
-                                        src={`${baseURL}/api/v1/node-icon/${data.name}`}
-                                        alt='Notification'
-                                    />
-                                </div>
-                            </Box>
-                            <Box>
-                                <Typography
-                                    sx={{
-                                        fontSize: '1rem',
-                                        fontWeight: 500,
-                                        mr: 2,
-                                        color: '#000000'
-                                    }}
-                                >
-                                    {data.label}
-                                </Typography>
-                            </Box>
-                            <div style={{ flexGrow: 1 }}></div>
-                            {data.tags && data.tags.includes('LlamaIndex') && (
-                                <>
-                                    <div
-                                        style={{
-                                            borderRadius: '50%',
-                                            padding: 15
-                                        }}
-                                    >
-                                        {/* <img
-                                            style={{
-                                                width: '25px',
-                                                height: '25px',
-                                                borderRadius: '50%',
-                                                objectFit: 'contain'
-                                            }}
-                                            src={LlamaindexPNG}
-                                            alt='LlamaIndex'
-                                        /> */}
-                                    </div>
-                                </>
-                            )}
-                            {warningMessage && (
-                                <>
-                                    <Tooltip title={<span style={{ whiteSpace: 'pre-line' }}>{warningMessage}</span>} placement='top'>
-                                        <IconButton sx={{ height: 35, width: 35 }}>
-                                            <IconAlertTriangle size={35} color='orange' />
-                                        </IconButton>
-                                    </Tooltip>
-                                </>
-                            )}
-                        </div>
-                        {(data.inputAnchors.length > 0 || data.inputParams.length > 0) && (
-                            <>
-                                <Divider />
-                                <Box sx={{ background: theme.palette.asyncSelect.main, p: 1 }}>
-                                    <Typography
-                                        sx={{
-                                            fontWeight: 500,
-                                            textAlign: 'center',
-                                            color: '#2F5597'
-                                        }}
-                                    >
-                                        Inputs
-                                    </Typography>
-                                </Box>
-                                <Divider />
-                            </>
-                        )}
-                        {data.inputAnchors.map((inputAnchor, index) => (
-                            <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} />
-                        ))}
-                        {data.inputParams
-                            .filter((inputParam) => !inputParam.hidden)
-                            .map((inputParam, index) => (
-                                <NodeInputHandler key={index} inputParam={inputParam} data={data} />
-                            ))}
-                        {data.inputParams.find((param) => param.additionalParams) && (
+                    <Tooltip
+                        open={open}
+                        onClick={handleOpen}
+                        style={{
+                            position: 'absolute',
+                            margin: '14px 0px 0px 270px',
+                            color: 'black',
+                            backgroundColor: 'rgb(0,0,0,0)',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <MoreVertIcon />
+                    </Tooltip>
+                    <NodeTooltip
+                        open={!canvas.canvasDialogShow && open}
+                        disableFocusListener={true}
+                        title={
                             <div
                                 style={{
-                                    textAlign: 'center',
-                                    marginTop:
-                                        data.inputParams.filter((param) => param.additionalParams).length ===
-                                        data.inputParams.length + data.inputAnchors.length
-                                            ? 20
-                                            : 0
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    position: 'relative'
                                 }}
                             >
-                                <Button sx={{ borderRadius: 25, width: '90%', mb: 2 }} variant='outlined' onClick={onDialogClicked}>
-                                    Additional Parameters
-                                </Button>
+                                <IconButton title='minmax' id='minmax-parent'>
+                                    {minMax ? (
+                                        <HorizontalRuleIcon onClick={handleMin} id='MinimizeIcon' />
+                                    ) : (
+                                        <button className='minmax-btn' onClick={handleMin}>
+                                            <CallMadeIcon id='ExpandIcon' />
+                                        </button>
+                                    )}
+                                </IconButton>
+                                <IconButton
+                                    title='Duplicate'
+                                    onClick={() => {
+                                        duplicateNode(data.id)
+                                    }}
+                                    sx={{ height: '35px', width: '35px', '&:hover': { color: theme?.palette.primary.main } }}
+                                    color={theme?.customization?.isDarkMode ? theme.colors?.paper : 'inherit'}
+                                >
+                                    <IconCopy />
+                                </IconButton>
+                                <IconButton
+                                    title='Delete'
+                                    onClick={() => {
+                                        deleteNode(data.id)
+                                    }}
+                                    sx={{ height: '35px', width: '35px', '&:hover': { color: 'red' } }}
+                                    color={theme?.customization?.isDarkMode ? theme.colors?.paper : 'inherit'}
+                                >
+                                    <IconTrash />
+                                </IconButton>
+                                <IconButton
+                                    title='Info'
+                                    onClick={() => {
+                                        setInfoDialogProps({ data })
+                                        setShowInfoDialog(true)
+                                    }}
+                                    sx={{ height: '35px', width: '35px', '&:hover': { color: theme?.palette.secondary.main } }}
+                                    color={theme?.customization?.isDarkMode ? theme.colors?.paper : 'inherit'}
+                                >
+                                    <IconInfoCircle />
+                                </IconButton>
                             </div>
-                        )}
-                        <Divider />
-                        <Box sx={{ background: theme.palette.asyncSelect.main, p: 1 }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: 500,
-                                    textAlign: 'center',
-                                    color: '#EC73FF'
+                        }
+                        placement='right-start'
+                    >
+                        <Box>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    // border:"4px solid red",
+                                    backgroundColor: data.selected ? NodeHeader(data) : NodeBorder(data)
                                 }}
                             >
-                                Output
-                            </Typography>
+                                <Box style={{ width: 50, marginRight: 10, padding: 5 }}>
+                                    <div
+                                        style={{
+                                            ...theme.typography.commonAvatar,
+                                            ...theme.typography.largeAvatar,
+                                            borderRadius: '20%',
+                                            backgroundColor: 'white',
+                                            // backgroundColor: data.selected ? NodeHeader(data) : NodeBorder(data),
+                                            cursor: 'grab'
+                                        }}
+                                    >
+                                        <img
+                                            style={{ width: '100%', height: '100%', padding: 5, objectFit: 'contain' }}
+                                            src={`${baseURL}/api/v1/node-icon/${data.name}`}
+                                            alt='Notification'
+                                        />
+                                    </div>
+                                </Box>
+                                <Box>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '0.94rem',
+                                            fontWeight: 500,
+                                            mr: 2,
+                                            color: '#000000'
+                                        }}
+                                    >
+                                        {data.label}
+                                    </Typography>
+                                </Box>
+                                <div style={{ flexGrow: 1 }}></div>
+                                {data.tags && data.tags.includes('LlamaIndex') && (
+                                    <>
+                                        <div
+                                            style={{
+                                                borderRadius: '50%',
+                                                padding: 15
+                                            }}
+                                        ></div>
+                                    </>
+                                )}
+                                {warningMessage && (
+                                    <>
+                                        <Tooltip title={<span style={{ whiteSpace: 'pre-line' }}>{warningMessage}</span>} placement='top'>
+                                            <IconButton sx={{ height: 35, width: 35 }}>
+                                                <IconAlertTriangle size={35} color='orange' />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </>
+                                )}
+                            </div>
+                            {minMax ? (
+                                <>
+                                    {(data.inputAnchors.length > 0 || data.inputParams.length > 0) && (
+                                        <>
+                                            <Divider />
+                                            <Box sx={{ background: theme.palette.asyncSelect.main, p: 1 }}>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: 500,
+                                                        textAlign: 'center',
+                                                        color: '#2F5597'
+                                                    }}
+                                                >
+                                                    Inputs
+                                                </Typography>
+                                            </Box>
+                                            <Divider />
+                                        </>
+                                    )}
+                                    {data.inputAnchors.map((inputAnchor, index) => (
+                                        <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} />
+                                    ))}
+                                    {data.inputParams
+                                        .filter((inputParam) => !inputParam.hidden)
+                                        .map((inputParam, index) => (
+                                            <NodeInputHandler key={index} inputParam={inputParam} data={data} />
+                                        ))}
+                                    {data.inputParams.find((param) => param.additionalParams) && (
+                                        <div
+                                            style={{
+                                                textAlign: 'center',
+                                                marginTop:
+                                                    data.inputParams.filter((param) => param.additionalParams).length ===
+                                                    data.inputParams.length + data.inputAnchors.length
+                                                        ? 20
+                                                        : 0
+                                            }}
+                                        >
+                                            <Button
+                                                sx={{ borderRadius: 25, width: '90%', mb: 2 }}
+                                                variant='outlined'
+                                                onClick={onDialogClicked}
+                                            >
+                                                Additional Parameters
+                                            </Button>
+                                        </div>
+                                    )}
+                                    <Divider />
+                                    <Box sx={{ background: theme.palette.asyncSelect.main, p: 1 }}>
+                                        <Typography
+                                            sx={{
+                                                fontWeight: 500,
+                                                textAlign: 'center',
+                                                color: '#EC73FF'
+                                            }}
+                                        >
+                                            Output
+                                        </Typography>
+                                    </Box>
+                                    <Divider />
+                                    {data.outputAnchors.map((outputAnchor, index) => (
+                                        <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data} />
+                                    ))}
+                                </>
+                            ) : undefined}
                         </Box>
-                        <Divider />
-                        {data.outputAnchors.map((outputAnchor, index) => (
-                            <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data} />
-                        ))}
-                    </Box>
-                </NodeTooltip>
-            </NodeCardWrapper>
-            <AdditionalParamsDialog
-                show={showDialog}
-                dialogProps={dialogProps}
-                onCancel={() => setShowDialog(false)}
-            ></AdditionalParamsDialog>
-            <NodeInfoDialog show={showInfoDialog} dialogProps={infoDialogProps} onCancel={() => setShowInfoDialog(false)}></NodeInfoDialog>
+                    </NodeTooltip>
+                </NodeCardWrapper>
+                <AdditionalParamsDialog
+                    show={showDialog}
+                    dialogProps={dialogProps}
+                    onCancel={() => setShowDialog(false)}
+                ></AdditionalParamsDialog>
+                <NodeInfoDialog
+                    show={showInfoDialog}
+                    dialogProps={infoDialogProps}
+                    onCancel={() => setShowInfoDialog(false)}
+                ></NodeInfoDialog>
+            </>
         </>
     )
 }

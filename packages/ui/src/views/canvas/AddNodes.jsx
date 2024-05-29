@@ -239,55 +239,19 @@ const AddNodes = ({ nodesData, node }) => {
             groupByCategory(nodesData)
             dispatch({ type: SET_COMPONENT_NODES, componentNodes: nodesData })
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nodesData, dispatch])
 
     return (
         <>
-            {/*<StyledFab*/}
-            {/*    sx={{ left: 20, top: 20 }}*/}
-            {/*    ref={anchorRef}*/}
-            {/*    size='small'*/}
-            {/*    color='primary'*/}
-            {/*    aria-label='add'*/}
-            {/*    title='Add Node'*/}
-            {/*    onClick={handleToggle}*/}
-            {/*>*/}
-            {/*    {open ? <IconMinus /> : <IconPlus />}*/}
-            {/*</StyledFab>*/}
-            {/*<Popper*/}
-            {/*    placement='bottom-end'*/}
-            {/*    open={true}*/}
-            {/*    anchorEl={anchorRef.current}*/}
-            {/*    role={undefined}*/}
-            {/*    transition*/}
-            {/*    disablePortal*/}
-            {/*    popperOptions={{*/}
-            {/*        modifiers: [*/}
-            {/*            {*/}
-            {/*                name: 'offset',*/}
-            {/*                options: {*/}
-            {/*                    offset: [-40, 14]*/}
-            {/*                }*/}
-            {/*            }*/}
-            {/*        ]*/}
-            {/*    }}*/}
-            {/*    sx={{ zIndex: 1000 }}*/}
-            {/*>*/}
-            {/*    {({ TransitionProps }) => (*/}
-            {/*        <Transitions in={open} {...TransitionProps}>*/}
             <Paper
                 sx={{
                     zIndex: 1000,
                     width: '350px',
-                    // height: 'calc(100vh - 70px)',
                     borderRight: `2px solid ${theme.palette.divider}`,
                     borderRadius: '0',
                     overflow: 'hidden'
                 }}
             >
-                {/*<ClickAwayListener onClickAway={handleClose}>*/}
                 <MainCard
                     sx={{
                         bgcolor: theme.palette.background.default,
@@ -300,9 +264,6 @@ const AddNodes = ({ nodesData, node }) => {
                     shadow={theme.shadows[16]}
                 >
                     <Box sx={{ p: 2 }}>
-                        {/*<Stack>*/}
-                        {/*    <Typography variant='h4'>Add Nodes</Typography>*/}
-                        {/*</Stack>*/}
                         <Box
                             sx={{
                                 display: 'flex',
@@ -388,44 +349,6 @@ const AddNodes = ({ nodesData, node }) => {
                             />
                         </Box>
 
-                        {/*<OutlinedInput*/}
-                        {/*    sx={{ width: '100%', pr: 2, pl: 2, my: 2 }}*/}
-                        {/*    id='input-search-node'*/}
-                        {/*    value={searchValue}*/}
-                        {/*    onChange={(e) => filterSearch(e.target.value)}*/}
-                        {/*    placeholder='Search nodes'*/}
-                        {/*    startAdornment={*/}
-                        {/*        <InputAdornment position='start'>*/}
-                        {/*            <IconSearch stroke={1.5} size='1rem' color={theme.palette.grey[500]} />*/}
-                        {/*        </InputAdornment>*/}
-                        {/*    }*/}
-                        {/*    endAdornment={*/}
-                        {/*        <InputAdornment*/}
-                        {/*            position='end'*/}
-                        {/*            sx={{*/}
-                        {/*                cursor: 'pointer',*/}
-                        {/*                color: theme.palette.grey[500],*/}
-                        {/*                '&:hover': {*/}
-                        {/*                    color: theme.palette.grey[900]*/}
-                        {/*                }*/}
-                        {/*            }}*/}
-                        {/*            title='Clear Search'*/}
-                        {/*        >*/}
-                        {/*            <IconX*/}
-                        {/*                stroke={1.5}*/}
-                        {/*                size='1rem'*/}
-                        {/*                onClick={() => filterSearch('')}*/}
-                        {/*                style={{*/}
-                        {/*                    cursor: 'pointer'*/}
-                        {/*                }}*/}
-                        {/*            />*/}
-                        {/*        </InputAdornment>*/}
-                        {/*    }*/}
-                        {/*    aria-describedby='search-helper-text'*/}
-                        {/*    inputProps={{*/}
-                        {/*        'aria-label': 'weight'*/}
-                        {/*    }}*/}
-                        {/*/>*/}
                         <Tabs
                             sx={{ position: 'relative', minHeight: '50px', height: '50px' }}
                             variant='fullWidth'
@@ -607,7 +530,6 @@ const AddNodes = ({ nodesData, node }) => {
                                                                                     width: 50,
                                                                                     height: 50,
                                                                                     borderRadius: '20%',
-                                                                                    // backgroundColor: theme.palette.background.default
                                                                                     backgroundColor: customization.isDarkMode
                                                                                         ? '#f0f0f0'
                                                                                         : '#f0f0f0'
@@ -648,11 +570,7 @@ const AddNodes = ({ nodesData, node }) => {
                         </Box>
                     </PerfectScrollbar>
                 </MainCard>
-                {/*</ClickAwayListener>*/}
             </Paper>
-            {/*</Transitions>*/}
-            {/*    )}*/}
-            {/*</Popper>*/}
         </>
     )
 }

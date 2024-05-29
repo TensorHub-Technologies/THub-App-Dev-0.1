@@ -212,7 +212,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 </ButtonBase>
             </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2, border: '2px solid red' }}>
                 <img src={Logo} alt='THub_Logo' width={130} />
             </Box>
             <Box>

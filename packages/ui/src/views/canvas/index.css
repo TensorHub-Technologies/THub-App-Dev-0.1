@@ -39,3 +39,35 @@
     height: 100%;
     background: linear-gradient(to left, #e22a90, #3c5ba4);
 }
+
+#minmax-parent {
+    padding: 2px;
+    margin-right: 0.5px;
+}
+.minmax-btn {
+    color: transparent;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+#MinimizeIcon {
+    background-color: transparent;
+    font-size: 22px;
+}
+
+#MinimizeIcon:hover {
+    fill: #e22a90;
+}
+
+.minmax-btn #ExpandIcon {
+    width: 20px;
+    color: white;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.minmax-btn #ExpandIcon:hover {
+    color: #e22a90;
+}
