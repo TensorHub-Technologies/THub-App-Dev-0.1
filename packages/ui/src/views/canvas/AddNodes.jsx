@@ -30,7 +30,6 @@ import CachedIcon from '@mui/icons-material/Cached'
 import ThreePIcon from '@mui/icons-material/ThreeP'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
 // import FingerprintIcon from '@mui/icons-material/Fingerprint'
-import { IconAffiliate } from '@tabler/icons'
 import ViewInArIcon from '@mui/icons-material/ViewInAr'
 // import CallMergeIcon from '@mui/icons-material/CallMerge'
 import MemoryIcon from '@mui/icons-material/Memory'
@@ -63,6 +62,8 @@ import { SET_COMPONENT_NODES } from '@/store/actions'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import { SHOW_MENU } from '@/store/constant'
 import './Node.css'
+import { IconChartScatter3d } from '@tabler/icons-react'
+import { IconUsersGroup } from '@tabler/icons-react'
 
 // ==============================|| ADD NODES||============================== //
 function a11yProps(index) {
@@ -78,9 +79,10 @@ const allIconsObj = {
     Chains: <LinkIcon />,
     'Chat Models': <ThreePIcon />,
     'Document Loaders': <DriveFolderUploadIcon />,
-    Embeddings: <IconAffiliate />,
+    Embeddings: <IconChartScatter3d />,
     Memory: <MemoryIcon />,
     LLMs: <ViewInArIcon />,
+    'Multi Agents': <IconUsersGroup />,
     Moderation: <AddModeratorIcon />,
     'Output Parsers': <ExitToAppIcon />,
     Prompts: <IntegrationInstructionsIcon />,

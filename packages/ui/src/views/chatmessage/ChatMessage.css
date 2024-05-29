@@ -16,7 +16,7 @@
 }
 
 .usermessagewaiting-light {
-    padding: 1rem 1.5rem 1rem 1.5rem;
+    /* padding: 1rem 1.5rem 1rem 1.5rem; */
     background: linear-gradient(to left, #ede7f6, #e3f2fd, #ede7f6);
     background-size: 200% 200%;
     background-position: -100% 0;
@@ -26,7 +26,7 @@
 }
 
 .usermessagewaiting-dark {
-    padding: 1rem 1.5rem 1rem 1.5rem;
+    /* padding: 1rem 1.5rem 1rem 1.5rem; */
     color: #ececf1;
     background: linear-gradient(to left, #2e2352, #1d3d60, #2e2352);
     background-size: 200% 200%;
@@ -94,8 +94,8 @@
 
 .boticon,
 .usericon {
-    margin-left: 10px;
-    margin-top: 10px;
+    margin-left: 23px;
+    margin-top: 14px;
     margin-right: 1rem;
     border-radius: 1rem;
 }
