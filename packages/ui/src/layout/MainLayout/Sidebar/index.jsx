@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
-
+import { useSelector, useDispatch } from 'react-redux'
+import { useState } from 'react'
 // material-ui
 import { useTheme } from '@mui/material/styles'
 import { Box, Drawer, useMediaQuery } from '@mui/material'
@@ -11,7 +12,7 @@ import { BrowserView, MobileView } from 'react-device-detect'
 // project imports
 import MenuList from './MenuList'
 import LogoSection from '../LogoSection'
-import { drawerWidth } from '@/store/constant'
+import { SHOW_MENU } from '@/store/constant'
 
 // ==============================|| SIDEBAR DRAWER ||============================== //
 
@@ -19,6 +20,11 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     const theme = useTheme()
     const matchUpMd = useMediaQuery(theme.breakpoints.up('md'))
 
+    const customization = useSelector((state) => state.customization)
+
+    const [isDark, setIsDark] = useState(customization.isDarkMode)
+    const dispatch = useDispatch()
+    console.log(customization.menu_open, 'SHOW_MENU')
     const drawer = (
         <>
             <Box sx={{ display: { xs: 'block', md: 'none' } }}>
@@ -26,18 +32,20 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                     <LogoSection />
                 </Box>
             </Box>
+
             <BrowserView>
                 <PerfectScrollbar
                     component='div'
                     style={{
                         height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
-                        paddingLeft: '36px',
+                        paddingLeft: '5px',
                         paddingRight: '36px'
                     }}
                 >
                     <MenuList />
                 </PerfectScrollbar>
             </BrowserView>
+
             <MobileView>
                 <Box sx={{ px: 2 }}>
                     <MenuList />
@@ -49,7 +57,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     const container = window !== undefined ? () => window.document.body : undefined
 
     return (
-        <Box component='nav' sx={{ flexShrink: { md: 0 }, width: matchUpMd ? drawerWidth : 'auto' }} aria-label='mailbox folders'>
+        <Box component='nav' sx={{ flexShrink: { md: 0 }, width: '100px' }} aria-label='mailbox folders'>
             <Drawer
                 container={container}
                 variant={matchUpMd ? 'persistent' : 'temporary'}
@@ -58,17 +66,21 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                 onClose={drawerToggle}
                 sx={{
                     '& .MuiDrawer-paper': {
-                        width: drawerWidth,
+                        transition: 'width .2s, box-shadow .2s',
+                        width: customization.menu_open ? '300px' : '100px',
+                        // width: drawerWidth,
                         background: theme.palette.background.default,
                         color: theme.palette.text.primary,
                         borderRight: 'none',
                         whiteSpace: 'nowrap',
                         boxSizing: 'border-box',
                         [theme.breakpoints.up('md')]: {
-                            top: '80px'
+                            top: '75px'
                         }
                     }
                 }}
+                onMouseEnter={() => dispatch({ type: SHOW_MENU })}
+                onMouseLeave={() => dispatch({ type: SHOW_MENU })}
                 ModalProps={{ keepMounted: true }}
                 color='inherit'
             >

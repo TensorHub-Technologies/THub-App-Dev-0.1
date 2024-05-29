@@ -1,11 +1,12 @@
 // assets
-import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined' // AI Workspace
-import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined' // Templates
-import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined' //Tools
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined' // Assistants
-import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined' // Credentials
+import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined'
+import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
+import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
+import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined'
 
 const icons = {
     AppsOutlinedIcon,
@@ -14,7 +15,8 @@ const icons = {
     SmartToyOutlinedIcon,
     InventoryOutlinedIcon,
     HttpsOutlinedIcon,
-    VpnKeyOutlinedIcon
+    VpnKeyOutlinedIcon,
+    InsertDriveFileOutlinedIcon
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -32,6 +34,15 @@ const dashboard = {
             icon: icons.AppsOutlinedIcon,
             breadcrumbs: true
         },
+        // {
+        //     id: 'agentflows',
+        //     title: 'Agentflows',
+        //     type: 'item',
+        //     url: '/agentflows',
+        //     icon: icons.IconUsersGroup,
+        //     breadcrumbs: true,
+        //     isBeta: true
+        // },
         {
             id: 'marketplaces',
             title: 'Templates',
@@ -80,6 +91,14 @@ const dashboard = {
             icon: icons.VpnKeyOutlinedIcon,
             breadcrumbs: true
         }
+        // {
+        //     id: 'document-stores',
+        //     title: 'Document Stores',
+        //     type: 'item',
+        //     url: '/document-stores',
+        //     icon: icons.InsertDriveFileOutlinedIcon,
+        //     breadcrumbs: true
+        // }
     ]
 }
 

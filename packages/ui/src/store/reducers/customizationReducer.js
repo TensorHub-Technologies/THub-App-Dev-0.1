@@ -8,9 +8,10 @@ export const initialState = {
     isOpen: [], // for active default menu
     fontFamily: config.fontFamily,
     borderRadius: config.borderRadius,
-    opened: true,
+    opened: false,
     isHorizontal: localStorage.getItem('isHorizontal') === 'true' ? true : false,
-    isDarkMode: localStorage.getItem('isDarkMode') === 'true' ? true : false
+    isDarkMode: localStorage.getItem('isDarkMode') === 'true' ? true : false,
+    menu_open: false
 }
 
 // ==============================|| CUSTOMIZATION REDUCER ||============================== //
@@ -23,6 +24,11 @@ const customizationReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isOpen: [id]
+            }
+        case actionTypes.SHOW_MENU:
+            return {
+                ...state,
+                menu_open: !state.menu_open
             }
         case actionTypes.SET_MENU:
             return {

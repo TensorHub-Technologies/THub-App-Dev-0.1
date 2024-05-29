@@ -29,14 +29,14 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
             stroke={1.5}
             size='1.3rem'
             sx={{
-                width: '36px',
+                width: '30px',
                 height: '36px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginBottom: '8px',
                 background: 'transparent !important',
-                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                color: customization?.isDarkMode ? '#fff' : '#000',
                 borderRadius: '20%',
                 padding: '1px'
             }}
@@ -114,12 +114,15 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
     return (
         <Box
             sx={{
+                transition: 'width .4s, box-shadow .4s',
+
                 borderRadius: `${customization.borderRadius}px`,
                 p: 0.1,
                 mb: 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+
                 backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
                 '&:hover': {
                     background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
@@ -127,13 +130,14 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                         backgroundColor: theme.palette.background.default,
                         color: customization?.isDarkMode ? '#fff' : '#000',
                         '& .icon-hover': {
-                            color: customization?.isDarkMode ? '#fff' : '#000'
+                            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
                         }
                     }
                 },
-                ...(customization.isOpen.findIndex((id) => id === item.id) > -1 && {
-                    background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
-                })
+                ...(customization.isOpen.findIndex((id) => id === item.id) > -1 &&
+                    {
+                        // background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
+                    })
             }}
         >
             <ListItemButton
@@ -163,7 +167,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                         '&:hover': {
                             backgroundColor: theme.palette.background.default,
                             '& .icon-hover': {
-                                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
                             }
                         }
                     }
@@ -173,26 +177,47 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
             >
                 {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
 
-                <Box display='flex' flexDirection='column' alignItems='center'>
-                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 36 : 36 }}>{itemIcon}</ListItemIcon>
-                    <ListItemText
-                        primary={
-                            <Typography
-                                sx={{ fontWeight: 'semibold !important' }}
-                                variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'}
-                                color='inherit'
-                            >
-                                {item.title}
-                            </Typography>
-                        }
-                        secondary={
-                            item.caption && (
-                                <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
-                                    {item.caption}
+                <Box
+                    display='flex'
+                    flexDirection='row'
+                    alignItems='center'
+                    justify-content='space-between'
+                    width='100%'
+                    color={customization?.isDarkMode ? '#fff' : '#000'}
+                >
+                    <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 10 : 36, marginRight: '8px', marginLeft: '3px' }}>
+                        {itemIcon}
+                    </ListItemIcon>
+                    {customization.menu_open && (
+                        <ListItemText
+                            primary={
+                                <Typography
+                                    sx={{
+                                        fontWeight: 'semibold !important',
+
+                                        flex: '1',
+                                        textAlign: 'left'
+                                    }}
+                                    variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'}
+                                    color='inherit'
+                                >
+                                    {item.title}
                                 </Typography>
-                            )
-                        }
-                    />
+                            }
+                            secondary={
+                                item.caption && (
+                                    <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
+                                        {item.caption}
+                                    </Typography>
+                                )
+                            }
+                            sx={{
+                                '&:hover': {
+                                    color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                }
+                            }}
+                        />
+                    )}
                 </Box>
                 {item.chip && (
                     <Chip

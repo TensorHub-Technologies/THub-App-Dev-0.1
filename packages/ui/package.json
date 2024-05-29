@@ -1,6 +1,6 @@
 {
     "name": "thub-ui",
-    "version": "1.6.6",
+    "version": "1.7.2",
     "license": "SEE LICENSE IN LICENSE.md",
     "homepage": "https://flowiseai.com",
     "author": {
@@ -19,13 +19,13 @@
         "@mui/material": "5.15.0",
         "@mui/x-data-grid": "6.8.0",
         "@tabler/icons": "^1.39.1",
+        "@tabler/icons-react": "^3.5.0",
         "@uiw/codemirror-theme-sublime": "^4.21.21",
         "@uiw/codemirror-theme-vscode": "^4.21.21",
         "@uiw/react-codemirror": "^4.21.21",
         "axios": "1.6.2",
         "clsx": "^1.1.1",
         "dotenv": "^16.0.0",
-        "flowise-embed": "latest",
         "flowise-embed-react": "latest",
         "flowise-react-json-view": "*",
         "formik": "^2.2.6",
@@ -55,6 +55,7 @@
         "remark-gfm": "^3.0.1",
         "remark-math": "^5.1.1",
         "socket.io-client": "^4.6.1",
+        "thub-embed": "latest",
         "uuid": "^9.0.1",
         "yup": "^0.32.9"
     },

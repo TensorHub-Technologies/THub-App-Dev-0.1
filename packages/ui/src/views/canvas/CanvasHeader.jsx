@@ -8,10 +8,12 @@ import { useTheme } from '@mui/material/styles'
 import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/material'
 
 // icons
-import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode, IconMenu2 } from '@tabler/icons'
+import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons'
 
 //Logo
-import Logo from '@/assets/images/THub_Logo_Icon.png'
+// import logo from '@/assets/images/THub_logo_dark.png'
+import logo from '@/assets/images/THub_Logo_resize.png'
+import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 
 // project imports
 import Settings from '@/views/settings'
@@ -40,7 +42,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
     const navigate = useNavigate()
     const flowNameRef = useRef()
     const settingsRef = useRef()
-
+    console.log('customization', customization)
     const [isEditingFlowName, setEditingFlowName] = useState(null)
     const [flowName, setFlowName] = useState('')
     const [isSettingsOpen, setSettingsOpen] = useState(false)
@@ -74,8 +76,11 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             setChatflowConfigurationDialogOpen(true)
         } else if (setting === 'duplicateChatflow') {
             try {
-                localStorage.setItem('duplicatedFlowData', chatflow.flowData)
-                window.open(`${uiBaseURL}/canvas`, '_blank')
+                let flowData = chatflow.flowData
+                const parsedFlowData = JSON.parse(flowData)
+                flowData = JSON.stringify(parsedFlowData)
+                localStorage.setItem('duplicatedFlowData', flowData)
+                window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_blank')
             } catch (e) {
                 console.error(e)
             }
@@ -187,8 +192,8 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
 
     return (
         <>
-            <Box sx={{ mr: 2 }}>
-                <ButtonBase title='Toggle' sx={{ borderRadius: '20%' }}>
+            {/* <Box sx={{ mr: 2 }}>
+                <ButtonBase title='Toggle' sx={{ borderRadius: '20%' }} onClick={()=>dispatch({ type: SHOW_MENU})}>
                     <Avatar
                         variant='rounded'
                         sx={{
@@ -210,13 +215,37 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                         <IconMenu2 stroke={1.5} size='1.3rem' />
                     </Avatar>
                 </ButtonBase>
-            </Box>
+            </Box> */}
 
-            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2, border: '2px solid red' }}>
-                <img src={Logo} alt='THub_Logo' width={130} />
-            </Box>
+            {/* <img src={ColorfulLogo} alt='THub_Logo' width={30} style={{  marginRight: customization.menu_open ? '190px' : '46px'}} />
+
+            {customization.menu_open ? (
+                <img src={logo} alt='THub_Logo' width={80} height={30} style={{ marginLeft: "6px" ,marginRight:"16px"}} />
+            ) : (
+                ""
+            )} */}
+            {/* <img src={ColorfulLogo} alt='THub_Logo' width={30} />
+
+{customization.menu_open ? (
+    <img src={logo} alt='THub_Logo' width={80} height={30}  />
+) : (
+    ""
+)} */}
+
+            {/* <img src={ColorfulLogo} alt='THub_Logo' width={customization.menu_open ? '40px' : '40px'  }/>
+
+{customization.menu_open ? (
+    <img src={newLogo} alt='THub_Logo' width={40} height={40} 
+    />
+) : (
+    ""
+)} */}
+
+            <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+
+            {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''}
             <Box>
-                <ButtonBase title='Back' sx={{ borderRadius: '20%' }}>
+                <ButtonBase title='Back' sx={{ borderRadius: '20%', marginLeft: customization.menu_open ? '198px' : '37px' }}>
                     <Avatar
                         variant='rounded'
                         sx={{

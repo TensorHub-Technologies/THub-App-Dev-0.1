@@ -2,18 +2,19 @@ import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import { Avatar, Box, ButtonBase, Switch } from '@mui/material'
+import { Box, Switch } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
 // project imports
-import LogoSection from '../LogoSection'
 import ProfileSection from './ProfileSection'
+// import logo from '@/assets/images/THub_logo_dark.png'
+import logo from '@/assets/images/THub_Logo_resize.png'
 
 // assets
-import { IconMenu2 } from '@tabler/icons'
 
 // store
 import { SET_DARKMODE } from '@/store/actions'
@@ -111,7 +112,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     }
                 }}
             >
-                <Box sx={{ mt: 1 }}>
+                {/* <Box sx={{ mt: 1 }}>
                     <ButtonBase sx={{ borderRadius: '20%', overflow: 'hidden' }}>
                         <Avatar
                             variant='rounded'
@@ -136,11 +137,29 @@ const Header = ({ handleLeftDrawerToggle }) => {
                             <IconMenu2 stroke={1.5} size='1.3rem' />
                         </Avatar>
                     </ButtonBase>
-                </Box>
-                <Box sx={{ ml: 2 }}></Box>
-                <Box component='span' sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+                </Box> */}
+                {/* <Box sx={{ ml: 2 }}></Box> */}
+                {/* <Box component='span' sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+                    
                     <LogoSection />
-                </Box>
+                </Box> */}
+                {/* {customization.menu_open ? (
+                    <img src={Logo} alt='THub_Logo' width={110} />
+                ) : (
+                    <img src={ColorfulLogo} alt='THub_Logo' width={30} />
+                )} */}
+
+                {/* <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+
+                {customization.menu_open ? (
+                    <img src={logo} alt='THub_Logo' width={70} height={35} style={{}}/>
+                ) : (
+                    ""
+                )} */}
+
+                <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+
+                {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} /> : ''}
             </Box>
             <Box sx={{ flexGrow: 1 }} />
             <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />
