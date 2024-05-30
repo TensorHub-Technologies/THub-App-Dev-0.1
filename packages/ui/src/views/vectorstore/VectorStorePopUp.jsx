@@ -42,14 +42,24 @@ export const VectorStorePopUp = ({ chatflowid }) => {
         <>
             <StyledFab
                 sx={{
-                    height: '34px',
-                    width: '34px',
+                    height: '32px',
+                    width: '32px',
                     borderRadius: '17%',
-                    left: '86%',
-                    position: 'fixed',
-                    zIndex: '2000',
+                    //     left: '86%',
+                    //     position: 'fixed',
+                    //     zIndex: '2000',
 
-                    top: '2%'
+                    //     top: '2% !important',
+                    // //    minHeight:'0px',
+                    //    marginLeft:'5px !important',
+                    //    marginTop:'8px !important',
+
+                    '&:hover': {
+                        // background: theme.palette.secondary.dark,
+                        background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                        // color: theme.palette.secondary.light
+                        color: '#fff'
+                    }
                 }}
                 ref={anchorRef}
                 size='small'

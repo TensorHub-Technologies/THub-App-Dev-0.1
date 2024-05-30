@@ -385,23 +385,23 @@ const AddNodes = ({ nodesData, node }) => {
                             ))}
                             {customization.menu_open && (
                                 <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        borderRadius: 10,
-                                        background: 'rgb(254,252,191)',
-                                        padding: '1px 6px',
-                                        width: 'max-content',
-                                        position: 'absolute',
-                                        top: 0,
-                                        right: 0,
-                                        fontSize: '0.6rem',
-                                        lineHeight: '1.5',
-                                        fontWeight: 700
-                                    }}
+                                // style={{
+                                //     display: 'flex',
+                                //     flexDirection: 'row',
+                                //     alignItems: 'center',
+                                //     borderRadius: 10,
+                                //     background: 'rgb(254,252,191)',
+                                //     padding: '1px 6px',
+                                //     width: 'max-content',
+                                //     position: 'absolute',
+                                //     top: 0,
+                                //     right: 0,
+                                //     fontSize: '0.6rem',
+                                //     lineHeight: '1.5',
+                                //     fontWeight: 700
+                                // }}
                                 >
-                                    {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>}
+                                    {/* {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>} */}
                                 </div>
                             )}
                         </Tabs>

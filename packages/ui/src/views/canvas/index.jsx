@@ -26,7 +26,7 @@ import CanvasHeader from './CanvasHeader'
 import AddNodes from './AddNodes'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { ChatPopUp } from '@/views/chatmessage/ChatPopUp'
-import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
+// import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
 import { flowContext } from '@/store/context/ReactFlowContext'
 
 // API
@@ -540,7 +540,7 @@ const Canvas = () => {
                                     />
                                     <Background color='#aaa' gap={16} />
 
-                                    {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />}
+                                    {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
                                     <ChatPopUp chatflowid={chatflowId} />
                                 </ReactFlow>
                             </div>

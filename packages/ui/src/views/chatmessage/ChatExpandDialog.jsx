@@ -21,7 +21,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
             aria-describedby='alert-dialog-description'
             sx={{ overflow: 'visible' }}
         >
-            <DialogTitle sx={{ fontSize: '1rem', p: 1.5 }} id='alert-dialog-title'>
+            <DialogTitle sx={{ fontSize: '1rem', p: 1.5, padding: '0px' }} id='alert-dialog-title'>
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {dialogProps.title}
                     <div style={{ flex: 1 }}></div>
@@ -40,7 +40,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                         sx={{
                             position: 'absolute',
                             right: 70,
-                            top: 20,
+                            top: 0,
                             background: 'transparent',
                             boxShadow: '0',
                             color: customization.isDarkMode ? 'white' : 'black'
@@ -55,7 +55,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                         sx={{
                             position: 'absolute',
                             right: 40,
-                            top: 20,
+                            top: 0,
                             background: 'transparent',
                             boxShadow: '0',
                             color: customization.isDarkMode ? 'white' : 'black'
@@ -73,7 +73,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                         sx={{
                             position: 'absolute',
                             right: 10,
-                            top: 20,
+                            top: 0,
                             background: 'transparent',
                             boxShadow: '0',
                             color: customization.isDarkMode ? 'white' : 'black'
