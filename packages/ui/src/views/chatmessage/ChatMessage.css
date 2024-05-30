@@ -150,6 +150,8 @@
 
 .cloud,
 .cloud-dialog {
+    scrollbar-width: thin;
+
     width: 100%;
     height: auto;
     max-height: calc(100% - 54px);

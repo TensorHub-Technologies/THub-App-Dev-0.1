@@ -923,6 +923,9 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                     })}
                 </Box>
             )}
+            <div style={{ marginBottom: '8px' }}>
+                <img src={Logo} alt='AI' width='26' height='26' className='boticon' />
+            </div>
             <div ref={ps} className={`${isDialog ? 'cloud-dialog' : 'cloud'}`}>
                 <div id='messagelist' className={'messagelist'}>
                     {messages &&

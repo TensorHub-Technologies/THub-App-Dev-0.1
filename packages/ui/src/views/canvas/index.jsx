@@ -26,7 +26,7 @@ import CanvasHeader from './CanvasHeader'
 import AddNodes from './AddNodes'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { ChatPopUp } from '@/views/chatmessage/ChatPopUp'
-import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
+// import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
 import { flowContext } from '@/store/context/ReactFlowContext'
 
 // API
@@ -488,11 +488,13 @@ const Canvas = () => {
                 <AppBar
                     enableColorOnDark
                     position='fixed'
+                    background='red'
                     color='inherit'
                     elevation={1}
                     sx={{
+                        zIndex: '-1',
                         bgcolor: theme.palette.background.default,
-                        height: '70px'
+                        height: '80px'
                     }}
                 >
                     <Toolbar>
@@ -538,7 +540,7 @@ const Canvas = () => {
                                     />
                                     <Background color='#aaa' gap={16} />
 
-                                    {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />}
+                                    {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
                                     <ChatPopUp chatflowid={chatflowId} />
                                 </ReactFlow>
                             </div>
