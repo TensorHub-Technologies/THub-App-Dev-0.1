@@ -488,11 +488,13 @@ const Canvas = () => {
                 <AppBar
                     enableColorOnDark
                     position='fixed'
+                    background='red'
                     color='inherit'
                     elevation={1}
                     sx={{
+                        zIndex: '-1',
                         bgcolor: theme.palette.background.default,
-                        height: '70px'
+                        height: '80px'
                     }}
                 >
                     <Toolbar>

@@ -475,8 +475,7 @@ const AddNodes = ({ nodesData, node }) => {
                                                     style={{
                                                         display: 'flex',
                                                         flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        position: 'fixed'
+                                                        alignItems: 'center'
                                                     }}
                                                 >
                                                     {getIconWithClass(
