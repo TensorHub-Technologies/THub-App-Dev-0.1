@@ -51,76 +51,51 @@ const CanvasNode = ({ data }) => {
         setOpen(!open)
     }
 
+    const borderColorMap = {
+        Agents: '#0066CC',
+        Chains: '#009966',
+        'Chat Models': '#CC0033',
+        'Document Loaders': '#9933CC',
+        Embeddings: '#FFCC00',
+        LLMs: '#666666',
+        Memory: '#999999',
+        Prompts: '#33CCCC',
+        Retrievers: '#FF9933',
+        'Text Splitters': '#FF66B2',
+        Tools: '#33CC99',
+        'Vector Stores': '#990033',
+        Cache: '#c65102',
+        'Output Parsers': '#702963',
+        Moderation: '#702963',
+        Utilities: '#AE9C2C'
+    }
+
+    const headerColorMap = {
+        Agents: '#66B2FF',
+        Chains: '#66FFB2',
+        'Chat Models': '#FF6688',
+        'Document Loaders': '#CC99FF',
+        Embeddings: '#FFFF99',
+        LLMs: '#dddddd',
+        Memory: '#D9D9D9',
+        Prompts: '#99E6E6',
+        Retrievers: '#FFCC99',
+        'Text Splitters': '#FF99CC',
+        Tools: '#99FFCC',
+        'Vector Stores': '#FF99B2',
+        Cache: '#FFA500',
+        'Output Parsers': '#BF40BF',
+        Moderation: '#C63287',
+        Utilities: '#83831F'
+    }
+
     const NodeBorder = () => {
-        if (data.category === 'Agents') {
-            return '#0066CC'
-        } else if (data.category === 'Chains') {
-            return '#009966'
-        } else if (data.category === 'Chat Models') {
-            return '#CC0033'
-        } else if (data.category === 'Document Loaders') {
-            return '#9933CC'
-        } else if (data.category === 'Embeddings') {
-            return '#FFCC00'
-        } else if (data.category === 'LLMs') {
-            return '#333333'
-        } else if (data.category === 'Memory') {
-            return '#999999'
-        } else if (data.category === 'Prompts') {
-            return '#33CCCC'
-        } else if (data.category === 'Retrievers') {
-            return '#FF9933'
-        } else if (data.category === 'Text Splitters') {
-            return '#FF66B2'
-        } else if (data.category === 'Tools') {
-            return '#33CC99'
-        } else if (data.category === 'Vector Stores') {
-            return '#990033'
-        } else if (data.category === 'Cache') {
-            return '#c65102'
-        } else if (data.category === 'Output Parsers') {
-            return '#702963'
-        } else if (data.category === 'Moderation') {
-            return '#702963'
-        }
-        return '#000000'
+        return borderColorMap[data.category] || '#FFD8DB'
     }
 
     const NodeHeader = () => {
-        if (data.category === 'Agents') {
-            return '#66B2FF'
-        } else if (data.category === 'Chains') {
-            return '#66FFB2'
-        } else if (data.category === 'Chat Models') {
-            return '#FF6688'
-        } else if (data.category === 'Document Loaders') {
-            return '#CC99FF'
-        } else if (data.category === 'Embeddings') {
-            return '#FFFF99'
-        } else if (data.category === 'LLMs') {
-            return '#B2B2B2'
-        } else if (data.category === 'Memory') {
-            return '#D9D9D9'
-        } else if (data.category === 'Prompts') {
-            return '#99E6E6'
-        } else if (data.category === 'Retrievers') {
-            return '#FFCC99'
-        } else if (data.category === 'Text Splitters') {
-            return '#FF99CC'
-        } else if (data.category === 'Tools') {
-            return '#99FFCC'
-        } else if (data.category === 'Vector Stores') {
-            return '#FF99B2'
-        } else if (data.category === 'Cache') {
-            return '#FFA500'
-        } else if (data.category === 'Output Parsers') {
-            return '#BF40BF'
-        } else if (data.category === 'Moderation') {
-            return '#C63287'
-        }
-        return '#000000'
+        return headerColorMap[data.category] || '#FFD8DB'
     }
-
     const nodeOutdatedMessage = (oldVersion, newVersion) => `Node version ${oldVersion} outdated\nUpdate to latest version ${newVersion}`
 
     const nodeVersionEmptyMessage = (newVersion) => `Node outdated\nUpdate to latest version ${newVersion}`
