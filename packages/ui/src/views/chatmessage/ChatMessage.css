@@ -206,3 +206,7 @@
     height: 100%;
     border-radius: 0;
 }
+.minimized {
+    height: 100px; /* Adjust as needed */
+    overflow: hidden;
+}
