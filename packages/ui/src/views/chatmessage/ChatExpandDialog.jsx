@@ -8,7 +8,7 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 import { IconX, IconEraser, IconMinus } from '@tabler/icons'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 
-const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setPreviews, open, setShowExpandDialog }) => {
+const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setPreviews, open, setOpen, setShowExpandDialog }) => {
     const portalElement = document.getElementById('portal')
     const customization = useSelector((state) => state.customization)
     const component = show ? (
@@ -39,26 +39,31 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                     <StyledFab
                         sx={{
                             position: 'absolute',
-                            right: 70,
+                            right: 100,
                             top: 0,
                             background: 'transparent',
                             boxShadow: '0',
-                            color: customization.isDarkMode ? 'white' : 'black'
+                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                         }}
                         variant='outlined'
                         title='Minimise'
-                        onClick={() => setShowExpandDialog(false)}
+                        onClick={() => {
+                            {
+                                setShowExpandDialog(false)
+                                setOpen(true)
+                            }
+                        }}
                     >
                         <IconMinus />
                     </StyledFab>
                     <StyledFab
                         sx={{
                             position: 'absolute',
-                            right: 40,
+                            right: 60,
                             top: 0,
                             background: 'transparent',
                             boxShadow: '0',
-                            color: customization.isDarkMode ? 'white' : 'black'
+                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                         }}
                         variant='outlined'
                         title='Erase'
@@ -72,11 +77,11 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                     <StyledFab
                         sx={{
                             position: 'absolute',
-                            right: 10,
+                            right: 20,
                             top: 0,
                             background: 'transparent',
                             boxShadow: '0',
-                            color: customization.isDarkMode ? 'white' : 'black'
+                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                         }}
                         variant='outlined'
                         title='Close'

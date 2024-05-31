@@ -492,7 +492,6 @@ const Canvas = () => {
                     color='inherit'
                     elevation={1}
                     sx={{
-                        zIndex: '-1',
                         bgcolor: theme.palette.background.default,
                         height: '80px'
                     }}

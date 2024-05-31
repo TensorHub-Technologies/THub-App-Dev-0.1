@@ -139,10 +139,10 @@ export const ChatPopUp = ({ chatflowid }) => {
                     position: 'absolute',
                     right: 20,
                     top: 20,
-                    background: 'transparent',
+                    // background: 'transparent',
                     boxShadow: '0',
                     color: customization.isDarkMode ? 'white' : 'black',
-                    backgroundColor: customization?.isDarkMode ? '#23262C' : '#FFF'
+                    backgroundColor: open ? (customization?.isDarkMode ? '#23262c' : '#fff') : ''
                 }}
                 ref={anchorRef}
                 size='small'
@@ -151,7 +151,16 @@ export const ChatPopUp = ({ chatflowid }) => {
                 title='Chat'
                 onClick={handleToggle}
             >
-                {open ? <IconX /> : <IconMessage />}
+                {open ? (
+                    <IconX
+                        style={{
+                            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4',
+                            backgroundColor: customization.isDarkMode ? '' : ''
+                        }}
+                    />
+                ) : (
+                    <IconMessage style={{ color: customization?.isDarkMode ? '#fff' : '#fff' }} />
+                )}
             </StyledFab>
             {open && (
                 <StyledFab
@@ -161,7 +170,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                         top: 20,
                         background: 'transparent',
                         boxShadow: '0',
-                        color: customization.isDarkMode ? 'white' : 'black'
+                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                     }}
                     onClick={clearChat}
                     size='small'
@@ -180,7 +189,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                         top: 20,
                         background: 'transparent',
                         boxShadow: '0',
-                        color: customization.isDarkMode ? 'white' : 'black'
+                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                     }}
                     onClick={expandChat}
                     size='small'
@@ -237,6 +246,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                 previews={previews}
                 setPreviews={setPreviews}
                 open={open}
+                setOpen={setOpen}
                 setShowExpandDialog={setShowExpandDialog}
             ></ChatExpandDialog>
         </>
