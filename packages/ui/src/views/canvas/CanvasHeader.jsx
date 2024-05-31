@@ -10,6 +10,8 @@ import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/mate
 // icons
 import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons'
 
+import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
+
 //Logo
 // import logo from '@/assets/images/THub_logo_dark.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
@@ -29,7 +31,7 @@ import chatflowsApi from '@/api/chatflows'
 import useApi from '@/hooks/useApi'
 
 // utils
-import { generateExportFlowData } from '@/utils/genericHelper'
+import { generateExportFlowData, getUpsertDetails } from '@/utils/genericHelper'
 import { uiBaseURL } from '@/store/constant'
 import { SET_CHATFLOW } from '@/store/actions'
 
@@ -56,6 +58,11 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
 
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const canvas = useSelector((state) => state.canvas)
+    const [canvasDataStore, setCanvasDataStore] = useState(canvas)
+    const [isUpsertButtonEnabled, setIsUpsertButtonEnabled] = useState(false)
+
+    const URLpath = document.location.pathname.toString().split('/')
+    const chatflowId = URLpath[URLpath.length - 1] === 'canvas' ? '' : URLpath[URLpath.length - 1]
 
     const onSettingsItemClick = (setting) => {
         setSettingsOpen(false)
@@ -76,8 +83,11 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             setChatflowConfigurationDialogOpen(true)
         } else if (setting === 'duplicateChatflow') {
             try {
-                localStorage.setItem('duplicatedFlowData', chatflow.flowData)
-                window.open(`${uiBaseURL}/canvas`, '_blank')
+                let flowData = chatflow.flowData
+                const parsedFlowData = JSON.parse(flowData)
+                flowData = JSON.stringify(parsedFlowData)
+                localStorage.setItem('duplicatedFlowData', flowData)
+                window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_blank')
             } catch (e) {
                 console.error(e)
             }
@@ -112,6 +122,23 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             updateChatflowApi.request(chatflow.id, updateBody)
         }
     }
+
+    const checkIfUpsertAvailable = (nodes, edges) => {
+        const upsertNodeDetails = getUpsertDetails(nodes, edges)
+        if (upsertNodeDetails.length) setIsUpsertButtonEnabled(true)
+        else setIsUpsertButtonEnabled(false)
+    }
+
+    useEffect(() => {
+        setCanvasDataStore(canvas)
+    }, [canvas])
+
+    useEffect(() => {
+        if (canvasDataStore.chatflow) {
+            const flowData = canvasDataStore.chatflow.flowData ? JSON.parse(canvasDataStore.chatflow.flowData) : []
+            checkIfUpsertAvailable(flowData.nodes || [], flowData.edges || [])
+        }
+    }, [canvasDataStore.chatflow])
 
     const onAPIDialogClick = () => {
         // If file type is file, isFormDataRequired = true
@@ -372,6 +399,9 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 )}
             </Box>
             <Box>
+                <ButtonBase title='Vector Database' sx={{ borderRadius: '50%', mr: 2 }}>
+                    {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />}
+                </ButtonBase>
                 {chatflow?.id && (
                     <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2 }}>
                         <Avatar

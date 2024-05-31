@@ -30,7 +30,6 @@ import CachedIcon from '@mui/icons-material/Cached'
 import ThreePIcon from '@mui/icons-material/ThreeP'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
 // import FingerprintIcon from '@mui/icons-material/Fingerprint'
-import { IconAffiliate } from '@tabler/icons'
 import ViewInArIcon from '@mui/icons-material/ViewInAr'
 // import CallMergeIcon from '@mui/icons-material/CallMerge'
 import MemoryIcon from '@mui/icons-material/Memory'
@@ -63,6 +62,8 @@ import { SET_COMPONENT_NODES } from '@/store/actions'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import { SHOW_MENU } from '@/store/constant'
 import './Node.css'
+import { IconChartScatter3d } from '@tabler/icons-react'
+import { IconUsersGroup } from '@tabler/icons-react'
 
 // ==============================|| ADD NODES||============================== //
 function a11yProps(index) {
@@ -78,9 +79,10 @@ const allIconsObj = {
     Chains: <LinkIcon />,
     'Chat Models': <ThreePIcon />,
     'Document Loaders': <DriveFolderUploadIcon />,
-    Embeddings: <IconAffiliate />,
+    Embeddings: <IconChartScatter3d />,
     Memory: <MemoryIcon />,
     LLMs: <ViewInArIcon />,
+    'Multi Agents': <IconUsersGroup />,
     Moderation: <AddModeratorIcon />,
     'Output Parsers': <ExitToAppIcon />,
     Prompts: <IntegrationInstructionsIcon />,
@@ -214,8 +216,6 @@ const AddNodes = ({ nodesData, node }) => {
             groupByCategory(nodesData)
             dispatch({ type: SET_COMPONENT_NODES, componentNodes: nodesData })
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nodesData, dispatch])
 
     console.log(customization.menu_open, 'SHOW_MENU')
@@ -385,23 +385,23 @@ const AddNodes = ({ nodesData, node }) => {
                             ))}
                             {customization.menu_open && (
                                 <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        borderRadius: 10,
-                                        background: 'rgb(254,252,191)',
-                                        padding: '1px 6px',
-                                        width: 'max-content',
-                                        position: 'absolute',
-                                        top: 0,
-                                        right: 0,
-                                        fontSize: '0.6rem',
-                                        lineHeight: '1.5',
-                                        fontWeight: 700
-                                    }}
+                                // style={{
+                                //     display: 'flex',
+                                //     flexDirection: 'row',
+                                //     alignItems: 'center',
+                                //     borderRadius: 10,
+                                //     background: 'rgb(254,252,191)',
+                                //     padding: '1px 6px',
+                                //     width: 'max-content',
+                                //     position: 'absolute',
+                                //     top: 0,
+                                //     right: 0,
+                                //     fontSize: '0.6rem',
+                                //     lineHeight: '1.5',
+                                //     fontWeight: 700
+                                // }}
                                 >
-                                    {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>}
+                                    {/* {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>} */}
                                 </div>
                             )}
                         </Tabs>
@@ -475,8 +475,7 @@ const AddNodes = ({ nodesData, node }) => {
                                                     style={{
                                                         display: 'flex',
                                                         flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        position: 'fixed'
+                                                        alignItems: 'center'
                                                     }}
                                                 >
                                                     {getIconWithClass(
@@ -550,7 +549,6 @@ const AddNodes = ({ nodesData, node }) => {
                                                                                     width: 50,
                                                                                     height: 50,
                                                                                     borderRadius: '20%',
-                                                                                    // backgroundColor: theme.palette.background.default
                                                                                     backgroundColor: customization.isDarkMode
                                                                                         ? '#f0f0f0'
                                                                                         : '#f0f0f0'

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, Fragment } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 import socketIOClient from 'socket.io-client'
 import { cloneDeep } from 'lodash'
@@ -8,6 +8,7 @@ import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid'
 
 import {
     Box,
@@ -20,13 +21,28 @@ import {
     IconButton,
     InputAdornment,
     OutlinedInput,
-    Typography
+    Typography,
+    CardContent,
+    Stack
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { IconCircleDot, IconDownload, IconSend, IconMicrophone, IconPhotoPlus, IconTrash, IconX, IconTool } from '@tabler/icons'
+import {
+    IconCircleDot,
+    IconDownload,
+    IconSend,
+    IconMicrophone,
+    IconPhotoPlus,
+    IconTrash,
+    IconX,
+    IconTool,
+    IconSquareFilled
+} from '@tabler/icons-react'
 import Logo from '@/assets/images/THub_icon_colorful_logo.png'
 import PersonIcon from '@mui/icons-material/Person'
+import multiagent_supervisorPNG from '@/assets/images/multiagent_supervisor.png'
+import multiagent_workerPNG from '@/assets/images/multiagent_worker.png'
 import audioUploadSVG from '@/assets/images/wave-sound.jpg'
+import nextAgentGIF from '@/assets/images/next-agent.gif'
 
 // project import
 import { CodeBlock } from '@/ui-component/markdown/CodeBlock'
@@ -34,12 +50,12 @@ import { MemoizedReactMarkdown } from '@/ui-component/markdown/MemoizedReactMark
 import SourceDocDialog from '@/ui-component/dialog/SourceDocDialog'
 import ChatFeedbackContentDialog from '@/ui-component/dialog/ChatFeedbackContentDialog'
 import StarterPromptsCard from '@/ui-component/cards/StarterPromptsCard'
-import { cancelAudioRecording, startAudioRecording, stopAudioRecording } from './audio-recording'
 import { ImageButton, ImageSrc, ImageBackdrop, ImageMarked } from '@/ui-component/button/ImageButton'
 import CopyToClipboardButton from '@/ui-component/button/CopyToClipboardButton'
 import ThumbsUpButton from '@/ui-component/button/ThumbsUpButton'
 import ThumbsDownButton from '@/ui-component/button/ThumbsDownButton'
 import './ChatMessage.css'
+import { cancelAudioRecording, startAudioRecording, stopAudioRecording } from './audio-recording'
 import './audio-recording.css'
 
 // api
@@ -47,15 +63,18 @@ import chatmessageApi from '@/api/chatmessage'
 import chatflowsApi from '@/api/chatflows'
 import predictionApi from '@/api/prediction'
 import chatmessagefeedbackApi from '@/api/chatmessagefeedback'
+import leadsApi from '@/api/lead'
 
 // Hooks
 import useApi from '@/hooks/useApi'
 
 // Const
 import { baseURL, maxScroll } from '@/store/constant'
+import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 
 // Utils
-import { isValidURL, removeDuplicateURL, setLocalStorageChatflow } from '@/utils/genericHelper'
+import { isValidURL, removeDuplicateURL, setLocalStorageChatflow, getLocalStorageChatflow } from '@/utils/genericHelper'
+import useNotifier from '@/utils/useNotifier'
 
 const messageImageStyle = {
     width: '128px',
@@ -63,11 +82,17 @@ const messageImageStyle = {
     objectFit: 'cover'
 }
 
-export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews }) => {
+export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
     const ps = useRef()
+
+    const dispatch = useDispatch()
+
+    useNotifier()
+    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
     const [userInput, setUserInput] = useState('')
     const [loading, setLoading] = useState(false)
@@ -77,13 +102,13 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
             type: 'apiMessage'
         }
     ])
-
     const [socketIOClientId, setSocketIOClientId] = useState('')
     const [isChatFlowAvailableToStream, setIsChatFlowAvailableToStream] = useState(false)
     const [isChatFlowAvailableForSpeech, setIsChatFlowAvailableForSpeech] = useState(false)
     const [sourceDialogOpen, setSourceDialogOpen] = useState(false)
     const [sourceDialogProps, setSourceDialogProps] = useState({})
-    const [chatId, setChatId] = useState(undefined)
+    const [chatId, setChatId] = useState(uuidv4())
+    const [isMessageStopping, setIsMessageStopping] = useState(false)
 
     const inputRef = useRef(null)
     const getChatmessageApi = useApi(chatmessageApi.getInternalChatmessageFromChatflow)
@@ -92,9 +117,19 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
     const getChatflowConfig = useApi(chatflowsApi.getSpecificChatflow)
 
     const [starterPrompts, setStarterPrompts] = useState([])
+
+    // feedback
     const [chatFeedbackStatus, setChatFeedbackStatus] = useState(false)
     const [feedbackId, setFeedbackId] = useState('')
     const [showFeedbackContentDialog, setShowFeedbackContentDialog] = useState(false)
+
+    // leads
+    const [leadsConfig, setLeadsConfig] = useState(null)
+    const [leadName, setLeadName] = useState('')
+    const [leadEmail, setLeadEmail] = useState('')
+    const [leadPhone, setLeadPhone] = useState('')
+    const [isLeadSaving, setIsLeadSaving] = useState(false)
+    const [isLeadSaved, setIsLeadSaved] = useState(false)
 
     // drag & drop and file input
     const fileUploadRef = useRef(null)
@@ -111,7 +146,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
         /**
          * {isImageUploadAllowed: boolean, imgUploadSizeAndTypes: Array<{ fileTypes: string[], maxUploadSize: number }>}
          */
-        let acceptFile = true
+        let acceptFile = false
         if (constraints.isImageUploadAllowed) {
             const fileType = file.type
             const sizeInMB = file.size / 1024 / 1024
@@ -277,6 +312,28 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
         }
     }
 
+    const handleAbort = async () => {
+        setIsMessageStopping(true)
+        try {
+            await chatmessageApi.abortMessage(chatflowid, chatId)
+        } catch (error) {
+            setIsMessageStopping(false)
+            enqueueSnackbar({
+                message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+        }
+    }
+
     const handleDeletePreview = (itemToDelete) => {
         if (itemToDelete.type === 'file') {
             URL.revokeObjectURL(itemToDelete.preview) // Clean up for file
@@ -344,6 +401,56 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
             if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
             allMessages[allMessages.length - 1].sourceDocuments = sourceDocuments
             return allMessages
+        })
+    }
+
+    const updateLastMessageAgentReasoning = (agentReasoning) => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            allMessages[allMessages.length - 1].agentReasoning = JSON.parse(agentReasoning)
+            return allMessages
+        })
+    }
+
+    const updateLastMessageNextAgent = (nextAgent) => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            const lastAgentReasoning = allMessages[allMessages.length - 1].agentReasoning
+            if (lastAgentReasoning && lastAgentReasoning.length > 0) {
+                lastAgentReasoning.push({ nextAgent })
+            }
+            allMessages[allMessages.length - 1].agentReasoning = lastAgentReasoning
+            return allMessages
+        })
+    }
+
+    const abortMessage = () => {
+        setIsMessageStopping(false)
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            const lastAgentReasoning = allMessages[allMessages.length - 1].agentReasoning
+            if (lastAgentReasoning && lastAgentReasoning.length > 0) {
+                allMessages[allMessages.length - 1].agentReasoning = lastAgentReasoning.filter((reasoning) => !reasoning.nextAgent)
+            }
+            return allMessages
+        })
+        setTimeout(() => {
+            inputRef.current?.focus()
+        }, 100)
+        enqueueSnackbar({
+            message: 'Message stopped',
+            options: {
+                key: new Date().getTime() + Math.random(),
+                variant: 'success',
+                action: (key) => (
+                    <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                        <IconX />
+                    </Button>
+                )
+            }
         })
     }
 
@@ -415,6 +522,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                 chatId
             }
             if (urls && urls.length > 0) params.uploads = urls
+            if (leadEmail) params.leadEmail = leadEmail
             if (isChatFlowAvailableToStream) params.socketIOClientId = socketIOClientId
 
             const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
@@ -430,7 +538,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                     return allMessages
                 })
 
-                if (!chatId) setChatId(data.chatId)
+                setChatId(data.chatId)
 
                 if (input === '' && data.question) {
                     // the response contains the question even if it was in an audio format
@@ -457,6 +565,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                             sourceDocuments: data?.sourceDocuments,
                             usedTools: data?.usedTools,
                             fileAnnotations: data?.fileAnnotations,
+                            agentReasoning: data?.agentReasoning,
                             type: 'apiMessage',
                             feedback: null
                         }
@@ -524,6 +633,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                 if (message.sourceDocuments) obj.sourceDocuments = JSON.parse(message.sourceDocuments)
                 if (message.usedTools) obj.usedTools = JSON.parse(message.usedTools)
                 if (message.fileAnnotations) obj.fileAnnotations = JSON.parse(message.fileAnnotations)
+                if (message.agentReasoning) obj.agentReasoning = JSON.parse(message.agentReasoning)
                 if (message.fileUploads) {
                     obj.fileUploads = JSON.parse(message.fileUploads)
                     obj.fileUploads.forEach((file) => {
@@ -574,6 +684,20 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                 if (config.chatFeedback) {
                     setChatFeedbackStatus(config.chatFeedback.status)
                 }
+
+                if (config.leads) {
+                    setLeadsConfig(config.leads)
+                    if (config.leads.status && !getLocalStorageChatflow(chatflowid).lead) {
+                        setMessages((prevMessages) => {
+                            const leadCaptureMessage = {
+                                message: '',
+                                type: 'leadCaptureMessage'
+                            }
+
+                            return [...prevMessages, leadCaptureMessage]
+                        })
+                    }
+                }
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -606,6 +730,13 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
 
             setIsRecording(false)
 
+            // leads
+            const savedLead = getLocalStorageChatflow(chatflowid)?.lead
+            if (savedLead) {
+                setIsLeadSaved(!!savedLead)
+                setLeadEmail(savedLead.email)
+            }
+
             // SocketIO
             socket = socketIOClient(baseURL)
 
@@ -624,6 +755,12 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
             socket.on('fileAnnotations', updateLastMessageFileAnnotations)
 
             socket.on('token', updateLastMessage)
+
+            socket.on('agentReasoning', updateLastMessageAgentReasoning)
+
+            socket.on('nextAgent', updateLastMessageNextAgent)
+
+            socket.on('abort', abortMessage)
         }
 
         return () => {
@@ -631,7 +768,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
             setLoading(false)
             setMessages([
                 {
-                    message: '',
+                    message: 'Hi there! How can I help?',
                     type: 'apiMessage'
                 }
             ])
@@ -732,6 +869,36 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
         }
     }
 
+    const handleLeadCaptureSubmit = async (event) => {
+        if (event) event.preventDefault()
+        setIsLeadSaving(true)
+
+        const body = {
+            chatflowid,
+            chatId,
+            name: leadName,
+            email: leadEmail,
+            phone: leadPhone
+        }
+
+        const result = await leadsApi.addLead(body)
+        if (result.data) {
+            const data = result.data
+            setChatId(data.chatId)
+            setLocalStorageChatflow(chatflowid, data.chatId, { lead: { name: leadName, email: leadEmail, phone: leadPhone } })
+            setIsLeadSaved(true)
+            setLeadEmail(leadEmail)
+            setMessages((prevMessages) => {
+                let allMessages = [...cloneDeep(prevMessages)]
+                if (allMessages[allMessages.length - 1].type !== 'leadCaptureMessage') return allMessages
+                allMessages[allMessages.length - 1].message =
+                    leadsConfig.successMessage || 'Thank you for submitting your contact information.'
+                return allMessages
+            })
+        }
+        setIsLeadSaving(false)
+    }
+
     return (
         <div onDragEnter={handleDrag}>
             {isDragActive && (
@@ -756,212 +923,497 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                     })}
                 </Box>
             )}
+            <div style={{ marginBottom: '8px' }}>
+                <img src={Logo} alt='AI' width='26' height='26' className='boticon' />
+            </div>
             <div ref={ps} className={`${isDialog ? 'cloud-dialog' : 'cloud'}`}>
                 <div id='messagelist' className={'messagelist'}>
                     {messages &&
                         messages.map((message, index) => {
                             return (
                                 // The latest message sent by the user will be animated while waiting for a response
-                                <>
-                                    <Box
-                                        sx={{
-                                            background: message.type === 'apiMessage' ? theme.palette.asyncSelect.main : ''
+                                <Box
+                                    sx={{
+                                        background:
+                                            message.type === 'apiMessage' || message.type === 'leadCaptureMessage'
+                                                ? theme.palette.asyncSelect.main
+                                                : ''
+                                    }}
+                                    key={index}
+                                    style={{ display: 'flex' }}
+                                    className={
+                                        message.type === 'userMessage' && loading && index === messages.length - 1
+                                            ? customization.isDarkMode
+                                                ? 'usermessagewaiting-dark'
+                                                : 'usermessagewaiting-light'
+                                            : message.type === 'usermessagewaiting'
+                                            ? 'apimessage'
+                                            : 'usermessage'
+                                    }
+                                >
+                                    {/* Display the correct icon depending on the message type */}
+                                    {message.type === 'apiMessage' ? (
+                                        <img src={Logo} alt='AI' width='26' height='26' className='boticon' />
+                                    ) : (
+                                        <PersonIcon width='30' height='30' className='usericon' style={{ color: '#A93A96' }} />
+                                    )}
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            width: '100%'
                                         }}
-                                        key={index}
-                                        style={{ display: 'flex' }}
-                                        className={
-                                            message.type === 'userMessage' && loading && index === messages.length - 1
-                                                ? customization.isDarkMode
-                                                    ? 'usermessagewaiting-dark'
-                                                    : 'usermessagewaiting-light'
-                                                : message.type === 'usermessagewaiting'
-                                                ? 'apimessage'
-                                                : 'usermessage'
-                                        }
                                     >
-                                        {/* Display the correct icon depending on the message type */}
-                                        {message.type === 'apiMessage' ? (
-                                            <img src={Logo} alt='AI' width='30' height='30' className='boticon' />
-                                        ) : (
-                                            <PersonIcon width='30' height='30' className='usericon' style={{ color: '#A93A96' }} />
+                                        {message.usedTools && (
+                                            <div
+                                                style={{
+                                                    display: 'block',
+                                                    flexDirection: 'row',
+                                                    width: '100%'
+                                                }}
+                                            >
+                                                {message.usedTools.map((tool, index) => {
+                                                    return tool ? (
+                                                        <Chip
+                                                            size='small'
+                                                            key={index}
+                                                            label={tool.tool}
+                                                            component='a'
+                                                            sx={{ mr: 1, mt: 1 }}
+                                                            variant='outlined'
+                                                            clickable
+                                                            icon={<IconTool size={15} />}
+                                                            onClick={() => onSourceDialogClick(tool, 'Used Tools')}
+                                                        />
+                                                    ) : null
+                                                })}
+                                            </div>
                                         )}
-                                        <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                                            {message.usedTools && (
-                                                <>
-                                                    <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
-                                                        {message.usedTools.map((tool, index) => {
-                                                            return (
-                                                                <Chip
-                                                                    size='small'
+                                        {message.fileUploads && message.fileUploads.length > 0 && (
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexWrap: 'wrap',
+                                                    flexDirection: 'column',
+                                                    width: '100%',
+                                                    gap: '8px'
+                                                }}
+                                            >
+                                                {message.fileUploads.map((item, index) => {
+                                                    return (
+                                                        <>
+                                                            {item?.mime?.startsWith('image/') ? (
+                                                                <Card
                                                                     key={index}
-                                                                    label={tool.tool}
-                                                                    component='a'
-                                                                    sx={{ mr: 1, mt: 1 }}
-                                                                    variant='outlined'
-                                                                    clickable
-                                                                    icon={<IconTool size={15} />}
-                                                                    onClick={() => onSourceDialogClick(tool, 'Used Tools')}
-                                                                />
-                                                            )
-                                                        })}
-                                                    </div>
-                                                </>
-                                            )}
-                                            {message.fileUploads && message.fileUploads.length > 0 && (
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        flexWrap: 'wrap',
-                                                        flexDirection: 'column',
-                                                        width: '100%',
-                                                        gap: '8px'
-                                                    }}
-                                                >
-                                                    {message.fileUploads.map((item, index) => {
-                                                        return (
-                                                            <>
-                                                                {item.mime.startsWith('image/') ? (
-                                                                    <Card
-                                                                        key={index}
-                                                                        sx={{
-                                                                            p: 0,
-                                                                            m: 0,
-                                                                            maxWidth: 128,
-                                                                            marginRight: '10px',
-                                                                            flex: '0 0 auto'
+                                                                    sx={{
+                                                                        p: 0,
+                                                                        m: 0,
+                                                                        maxWidth: 128,
+                                                                        marginRight: '10px',
+                                                                        flex: '0 0 auto'
+                                                                    }}
+                                                                >
+                                                                    <CardMedia
+                                                                        component='img'
+                                                                        image={item.data}
+                                                                        sx={{ height: 64 }}
+                                                                        alt={'preview'}
+                                                                        style={messageImageStyle}
+                                                                    />
+                                                                </Card>
+                                                            ) : (
+                                                                // eslint-disable-next-line jsx-a11y/media-has-caption
+                                                                <audio controls='controls'>
+                                                                    Your browser does not support the &lt;audio&gt; tag.
+                                                                    <source src={item.data} type={item.mime} />
+                                                                </audio>
+                                                            )}
+                                                        </>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
+                                        {message.agentReasoning && (
+                                            <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
+                                                {message.agentReasoning.map((agent, index) => {
+                                                    return agent.nextAgent ? (
+                                                        <Card
+                                                            key={index}
+                                                            sx={{
+                                                                border: customization.isDarkMode ? 'none' : '1px solid #e0e0e0',
+                                                                borderRadius: `${customization.borderRadius}px`,
+                                                                background: customization.isDarkMode
+                                                                    ? `linear-gradient(to top, #303030, #212121)`
+                                                                    : `linear-gradient(to top, #f6f3fb, #f2f8fc)`,
+                                                                mb: 1
+                                                            }}
+                                                        >
+                                                            <CardContent>
+                                                                <Stack
+                                                                    sx={{
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'flex-start',
+                                                                        width: '100%'
+                                                                    }}
+                                                                    flexDirection='row'
+                                                                >
+                                                                    <Box sx={{ height: 'auto', pr: 1 }}>
+                                                                        <img
+                                                                            style={{
+                                                                                objectFit: 'cover',
+                                                                                height: '35px',
+                                                                                width: 'auto'
+                                                                            }}
+                                                                            src={nextAgentGIF}
+                                                                            alt='agentPNG'
+                                                                        />
+                                                                    </Box>
+                                                                    <div>{agent.nextAgent}</div>
+                                                                </Stack>
+                                                            </CardContent>
+                                                        </Card>
+                                                    ) : (
+                                                        <Card
+                                                            key={index}
+                                                            sx={{
+                                                                border: customization.isDarkMode ? 'none' : '1px solid #e0e0e0',
+                                                                borderRadius: `${customization.borderRadius}px`,
+                                                                background: customization.isDarkMode
+                                                                    ? `linear-gradient(to top, #303030, #212121)`
+                                                                    : `linear-gradient(to top, #f6f3fb, #f2f8fc)`,
+                                                                mb: 1
+                                                            }}
+                                                        >
+                                                            <CardContent>
+                                                                <Stack
+                                                                    sx={{
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'flex-start',
+                                                                        width: '100%'
+                                                                    }}
+                                                                    flexDirection='row'
+                                                                >
+                                                                    <Box sx={{ height: 'auto', pr: 1 }}>
+                                                                        <img
+                                                                            style={{
+                                                                                objectFit: 'cover',
+                                                                                height: '25px',
+                                                                                width: 'auto'
+                                                                            }}
+                                                                            src={
+                                                                                agent.instructions
+                                                                                    ? multiagent_supervisorPNG
+                                                                                    : multiagent_workerPNG
+                                                                            }
+                                                                            alt='agentPNG'
+                                                                        />
+                                                                    </Box>
+                                                                    <div>{agent.agentName}</div>
+                                                                </Stack>
+                                                                {agent.usedTools && agent.usedTools.length > 0 && (
+                                                                    <div
+                                                                        style={{
+                                                                            display: 'block',
+                                                                            flexDirection: 'row',
+                                                                            width: '100%'
                                                                         }}
                                                                     >
-                                                                        <CardMedia
-                                                                            component='img'
-                                                                            image={item.data}
-                                                                            sx={{ height: 64 }}
-                                                                            alt={'preview'}
-                                                                            style={messageImageStyle}
-                                                                        />
-                                                                    </Card>
-                                                                ) : (
-                                                                    // eslint-disable-next-line jsx-a11y/media-has-caption
-                                                                    <audio controls='controls'>
-                                                                        Your browser does not support the &lt;audio&gt; tag.
-                                                                        <source src={item.data} type={item.mime} />
-                                                                    </audio>
+                                                                        {agent.usedTools.map((tool, index) => {
+                                                                            return tool !== null ? (
+                                                                                <Chip
+                                                                                    size='small'
+                                                                                    key={index}
+                                                                                    label={tool.tool}
+                                                                                    component='a'
+                                                                                    sx={{ mr: 1, mt: 1 }}
+                                                                                    variant='outlined'
+                                                                                    clickable
+                                                                                    icon={<IconTool size={15} />}
+                                                                                    onClick={() => onSourceDialogClick(tool, 'Used Tools')}
+                                                                                />
+                                                                            ) : null
+                                                                        })}
+                                                                    </div>
                                                                 )}
-                                                            </>
-                                                        )
-                                                    })}
-                                                </div>
-                                            )}
-                                            <div className='markdownanswer'>
-                                                {/* Messages are being rendered in Markdown format */}
-                                                <MemoizedReactMarkdown
-                                                    remarkPlugins={[remarkGfm, remarkMath]}
-                                                    rehypePlugins={[rehypeMathjax, rehypeRaw]}
-                                                    components={{
-                                                        code({ inline, className, children, ...props }) {
-                                                            const match = /language-(\w+)/.exec(className || '')
-                                                            return !inline ? (
-                                                                <CodeBlock
-                                                                    key={Math.random()}
-                                                                    chatflowid={chatflowid}
-                                                                    isDialog={isDialog}
-                                                                    language={(match && match[1]) || ''}
-                                                                    value={String(children).replace(/\n$/, '')}
-                                                                    {...props}
-                                                                />
-                                                            ) : (
-                                                                <code className={className} {...props}>
-                                                                    {children}
-                                                                </code>
-                                                            )
-                                                        }
+                                                                {agent.messages.length > 0 && (
+                                                                    <MemoizedReactMarkdown
+                                                                        remarkPlugins={[remarkGfm, remarkMath]}
+                                                                        rehypePlugins={[rehypeMathjax, rehypeRaw]}
+                                                                        components={{
+                                                                            code({ inline, className, children, ...props }) {
+                                                                                const match = /language-(\w+)/.exec(className || '')
+                                                                                return !inline ? (
+                                                                                    <CodeBlock
+                                                                                        key={Math.random()}
+                                                                                        chatflowid={chatflowid}
+                                                                                        isDialog={isDialog}
+                                                                                        language={(match && match[1]) || ''}
+                                                                                        value={String(children).replace(/\n$/, '')}
+                                                                                        {...props}
+                                                                                    />
+                                                                                ) : (
+                                                                                    <code className={className} {...props}>
+                                                                                        {children}
+                                                                                    </code>
+                                                                                )
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        {agent.messages.length > 1
+                                                                            ? agent.messages.join('\\n')
+                                                                            : agent.messages[0]}
+                                                                    </MemoizedReactMarkdown>
+                                                                )}
+                                                                {agent.instructions && <p>{agent.instructions}</p>}
+                                                                {agent.messages.length === 0 && !agent.instructions && <p>Finished</p>}
+                                                                {agent.sourceDocuments && agent.sourceDocuments.length > 0 && (
+                                                                    <div
+                                                                        style={{
+                                                                            display: 'block',
+                                                                            flexDirection: 'row',
+                                                                            width: '100%'
+                                                                        }}
+                                                                    >
+                                                                        {removeDuplicateURL(agent).map((source, index) => {
+                                                                            const URL =
+                                                                                source && source.metadata && source.metadata.source
+                                                                                    ? isValidURL(source.metadata.source)
+                                                                                    : undefined
+                                                                            return (
+                                                                                <Chip
+                                                                                    size='small'
+                                                                                    key={index}
+                                                                                    label={
+                                                                                        URL
+                                                                                            ? URL.pathname.substring(0, 15) === '/'
+                                                                                                ? URL.host
+                                                                                                : `${URL.pathname.substring(0, 15)}...`
+                                                                                            : `${source.pageContent.substring(0, 15)}...`
+                                                                                    }
+                                                                                    component='a'
+                                                                                    sx={{ mr: 1, mb: 1 }}
+                                                                                    variant='outlined'
+                                                                                    clickable
+                                                                                    onClick={() =>
+                                                                                        URL
+                                                                                            ? onURLClick(source.metadata.source)
+                                                                                            : onSourceDialogClick(source)
+                                                                                    }
+                                                                                />
+                                                                            )
+                                                                        })}
+                                                                    </div>
+                                                                )}
+                                                            </CardContent>
+                                                        </Card>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
+                                        <div className='markdownanswer'>
+                                            {message.type === 'leadCaptureMessage' &&
+                                            !getLocalStorageChatflow(chatflowid)?.lead &&
+                                            leadsConfig.status ? (
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        gap: 2,
+                                                        marginTop: 2
                                                     }}
                                                 >
-                                                    {message.message}
-                                                </MemoizedReactMarkdown>
-                                            </div>
-                                            {message.type === 'apiMessage' && message.id && chatFeedbackStatus ? (
-                                                <>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1 }}>
-                                                        <CopyToClipboardButton onClick={() => copyMessageToClipboard(message.message)} />
-                                                        {!message.feedback ||
-                                                        message.feedback.rating === '' ||
-                                                        message.feedback.rating === 'THUMBS_UP' ? (
-                                                            <ThumbsUpButton
-                                                                isDisabled={message.feedback && message.feedback.rating === 'THUMBS_UP'}
-                                                                rating={message.feedback ? message.feedback.rating : ''}
-                                                                onClick={() => onThumbsUpClick(message.id)}
+                                                    <Typography sx={{ lineHeight: '1.5rem', whiteSpace: 'pre-line' }}>
+                                                        {leadsConfig.title || 'Let us know where we can reach you:'}
+                                                    </Typography>
+                                                    <form
+                                                        style={{
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            gap: '8px',
+                                                            width: isDialog ? '50%' : '100%'
+                                                        }}
+                                                        onSubmit={handleLeadCaptureSubmit}
+                                                    >
+                                                        {leadsConfig.name && (
+                                                            <OutlinedInput
+                                                                id='leadName'
+                                                                type='text'
+                                                                fullWidth
+                                                                placeholder='Name'
+                                                                name='leadName'
+                                                                value={leadName}
+                                                                // eslint-disable-next-line
+                                                                autoFocus={true}
+                                                                onChange={(e) => setLeadName(e.target.value)}
                                                             />
-                                                        ) : null}
-                                                        {!message.feedback ||
-                                                        message.feedback.rating === '' ||
-                                                        message.feedback.rating === 'THUMBS_DOWN' ? (
-                                                            <ThumbsDownButton
-                                                                isDisabled={message.feedback && message.feedback.rating === 'THUMBS_DOWN'}
-                                                                rating={message.feedback ? message.feedback.rating : ''}
-                                                                onClick={() => onThumbsDownClick(message.id)}
+                                                        )}
+                                                        {leadsConfig.email && (
+                                                            <OutlinedInput
+                                                                id='leadEmail'
+                                                                type='email'
+                                                                fullWidth
+                                                                placeholder='Email Address'
+                                                                name='leadEmail'
+                                                                value={leadEmail}
+                                                                onChange={(e) => setLeadEmail(e.target.value)}
                                                             />
-                                                        ) : null}
-                                                    </Box>
-                                                </>
-                                            ) : null}
-                                            {message.fileAnnotations && (
-                                                <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
-                                                    {message.fileAnnotations.map((fileAnnotation, index) => {
-                                                        return (
+                                                        )}
+                                                        {leadsConfig.phone && (
+                                                            <OutlinedInput
+                                                                id='leadPhone'
+                                                                type='number'
+                                                                fullWidth
+                                                                placeholder='Phone Number'
+                                                                name='leadPhone'
+                                                                value={leadPhone}
+                                                                onChange={(e) => setLeadPhone(e.target.value)}
+                                                            />
+                                                        )}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'center'
+                                                            }}
+                                                        >
                                                             <Button
-                                                                sx={{ fontSize: '0.85rem', textTransform: 'none', mb: 1 }}
-                                                                key={index}
                                                                 variant='outlined'
-                                                                onClick={() => downloadFile(fileAnnotation)}
-                                                                endIcon={<IconDownload color={theme.palette.primary.main} />}
+                                                                fullWidth
+                                                                type='submit'
+                                                                sx={{ borderRadius: '20px' }}
                                                             >
-                                                                {fileAnnotation.fileName}
+                                                                {isLeadSaving ? 'Saving...' : 'Save'}
                                                             </Button>
-                                                        )
-                                                    })}
-                                                </div>
-                                            )}
-                                            {message.sourceDocuments && (
-                                                <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
-                                                    {removeDuplicateURL(message).map((source, index) => {
-                                                        const URL =
-                                                            source.metadata && source.metadata.source
-                                                                ? isValidURL(source.metadata.source)
-                                                                : undefined
-                                                        return (
-                                                            <Chip
-                                                                size='small'
-                                                                key={index}
-                                                                label={
-                                                                    URL
-                                                                        ? URL.pathname.substring(0, 15) === '/'
-                                                                            ? URL.host
-                                                                            : `${URL.pathname.substring(0, 15)}...`
-                                                                        : `${source.pageContent.substring(0, 15)}...`
-                                                                }
-                                                                component='a'
-                                                                sx={{ mr: 1, mb: 1 }}
-                                                                variant='outlined'
-                                                                clickable
-                                                                onClick={() =>
-                                                                    URL ? onURLClick(source.metadata.source) : onSourceDialogClick(source)
-                                                                }
-                                                            />
-                                                        )
-                                                    })}
-                                                </div>
+                                                        </Box>
+                                                    </form>
+                                                </Box>
+                                            ) : (
+                                                <>
+                                                    {/* Messages are being rendered in Markdown format */}
+                                                    <MemoizedReactMarkdown
+                                                        remarkPlugins={[remarkGfm, remarkMath]}
+                                                        rehypePlugins={[rehypeMathjax, rehypeRaw]}
+                                                        components={{
+                                                            code({ inline, className, children, ...props }) {
+                                                                const match = /language-(\w+)/.exec(className || '')
+                                                                return !inline ? (
+                                                                    <CodeBlock
+                                                                        key={Math.random()}
+                                                                        chatflowid={chatflowid}
+                                                                        isDialog={isDialog}
+                                                                        language={(match && match[1]) || ''}
+                                                                        value={String(children).replace(/\n$/, '')}
+                                                                        {...props}
+                                                                    />
+                                                                ) : (
+                                                                    <code className={className} {...props}>
+                                                                        {children}
+                                                                    </code>
+                                                                )
+                                                            }
+                                                        }}
+                                                    >
+                                                        {message.message}
+                                                    </MemoizedReactMarkdown>
+                                                </>
                                             )}
                                         </div>
-                                    </Box>
-                                    <div
-                                        style={{ background: 'transparent', marginTop: '-8px', height: 'auto', marginLeft: '10px' }}
-                                        className='MuiBox-root css-v512oj'
-                                    >
-                                        <p className='MuiTypography-root MuiTypography-body1 css-1dddwi4-MuiTypography-root'>
-                                            Hi there! How can I help?
-                                        </p>
+                                        {message.type === 'apiMessage' && message.id && chatFeedbackStatus ? (
+                                            <>
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'start',
+                                                        gap: 1
+                                                    }}
+                                                >
+                                                    <CopyToClipboardButton onClick={() => copyMessageToClipboard(message.message)} />
+                                                    {!message.feedback ||
+                                                    message.feedback.rating === '' ||
+                                                    message.feedback.rating === 'THUMBS_UP' ? (
+                                                        <ThumbsUpButton
+                                                            isDisabled={message.feedback && message.feedback.rating === 'THUMBS_UP'}
+                                                            rating={message.feedback ? message.feedback.rating : ''}
+                                                            onClick={() => onThumbsUpClick(message.id)}
+                                                        />
+                                                    ) : null}
+                                                    {!message.feedback ||
+                                                    message.feedback.rating === '' ||
+                                                    message.feedback.rating === 'THUMBS_DOWN' ? (
+                                                        <ThumbsDownButton
+                                                            isDisabled={message.feedback && message.feedback.rating === 'THUMBS_DOWN'}
+                                                            rating={message.feedback ? message.feedback.rating : ''}
+                                                            onClick={() => onThumbsDownClick(message.id)}
+                                                        />
+                                                    ) : null}
+                                                </Box>
+                                            </>
+                                        ) : null}
+                                        {message.fileAnnotations && (
+                                            <div
+                                                style={{
+                                                    display: 'block',
+                                                    flexDirection: 'row',
+                                                    width: '100%'
+                                                }}
+                                            >
+                                                {message.fileAnnotations.map((fileAnnotation, index) => {
+                                                    return (
+                                                        <Button
+                                                            sx={{
+                                                                fontSize: '0.85rem',
+                                                                textTransform: 'none',
+                                                                mb: 1
+                                                            }}
+                                                            key={index}
+                                                            variant='outlined'
+                                                            onClick={() => downloadFile(fileAnnotation)}
+                                                            endIcon={<IconDownload color={theme.palette.primary.main} />}
+                                                        >
+                                                            {fileAnnotation.fileName}
+                                                        </Button>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
+                                        {message.sourceDocuments && (
+                                            <div
+                                                style={{
+                                                    display: 'block',
+                                                    flexDirection: 'row',
+                                                    width: '100%'
+                                                }}
+                                            >
+                                                {removeDuplicateURL(message).map((source, index) => {
+                                                    const URL =
+                                                        source.metadata && source.metadata.source
+                                                            ? isValidURL(source.metadata.source)
+                                                            : undefined
+                                                    return (
+                                                        <Chip
+                                                            size='small'
+                                                            key={index}
+                                                            label={
+                                                                URL
+                                                                    ? URL.pathname.substring(0, 15) === '/'
+                                                                        ? URL.host
+                                                                        : `${URL.pathname.substring(0, 15)}...`
+                                                                    : `${source.pageContent.substring(0, 15)}...`
+                                                            }
+                                                            component='a'
+                                                            sx={{ mr: 1, mb: 1 }}
+                                                            variant='outlined'
+                                                            clickable
+                                                            onClick={() =>
+                                                                URL ? onURLClick(source.metadata.source) : onSourceDialogClick(source)
+                                                            }
+                                                        />
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
                                     </div>
-                                </>
+                                </Box>
                             )
                         })}
                 </div>
@@ -1070,12 +1522,12 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                 <div className='recording-control-buttons-container'>
                                     <IconButton onClick={onRecordingCancelled} size='small'>
                                         <IconX
-                                            color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? '#A93B97' : '#1e88e5'}
+                                            color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
                                         />
                                     </IconButton>
                                     <IconButton onClick={onRecordingStopped} size='small'>
                                         <IconSend
-                                            color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? '#A93B97' : '#1e88e5'}
+                                            color={loading || !chatflowid ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
                                         />
                                     </IconButton>
                                 </div>
@@ -1100,7 +1552,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                     borderColor: customization.isDarkMode ? '#A93B97' : undefined
                                 }
                             }}
-                            disabled={loading || !chatflowid}
+                            disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
                             onKeyDown={handleEnter}
                             id='userInput'
                             name='userInput'
@@ -1115,7 +1567,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                         <IconButton
                                             onClick={handleUploadClick}
                                             type='button'
-                                            disabled={loading || !chatflowid}
+                                            disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
                                             edge='start'
                                         >
                                             <IconPhotoPlus
@@ -1134,7 +1586,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                             <IconButton
                                                 onClick={() => onMicrophonePressed()}
                                                 type='button'
-                                                disabled={loading || !chatflowid}
+                                                disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
                                                 edge='end'
                                             >
                                                 <IconMicrophone
@@ -1150,26 +1602,74 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
                                             </IconButton>
                                         </InputAdornment>
                                     )}
-                                    <InputAdornment position='end' sx={{ padding: '15px' }}>
-                                        <IconButton type='submit' disabled={loading || !chatflowid} edge='end'>
-                                            {loading ? (
-                                                <div>
-                                                    <CircularProgress color='inherit' size={20} />
-                                                </div>
-                                            ) : (
-                                                // Send icon SVG in input field
-                                                <IconSend
-                                                    color={
-                                                        loading || !chatflowid
-                                                            ? '#9e9e9e'
-                                                            : customization.isDarkMode
-                                                            ? '#A93B97'
-                                                            : '#1e88e5'
-                                                    }
-                                                />
+                                    {!isAgentCanvas && (
+                                        <InputAdornment position='end' sx={{ padding: '15px' }}>
+                                            <IconButton
+                                                type='submit'
+                                                disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
+                                                edge='end'
+                                            >
+                                                {loading ? (
+                                                    <div>
+                                                        <CircularProgress color='inherit' size={20} />
+                                                    </div>
+                                                ) : (
+                                                    // Send icon SVG in input field
+                                                    <IconSend
+                                                        color={
+                                                            loading || !chatflowid
+                                                                ? '#9e9e9e'
+                                                                : customization.isDarkMode
+                                                                ? '#A93B97'
+                                                                : '#1e88e5'
+                                                        }
+                                                    />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )}
+                                    {isAgentCanvas && (
+                                        <>
+                                            {!loading && (
+                                                <InputAdornment position='end' sx={{ padding: '15px' }}>
+                                                    <IconButton
+                                                        type='submit'
+                                                        disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
+                                                        edge='end'
+                                                    >
+                                                        <IconSend
+                                                            color={
+                                                                loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)
+                                                                    ? '#9e9e9e'
+                                                                    : customization.isDarkMode
+                                                                    ? 'white'
+                                                                    : '#1e88e5'
+                                                            }
+                                                        />
+                                                    </IconButton>
+                                                </InputAdornment>
                                             )}
-                                        </IconButton>
-                                    </InputAdornment>
+                                            {loading && (
+                                                <InputAdornment position='end' sx={{ padding: '15px', mr: 1 }}>
+                                                    <IconButton
+                                                        edge='end'
+                                                        title={isMessageStopping ? 'Stopping...' : 'Stop'}
+                                                        style={{ border: !isMessageStopping ? '2px solid red' : 'none' }}
+                                                        onClick={() => handleAbort()}
+                                                        disabled={isMessageStopping}
+                                                    >
+                                                        {isMessageStopping ? (
+                                                            <div>
+                                                                <CircularProgress color='error' size={20} />
+                                                            </div>
+                                                        ) : (
+                                                            <IconSquareFilled size={15} color='red' />
+                                                        )}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )}
+                                        </>
+                                    )}
                                 </>
                             }
                         />
@@ -1192,6 +1692,7 @@ export const ChatMessage = ({ open, chatflowid, isDialog, previews, setPreviews 
 ChatMessage.propTypes = {
     open: PropTypes.bool,
     chatflowid: PropTypes.string,
+    isAgentCanvas: PropTypes.bool,
     isDialog: PropTypes.bool,
     previews: PropTypes.array,
     setPreviews: PropTypes.func

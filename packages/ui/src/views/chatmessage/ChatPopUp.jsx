@@ -141,7 +141,8 @@ export const ChatPopUp = ({ chatflowid }) => {
                     top: 20,
                     background: 'transparent',
                     boxShadow: '0',
-                    color: customization.isDarkMode ? 'white' : 'black'
+                    color: customization.isDarkMode ? 'white' : 'black',
+                    backgroundColor: customization?.isDarkMode ? '#23262C' : '#FFF'
                 }}
                 ref={anchorRef}
                 size='small'

@@ -172,8 +172,8 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                         }
                     }
                 }}
-                selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
-                onClick={() => itemHandler(item.id)}
+                // selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
+                // onClick={() => itemHandler(item.id)}
             >
                 {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
 
