@@ -140,7 +140,19 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                 }}
                                             >
                                                 <ListItemButton
-                                                    sx={{ borderRadius: `${customization.borderRadius}px` }}
+                                                    sx={{
+                                                        borderRadius: `${customization.borderRadius}px`,
+
+                                                        '&:hover': {
+                                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                            '& .MuiListItemIcon-root': {
+                                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                            },
+                                                            '& .MuiTypography-root': {
+                                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                            }
+                                                        }
+                                                    }}
                                                     onClick={() => {
                                                         setOpen(false)
                                                         setAboutDialogOpen(true)

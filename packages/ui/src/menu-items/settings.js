@@ -1,5 +1,6 @@
 // assets
 import {
+    IconCode,
     IconTrash,
     IconFileUpload,
     IconFileExport,
@@ -17,7 +18,8 @@ const icons = {
     IconCopy,
     IconMessage,
     IconDatabaseExport,
-    IconAdjustmentsHorizontal
+    IconAdjustmentsHorizontal,
+    IconCode
 }
 
 // ==============================|| SETTINGS MENU ITEMS ||============================== //
@@ -48,6 +50,15 @@ const settings = {
             url: '',
             icon: icons.IconAdjustmentsHorizontal
         },
+
+        {
+            id: 'apiEndpoint',
+            title: 'API Endpoint',
+            type: 'item',
+            url: '',
+            icon: icons.IconCode
+        },
+
         {
             id: 'duplicateChatflow',
             title: 'Duplicate Workflow',
