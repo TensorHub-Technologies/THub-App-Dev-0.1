@@ -1,27 +1,16 @@
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
-import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
-
-// material-ui
 import { useTheme } from '@mui/material/styles'
 import { Box, Switch } from '@mui/material'
 import { styled } from '@mui/material/styles'
-
-// project imports
+import { SET_DARKMODE } from '@/store/actions'
 import ProfileSection from './ProfileSection'
-
-// import logo from '@/assets/images/THub_logo_dark.png'
+import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
 
-// assets
-
-// store
-import { SET_DARKMODE } from '@/store/actions'
-
-// ==============================|| MAIN NAVBAR / HEADER ||============================== //
-
+// Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
     height: 34,
@@ -40,13 +29,11 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
             },
             '& + .MuiSwitch-track': {
                 opacity: 1,
-                // backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be'
                 backgroundColor: theme.palette.mode === 'dark' ? '#3C5BA4' : '#E22A90'
             }
         }
     },
     '& .MuiSwitch-thumb': {
-        // backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
         background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
         width: 32,
         height: 32,
@@ -66,7 +53,6 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     },
     '& .MuiSwitch-track': {
         opacity: 1,
-        // backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
         backgroundColor: theme.palette.mode === 'dark' ? '#E22A90' : '#3C5BA4',
         borderRadius: 20 / 2
     }
@@ -75,23 +61,32 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 const Header = ({ handleLeftDrawerToggle }) => {
     const theme = useTheme()
     const navigate = useNavigate()
-
     const customization = useSelector((state) => state.customization)
-
-    const [isDark, setIsDark] = useState(customization.isDarkMode)
     const dispatch = useDispatch()
+
+    const [isDark, setIsDark] = useState(() => {
+        const storedTheme = localStorage.getItem('isDarkMode')
+        return storedTheme !== null ? JSON.parse(storedTheme) : customization.isDarkMode
+    })
+
     useEffect(() => {
         let url = new URL(window.location.href)
         let params = new URLSearchParams(url.search)
-        const isDarkTheme = params.get('theme') === 'dark'
-        setIsDark(isDarkTheme)
-        dispatch({ type: SET_DARKMODE, isDarkMode: isDarkTheme })
-        localStorage.setItem('isDarkMode', isDarkTheme)
-    }, [])
+        const urlTheme = params.get('theme') === 'dark'
+
+        const storedTheme = localStorage.getItem('isDarkMode')
+        const initialTheme = storedTheme !== null ? JSON.parse(storedTheme) : urlTheme
+
+        setIsDark(initialTheme)
+        dispatch({ type: SET_DARKMODE, isDarkMode: initialTheme })
+        localStorage.setItem('isDarkMode', initialTheme)
+    }, [dispatch])
+
     const changeDarkMode = () => {
-        dispatch({ type: SET_DARKMODE, isDarkMode: !isDark })
-        setIsDark((isDark) => !isDark)
-        localStorage.setItem('isDarkMode', !isDark)
+        const newTheme = !isDark
+        setIsDark(newTheme)
+        dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
+        localStorage.setItem('isDarkMode', newTheme)
     }
 
     const signOutClicked = () => {
@@ -103,7 +98,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
     return (
         <>
-            {/* logo & toggler button */}
             <Box
                 sx={{
                     width: 200,
@@ -113,54 +107,8 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     }
                 }}
             >
-                {/* <Box sx={{ mt: 1 }}>
-                    <ButtonBase sx={{ borderRadius: '20%', overflow: 'hidden' }}>
-                        <Avatar
-                            variant='rounded'
-                            sx={{
-                                ...theme.typography.commonAvatar,
-                                ...theme.typography.mediumAvatar,
-                                transition: 'all .2s ease-in-out',
-                                // background: theme.palette.secondary.light,
-                                background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                // color: theme.palette.secondary.dark,
-                                color: '#fff',
-                                '&:hover': {
-                                    // background: theme.palette.secondary.dark,
-                                    background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                                    // color: theme.palette.secondary.light
-                                    color: '#fff'
-                                }
-                            }}
-                            onClick={handleLeftDrawerToggle}
-                            color='inherit'
-                        >
-                            <IconMenu2 stroke={1.5} size='1.3rem' />
-                        </Avatar>
-                    </ButtonBase>
-                </Box> */}
-                {/* <Box sx={{ ml: 2 }}></Box> */}
-                {/* <Box component='span' sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
-                    
-                    <LogoSection />
-                </Box> */}
-                {/* {customization.menu_open ? (
-                    <img src={Logo} alt='THub_Logo' width={110} />
-                ) : (
-                    <img src={ColorfulLogo} alt='THub_Logo' width={30} />
-                )} */}
-
-                {/* <img src={ColorfulLogo} alt='THub_Logo' width={35} />
-
-                {customization.menu_open ? (
-                    <img src={logo} alt='THub_Logo' width={70} height={35} style={{}}/>
-                ) : (
-                    ""
-                )} */}
-
                 <img src={ColorfulLogo} alt='THub_Logo' width={35} />
-
-                {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} /> : ''}
+                {customization.menu_open && <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} />}
             </Box>
 
             <Box sx={{ flexGrow: 1 }} />
