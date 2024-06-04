@@ -31,7 +31,7 @@ const CHATFLOW_CONFIGURATION_TABS = [
         id: 'allowedDomains'
     },
     {
-        label: 'Analyse Chatflow',
+        label: 'Analyse Workflow',
         id: 'analyseChatflow'
     }
 ]
@@ -66,6 +66,7 @@ function a11yProps(index) {
 }
 
 const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
+    console.log('dialogProps', dialogProps)
     const portalElement = document.getElementById('portal')
     const [tabValue, setTabValue] = useState(0)
 
@@ -99,7 +100,7 @@ const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
                 </Tabs>
                 {CHATFLOW_CONFIGURATION_TABS.map((item, index) => (
                     <TabPanel key={index} value={tabValue} index={index}>
-                        {item.id === 'rateLimiting' && <RateLimit />}
+                        {item.id === 'rateLimiting' ? <RateLimit dialogProps={dialogProps} /> : null}
                         {item.id === 'conversationStarters' ? <StarterPrompts dialogProps={dialogProps} /> : null}
                         {item.id === 'speechToText' ? <SpeechToText dialogProps={dialogProps} /> : null}
                         {item.id === 'chatFeedback' ? <ChatFeedback dialogProps={dialogProps} /> : null}

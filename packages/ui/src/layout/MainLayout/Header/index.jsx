@@ -110,10 +110,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 <img src={ColorfulLogo} alt='THub_Logo' width={35} />
                 {customization.menu_open && <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} />}
             </Box>
+
             <Box sx={{ flexGrow: 1 }} />
             <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
+            {/* <h1>hello</h1> */}
         </>
     )
 }
