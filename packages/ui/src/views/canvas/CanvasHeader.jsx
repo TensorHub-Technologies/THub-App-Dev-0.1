@@ -310,7 +310,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                             {canvas.isDirty && <strong style={{ color: theme.palette.orange.main }}>*</strong>} {flowName}
                         </Typography>
                         {chatflow?.id && (
-                            <ButtonBase title='Edit Name1' sx={{ borderRadius: '20%' }}>
+                            <ButtonBase title='Edit Name' sx={{ borderRadius: '20%' }}>
                                 <Avatar
                                     variant='rounded'
                                     sx={{

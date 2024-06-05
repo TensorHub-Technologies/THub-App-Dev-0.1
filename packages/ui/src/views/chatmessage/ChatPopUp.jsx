@@ -148,7 +148,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                 size='small'
                 color='secondary'
                 aria-label='chat'
-                title='Chat1'
+                title='Chat'
                 onClick={handleToggle}
             >
                 {open ? (
