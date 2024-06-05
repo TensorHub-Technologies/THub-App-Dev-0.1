@@ -30,7 +30,7 @@ import {
     IMessage,
     FlowiseMemory,
     IFileUpload
-} from 'flowise-components'
+} from 'thub-components'
 import { randomBytes } from 'crypto'
 import { AES, enc } from 'crypto-js'
 
