@@ -148,7 +148,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                 size='small'
                 color='secondary'
                 aria-label='chat'
-                title='Chat'
+                title='Chat1'
                 onClick={handleToggle}
             >
                 {open ? <IconX /> : <IconMessage />}
@@ -237,6 +237,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                 previews={previews}
                 setPreviews={setPreviews}
                 open={open}
+                setOpen={setOpen}
                 setShowExpandDialog={setShowExpandDialog}
             ></ChatExpandDialog>
         </>

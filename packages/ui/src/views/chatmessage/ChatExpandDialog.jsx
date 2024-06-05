@@ -8,7 +8,7 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 import { IconX, IconEraser, IconMinus } from '@tabler/icons'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 
-const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setPreviews, open, setShowExpandDialog }) => {
+const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setPreviews, open, setOpen, setShowExpandDialog }) => {
     const portalElement = document.getElementById('portal')
     const customization = useSelector((state) => state.customization)
     const component = show ? (
@@ -46,8 +46,13 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                             color: customization.isDarkMode ? 'white' : 'black'
                         }}
                         variant='outlined'
-                        title='Minimise'
-                        onClick={() => setShowExpandDialog(false)}
+                        title='Minimise1'
+                        onClick={() => {
+                            {
+                                setShowExpandDialog(false)
+                                setOpen(true)
+                            }
+                        }}
                     >
                         <IconMinus />
                     </StyledFab>
