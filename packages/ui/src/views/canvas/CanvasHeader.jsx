@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles'
 import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/material'
 
 // icons
-import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons'
+import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX } from '@tabler/icons'
 
 import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
 
@@ -81,6 +81,8 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 chatflow: chatflow
             })
             setChatflowConfigurationDialogOpen(true)
+        } else if (setting === 'apiEndpoint') {
+            onAPIDialogClick()
         } else if (setting === 'duplicateChatflow') {
             try {
                 let flowData = chatflow.flowData
@@ -402,7 +404,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 <ButtonBase title='Vector Database' sx={{ borderRadius: '50%', mr: 2 }}>
                     {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />}
                 </ButtonBase>
-                {chatflow?.id && (
+                {/* {chatflow?.id && (
                     <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2 }}>
                         <Avatar
                             variant='rounded'
@@ -427,7 +429,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                             <IconCode stroke={1.5} size='1.3rem' />
                         </Avatar>
                     </ButtonBase>
-                )}
+                )} */}
                 <ButtonBase title='Save Workspace' sx={{ borderRadius: '50%', mr: 2 }}>
                     <Avatar
                         variant='rounded'

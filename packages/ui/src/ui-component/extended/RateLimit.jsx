@@ -18,11 +18,11 @@ import chatflowsApi from '@/api/chatflows'
 // utils
 import useNotifier from '@/utils/useNotifier'
 
-const RateLimit = () => {
+const RateLimit = ({ dialogProps }) => {
     const dispatch = useDispatch()
     const chatflow = useSelector((state) => state.canvas.chatflow)
-    const chatflowid = chatflow.id
-    const apiConfig = chatflow.apiConfig ? JSON.parse(chatflow.apiConfig) : {}
+    const chatflowid = chatflow?.id || dialogProps?.chatflow?.id
+    const apiConfig = chatflow?.apiConfig ? JSON.parse(chatflow.apiConfig) : {}
 
     useNotifier()
 
@@ -75,7 +75,7 @@ const RateLimit = () => {
         } catch (error) {
             enqueueSnackbar({
                 message: `Failed to save Rate Limit Configuration: ${
-                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                    typeof error.response?.data === 'object' ? error.response.data.message : error.response?.data || error.message
                 }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
@@ -101,6 +101,8 @@ const RateLimit = () => {
                 break
             case 'limitMsg':
                 setLimitMsg(value)
+                break
+            default:
                 break
         }
     }
@@ -151,7 +153,8 @@ const RateLimit = () => {
 }
 
 RateLimit.propTypes = {
-    isSessionMemory: PropTypes.bool
+    isSessionMemory: PropTypes.bool,
+    dialogProps: PropTypes.object
 }
 
 export default RateLimit

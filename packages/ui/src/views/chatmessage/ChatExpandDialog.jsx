@@ -39,14 +39,14 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                     <StyledFab
                         sx={{
                             position: 'absolute',
-                            right: 70,
+                            right: 100,
                             top: 0,
                             background: 'transparent',
                             boxShadow: '0',
-                            color: customization.isDarkMode ? 'white' : 'black'
+                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                         }}
                         variant='outlined'
-                        title='Minimise1'
+                        title='Minimise'
                         onClick={() => {
                             {
                                 setShowExpandDialog(false)
@@ -59,11 +59,11 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                     <StyledFab
                         sx={{
                             position: 'absolute',
-                            right: 40,
+                            right: 60,
                             top: 0,
                             background: 'transparent',
                             boxShadow: '0',
-                            color: customization.isDarkMode ? 'white' : 'black'
+                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                         }}
                         variant='outlined'
                         title='Erase'
@@ -77,11 +77,11 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                     <StyledFab
                         sx={{
                             position: 'absolute',
-                            right: 10,
+                            right: 20,
                             top: 0,
                             background: 'transparent',
                             boxShadow: '0',
-                            color: customization.isDarkMode ? 'white' : 'black'
+                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                         }}
                         variant='outlined'
                         title='Close'
