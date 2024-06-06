@@ -7,8 +7,9 @@ import { IconDatabaseImport, IconX } from '@tabler/icons'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import VectorStoreDialog from './VectorStoreDialog'
 import UpsertResultDialog from './UpsertResultDialog'
+import { IconButton } from '@mui/material'
 
-export const VectorStorePopUp = ({ chatflowid }) => {
+export const VectorStorePopUp = ({ chatflowid, isUpsertButtonEnabled }) => {
     const [open, setOpen] = useState(false)
     const [showExpandDialog, setShowExpandDialog] = useState(false)
     const [expandDialogProps, setExpandDialogProps] = useState({})
@@ -40,36 +41,56 @@ export const VectorStorePopUp = ({ chatflowid }) => {
 
     return (
         <>
-            <StyledFab
-                sx={{
-                    height: '32px',
-                    width: '32px',
-                    borderRadius: '17%',
-                    //     left: '86%',
-                    //     position: 'fixed',
-                    //     zIndex: '2000',
-
-                    //     top: '2% !important',
-                    // //    minHeight:'0px',
-                    //    marginLeft:'5px !important',
-                    //    marginTop:'8px !important',
-
-                    '&:hover': {
-                        // background: theme.palette.secondary.dark,
-                        background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                        // color: theme.palette.secondary.light
-                        color: '#fff'
-                    }
-                }}
-                ref={anchorRef}
-                size='small'
-                color='teal'
-                aria-label='upsert'
-                title='Upsert Vector Database'
-                onClick={handleToggle}
-            >
-                {open ? <IconX /> : <IconDatabaseImport />}
-            </StyledFab>
+            {isUpsertButtonEnabled && (
+                <StyledFab
+                    sx={{
+                        height: '32px',
+                        width: '32px',
+                        borderRadius: '17%',
+                        '&:hover': {
+                            background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                            color: '#fff'
+                        }
+                    }}
+                    ref={anchorRef}
+                    size='small'
+                    color='teal'
+                    aria-label='upsert'
+                    title='Upsert Vector Database'
+                    onClick={handleToggle}
+                    disabled={!isUpsertButtonEnabled}
+                >
+                    {open ? <IconX /> : <IconDatabaseImport />}
+                </StyledFab>
+            )}
+            {!isUpsertButtonEnabled && (
+                <IconButton style={{ cursor: 'not-allowed' }}>
+                    <StyledFab
+                        sx={{
+                            height: '32px',
+                            width: '32px',
+                            borderRadius: '17%',
+                            background: 'red',
+                            color: '#fff',
+                            cursor: 'not-allowed',
+                            '&:hover': {
+                                background: 'red',
+                                color: '#fff',
+                                cursor: 'not-allowed'
+                            }
+                        }}
+                        ref={anchorRef}
+                        size='small'
+                        color='teal'
+                        aria-label='upsert'
+                        title='Upsert Vector Database'
+                        onClick={handleToggle}
+                        disabled
+                    >
+                        {open ? <IconX /> : <IconDatabaseImport />}
+                    </StyledFab>
+                </IconButton>
+            )}
             <VectorStoreDialog
                 show={showExpandDialog}
                 dialogProps={expandDialogProps}
@@ -95,4 +116,7 @@ export const VectorStorePopUp = ({ chatflowid }) => {
     )
 }
 
-VectorStorePopUp.propTypes = { chatflowid: PropTypes.string }
+VectorStorePopUp.propTypes = {
+    chatflowid: PropTypes.string,
+    isUpsertButtonEnabled: PropTypes.boolean
+}

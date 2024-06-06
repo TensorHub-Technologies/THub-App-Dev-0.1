@@ -63,7 +63,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }))
 
 const Header = ({ handleLeftDrawerToggle }) => {
-    const [user , setUser] = useState("");
+    const [user, setUser] = useState('')
 
     const theme = useTheme()
     const navigate = useNavigate()
@@ -101,31 +101,32 @@ const Header = ({ handleLeftDrawerToggle }) => {
         const uid = params.get('uid') || ''
         setUserId(uid)
         localStorage.setItem('userId', uid)
-        const userId = localStorage.getItem('userId');
-        
-        const apiUrl = (window.location.hostname === 'localhost') ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user';
-        
+        const userId = localStorage.getItem('userId')
+
+        const apiUrl =
+            window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+
         fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                "userId": userId
+            body: JSON.stringify({
+                userId: userId
             })
         })
-        .then(response => {
-            if (response.ok) {
-                response.json().then(user =>{
-                    setUser(user[0].name[0]);
-            });
-            } else {
-                console.error('Error:', response.statusText);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            .then((response) => {
+                if (response.ok) {
+                    response.json().then((user) => {
+                        setUser(user[0].name[0])
+                    })
+                } else {
+                    console.error('Error:', response.statusText)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+            })
     }, [])
 
     const changeDarkMode = () => {
