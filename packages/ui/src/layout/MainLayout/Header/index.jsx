@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
-import { Box, Switch, Tooltip } from '@mui/material'
+import { Box, IconButton, Link, Switch, Toolbar, Tooltip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SET_DARKMODE } from '@/store/actions'
 import ProfileSection from './ProfileSection'
@@ -11,6 +11,8 @@ import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
 import Avatar from '@mui/material/Avatar'
 import Stack from '@mui/material/Stack'
+import toggle_1 from '@/assets/images/toggle_mode-1.svg'
+import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 
 // Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -111,6 +113,17 @@ const Header = ({ handleLeftDrawerToggle }) => {
         navigate('/', { replace: true })
         navigate(0)
     }
+    const StyledLink = styled(Link)(({ theme }) => ({
+        color: customization?.isDarkMode ? '#fff' : '#000',
+        fontSize: '1.25rem', // Adjust font size as needed
+        fontWeight: 'bold',
+        fontFamily: 'Arial, sans-serif',
+        textDecoration: 'none',
+
+        '&:hover': {
+            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
+        }
+    }))
 
     return (
         <>
@@ -126,9 +139,20 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 <img src={ColorfulLogo} alt='THub_Logo' width={35} />
                 {customization.menu_open && <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} />}
             </Box>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
 
             <Box sx={{ flexGrow: 1 }} />
-            <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />
+            {/* <MaterialUISwitch checked={isDark} onChange={changeDarkMode} /> */}
+            {isDark ? (
+                <IconButton checked={isDark} onClick={changeDarkMode}>
+                    <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
+                </IconButton>
+            ) : (
+                <IconButton checked={isDark} onClick={changeDarkMode}>
+                    <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
+                </IconButton>
+            )}
+            {/* <img src={toggle_1} checked={isDark} onClick={changeDarkMode} /> */}
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
             {/* <AccountCircleIcon style={{cursor:"pointer",fontSize:"32px",marginLeft:"12px"}}/>

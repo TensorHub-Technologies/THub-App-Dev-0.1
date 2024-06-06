@@ -30,19 +30,13 @@ const settings = {
     type: 'group',
     children: [
         {
-            id: 'viewMessages',
-            title: 'View Messages',
+            id: 'apiEndpoint',
+            title: 'API Endpoint',
             type: 'item',
             url: '',
-            icon: icons.IconMessage
+            icon: icons.IconCode
         },
-        {
-            id: 'viewUpsertHistory',
-            title: 'Upsert History',
-            type: 'item',
-            url: '',
-            icon: icons.IconDatabaseExport
-        },
+
         {
             id: 'chatflowConfiguration',
             title: 'Configuration',
@@ -52,11 +46,26 @@ const settings = {
         },
 
         {
-            id: 'apiEndpoint',
-            title: 'API Endpoint',
+            id: 'viewUpsertHistory',
+            title: 'Upsert History',
             type: 'item',
             url: '',
-            icon: icons.IconCode
+            icon: icons.IconDatabaseExport
+        },
+        {
+            id: 'viewMessages',
+            title: 'View Messages',
+            type: 'item',
+            url: '',
+            icon: icons.IconMessage
+        },
+
+        {
+            id: 'loadChatflow',
+            title: 'Load Workflow',
+            type: 'item',
+            url: '',
+            icon: icons.IconFileUpload
         },
 
         {
@@ -66,13 +75,7 @@ const settings = {
             url: '',
             icon: icons.IconCopy
         },
-        {
-            id: 'loadChatflow',
-            title: 'Load Workflow',
-            type: 'item',
-            url: '',
-            icon: icons.IconFileUpload
-        },
+
         {
             id: 'exportChatflow',
             title: 'Export Workflow',

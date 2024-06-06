@@ -18,7 +18,7 @@ import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
 import Button from '@mui/material/Button'
 import { IconX } from '@tabler/icons'
 import { IconDeviceAnalytics } from '@tabler/icons'
-import { IconRegexOff } from '@tabler/icons'
+import { IconAdjustmentsAlt } from '@tabler/icons'
 
 import chatflowsApi from '@/api/chatflows'
 
@@ -360,7 +360,9 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleRateLimit} disableRipple>
-                    <IconRegexOff style={{ color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <IconAdjustmentsAlt
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
                     Rate Limiting
                 </MenuItem>
 
@@ -381,7 +383,9 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                     Speech To Text
                 </MenuItem>
                 <MenuItem onClick={handleAnalyse} disableRipple>
-                    <IconDeviceAnalytics style={{ color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <IconDeviceAnalytics
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
                     Analyse WorkFlow
                 </MenuItem>
                 <MenuItem onClick={handleFlowCategory} disableRipple>

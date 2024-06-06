@@ -166,6 +166,7 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                     sx={{
                                                         borderRadius: `${customization.borderRadius}px`,
                                                         '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#23262c' : '#fff',
                                                             color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                                                             '& .MuiListItemIcon-root': {
                                                                 color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
