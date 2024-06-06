@@ -1,26 +1,20 @@
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
-import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
-
-// material-ui
 import { useTheme } from '@mui/material/styles'
-import { Box, Switch } from '@mui/material'
+import { Box, IconButton, Link, Switch, Toolbar, Tooltip } from '@mui/material'
 import { styled } from '@mui/material/styles'
-
-// project imports
-import ProfileSection from './ProfileSection'
-// import logo from '@/assets/images/THub_logo_dark.png'
-import logo from '@/assets/images/THub_Logo_resize.png'
-
-// assets
-
-// store
 import { SET_DARKMODE } from '@/store/actions'
+import ProfileSection from './ProfileSection'
+import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
+import logo from '@/assets/images/THub_Logo_resize.png'
+import Avatar from '@mui/material/Avatar'
+import Stack from '@mui/material/Stack'
+import toggle_1 from '@/assets/images/toggle_mode-1.svg'
+import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 
-// ==============================|| MAIN NAVBAR / HEADER ||============================== //
-
+// Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
     height: 34,
@@ -39,13 +33,11 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
             },
             '& + .MuiSwitch-track': {
                 opacity: 1,
-                // backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be'
                 backgroundColor: theme.palette.mode === 'dark' ? '#3C5BA4' : '#E22A90'
             }
         }
     },
     '& .MuiSwitch-thumb': {
-        // backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
         background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
         width: 32,
         height: 32,
@@ -65,32 +57,83 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     },
     '& .MuiSwitch-track': {
         opacity: 1,
-        // backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
         backgroundColor: theme.palette.mode === 'dark' ? '#E22A90' : '#3C5BA4',
         borderRadius: 20 / 2
     }
 }))
 
 const Header = ({ handleLeftDrawerToggle }) => {
+    const [user, setUser] = useState('')
+
     const theme = useTheme()
     const navigate = useNavigate()
-
     const customization = useSelector((state) => state.customization)
-
-    const [isDark, setIsDark] = useState(customization.isDarkMode)
     const dispatch = useDispatch()
+
+    const [userId, setUserId] = useState('')
+    const [isDark, setIsDark] = useState(() => {
+        const storedTheme = localStorage.getItem('isDarkMode')
+        return storedTheme !== null ? JSON.parse(storedTheme) : customization.isDarkMode
+    })
+
     useEffect(() => {
         let url = new URL(window.location.href)
         let params = new URLSearchParams(url.search)
-        const isDarkTheme = params.get('theme') === 'dark'
-        setIsDark(isDarkTheme)
-        dispatch({ type: SET_DARKMODE, isDarkMode: isDarkTheme })
-        localStorage.setItem('isDarkMode', isDarkTheme)
+        const urlTheme = params.get('theme') === 'dark'
+
+        const storedTheme = localStorage.getItem('isDarkMode')
+        const initialTheme = storedTheme !== null ? JSON.parse(storedTheme) : urlTheme
+
+        setIsDark(initialTheme)
+        dispatch({ type: SET_DARKMODE, isDarkMode: initialTheme })
+        localStorage.setItem('isDarkMode', initialTheme)
+    }, [dispatch])
+
+    useEffect(() => {
+        let url = new URL(window.location.href)
+        let params = new URLSearchParams(url.search)
+        // const urlFullName=params.get("first_name") + " " + params.get("last_name")
+        // const urlFirstName = params.get('first_name').slice(0,1) || ""
+        // const urlLastName = params.get('last_name').slice(0,1) || ""
+        // setFullName(urlFullName)
+        // setFirstName(urlFirstName)
+        // setLastName(urlLastName)
+        const uid = params.get('uid') || ''
+        setUserId(uid)
+        localStorage.setItem('userId', uid)
+        const userId = localStorage.getItem('userId')
+
+        const apiUrl =
+            window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId
+            })
+        })
+            .then((response) => {
+                if (response.ok) {
+                    response.json().then((user) => {
+                        setUser(user[0].name[0])
+                    })
+                } else {
+                    console.error('Error:', response.statusText)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+            })
     }, [])
+
     const changeDarkMode = () => {
-        dispatch({ type: SET_DARKMODE, isDarkMode: !isDark })
-        setIsDark((isDark) => !isDark)
-        localStorage.setItem('isDarkMode', !isDark)
+        const newTheme = !isDark
+        setIsDark(newTheme)
+        dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
+        localStorage.setItem('isDarkMode', newTheme)
     }
 
     const signOutClicked = () => {
@@ -99,10 +142,20 @@ const Header = ({ handleLeftDrawerToggle }) => {
         navigate('/', { replace: true })
         navigate(0)
     }
+    const StyledLink = styled(Link)(({ theme }) => ({
+        color: customization?.isDarkMode ? '#fff' : '#000',
+        fontSize: '1.25rem', // Adjust font size as needed
+        fontWeight: 'bold',
+        fontFamily: 'Arial, sans-serif',
+        textDecoration: 'none',
+
+        '&:hover': {
+            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
+        }
+    }))
 
     return (
         <>
-            {/* logo & toggler button */}
             <Box
                 sx={{
                     width: 200,
@@ -112,59 +165,37 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     }
                 }}
             >
-                {/* <Box sx={{ mt: 1 }}>
-                    <ButtonBase sx={{ borderRadius: '20%', overflow: 'hidden' }}>
-                        <Avatar
-                            variant='rounded'
-                            sx={{
-                                ...theme.typography.commonAvatar,
-                                ...theme.typography.mediumAvatar,
-                                transition: 'all .2s ease-in-out',
-                                // background: theme.palette.secondary.light,
-                                background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                // color: theme.palette.secondary.dark,
-                                color: '#fff',
-                                '&:hover': {
-                                    // background: theme.palette.secondary.dark,
-                                    background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                                    // color: theme.palette.secondary.light
-                                    color: '#fff'
-                                }
-                            }}
-                            onClick={handleLeftDrawerToggle}
-                            color='inherit'
-                        >
-                            <IconMenu2 stroke={1.5} size='1.3rem' />
-                        </Avatar>
-                    </ButtonBase>
-                </Box> */}
-                {/* <Box sx={{ ml: 2 }}></Box> */}
-                {/* <Box component='span' sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
-                    
-                    <LogoSection />
-                </Box> */}
-                {/* {customization.menu_open ? (
-                    <img src={Logo} alt='THub_Logo' width={110} />
-                ) : (
-                    <img src={ColorfulLogo} alt='THub_Logo' width={30} />
-                )} */}
-
-                {/* <img src={ColorfulLogo} alt='THub_Logo' width={35} />
-
-                {customization.menu_open ? (
-                    <img src={logo} alt='THub_Logo' width={70} height={35} style={{}}/>
-                ) : (
-                    ""
-                )} */}
-
                 <img src={ColorfulLogo} alt='THub_Logo' width={35} />
-
-                {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} /> : ''}
+                {customization.menu_open && <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} />}
             </Box>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
+
             <Box sx={{ flexGrow: 1 }} />
-            <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />
+            {/* <MaterialUISwitch checked={isDark} onChange={changeDarkMode} /> */}
+            {isDark ? (
+                <IconButton checked={isDark} onClick={changeDarkMode}>
+                    <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
+                </IconButton>
+            ) : (
+                <IconButton checked={isDark} onClick={changeDarkMode}>
+                    <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
+                </IconButton>
+            )}
+            {/* <img src={toggle_1} checked={isDark} onClick={changeDarkMode} /> */}
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
+            <Stack direction='row' spacing={2}>
+                <Tooltip title='Username'>
+                    <Avatar
+                        style={{
+                            color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                        }}
+                    >
+                        {user}
+                    </Avatar>
+                </Tooltip>
+            </Stack>
         </>
     )
 }

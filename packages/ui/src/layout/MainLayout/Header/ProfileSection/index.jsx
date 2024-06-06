@@ -26,9 +26,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import MainCard from '@/ui-component/cards/MainCard'
 import Transitions from '@/ui-component/extended/Transitions'
 import AboutDialog from '@/ui-component/dialog/AboutDialog'
-
+import MenuIcon from '@mui/icons-material/Menu'
 // assets
-import { IconLogout, IconSettings, IconInfoCircle } from '@tabler/icons'
+import { IconLogout, IconInfoCircle } from '@tabler/icons'
 
 import './index.css'
 
@@ -36,7 +36,6 @@ import './index.css'
 
 const ProfileSection = ({ username, handleLogout }) => {
     const theme = useTheme()
-
     const customization = useSelector((state) => state.customization)
 
     const [open, setOpen] = useState(false)
@@ -51,16 +50,18 @@ const ProfileSection = ({ username, handleLogout }) => {
         setOpen(false)
     }
 
-    const handleToggle = () => {
+    const settingToggle = () => {
         setOpen((prevOpen) => !prevOpen)
     }
 
+    const profileToggle = () => {
+        setOpen((prevOpen) => !prevOpen)
+    }
     const prevOpen = useRef(open)
     useEffect(() => {
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus()
         }
-
         prevOpen.current = open
     }, [open])
 
@@ -73,23 +74,45 @@ const ProfileSection = ({ username, handleLogout }) => {
                         ...theme.typography.commonAvatar,
                         ...theme.typography.mediumAvatar,
                         transition: 'all .2s ease-in-out',
-                        // background: theme.palette.secondary.light,
                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                        // color: theme.palette.secondary.dark,
                         color: '#fff',
                         '&:hover': {
-                            // background: theme.palette.secondary.dark,
                             background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                            // color: theme.palette.secondary.light
                             color: '#fff'
-                        }
+                        },
+                        marginRight: '18px',
+                        borderRadius: '12px'
                     }}
-                    onClick={handleToggle}
+                    onClick={settingToggle}
                     color='inherit'
                 >
-                    <IconSettings stroke={1.5} size='1.3rem' />
+                    <MenuIcon stroke={1.5} size='1.3rem' style={{ background: 'transparent' }} />
                 </Avatar>
             </ButtonBase>
+            {/* <ButtonBase ref={anchorRef} sx={{ borderRadius: '12px', overflow: 'hidden' }}>
+                
+                <Avatar
+                    variant='rounded'
+                    sx={{
+                        ...theme.typography.commonAvatar,
+                        ...theme.typography.mediumAvatar,
+                        transition: 'all .2s ease-in-out',
+                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                        color: '#fff',
+                        '&:hover': {
+                            background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                            color: '#fff'
+                        },
+                    }}
+                    // onClick={profileToggle}
+                    color='inherit'
+                >
+                    <PersonIcon stroke={1.5} size='1.3rem'
+                    style={{background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'}} 
+                    /> 
+                </Avatar>
+
+            </ButtonBase> */}
             <Popper
                 placement='bottom-end'
                 open={open}
@@ -113,13 +136,13 @@ const ProfileSection = ({ username, handleLogout }) => {
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
-                                    {username && (
-                                        <Box sx={{ p: 2 }}>
+                                    <Box sx={{ p: 2 }}>
+                                        {username && (
                                             <Typography component='span' variant='h4'>
                                                 {username}
                                             </Typography>
-                                        </Box>
-                                    )}
+                                        )}
+                                    </Box>
                                     <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
                                         <Box sx={{ p: 2 }}>
                                             <Divider />
@@ -140,7 +163,19 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                 }}
                                             >
                                                 <ListItemButton
-                                                    sx={{ borderRadius: `${customization.borderRadius}px` }}
+                                                    sx={{
+                                                        borderRadius: `${customization.borderRadius}px`,
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#23262c' : '#fff',
+                                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                            '& .MuiListItemIcon-root': {
+                                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                            },
+                                                            '& .MuiTypography-root': {
+                                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                            }
+                                                        }
+                                                    }}
                                                     onClick={() => {
                                                         setOpen(false)
                                                         setAboutDialogOpen(true)
@@ -178,7 +213,7 @@ const ProfileSection = ({ username, handleLogout }) => {
 
 ProfileSection.propTypes = {
     username: PropTypes.string,
-    handleLogout: PropTypes.func
+    handleLogout: PropTypes.func.isRequired
 }
 
 export default ProfileSection

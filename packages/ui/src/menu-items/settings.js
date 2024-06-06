@@ -1,5 +1,6 @@
 // assets
 import {
+    IconCode,
     IconTrash,
     IconFileUpload,
     IconFileExport,
@@ -17,7 +18,8 @@ const icons = {
     IconCopy,
     IconMessage,
     IconDatabaseExport,
-    IconAdjustmentsHorizontal
+    IconAdjustmentsHorizontal,
+    IconCode
 }
 
 // ==============================|| SETTINGS MENU ITEMS ||============================== //
@@ -28,12 +30,21 @@ const settings = {
     type: 'group',
     children: [
         {
-            id: 'viewMessages',
-            title: 'View Messages',
+            id: 'apiEndpoint',
+            title: 'API Endpoint',
             type: 'item',
             url: '',
-            icon: icons.IconMessage
+            icon: icons.IconCode
         },
+
+        {
+            id: 'chatflowConfiguration',
+            title: 'Configuration',
+            type: 'item',
+            url: '',
+            icon: icons.IconAdjustmentsHorizontal
+        },
+
         {
             id: 'viewUpsertHistory',
             title: 'Upsert History',
@@ -42,19 +53,13 @@ const settings = {
             icon: icons.IconDatabaseExport
         },
         {
-            id: 'chatflowConfiguration',
-            title: 'Configuration',
+            id: 'viewMessages',
+            title: 'View Messages',
             type: 'item',
             url: '',
-            icon: icons.IconAdjustmentsHorizontal
+            icon: icons.IconMessage
         },
-        {
-            id: 'duplicateChatflow',
-            title: 'Duplicate Workflow',
-            type: 'item',
-            url: '',
-            icon: icons.IconCopy
-        },
+
         {
             id: 'loadChatflow',
             title: 'Load Workflow',
@@ -62,6 +67,15 @@ const settings = {
             url: '',
             icon: icons.IconFileUpload
         },
+
+        {
+            id: 'duplicateChatflow',
+            title: 'Duplicate Workflow',
+            type: 'item',
+            url: '',
+            icon: icons.IconCopy
+        },
+
         {
             id: 'exportChatflow',
             title: 'Export Workflow',

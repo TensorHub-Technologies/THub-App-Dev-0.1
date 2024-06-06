@@ -17,6 +17,8 @@ import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
 import Button from '@mui/material/Button'
 import { IconX } from '@tabler/icons'
+import { IconDeviceAnalytics } from '@tabler/icons'
+import { IconAdjustmentsAlt } from '@tabler/icons'
 
 import chatflowsApi from '@/api/chatflows'
 
@@ -37,10 +39,13 @@ import SpeechToTextDialog from '../dialog/SpeechToTextDialog'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import IconButton from '@mui/material/IconButton'
 import { MoreHoriz } from '@mui/icons-material'
+import RateLimitDailog from '../dialog/RateLimitDailog'
+import AnalyseWorkflowDailog from '../dialog/AnalyseWorkflowDialog'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
 }
+
 const StyledMenu = styled((props) => (
     <Menu
         elevation={0}
@@ -100,6 +105,12 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const [allowedDomainsDialogOpen, setAllowedDomainsDialogOpen] = useState(false)
     const [allowedDomainsDialogProps, setAllowedDomainsDialogProps] = useState({})
     const [speechToTextDialogOpen, setSpeechToTextDialogOpen] = useState(false)
+    const [rateLimitDialogOpen, setRateLimitDialogOpen] = useState(false)
+    const [rateLimitDialogProps, setRateLimitDialogProps] = useState(false)
+
+    const [AnalyseWorkFlowDialogOpen, setWorkFlowDialogOpen] = useState(false)
+    const [AnalyseWorkFlowDialogProps, setWorkFlowDialogProps] = useState(false)
+
     const [speechToTextDialogProps, setSpeechToTextDialogProps] = useState({})
 
     const handleClick = (event) => {
@@ -149,6 +160,23 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             chatflow: chatflow
         })
         setSpeechToTextDialogOpen(true)
+    }
+
+    const handleRateLimit = () => {
+        setAnchorEl(null)
+        setRateLimitDialogProps({
+            title: 'Rate Limiting - ' + chatflow.name,
+            chatflow: chatflow
+        })
+        setRateLimitDialogOpen(true)
+    }
+    const handleAnalyse = () => {
+        setAnchorEl(null)
+        setWorkFlowDialogProps({
+            title: 'Analyse Workflow - ' + chatflow.name,
+            chatflow: chatflow
+        })
+        setWorkFlowDialogOpen(true)
     }
 
     const saveFlowRename = async (chatflowName) => {
@@ -276,7 +304,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             console.error(e)
         }
     }
-
+    const customization = useSelector((state) => state.customization)
     return (
         <div>
             {localStorage.getItem('flowDisplayStyle') === 'list' ? (
@@ -331,6 +359,13 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                     Export
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
+                <MenuItem onClick={handleRateLimit} disableRipple>
+                    <IconAdjustmentsAlt
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
+                    Rate Limiting
+                </MenuItem>
+
                 <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
                     <PictureInPictureAltIcon />
                     Starter Prompts
@@ -346,6 +381,12 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 <MenuItem onClick={handleSpeechToText} disableRipple>
                     <MicNoneOutlinedIcon />
                     Speech To Text
+                </MenuItem>
+                <MenuItem onClick={handleAnalyse} disableRipple>
+                    <IconDeviceAnalytics
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
+                    Analyse WorkFlow
                 </MenuItem>
                 <MenuItem onClick={handleFlowCategory} disableRipple>
                     <FileCategoryIcon />
@@ -392,6 +433,12 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 show={speechToTextDialogOpen}
                 dialogProps={speechToTextDialogProps}
                 onCancel={() => setSpeechToTextDialogOpen(false)}
+            />
+            <RateLimitDailog show={rateLimitDialogOpen} dialogProps={rateLimitDialogProps} onCancel={() => setRateLimitDialogOpen(false)} />
+            <AnalyseWorkflowDailog
+                show={AnalyseWorkFlowDialogOpen}
+                dialogProps={AnalyseWorkFlowDialogProps}
+                onCancel={() => setWorkFlowDialogOpen(false)}
             />
         </div>
     )
