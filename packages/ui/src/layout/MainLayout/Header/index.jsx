@@ -3,12 +3,14 @@ import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
-import { Box, IconButton, Link, Switch, Toolbar } from '@mui/material'
+import { Box, IconButton, Link, Switch, Toolbar, Tooltip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SET_DARKMODE } from '@/store/actions'
 import ProfileSection from './ProfileSection'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
+import Avatar from '@mui/material/Avatar'
+import Stack from '@mui/material/Stack'
 import toggle_1 from '@/assets/images/toggle_mode-1.svg'
 import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 
@@ -61,11 +63,14 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }))
 
 const Header = ({ handleLeftDrawerToggle }) => {
+    const [user, setUser] = useState('')
+
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
+    const [userId, setUserId] = useState('')
     const [isDark, setIsDark] = useState(() => {
         const storedTheme = localStorage.getItem('isDarkMode')
         return storedTheme !== null ? JSON.parse(storedTheme) : customization.isDarkMode
@@ -83,6 +88,46 @@ const Header = ({ handleLeftDrawerToggle }) => {
         dispatch({ type: SET_DARKMODE, isDarkMode: initialTheme })
         localStorage.setItem('isDarkMode', initialTheme)
     }, [dispatch])
+
+    useEffect(() => {
+        let url = new URL(window.location.href)
+        let params = new URLSearchParams(url.search)
+        // const urlFullName=params.get("first_name") + " " + params.get("last_name")
+        // const urlFirstName = params.get('first_name').slice(0,1) || ""
+        // const urlLastName = params.get('last_name').slice(0,1) || ""
+        // setFullName(urlFullName)
+        // setFirstName(urlFirstName)
+        // setLastName(urlLastName)
+        const uid = params.get('uid') || ''
+        setUserId(uid)
+        localStorage.setItem('userId', uid)
+        const userId = localStorage.getItem('userId')
+
+        const apiUrl =
+            window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId
+            })
+        })
+            .then((response) => {
+                if (response.ok) {
+                    response.json().then((user) => {
+                        setUser(user[0].name[0])
+                    })
+                } else {
+                    console.error('Error:', response.statusText)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+            })
+    }, [])
 
     const changeDarkMode = () => {
         const newTheme = !isDark
@@ -139,6 +184,18 @@ const Header = ({ handleLeftDrawerToggle }) => {
             {/* <img src={toggle_1} checked={isDark} onClick={changeDarkMode} /> */}
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
+            <Stack direction='row' spacing={2}>
+                <Tooltip title='Username'>
+                    <Avatar
+                        style={{
+                            color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                        }}
+                    >
+                        {user}
+                    </Avatar>
+                </Tooltip>
+            </Stack>
         </>
     )
 }
