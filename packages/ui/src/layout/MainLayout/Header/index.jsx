@@ -3,12 +3,14 @@ import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
-import { Box, Switch } from '@mui/material'
+import { Box, Switch, Tooltip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SET_DARKMODE } from '@/store/actions'
 import ProfileSection from './ProfileSection'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
+import Avatar from '@mui/material/Avatar'
+import Stack from '@mui/material/Stack'
 
 // Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -63,6 +65,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    // const [firstName, setFirstName] = useState("")
+    // const [lastName, setLastName] = useState("")
+    // const [fullName,setFullName]=useState("")
 
     const [isDark, setIsDark] = useState(() => {
         const storedTheme = localStorage.getItem('isDarkMode')
@@ -81,6 +86,17 @@ const Header = ({ handleLeftDrawerToggle }) => {
         dispatch({ type: SET_DARKMODE, isDarkMode: initialTheme })
         localStorage.setItem('isDarkMode', initialTheme)
     }, [dispatch])
+
+    // useEffect(() => {
+    //     let url = new URL(window.location.href)
+    //     let params = new URLSearchParams(url.search)
+    //     const urlFullName=params.get("first_name") + " " + params.get("last_name")
+    //     const urlFirstName = params.get('first_name').slice(0,1) || ""
+    //     const urlLastName = params.get('last_name').slice(0,1) || ""
+    //     setFullName(urlFullName)
+    //     setFirstName(urlFirstName)
+    //     setLastName(urlLastName)
+    // }, [])
 
     const changeDarkMode = () => {
         const newTheme = !isDark
@@ -115,7 +131,20 @@ const Header = ({ handleLeftDrawerToggle }) => {
             <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
-            {/* <h1>hello</h1> */}
+            {/* <AccountCircleIcon style={{cursor:"pointer",fontSize:"32px",marginLeft:"12px"}}/>
+            <h3>{firstName} {lastName}</h3> */}
+            <Stack direction='row' spacing={2}>
+                <Tooltip title='Username'>
+                    <Avatar
+                        style={{
+                            color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                        }}
+                    >
+                        UN
+                    </Avatar>
+                </Tooltip>
+            </Stack>
         </>
     )
 }
