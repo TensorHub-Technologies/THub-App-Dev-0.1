@@ -31,6 +31,8 @@ import chatflowsApi from '@/api/chatflows'
 import useApi from '@/hooks/useApi'
 
 // utils
+import { styled } from '@mui/material/styles'
+import { Switch, Link } from '@mui/material'
 import { generateExportFlowData, getUpsertDetails } from '@/utils/genericHelper'
 import { uiBaseURL } from '@/store/constant'
 import { SET_CHATFLOW } from '@/store/actions'
@@ -124,6 +126,52 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             updateChatflowApi.request(chatflow.id, updateBody)
         }
     }
+    const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+        width: 62,
+        height: 34,
+        padding: 7,
+        '& .MuiSwitch-switchBase': {
+            margin: 1,
+            padding: 0,
+            transform: 'translateX(6px)',
+            '&.Mui-checked': {
+                color: '#fff',
+                transform: 'translateX(22px)',
+                '& .MuiSwitch-thumb:before': {
+                    backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+                        '#fff'
+                    )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`
+                },
+                '& + .MuiSwitch-track': {
+                    opacity: 1,
+                    backgroundColor: theme.palette.mode === 'dark' ? '#3C5BA4' : '#E22A90'
+                }
+            }
+        },
+        '& .MuiSwitch-thumb': {
+            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
+            width: 32,
+            height: 32,
+            '&:before': {
+                content: "''",
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                left: 0,
+                top: 0,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+                    '#fff'
+                )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`
+            }
+        },
+        '& .MuiSwitch-track': {
+            opacity: 1,
+            backgroundColor: theme.palette.mode === 'dark' ? '#E22A90' : '#3C5BA4',
+            borderRadius: 20 / 2
+        }
+    }))
 
     const checkIfUpsertAvailable = (nodes, edges) => {
         const upsertNodeDetails = getUpsertDetails(nodes, edges)
@@ -215,6 +263,17 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             }
         }
     }, [chatflow, chatflowConfigurationDialogOpen])
+    const StyledLink = styled(Link)(({ theme }) => ({
+        color: customization?.isDarkMode ? '#fff' : '#000',
+        fontSize: '0.87rem', // Adjust font size as needed
+        fontWeight: 'bold',
+        fontFamily: 'Arial, sans-serif',
+        textDecoration: 'none',
+
+        '&:hover': {
+            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
+        }
+    }))
 
     return (
         <>
@@ -270,6 +329,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             <img src={ColorfulLogo} alt='THub_Logo' width={35} />
 
             {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''}
+
             <Box>
                 <ButtonBase title='Back' sx={{ borderRadius: '20%', marginLeft: customization.menu_open ? '198px' : '37px' }}>
                     <Avatar
@@ -297,6 +357,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                     </Avatar>
                 </ButtonBase>
             </Box>
+
             <Box sx={{ flexGrow: 1 }}>
                 {!isEditingFlowName && (
                     <Stack flexDirection='row'>
@@ -334,8 +395,33 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 </Avatar>
                             </ButtonBase>
                         )}
+
+                        <Stack direction='row' gap={1} marginTop='8px' sx={{ marginLeft: 'auto', marginRight: '20px' }}>
+                            <StyledLink href='/workflows' underline='none'>
+                                AI Workspace
+                            </StyledLink>
+                            <StyledLink href='/templates' underline='none'>
+                                Templates
+                            </StyledLink>
+                            <StyledLink href='/tools' underline='none'>
+                                Tools
+                            </StyledLink>
+                            <StyledLink href='/assistants' underline='none'>
+                                Assistants
+                            </StyledLink>
+                            <StyledLink href='/credentials' underline='none'>
+                                Credentials
+                            </StyledLink>
+                            <StyledLink href='/variables' underline='none'>
+                                Variables
+                            </StyledLink>
+                            <StyledLink href='/apikey' underline='none'>
+                                API Keys
+                            </StyledLink>
+                        </Stack>
                     </Stack>
                 )}
+
                 {isEditingFlowName && (
                     <Stack flexDirection='row'>
                         <TextField
@@ -347,6 +433,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                             }}
                             defaultValue={flowName}
                         />
+
                         <ButtonBase title='Save Name' sx={{ borderRadius: '50%' }}>
                             <Avatar
                                 variant='rounded'
@@ -400,6 +487,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                     </Stack>
                 )}
             </Box>
+
             <Box>
                 <ButtonBase title='Vector Database' sx={{ borderRadius: '50%', mr: 2 }}>
                     {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />}

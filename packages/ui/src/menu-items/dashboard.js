@@ -91,6 +91,7 @@ const dashboard = {
             icon: icons.VpnKeyOutlinedIcon,
             breadcrumbs: true
         }
+
         // {
         //     id: 'document-stores',
         //     title: 'Document Stores',
