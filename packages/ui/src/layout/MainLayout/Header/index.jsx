@@ -62,9 +62,11 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     }
 }))
 
-const Header = ({ handleLeftDrawerToggle }) => {
-    const [user, setUser] = useState('')
 
+const Header = ({ handleLeftDrawerToggle }) => {
+    const [userIcon , setUserIcon] = useState("");
+    const [userName , setUserName] = useState("");
+    
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
@@ -115,18 +117,19 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 userId: userId
             })
         })
-            .then((response) => {
-                if (response.ok) {
-                    response.json().then((user) => {
-                        setUser(user[0].name[0])
-                    })
-                } else {
-                    console.error('Error:', response.statusText)
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error)
-            })
+        .then(response => {
+            if (response.ok) {
+                response.json().then(user =>{
+                    setUserIcon(user[0].name[0]);
+                    setUserName(user[0].name);
+            });
+            } else {
+                console.error('Error:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }, [])
 
     const changeDarkMode = () => {
@@ -185,14 +188,14 @@ const Header = ({ handleLeftDrawerToggle }) => {
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
             <Stack direction='row' spacing={2}>
-                <Tooltip title='Username'>
+                <Tooltip title={userName}>
                     <Avatar
                         style={{
                             color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
                             background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                         }}
                     >
-                        {user}
+                        {userIcon}
                     </Avatar>
                 </Tooltip>
             </Stack>
