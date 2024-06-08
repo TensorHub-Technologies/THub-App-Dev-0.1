@@ -68,12 +68,12 @@ const AboutDialog = ({ show, onCancel }) => {
                             <TableBody>
                                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                     <TableCell component='th' scope='row'>
-                                        {data.currentVersion}
+                                        1.8.1
                                     </TableCell>
                                     <TableCell component='th' scope='row'>
-                                        <a target='_blank' rel='noreferrer' href={data.html_url}>
-                                            {data.name}
-                                        </a>
+                                        {/* <a target='_blank' rel='noreferrer' href={data.html_url}> */}
+                                        THub@1.8.1
+                                        {/* </a> */}
                                     </TableCell>
                                     <TableCell>{moment(data.published_at).fromNow()}</TableCell>
                                 </TableRow>
