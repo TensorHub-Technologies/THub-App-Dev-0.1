@@ -26,9 +26,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import MainCard from '@/ui-component/cards/MainCard'
 import Transitions from '@/ui-component/extended/Transitions'
 import AboutDialog from '@/ui-component/dialog/AboutDialog'
-
+import MenuIcon from '@mui/icons-material/Menu'
 // assets
-import { IconLogout, IconSettings, IconInfoCircle } from '@tabler/icons'
+import { IconLogout, IconInfoCircle } from '@tabler/icons'
 
 import './index.css'
 
@@ -85,7 +85,7 @@ const ProfileSection = ({ username, handleLogout }) => {
                     onClick={settingToggle}
                     color='inherit'
                 >
-                    <IconSettings stroke={1.5} size='1.3rem' />
+                    <MenuIcon stroke={1.5} size='1.3rem' style={{ background: 'transparent' }} />
                 </Avatar>
             </ButtonBase>
             {/* <ButtonBase ref={anchorRef} sx={{ borderRadius: '12px', overflow: 'hidden' }}>

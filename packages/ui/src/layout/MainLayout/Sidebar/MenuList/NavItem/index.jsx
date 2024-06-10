@@ -52,9 +52,6 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
     )
 
     let itemTarget = '_self'
-    if (item.target === undefined) {
-        null
-    }
     if (item.target) {
         itemTarget = '_blank'
     }
