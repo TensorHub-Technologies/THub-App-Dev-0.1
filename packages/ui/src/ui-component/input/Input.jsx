@@ -99,11 +99,14 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                         value={myValue}
                         name={inputParam.name}
                         onChange={(e) => {
-                            setMyValue(e.target.value)
-                            onChange(e.target.value)
+                            const inputValue = e.target.value
+                            if (/^(0\.[1-9]|[0-9](\.[0-9])?)$/.test(inputValue) && parseFloat(inputValue) <= 0.9) {
+                                setMyValue(inputValue)
+                                onChange(inputValue)
+                            }
                         }}
                         inputProps={{
-                            step: inputParam.step ?? 1,
+                            step: inputParam.step ?? 0.1,
                             style: {
                                 height: inputParam.rows ? '90px' : 'inherit'
                             }
