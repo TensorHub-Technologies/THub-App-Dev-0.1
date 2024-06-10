@@ -10,9 +10,18 @@ import ProfileSection from './ProfileSection'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
 import Avatar from '@mui/material/Avatar'
-import Stack from '@mui/material/Stack'
 import toggle_1 from '@/assets/images/toggle_mode-1.svg'
 import toggle_2 from '@/assets/images/toggle_mode-2.svg'
+
+// menu
+import * as React from 'react'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import PersonAdd from '@mui/icons-material/PersonAdd'
+import Settings from '@mui/icons-material/Settings'
+import Logout from '@mui/icons-material/Logout'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 // Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -69,6 +78,15 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    // menu
+    const [anchorEl, setAnchorEl] = React.useState(null)
+    const open = Boolean(anchorEl)
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
 
     const [userId, setUserId] = useState('')
     const [isDark, setIsDark] = useState(() => {
@@ -142,6 +160,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
         navigate('/', { replace: true })
         navigate(0)
     }
+
     const StyledLink = styled(Link)(({ theme }) => ({
         color: customization?.isDarkMode ? '#fff' : '#000',
         fontSize: '1.25rem', // Adjust font size as needed
@@ -169,7 +188,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 {customization.menu_open && <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} />}
             </Box>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
-
             <Box sx={{ flexGrow: 1 }} />
             {/* <MaterialUISwitch checked={isDark} onChange={changeDarkMode} /> */}
             {isDark ? (
@@ -181,10 +199,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
                 </IconButton>
             )}
-            {/* <img src={toggle_1} checked={isDark} onClick={changeDarkMode} /> */}
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
-            <Stack direction='row' spacing={2}>
+            {/* <Stack direction='row' spacing={2}>
                 <Tooltip title='Username'>
                     <Avatar
                         style={{
@@ -195,7 +212,89 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         {user}
                     </Avatar>
                 </Tooltip>
-            </Stack>
+            </Stack> */}
+            <React.Fragment>
+                <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                    <Tooltip title='Account'>
+                        <IconButton
+                            onClick={handleClick}
+                            size='small'
+                            sx={{ ml: 2 }}
+                            aria-controls={open ? 'account-menu' : undefined}
+                            aria-haspopup='true'
+                            aria-expanded={open ? 'true' : undefined}
+                        >
+                            <Avatar
+                                sx={{ width: 38, height: 38 }}
+                                style={{
+                                    color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                                    background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                    fontSize: '18px'
+                                }}
+                            >
+                                GM
+                            </Avatar>
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+                <KeyboardArrowDownIcon onClick={handleClick} style={{ background: 'transparent', cursor: 'pointer', fontSize: '28px' }} />
+                <Menu
+                    anchorEl={anchorEl}
+                    id='account-menu'
+                    open={open}
+                    onClose={handleClose}
+                    onClick={handleClose}
+                    PaperProps={{
+                        elevation: 0,
+                        sx: {
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1
+                            },
+                            '&::before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0
+                            }
+                            // border:"2px solid red",
+                            // width:"180px"
+                        }
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                    <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                            <Settings fontSize='small' />
+                        </ListItemIcon>
+                        Settings
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                            <PersonAdd fontSize='small' />
+                        </ListItemIcon>
+                        Subscription
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                            <Logout fontSize='small' style={{ marginLeft: '3.5px' }} />
+                        </ListItemIcon>
+                        Logout
+                    </MenuItem>
+                </Menu>
+            </React.Fragment>
         </>
     )
 }

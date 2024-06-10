@@ -80,7 +80,6 @@ const ProfileSection = ({ username, handleLogout }) => {
                             background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
                             color: '#fff'
                         },
-                        marginRight: '18px',
                         borderRadius: '12px'
                     }}
                     onClick={settingToggle}
