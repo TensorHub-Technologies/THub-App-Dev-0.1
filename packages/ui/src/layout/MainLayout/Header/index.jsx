@@ -89,22 +89,13 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     const [userId, setUserId] = useState('')
-    const [isDark, setIsDark] = useState(() => {
-        const storedTheme = localStorage.getItem('isDarkMode')
-        return storedTheme !== null ? JSON.parse(storedTheme) : customization.isDarkMode
-    })
-
+    const [isDark, setIsDark] = useState(false)
     useEffect(() => {
         let url = new URL(window.location.href)
         let params = new URLSearchParams(url.search)
         const urlTheme = params.get('theme') === 'dark'
-
-        const storedTheme = localStorage.getItem('isDarkMode')
-        const initialTheme = storedTheme !== null ? JSON.parse(storedTheme) : urlTheme
-
-        setIsDark(initialTheme)
-        dispatch({ type: SET_DARKMODE, isDarkMode: initialTheme })
-        localStorage.setItem('isDarkMode', initialTheme)
+        dispatch({ type: SET_DARKMODE, isDarkMode: urlTheme })
+        localStorage.setItem('isDarkMode', urlTheme)
     }, [dispatch])
 
     useEffect(() => {
@@ -190,12 +181,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
             <Box sx={{ flexGrow: 1 }} />
             {/* <MaterialUISwitch checked={isDark} onChange={changeDarkMode} /> */}
-            {isDark ? (
-                <IconButton checked={isDark} onClick={changeDarkMode}>
+            {customization.isDarkMode ? (
+                <IconButton checked={true} onClick={changeDarkMode}>
                     <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
                 </IconButton>
             ) : (
-                <IconButton checked={isDark} onClick={changeDarkMode}>
+                <IconButton checked={false} onClick={changeDarkMode}>
                     <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
                 </IconButton>
             )}
@@ -232,7 +223,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                                     fontSize: '18px'
                                 }}
                             >
-                                GM
+                                {user}
                             </Avatar>
                         </IconButton>
                     </Tooltip>

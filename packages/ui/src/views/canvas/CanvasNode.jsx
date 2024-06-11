@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 
 // material-ui
@@ -37,10 +37,21 @@ const CanvasNode = ({ data }) => {
     const [warningMessage, setWarningMessage] = useState('')
     const [open, setOpen] = useState(false)
     const [minMax, setMinMax] = useState('true')
+    const menuRef = useRef()
 
     // const handleClose = () => {
     //     setOpen(false)
     // }
+
+    useEffect(() => {
+        let handler = (e) => {
+            if (!menuRef.current.contains(e.target)) {
+                setOpen(false)
+                console.log(menuRef.current)
+            }
+        }
+        document.addEventListener('mousedown', handler)
+    })
     const handleMin = () => {
         setMinMax(!minMax)
     }
@@ -126,7 +137,7 @@ const CanvasNode = ({ data }) => {
 
     return (
         <>
-            <>
+            <div>
                 <NodeCardWrapper
                     content={false}
                     sx={{
@@ -161,6 +172,7 @@ const CanvasNode = ({ data }) => {
                                     flexDirection: 'column',
                                     position: 'relative'
                                 }}
+                                ref={menuRef}
                             >
                                 <IconButton title='minmax' id='minmax-parent'>
                                     {minMax ? (
@@ -345,7 +357,7 @@ const CanvasNode = ({ data }) => {
                     dialogProps={infoDialogProps}
                     onCancel={() => setShowInfoDialog(false)}
                 ></NodeInfoDialog>
-            </>
+            </div>
         </>
     )
 }
