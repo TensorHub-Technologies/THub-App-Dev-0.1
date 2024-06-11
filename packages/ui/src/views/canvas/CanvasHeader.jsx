@@ -475,16 +475,16 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             {/* NAVIGATION */}
             {isDark ? (
                 <IconButton checked={isDark} onClick={changeDarkMode}>
-                    <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
+                    <img src={toggle_1} style={{ width: '30px', marginRight: '5px' }} alt='dark' />
                 </IconButton>
             ) : (
                 <IconButton checked={isDark} onClick={changeDarkMode}>
-                    <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
+                    <img src={toggle_2} style={{ width: '27px', marginRight: '5px' }} alt='lite' />
                 </IconButton>
             )}
 
             <Box>
-                <ButtonBase title='Vector Database' sx={{ borderRadius: '50%', mr: 2 }}>
+                <ButtonBase>
                     <VectorStorePopUp chatflowid={chatflowId} isUpsertButtonEnabled={isUpsertButtonEnabled} />
                 </ButtonBase>
                 <ButtonBase title='Save Workspace' sx={{ borderRadius: '50%', mr: 2 }}>
@@ -513,8 +513,9 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 </ButtonBase>
 
                 <ButtonBase>
-                    <div>
+                    <div title='Navbar'>
                         <Button
+                            style={{ marginLeft: '-15px' }}
                             id='demo-positioned-button'
                             aria-controls={open ? 'demo-positioned-menu' : undefined}
                             aria-haspopup='true'
@@ -542,8 +543,9 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 <ListIcon stroke={1.5} size='1.3rem' style={{ background: 'transparent' }} />
                             </Avatar>
                         </Button>
+
                         <Menu
-                            style={{ marginTop: '60px', marginLeft: '0px', height: '260px' }}
+                            style={{ marginTop: '60px', marginLeft: '15px', height: '260px' }}
                             id='demo-positioned-menu'
                             aria-labelledby='demo-positioned-button'
                             anchorEl={anchorEl}
@@ -559,67 +561,159 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                             }}
                             sx={{
                                 '& .MuiPaper-root': {
+                                    //     position: 'relative',
+                                    //     top: '65px',
+                                    //     width: '180px',
+                                    //     lineHeight: '1.334em',
+                                    //     fontSize:'0.875rem',
+                                    //     padding:'16px',
+                                    //     overflow:'hidden',
+                                    //     lineHeight:'1.75em',
+                                    //     background: customization.isDarkMode ? '#23262C' : '#FFF',
+                                    //     height: 'auto',
+                                    // fontFamily:'roboto sans-serif',
+
+                                    //     maxHeight: 'calc(-235px + 100vh)',
+
+                                    // borderRadius: `${customization.borderRadius}px`,
+                                    // mb: 0.5,
+                                    // alignItems: 'flex-start',
+                                    // py: 1.25,
+                                    // pl: `24px`,
+
                                     position: 'relative',
                                     top: '65px',
-                                    width: '180px',
+                                    width: '220px',
+
+                                    fontSize: '0.875rem',
+                                    padding: '30px',
+                                    overflow: 'hidden',
 
                                     background: customization.isDarkMode ? '#23262C' : '#FFF',
-                                    height: '100%',
+                                    height: 'auto',
+                                    fontFamily: 'roboto sans-serif',
 
-                                    maxHeight: 'calc(-235px + 100vh)'
+                                    maxHeight: 'calc(-235px + 100vh)',
+                                    marginBottom: '16px'
                                 }
                             }}
                         >
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
+                            <MenuItem
+                                onClick={handleClose}
+                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '2em', marginTop: '-10px' }}
+                            >
                                 <AppsOutlinedIcon />
                                 <a
                                     href='/workflows'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFF' : '#616161',
+                                        textDecoration: 'none',
+                                        marginLeft: '8px',
+                                        lineHeight: '3em'
+                                    }}
                                 >
                                     AI Workspace
                                 </a>
                             </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
+                            <MenuItem
+                                onClick={handleClose}
+                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
+                            >
                                 <DynamicFeedOutlinedIcon />
                                 <a
                                     href='/templates'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFF' : '#616161',
+                                        textDecoration: 'none',
+                                        marginLeft: '8px',
+                                        lineHeight: '3em'
+                                    }}
                                 >
                                     Templates
                                 </a>
                             </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
+                            <MenuItem
+                                onClick={handleClose}
+                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
+                            >
                                 <ConstructionOutlinedIcon />
                                 <a
                                     href='/tools'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFF' : '#616161',
+                                        textDecoration: 'none',
+                                        marginLeft: '8px',
+                                        lineHeight: '3em'
+                                    }}
                                 >
                                     Tools
                                 </a>
                             </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
+
+                            <MenuItem
+                                onClick={handleClose}
+                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
+                            >
+                                <ConstructionOutlinedIcon />
+                                <a
+                                    href='/assistants'
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFF' : '#616161',
+                                        textDecoration: 'none',
+                                        marginLeft: '8px',
+                                        lineHeight: '3em'
+                                    }}
+                                >
+                                    Assistants
+                                </a>
+                            </MenuItem>
+                            <MenuItem
+                                onClick={handleClose}
+                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
+                            >
                                 <SmartToyOutlinedIcon />
                                 <a
                                     href='/credentials'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFF' : '#616161',
+                                        textDecoration: 'none',
+                                        marginLeft: '8px',
+                                        lineHeight: '3em'
+                                    }}
                                 >
                                     Credentials
                                 </a>
                             </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
+                            <MenuItem
+                                onClick={handleClose}
+                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
+                            >
                                 <HttpsOutlinedIcon />
                                 <a
                                     href='/variables'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFF' : '#616161',
+                                        textDecoration: 'none',
+                                        marginLeft: '8px',
+                                        lineHeight: '3em'
+                                    }}
                                 >
                                     Variables
                                 </a>
                             </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
+                            <MenuItem
+                                onClick={handleClose}
+                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
+                            >
                                 <VpnKeyOutlinedIcon />
                                 <a
                                     href='/apikey'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFF' : '#616161',
+                                        textDecoration: 'none',
+                                        marginLeft: '8px',
+                                        lineHeight: '3em'
+                                    }}
                                 >
                                     API Keys
                                 </a>

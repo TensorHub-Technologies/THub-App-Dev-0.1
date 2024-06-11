@@ -6,6 +6,7 @@ import { Fab } from '@mui/material'
 export const StyledFab = styled(Fab)(({ theme }) => {
     const customization = useSelector((state) => state.customization)
     return {
+        marginRight: '3px',
         color: 'white',
         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
         '&:hover': {
@@ -14,6 +15,11 @@ export const StyledFab = styled(Fab)(({ theme }) => {
         '&.Mui-disabled': {
             background: 'grey',
             color: '#fff',
+            // border:"2px solid red",
+            marginRight: '8px',
+            minHeight: '0px',
+            height: '34px',
+            width: '35px',
             cursor: 'not-allowed'
         }
     }

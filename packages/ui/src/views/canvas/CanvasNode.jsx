@@ -54,6 +54,7 @@ const CanvasNode = ({ data }) => {
     })
     const handleMin = () => {
         setMinMax(!minMax)
+        setOpen(false)
     }
     // const handleMax=()=>{
     //     setMinMax(true)
@@ -61,7 +62,7 @@ const CanvasNode = ({ data }) => {
     const handleOpen = () => {
         setOpen(!open)
     }
-
+    console.log('open', open)
     const borderColorMap = {
         Agents: '#0066CC',
         Chains: '#009966',
@@ -134,7 +135,7 @@ const CanvasNode = ({ data }) => {
     //         }
     //     }
     // }, [canvas.componentNodes, data.name, data.version])
-
+    console.log('data.inputParams', data.inputParams)
     return (
         <>
             <div>
