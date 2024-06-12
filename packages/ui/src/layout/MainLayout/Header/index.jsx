@@ -73,6 +73,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 const Header = ({ handleLeftDrawerToggle }) => {
     const [user, setUser] = useState('')
+    const [userImg, setuserImg] = useState('')
 
     const theme = useTheme()
     const navigate = useNavigate()
@@ -89,33 +90,19 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     const [userId, setUserId] = useState('')
-    const [isDark, setIsDark] = useState(() => {
-        const storedTheme = localStorage.getItem('isDarkMode')
-        return storedTheme !== null ? JSON.parse(storedTheme) : customization.isDarkMode
-    })
-
+    const [isDark, setIsDark] = useState(false)
+    // console.log(    customization.isDarkMode,"**********"    );
     useEffect(() => {
         let url = new URL(window.location.href)
         let params = new URLSearchParams(url.search)
         const urlTheme = params.get('theme') === 'dark'
-
-        const storedTheme = localStorage.getItem('isDarkMode')
-        const initialTheme = storedTheme !== null ? JSON.parse(storedTheme) : urlTheme
-
-        setIsDark(initialTheme)
-        dispatch({ type: SET_DARKMODE, isDarkMode: initialTheme })
-        localStorage.setItem('isDarkMode', initialTheme)
+        dispatch({ type: SET_DARKMODE, isDarkMode: urlTheme })
+        localStorage.setItem('isDarkMode', urlTheme)
     }, [dispatch])
 
     useEffect(() => {
         let url = new URL(window.location.href)
         let params = new URLSearchParams(url.search)
-        // const urlFullName=params.get("first_name") + " " + params.get("last_name")
-        // const urlFirstName = params.get('first_name').slice(0,1) || ""
-        // const urlLastName = params.get('last_name').slice(0,1) || ""
-        // setFullName(urlFullName)
-        // setFirstName(urlFirstName)
-        // setLastName(urlLastName)
         const uid = params.get('uid') || ''
         setUserId(uid)
         localStorage.setItem('userId', uid)
@@ -136,7 +123,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
             .then((response) => {
                 if (response.ok) {
                     response.json().then((user) => {
-                        setUser(user[0].name[0])
+                        console.log(user)
+                        const name = user[0].name[0]
+                        const img = user[0].picture
+                        const showName = name.toUpperCase()
+                        setUser(showName)
+                        setuserImg(img)
                     })
                 } else {
                     console.error('Error:', response.statusText)
@@ -190,29 +182,17 @@ const Header = ({ handleLeftDrawerToggle }) => {
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
             <Box sx={{ flexGrow: 1 }} />
             {/* <MaterialUISwitch checked={isDark} onChange={changeDarkMode} /> */}
-            {isDark ? (
-                <IconButton checked={isDark} onClick={changeDarkMode}>
+            {customization.isDarkMode ? (
+                <IconButton checked={true} onClick={changeDarkMode}>
                     <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
                 </IconButton>
             ) : (
-                <IconButton checked={isDark} onClick={changeDarkMode}>
+                <IconButton checked={false} onClick={changeDarkMode}>
                     <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
                 </IconButton>
             )}
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
-            {/* <Stack direction='row' spacing={2}>
-                <Tooltip title='Username'>
-                    <Avatar
-                        style={{
-                            color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
-                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                        }}
-                    >
-                        {user}
-                    </Avatar>
-                </Tooltip>
-            </Stack> */}
             <React.Fragment>
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                     <Tooltip title='Account'>
@@ -224,16 +204,27 @@ const Header = ({ handleLeftDrawerToggle }) => {
                             aria-haspopup='true'
                             aria-expanded={open ? 'true' : undefined}
                         >
-                            <Avatar
-                                sx={{ width: 38, height: 38 }}
-                                style={{
-                                    color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
-                                    background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    fontSize: '18px'
-                                }}
-                            >
-                                GM
-                            </Avatar>
+                            {userImg ? (
+                                <Avatar
+                                    sx={{ width: 38, height: 38 }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                    }}
+                                    alt='GS'
+                                    src={userImg}
+                                ></Avatar>
+                            ) : (
+                                <Avatar
+                                    sx={{ width: 38, height: 38 }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                    }}
+                                >
+                                    {user}
+                                </Avatar>
+                            )}
                         </IconButton>
                     </Tooltip>
                 </Box>

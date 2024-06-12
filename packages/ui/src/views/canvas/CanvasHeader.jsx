@@ -330,57 +330,13 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
         }
     }))
 
+    const handleUrlChange = () => {
+        window.history.state && window.history.state.idx > 0
+            ? navigate(`/?theme=${customization.isDarkMode ? 'dark' : 'lite'}`)
+            : navigate('/', { replace: true })
+    }
     return (
         <>
-            {/* <Box sx={{ mr: 2 }}>
-                <ButtonBase title='Toggle' sx={{ borderRadius: '20%' }} onClick={()=>dispatch({ type: SHOW_MENU})}>
-                    <Avatar
-                        variant='rounded'
-                        sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.mediumAvatar,
-                            transition: 'all .2s ease-in-out',
-                            // background: theme.palette.canvasHeader.settingsLight,
-                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                            // color: theme.palette.canvasHeader.settingsDark,
-                            color: '#fff',
-                            '&:hover': {
-                                // background: theme.palette.canvasHeader.settingsDark,
-                                background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                // color: theme.palette.canvasHeader.settingsLight
-                                color: '#fff'
-                            }
-                        }}
-                    >
-                        <IconMenu2 stroke={1.5} size='1.3rem' />
-                    </Avatar>
-                </ButtonBase>
-            </Box> */}
-
-            {/* <img src={ColorfulLogo} alt='THub_Logo' width={30} style={{  marginRight: customization.menu_open ? '190px' : '46px'}} />
-
-            {customization.menu_open ? (
-                <img src={logo} alt='THub_Logo' width={80} height={30} style={{ marginLeft: "6px" ,marginRight:"16px"}} />
-            ) : (
-                ""
-            )} */}
-            {/* <img src={ColorfulLogo} alt='THub_Logo' width={30} />
-
-{customization.menu_open ? (
-    <img src={logo} alt='THub_Logo' width={80} height={30}  />
-) : (
-    ""
-)} */}
-
-            {/* <img src={ColorfulLogo} alt='THub_Logo' width={customization.menu_open ? '40px' : '40px'  }/>
-
-{customization.menu_open ? (
-    <img src={newLogo} alt='THub_Logo' width={40} height={40} 
-    />
-) : (
-    ""
-)} */}
-
             <img src={ColorfulLogo} alt='THub_Logo' width={35} />
 
             {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''}
@@ -404,9 +360,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 color: '#fff'
                             }
                         }}
-                        onClick={() =>
-                            window.history.state && window.history.state.idx > 0 ? navigate(-1) : navigate('/', { replace: true })
-                        }
+                        onClick={handleUrlChange}
                     >
                         <IconChevronLeft stroke={1.5} size='1.3rem' />
                     </Avatar>
@@ -450,31 +404,6 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 </Avatar>
                             </ButtonBase>
                         )}
-
-                        {/* 
-                        <Stack direction='row' gap={1} marginTop='8px' sx={{ marginLeft: 'auto', marginRight: '20px' }}>
-                            <StyledLink href='/workflows' underline='none'>
-                                AI Workspace
-                            </StyledLink>
-                            <StyledLink href='/templates' underline='none'>
-                                Templates
-                            </StyledLink>
-                            <StyledLink href='/tools' underline='none'>
-                                Tools
-                            </StyledLink>
-                            <StyledLink href='/assistants' underline='none'>
-                                Assistants
-                            </StyledLink>
-                            <StyledLink href='/credentials' underline='none'>
-                                Credentials
-                            </StyledLink>
-                            <StyledLink href='/variables' underline='none'>
-                                Variables
-                            </StyledLink>
-                            <StyledLink href='/apikey' underline='none'>
-                                API Keys
-                            </StyledLink>
-                        </Stack> */}
                     </Stack>
                 )}
 
@@ -558,34 +487,6 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 <ButtonBase>
                     <VectorStorePopUp chatflowid={chatflowId} isUpsertButtonEnabled={isUpsertButtonEnabled} />
                 </ButtonBase>
-
-                {/* {chatflow?.id && (
-                    <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2 }}>
-                        <Avatar
-                            variant='rounded'
-                            sx={{
-                                ...theme.typography.commonAvatar,
-                                ...theme.typography.mediumAvatar,
-                                transition: 'all .2s ease-in-out',
-                                // background: theme.palette.canvasHeader.deployLight,
-                                background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                // color: theme.palette.canvasHeader.deployDark,
-                                color: '#fff',
-                                '&:hover': {
-                                    // background: theme.palette.canvasHeader.deployDark,
-                                    background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                    // color: theme.palette.canvasHeader.deployLight
-                                    color: '#fff'
-                                }
-                            }}
-                            color='inherit'
-                            onClick={onAPIDialogClick}
-                        >
-                            <IconCode stroke={1.5} size='1.3rem' />
-                        </Avatar>
-                    </ButtonBase>
-                )} */}
-
                 <ButtonBase title='Save Workspace' sx={{ borderRadius: '50%', mr: 2 }}>
                     <Avatar
                         variant='rounded'
