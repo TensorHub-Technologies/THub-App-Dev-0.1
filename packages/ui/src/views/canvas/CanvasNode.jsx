@@ -344,7 +344,16 @@ const CanvasNode = ({ data }) => {
                                         <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data} />
                                     ))}
                                 </>
-                            ) : undefined}
+                            ) : (
+                                <>
+                                    {data.inputAnchors.map((inputAnchor, index) => (
+                                        <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} />
+                                    ))}
+                                    {data.outputAnchors.map((outputAnchor, index) => (
+                                        <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data} />
+                                    ))}
+                                </>
+                            )}
                         </Box>
                     </NodeTooltip>
                 </NodeCardWrapper>
