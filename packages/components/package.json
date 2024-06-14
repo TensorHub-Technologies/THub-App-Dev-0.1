@@ -1,6 +1,6 @@
 {
     "name": "thub-components",
-    "version": "1.8.0",
+    "version": "1.8.2",
     "description": "THub Components",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
