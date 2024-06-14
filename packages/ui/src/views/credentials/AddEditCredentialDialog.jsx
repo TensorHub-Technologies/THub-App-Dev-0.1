@@ -29,9 +29,12 @@ import useNotifier from '@/utils/useNotifier'
 import { baseURL, REDACTED_CREDENTIAL_VALUE } from '@/store/constant'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 
+import { useSelector } from 'react-redux'
+
 const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setError = () => {} }) => {
     const portalElement = document.getElementById('portal')
-
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData['uid']
     const dispatch = useDispatch()
 
     // ==============================|| Snackbar ||============================== //
@@ -113,8 +116,10 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             const obj = {
                 name,
                 credentialName: componentCredential.name,
-                plainDataObj: credentialData
+                plainDataObj: credentialData,
+                tenantId
             }
+            console.log('ui/src/views/credentials/AddEditCredentialDialog/addNewCredential obj: ', obj)
             const createResp = await credentialsApi.createCredential(obj)
             if (createResp.data) {
                 enqueueSnackbar({
@@ -156,9 +161,10 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
         try {
             const saveObj = {
                 name,
-                credentialName: componentCredential.name
+                credentialName: componentCredential.name,
+                tenantId
             }
-
+            console.log('ui/src/views/credentials/AddEditCredentialDialog/saveCredential saveObj: ', saveObj)
             let plainDataObj = {}
             for (const key in credentialData) {
                 if (credentialData[key] !== REDACTED_CREDENTIAL_VALUE) {
@@ -168,6 +174,50 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             if (Object.keys(plainDataObj).length) saveObj.plainDataObj = plainDataObj
 
             const saveResp = await credentialsApi.updateCredential(credential.id, saveObj)
+            if (saveResp.data) {
+                enqueueSnackbar({
+                    message: 'Credential saved',
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'success',
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+                onConfirm(saveResp.data.id)
+            }
+        } catch (error) {
+            setError(error)
+            enqueueSnackbar({
+                message: `Failed to save Credential: ${
+                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                }`,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+            onCancel()
+        }
+    }
+
+    const getAllCredential = async () => {
+        try {
+            const getObj = {
+                tenantId
+            }
+            console.log('ui/src/views/credentials/AddEditCredentialDialog/saveCredential saveObj: ', getObj)
+            const saveResp = await credentialsApi.getAllCredentials(credential.id, getObj)
+            console.log('ui/src/views/credentials/AddEditCredentialDialog/saveCredential getObj: ', getObj)
             if (saveResp.data) {
                 enqueueSnackbar({
                     message: 'Credential saved',

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import axios from 'axios'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -22,6 +23,8 @@ import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+
+import { setUserData } from '@/store/actions'
 
 // Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -79,6 +82,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    const userData = useSelector((state) => state.user.userData)
+    console.log(userData, 'userData********')
+
     // menu
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
@@ -101,43 +107,35 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }, [dispatch])
 
     useEffect(() => {
-        let url = new URL(window.location.href)
-        let params = new URLSearchParams(url.search)
-        const uid = params.get('uid') || ''
-        setUserId(uid)
-        localStorage.setItem('userId', uid)
-        const userId = localStorage.getItem('userId')
+        const fetchUserData = async () => {
+            let url = new URL(window.location.href)
+            let params = new URLSearchParams(url.search)
+            const uid = params.get('uid') || ''
+            setUserId(uid)
+            localStorage.setItem('userId', uid)
+            const storedUserId = localStorage.getItem('userId')
 
-        const apiUrl =
-            window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+            const apiUrl =
+                window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
 
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userId: userId
-            })
-        })
-            .then((response) => {
-                if (response.ok) {
-                    response.json().then((user) => {
-                        console.log(user)
-                        const name = user[0].name[0]
-                        const img = user[0].picture
-                        const showName = name.toUpperCase()
-                        setUser(showName)
-                        setuserImg(img)
-                    })
+            try {
+                const response = await axios.post(apiUrl, {
+                    userId: storedUserId
+                })
+                if (response.status === 200) {
+                    setUser(response.data[0].name[0])
+                    console.log('userData to be stored in redux: ', response.data[0])
+                    dispatch(setUserData(response.data[0]))
                 } else {
                     console.error('Error:', response.statusText)
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 console.error('Error:', error)
-            })
-    }, [])
+            }
+        }
+
+        fetchUserData()
+    }, [dispatch])
 
     const changeDarkMode = () => {
         const newTheme = !isDark

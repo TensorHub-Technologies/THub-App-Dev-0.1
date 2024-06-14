@@ -4,6 +4,7 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 
 const createCredential = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('server/src/controllers/credentials/index.js/createCredential req.body: ', req.body)
     try {
         if (!req.body) {
             throw new InternalFlowiseError(
@@ -34,8 +35,9 @@ const deleteCredentials = async (req: Request, res: Response, next: NextFunction
 }
 
 const getAllCredentials = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('server/src/controllers/credentials/index.js/getAllCredentials req.body: ', req)
     try {
-        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName)
+        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName, req.params.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

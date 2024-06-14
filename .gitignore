@@ -44,3 +44,4 @@
 
 ## compressed
 **/*.tgz
+packages/server/src/services/credentials/index.ts

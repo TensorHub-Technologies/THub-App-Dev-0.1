@@ -8,13 +8,18 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 
 const createCredential = async (requestBody: any) => {
+    console.log('server/src/services/credentials/index.js/createCredential req.body: ', requestBody)
     try {
         const appServer = getRunningExpressApp()
         const newCredential = await transformToCredentialEntity(requestBody)
+        console.log('server/src/services/credentials/index.js/createCredential newCredential: ', newCredential)
         const credential = await appServer.AppDataSource.getRepository(Credential).create(newCredential)
+        console.log('server/src/services/credentials/index.js/createCredential credential: ', credential)
         const dbResponse = await appServer.AppDataSource.getRepository(Credential).save(credential)
+        console.log('server/src/services/credentials/index.js/createCredential dbResponse: ', dbResponse)
         return dbResponse
     } catch (error) {
+        console.log('server/src/services/credentials/index.js/createCredential error: ', error)
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.createCredential - ${getErrorMessage(error)}`
@@ -39,7 +44,7 @@ const deleteCredentials = async (credentialId: string): Promise<any> => {
     }
 }
 
-const getAllCredentials = async (paramCredentialName: any) => {
+const getAllCredentials = async (paramCredentialName: any, tenantId: any) => {
     try {
         const appServer = getRunningExpressApp()
         let dbResponse = []
@@ -48,13 +53,15 @@ const getAllCredentials = async (paramCredentialName: any) => {
                 for (let i = 0; i < paramCredentialName.length; i += 1) {
                     const name = paramCredentialName[i] as string
                     const credentials = await appServer.AppDataSource.getRepository(Credential).findBy({
-                        credentialName: name
+                        credentialName: name,
+                        tenantId: tenantId
                     })
                     dbResponse.push(...credentials)
                 }
             } else {
                 const credentials = await appServer.AppDataSource.getRepository(Credential).findBy({
-                    credentialName: paramCredentialName as string
+                    credentialName: paramCredentialName as string,
+                    tenantId: tenantId
                 })
                 dbResponse = [...credentials]
             }

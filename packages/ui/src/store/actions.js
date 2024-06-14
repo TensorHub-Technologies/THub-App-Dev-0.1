@@ -25,6 +25,8 @@ export const REMOVE_SNACKBAR = 'REMOVE_SNACKBAR'
 export const SHOW_CONFIRM = 'SHOW_CONFIRM'
 export const HIDE_CONFIRM = 'HIDE_CONFIRM'
 
+export const SET_USER_DATA = 'SET_USER_DATA'
+
 export const SHOW_MENU = 'SHOW_MENU'
 export const enqueueSnackbar = (notification) => {
     const key = notification.options && notification.options.key
@@ -47,4 +49,9 @@ export const closeSnackbar = (key) => ({
 export const removeSnackbar = (key) => ({
     type: REMOVE_SNACKBAR,
     key
+})
+
+export const setUserData = (userData) => ({
+    type: SET_USER_DATA,
+    payload: userData
 })

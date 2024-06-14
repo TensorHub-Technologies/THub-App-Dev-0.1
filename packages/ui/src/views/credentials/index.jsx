@@ -55,6 +55,9 @@ const Credentials = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData['uid']
+
     const dispatch = useDispatch()
     useNotifier()
 
@@ -168,18 +171,27 @@ const Credentials = () => {
     }
 
     const onConfirm = () => {
+        console.log('ui/src/views/credentials/index.js/onConfirm tenantId: ', tenantId)
+        const getObj = {
+            tenantId
+        }
         setShowCredentialListDialog(false)
         setShowSpecificCredentialDialog(false)
-        getAllCredentialsApi.request()
+        getAllCredentialsApi.request(getObj)
     }
 
     useEffect(() => {
-        getAllCredentialsApi.request()
+        console.log('ui/src/views/credentials/index.js/useEffect1 tenantId: ', tenantId)
+        const getObj = {
+            tenantId
+        }
+        getAllCredentialsApi.request(tenantId)
         getAllComponentsCredentialsApi.request()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
+        console.log('ui/src/views/credentials/index.js/useEffect2 tenantId: ', tenantId)
         if (getAllCredentialsApi.data) {
             setCredentials(getAllCredentialsApi.data)
         }
