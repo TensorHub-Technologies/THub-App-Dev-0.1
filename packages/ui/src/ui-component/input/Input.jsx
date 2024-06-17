@@ -86,7 +86,7 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                         }}
                     />
                 </FormControl>
-            ) : (
+            ) : inputParam.name === 'temperature' ? (
                 <FormControl sx={{ mt: 1, width: '100%' }} size='small'>
                     <OutlinedInput
                         id={inputParam.name}
@@ -104,6 +104,30 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                                 setMyValue(inputValue)
                                 onChange(inputValue)
                             }
+                        }}
+                        inputProps={{
+                            step: inputParam.step ?? 0.1,
+                            style: {
+                                height: inputParam.rows ? '90px' : 'inherit'
+                            }
+                        }}
+                    />
+                </FormControl>
+            ) : (
+                <FormControl sx={{ mt: 1, width: '100%' }} size='small'>
+                    <OutlinedInput
+                        id={inputParam.name}
+                        size='small'
+                        disabled={disabled}
+                        type={getInputType(inputParam.type)}
+                        placeholder={inputParam.placeholder}
+                        multiline={!!inputParam.rows}
+                        rows={inputParam.rows ?? 1}
+                        value={myValue}
+                        name={inputParam.name}
+                        onChange={(e) => {
+                            setMyValue(e.target.value)
+                            onChange(e.target.value)
                         }}
                         inputProps={{
                             step: inputParam.step ?? 0.1,
