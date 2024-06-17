@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -15,6 +16,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { setUserData } from '@/store/actions'
 
 // Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -65,12 +67,15 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }))
 
 const Header = ({ handleLeftDrawerToggle }) => {
-    const [user, setUser] = useState('')
+    const [userName, setUserName] = useState('')
     const [userImg, setuserImg] = useState('')
 
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
+
+    const userData = useSelector((state) => state.user.userData)
+
     const dispatch = useDispatch()
     // menu
     const [anchorEl, setAnchorEl] = useState(null)
@@ -102,43 +107,37 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }, [dispatch])
 
     useEffect(() => {
-        const url = new URL(window.location.href)
-        const params = new URLSearchParams(url.search)
-        const uid = params.get('uid') || ''
-        setUserId(uid)
-        localStorage.setItem('userId', uid)
-        const userId = localStorage.getItem('userId')
+        const fetchUserData = async () => {
+            const url = new URL(window.location.href)
+            const params = new URLSearchParams(url.search)
+            const uid = params.get('uid') || ''
+            setUserId(uid)
+            localStorage.setItem('userId', uid)
+            const userId = localStorage.getItem('userId')
 
-        const apiUrl =
-            window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+            const apiUrl =
+                window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
 
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userId: userId
-            })
-        })
-            .then((response) => {
-                if (response.ok) {
-                    response.json().then((user) => {
-                        console.log(user)
-                        const name = user[0].name[0]
-                        const img = user[0].picture
-                        const showName = name.toUpperCase()
-                        setUser(showName)
-                        setuserImg(img)
-                    })
+            try {
+                const response = await axios.post(apiUrl, {
+                    userId: userId
+                })
+                if (response.status === 200) {
+                    dispatch(setUserData(response.data[0]))
+
+                    const name = response.data[0].name[0]
+                    setUserName(name.toUpperCase())
+                    setuserImg(response.data[0].picture)
                 } else {
                     console.error('Error:', response.statusText)
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 console.error('Error:', error)
-            })
-    }, [])
+            }
+        }
+
+        fetchUserData()
+    }, [dispatch])
 
     const changeDarkMode = () => {
         const newTheme = !customization.isDarkMode
@@ -212,7 +211,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
                                 >
-                                    {user}
+                                    {userName}
                                 </Avatar>
                             )}
                         </IconButton>
