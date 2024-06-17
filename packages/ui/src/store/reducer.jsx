@@ -7,6 +7,7 @@ import notifierReducer from './reducers/notifierReducer'
 import dialogReducer from './reducers/dialogReducer'
 import userReducer from './reducers/userReducer'
 import minMaxReducer from './reducers/minMaxReducer'
+import NodeMinMaxReducer from './reducers/nodemMinMaxReducer'
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -16,7 +17,8 @@ const reducer = combineReducers({
     notifier: notifierReducer,
     dialog: dialogReducer,
     user: userReducer,
-    minMax: minMaxReducer
+    minMax: minMaxReducer,
+    nodeMinMax: NodeMinMaxReducer
 })
 
 export default reducer

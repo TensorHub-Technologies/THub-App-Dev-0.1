@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useContext, useEffect, useState, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
@@ -22,6 +22,7 @@ import NodeInfoDialog from '@/ui-component/dialog/NodeInfoDialog'
 import { baseURL } from '@/store/constant'
 import { IconTrash, IconCopy, IconInfoCircle, IconAlertTriangle } from '@tabler/icons'
 import { flowContext } from '@/store/context/ReactFlowContext'
+import { setNodesMinMax } from '@/store/actions'
 
 // ===========================|| CANVAS NODE ||=========================== //
 
@@ -36,6 +37,7 @@ const CanvasNode = ({ data }) => {
     const [warningMessage, setWarningMessage] = useState('')
     const [open, setOpen] = useState(false)
     const menuRef = useRef()
+    const dispatch = useDispatch()
 
     const { minMax, uniqueId } = useSelector((state) => state.minMax)
 
@@ -62,6 +64,7 @@ const CanvasNode = ({ data }) => {
 
     const handleMin = () => {
         setNodeMinMax(!nodeMinMax)
+        dispatch(setNodesMinMax(!nodeMinMax))
         setOpen(false)
     }
 
