@@ -81,6 +81,11 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
 
+    // user
+    const [user, setUser] = useState('')
+    const [userImg, setuserImg] = useState('')
+    const [userId, setUserId] = useState('')
+
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const canvas = useSelector((state) => state.canvas)
     const [canvasDataStore, setCanvasDataStore] = useState(canvas)
@@ -331,9 +336,49 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
         }
     }))
 
+    useEffect(() => {
+        // let url = new URL(window.location.href)
+        // let params = new URLSearchParams(url.search)
+        // const uid = params.get('uid') || ''
+        // setUserId(uid)
+        // localStorage.setItem('userId', uid)
+        const userId = localStorage.getItem('userId')
+        setUserId(userId)
+
+        const apiUrl =
+            window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId
+            })
+        })
+            .then((response) => {
+                if (response.ok) {
+                    response.json().then((user) => {
+                        console.log(user)
+                        const name = user[0].name[0]
+                        const img = user[0].picture
+                        const showName = name.toUpperCase()
+                        setUser(showName)
+                        setuserImg(img)
+                    })
+                } else {
+                    console.error('Error:', response.statusText)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+            })
+    }, [])
+
     const handleUrlChange = () => {
         window.history.state && window.history.state.idx > 0
-            ? navigate(`/?theme=${customization.isDarkMode ? 'dark' : 'lite'}`)
+            ? navigate(`/?theme=${customization.isDarkMode ? 'dark' : 'lite'}&uid=${userId}`)
             : navigate('/', { replace: true })
     }
     return (

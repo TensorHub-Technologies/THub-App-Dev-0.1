@@ -1,23 +1,16 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
-import { Box, IconButton, Link, Switch, Toolbar, Tooltip } from '@mui/material'
+import { Box, IconButton, Toolbar, Tooltip, Avatar, Menu, MenuItem, ListItemIcon, Switch } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SET_DARKMODE } from '@/store/actions'
 import ProfileSection from './ProfileSection'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
-import Avatar from '@mui/material/Avatar'
 import toggle_1 from '@/assets/images/toggle_mode-1.svg'
 import toggle_2 from '@/assets/images/toggle_mode-2.svg'
-
-// menu
-import * as React from 'react'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import ListItemIcon from '@mui/material/ListItemIcon'
 import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
@@ -80,7 +73,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     // menu
-    const [anchorEl, setAnchorEl] = React.useState(null)
+    const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -90,19 +83,27 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     const [userId, setUserId] = useState('')
-    const [isDark, setIsDark] = useState(false)
-    // console.log(    customization.isDarkMode,"**********"    );
+
     useEffect(() => {
-        let url = new URL(window.location.href)
-        let params = new URLSearchParams(url.search)
-        const urlTheme = params.get('theme') === 'dark'
-        dispatch({ type: SET_DARKMODE, isDarkMode: urlTheme })
-        localStorage.setItem('isDarkMode', urlTheme)
+        const url = new URL(window.location.href)
+        const params = new URLSearchParams(url.search)
+        const urlTheme = params.get('theme')
+
+        const localTheme = localStorage.getItem('isDarkMode')
+
+        if (urlTheme === 'dark' || urlTheme === 'lite') {
+            const isDarkMode = urlTheme === 'dark'
+            dispatch({ type: SET_DARKMODE, isDarkMode })
+            localStorage.setItem('isDarkMode', isDarkMode)
+        } else if (localTheme !== null) {
+            const storedTheme = localTheme === 'true'
+            dispatch({ type: SET_DARKMODE, isDarkMode: storedTheme })
+        }
     }, [dispatch])
 
     useEffect(() => {
-        let url = new URL(window.location.href)
-        let params = new URLSearchParams(url.search)
+        const url = new URL(window.location.href)
+        const params = new URLSearchParams(url.search)
         const uid = params.get('uid') || ''
         setUserId(uid)
         localStorage.setItem('userId', uid)
@@ -140,10 +141,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }, [])
 
     const changeDarkMode = () => {
-        const newTheme = !isDark
-        setIsDark(newTheme)
+        const newTheme = !customization.isDarkMode
         dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
         localStorage.setItem('isDarkMode', newTheme)
+        const url = new URL(window.location.href)
+        url.searchParams.set('theme', newTheme ? 'dark' : 'lite')
+        window.history.replaceState({}, '', url)
     }
 
     const signOutClicked = () => {
@@ -153,23 +156,11 @@ const Header = ({ handleLeftDrawerToggle }) => {
         navigate(0)
     }
 
-    const StyledLink = styled(Link)(({ theme }) => ({
-        color: customization?.isDarkMode ? '#fff' : '#000',
-        fontSize: '1.25rem', // Adjust font size as needed
-        fontWeight: 'bold',
-        fontFamily: 'Arial, sans-serif',
-        textDecoration: 'none',
-
-        '&:hover': {
-            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
-        }
-    }))
-
     return (
         <>
             <Box
                 sx={{
-                    width: 200,
+                    width: 228,
                     display: 'flex',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
@@ -181,13 +172,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
             </Box>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
             <Box sx={{ flexGrow: 1 }} />
-            {/* <MaterialUISwitch checked={isDark} onChange={changeDarkMode} /> */}
             {customization.isDarkMode ? (
                 <IconButton checked={true} onClick={changeDarkMode}>
                     <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
                 </IconButton>
             ) : (
-                <IconButton checked={false} onClick={changeDarkMode}>
+                <IconButton checked={true} onClick={changeDarkMode}>
                     <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
                 </IconButton>
             )}
@@ -259,8 +249,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
                                 transform: 'translateY(-50%) rotate(45deg)',
                                 zIndex: 0
                             }
-                            // border:"2px solid red",
-                            // width:"180px"
                         }
                     }}
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
