@@ -75,7 +75,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const customization = useSelector((state) => state.customization)
 
     const userData = useSelector((state) => state.user.userData)
-    console.log(userData, 'userData********')
 
     const dispatch = useDispatch()
     // menu
