@@ -18,6 +18,7 @@ import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
 import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
+import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 
 // icons
@@ -573,14 +574,10 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                     ...theme.typography.commonAvatar,
                                     ...theme.typography.mediumAvatar,
                                     transition: 'all .2s ease-in-out',
-                                    // background: theme.palette.canvasHeader.settingsLight,
                                     background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    // color: theme.palette.canvasHeader.settingsDark,
                                     color: '#fff',
                                     '&:hover': {
-                                        // background: theme.palette.canvasHeader.settingsDark,
                                         background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                        // color: theme.palette.canvasHeader.settingsLight
                                         color: '#fff'
                                     }
                                 }}
@@ -606,163 +603,59 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                             }}
                             sx={{
                                 '& .MuiPaper-root': {
-                                    //     position: 'relative',
-                                    //     top: '65px',
-                                    //     width: '180px',
-                                    //     lineHeight: '1.334em',
-                                    //     fontSize:'0.875rem',
-                                    //     padding:'16px',
-                                    //     overflow:'hidden',
-                                    //     lineHeight:'1.75em',
-                                    //     background: customization.isDarkMode ? '#23262C' : '#FFF',
-                                    //     height: 'auto',
-                                    // fontFamily:'roboto sans-serif',
-
-                                    //     maxHeight: 'calc(-235px + 100vh)',
-
-                                    // borderRadius: `${customization.borderRadius}px`,
-                                    // mb: 0.5,
-                                    // alignItems: 'flex-start',
-                                    // py: 1.25,
-                                    // pl: `24px`,
-
                                     position: 'relative',
                                     top: '65px',
                                     width: '220px',
-
                                     fontSize: '0.875rem',
                                     padding: '30px',
                                     overflow: 'hidden',
-
-                                    background: customization.isDarkMode ? '#23262C' : '#FFF',
+                                    // background: customization.isDarkMode ? '#23262C' : '#FFF',
                                     height: 'auto',
                                     fontFamily: 'roboto sans-serif',
-
                                     maxHeight: 'calc(-235px + 100vh)',
                                     marginBottom: '16px'
                                 }
                             }}
                         >
-                            <MenuItem
-                                onClick={handleClose}
-                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '2em', marginTop: '-10px' }}
-                            >
-                                <AppsOutlinedIcon />
-                                <a
-                                    href='/workflows'
-                                    style={{
+                            {[
+                                { icon: <AppsOutlinedIcon />, text: 'AI Workspace', href: '/workflows' },
+                                { icon: <DynamicFeedOutlinedIcon />, text: 'Templates', href: '/templates' },
+                                { icon: <ConstructionOutlinedIcon />, text: 'Tools', href: '/tools' },
+                                { icon: <SmartToyOutlinedIcon />, text: 'Assistants', href: '/assistants' },
+                                { icon: <HttpsOutlinedIcon />, text: 'Credentials', href: '/credentials' },
+                                { icon: <InventoryOutlinedIcon />, text: 'Variables', href: '/variables' },
+                                { icon: <VpnKeyOutlinedIcon />, text: 'API Keys', href: '/apikey' }
+                            ].map((item, index) => (
+                                <MenuItem
+                                    key={index}
+                                    onClick={handleClose}
+                                    sx={{
                                         color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        textDecoration: 'none',
-                                        marginLeft: '8px',
-                                        lineHeight: '3em'
+                                        lineHeight: '3em',
+                                        '&:hover': {
+                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                            '& .MuiSvgIcon-root': {
+                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                            }
+                                        }
                                     }}
                                 >
-                                    AI Workspace
-                                </a>
-                            </MenuItem>
-                            <MenuItem
-                                onClick={handleClose}
-                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
-                            >
-                                <DynamicFeedOutlinedIcon />
-                                <a
-                                    href='/templates'
-                                    style={{
-                                        color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        textDecoration: 'none',
-                                        marginLeft: '8px',
-                                        lineHeight: '3em'
-                                    }}
-                                >
-                                    Templates
-                                </a>
-                            </MenuItem>
-                            <MenuItem
-                                onClick={handleClose}
-                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
-                            >
-                                <ConstructionOutlinedIcon />
-                                <a
-                                    href='/tools'
-                                    style={{
-                                        color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        textDecoration: 'none',
-                                        marginLeft: '8px',
-                                        lineHeight: '3em'
-                                    }}
-                                >
-                                    Tools
-                                </a>
-                            </MenuItem>
-
-                            <MenuItem
-                                onClick={handleClose}
-                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
-                            >
-                                <ConstructionOutlinedIcon />
-                                <a
-                                    href='/assistants'
-                                    style={{
-                                        color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        textDecoration: 'none',
-                                        marginLeft: '8px',
-                                        lineHeight: '3em'
-                                    }}
-                                >
-                                    Assistants
-                                </a>
-                            </MenuItem>
-                            <MenuItem
-                                onClick={handleClose}
-                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
-                            >
-                                <SmartToyOutlinedIcon />
-                                <a
-                                    href='/credentials'
-                                    style={{
-                                        color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        textDecoration: 'none',
-                                        marginLeft: '8px',
-                                        lineHeight: '3em'
-                                    }}
-                                >
-                                    Credentials
-                                </a>
-                            </MenuItem>
-                            <MenuItem
-                                onClick={handleClose}
-                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
-                            >
-                                <HttpsOutlinedIcon />
-                                <a
-                                    href='/variables'
-                                    style={{
-                                        color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        textDecoration: 'none',
-                                        marginLeft: '8px',
-                                        lineHeight: '3em'
-                                    }}
-                                >
-                                    Variables
-                                </a>
-                            </MenuItem>
-                            <MenuItem
-                                onClick={handleClose}
-                                sx={{ color: customization.isDarkMode ? '#FFF' : '#616161', lineHeight: '3em' }}
-                            >
-                                <VpnKeyOutlinedIcon />
-                                <a
-                                    href='/apikey'
-                                    style={{
-                                        color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        textDecoration: 'none',
-                                        marginLeft: '8px',
-                                        lineHeight: '3em'
-                                    }}
-                                >
-                                    API Keys
-                                </a>
-                            </MenuItem>
+                                    {item.icon}
+                                    <a
+                                        href={item.href}
+                                        style={{
+                                            color: customization.isDarkMode ? '#FFF' : '#616161',
+                                            textDecoration: 'none',
+                                            marginLeft: '13px',
+                                            lineHeight: '3em'
+                                        }}
+                                        onMouseEnter={(e) => (e.target.style.color = customization.isDarkMode ? '#e22a90' : '#3c5ba4')}
+                                        onMouseLeave={(e) => (e.target.style.color = customization.isDarkMode ? '#fff' : '#000')}
+                                    >
+                                        {item.text}
+                                    </a>
+                                </MenuItem>
+                            ))}
                         </Menu>
                     </div>
                 </ButtonBase>
