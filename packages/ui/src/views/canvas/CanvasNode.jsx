@@ -29,36 +29,42 @@ const CanvasNode = ({ data }) => {
     const theme = useTheme()
     const canvas = useSelector((state) => state.canvas)
     const { deleteNode, duplicateNode } = useContext(flowContext)
-
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
     const [showInfoDialog, setShowInfoDialog] = useState(false)
     const [infoDialogProps, setInfoDialogProps] = useState({})
     const [warningMessage, setWarningMessage] = useState('')
     const [open, setOpen] = useState(false)
-    const [minMax, setMinMax] = useState('true')
     const menuRef = useRef()
 
-    // const handleClose = () => {
-    //     setOpen(false)
-    // }
+    const { minMax, uniqueId } = useSelector((state) => state.minMax)
+
+    const [nodeMinMax, setNodeMinMax] = useState(minMax)
 
     useEffect(() => {
-        let handler = (e) => {
-            if (!menuRef.current.contains(e.target)) {
+        setNodeMinMax(minMax)
+    }, [minMax, uniqueId])
+
+    useEffect(() => {
+        const handler = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
                 setOpen(false)
                 console.log(menuRef.current)
             }
         }
+
         document.addEventListener('mousedown', handler)
-    })
+
+        return () => {
+            document.removeEventListener('mousedown', handler)
+        }
+    }, [])
+
     const handleMin = () => {
-        setMinMax(!minMax)
+        setNodeMinMax(!nodeMinMax)
         setOpen(false)
     }
-    // const handleMax=()=>{
-    //     setMinMax(true)
-    // }
+
     const handleOpen = () => {
         setOpen(!open)
     }
@@ -176,7 +182,7 @@ const CanvasNode = ({ data }) => {
                                 ref={menuRef}
                             >
                                 <IconButton title='minmax' id='minmax-parent'>
-                                    {minMax ? (
+                                    {nodeMinMax ? (
                                         <HorizontalRuleIcon onClick={handleMin} id='MinimizeIcon' />
                                     ) : (
                                         <button className='minmax-btn' onClick={handleMin}>
@@ -280,7 +286,7 @@ const CanvasNode = ({ data }) => {
                                     </>
                                 )}
                             </div>
-                            {minMax ? (
+                            {nodeMinMax ? (
                                 <>
                                     {(data.inputAnchors.length > 0 || data.inputParams.length > 0) && (
                                         <>

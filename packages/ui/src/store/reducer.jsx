@@ -6,6 +6,7 @@ import canvasReducer from './reducers/canvasReducer'
 import notifierReducer from './reducers/notifierReducer'
 import dialogReducer from './reducers/dialogReducer'
 import userReducer from './reducers/userReducer'
+import minMaxReducer from './reducers/minMaxReducer'
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -14,7 +15,8 @@ const reducer = combineReducers({
     canvas: canvasReducer,
     notifier: notifierReducer,
     dialog: dialogReducer,
-    user: userReducer
+    user: userReducer,
+    minMax: minMaxReducer
 })
 
 export default reducer
