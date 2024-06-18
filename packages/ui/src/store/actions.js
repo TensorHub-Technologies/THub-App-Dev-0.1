@@ -63,3 +63,10 @@ export const setMinMax = (minMax) => ({
     type: SET_MINMAX,
     payload: minMax
 })
+
+export const SET_NODEMINMAX = 'SET_NODEMINMAX'
+
+export const setNodesMinMax = (NodeMinMax) => ({
+    type: SET_NODEMINMAX,
+    payload: NodeMinMax
+})

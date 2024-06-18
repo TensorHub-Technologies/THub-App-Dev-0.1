@@ -10,7 +10,8 @@ import {
     SET_CHATFLOW,
     enqueueSnackbar as enqueueSnackbarAction,
     closeSnackbar as closeSnackbarAction,
-    setMinMax
+    setMinMax,
+    setNodesMinMax
 } from '@/store/actions'
 import { omit, cloneDeep } from 'lodash'
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
@@ -103,7 +104,14 @@ const Canvas = () => {
 
     //=======// Expand and Collapse All Node//===========//
     const [menuPosition, setMenuPosition] = useState(null)
-    const minMax = useSelector((state) => state.minMax.minMax)
+    const { minMax, uniqueId } = useSelector((state) => state.minMax)
+
+    const nodeMinMax = useSelector((state) => state.nodeMinMax.nodeMinMax)
+    console.log(nodeMinMax, 'nodeMinMax')
+
+    useEffect(() => {
+        dispatch(setNodesMinMax(minMax))
+    }, [minMax, uniqueId])
 
     const handleMin = () => {
         dispatch(setMinMax(true))
@@ -666,7 +674,7 @@ const Canvas = () => {
                                             }
                                         }}
                                         onClick={handleMin}
-                                        disabled={minMax}
+                                        disabled={minMax && nodeMinMax}
                                     >
                                         <CallMadeIcon id='ExpandIcon' sx={{ mr: '12px' }} />
                                         Expand All Node
@@ -683,7 +691,7 @@ const Canvas = () => {
                                             }
                                         }}
                                         onClick={handleMax}
-                                        disabled={!minMax}
+                                        disabled={!minMax && !nodeMinMax}
                                     >
                                         <HorizontalRuleIcon id='MinimizeIcon' sx={{ mr: '12px' }} />
                                         Collapse All Node

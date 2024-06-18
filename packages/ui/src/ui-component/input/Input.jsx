@@ -100,7 +100,7 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                         name={inputParam.name}
                         onChange={(e) => {
                             const inputValue = e.target.value
-                            if (/^(0\.[1-9]|[0-9](\.[0-9])?)$/.test(inputValue) && parseFloat(inputValue) <= 1) {
+                            if (/^(0(\.[0-9]+)?|1(\.[0-9]+)?|2(\.0)?)$/.test(inputValue) && parseFloat(inputValue) <= 2) {
                                 setMyValue(inputValue)
                                 onChange(inputValue)
                             }
