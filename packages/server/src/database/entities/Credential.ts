@@ -13,6 +13,9 @@ export class Credential implements ICredential {
     @Column()
     credentialName: string
 
+    @Column()
+    tenantId: string
+
     @Column({ type: 'text' })
     encryptedData: string
 
