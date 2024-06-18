@@ -67,18 +67,18 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }))
 
 const Header = ({ handleLeftDrawerToggle }) => {
-    const [userIcon , setUserIcon] = useState("");
-    const [userName , setUserName] = useState("");
-    
+    const [userName, setUserName] = useState('')
+    const [userImg, setUserImg] = useState('')
+    const [userFName, setUserFullName] = useState('')
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [userId, setUserId] = useState('')
+
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
-
     const userData = useSelector((state) => state.user.userData)
-
     const dispatch = useDispatch()
-    // menu
-    const [anchorEl, setAnchorEl] = useState(null)
+
     const open = Boolean(anchorEl)
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -87,13 +87,10 @@ const Header = ({ handleLeftDrawerToggle }) => {
         setAnchorEl(null)
     }
 
-    const [userId, setUserId] = useState('')
-
     useEffect(() => {
         const url = new URL(window.location.href)
         const params = new URLSearchParams(url.search)
         const urlTheme = params.get('theme')
-
         const localTheme = localStorage.getItem('isDarkMode')
 
         if (urlTheme === 'dark' || urlTheme === 'lite') {
@@ -107,7 +104,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }, [dispatch])
 
     useEffect(() => {
-
         const fetchUserData = async () => {
             const url = new URL(window.location.href)
             const params = new URLSearchParams(url.search)
@@ -120,15 +116,14 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
 
             try {
-                const response = await axios.post(apiUrl, {
-                    userId: userId
-                })
+                const response = await axios.post(apiUrl, { userId })
                 if (response.status === 200) {
                     dispatch(setUserData(response.data[0]))
-
+                    const fullName = response.data[0].name
                     const name = response.data[0].name[0]
+                    setUserFullName(fullName)
                     setUserName(name.toUpperCase())
-                    setuserImg(response.data[0].picture)
+                    setUserImg(response.data[0].picture)
                 } else {
                     console.error('Error:', response.statusText)
                 }
@@ -140,7 +135,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
         fetchUserData()
     }, [dispatch])
 
-  const changeDarkMode = () => {
+    const changeDarkMode = () => {
         const newTheme = !customization.isDarkMode
         dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
         localStorage.setItem('isDarkMode', newTheme)
@@ -183,10 +178,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
             )}
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
-
             <React.Fragment>
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-                    <Tooltip title='Account'>
+                    <Tooltip title={userFName}>
                         <IconButton
                             onClick={handleClick}
                             size='small'
