@@ -67,9 +67,9 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }))
 
 const Header = ({ handleLeftDrawerToggle }) => {
-    const [userName, setUserName] = useState('')
-    const [userImg, setuserImg] = useState('')
-
+    const [userIcon , setUserIcon] = useState("");
+    const [userName , setUserName] = useState("");
+    
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
@@ -107,6 +107,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }, [dispatch])
 
     useEffect(() => {
+
         const fetchUserData = async () => {
             const url = new URL(window.location.href)
             const params = new URLSearchParams(url.search)
@@ -139,7 +140,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
         fetchUserData()
     }, [dispatch])
 
-    const changeDarkMode = () => {
+  const changeDarkMode = () => {
         const newTheme = !customization.isDarkMode
         dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
         localStorage.setItem('isDarkMode', newTheme)
@@ -182,6 +183,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             )}
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
+
             <React.Fragment>
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                     <Tooltip title='Account'>
