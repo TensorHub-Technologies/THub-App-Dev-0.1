@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
-import { useContext, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useContext, useEffect, useState, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
@@ -22,6 +22,7 @@ import NodeInfoDialog from '@/ui-component/dialog/NodeInfoDialog'
 import { baseURL } from '@/store/constant'
 import { IconTrash, IconCopy, IconInfoCircle, IconAlertTriangle } from '@tabler/icons'
 import { flowContext } from '@/store/context/ReactFlowContext'
+import { setNodesMinMax } from '@/store/actions'
 
 // ===========================|| CANVAS NODE ||=========================== //
 
@@ -29,28 +30,48 @@ const CanvasNode = ({ data }) => {
     const theme = useTheme()
     const canvas = useSelector((state) => state.canvas)
     const { deleteNode, duplicateNode } = useContext(flowContext)
-
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
     const [showInfoDialog, setShowInfoDialog] = useState(false)
     const [infoDialogProps, setInfoDialogProps] = useState({})
     const [warningMessage, setWarningMessage] = useState('')
     const [open, setOpen] = useState(false)
-    const [minMax, setMinMax] = useState('true')
+    const menuRef = useRef()
+    const dispatch = useDispatch()
 
-    // const handleClose = () => {
-    //     setOpen(false)
-    // }
+    const { minMax, uniqueId } = useSelector((state) => state.minMax)
+
+    const [nodeMinMax, setNodeMinMax] = useState(minMax)
+
+    useEffect(() => {
+        setNodeMinMax(minMax)
+    }, [minMax, uniqueId])
+
+    useEffect(() => {
+        const handler = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setOpen(false)
+                console.log(menuRef.current)
+            }
+        }
+
+        document.addEventListener('mousedown', handler)
+
+        return () => {
+            document.removeEventListener('mousedown', handler)
+        }
+    }, [])
+
     const handleMin = () => {
-        setMinMax(!minMax)
+        setNodeMinMax(!nodeMinMax)
+        dispatch(setNodesMinMax(!nodeMinMax))
+        setOpen(false)
     }
-    // const handleMax=()=>{
-    //     setMinMax(true)
-    // }
+
     const handleOpen = () => {
         setOpen(!open)
     }
-
+    console.log('open', open)
     const borderColorMap = {
         Agents: '#0066CC',
         Chains: '#009966',
@@ -123,10 +144,10 @@ const CanvasNode = ({ data }) => {
     //         }
     //     }
     // }, [canvas.componentNodes, data.name, data.version])
-
+    console.log('data.inputParams', data.inputParams)
     return (
         <>
-            <>
+            <div>
                 <NodeCardWrapper
                     content={false}
                     sx={{
@@ -161,9 +182,10 @@ const CanvasNode = ({ data }) => {
                                     flexDirection: 'column',
                                     position: 'relative'
                                 }}
+                                ref={menuRef}
                             >
                                 <IconButton title='minmax' id='minmax-parent'>
-                                    {minMax ? (
+                                    {nodeMinMax ? (
                                         <HorizontalRuleIcon onClick={handleMin} id='MinimizeIcon' />
                                     ) : (
                                         <button className='minmax-btn' onClick={handleMin}>
@@ -267,7 +289,7 @@ const CanvasNode = ({ data }) => {
                                     </>
                                 )}
                             </div>
-                            {minMax ? (
+                            {nodeMinMax ? (
                                 <>
                                     {(data.inputAnchors.length > 0 || data.inputParams.length > 0) && (
                                         <>
@@ -331,7 +353,16 @@ const CanvasNode = ({ data }) => {
                                         <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data} />
                                     ))}
                                 </>
-                            ) : undefined}
+                            ) : (
+                                <>
+                                    {data.inputAnchors.map((inputAnchor, index) => (
+                                        <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} />
+                                    ))}
+                                    {data.outputAnchors.map((outputAnchor, index) => (
+                                        <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data} />
+                                    ))}
+                                </>
+                            )}
                         </Box>
                     </NodeTooltip>
                 </NodeCardWrapper>
@@ -345,7 +376,7 @@ const CanvasNode = ({ data }) => {
                     dialogProps={infoDialogProps}
                     onCancel={() => setShowInfoDialog(false)}
                 ></NodeInfoDialog>
-            </>
+            </div>
         </>
     )
 }

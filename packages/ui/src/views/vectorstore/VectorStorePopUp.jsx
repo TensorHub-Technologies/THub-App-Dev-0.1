@@ -44,9 +44,11 @@ export const VectorStorePopUp = ({ chatflowid, isUpsertButtonEnabled }) => {
             {isUpsertButtonEnabled && (
                 <StyledFab
                     sx={{
-                        height: '32px',
-                        width: '32px',
-                        borderRadius: '17%',
+                        height: '34px',
+                        width: '34px',
+                        minHeight: '0px',
+                        marginRight: '16px',
+                        borderRadius: '8px',
                         '&:hover': {
                             background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
                             color: '#fff'
@@ -60,16 +62,14 @@ export const VectorStorePopUp = ({ chatflowid, isUpsertButtonEnabled }) => {
                     onClick={handleToggle}
                     disabled={!isUpsertButtonEnabled}
                 >
-                    {open ? <IconX /> : <IconDatabaseImport />}
+                    {open ? <IconX style={{ width: '21px' }} /> : <IconDatabaseImport style={{ width: '21px' }} />}
                 </StyledFab>
             )}
             {!isUpsertButtonEnabled && (
                 <IconButton style={{ cursor: 'not-allowed' }}>
                     <StyledFab
                         sx={{
-                            height: '32px',
-                            width: '32px',
-                            borderRadius: '17%',
+                            borderRadius: '8px',
                             background: 'red',
                             color: '#fff',
                             cursor: 'not-allowed',
@@ -87,7 +87,7 @@ export const VectorStorePopUp = ({ chatflowid, isUpsertButtonEnabled }) => {
                         onClick={handleToggle}
                         disabled
                     >
-                        {open ? <IconX /> : <IconDatabaseImport />}
+                        {open ? <IconX style={{ width: '21px' }} /> : <IconDatabaseImport style={{ width: '21px' }} />}
                     </StyledFab>
                 </IconButton>
             )}

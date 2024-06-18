@@ -1,18 +1,22 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
-import { Box, IconButton, Link, Switch, Toolbar, Tooltip } from '@mui/material'
+import { Box, IconButton, Toolbar, Tooltip, Avatar, Menu, MenuItem, ListItemIcon, Switch } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { SET_DARKMODE } from '@/store/actions'
 import ProfileSection from './ProfileSection'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
-import Avatar from '@mui/material/Avatar'
-import Stack from '@mui/material/Stack'
 import toggle_1 from '@/assets/images/toggle_mode-1.svg'
 import toggle_2 from '@/assets/images/toggle_mode-2.svg'
+import PersonAdd from '@mui/icons-material/PersonAdd'
+import Settings from '@mui/icons-material/Settings'
+import Logout from '@mui/icons-material/Logout'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { setUserData } from '@/store/actions'
 
 // Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -62,7 +66,6 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     }
 }))
 
-
 const Header = ({ handleLeftDrawerToggle }) => {
     const [userIcon , setUserIcon] = useState("");
     const [userName , setUserName] = useState("");
@@ -70,73 +73,80 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
+
+    const userData = useSelector((state) => state.user.userData)
+
     const dispatch = useDispatch()
+    // menu
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
 
     const [userId, setUserId] = useState('')
-    const [isDark, setIsDark] = useState(() => {
-        const storedTheme = localStorage.getItem('isDarkMode')
-        return storedTheme !== null ? JSON.parse(storedTheme) : customization.isDarkMode
-    })
 
     useEffect(() => {
-        let url = new URL(window.location.href)
-        let params = new URLSearchParams(url.search)
-        const urlTheme = params.get('theme') === 'dark'
+        const url = new URL(window.location.href)
+        const params = new URLSearchParams(url.search)
+        const urlTheme = params.get('theme')
 
-        const storedTheme = localStorage.getItem('isDarkMode')
-        const initialTheme = storedTheme !== null ? JSON.parse(storedTheme) : urlTheme
+        const localTheme = localStorage.getItem('isDarkMode')
 
-        setIsDark(initialTheme)
-        dispatch({ type: SET_DARKMODE, isDarkMode: initialTheme })
-        localStorage.setItem('isDarkMode', initialTheme)
+        if (urlTheme === 'dark' || urlTheme === 'lite') {
+            const isDarkMode = urlTheme === 'dark'
+            dispatch({ type: SET_DARKMODE, isDarkMode })
+            localStorage.setItem('isDarkMode', isDarkMode)
+        } else if (localTheme !== null) {
+            const storedTheme = localTheme === 'true'
+            dispatch({ type: SET_DARKMODE, isDarkMode: storedTheme })
+        }
     }, [dispatch])
 
     useEffect(() => {
-        let url = new URL(window.location.href)
-        let params = new URLSearchParams(url.search)
-        // const urlFullName=params.get("first_name") + " " + params.get("last_name")
-        // const urlFirstName = params.get('first_name').slice(0,1) || ""
-        // const urlLastName = params.get('last_name').slice(0,1) || ""
-        // setFullName(urlFullName)
-        // setFirstName(urlFirstName)
-        // setLastName(urlLastName)
-        const uid = params.get('uid') || ''
-        setUserId(uid)
-        localStorage.setItem('userId', uid)
-        const userId = localStorage.getItem('userId')
 
-        const apiUrl =
-            window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+        const fetchUserData = async () => {
+            const url = new URL(window.location.href)
+            const params = new URLSearchParams(url.search)
+            const uid = params.get('uid') || ''
+            setUserId(uid)
+            localStorage.setItem('userId', uid)
+            const userId = localStorage.getItem('userId')
 
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userId: userId
-            })
-        })
-        .then(response => {
-            if (response.ok) {
-                response.json().then(user =>{
-                    setUserIcon(user[0].name[0]);
-                    setUserName(user[0].name);
-            });
-            } else {
-                console.error('Error:', response.statusText);
+            const apiUrl =
+                window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+
+            try {
+                const response = await axios.post(apiUrl, {
+                    userId: userId
+                })
+                if (response.status === 200) {
+                    dispatch(setUserData(response.data[0]))
+
+                    const name = response.data[0].name[0]
+                    setUserName(name.toUpperCase())
+                    setuserImg(response.data[0].picture)
+                } else {
+                    console.error('Error:', response.statusText)
+                }
+            } catch (error) {
+                console.error('Error:', error)
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }, [])
+        }
 
-    const changeDarkMode = () => {
-        const newTheme = !isDark
-        setIsDark(newTheme)
+        fetchUserData()
+    }, [dispatch])
+
+  const changeDarkMode = () => {
+        const newTheme = !customization.isDarkMode
         dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
         localStorage.setItem('isDarkMode', newTheme)
+        const url = new URL(window.location.href)
+        url.searchParams.set('theme', newTheme ? 'dark' : 'lite')
+        window.history.replaceState({}, '', url)
     }
 
     const signOutClicked = () => {
@@ -145,23 +155,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
         navigate('/', { replace: true })
         navigate(0)
     }
-    const StyledLink = styled(Link)(({ theme }) => ({
-        color: customization?.isDarkMode ? '#fff' : '#000',
-        fontSize: '1.25rem', // Adjust font size as needed
-        fontWeight: 'bold',
-        fontFamily: 'Arial, sans-serif',
-        textDecoration: 'none',
-
-        '&:hover': {
-            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
-        }
-    }))
 
     return (
         <>
             <Box
                 sx={{
-                    width: 200,
+                    width: 228,
                     display: 'flex',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
@@ -172,33 +171,110 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 {customization.menu_open && <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} />}
             </Box>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
-
             <Box sx={{ flexGrow: 1 }} />
-            {/* <MaterialUISwitch checked={isDark} onChange={changeDarkMode} /> */}
-            {isDark ? (
-                <IconButton checked={isDark} onClick={changeDarkMode}>
+            {customization.isDarkMode ? (
+                <IconButton checked={true} onClick={changeDarkMode}>
                     <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
                 </IconButton>
             ) : (
-                <IconButton checked={isDark} onClick={changeDarkMode}>
+                <IconButton checked={true} onClick={changeDarkMode}>
                     <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
                 </IconButton>
             )}
-            {/* <img src={toggle_1} checked={isDark} onClick={changeDarkMode} /> */}
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
-            <Stack direction='row' spacing={2}>
-                <Tooltip title={userName}>
-                    <Avatar
-                        style={{
-                            color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
-                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                        }}
-                    >
-                        {userIcon}
-                    </Avatar>
-                </Tooltip>
-            </Stack>
+
+            <React.Fragment>
+                <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                    <Tooltip title='Account'>
+                        <IconButton
+                            onClick={handleClick}
+                            size='small'
+                            sx={{ ml: 2 }}
+                            aria-controls={open ? 'account-menu' : undefined}
+                            aria-haspopup='true'
+                            aria-expanded={open ? 'true' : undefined}
+                        >
+                            {userImg ? (
+                                <Avatar
+                                    sx={{ width: 38, height: 38 }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                    }}
+                                    alt='GS'
+                                    src={userImg}
+                                ></Avatar>
+                            ) : (
+                                <Avatar
+                                    sx={{ width: 38, height: 38 }}
+                                    style={{
+                                        color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                    }}
+                                >
+                                    {userName}
+                                </Avatar>
+                            )}
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+                <KeyboardArrowDownIcon onClick={handleClick} style={{ background: 'transparent', cursor: 'pointer', fontSize: '28px' }} />
+                <Menu
+                    anchorEl={anchorEl}
+                    id='account-menu'
+                    open={open}
+                    onClose={handleClose}
+                    onClick={handleClose}
+                    PaperProps={{
+                        elevation: 0,
+                        sx: {
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1
+                            },
+                            '&::before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0
+                            }
+                        }
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                    <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                            <Settings fontSize='small' />
+                        </ListItemIcon>
+                        Settings
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                            <PersonAdd fontSize='small' />
+                        </ListItemIcon>
+                        Subscription
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                            <Logout fontSize='small' style={{ marginLeft: '3.5px' }} />
+                        </ListItemIcon>
+                        Logout
+                    </MenuItem>
+                </Menu>
+            </React.Fragment>
         </>
     )
 }

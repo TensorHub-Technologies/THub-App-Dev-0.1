@@ -9,13 +9,19 @@ import {
     SET_DIRTY,
     SET_CHATFLOW,
     enqueueSnackbar as enqueueSnackbarAction,
-    closeSnackbar as closeSnackbarAction
+    closeSnackbar as closeSnackbarAction,
+    setMinMax,
+    setNodesMinMax
 } from '@/store/actions'
 import { omit, cloneDeep } from 'lodash'
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
+import CallMadeIcon from '@mui/icons-material/CallMade'
 
 // material-ui
 import { Toolbar, Box, AppBar, Button, Switch, Link } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 
 // project imports
 import { styled } from '@mui/material/styles'
@@ -95,6 +101,39 @@ const Canvas = () => {
     const testChatflowApi = useApi(chatflowsApi.testChatflow)
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const getSpecificChatflowApi = useApi(chatflowsApi.getSpecificChatflow)
+
+    //=======// Expand and Collapse All Node//===========//
+    const [menuPosition, setMenuPosition] = useState(null)
+    const { minMax, uniqueId } = useSelector((state) => state.minMax)
+
+    const nodeMinMax = useSelector((state) => state.nodeMinMax.nodeMinMax)
+    console.log(nodeMinMax, 'nodeMinMax')
+
+    useEffect(() => {
+        dispatch(setNodesMinMax(minMax))
+    }, [minMax, uniqueId])
+
+    const handleMin = () => {
+        dispatch(setMinMax(true))
+    }
+    const handleMax = () => {
+        dispatch(setMinMax(false))
+    }
+
+    const handleContextMenu = (event) => {
+        event.preventDefault()
+        setMenuPosition({ mouseX: event.clientX - 2, mouseY: event.clientY - 4 })
+    }
+
+    const handleClose = () => {
+        setMenuPosition(null)
+    }
+
+    const handleClick = () => {
+        if (menuPosition) {
+            setMenuPosition(null)
+        }
+    }
 
     // ==============================|| Events & Actions ||============================== //
 
@@ -568,7 +607,7 @@ const Canvas = () => {
                         <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
                     </Box>
 
-                    <Box sx={{ width: '100%' }}>
+                    <Box sx={{ width: '100%' }} onClick={handleClick}>
                         <div className='reactflow-parent-wrapper'>
                             <div className='reactflow-wrapper' ref={reactFlowWrapper}>
                                 <ReactFlow
@@ -587,6 +626,7 @@ const Canvas = () => {
                                     fitView
                                     deleteKeyCode={canvas.canvasDialogShow ? null : ['Delete']}
                                     minZoom={0.1}
+                                    onContextMenu={handleContextMenu}
                                 >
                                     <Controls
                                         style={{
@@ -601,6 +641,62 @@ const Canvas = () => {
                                     {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
                                     <ChatPopUp chatflowid={chatflowId} />
                                 </ReactFlow>
+                                <Menu
+                                    open={menuPosition !== null}
+                                    onClose={handleClose}
+                                    anchorReference='anchorPosition'
+                                    anchorPosition={
+                                        menuPosition !== null ? { top: menuPosition.mouseY, left: menuPosition.mouseX } : undefined
+                                    }
+                                    sx={{
+                                        '& .MuiPaper-root': {
+                                            position: 'relative',
+                                            top: '65px',
+                                            width: '200px',
+                                            fontSize: '0.875rem',
+                                            padding: '12px',
+                                            overflow: 'hidden',
+                                            height: 'auto',
+                                            fontFamily: 'roboto sans-serif',
+                                            maxHeight: 'calc(-235px + 100vh)'
+                                        }
+                                    }}
+                                >
+                                    <MenuItem
+                                        sx={{
+                                            color: customization.isDarkMode ? '#FFF' : '#616161',
+                                            lineHeight: '3em',
+                                            '&:hover': {
+                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                '& .MuiSvgIcon-root': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                }
+                                            }
+                                        }}
+                                        onClick={handleMin}
+                                        disabled={minMax && nodeMinMax}
+                                    >
+                                        <CallMadeIcon id='ExpandIcon' sx={{ mr: '12px' }} />
+                                        Expand All Node
+                                    </MenuItem>
+                                    <MenuItem
+                                        sx={{
+                                            color: customization.isDarkMode ? '#FFF' : '#616161',
+                                            lineHeight: '3em',
+                                            '&:hover': {
+                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                '& .MuiSvgIcon-root': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                }
+                                            }
+                                        }}
+                                        onClick={handleMax}
+                                        disabled={!minMax && !nodeMinMax}
+                                    >
+                                        <HorizontalRuleIcon id='MinimizeIcon' sx={{ mr: '12px' }} />
+                                        Collapse All Node
+                                    </MenuItem>
+                                </Menu>
                             </div>
                         </div>
                     </Box>

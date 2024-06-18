@@ -18,6 +18,7 @@ import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
 import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
+import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 
 // icons
@@ -79,6 +80,11 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
     // navigation
     const [anchorEl, setAnchorEl] = React.useState(null)
     const open = Boolean(anchorEl)
+
+    // user
+    const [user, setUser] = useState('')
+    const [userImg, setuserImg] = useState('')
+    const [userId, setUserId] = useState('')
 
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const canvas = useSelector((state) => state.canvas)
@@ -330,57 +336,53 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
         }
     }))
 
+    useEffect(() => {
+        // let url = new URL(window.location.href)
+        // let params = new URLSearchParams(url.search)
+        // const uid = params.get('uid') || ''
+        // setUserId(uid)
+        // localStorage.setItem('userId', uid)
+        const userId = localStorage.getItem('userId')
+        setUserId(userId)
+
+        const apiUrl =
+            window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId
+            })
+        })
+            .then((response) => {
+                if (response.ok) {
+                    response.json().then((user) => {
+                        console.log(user)
+                        const name = user[0].name[0]
+                        const img = user[0].picture
+                        const showName = name.toUpperCase()
+                        setUser(showName)
+                        setuserImg(img)
+                    })
+                } else {
+                    console.error('Error:', response.statusText)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+            })
+    }, [])
+
+    const handleUrlChange = () => {
+        window.history.state && window.history.state.idx > 0
+            ? navigate(`/?theme=${customization.isDarkMode ? 'dark' : 'lite'}&uid=${userId}`)
+            : navigate('/', { replace: true })
+    }
     return (
         <>
-            {/* <Box sx={{ mr: 2 }}>
-                <ButtonBase title='Toggle' sx={{ borderRadius: '20%' }} onClick={()=>dispatch({ type: SHOW_MENU})}>
-                    <Avatar
-                        variant='rounded'
-                        sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.mediumAvatar,
-                            transition: 'all .2s ease-in-out',
-                            // background: theme.palette.canvasHeader.settingsLight,
-                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                            // color: theme.palette.canvasHeader.settingsDark,
-                            color: '#fff',
-                            '&:hover': {
-                                // background: theme.palette.canvasHeader.settingsDark,
-                                background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                // color: theme.palette.canvasHeader.settingsLight
-                                color: '#fff'
-                            }
-                        }}
-                    >
-                        <IconMenu2 stroke={1.5} size='1.3rem' />
-                    </Avatar>
-                </ButtonBase>
-            </Box> */}
-
-            {/* <img src={ColorfulLogo} alt='THub_Logo' width={30} style={{  marginRight: customization.menu_open ? '190px' : '46px'}} />
-
-            {customization.menu_open ? (
-                <img src={logo} alt='THub_Logo' width={80} height={30} style={{ marginLeft: "6px" ,marginRight:"16px"}} />
-            ) : (
-                ""
-            )} */}
-            {/* <img src={ColorfulLogo} alt='THub_Logo' width={30} />
-
-{customization.menu_open ? (
-    <img src={logo} alt='THub_Logo' width={80} height={30}  />
-) : (
-    ""
-)} */}
-
-            {/* <img src={ColorfulLogo} alt='THub_Logo' width={customization.menu_open ? '40px' : '40px'  }/>
-
-{customization.menu_open ? (
-    <img src={newLogo} alt='THub_Logo' width={40} height={40} 
-    />
-) : (
-    ""
-)} */}
-
             <img src={ColorfulLogo} alt='THub_Logo' width={35} />
 
             {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''}
@@ -404,9 +406,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 color: '#fff'
                             }
                         }}
-                        onClick={() =>
-                            window.history.state && window.history.state.idx > 0 ? navigate(-1) : navigate('/', { replace: true })
-                        }
+                        onClick={handleUrlChange}
                     >
                         <IconChevronLeft stroke={1.5} size='1.3rem' />
                     </Avatar>
@@ -450,31 +450,6 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 </Avatar>
                             </ButtonBase>
                         )}
-
-                        {/* 
-                        <Stack direction='row' gap={1} marginTop='8px' sx={{ marginLeft: 'auto', marginRight: '20px' }}>
-                            <StyledLink href='/workflows' underline='none'>
-                                AI Workspace
-                            </StyledLink>
-                            <StyledLink href='/templates' underline='none'>
-                                Templates
-                            </StyledLink>
-                            <StyledLink href='/tools' underline='none'>
-                                Tools
-                            </StyledLink>
-                            <StyledLink href='/assistants' underline='none'>
-                                Assistants
-                            </StyledLink>
-                            <StyledLink href='/credentials' underline='none'>
-                                Credentials
-                            </StyledLink>
-                            <StyledLink href='/variables' underline='none'>
-                                Variables
-                            </StyledLink>
-                            <StyledLink href='/apikey' underline='none'>
-                                API Keys
-                            </StyledLink>
-                        </Stack> */}
                     </Stack>
                 )}
 
@@ -546,45 +521,18 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             {/* NAVIGATION */}
             {isDark ? (
                 <IconButton checked={isDark} onClick={changeDarkMode}>
-                    <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
+                    <img src={toggle_1} style={{ width: '30px', marginRight: '5px' }} alt='dark' />
                 </IconButton>
             ) : (
                 <IconButton checked={isDark} onClick={changeDarkMode}>
-                    <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
+                    <img src={toggle_2} style={{ width: '27px', marginRight: '5px' }} alt='lite' />
                 </IconButton>
             )}
 
             <Box>
-                <ButtonBase title='Vector Database' sx={{ borderRadius: '50%', mr: 2 }}>
+                <ButtonBase>
                     <VectorStorePopUp chatflowid={chatflowId} isUpsertButtonEnabled={isUpsertButtonEnabled} />
                 </ButtonBase>
-                {/* {chatflow?.id && (
-                    <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2 }}>
-                        <Avatar
-                            variant='rounded'
-                            sx={{
-                                ...theme.typography.commonAvatar,
-                                ...theme.typography.mediumAvatar,
-                                transition: 'all .2s ease-in-out',
-                                // background: theme.palette.canvasHeader.deployLight,
-                                background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                // color: theme.palette.canvasHeader.deployDark,
-                                color: '#fff',
-                                '&:hover': {
-                                    // background: theme.palette.canvasHeader.deployDark,
-                                    background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                    // color: theme.palette.canvasHeader.deployLight
-                                    color: '#fff'
-                                }
-                            }}
-                            color='inherit'
-                            onClick={onAPIDialogClick}
-                        >
-                            <IconCode stroke={1.5} size='1.3rem' />
-                        </Avatar>
-                    </ButtonBase>
-                )} */}
-
                 <ButtonBase title='Save Workspace' sx={{ borderRadius: '50%', mr: 2 }}>
                     <Avatar
                         variant='rounded'
@@ -611,8 +559,9 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 </ButtonBase>
 
                 <ButtonBase>
-                    <div>
+                    <div title='Navbar'>
                         <Button
+                            style={{ marginLeft: '-15px' }}
                             id='demo-positioned-button'
                             aria-controls={open ? 'demo-positioned-menu' : undefined}
                             aria-haspopup='true'
@@ -625,14 +574,10 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                     ...theme.typography.commonAvatar,
                                     ...theme.typography.mediumAvatar,
                                     transition: 'all .2s ease-in-out',
-                                    // background: theme.palette.canvasHeader.settingsLight,
                                     background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    // color: theme.palette.canvasHeader.settingsDark,
                                     color: '#fff',
                                     '&:hover': {
-                                        // background: theme.palette.canvasHeader.settingsDark,
                                         background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                        // color: theme.palette.canvasHeader.settingsLight
                                         color: '#fff'
                                     }
                                 }}
@@ -640,8 +585,9 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 <ListIcon stroke={1.5} size='1.3rem' style={{ background: 'transparent' }} />
                             </Avatar>
                         </Button>
+
                         <Menu
-                            style={{ marginTop: '60px', marginLeft: '0px', height: '260px' }}
+                            style={{ marginTop: '60px', marginLeft: '15px', height: '260px' }}
                             id='demo-positioned-menu'
                             aria-labelledby='demo-positioned-button'
                             anchorEl={anchorEl}
@@ -659,69 +605,57 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                                 '& .MuiPaper-root': {
                                     position: 'relative',
                                     top: '65px',
-                                    width: '180px',
-
-                                    background: customization.isDarkMode ? '#23262C' : '#FFF',
-                                    height: '100%',
-
-                                    maxHeight: 'calc(-235px + 100vh)'
+                                    width: '220px',
+                                    fontSize: '0.875rem',
+                                    padding: '30px',
+                                    overflow: 'hidden',
+                                    // background: customization.isDarkMode ? '#23262C' : '#FFF',
+                                    height: 'auto',
+                                    fontFamily: 'roboto sans-serif',
+                                    maxHeight: 'calc(-235px + 100vh)',
+                                    marginBottom: '16px'
                                 }
                             }}
                         >
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
-                                <AppsOutlinedIcon />
-                                <a
-                                    href='/workflows'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
+                            {[
+                                { icon: <AppsOutlinedIcon />, text: 'AI Workspace', href: '/workflows' },
+                                { icon: <DynamicFeedOutlinedIcon />, text: 'Templates', href: '/templates' },
+                                { icon: <ConstructionOutlinedIcon />, text: 'Tools', href: '/tools' },
+                                { icon: <SmartToyOutlinedIcon />, text: 'Assistants', href: '/assistants' },
+                                { icon: <HttpsOutlinedIcon />, text: 'Credentials', href: '/credentials' },
+                                { icon: <InventoryOutlinedIcon />, text: 'Variables', href: '/variables' },
+                                { icon: <VpnKeyOutlinedIcon />, text: 'API Keys', href: '/apikey' }
+                            ].map((item, index) => (
+                                <MenuItem
+                                    key={index}
+                                    onClick={handleClose}
+                                    sx={{
+                                        color: customization.isDarkMode ? '#FFF' : '#616161',
+                                        lineHeight: '3em',
+                                        '&:hover': {
+                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                            '& .MuiSvgIcon-root': {
+                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                            }
+                                        }
+                                    }}
                                 >
-                                    AI Workspace
-                                </a>
-                            </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
-                                <DynamicFeedOutlinedIcon />
-                                <a
-                                    href='/templates'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
-                                >
-                                    Templates
-                                </a>
-                            </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
-                                <ConstructionOutlinedIcon />
-                                <a
-                                    href='/tools'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
-                                >
-                                    Tools
-                                </a>
-                            </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
-                                <SmartToyOutlinedIcon />
-                                <a
-                                    href='/credentials'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
-                                >
-                                    Credentials
-                                </a>
-                            </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
-                                <HttpsOutlinedIcon />
-                                <a
-                                    href='/variables'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
-                                >
-                                    Variables
-                                </a>
-                            </MenuItem>
-                            <MenuItem onClick={handleClose} sx={{ color: customization.isDarkMode ? '#FFF' : '#000' }}>
-                                <VpnKeyOutlinedIcon />
-                                <a
-                                    href='/apikey'
-                                    style={{ color: customization.isDarkMode ? '#FFF' : '#000', textDecoration: 'none', marginLeft: '8px' }}
-                                >
-                                    API Keys
-                                </a>
-                            </MenuItem>
+                                    {item.icon}
+                                    <a
+                                        href={item.href}
+                                        style={{
+                                            color: customization.isDarkMode ? '#FFF' : '#616161',
+                                            textDecoration: 'none',
+                                            marginLeft: '13px',
+                                            lineHeight: '3em'
+                                        }}
+                                        onMouseEnter={(e) => (e.target.style.color = customization.isDarkMode ? '#e22a90' : '#3c5ba4')}
+                                        onMouseLeave={(e) => (e.target.style.color = customization.isDarkMode ? '#fff' : '#000')}
+                                    >
+                                        {item.text}
+                                    </a>
+                                </MenuItem>
+                            ))}
                         </Menu>
                     </div>
                 </ButtonBase>

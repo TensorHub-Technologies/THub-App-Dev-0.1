@@ -26,6 +26,9 @@ export const SHOW_CONFIRM = 'SHOW_CONFIRM'
 export const HIDE_CONFIRM = 'HIDE_CONFIRM'
 
 export const SHOW_MENU = 'SHOW_MENU'
+
+export const SET_USER_DATA = 'SET_USER_DATA'
+
 export const enqueueSnackbar = (notification) => {
     const key = notification.options && notification.options.key
 
@@ -47,4 +50,23 @@ export const closeSnackbar = (key) => ({
 export const removeSnackbar = (key) => ({
     type: REMOVE_SNACKBAR,
     key
+})
+
+export const setUserData = (userData) => ({
+    type: SET_USER_DATA,
+    payload: userData
+})
+
+export const SET_MINMAX = 'SET_MINMAX'
+
+export const setMinMax = (minMax) => ({
+    type: SET_MINMAX,
+    payload: minMax
+})
+
+export const SET_NODEMINMAX = 'SET_NODEMINMAX'
+
+export const setNodesMinMax = (NodeMinMax) => ({
+    type: SET_NODEMINMAX,
+    payload: NodeMinMax
 })
