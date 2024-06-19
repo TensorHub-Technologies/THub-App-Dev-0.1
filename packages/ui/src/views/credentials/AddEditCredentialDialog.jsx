@@ -66,8 +66,15 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             }
             console.log('credential api data')
             console.log('********************', getSpecificCredentialApi.data)
-            console.log(`credentialName: ${getSpecificCredentialApi.data[0].credentialName}`)
-            getSpecificComponentCredentialApi.request(getSpecificCredentialApi.data[0].credentialName)
+
+            let credentialName
+            if (typeof getSpecificCredentialApi.data == 'object') {
+                credentialName = getSpecificCredentialApi.data.credentialName
+            } else {
+                credentialName = getSpecificCredentialApi.data[0].credentialName
+            }
+            console.log(`credentialName: ${credentialName}`)
+            getSpecificComponentCredentialApi.request(credentialName)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,7 +113,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             // When credential dialog is opened from Credentials dashboard
             console.log('U5.1 ', dialogProps.data.id)
 
-            getSpecificCredentialApi.request(dialogProps.data.id, tenantId)
+            getSpecificCredentialApi.request(dialogProps.data.id)
         } else if (dialogProps.type === 'EDIT' && dialogProps.credentialId) {
             // When credential dialog is opened from node in canvas
             console.log('U5.2')

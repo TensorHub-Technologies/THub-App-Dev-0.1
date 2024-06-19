@@ -35,11 +35,12 @@ const deleteCredentials = async (req: Request, res: Response, next: NextFunction
 }
 
 const getAllCredentials = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('req.params: ', req.params)
-    console.log('req.query: ', req.query)
-    console.log('controllers.id: ', req.query.id, ' controllers.tenantId: ', req.params.tenantId)
+    // console.log('req.params: ', req.params)
+    // console.log('req.query: ', req.query)
+    console.log('controllers.credentialName: ', req.query.credentialName, ' controllers.tenantId: ', req.query.tenantId)
     try {
-        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName, req.params.tenantId)
+        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName, req.query.tenantId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
