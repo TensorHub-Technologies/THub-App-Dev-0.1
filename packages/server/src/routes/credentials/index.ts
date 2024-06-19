@@ -7,7 +7,7 @@ router.post('/', credentialsController.createCredential)
 
 // READ
 //router.get('/:id', credentialsController.getAllCredentials)
-router.get(['/:tenantId', '/:id'], credentialsController.getAllCredentials)
+router.get(['/:id', '/:id/:tenantId'], credentialsController.getAllCredentials)
 router.get(['/', '/:id'], credentialsController.getCredentialById)
 
 // UPDATE

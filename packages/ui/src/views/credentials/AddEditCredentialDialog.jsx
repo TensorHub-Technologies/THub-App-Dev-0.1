@@ -64,7 +64,10 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             if (getSpecificCredentialApi.data.plainDataObj) {
                 setCredentialData(getSpecificCredentialApi.data.plainDataObj)
             }
-            getSpecificComponentCredentialApi.request(getSpecificCredentialApi.data.credentialName)
+            console.log('credential api data')
+            console.log('********************', getSpecificCredentialApi.data)
+            console.log(`credentialName: ${getSpecificCredentialApi.data[0].credentialName}`)
+            getSpecificComponentCredentialApi.request(getSpecificCredentialApi.data[0].credentialName)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
