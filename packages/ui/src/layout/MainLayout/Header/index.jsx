@@ -84,6 +84,13 @@ const Header = ({ handleLeftDrawerToggle }) => {
         setAnchorEl(event.currentTarget)
     }
     const handleClose = () => {
+        localStorage.removeItem('userId')
+        dispatch(setUserData(''))
+        setUserName('')
+        setUserImg('')
+        window.location.hostname !== 'localhost'
+            ? (window.location.href = 'https://thub.tech/')
+            : (window.location.href = 'http://localhost:3000/')
         setAnchorEl(null)
     }
 
