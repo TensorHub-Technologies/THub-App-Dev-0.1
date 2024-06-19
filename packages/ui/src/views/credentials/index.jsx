@@ -177,9 +177,6 @@ const Credentials = () => {
     }
 
     useEffect(() => {
-        const getObj = {
-            tenantId
-        }
         getAllCredentialsApi.request(tenantId)
         getAllComponentsCredentialsApi.request()
         // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -6,7 +6,6 @@ const router = express.Router()
 router.post('/', credentialsController.createCredential)
 
 // READ
-//router.get('/:id', credentialsController.getAllCredentials)
 router.get(['/'], credentialsController.getAllCredentials)
 router.get(['/', '/:id'], credentialsController.getCredentialById)
 

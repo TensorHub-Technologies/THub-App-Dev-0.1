@@ -40,7 +40,6 @@ const deleteCredentials = async (credentialId: string): Promise<any> => {
 }
 
 const getAllCredentials = async (paramCredentialName: any, tenantId: any) => {
-    console.log('service.tenantId: ', tenantId)
     try {
         const appServer = getRunningExpressApp()
         let dbResponse = []
@@ -108,7 +107,6 @@ const getCredentialById = async (credentialId: string): Promise<any> => {
 }
 
 const updateCredential = async (credentialId: string, requestBody: any): Promise<any> => {
-    console.log('service.id: ', credentialId, 'service.body:', requestBody)
     try {
         const appServer = getRunningExpressApp()
         const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
