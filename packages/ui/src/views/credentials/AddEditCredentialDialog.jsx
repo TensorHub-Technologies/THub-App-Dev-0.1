@@ -55,7 +55,6 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     const [componentCredential, setComponentCredential] = useState({})
 
     useEffect(() => {
-        //console.log("U1")
         if (getSpecificCredentialApi.data) {
             setCredential(getSpecificCredentialApi.data)
             if (getSpecificCredentialApi.data.name) {
@@ -64,16 +63,12 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             if (getSpecificCredentialApi.data.plainDataObj) {
                 setCredentialData(getSpecificCredentialApi.data.plainDataObj)
             }
-            console.log('credential api data')
-            console.log('********************', getSpecificCredentialApi.data)
-
             let credentialName
             if (typeof getSpecificCredentialApi.data == 'object') {
                 credentialName = getSpecificCredentialApi.data.credentialName
             } else {
                 credentialName = getSpecificCredentialApi.data[0].credentialName
             }
-            console.log(`credentialName: ${credentialName}`)
             getSpecificComponentCredentialApi.request(credentialName)
         }
 
@@ -81,14 +76,12 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     }, [getSpecificCredentialApi.data])
 
     useEffect(() => {
-        //console.log("U2")
         if (getSpecificComponentCredentialApi.data) {
             setComponentCredential(getSpecificComponentCredentialApi.data)
         }
     }, [getSpecificComponentCredentialApi.data])
 
     useEffect(() => {
-        //console.log("U3")
         if (getSpecificCredentialApi.error) {
             setError(getSpecificCredentialApi.error)
         }
@@ -96,7 +89,6 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     }, [getSpecificCredentialApi.error])
 
     useEffect(() => {
-        //console.log("U4")
         if (getSpecificComponentCredentialApi.error) {
             setError(getSpecificComponentCredentialApi.error)
         }
@@ -104,19 +96,10 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     }, [getSpecificComponentCredentialApi.error])
 
     useEffect(() => {
-        console.log('U5')
-        console.log('dialogProps: ', dialogProps)
-        console.log('dialogProps.data: ', dialogProps.data)
-        console.log('dialogProps.type: ', dialogProps.type)
-        console.log('dialogProps.credentialId: ', dialogProps.credentialId)
         if (dialogProps.type === 'EDIT' && dialogProps.data) {
-            // When credential dialog is opened from Credentials dashboard
-            console.log('U5.1 ', dialogProps.data.id)
-
             getSpecificCredentialApi.request(dialogProps.data.id)
         } else if (dialogProps.type === 'EDIT' && dialogProps.credentialId) {
             // When credential dialog is opened from node in canvas
-            console.log('U5.2')
             getSpecificCredentialApi.request(dialogProps.credentialId)
         } else if (dialogProps.type === 'ADD' && dialogProps.credentialComponent) {
             // When credential dialog is to add a new credential

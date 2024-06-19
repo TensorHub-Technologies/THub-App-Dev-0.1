@@ -106,8 +106,6 @@ export const AsyncDropdown = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    console.log(options, 'options')
-
     return (
         <>
             <Autocomplete
