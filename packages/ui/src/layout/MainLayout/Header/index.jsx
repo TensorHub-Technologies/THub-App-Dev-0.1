@@ -68,35 +68,42 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 const Header = ({ handleLeftDrawerToggle }) => {
     const [userName, setUserName] = useState('')
-    const [userImg, setuserImg] = useState('')
+    const [userImg, setUserImg] = useState('')
+    const [userFName, setUserFullName] = useState('')
+    const [anchorEl, setAnchorEl] = useState(null)
 
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
-
-    const userData = useSelector((state) => state.user.userData)
-
     const dispatch = useDispatch()
-    const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
 
     const handleClose = () => {
+        setAnchorEl(null)
+    }
+
+    const handleLogout = () => {
         localStorage.removeItem('userId')
         dispatch(setUserData(''))
         setUserName('')
-        setuserImg('')
-        window.location.href = 'https://thub.tech/'
+        setUserImg('')
+        const isLocalhost = window.location.hostname === 'localhost'
+        const redirectUrl = customization.isDarkMode
+            ? isLocalhost
+                ? 'http://localhost:3000/index.html'
+                : 'https://thub.tech/index.html'
+            : isLocalhost
+            ? 'http://localhost:3000/index-lite.html'
+            : 'https://thub.tech/index-lite.html'
+        window.location.href = redirectUrl
         setAnchorEl(null)
     }
 
     useEffect(() => {
         const fetchUserData = async () => {
-            // const url = new URL(window.location.href)
-            // const params = new URLSearchParams(url.search)
-            // const uid = params.get('uid') || ''
             const userId = localStorage.getItem('userId')
             if (userId) {
                 const apiUrl =
@@ -111,8 +118,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     if (response.status === 200) {
                         dispatch(setUserData(response?.data[0]))
                         const name = response?.data[0]?.name[0].toUpperCase()
+                        setUserFullName(response?.data[0]?.name)
                         setUserName(name)
-                        setuserImg(response?.data[0]?.picture)
+                        setUserImg(response?.data[0]?.picture)
                     } else {
                         console.error('Error:', response.statusText)
                     }
@@ -172,7 +180,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
             <React.Fragment>
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-                    <Tooltip title='Account'>
+                    <Tooltip title={userFName}>
                         <IconButton
                             onClick={handleClick}
                             size='small'
@@ -253,7 +261,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         </ListItemIcon>
                         Subscription
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleLogout}>
                         <ListItemIcon>
                             <Logout fontSize='small' style={{ marginLeft: '3.5px' }} />
                         </ListItemIcon>
