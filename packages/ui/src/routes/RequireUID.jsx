@@ -1,9 +1,10 @@
 import { SET_DARKMODE } from '@/store/actions'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 const RequireUID = ({ children }) => {
+    const customization = useSelector((state) => state.customization)
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -15,7 +16,15 @@ const RequireUID = ({ children }) => {
         const uid = params.get('uid') || localStorage.getItem('userId')
 
         if (!uid) {
-            window.location.href = 'https://thub.tech/'
+            const isLocalhost = window.location.hostname === 'localhost'
+            const redirectUrl = customization.isDarkMode
+                ? isLocalhost
+                    ? 'http://localhost:3000/index.html'
+                    : 'https://thub.tech/index.html'
+                : isLocalhost
+                ? 'http://localhost:3000/index-lite.html'
+                : 'https://thub.tech/index-lite.html'
+            window.location.href = redirectUrl
         } else {
             if (urlTheme === 'dark' || urlTheme === 'lite') {
                 const isDarkMode = urlTheme === 'dark'
