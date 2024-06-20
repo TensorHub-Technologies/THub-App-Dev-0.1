@@ -6,7 +6,6 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 
 const getAllApiKeys = async (tenantId: string) => {
-    console.log('server/src/apikey/index.ts/getAllApiKeys getAllApiKeys: ', tenantId)
     try {
         const keys = await getAPIKeys(tenantId)
         const dbResponse = await addChatflowsCount(keys)
@@ -17,7 +16,6 @@ const getAllApiKeys = async (tenantId: string) => {
 }
 
 const createApiKey = async (keyName: string, tenantId: any) => {
-    console.log('server/src/apikey/index.ts/getAllApiKeys createApiKey: ', tenantId)
     try {
         const keys = await addAPIKey(keyName, tenantId)
         const dbResponse = await addChatflowsCount(keys)
@@ -29,7 +27,6 @@ const createApiKey = async (keyName: string, tenantId: any) => {
 
 // Update api key
 const updateApiKey = async (id: any, keyName: string, tenantId: any) => {
-    console.log('server/src/apikey/index.ts/getAllApiKeys updateApiKey: ', tenantId)
     try {
         const keys = await updateAPIKey(id, keyName, tenantId)
         const dbResponse = await addChatflowsCount(keys)
@@ -40,7 +37,6 @@ const updateApiKey = async (id: any, keyName: string, tenantId: any) => {
 }
 
 const deleteApiKey = async (id: any, tenantId: any) => {
-    console.log('server/src/apikey/index.ts/getAllApiKeys deleteApiKey: ', tenantId)
     try {
         const keys = await deleteAPIKey(id, tenantId)
         const dbResponse = await addChatflowsCount(keys)
@@ -51,7 +47,8 @@ const deleteApiKey = async (id: any, tenantId: any) => {
 }
 
 const verifyApiKey = async (paramApiKey: string, tenantId: string): Promise<string> => {
-    console.log('server/src/apikey/index.ts/getAllApiKeys verifyApiKey: ', tenantId)
+    console.log('server/src/apikey/index.ts/verifyApiKey tenantId: ', tenantId)
+    console.log('server/src/apikey/index.ts/verifyApiKey paramApiKey: ', paramApiKey)
     try {
         const apiKey = await getApiKey(paramApiKey, tenantId)
         if (!apiKey) {
