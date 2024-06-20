@@ -60,6 +60,7 @@ const getAllChatflows = async (req: Request, res: Response, next: NextFunction) 
 
 // Get specific chatflow via api key
 const getChatflowByApiKey = async (req: Request, res: Response, next: NextFunction) => {
+    const tenantId = 'oNELkPmgkmgmskauGSHwvHXo22S2'
     try {
         if (typeof req.params === 'undefined' || !req.params.apikey) {
             throw new InternalFlowiseError(
@@ -67,7 +68,7 @@ const getChatflowByApiKey = async (req: Request, res: Response, next: NextFuncti
                 `Error: chatflowsRouter.getChatflowByApiKey - apikey not provided!`
             )
         }
-        const apikey = await getApiKey(req.params.apikey)
+        const apikey = await getApiKey(req.params.apikey, tenantId)
         if (!apikey) {
             return res.status(401).send('Unauthorized')
         }

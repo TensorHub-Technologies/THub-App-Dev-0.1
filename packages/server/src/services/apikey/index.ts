@@ -5,9 +5,10 @@ import { getApiKey } from '../../utils/apiKey'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 
-const getAllApiKeys = async () => {
+const getAllApiKeys = async (tenantId: string) => {
+    console.log('server/src/apikey/index.ts/getAllApiKeys getAllApiKeys: ', tenantId)
     try {
-        const keys = await getAPIKeys()
+        const keys = await getAPIKeys(tenantId)
         const dbResponse = await addChatflowsCount(keys)
         return dbResponse
     } catch (error) {
@@ -15,9 +16,10 @@ const getAllApiKeys = async () => {
     }
 }
 
-const createApiKey = async (keyName: string) => {
+const createApiKey = async (keyName: string, tenantId: any) => {
+    console.log('server/src/apikey/index.ts/getAllApiKeys createApiKey: ', tenantId)
     try {
-        const keys = await addAPIKey(keyName)
+        const keys = await addAPIKey(keyName, tenantId)
         const dbResponse = await addChatflowsCount(keys)
         return dbResponse
     } catch (error) {
@@ -26,9 +28,10 @@ const createApiKey = async (keyName: string) => {
 }
 
 // Update api key
-const updateApiKey = async (id: string, keyName: string) => {
+const updateApiKey = async (id: any, keyName: string, tenantId: any) => {
+    console.log('server/src/apikey/index.ts/getAllApiKeys updateApiKey: ', tenantId)
     try {
-        const keys = await updateAPIKey(id, keyName)
+        const keys = await updateAPIKey(id, keyName, tenantId)
         const dbResponse = await addChatflowsCount(keys)
         return dbResponse
     } catch (error) {
@@ -36,9 +39,10 @@ const updateApiKey = async (id: string, keyName: string) => {
     }
 }
 
-const deleteApiKey = async (id: string) => {
+const deleteApiKey = async (id: any, tenantId: any) => {
+    console.log('server/src/apikey/index.ts/getAllApiKeys deleteApiKey: ', tenantId)
     try {
-        const keys = await deleteAPIKey(id)
+        const keys = await deleteAPIKey(id, tenantId)
         const dbResponse = await addChatflowsCount(keys)
         return dbResponse
     } catch (error) {
@@ -46,9 +50,10 @@ const deleteApiKey = async (id: string) => {
     }
 }
 
-const verifyApiKey = async (paramApiKey: string): Promise<string> => {
+const verifyApiKey = async (paramApiKey: string, tenantId: string): Promise<string> => {
+    console.log('server/src/apikey/index.ts/getAllApiKeys verifyApiKey: ', tenantId)
     try {
-        const apiKey = await getApiKey(paramApiKey)
+        const apiKey = await getApiKey(paramApiKey, tenantId)
         if (!apiKey) {
             throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
         }
