@@ -1234,7 +1234,8 @@ export const decryptCredentialData = async (
 export const transformToCredentialEntity = async (body: ICredentialReqBody): Promise<Credential> => {
     const credentialBody: ICommonObject = {
         name: body.name,
-        credentialName: body.credentialName
+        credentialName: body.credentialName,
+        tenantId: body.tenantId
     }
 
     if (body.plainDataObj) {
