@@ -83,14 +83,25 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
+
     const handleClose = () => {
+        setAnchorEl(null)
+    }
+
+    const handleLogout = () => {
         localStorage.removeItem('userId')
         dispatch(setUserData(''))
         setUserName('')
         setUserImg('')
-        window.location.hostname !== 'localhost'
-            ? (window.location.href = 'https://thub.tech/')
-            : (window.location.href = 'http://localhost:3000/')
+        const isLocalhost = window.location.hostname === 'localhost'
+        const redirectUrl = customization.isDarkMode
+            ? isLocalhost
+                ? 'http://localhost:3000/index.html'
+                : 'https://thub.tech/index.html'
+            : isLocalhost
+            ? 'http://localhost:3000/index-lite.html'
+            : 'https://thub.tech/index-lite.html'
+        window.location.href = redirectUrl
         setAnchorEl(null)
     }
 
@@ -268,7 +279,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         </ListItemIcon>
                         Subscription
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleLogout}>
                         <ListItemIcon>
                             <Logout fontSize='small' style={{ marginLeft: '3.5px' }} />
                         </ListItemIcon>
