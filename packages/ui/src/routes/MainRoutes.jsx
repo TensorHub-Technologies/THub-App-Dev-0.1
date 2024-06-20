@@ -3,6 +3,7 @@ import { lazy } from 'react'
 // project imports
 import MainLayout from '@/layout/MainLayout'
 import Loadable from '@/ui-component/loading/Loadable'
+import RequireUID from './RequireUID'
 
 // chatflows routing
 const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
@@ -38,7 +39,11 @@ const LoaderConfigPreviewChunks = Loadable(lazy(() => import('@/views/docstore/L
 
 const MainRoutes = {
     path: '/',
-    element: <MainLayout />,
+    element: (
+        <RequireUID>
+            <MainLayout />
+        </RequireUID>
+    ),
     children: [
         {
             path: '/',

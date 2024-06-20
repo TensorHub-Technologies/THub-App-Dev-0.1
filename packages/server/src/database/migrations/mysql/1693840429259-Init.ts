@@ -31,6 +31,7 @@ export class Init1693840429259 implements MigrationInterface {
         await queryRunner.query(
             `CREATE TABLE IF NOT EXISTS \`credential\` (
                 \`id\` varchar(36) NOT NULL,
+                \`tenantId\` varchar(36) NOT NULL,
                 \`name\` varchar(255) NOT NULL,
                 \`credentialName\` varchar(255) NOT NULL,
                 \`encryptedData\` varchar(255) NOT NULL,

@@ -4,6 +4,7 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 
 const createCredential = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('controllers: ', req.body)
     try {
         if (!req.body) {
             throw new InternalFlowiseError(
@@ -35,7 +36,8 @@ const deleteCredentials = async (req: Request, res: Response, next: NextFunction
 
 const getAllCredentials = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName)
+        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName, req.query.tenantId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -58,6 +60,7 @@ const getCredentialById = async (req: Request, res: Response, next: NextFunction
 }
 
 const updateCredential = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('controller.id ', req.params.id, 'controller.body ', req.body)
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(

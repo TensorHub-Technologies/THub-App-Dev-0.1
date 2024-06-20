@@ -71,14 +71,11 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const [userImg, setUserImg] = useState('')
     const [userFName, setUserFullName] = useState('')
     const [anchorEl, setAnchorEl] = useState(null)
-    const [userId, setUserId] = useState('')
 
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
-    const userData = useSelector((state) => state.user.userData)
     const dispatch = useDispatch()
-
     const open = Boolean(anchorEl)
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -106,47 +103,32 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     useEffect(() => {
-        const url = new URL(window.location.href)
-        const params = new URLSearchParams(url.search)
-        const urlTheme = params.get('theme')
-        const localTheme = localStorage.getItem('isDarkMode')
-
-        if (urlTheme === 'dark' || urlTheme === 'lite') {
-            const isDarkMode = urlTheme === 'dark'
-            dispatch({ type: SET_DARKMODE, isDarkMode })
-            localStorage.setItem('isDarkMode', isDarkMode)
-        } else if (localTheme !== null) {
-            const storedTheme = localTheme === 'true'
-            dispatch({ type: SET_DARKMODE, isDarkMode: storedTheme })
-        }
-    }, [dispatch])
-
-    useEffect(() => {
         const fetchUserData = async () => {
-            const url = new URL(window.location.href)
-            const params = new URLSearchParams(url.search)
-            const uid = params.get('uid') || ''
-            setUserId(uid)
-            localStorage.setItem('userId', uid)
             const userId = localStorage.getItem('userId')
+            if (userId) {
+                const apiUrl =
+                    window.location.hostname === 'localhost'
+                        ? 'http://localhost:4000/user'
+                        : 'https://thub-dev-420204.uc.r.appspot.com/user'
 
-            const apiUrl =
-                window.location.hostname === 'localhost' ? 'http://localhost:4000/user' : 'https://thub-dev-420204.uc.r.appspot.com/user'
-
-            try {
-                const response = await axios.post(apiUrl, { userId })
-                if (response.status === 200) {
-                    dispatch(setUserData(response.data[0]))
-                    const fullName = response.data[0].name
-                    const name = response.data[0].name[0]
-                    setUserFullName(fullName)
-                    setUserName(name.toUpperCase())
-                    setUserImg(response.data[0].picture)
-                } else {
-                    console.error('Error:', response.statusText)
+                try {
+                    const response = await axios.post(apiUrl, {
+                        userId
+                    })
+                    if (response.status === 200) {
+                        dispatch(setUserData(response?.data[0]))
+                        const name = response?.data[0]?.name[0].toUpperCase()
+                        setUserFullName(response?.data[0]?.name)
+                        setUserName(name)
+                        setUserImg(response?.data[0]?.picture)
+                    } else {
+                        console.error('Error:', response.statusText)
+                    }
+                } catch (error) {
+                    console.error('Error:', error)
                 }
-            } catch (error) {
-                console.error('Error:', error)
+            } else {
+                console.warn('UID parameter is missing in the URL')
             }
         }
 
