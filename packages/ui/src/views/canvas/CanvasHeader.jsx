@@ -55,6 +55,7 @@ import { Switch, Link } from '@mui/material'
 import { generateExportFlowData, getUpsertDetails } from '@/utils/genericHelper'
 import { uiBaseURL } from '@/store/constant'
 import { SET_CHATFLOW } from '@/store/actions'
+import UpsertHistoryDialog from '../vectorstore/UpsertHistoryDialog'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -72,6 +73,8 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
     const [flowDialogOpen, setFlowDialogOpen] = useState(false)
     const [apiDialogOpen, setAPIDialogOpen] = useState(false)
     const [apiDialogProps, setAPIDialogProps] = useState({})
+    const [upsertHistoryDialogOpen, setUpsertHistoryDialogOpen] = useState(false)
+    const [upsertHistoryDialogProps, setUpsertHistoryDialogProps] = useState({})
     const [viewMessagesDialogOpen, setViewMessagesDialogOpen] = useState(false)
     const [viewMessagesDialogProps, setViewMessagesDialogProps] = useState({})
     const [chatflowConfigurationDialogOpen, setChatflowConfigurationDialogOpen] = useState(false)
@@ -110,6 +113,12 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 chatflow: chatflow
             })
             setViewMessagesDialogOpen(true)
+        } else if (setting === 'viewUpsertHistory') {
+            setUpsertHistoryDialogProps({
+                title: 'View Upsert History',
+                chatflow: chatflow
+            })
+            setUpsertHistoryDialogOpen(true)
         } else if (setting === 'chatflowConfiguration') {
             setChatflowConfigurationDialogProps({
                 title: 'Workflow Configuration',
@@ -707,6 +716,11 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 show={viewMessagesDialogOpen}
                 dialogProps={viewMessagesDialogProps}
                 onCancel={() => setViewMessagesDialogOpen(false)}
+            />
+            <UpsertHistoryDialog
+                show={upsertHistoryDialogOpen}
+                dialogProps={upsertHistoryDialogProps}
+                onCancel={() => setUpsertHistoryDialogOpen(false)}
             />
             <ChatflowConfigurationDialog
                 key='chatflowConfiguration'
