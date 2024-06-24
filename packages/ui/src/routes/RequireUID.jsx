@@ -19,10 +19,10 @@ const RequireUID = ({ children }) => {
             const isLocalhost = window.location.hostname === 'localhost'
             const redirectUrl = customization.isDarkMode
                 ? isLocalhost
-                    ? 'http://localhost:5000/index.html'
+                    ? 'http://localhost:5001/index.html'
                     : 'https://thub.tech/index.html'
                 : isLocalhost
-                ? 'http://localhost:5000/index-lite.html'
+                ? 'http://localhost:5001/index-lite.html'
                 : 'https://thub.tech/index-lite.html'
             window.location.href = redirectUrl
         } else {
