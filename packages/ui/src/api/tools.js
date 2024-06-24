@@ -1,6 +1,6 @@
 import client from './client'
 
-const getAllTools = () => client.get('/tools')
+const getAllTools = (tenantId) => client.get(`/tools/${tenantId}`)
 
 const getSpecificTool = (id) => client.get(`/tools/${id}`)
 
