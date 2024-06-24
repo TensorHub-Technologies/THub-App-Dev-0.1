@@ -164,10 +164,13 @@ const deleteAssistant = async (assistantId: string, isDeleteBoth: any): Promise<
     }
 }
 
-const getAllAssistants = async (): Promise<any> => {
+const getAllAssistants = async (tenantId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).find()
+        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findBy({
+            tenantId: tenantId
+        })
+        console.log(dbResponse)
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -177,14 +180,16 @@ const getAllAssistants = async (): Promise<any> => {
     }
 }
 
-const getAssistantById = async (assistantId: string): Promise<any> => {
+const getAssistantById = async (tenantId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findOneBy({
-            id: assistantId
+        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findBy({
+            tenantId: tenantId
         })
+        console.log(dbResponse, '*************')
+        console.log(tenantId, '**********')
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${assistantId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${tenantId} not found`)
         }
         return dbResponse
     } catch (error) {

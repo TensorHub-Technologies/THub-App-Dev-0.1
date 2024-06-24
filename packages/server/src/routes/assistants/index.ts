@@ -7,7 +7,6 @@ const router = express.Router()
 router.post('/', assistantsController.createAssistant)
 
 // READ
-router.get('/', assistantsController.getAllAssistants)
 router.get(['/', '/:id'], assistantsController.getAssistantById)
 
 // UPDATE

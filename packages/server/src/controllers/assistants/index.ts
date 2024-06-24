@@ -35,7 +35,10 @@ const deleteAssistant = async (req: Request, res: Response, next: NextFunction) 
 
 const getAllAssistants = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await assistantsService.getAllAssistants()
+        // const apiResponse = await assistantsService.getAllAssistants()
+        let tenantId = req.params.id
+        console.log(tenantId, '************')
+        const apiResponse = await assistantsService.createAssistant(tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

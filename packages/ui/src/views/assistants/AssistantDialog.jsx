@@ -104,6 +104,8 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
     const customization = useSelector((state) => state.customization)
     const dialogRef = useRef()
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData['uid']
 
     const getSpecificAssistantApi = useApi(assistantsApi.getSpecificAssistant)
     const getAssistantObjApi = useApi(assistantsApi.getAssistantObj)
@@ -322,6 +324,7 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
             const assistantDetails = {
                 id: openAIAssistantId,
                 name: assistantName,
+                tenantId,
                 description: assistantDesc,
                 model: assistantModel,
                 instructions: assistantInstructions,
