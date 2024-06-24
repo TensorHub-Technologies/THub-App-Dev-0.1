@@ -36,7 +36,8 @@ const deleteVariable = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllVariables = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await variablesService.getAllVariables()
+        let tenantId = req.params.id
+        const apiResponse = await variablesService.getAllVariables(tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

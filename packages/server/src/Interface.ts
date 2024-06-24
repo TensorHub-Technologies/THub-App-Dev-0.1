@@ -93,6 +93,7 @@ export interface ICredential {
 export interface IVariable {
     id: string
     name: string
+    tenantId: string
     value: string
     type: string
     updatedDate: Date

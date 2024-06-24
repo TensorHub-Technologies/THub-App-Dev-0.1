@@ -75,6 +75,9 @@ const Variables = () => {
     }
     const [isInputFocused, setInputFocused] = useState(false)
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData['uid']
+
     function filterVariables(data) {
         return data.name.toLowerCase().indexOf(search.toLowerCase()) > -1
     }
@@ -149,14 +152,14 @@ const Variables = () => {
 
     const onConfirm = () => {
         setShowVariableDialog(false)
-        getAllVariables.request()
+        getAllVariables.request(tenantId)
     }
 
     useEffect(() => {
-        getAllVariables.request()
+        getAllVariables.request(tenantId)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
+    // console.log(getAllVariables.data,"getAllVariables.data");
     useEffect(() => {
         if (getAllVariables.data) {
             setVariables(getAllVariables.data)
@@ -295,7 +298,7 @@ const Variables = () => {
                         <div>No Variables Yet</div>
                     </Stack>
                 )}
-                {variables.length > 0 && (
+                {variables?.length > 0 && (
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label='simple table'>
                             <TableHead>
