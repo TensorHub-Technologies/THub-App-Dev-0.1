@@ -84,7 +84,6 @@ const Assistants = () => {
 
     useEffect(() => {
         getAllAssistantsApi.request(tenantId)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     console.log(getAllAssistantsApi.data)

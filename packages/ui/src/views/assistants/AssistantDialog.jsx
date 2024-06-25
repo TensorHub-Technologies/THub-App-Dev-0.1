@@ -324,7 +324,6 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
             const assistantDetails = {
                 id: openAIAssistantId,
                 name: assistantName,
-                tenantId,
                 description: assistantDesc,
                 model: assistantModel,
                 instructions: assistantInstructions,
@@ -335,6 +334,7 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
             }
             const obj = {
                 details: JSON.stringify(assistantDetails),
+                tenantId,
                 iconSrc: assistantIcon,
                 credential: assistantCredential
             }

@@ -37,8 +37,10 @@ const getAllAssistants = async (req: Request, res: Response, next: NextFunction)
     try {
         // const apiResponse = await assistantsService.getAllAssistants()
         let tenantId = req.params.id
-        console.log(tenantId, '************')
-        const apiResponse = await assistantsService.createAssistant(tenantId)
+        // console.log(tenantId, '************')
+        let apiResponse = await assistantsService.getAllAssistants()
+        apiResponse = apiResponse.filter(({ tenantId }: any) => tenantId === req.params.id)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
