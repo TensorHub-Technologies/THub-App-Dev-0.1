@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 
 // Material
@@ -50,9 +50,6 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
 
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
-
-    const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
 
     const [variableName, setVariableName] = useState('')
     const [variableValue, setVariableValue] = useState('')

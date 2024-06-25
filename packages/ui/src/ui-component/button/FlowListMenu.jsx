@@ -245,6 +245,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     }
 
     const handleDelete = async () => {
+        console.log('deleted')
         setAnchorEl(null)
         const confirmPayload = {
             title: `Delete`,
@@ -395,7 +396,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleDelete} disableRipple>
                     <FileDeleteIcon />
-                    Delete
+                    Delete111
                 </MenuItem>
             </StyledMenu>
             <SaveChatflowDialog

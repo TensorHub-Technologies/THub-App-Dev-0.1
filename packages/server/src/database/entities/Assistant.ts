@@ -10,6 +10,9 @@ export class Assistant implements IAssistant {
     @Column({ type: 'text' })
     details: string
 
+    @Column()
+    tenantId: string
+
     @Column({ type: 'uuid' })
     credential: string
 

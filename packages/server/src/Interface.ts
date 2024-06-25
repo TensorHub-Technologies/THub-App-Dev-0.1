@@ -75,6 +75,7 @@ export interface ITool {
 
 export interface IAssistant {
     id: string
+    tenantId: string
     details: string
     credential: string
     iconSrc?: string
