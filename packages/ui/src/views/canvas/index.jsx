@@ -107,7 +107,9 @@ const Canvas = () => {
     const { minMax, uniqueId } = useSelector((state) => state.minMax)
 
     const nodeMinMax = useSelector((state) => state.nodeMinMax.nodeMinMax)
-    console.log(nodeMinMax, 'nodeMinMax')
+
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData['uid']
 
     useEffect(() => {
         dispatch(setNodesMinMax(minMax))
@@ -251,6 +253,7 @@ const Canvas = () => {
             if (!chatflow.id) {
                 const newChatflowBody = {
                     name: chatflowName,
+                    tenantId,
                     deployed: false,
                     isPublic: false,
                     flowData

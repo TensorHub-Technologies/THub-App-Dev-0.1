@@ -51,7 +51,8 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllChatflows = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await chatflowsService.getAllChatflows(req.query?.type as ChatflowType)
+        let apiResponse = await chatflowsService.getAllChatflows(req.query?.type as ChatflowType)
+        apiResponse = apiResponse.filter(({ tenantId }) => tenantId === req.params.tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -71,7 +72,7 @@ const getChatflowByApiKey = async (req: Request, res: Response, next: NextFuncti
         if (!apikey) {
             return res.status(401).send('Unauthorized')
         }
-        const apiResponse = await chatflowsService.getChatflowByApiKey(apikey.id)
+        const apiResponse = await chatflowsService.getChatflowByApiKey(apikey.id, req.query.keyonly)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -80,10 +81,10 @@ const getChatflowByApiKey = async (req: Request, res: Response, next: NextFuncti
 
 const getChatflowById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (typeof req.params === 'undefined' || !req.params.id) {
+        if (typeof req.params === 'undefined' || !req.params.chatflowId) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsRouter.getChatflowById - id not provided!`)
         }
-        const apiResponse = await chatflowsService.getChatflowById(req.params.id)
+        const apiResponse = await chatflowsService.getChatflowById(req.params.chatflowId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
