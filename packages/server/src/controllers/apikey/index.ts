@@ -34,7 +34,6 @@ const updateApiKey = async (req: Request, res: Response, next: NextFunction) => 
         if (typeof req.body === 'undefined' || !req.body.keyName) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: apikeyController.updateApiKey - keyName not provided!`)
         }
-        console.log('here')
         const apiResponse = await apikeyService.updateApiKey(req.query.id, req.body.keyName, req.query.tenantId)
         return res.json(apiResponse)
     } catch (error) {
@@ -57,7 +56,6 @@ const deleteApiKey = async (req: Request, res: Response, next: NextFunction) => 
 
 // Verify api key
 const verifyApiKey = async (req: Request, res: Response, next: NextFunction) => {
-    //console.log("server/src/controllers/apikey/verifyApiKey req:",req)
     const tenantId = 'oNELkPmgkmgmskauGSHwvHXo22S2'
     try {
         if (typeof req.params === 'undefined' || !req.params.apiKey) {
