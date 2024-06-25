@@ -6,12 +6,12 @@ const router = express.Router()
 router.post('/', apikeyController.createApiKey)
 
 // READ
-router.get('/', apikeyController.getAllApiKeys)
+router.get('/:tenantId', apikeyController.getAllApiKeys)
 
 // UPDATE
 router.put(['/', '/:id'], apikeyController.updateApiKey)
 
 // DELETE
-router.delete(['/', '/:id'], apikeyController.deleteApiKey)
+router.delete('/:tenantId/:id', apikeyController.deleteApiKey)
 
 export default router

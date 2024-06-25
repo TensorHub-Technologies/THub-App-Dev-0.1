@@ -42,6 +42,7 @@ export class App {
     }
 
     async initDatabase() {
+        const tenantId = 'oNELkPmgkmgmskauGSHwvHXo22S2'
         // Initialize database
         try {
             await this.AppDataSource.initialize()
@@ -58,7 +59,7 @@ export class App {
             this.chatflowPool = new ChatflowPool()
 
             // Initialize API keys
-            await getAPIKeys()
+            await getAPIKeys(tenantId)
 
             // Initialize encryption key
             await getEncryptionKey()

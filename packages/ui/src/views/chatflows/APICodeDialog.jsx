@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import {
@@ -82,6 +82,8 @@ function a11yProps(index) {
 const APICodeDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const navigate = useNavigate()
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData['uid']
     const dispatch = useDispatch()
 
     const codes = ['Embed', 'Python', 'JavaScript', 'cURL', 'Share Chatbot']
@@ -558,7 +560,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
 
     useEffect(() => {
         if (show) {
-            getAllAPIKeysApi.request()
+            getAllAPIKeysApi.request(tenantId)
             getIsChatflowStreamingApi.request(dialogProps.chatflowid)
         }
 
