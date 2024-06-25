@@ -102,7 +102,6 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     }
 
     const saveKey = async () => {
-        console.log('ui/src/views/apikey/saveKey tenantId: ', tenantId)
         try {
             const saveResp = await apikeyApi.updateAPI(tenantId, dialogProps.key.id, { keyName })
             if (saveResp.data) {
