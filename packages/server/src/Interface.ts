@@ -19,6 +19,7 @@ export enum ChatMessageRatingType {
 export interface IChatFlow {
     id: string
     name: string
+    tenantId: string
     flowData: string
     updatedDate: Date
     createdDate: Date
