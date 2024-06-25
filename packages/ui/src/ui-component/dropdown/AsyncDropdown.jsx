@@ -57,6 +57,8 @@ export const AsyncDropdown = ({
     disableClearable = false
 }) => {
     const customization = useSelector((state) => state.customization)
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData['uid']
 
     const [open, setOpen] = useState(false)
     const [options, setOptions] = useState([])
@@ -74,7 +76,7 @@ export const AsyncDropdown = ({
             } else {
                 names = credentialNames[0]
             }
-            const resp = await credentialsApi.getCredentialsByName(names)
+            const resp = await credentialsApi.getCredentialsByName(names, tenantId)
             if (resp.data) {
                 const returnList = []
                 for (let i = 0; i < resp.data.length; i += 1) {
