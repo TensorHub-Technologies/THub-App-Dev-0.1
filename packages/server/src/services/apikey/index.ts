@@ -47,8 +47,6 @@ const deleteApiKey = async (id: any, tenantId: any) => {
 }
 
 const verifyApiKey = async (paramApiKey: string, tenantId: string): Promise<string> => {
-    console.log('server/src/apikey/index.ts/verifyApiKey tenantId: ', tenantId)
-    console.log('server/src/apikey/index.ts/verifyApiKey paramApiKey: ', paramApiKey)
     try {
         const apiKey = await getApiKey(paramApiKey, tenantId)
         if (!apiKey) {
