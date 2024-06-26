@@ -396,7 +396,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleDelete} disableRipple>
                     <FileDeleteIcon />
-                    Delete111
+                    Delete
                 </MenuItem>
             </StyledMenu>
             <SaveChatflowDialog

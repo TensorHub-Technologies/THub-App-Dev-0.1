@@ -12,6 +12,8 @@ const createAssistant = async (req: Request, res: Response, next: NextFunction) 
             )
         }
         const apiResponse = await assistantsService.createAssistant(req.body)
+        console.log(apiResponse, 'apiResponse')
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -35,12 +37,8 @@ const deleteAssistant = async (req: Request, res: Response, next: NextFunction) 
 
 const getAllAssistants = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // const apiResponse = await assistantsService.getAllAssistants()
-        let tenantId = req.params.id
-        // console.log(tenantId, '************')
         let apiResponse = await assistantsService.getAllAssistants()
         apiResponse = apiResponse.filter(({ tenantId }: any) => tenantId === req.params.id)
-
         return res.json(apiResponse)
     } catch (error) {
         next(error)
