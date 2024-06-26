@@ -115,7 +115,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
             setError(err)
             enqueueSnackbar({
                 message: `Failed to add new Variable: ${
-                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                    typeof err.response.data === 'object' ? err.response.data.message : err.response.data
                 }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
