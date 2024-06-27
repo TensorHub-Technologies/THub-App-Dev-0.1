@@ -245,6 +245,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     }
 
     const handleDelete = async () => {
+        console.log('deleted')
         setAnchorEl(null)
         const confirmPayload = {
             title: `Delete`,
