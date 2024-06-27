@@ -109,7 +109,6 @@ const AddNodes = ({ nodesData, node }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
-    console.log('customization', customization)
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
     // const [open, setOpen] = useState(false)
@@ -217,8 +216,6 @@ const AddNodes = ({ nodesData, node }) => {
             dispatch({ type: SET_COMPONENT_NODES, componentNodes: nodesData })
         }
     }, [nodesData, dispatch])
-
-    console.log(customization.menu_open, 'SHOW_MENU')
 
     return (
         <>

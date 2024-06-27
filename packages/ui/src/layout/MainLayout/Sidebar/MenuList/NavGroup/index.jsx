@@ -15,7 +15,6 @@ const NavGroup = ({ item }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
-    console.log('customization', customization)
 
     // menu list collapse & items
     const items = item.children?.map((menu) => {
@@ -32,8 +31,6 @@ const NavGroup = ({ item }) => {
                 )
         }
     })
-
-    console.log(customization.menu_open, 'SHOW_MENU')
 
     return (
         <>

@@ -184,11 +184,14 @@ const saveChatflow = async (newChatFlow: ChatFlow): Promise<any> => {
             const chatflow = appServer.AppDataSource.getRepository(ChatFlow).create(newChatFlow)
             dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).save(chatflow)
         }
-        await appServer.telemetry.sendTelemetry('chatflow_created', {
-            version: await getAppVersion(),
-            chatflowId: dbResponse.id,
-            flowGraph: getTelemetryFlowObj(JSON.parse(dbResponse.flowData)?.nodes, JSON.parse(dbResponse.flowData)?.edges)
-        })
+        if (appServer.telemetry && appServer.telemetry.sendTelemetry) {
+            await appServer.telemetry.sendTelemetry('chatflow_created', {
+                version: await getAppVersion(),
+                chatflowId: dbResponse.id,
+                flowGraph: getTelemetryFlowObj(JSON.parse(dbResponse.flowData)?.nodes, JSON.parse(dbResponse.flowData)?.edges)
+            })
+        }
+
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
