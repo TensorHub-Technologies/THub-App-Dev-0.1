@@ -17,8 +17,6 @@ import { IconX, IconVariable } from '@tabler/icons'
 // API
 import variablesApi from '@/api/variables'
 
-// Hooks
-
 // utils
 import useNotifier from '@/utils/useNotifier'
 
@@ -41,10 +39,7 @@ const variableTypes = [
 
 const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     const portalElement = document.getElementById('portal')
-
     const dispatch = useDispatch()
-
-    // ==============================|| Snackbar ||============================== //
 
     useNotifier()
 
@@ -94,7 +89,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
         try {
             const obj = {
                 name: variableName,
-                tenantId,
+                tenantId: dialogProps.tenantId,
                 value: variableValue,
                 type: variableType
             }
@@ -139,7 +134,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
         try {
             const saveObj = {
                 name: variableName,
-                tenantId,
+                tenantId: dialogProps.tenantId, // Assuming tenantId comes from dialogProps
                 value: variableValue,
                 type: variableType
             }
@@ -161,7 +156,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                 onConfirm(saveResp.data.id)
             }
         } catch (error) {
-            setError(err)
+            setError(error)
             enqueueSnackbar({
                 message: `Failed to save Variable: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
@@ -220,7 +215,6 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                         <Typography>
                             Variable Name<span style={{ color: 'red' }}>&nbsp;*</span>
                         </Typography>
-
                         <div style={{ flexGrow: 1 }}></div>
                     </div>
                     <OutlinedInput
