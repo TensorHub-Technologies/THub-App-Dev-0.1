@@ -66,7 +66,6 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
     const navigate = useNavigate()
     const flowNameRef = useRef()
     const settingsRef = useRef()
-    console.log('customization', customization)
     const [isEditingFlowName, setEditingFlowName] = useState(null)
     const [flowName, setFlowName] = useState('')
     const [isSettingsOpen, setSettingsOpen] = useState(false)
@@ -369,7 +368,6 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             .then((response) => {
                 if (response.ok) {
                     response.json().then((user) => {
-                        console.log(user)
                         const name = user[0].name[0]
                         const img = user[0].picture
                         const showName = name.toUpperCase()

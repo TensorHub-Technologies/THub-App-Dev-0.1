@@ -122,9 +122,9 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
         try {
             const obj = {
                 name,
+                tenantId: tenantId,
                 credentialName: componentCredential.name,
-                plainDataObj: credentialData,
-                tenantId
+                plainDataObj: credentialData
             }
             const createResp = await credentialsApi.createCredential(obj)
             if (createResp.data) {
