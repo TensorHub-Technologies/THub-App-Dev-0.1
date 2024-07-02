@@ -32,7 +32,8 @@ const Assistants = () => {
     const getAllAssistantsApi = useApi(assistantsApi.getAllAssistants)
 
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})

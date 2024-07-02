@@ -61,7 +61,8 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     // ==============================|| Snackbar ||============================== //
 

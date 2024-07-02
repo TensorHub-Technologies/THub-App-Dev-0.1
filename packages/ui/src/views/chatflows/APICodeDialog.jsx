@@ -83,7 +83,8 @@ const APICodeDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const navigate = useNavigate()
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
     const dispatch = useDispatch()
 
     const codes = ['Embed', 'Python', 'JavaScript', 'cURL', 'Share Chatbot']

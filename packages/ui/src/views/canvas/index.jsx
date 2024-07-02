@@ -75,7 +75,8 @@ const Canvas = () => {
     const canvas = useSelector((state) => state.canvas)
     const customization = useSelector((state) => state.customization)
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
     const [canvasDataStore, setCanvasDataStore] = useState(canvas)
     const [chatflow, setChatflow] = useState(null)
 

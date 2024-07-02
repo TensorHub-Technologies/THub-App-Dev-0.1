@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import { Box, IconButton, Toolbar, Tooltip, Avatar, Menu, MenuItem, ListItemIcon, Switch } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { SET_DARKMODE } from '@/store/actions'
+import { SET_DARKMODE, setUserData } from '@/store/actions'
 import ProfileSection from './ProfileSection'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
@@ -16,7 +16,6 @@ import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { setUserData } from '@/store/actions'
 
 // Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -77,6 +76,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const open = Boolean(anchorEl)
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
@@ -104,7 +104,8 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const userId = localStorage.getItem('userId')
+            const urlParams = new URLSearchParams(window.location.search)
+            const userId = localStorage.getItem('userId') || urlParams.get('uid')
             if (userId) {
                 const apiUrl =
                     window.location.hostname === 'localhost'
@@ -112,15 +113,15 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         : 'https://thub-dev-420204.uc.r.appspot.com/user'
 
                 try {
-                    const response = await axios.post(apiUrl, {
-                        userId
-                    })
+                    const response = await axios.post(apiUrl, { userId })
                     if (response.status === 200) {
-                        dispatch(setUserData(response?.data[0]))
-                        const name = response?.data[0]?.name[0].toUpperCase()
-                        setUserFullName(response?.data[0]?.name)
+                        const userData = response?.data[0]
+                        dispatch(setUserData(userData))
+                        const name = userData?.name[0].toUpperCase()
+                        setUserFullName(userData?.name)
                         setUserName(name)
-                        setUserImg(response?.data[0]?.picture)
+                        // console.log(userData.picture)
+                        setUserImg(userData?.picture)
                     } else {
                         console.error('Error:', response.statusText)
                     }
@@ -167,15 +168,13 @@ const Header = ({ handleLeftDrawerToggle }) => {
             </Box>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
             <Box sx={{ flexGrow: 1 }} />
-            {customization.isDarkMode ? (
-                <IconButton checked={true} onClick={changeDarkMode}>
-                    <img src={toggle_1} style={{ width: '30px', marginRight: '3px' }} alt='dark' />
-                </IconButton>
-            ) : (
-                <IconButton checked={true} onClick={changeDarkMode}>
-                    <img src={toggle_2} style={{ width: '30px', marginRight: '3px' }} alt='lite' />
-                </IconButton>
-            )}
+            <IconButton onClick={changeDarkMode}>
+                <img
+                    src={customization.isDarkMode ? toggle_1 : toggle_2}
+                    style={{ width: '30px', marginRight: '3px' }}
+                    alt={customization.isDarkMode ? 'dark' : 'lite'}
+                />
+            </IconButton>
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
             <React.Fragment>
@@ -193,7 +192,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                                 <Avatar
                                     sx={{ width: 38, height: 38 }}
                                     style={{
-                                        color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                                        color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
                                     alt='GS'
@@ -203,7 +202,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                                 <Avatar
                                     sx={{ width: 38, height: 38 }}
                                     style={{
-                                        color: customization.isDarkMode ? '#FFFFFF' : '#FFFFFF',
+                                        color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
                                 >
