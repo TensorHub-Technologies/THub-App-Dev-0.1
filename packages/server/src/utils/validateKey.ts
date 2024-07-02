@@ -9,7 +9,6 @@ import { getAPIKeys, compareKeys } from './apiKey'
  * @param {ChatFlow} chatflow
  */
 export const utilValidateKey = async (req: Request, chatflow: ChatFlow) => {
-    const tenantId = 'oNELkPmgkmgmskauGSHwvHXo22S2'
     const chatFlowApiKeyId = chatflow.apikeyid
     if (!chatFlowApiKeyId) return true
 
@@ -18,7 +17,7 @@ export const utilValidateKey = async (req: Request, chatflow: ChatFlow) => {
 
     const suppliedKey = authorizationHeader.split(`Bearer `).pop()
     if (suppliedKey) {
-        const keys = await getAPIKeys(tenantId)
+        const keys = await getAPIKeys()
         const apiSecret = keys.find((key) => key.id === chatFlowApiKeyId)?.apiSecret
         if (!compareKeys(apiSecret, suppliedKey)) return false
         return true

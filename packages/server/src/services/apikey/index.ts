@@ -5,9 +5,9 @@ import { getApiKey } from '../../utils/apiKey'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 
-const getAllApiKeys = async (tenantId: string) => {
+const getAllApiKeys = async () => {
     try {
-        const keys = await getAPIKeys(tenantId)
+        const keys = await getAPIKeys()
         const dbResponse = await addChatflowsCount(keys)
         return dbResponse
     } catch (error) {
@@ -15,9 +15,9 @@ const getAllApiKeys = async (tenantId: string) => {
     }
 }
 
-const createApiKey = async (keyName: string, tenantId: any) => {
+const createApiKey = async (keyName: string) => {
     try {
-        const keys = await addAPIKey(keyName, tenantId)
+        const keys = await addAPIKey(keyName)
         const dbResponse = await addChatflowsCount(keys)
         return dbResponse
     } catch (error) {
@@ -26,9 +26,9 @@ const createApiKey = async (keyName: string, tenantId: any) => {
 }
 
 // Update api key
-const updateApiKey = async (id: any, keyName: string, tenantId: any) => {
+const updateApiKey = async (id: string, keyName: string) => {
     try {
-        const keys = await updateAPIKey(id, keyName, tenantId)
+        const keys = await updateAPIKey(id, keyName)
         const dbResponse = await addChatflowsCount(keys)
         return dbResponse
     } catch (error) {
@@ -36,9 +36,9 @@ const updateApiKey = async (id: any, keyName: string, tenantId: any) => {
     }
 }
 
-const deleteApiKey = async (id: any, tenantId: any) => {
+const deleteApiKey = async (id: string) => {
     try {
-        const keys = await deleteAPIKey(id, tenantId)
+        const keys = await deleteAPIKey(id)
         const dbResponse = await addChatflowsCount(keys)
         return dbResponse
     } catch (error) {
@@ -46,9 +46,9 @@ const deleteApiKey = async (id: any, tenantId: any) => {
     }
 }
 
-const verifyApiKey = async (paramApiKey: string, tenantId: string): Promise<string> => {
+const verifyApiKey = async (paramApiKey: string): Promise<string> => {
     try {
-        const apiKey = await getApiKey(paramApiKey, tenantId)
+        const apiKey = await getApiKey(paramApiKey)
         if (!apiKey) {
             throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
         }
