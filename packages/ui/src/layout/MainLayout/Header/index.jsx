@@ -120,7 +120,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         const name = userData?.name[0].toUpperCase()
                         setUserFullName(userData?.name)
                         setUserName(name)
-                        // console.log(userData.picture)
+                        console.log(userData.picture)
                         setUserImg(userData?.picture)
                     } else {
                         console.error('Error:', response.statusText)
@@ -151,7 +151,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
         navigate('/', { replace: true })
         navigate(0)
     }
-
     return (
         <>
             <Box
