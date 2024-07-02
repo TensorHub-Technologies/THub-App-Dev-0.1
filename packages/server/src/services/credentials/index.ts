@@ -108,7 +108,6 @@ const getCredentialById = async (credentialId: string): Promise<any> => {
 }
 
 const updateCredential = async (credentialId: string, requestBody: any): Promise<any> => {
-    console.log('service.id: ', credentialId, 'service.body:', requestBody)
     try {
         const appServer = getRunningExpressApp()
         const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({

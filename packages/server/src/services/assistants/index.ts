@@ -171,7 +171,6 @@ const getAllAssistants = async (): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
         const dbResponse = await appServer.AppDataSource.getRepository(Assistant).find()
-        console.log(dbResponse)
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(

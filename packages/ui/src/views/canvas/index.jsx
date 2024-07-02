@@ -93,10 +93,6 @@ const Canvas = () => {
     const [nodes, setNodes, onNodesChange] = useNodesState()
     const [edges, setEdges, onEdgesChange] = useEdgesState()
 
-    console.log(nodes, 'nodes')
-
-    console.log(edges, 'nodes22222222222222')
-
     const [selectedNode, setSelectedNode] = useState(null)
     const [isUpsertButtonEnabled, setIsUpsertButtonEnabled] = useState(false)
 
@@ -146,7 +142,6 @@ const Canvas = () => {
 
     // =================// undo // =====================
     const handleUndo = () => {
-        console.log('deletedNode', deletedNode)
         if (deletedNode.length > 0) {
             const lastDeletedNode = deletedNode[deletedNode.length - 1]
             setSelectedNode(lastDeletedNode)
@@ -310,7 +305,6 @@ const Canvas = () => {
 
     // eslint-disable-next-line
     const onNodeClick = useCallback((event, clickedNode) => {
-        console.log('deletedNode111', deletedNode)
         setDeletedNodes((prevDeletedNodes) => [...prevDeletedNodes, clickedNode])
         setSelectedNode(clickedNode)
         setNodes((nds) =>
