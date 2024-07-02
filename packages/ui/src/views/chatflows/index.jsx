@@ -41,7 +41,8 @@ const Chatflows = () => {
     const customization = useSelector((state) => state.customization)
 
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     const [isLoading, setLoading] = useState(true)
     const [images, setImages] = useState({})

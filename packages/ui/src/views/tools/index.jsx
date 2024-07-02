@@ -28,7 +28,8 @@ const Tools = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     const getAllToolsApi = useApi(toolsApi.getAllTools)
 

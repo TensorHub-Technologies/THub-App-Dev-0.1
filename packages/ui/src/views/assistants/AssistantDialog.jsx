@@ -105,7 +105,8 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
     const customization = useSelector((state) => state.customization)
     const dialogRef = useRef()
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     const getSpecificAssistantApi = useApi(assistantsApi.getSpecificAssistant)
     const getAssistantObjApi = useApi(assistantsApi.getAssistantObj)

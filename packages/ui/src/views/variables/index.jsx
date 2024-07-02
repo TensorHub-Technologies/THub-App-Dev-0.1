@@ -76,7 +76,8 @@ const Variables = () => {
     const [isInputFocused, setInputFocused] = useState(false)
 
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData['uid']
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     function filterVariables(data) {
         return data.name.toLowerCase().indexOf(search.toLowerCase()) > -1
