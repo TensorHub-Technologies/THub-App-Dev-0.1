@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 
 // Material
@@ -52,6 +52,9 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
     const [dialogType, setDialogType] = useState('ADD')
     const [variable, setVariable] = useState({})
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid
+
     useEffect(() => {
         if (dialogProps.type === 'EDIT' && dialogProps.data) {
             setVariableName(dialogProps.data.name)
@@ -86,7 +89,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
         try {
             const obj = {
                 name: variableName,
-                tenantId: dialogProps.tenantId,
+                tenantId,
                 value: variableValue,
                 type: variableType
             }
@@ -131,7 +134,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
         try {
             const saveObj = {
                 name: variableName,
-                tenantId: dialogProps.tenantId, // Assuming tenantId comes from dialogProps
+                tenantId,
                 value: variableValue,
                 type: variableType
             }
