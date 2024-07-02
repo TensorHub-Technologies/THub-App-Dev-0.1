@@ -12,7 +12,6 @@ const createAssistant = async (req: Request, res: Response, next: NextFunction) 
             )
         }
         const apiResponse = await assistantsService.createAssistant(req.body)
-        console.log(apiResponse, 'apiResponse')
 
         return res.json(apiResponse)
     } catch (error) {
