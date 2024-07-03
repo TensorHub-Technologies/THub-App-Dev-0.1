@@ -69,11 +69,11 @@ const getChatflowByApiKey = async (req: Request, res: Response, next: NextFuncti
                 `Error: chatflowsRouter.getChatflowByApiKey - apikey not provided!`
             )
         }
-        const apikey = await getApiKey(req.params.apikey)
+        const apikey = await getApiKey(req.params.apikey, tenantId)
         if (!apikey) {
             return res.status(401).send('Unauthorized')
         }
-        const apiResponse = await chatflowsService.getChatflowByApiKey(apikey.id, req.query.keyonly)
+        const apiResponse = await chatflowsService.getChatflowByApiKey(apikey.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

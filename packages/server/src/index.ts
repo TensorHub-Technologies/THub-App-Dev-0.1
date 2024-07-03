@@ -15,7 +15,6 @@ import { ChatFlow } from './database/entities/ChatFlow'
 import { ChatflowPool } from './ChatflowPool'
 import { CachePool } from './CachePool'
 import { initializeRateLimiter } from './utils/rateLimit'
-import { getAPIKeys } from './utils/apiKey'
 import { sanitizeMiddleware, getCorsOptions, getAllowedIframeOrigins } from './utils/XSS'
 import { Telemetry } from './utils/telemetry'
 import flowiseApiV1Router from './routes'
@@ -42,6 +41,7 @@ export class App {
     }
 
     async initDatabase() {
+        //   const tenantId = 'oNELkPmgkmgmskauGSHwvHXo22S2'
         // Initialize database
         try {
             await this.AppDataSource.initialize()
@@ -58,7 +58,7 @@ export class App {
             this.chatflowPool = new ChatflowPool()
 
             // Initialize API keys
-            await getAPIKeys()
+            // await getAPIKeys(tenantId)
 
             // Initialize encryption key
             await getEncryptionKey()

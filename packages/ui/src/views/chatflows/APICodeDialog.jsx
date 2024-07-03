@@ -83,7 +83,6 @@ const APICodeDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const navigate = useNavigate()
     const userData = useSelector((state) => state.user.userData)
-    // const tenantId = userData['uid']
     const tenantId = userData?.uid
     const dispatch = useDispatch()
 
@@ -561,7 +560,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
 
     useEffect(() => {
         if (show) {
-            getAllAPIKeysApi.request()
+            getAllAPIKeysApi.request(tenantId)
             getIsChatflowStreamingApi.request(dialogProps.chatflowid)
         }
 

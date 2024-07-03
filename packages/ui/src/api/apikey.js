@@ -1,12 +1,12 @@
 import client from './client'
 
-const getAllAPIKeys = () => client.get('/apikey')
+const getAllAPIKeys = (tenantId) => client.get(`/apikey/${tenantId}`)
 
-const createNewAPI = (body) => client.post(`/apikey`, body)
+const createNewAPI = (tenantId, body) => client.post(`/apikey?tenantId=${tenantId}`, body)
 
-const updateAPI = (id, body) => client.put(`/apikey/${id}`, body)
+const updateAPI = (tenantId, id, body) => client.put(`/apikey?id=${id}&tenantId=${tenantId}`, body)
 
-const deleteAPI = (id) => client.delete(`/apikey/${id}`)
+const deleteAPI = (tenantId, id) => client.delete(`/apikey/${tenantId}/${id}`)
 
 export default {
     getAllAPIKeys,
