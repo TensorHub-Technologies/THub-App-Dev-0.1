@@ -11,6 +11,8 @@ const getRateLimiterMiddleware = async (req: Request, res: Response, next: NextF
 }
 
 const upsertVectorMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('upsertVectorMiddleware: param: ', req.params)
+    console.log('upsertVectorMiddleware: query: ', req.query)
     try {
         const apiResponse = await vectorsService.upsertVectorMiddleware(req)
         return res.json(apiResponse)
@@ -20,6 +22,7 @@ const upsertVectorMiddleware = async (req: Request, res: Response, next: NextFun
 }
 
 const createInternalUpsert = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('createInternalUpsert: query: ', req.query)
     try {
         const isInternal = true
         const apiResponse = await vectorsService.upsertVectorMiddleware(req, isInternal)

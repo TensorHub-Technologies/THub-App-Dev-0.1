@@ -32,7 +32,7 @@ import { getErrorMessage } from '../errors/utils'
 export const upsertVector = async (req: Request, isInternal: boolean = false) => {
     try {
         const appServer = getRunningExpressApp()
-        const chatflowid = req.params.id
+        const chatflowid = req.query.id
         let incomingInput: IncomingInput = req.body
 
         const chatflow = await appServer.AppDataSource.getRepository(ChatFlow).findOneBy({

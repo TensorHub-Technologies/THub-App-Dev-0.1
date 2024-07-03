@@ -5,7 +5,7 @@ const router = express.Router()
 // CREATE
 
 // READ
-router.get(['/', '/:id'], upsertHistoryController.getAllUpsertHistory)
+router.get(['/', '/:tenantId/:id'], upsertHistoryController.getAllUpsertHistory)
 
 // PATCH
 router.patch('/', upsertHistoryController.patchDeleteUpsertHistory)

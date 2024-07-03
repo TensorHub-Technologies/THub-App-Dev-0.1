@@ -40,7 +40,6 @@ const deleteCredentials = async (credentialId: string): Promise<any> => {
 }
 
 const getAllCredentials = async (paramCredentialName: any, tenantId: any) => {
-    console.log('service.tenantId: ', tenantId)
     try {
         const appServer = getRunningExpressApp()
         let dbResponse = []

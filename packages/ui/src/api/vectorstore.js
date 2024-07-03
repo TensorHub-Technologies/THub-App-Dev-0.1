@@ -1,7 +1,8 @@
 import client from './client'
 
-const upsertVectorStore = (id, input) => client.post(`/vector/internal-upsert/${id}`, input)
-const getUpsertHistory = (id, params = {}) => client.get(`/upsert-history/${id}`, { params: { order: 'DESC', ...params } })
+const upsertVectorStore = (tenantId, id, input) => client.post(`/vector/internal-upsert?id=${id}&tenantId=${tenantId}`, input)
+const getUpsertHistory = (tenantId, id, params = {}) =>
+    client.get(`/upsert-history?id=${id}&tenantId=${tenantId}`, { params: { order: 'DESC', ...params } })
 const deleteUpsertHistory = (ids) => client.patch(`/upsert-history`, { ids })
 
 export default {

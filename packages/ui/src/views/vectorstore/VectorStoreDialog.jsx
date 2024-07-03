@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useContext, useState, useEffect } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { CopyBlock, atomOneDark } from 'react-code-blocks'
@@ -81,6 +81,8 @@ function a11yProps(index) {
 const VectorStoreDialog = ({ show, dialogProps, onCancel, onIndexResult }) => {
     const portalElement = document.getElementById('portal')
     const { reactFlowInstance } = useContext(flowContext)
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid
     const dispatch = useDispatch()
 
     useNotifier()
@@ -306,7 +308,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
     const onUpsertClicked = async (vectorStoreNode) => {
         setLoading(true)
         try {
-            const res = await vectorstoreApi.upsertVectorStore(dialogProps.chatflowid, { stopNodeId: vectorStoreNode.data.id })
+            const res = await vectorstoreApi.upsertVectorStore(tenantId, dialogProps.chatflowid, { stopNodeId: vectorStoreNode.data.id })
             enqueueSnackbar({
                 message: 'Succesfully upserted vector store. You can start chatting now!',
                 options: {
