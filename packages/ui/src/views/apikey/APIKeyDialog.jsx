@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 
 import {
@@ -32,12 +32,9 @@ import useNotifier from '@/utils/useNotifier'
 const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     const portalElement = document.getElementById('portal')
 
-    // const userData = useSelector((state) => state.user.userData)
-    // const tenantId = userData['uid']
     const theme = useTheme()
 
     const userData = useSelector((state) => state.user.userData)
-    // const tenantId = userData['uid']
     const tenantId = userData?.uid
 
     const dispatch = useDispatch()
@@ -67,7 +64,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
 
     const addNewKey = async () => {
         try {
-            const createResp = await apikeyApi.createNewAPI({ keyName })
+            const createResp = await apikeyApi.createNewAPI(tenantId, { keyName })
             if (createResp.data) {
                 enqueueSnackbar({
                     message: 'New API key added',
@@ -106,7 +103,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
 
     const saveKey = async () => {
         try {
-            const saveResp = await apikeyApi.updateAPI(dialogProps.key.id, { keyName })
+            const saveResp = await apikeyApi.updateAPI(tenantId, dialogProps.key.id, { keyName })
             if (saveResp.data) {
                 enqueueSnackbar({
                     message: 'API Key saved',
