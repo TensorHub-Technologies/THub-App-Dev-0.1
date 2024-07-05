@@ -7,7 +7,7 @@ const router = express.Router()
 router.post('/', variablesController.createVariable)
 
 // READ
-router.get('/', variablesController.getAllVariables)
+router.get('/:id', variablesController.getAllVariables)
 
 // UPDATE
 router.put(['/', '/:id'], variablesController.updateVariable)

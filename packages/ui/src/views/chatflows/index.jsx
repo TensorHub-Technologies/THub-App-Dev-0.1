@@ -40,6 +40,10 @@ const Chatflows = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
+    const userData = useSelector((state) => state.user.userData)
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
+
     const [isLoading, setLoading] = useState(true)
     const [images, setImages] = useState({})
     const [search, setSearch] = useState('')
@@ -83,7 +87,7 @@ const Chatflows = () => {
     }
 
     useEffect(() => {
-        getAllChatflowsApi.request()
+        getAllChatflowsApi.request(tenantId)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])

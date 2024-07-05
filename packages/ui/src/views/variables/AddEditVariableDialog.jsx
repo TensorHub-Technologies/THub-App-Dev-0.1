@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 
 // Material
@@ -16,8 +16,6 @@ import { IconX, IconVariable } from '@tabler/icons'
 
 // API
 import variablesApi from '@/api/variables'
-
-// Hooks
 
 // utils
 import useNotifier from '@/utils/useNotifier'
@@ -41,10 +39,7 @@ const variableTypes = [
 
 const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     const portalElement = document.getElementById('portal')
-
     const dispatch = useDispatch()
-
-    // ==============================|| Snackbar ||============================== //
 
     useNotifier()
 
@@ -56,6 +51,9 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
     const [variableType, setVariableType] = useState('static')
     const [dialogType, setDialogType] = useState('ADD')
     const [variable, setVariable] = useState({})
+
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid
 
     useEffect(() => {
         if (dialogProps.type === 'EDIT' && dialogProps.data) {
@@ -91,6 +89,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
         try {
             const obj = {
                 name: variableName,
+                tenantId,
                 value: variableValue,
                 type: variableType
             }
@@ -111,10 +110,10 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                 onConfirm(createResp.data.id)
             }
         } catch (err) {
-            setError(err)
+            if (setError) setError(err)
             enqueueSnackbar({
                 message: `Failed to add new Variable: ${
-                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                    typeof err.response.data === 'object' ? err.response.data.message : err.response.data
                 }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
@@ -135,6 +134,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
         try {
             const saveObj = {
                 name: variableName,
+                tenantId,
                 value: variableValue,
                 type: variableType
             }
@@ -156,7 +156,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                 onConfirm(saveResp.data.id)
             }
         } catch (error) {
-            setError(err)
+            if (setError) setError(err)
             enqueueSnackbar({
                 message: `Failed to save Variable: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
@@ -215,7 +215,6 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                         <Typography>
                             Variable Name<span style={{ color: 'red' }}>&nbsp;*</span>
                         </Typography>
-
                         <div style={{ flexGrow: 1 }}></div>
                     </div>
                     <OutlinedInput

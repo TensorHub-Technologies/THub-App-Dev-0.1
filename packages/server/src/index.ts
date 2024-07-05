@@ -15,7 +15,6 @@ import { ChatFlow } from './database/entities/ChatFlow'
 import { ChatflowPool } from './ChatflowPool'
 import { CachePool } from './CachePool'
 import { initializeRateLimiter } from './utils/rateLimit'
-import { getAPIKeys } from './utils/apiKey'
 import { sanitizeMiddleware, getCorsOptions, getAllowedIframeOrigins } from './utils/XSS'
 import { Telemetry } from './utils/telemetry'
 import flowiseApiV1Router from './routes'
@@ -42,6 +41,7 @@ export class App {
     }
 
     async initDatabase() {
+        //   const tenantId = 'oNELkPmgkmgmskauGSHwvHXo22S2'
         // Initialize database
         try {
             await this.AppDataSource.initialize()
@@ -58,7 +58,7 @@ export class App {
             this.chatflowPool = new ChatflowPool()
 
             // Initialize API keys
-            await getAPIKeys()
+            // await getAPIKeys(tenantId)
 
             // Initialize encryption key
             await getEncryptionKey()
@@ -137,7 +137,8 @@ export class App {
                 '/api/v1/feedback',
                 '/api/v1/leads',
                 '/api/v1/get-upload-file',
-                '/api/v1/ip'
+                '/api/v1/ip',
+                '/api/v1/ping'
             ]
             this.app.use((req, res, next) => {
                 if (/\/api\/v1\//i.test(req.url)) {
@@ -154,7 +155,7 @@ export class App {
         this.app.get('/api/v1/ip', (request, response) => {
             response.send({
                 ip: request.ip,
-                msg: 'Check returned IP address in the response. If it matches your current IP address ( which you can get by going to http://ip.nfriedly.com/ or https://api.ipify.org/ ), then the number of proxies is correct and the rate limiter should now work correctly. If not, increase the number of proxies by 1 and restart Cloud-Hosted THub until the IP address matches your own. Visit https://docs.flowiseai.com/configuration/rate-limit#cloud-hosted-rate-limit-setup-guide for more information.'
+                msg: 'Check returned IP address in the response. If it matches your current IP address ( which you can get by going to http://ip.nfriedly.com/ or https://api.ipify.org/ ), then the number of proxies is correct and the rate limiter should now work correctly. If not, increase the number of proxies by 1 and restart Cloud-Hosted Flowise until the IP address matches your own. Visit https://docs.flowiseai.com/configuration/rate-limit#cloud-hosted-rate-limit-setup-guide for more information.'
             })
         })
 
@@ -197,6 +198,7 @@ export async function getAllChatFlow(): Promise<IChatFlow[]> {
 export async function start(): Promise<void> {
     serverApp = new App()
 
+    const host = process.env.HOST
     const port = parseInt(process.env.PORT || '', 10) || 3000
     const server = http.createServer(serverApp.app)
 
@@ -207,8 +209,8 @@ export async function start(): Promise<void> {
     await serverApp.initDatabase()
     await serverApp.config(io)
 
-    server.listen(port, () => {
-        logger.info(`⚡️ [server]: THub Server is listening at ${port}`)
+    server.listen(port, host, () => {
+        logger.info(`⚡️ [server]: THub Server is listening at ${host ? 'http://' + host : ''}:${port}`)
     })
 }
 

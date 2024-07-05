@@ -104,6 +104,9 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
     const customization = useSelector((state) => state.customization)
     const dialogRef = useRef()
+    const userData = useSelector((state) => state.user.userData)
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     const getSpecificAssistantApi = useApi(assistantsApi.getSpecificAssistant)
     const getAssistantObjApi = useApi(assistantsApi.getAssistantObj)
@@ -140,16 +143,20 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
             setAssistantIcon(getSpecificAssistantApi.data.iconSrc)
             setAssistantCredential(getSpecificAssistantApi.data.credential)
 
-            const assistantDetails = JSON.parse(getSpecificAssistantApi.data.details)
-            setOpenAIAssistantId(assistantDetails.id)
-            setAssistantName(assistantDetails.name)
-            setAssistantDesc(assistantDetails.description)
-            setAssistantModel(assistantDetails.model)
-            setAssistantInstructions(assistantDetails.instructions)
-            setTemperature(assistantDetails.temperature)
-            setTopP(assistantDetails.top_p)
-            setAssistantTools(assistantDetails.tools ?? [])
-            setToolResources(assistantDetails.tool_resources ?? {})
+            try {
+                const assistantDetails = JSON.parse(getSpecificAssistantApi.data.details)
+                setOpenAIAssistantId(assistantDetails.id)
+                setAssistantName(assistantDetails.name)
+                setAssistantDesc(assistantDetails.description)
+                setAssistantModel(assistantDetails.model)
+                setAssistantInstructions(assistantDetails.instructions)
+                setTemperature(assistantDetails.temperature)
+                setTopP(assistantDetails.top_p)
+                setAssistantTools(assistantDetails.tools ?? [])
+                setToolResources(assistantDetails.tool_resources ?? {})
+            } catch (e) {
+                console.error('Failed to parse assistant details:', e)
+            }
         }
     }, [getSpecificAssistantApi.data])
 
@@ -332,6 +339,7 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
             }
             const obj = {
                 details: JSON.stringify(assistantDetails),
+                tenantId,
                 iconSrc: assistantIcon,
                 credential: assistantCredential
             }

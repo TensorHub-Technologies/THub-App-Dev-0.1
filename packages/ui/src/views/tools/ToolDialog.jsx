@@ -60,6 +60,9 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
 
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    const userData = useSelector((state) => state.user.userData)
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     // ==============================|| Snackbar ||============================== //
 
@@ -161,7 +164,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
     }, [getSpecificToolApi.data])
 
     useEffect(() => {
-        if (getSpecificToolApi.error) {
+        if (getSpecificToolApi.error && setError) {
             setError(getSpecificToolApi.error)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -255,6 +258,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
         try {
             const obj = {
                 name: toolName,
+                tenantId,
                 description: toolDesc,
                 color: generateRandomGradient(),
                 schema: JSON.stringify(toolSchema),

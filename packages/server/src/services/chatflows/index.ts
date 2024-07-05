@@ -120,17 +120,18 @@ const getAllChatflows = async (type?: ChatflowType): Promise<IChatFlow[]> => {
     }
 }
 
-const getChatflowByApiKey = async (apiKeyId: string): Promise<any> => {
+const getChatflowByApiKey = async (apiKeyId: string, keyonly?: unknown): Promise<any> => {
     try {
         // Here we only get chatflows that are bounded by the apikeyid and chatflows that are not bounded by any apikey
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow)
+        let query = appServer.AppDataSource.getRepository(ChatFlow)
             .createQueryBuilder('cf')
             .where('cf.apikeyid = :apikeyid', { apikeyid: apiKeyId })
-            .orWhere('cf.apikeyid IS NULL')
-            .orWhere('cf.apikeyid = ""')
-            .orderBy('cf.name', 'ASC')
-            .getMany()
+        if (keyonly === undefined) {
+            query = query.orWhere('cf.apikeyid IS NULL').orWhere('cf.apikeyid = ""')
+        }
+
+        const dbResponse = await query.orderBy('cf.name', 'ASC').getMany()
         if (dbResponse.length < 1) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow not found in the database!`)
         }
@@ -183,11 +184,14 @@ const saveChatflow = async (newChatFlow: ChatFlow): Promise<any> => {
             const chatflow = appServer.AppDataSource.getRepository(ChatFlow).create(newChatFlow)
             dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).save(chatflow)
         }
-        await appServer.telemetry.sendTelemetry('chatflow_created', {
-            version: await getAppVersion(),
-            chatflowId: dbResponse.id,
-            flowGraph: getTelemetryFlowObj(JSON.parse(dbResponse.flowData)?.nodes, JSON.parse(dbResponse.flowData)?.edges)
-        })
+        if (appServer.telemetry && appServer.telemetry.sendTelemetry) {
+            await appServer.telemetry.sendTelemetry('chatflow_created', {
+                version: await getAppVersion(),
+                chatflowId: dbResponse.id,
+                flowGraph: getTelemetryFlowObj(JSON.parse(dbResponse.flowData)?.nodes, JSON.parse(dbResponse.flowData)?.edges)
+            })
+        }
+
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(

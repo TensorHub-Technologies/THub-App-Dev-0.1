@@ -12,11 +12,13 @@ const createTool = async (requestBody: any): Promise<any> => {
         Object.assign(newTool, requestBody)
         const tool = await appServer.AppDataSource.getRepository(Tool).create(newTool)
         const dbResponse = await appServer.AppDataSource.getRepository(Tool).save(tool)
-        await appServer.telemetry.sendTelemetry('tool_created', {
-            version: await getAppVersion(),
-            toolId: dbResponse.id,
-            toolName: dbResponse.name
-        })
+        if (appServer.telemetry && appServer.telemetry.sendTelemetry) {
+            await appServer.telemetry.sendTelemetry('tool_created', {
+                version: await getAppVersion(),
+                toolId: dbResponse.id,
+                toolName: dbResponse.name
+            })
+        }
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.createTool - ${getErrorMessage(error)}`)
@@ -35,10 +37,12 @@ const deleteTool = async (toolId: string): Promise<any> => {
     }
 }
 
-const getAllTools = async (): Promise<any> => {
+const getAllTools = async (tenantId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Tool).find()
+        const dbResponse = await appServer.AppDataSource.getRepository(Tool).findBy({
+            tenantId: tenantId
+        })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.getAllTools - ${getErrorMessage(error)}`)

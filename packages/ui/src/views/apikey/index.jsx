@@ -184,6 +184,8 @@ const APIKey = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid
     const dispatch = useDispatch()
     useNotifier()
 
@@ -265,7 +267,7 @@ const APIKey = () => {
 
         if (isConfirmed) {
             try {
-                const deleteResp = await apiKeyApi.deleteAPI(key.id)
+                const deleteResp = await apiKeyApi.deleteAPI(tenantId, key.id)
                 if (deleteResp.data) {
                     enqueueSnackbar({
                         message: 'API key deleted',
@@ -303,11 +305,11 @@ const APIKey = () => {
 
     const onConfirm = () => {
         setShowDialog(false)
-        getAllAPIKeysApi.request()
+        getAllAPIKeysApi.request(tenantId)
     }
 
     useEffect(() => {
-        getAllAPIKeysApi.request()
+        getAllAPIKeysApi.request(tenantId)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])

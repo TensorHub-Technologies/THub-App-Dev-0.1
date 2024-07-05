@@ -1,6 +1,6 @@
 import client from './client'
 
-const getAllVariables = () => client.get('/variables')
+const getAllVariables = (id) => client.get(`/variables/${id}`)
 
 const createVariable = (body) => client.post(`/variables`, body)
 

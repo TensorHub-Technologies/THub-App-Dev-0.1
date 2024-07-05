@@ -66,7 +66,6 @@ function a11yProps(index) {
 }
 
 const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
-    console.log('dialogProps', dialogProps)
     const portalElement = document.getElementById('portal')
     const [tabValue, setTabValue] = useState(0)
 

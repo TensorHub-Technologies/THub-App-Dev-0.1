@@ -29,8 +29,14 @@ import useNotifier from '@/utils/useNotifier'
 import { baseURL, REDACTED_CREDENTIAL_VALUE } from '@/store/constant'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 
+import { useSelector } from 'react-redux'
+
 const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setError = () => {} }) => {
     const portalElement = document.getElementById('portal')
+
+    const userData = useSelector((state) => state.user.userData)
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     const dispatch = useDispatch()
 
@@ -58,7 +64,13 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             if (getSpecificCredentialApi.data.plainDataObj) {
                 setCredentialData(getSpecificCredentialApi.data.plainDataObj)
             }
-            getSpecificComponentCredentialApi.request(getSpecificCredentialApi.data.credentialName)
+            let credentialName
+            if (typeof getSpecificCredentialApi.data == 'object') {
+                credentialName = getSpecificCredentialApi.data.credentialName
+            } else {
+                credentialName = getSpecificCredentialApi.data[0].credentialName
+            }
+            getSpecificComponentCredentialApi.request(credentialName)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,14 +83,14 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     }, [getSpecificComponentCredentialApi.data])
 
     useEffect(() => {
-        if (getSpecificCredentialApi.error) {
+        if (getSpecificCredentialApi.error && setError) {
             setError(getSpecificCredentialApi.error)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getSpecificCredentialApi.error])
 
     useEffect(() => {
-        if (getSpecificComponentCredentialApi.error) {
+        if (getSpecificComponentCredentialApi.error && setError) {
             setError(getSpecificComponentCredentialApi.error)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,7 +98,6 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
 
     useEffect(() => {
         if (dialogProps.type === 'EDIT' && dialogProps.data) {
-            // When credential dialog is opened from Credentials dashboard
             getSpecificCredentialApi.request(dialogProps.data.id)
         } else if (dialogProps.type === 'EDIT' && dialogProps.credentialId) {
             // When credential dialog is opened from node in canvas
@@ -112,6 +123,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
         try {
             const obj = {
                 name,
+                tenantId: tenantId,
                 credentialName: componentCredential.name,
                 plainDataObj: credentialData
             }
@@ -132,7 +144,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 onConfirm(createResp.data.id)
             }
         } catch (error) {
-            setError(error)
+            if (setError) setError(error)
             enqueueSnackbar({
                 message: `Failed to add new Credential: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
@@ -156,7 +168,8 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
         try {
             const saveObj = {
                 name,
-                credentialName: componentCredential.name
+                credentialName: componentCredential.name,
+                tenantId
             }
 
             let plainDataObj = {}
@@ -184,7 +197,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 onConfirm(saveResp.data.id)
             }
         } catch (error) {
-            setError(error)
+            if (setError) setError(error)
             enqueueSnackbar({
                 message: `Failed to save Credential: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data

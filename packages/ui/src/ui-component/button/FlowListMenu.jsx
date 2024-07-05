@@ -188,6 +188,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             await updateChatflowApi.request(chatflow.id, updateBody)
             await updateFlowsApi.request()
         } catch (error) {
+            if (setError) setError(error)
             const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
             enqueueSnackbar({
                 message: errorData,
@@ -227,6 +228,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             await updateChatflowApi.request(chatflow.id, updateBody)
             await updateFlowsApi.request()
         } catch (error) {
+            if (setError) setError(error)
             const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
             enqueueSnackbar({
                 message: errorData,
@@ -259,6 +261,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 await chatflowsApi.deleteChatflow(chatflow.id)
                 await updateFlowsApi.request()
             } catch (error) {
+                if (setError) setError(error)
                 const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
                 enqueueSnackbar({
                     message: errorData,
@@ -446,5 +449,6 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
 
 FlowListMenu.propTypes = {
     chatflow: PropTypes.object,
-    updateFlowsApi: PropTypes.object
+    updateFlowsApi: PropTypes.object,
+    setError: PropTypes.func
 }

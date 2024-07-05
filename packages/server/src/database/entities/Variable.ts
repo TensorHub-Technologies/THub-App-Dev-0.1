@@ -10,6 +10,9 @@ export class Variable implements IVariable {
     @Column()
     name: string
 
+    @Column()
+    tenantId: string
+
     @Column({ nullable: true, type: 'text' })
     value: string
 

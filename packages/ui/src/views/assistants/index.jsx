@@ -31,6 +31,10 @@ const Assistants = () => {
 
     const getAllAssistantsApi = useApi(assistantsApi.getAllAssistants)
 
+    const userData = useSelector((state) => state.user.userData)
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
+
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
     const [showLoadDialog, setShowLoadDialog] = useState(false)
@@ -76,14 +80,14 @@ const Assistants = () => {
 
     const onConfirm = () => {
         setShowDialog(false)
-        getAllAssistantsApi.request()
+        getAllAssistantsApi.request(tenantId)
     }
 
     useEffect(() => {
-        getAllAssistantsApi.request()
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        getAllAssistantsApi.request(tenantId)
     }, [])
+
+    console.log(getAllAssistantsApi.data)
 
     return (
         <>

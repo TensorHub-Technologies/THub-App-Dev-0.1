@@ -19,6 +19,7 @@ export enum ChatMessageRatingType {
 export interface IChatFlow {
     id: string
     name: string
+    tenantId: string
     flowData: string
     updatedDate: Date
     createdDate: Date
@@ -63,6 +64,7 @@ export interface IChatMessageFeedback {
 export interface ITool {
     id: string
     name: string
+    tenantId: string
     description: string
     color: string
     iconSrc?: string
@@ -74,6 +76,7 @@ export interface ITool {
 
 export interface IAssistant {
     id: string
+    tenantId: string
     details: string
     credential: string
     iconSrc?: string
@@ -93,6 +96,7 @@ export interface ICredential {
 export interface IVariable {
     id: string
     name: string
+    tenantId: string
     value: string
     type: string
     updatedDate: Date
@@ -248,6 +252,7 @@ export interface ICredentialReqBody {
     name: string
     credentialName: string
     plainDataObj: ICredentialDataDecrypted
+    tenantId: string
 }
 
 // Decrypted credential object sent back to client

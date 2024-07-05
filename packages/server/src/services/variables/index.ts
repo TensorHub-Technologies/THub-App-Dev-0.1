@@ -31,10 +31,12 @@ const deleteVariable = async (variableId: string): Promise<any> => {
     }
 }
 
-const getAllVariables = async () => {
+const getAllVariables = async (tenantId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Variable).find()
+        const dbResponse = await appServer.AppDataSource.getRepository(Variable).findBy({
+            tenantId: tenantId
+        })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(

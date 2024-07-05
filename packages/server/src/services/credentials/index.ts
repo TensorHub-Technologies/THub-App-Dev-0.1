@@ -39,7 +39,8 @@ const deleteCredentials = async (credentialId: string): Promise<any> => {
     }
 }
 
-const getAllCredentials = async (paramCredentialName: any) => {
+const getAllCredentials = async (paramCredentialName: any, tenantId: any) => {
+    console.log('service.tenantId: ', tenantId)
     try {
         const appServer = getRunningExpressApp()
         let dbResponse = []
@@ -48,18 +49,22 @@ const getAllCredentials = async (paramCredentialName: any) => {
                 for (let i = 0; i < paramCredentialName.length; i += 1) {
                     const name = paramCredentialName[i] as string
                     const credentials = await appServer.AppDataSource.getRepository(Credential).findBy({
-                        credentialName: name
+                        credentialName: name,
+                        tenantId: tenantId
                     })
                     dbResponse.push(...credentials)
                 }
             } else {
                 const credentials = await appServer.AppDataSource.getRepository(Credential).findBy({
-                    credentialName: paramCredentialName as string
+                    credentialName: paramCredentialName as string,
+                    tenantId: tenantId
                 })
                 dbResponse = [...credentials]
             }
         } else {
-            const credentials = await appServer.AppDataSource.getRepository(Credential).find()
+            const credentials = await appServer.AppDataSource.getRepository(Credential).findBy({
+                tenantId: tenantId
+            })
             for (const credential of credentials) {
                 dbResponse.push(omit(credential, ['encryptedData']))
             }

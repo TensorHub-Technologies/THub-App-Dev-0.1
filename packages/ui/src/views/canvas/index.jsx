@@ -52,6 +52,7 @@ import useNotifier from '@/utils/useNotifier'
 
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
+import { IconArrowBackUp } from '@tabler/icons-react'
 
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
 const edgeTypes = { buttonedge: ButtonEdge }
@@ -73,6 +74,9 @@ const Canvas = () => {
     const dispatch = useDispatch()
     const canvas = useSelector((state) => state.canvas)
     const customization = useSelector((state) => state.customization)
+    const userData = useSelector((state) => state.user.userData)
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
     const [canvasDataStore, setCanvasDataStore] = useState(canvas)
     const [chatflow, setChatflow] = useState(null)
 
@@ -92,6 +96,8 @@ const Canvas = () => {
     const [selectedNode, setSelectedNode] = useState(null)
     const [isUpsertButtonEnabled, setIsUpsertButtonEnabled] = useState(false)
 
+    const [deletedNode, setDeletedNodes] = useState([])
+
     const reactFlowWrapper = useRef(null)
 
     // ==============================|| Workflow API ||============================== //
@@ -107,7 +113,6 @@ const Canvas = () => {
     const { minMax, uniqueId } = useSelector((state) => state.minMax)
 
     const nodeMinMax = useSelector((state) => state.nodeMinMax.nodeMinMax)
-    console.log(nodeMinMax, 'nodeMinMax')
 
     useEffect(() => {
         dispatch(setNodesMinMax(minMax))
@@ -132,6 +137,37 @@ const Canvas = () => {
     const handleClick = () => {
         if (menuPosition) {
             setMenuPosition(null)
+        }
+    }
+
+    // =================// undo // =====================
+    const handleUndo = () => {
+        if (deletedNode.length > 0) {
+            const lastDeletedNode = deletedNode[deletedNode.length - 1]
+            setSelectedNode(lastDeletedNode)
+            setDeletedNodes(deletedNode.slice(0, -1))
+            setNodes((nds) =>
+                nds.concat(lastDeletedNode).map((node) => {
+                    if (node.id === lastDeletedNode.id) {
+                        node.data = {
+                            ...node.data,
+                            selected: true
+                        }
+                    } else {
+                        node.data = {
+                            ...node.data,
+                            selected: false
+                        }
+                    }
+                    return node
+                })
+            )
+        }
+        if (getSpecificChatflowApi.data) {
+            const chatflow = getSpecificChatflowApi.data
+            const initialFlow = chatflow.flowData ? JSON.parse(chatflow.flowData) : []
+            setEdges(initialFlow.edges || [])
+            dispatch({ type: SET_CHATFLOW, chatflow })
         }
     }
 
@@ -253,6 +289,7 @@ const Canvas = () => {
                     name: chatflowName,
                     deployed: false,
                     isPublic: false,
+                    tenantId,
                     flowData
                 }
                 createNewChatflowApi.request(newChatflowBody)
@@ -268,6 +305,7 @@ const Canvas = () => {
 
     // eslint-disable-next-line
     const onNodeClick = useCallback((event, clickedNode) => {
+        setDeletedNodes((prevDeletedNodes) => [...prevDeletedNodes, clickedNode])
         setSelectedNode(clickedNode)
         setNodes((nds) =>
             nds.map((node) => {
@@ -695,6 +733,23 @@ const Canvas = () => {
                                     >
                                         <HorizontalRuleIcon id='MinimizeIcon' sx={{ mr: '12px' }} />
                                         Collapse All Node
+                                    </MenuItem>
+
+                                    <MenuItem
+                                        sx={{
+                                            color: customization.isDarkMode ? '#FFF' : '#616161',
+                                            lineHeight: '3em',
+                                            '&:hover': {
+                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                '& .MuiSvgIcon-root': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                }
+                                            }
+                                        }}
+                                        onClick={handleUndo}
+                                    >
+                                        <IconArrowBackUp id='MinimizeIcon' sx={{ mr: '12px' }} />
+                                        Undo
                                     </MenuItem>
                                 </Menu>
                             </div>

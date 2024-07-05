@@ -29,7 +29,13 @@ const deleteTool = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllTools = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await toolsService.getAllTools()
+        const tenantId = req.params.id
+
+        if (typeof tenantId !== 'string') {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid tenantId')
+        }
+
+        const apiResponse = await toolsService.getAllTools(tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

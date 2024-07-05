@@ -40,7 +40,7 @@ function a11yProps(index) {
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.4.9/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.5.1/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -61,7 +61,7 @@ const App = () => {
 const embedFullpageHtmlCode = (chatflowid) => {
     return `<flowise-fullchatbot></flowise-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.4.9/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.5.1/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -104,6 +104,24 @@ const buttonConfig = (isReact = false) => {
             }`
 }
 
+const tooltipConfig = (isReact = false) => {
+    return isReact
+        ? `tooltip: {
+                    showTooltip: true,
+                    tooltipMessage: 'Hi There 👋!',
+                    tooltipBackgroundColor: 'black',
+                    tooltipTextColor: 'white',
+                    tooltipFontSize: 16,
+                }`
+        : `tooltip: {
+                showTooltip: true,
+                tooltipMessage: 'Hi There 👋!',
+                tooltipBackgroundColor: 'black',
+                tooltipTextColor: 'white',
+                tooltipFontSize: 16,
+            }`
+}
+
 const chatwindowConfig = (isReact = false) => {
     return isReact
         ? `chatWindow: {
@@ -136,6 +154,7 @@ const chatwindowConfig = (isReact = false) => {
                         sendButtonColor: '#3B81F6',
                         maxChars: 50,
                         maxCharsWarningMessage: 'You exceeded the characters limit. Please input less than 50 characters.',
+                        autoFocus: true, // If not used, autofocus is disabled on mobile and enabled on desktop. true enables it on both, false disables it on both.
                     },
                     feedback: {
                         color: '#303235',
@@ -177,6 +196,7 @@ const chatwindowConfig = (isReact = false) => {
                     sendButtonColor: '#3B81F6',
                     maxChars: 50,
                     maxCharsWarningMessage: 'You exceeded the characters limit. Please input less than 50 characters.',
+                    autoFocus: true, // If not used, autofocus is disabled on mobile and enabled on desktop. true enables it on both, false disables it on both.
                 },
                 feedback: {
                     color: '#303235',
@@ -192,7 +212,7 @@ const chatwindowConfig = (isReact = false) => {
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.4.9/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.5.1/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -201,6 +221,7 @@ const embedPopupHtmlCodeCustomization = (chatflowid) => {
         },
         theme: {
             ${buttonConfig()},
+            ${tooltipConfig()},
             ${chatwindowConfig()}
         }
     })
@@ -217,6 +238,7 @@ const App = () => {
             apiHost="${baseURL}"
             theme={{
                 ${buttonConfig(true)},
+                ${tooltipConfig(true)},
                 ${chatwindowConfig(true)}
             }}
         />
@@ -227,7 +249,7 @@ const App = () => {
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
     return `<flowise-fullchatbot></flowise-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.4.9/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.5.1/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",

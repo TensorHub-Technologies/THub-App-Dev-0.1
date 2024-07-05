@@ -1,8 +1,9 @@
 import client from './client'
 
-const getAllCredentials = () => client.get('/credentials')
+const getAllCredentials = (tenantId) => client.get(`/credentials?tenantId=${tenantId}`)
 
-const getCredentialsByName = (componentCredentialName) => client.get(`/credentials?credentialName=${componentCredentialName}`)
+const getCredentialsByName = (componentCredentialName, tenantId) =>
+    client.get(`/credentials?credentialName=${componentCredentialName}&tenantId=${tenantId}`)
 
 const getAllComponentsCredentials = () => client.get('/components-credentials')
 

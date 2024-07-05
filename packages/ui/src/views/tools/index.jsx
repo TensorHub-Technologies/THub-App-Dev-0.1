@@ -27,6 +27,9 @@ import { IconPlus, IconFileImport } from '@tabler/icons'
 const Tools = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const userData = useSelector((state) => state.user.userData)
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid
 
     const getAllToolsApi = useApi(toolsApi.getAllTools)
 
@@ -92,12 +95,11 @@ const Tools = () => {
 
     const onConfirm = () => {
         setShowDialog(false)
-        getAllToolsApi.request()
+        getAllToolsApi.request(tenantId)
     }
 
     useEffect(() => {
-        getAllToolsApi.request()
-
+        getAllToolsApi.request(tenantId)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

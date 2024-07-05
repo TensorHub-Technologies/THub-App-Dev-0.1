@@ -6,8 +6,10 @@ const router = express.Router()
 router.post('/', chatflowsController.saveChatflow)
 
 // READ
-router.get('/', chatflowsController.getAllChatflows)
-router.get(['/', '/:id'], chatflowsController.getChatflowById)
+router.get('/:tenantId', chatflowsController.getAllChatflows)
+
+router.get(['/', '/getChatflowById/:chatflowId'], chatflowsController.getChatflowById)
+
 router.get(['/apikey/', '/apikey/:apikey'], chatflowsController.getChatflowByApiKey)
 
 // UPDATE

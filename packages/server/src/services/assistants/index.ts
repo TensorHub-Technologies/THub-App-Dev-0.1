@@ -105,11 +105,14 @@ const createAssistant = async (requestBody: any): Promise<any> => {
 
         const assistant = appServer.AppDataSource.getRepository(Assistant).create(newAssistant)
         const dbResponse = await appServer.AppDataSource.getRepository(Assistant).save(assistant)
-
-        await appServer.telemetry.sendTelemetry('assistant_created', {
-            version: await getAppVersion(),
-            assistantId: dbResponse.id
-        })
+        if (appServer.telemetry && typeof appServer.telemetry.sendTelemetry === 'function') {
+            await appServer.telemetry.sendTelemetry('assistant_created', {
+                version: await getAppVersion(),
+                assistantId: dbResponse.id
+            })
+        } else {
+            console.warn('Telemetry service is not available or sendTelemetry is not a function.')
+        }
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -177,14 +180,14 @@ const getAllAssistants = async (): Promise<any> => {
     }
 }
 
-const getAssistantById = async (assistantId: string): Promise<any> => {
+const getAssistantById = async (tenantId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findOneBy({
-            id: assistantId
+        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findBy({
+            tenantId: tenantId
         })
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${assistantId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${tenantId} not found`)
         }
         return dbResponse
     } catch (error) {

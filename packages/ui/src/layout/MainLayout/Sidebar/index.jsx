@@ -24,7 +24,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
 
     const [isDark, setIsDark] = useState(customization.isDarkMode)
     const dispatch = useDispatch()
-    console.log(customization.menu_open, 'SHOW_MENU')
     const drawer = (
         <>
             <Box sx={{ display: { xs: 'block', md: 'none' } }}>

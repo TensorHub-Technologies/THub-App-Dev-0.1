@@ -8,7 +8,7 @@ const getAllAvailableAssistants = (credentialId) => client.get(`/openai-assistan
 // Assistant
 const createNewAssistant = (body) => client.post(`/assistants`, body)
 
-const getAllAssistants = () => client.get('/assistants')
+const getAllAssistants = (id) => client.get(`/assistants/${id}`)
 
 const getSpecificAssistant = (id) => client.get(`/assistants/${id}`)
 
