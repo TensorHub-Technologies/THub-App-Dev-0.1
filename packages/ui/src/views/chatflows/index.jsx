@@ -48,6 +48,9 @@ const Chatflows = () => {
     const [loginDialogProps, setLoginDialogProps] = useState({})
     const [showModal, setShowModal] = useState(false)
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid
+
     const getAllChatflowsApi = useApi(chatflowsApi.getAllChatflows)
     const [view, setView] = React.useState(localStorage.getItem('flowDisplayStyle') || 'card')
 
