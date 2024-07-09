@@ -120,8 +120,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         const name = userData?.name[0].toUpperCase()
                         setUserFullName(userData?.name)
                         setUserName(name)
-                        console.log(userData.picture)
-                        setUserImg(userData?.picture)
+                        // console.log(userData?.picture)
+                        const proPicture = userData?.picture
+                        setUserImg(proPicture)
                     } else {
                         console.error('Error:', response.statusText)
                     }
@@ -196,7 +197,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                                     }}
                                     alt='GS'
                                     src={userImg}
-                                ></Avatar>
+                                />
                             ) : (
                                 <Avatar
                                     sx={{ width: 38, height: 38 }}
@@ -205,7 +206,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
                                 >
-                                    {userName}
+                                    {userName?.charAt(0).toUpperCase()}
                                 </Avatar>
                             )}
                         </IconButton>
