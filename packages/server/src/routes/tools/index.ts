@@ -8,7 +8,7 @@ router.post('/', toolsController.createTool)
 
 // READ
 router.get('/:id', toolsController.getAllTools)
-router.get(['/', '/:id'], toolsController.getToolById)
+router.get(['/', '/getToolById/:id'], toolsController.getToolById)
 
 // UPDATE
 router.put(['/', '/:id'], toolsController.updateTool)

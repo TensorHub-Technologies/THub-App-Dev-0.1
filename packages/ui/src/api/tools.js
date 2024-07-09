@@ -2,7 +2,7 @@ import client from './client'
 
 const getAllTools = (tenantId) => client.get(`/tools/${tenantId}`)
 
-const getSpecificTool = (id) => client.get(`/tools/${id}`)
+const getSpecificTool = (id) => client.get(`/tools/getToolById/${id}`)
 
 const createNewTool = (body) => client.post(`/tools`, body)
 
