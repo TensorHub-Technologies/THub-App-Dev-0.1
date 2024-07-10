@@ -120,7 +120,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         const name = userData?.name[0].toUpperCase()
                         setUserFullName(userData?.name)
                         setUserName(name)
-                        // console.log(userData?.picture)
+                        console.log(userData?.picture)
                         const proPicture = userData?.picture
                         setUserImg(proPicture)
                     } else {
