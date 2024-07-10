@@ -28,9 +28,9 @@ import {
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import DatePicker from 'react-datepicker'
+import user from '@/assets/images/user.png'
 
-import robotPNG from '@/assets/images/robot.png'
-import userPNG from '@/assets/images/account.png'
+import Logo from '@/assets/images/THub_icon_colorful_logo.png'
 import msgEmptySVG from '@/assets/images/message_empty.svg'
 import multiagent_supervisorPNG from '@/assets/images/multiagent_supervisor.png'
 import multiagent_workerPNG from '@/assets/images/multiagent_worker.png'
@@ -722,19 +722,19 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                                             {message.type === 'apiMessage' ? (
                                                                 <img
                                                                     style={{ marginLeft: '10px' }}
-                                                                    src={robotPNG}
+                                                                    src={Logo}
                                                                     alt='AI'
-                                                                    width='25'
-                                                                    height='25'
+                                                                    width='23'
+                                                                    height='23'
                                                                     className='boticon'
                                                                 />
                                                             ) : (
                                                                 <img
                                                                     style={{ marginLeft: '10px' }}
-                                                                    src={userPNG}
+                                                                    src={user}
                                                                     alt='Me'
-                                                                    width='25'
-                                                                    height='25'
+                                                                    width='22'
+                                                                    height='22'
                                                                     className='usericon'
                                                                 />
                                                             )}
