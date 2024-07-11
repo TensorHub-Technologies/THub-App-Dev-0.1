@@ -88,7 +88,7 @@ const Chatflows = () => {
     }
 
     useEffect(() => {
-        const modalShown = localStorage.getItem('modalShown')
+        const modalShown = sessionStorage.getItem('modalShown')
         if ((userData?.company === '' || userData?.company === null) && !modalShown) {
             setShowModal(true)
         }

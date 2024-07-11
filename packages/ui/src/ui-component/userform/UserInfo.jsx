@@ -49,7 +49,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
 
     const handleSkip = () => {
         setShowModal(false)
-        localStorage.setItem('modalShown', 'true')
+        sessionStorage.setItem('modalShown', 'true')
         handleClose()
     }
 
