@@ -35,6 +35,7 @@ const RequireUID = ({ children }) => {
                 dispatch({ type: SET_DARKMODE, isDarkMode: storedTheme })
             }
             localStorage.setItem('userId', uid)
+            sessionStorage.setItem('userId_session', uid)
         }
     }, [navigate])
 
