@@ -6,6 +6,9 @@ import { getApiKey } from '../../utils/apiKey'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 import { ChatflowType } from '../../Interface'
+import { getEncryptionKeyFromTenant } from '../../utils/getEncryptionKey'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import { User } from '../../database/entities/user'
 
 const checkIfChatflowIsValidForStreaming = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -50,7 +53,13 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
 }
 
 const getAllChatflows = async (req: Request, res: Response, next: NextFunction) => {
+    const appServer = getRunningExpressApp()
+    const dbResponse = await appServer.AppDataSource.getRepository(User).findOneBy({
+        uid: req.params.tenantId
+    })
+    console.log('dbResponse: ', dbResponse)
     try {
+        getEncryptionKeyFromTenant(req.params.tenantId)
         let apiResponse = await chatflowsService.getAllChatflows(req.query?.type as ChatflowType)
         apiResponse = apiResponse.filter(({ tenantId }) => tenantId === req.params.tenantId)
         return res.json(apiResponse)
