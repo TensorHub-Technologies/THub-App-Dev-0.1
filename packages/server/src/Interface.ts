@@ -33,6 +33,16 @@ export interface IChatFlow {
     type?: ChatflowType
 }
 
+export interface IUser {
+    uid: string
+    email: string
+    access_token: string
+    login_type: string
+    name: string
+    picture: string
+    encryption_key: string
+}
+
 export interface IChatMessage {
     id: string
     role: MessageType
