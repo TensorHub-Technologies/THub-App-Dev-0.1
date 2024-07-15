@@ -87,6 +87,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
     const handleLogout = () => {
         localStorage.removeItem('userId')
+        sessionStorage.removeItem('modalShown')
         dispatch(setUserData(''))
         setUserName('')
         setUserImg('')
