@@ -106,9 +106,9 @@ const getCredentialById = async (credentialId: string): Promise<any> => {
 
         const returnCredential: ICredentialReturnResponse = {
             ...credential,
-            plainDataObj: decryptedCredentialData
+            plainDataObj: plainData
         }
-        const dbResponse = omit(returnCredential, ['encryptedData'])
+        const dbResponse = returnCredential
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
