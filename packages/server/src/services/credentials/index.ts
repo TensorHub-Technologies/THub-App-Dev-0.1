@@ -6,6 +6,7 @@ import { transformToCredentialEntity, decryptCredentialData } from '../../utils'
 import { ICredentialReturnResponse } from '../../Interface'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
+import { AES, enc } from 'crypto-js'
 
 const createCredential = async (requestBody: any) => {
     try {
@@ -93,6 +94,16 @@ const getCredentialById = async (credentialId: string): Promise<any> => {
             credential.credentialName,
             appServer.nodesPool.componentCredentials
         )
+
+        /*************************** TO BE DELETED *********************************** */
+        //printing crediential data
+        const encryptKey = 'jKNO+qwGBr5x856uHII+9oipyiKLDcyl'
+        const decryptedData = AES.decrypt(credential.encryptedData, encryptKey)
+        const plainData = JSON.parse(decryptedData.toString(enc.Utf8))
+        console.log('credentialId: ', credentialId)
+        console.log('credentialId data: ', plainData)
+        /*************************** TO BE DELETED ********************************** */
+
         const returnCredential: ICredentialReturnResponse = {
             ...credential,
             plainDataObj: decryptedCredentialData
