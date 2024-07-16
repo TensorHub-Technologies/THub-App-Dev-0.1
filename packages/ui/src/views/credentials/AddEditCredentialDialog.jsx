@@ -56,14 +56,13 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     const [componentCredential, setComponentCredential] = useState({})
 
     useEffect(() => {
-        console.log('plainDataObj: ', getSpecificCredentialApi.data.plainDataObj)
-
         if (getSpecificCredentialApi.data) {
             setCredential(getSpecificCredentialApi.data)
             if (getSpecificCredentialApi.data.name) {
                 setName(getSpecificCredentialApi.data.name)
             }
             if (getSpecificCredentialApi.data.plainDataObj) {
+                console.log('plainDataObj: ', getSpecificCredentialApi.data.plainDataObj)
                 setCredentialData(getSpecificCredentialApi.data.plainDataObj)
             }
             let credentialName
