@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { forwardRef, useEffect } from 'react'
+import { forwardRef, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -13,8 +13,6 @@ import config from '@/config'
 
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
-
-// ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
 const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
     const theme = useTheme()
@@ -56,17 +54,22 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
         itemTarget = '_blank'
     }
 
-    let listItemProps = {
-        component: forwardRef(function ListItemPropsComponent(props, ref) {
-            return <Link ref={ref} {...props} to={`${config.basename}${item.url}`} target={itemTarget} />
-        })
-    }
-    if (item?.external) {
-        listItemProps = { component: 'a', href: item.url, target: itemTarget }
-    }
-    if (item?.id === 'loadChatflow') {
-        listItemProps.component = 'label'
-    }
+    const listItemProps = useMemo(() => {
+        let props = {
+            component: forwardRef(function ListItemPropsComponent(props, ref) {
+                return <Link ref={ref} {...props} to={`${config.basename}${item.url}`} target={itemTarget} />
+            })
+        }
+
+        if (item?.external) {
+            props = { component: 'a', href: item.url, target: itemTarget }
+        }
+        if (item?.id === 'loadChatflow') {
+            props.component = 'label'
+        }
+
+        return props
+    }, [item, itemTarget])
 
     const handleFileUpload = (e) => {
         if (!e.target.files) return
@@ -93,7 +96,6 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
         }
     }
 
-    // active menu item on page load
     useEffect(() => {
         if (navType === 'MENU') {
             const currentIndex = document.location.pathname
@@ -107,22 +109,18 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                 itemHandler('chatflows')
             }
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [navType])
+    }, [navType, item.id, dispatch])
 
     return (
         <Box
             sx={{
                 transition: 'width .4s, box-shadow .4s',
-
                 borderRadius: `${customization.borderRadius}px`,
                 p: 0.1,
                 mb: 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-
                 backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
                 '&:hover': {
                     background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
@@ -143,14 +141,6 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
             <ListItemButton
                 {...listItemProps}
                 disabled={item.disabled}
-                // sx={{
-                //     borderRadius: `${customization.borderRadius}px`,
-                //     mb: 0.5,
-                //     alignItems: 'flex-start',
-                //     backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
-                //     py: level > 1 ? 1 : 1.25,
-                //     pl: `${level * 24}px`
-                // }}
                 sx={{
                     borderRadius: `${customization.borderRadius}px`,
                     display: 'flex',
@@ -172,8 +162,8 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                         }
                     }
                 }}
-                // selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
-                // onClick={() => itemHandler(item.id)}
+                selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
+                onClick={() => itemHandler(item.id)}
             >
                 {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
 
@@ -194,7 +184,6 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                                 <Typography
                                     sx={{
                                         fontWeight: 'semibold !important',
-
                                         flex: '1',
                                         textAlign: 'left'
                                     }}
