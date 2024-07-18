@@ -35,6 +35,7 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else {
         const dir = path.join(getStoragePath(), chatflowid)
+        console.log('dir: ', dir)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }

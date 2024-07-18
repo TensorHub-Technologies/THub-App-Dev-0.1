@@ -40,7 +40,7 @@
 **/api.json
 
 ## uploads
-**/uploads
+# **/uploads
 
 ## compressed
 **/*.tgz
