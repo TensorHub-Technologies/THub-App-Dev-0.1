@@ -35,7 +35,7 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else {
         const dir = path.join(getStoragePath(), chatflowid)
-        console.log('dir: ', dir)
+        console.log('addBase64FilesToStorage dir: ', dir)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
@@ -45,6 +45,7 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
 
         const filePath = path.join(dir, filename)
+        console.log('addBase64FilesToStorage filePath: ', filePath)
         fs.writeFileSync(filePath, bf)
         fileNames.push(filename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
@@ -73,6 +74,7 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else {
         const dir = path.join(getStoragePath(), ...paths)
+        console.log('addArrayFilesToStorage dir: ', dir)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
@@ -105,6 +107,8 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
         return 'FILE-STORAGE::' + fileName
     } else {
         const dir = path.join(getStoragePath(), ...paths)
+        console.log('storage dir: ', dir)
+
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
@@ -143,6 +147,8 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         return buffer
     } else {
         const fileInStorage = path.join(getStoragePath(), ...paths, file)
+        console.log('fileInStorage: ', fileInStorage)
+
         return fs.readFileSync(fileInStorage)
     }
 }
