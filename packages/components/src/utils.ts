@@ -454,7 +454,7 @@ const getEncryptionKeyFilePath = (): string => {
 }
 
 export const getEncryptionKeyPath = (): string => {
-    return process.env.SECRETKEY_PATH ? path.join(process.env.SECRETKEY_PATH, 'encryption.key') : getEncryptionKeyFilePath()
+    return process.env.SECRETKEY_PATH ? path.join('gs://thub-files/.flowise/', 'encryption.key') : getEncryptionKeyFilePath()
 }
 
 /**
