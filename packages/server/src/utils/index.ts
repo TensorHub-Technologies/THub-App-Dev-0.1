@@ -1178,10 +1178,10 @@ export const generateEncryptKey = (): string => {
  * @returns {Promise<string>}
  */
 export const getEncryptionKey = async (): Promise<string> => {
-    if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
+    /*if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
         console.log('*** server.getEncryptionKey encryption_key_SECRETKEY_OVERWRITE: ', process.env.FLOWISE_SECRETKEY_OVERWRITE)
         return process.env.FLOWISE_SECRETKEY_OVERWRITE
-    }
+    }*/
     try {
         const key = await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
         await uploadToGCS('.flowise/encryption.key', key)
