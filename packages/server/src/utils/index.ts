@@ -1179,11 +1179,13 @@ export const generateEncryptKey = (): string => {
  */
 export const getEncryptionKey = async (): Promise<string> => {
     if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
+        console.log('*** server.getEncryptionKey encryption_key_SECRETKEY_OVERWRITE: ', process.env.FLOWISE_SECRETKEY_OVERWRITE)
         return process.env.FLOWISE_SECRETKEY_OVERWRITE
     }
     try {
         const key = await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
         await uploadToGCS('.flowise/encryption.key', key)
+        console.log('*** server.getEncryptionKey encryption key file: ', key)
         return key
     } catch (error) {
         const encryptKey = generateEncryptKey()
@@ -1192,6 +1194,8 @@ export const getEncryptionKey = async (): Promise<string> => {
             : path.join(getUserHome(), '.flowise', 'encryption.key')
         await fs.promises.writeFile(defaultLocation, encryptKey)
         await uploadToGCS('.flowise/encryption.key', encryptKey) // Upload to GCS
+        console.log('*** server.getEncryptionKey encryption key: ', encryptKey)
+        console.log('*** server.getEncryptionKey encryption key path: ', defaultLocation)
         return encryptKey
     }
 }
@@ -1203,6 +1207,7 @@ export const getEncryptionKey = async (): Promise<string> => {
  */
 export const encryptCredentialData = async (plainDataObj: ICredentialDataDecrypted): Promise<string> => {
     const encryptKey = await getEncryptionKey()
+    console.log('*** server.encryptCredentialData encryption key: ', encryptKey)
     return AES.encrypt(JSON.stringify(plainDataObj), encryptKey).toString()
 }
 
@@ -1219,6 +1224,8 @@ export const decryptCredentialData = async (
     componentCredentials?: IComponentCredentials
 ): Promise<ICredentialDataDecrypted> => {
     const encryptKey = await getEncryptionKey()
+    console.log('*** server.decryptCredentialData encryptKey key: ', encryptKey)
+    console.log('*** server.decryptCredentialData credentialName: ', componentCredentialName)
     const decryptedData = AES.decrypt(encryptedData, encryptKey)
     const decryptedDataStr = decryptedData.toString(enc.Utf8)
     if (!decryptedDataStr) return {}
