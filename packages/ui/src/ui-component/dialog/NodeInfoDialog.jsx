@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom'
+import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import PropTypes from 'prop-types'
@@ -17,6 +18,7 @@ import useApi from '@/hooks/useApi'
 
 const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
+    const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
     const getNodeConfigApi = useApi(configApi.getNodeConfig)
@@ -73,7 +75,9 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                 <div
                                     style={{
-                                        display: 'flex',
+                                        border: '5px solid red',
+
+                                        display: 'none',
                                         flexDirection: 'row',
                                         width: 'max-content',
                                         borderRadius: 15,
@@ -87,10 +91,11 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                 >
                                     <span style={{ color: 'rgb(116,66,16)', fontSize: '0.825rem' }}>{dialogProps.data.id}</span>
                                 </div>
+
                                 {dialogProps.data.version && (
                                     <div
                                         style={{
-                                            display: 'flex',
+                                            display: 'none',
                                             flexDirection: 'row',
                                             width: 'max-content',
                                             borderRadius: 15,
@@ -103,9 +108,32 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                             marginBottom: 5
                                         }}
                                     >
-                                        <span style={{ color: '#606c38', fontSize: '0.825rem' }}>version {dialogProps.data.version}</span>
+                                        {/* <span style={{ color: '#606c38', fontSize: '0.825rem' }}>version {dialogProps.data.version}</span> */}
                                     </div>
                                 )}
+
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        width: 'max-content',
+                                        borderRadius: 15,
+                                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                        padding: 5,
+                                        paddingLeft: 10,
+                                        paddingRight: 10,
+                                        marginTop: 5,
+                                        // marginLeft: '10px',
+                                        marginBottom: 5
+                                    }}
+                                >
+                                    <a
+                                        href={`https://docs.thub.tech/${dialogProps.data.category.replace(/\s+/g, '-').toLowerCase()}`}
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <span style={{ color: '#fff', fontSize: '0.825rem' }}>Documentation</span>
+                                    </a>
+                                </div>
                                 {dialogProps.data.badge && (
                                     <div
                                         style={{
@@ -132,40 +160,41 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                         </span>
                                     </div>
                                 )}
-                                {dialogProps.data.tags &&
+                                {/* {dialogProps.data.tags &&
                                     dialogProps.data.tags.length &&
                                     dialogProps.data.tags.map((tag, index) => (
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'row',
-                                                width: 'max-content',
-                                                borderRadius: 15,
-                                                background: '#cae9ff',
-                                                padding: 5,
-                                                paddingLeft: 10,
-                                                paddingRight: 10,
-                                                marginTop: 5,
-                                                marginLeft: 10,
-                                                marginBottom: 5
-                                            }}
-                                            key={index}
-                                        >
-                                            <span
-                                                style={{
-                                                    color: '#023e7d',
-                                                    fontSize: '0.825rem'
-                                                }}
-                                            >
-                                                {tag.toLowerCase()}
-                                            </span>
-                                        </div>
-                                    ))}
+                                        // <div
+                                        //     style={{
+                                        //         display: 'flex',
+                                        //         flexDirection: 'row',
+                                        //         width: 'max-content',
+                                        //         borderRadius: 15,
+                                        //         background: '#cae9ff',
+                                        //         padding: 5,
+                                        //         paddingLeft: 10,
+                                        //         paddingRight: 10,
+                                        //         marginTop: 5,
+                                        //         marginLeft: 10,
+                                        //         marginBottom: 5
+                                        //     }}
+                                        //     key={index}
+                                        // >
+                                        //     <span
+                                        //         style={{
+                                        //             color: '#023e7d',
+                                        //             fontSize: '0.825rem'
+                                        //         }}
+                                        //     >
+                                        //         {tag.toLowerCase()}
+                                        //     </span>
+                                        // </div>
+                                    ))} */}
                             </div>
                         </div>
                     </div>
                 )}
             </DialogTitle>
+
             <DialogContent>
                 {dialogProps.data?.description && (
                     <div
