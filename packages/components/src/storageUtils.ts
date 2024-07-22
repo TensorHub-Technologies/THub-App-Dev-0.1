@@ -53,6 +53,7 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else {
         const dir = path.join(getStoragePath(), chatflowid)
+        console.log('storage dir path: ', dir)
         await createFolderInGCS(`.flowise/storage/${chatflowid}`)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
@@ -65,6 +66,7 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         const gcsFilePath = `.flowise/storage/${chatflowid}/${filename}`
         fs.writeFileSync(filePath, bf)
         await uploadFileToGCS(filePath, gcsFilePath)
+        console.log('storage file path: ', filePath)
         fileNames.push(filename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     }
@@ -98,6 +100,7 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
 
         const filePath = path.join(dir, fileName)
         fs.writeFileSync(filePath, bf)
+        console.log('storage addArrayFilesToStorage: ', filePath)
         fileNames.push(fileName)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     }
@@ -132,6 +135,7 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
 
         const filePath = path.join(dir, fileName)
         fs.writeFileSync(filePath, bf)
+        console.log('storage addSingleFileToStorage: ', filePath)
         return 'FILE-STORAGE::' + fileName
     }
 }
@@ -164,6 +168,8 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         return buffer
     } else {
         const fileInStorage = path.join(getStoragePath(), ...paths, file)
+        console.log('storage fileInStorage: ', fileInStorage)
+
         return fs.readFileSync(fileInStorage)
     }
 }
