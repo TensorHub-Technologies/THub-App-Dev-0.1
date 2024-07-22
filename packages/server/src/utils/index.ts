@@ -1,3 +1,4 @@
+import { Storage } from '@google-cloud/storage'
 import path from 'path'
 import fs from 'fs'
 import logger from './logger'
@@ -782,13 +783,7 @@ export const getVariableValue = (
             const variableValue = variableDict[path]
             // Replace all occurrence
             if (typeof variableValue === 'object') {
-                const stringifiedValue = JSON.stringify(JSON.stringify(variableValue))
-                if (stringifiedValue.startsWith('"') && stringifiedValue.endsWith('"')) {
-                    // get rid of the double quotes
-                    returnVal = returnVal.split(path).join(stringifiedValue.substring(1, stringifiedValue.length - 1))
-                } else {
-                    returnVal = returnVal.split(path).join(JSON.stringify(variableValue).replace(/"/g, '\\"'))
-                }
+                returnVal = returnVal.split(path).join(JSON.stringify(JSON.stringify(variableValue)))
             } else {
                 returnVal = returnVal.split(path).join(variableValue)
             }
@@ -1095,8 +1090,7 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
             'chatCohere',
             'chatGoogleGenerativeAI',
             'chatTogetherAI',
-            'chatTogetherAI_LlamaIndex',
-            'chatFireworks'
+            'chatTogetherAI_LlamaIndex'
         ],
         LLMs: ['azureOpenAI', 'openAI', 'ollama']
     }
@@ -1160,6 +1154,17 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
     return isChatOrLLMsExist && isValidChainOrAgent && !isOutputParserExist
 }
 
+const storage = new Storage({
+    keyFilename: path.join(__dirname, '..', '..', 'uploads', 'serviceAccountKey.json')
+})
+
+const bucketName = 'thub-files'
+
+async function uploadToGCS(remotePath: string, content: string): Promise<void> {
+    const file = storage.bucket(bucketName).file(remotePath)
+    await file.save(content)
+    console.log(`File ${remotePath} uploaded to bucket ${bucketName}`)
+}
 /**
  * Generate an encryption key
  * @returns {string}
@@ -1177,13 +1182,16 @@ export const getEncryptionKey = async (): Promise<string> => {
         return process.env.FLOWISE_SECRETKEY_OVERWRITE
     }
     try {
-        return await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
+        const key = await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
+        await uploadToGCS('.flowise/encryption.key', key)
+        return key
     } catch (error) {
         const encryptKey = generateEncryptKey()
         const defaultLocation = process.env.SECRETKEY_PATH
             ? path.join(process.env.SECRETKEY_PATH, 'encryption.key')
             : path.join(getUserHome(), '.flowise', 'encryption.key')
         await fs.promises.writeFile(defaultLocation, encryptKey)
+        await uploadToGCS('.flowise/encryption.key', encryptKey) // Upload to GCS
         return encryptKey
     }
 }
@@ -1234,8 +1242,8 @@ export const decryptCredentialData = async (
 export const transformToCredentialEntity = async (body: ICredentialReqBody): Promise<Credential> => {
     const credentialBody: ICommonObject = {
         name: body.name,
-        credentialName: body.credentialName,
-        tenantId: body.tenantId
+        tenantId: body.tenantId,
+        credentialName: body.credentialName
     }
 
     if (body.plainDataObj) {

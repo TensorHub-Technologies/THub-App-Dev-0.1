@@ -54,7 +54,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 const Credentials = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
-
+    const [dialogKey, setDialogKey] = useState(0)
     const userData = useSelector((state) => state.user.userData)
     // const tenantId = userData['uid']
     const tenantId = userData?.uid
@@ -116,6 +116,7 @@ const Credentials = () => {
             data: credential
         }
         setSpecificCredentialDialogProps(dialogProp)
+        setDialogKey((prevKey) => prevKey + 1)
         setShowSpecificCredentialDialog(true)
     }
 
@@ -388,6 +389,7 @@ const Credentials = () => {
                 onCredentialSelected={onCredentialSelected}
             ></CredentialListDialog>
             <AddEditCredentialDialog
+                key={dialogKey}
                 show={showSpecificCredentialDialog}
                 dialogProps={specificCredentialDialogProps}
                 onCancel={() => setShowSpecificCredentialDialog(false)}
