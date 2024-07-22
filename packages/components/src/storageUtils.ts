@@ -1,3 +1,4 @@
+const { Storage } = require('@google-cloud/storage')
 import path from 'path'
 import fs from 'fs'
 import {
@@ -10,6 +11,23 @@ import {
 } from '@aws-sdk/client-s3'
 import { Readable } from 'node:stream'
 import { getUserHome } from './utils'
+
+const storage = new Storage({
+    keyFilename: path.join(__dirname, '..', '..', '..', 'server', 'uploads', 'serviceAccountKey.json')
+})
+
+const bucketName = 'thub-files'
+
+async function createFolderInGCS(folderPath: string): Promise<void> {
+    const file = storage.bucket(bucketName).file(`${folderPath}/`)
+    await file.save('')
+}
+
+async function uploadFileToGCS(filePath: string, destination: string): Promise<void> {
+    await storage.bucket(bucketName).upload(filePath, {
+        destination
+    })
+}
 
 export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: string, fileNames: string[]) => {
     const storageType = getStorageType()
@@ -35,17 +53,20 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else {
         const dir = path.join(getStoragePath(), chatflowid)
-        console.log('dir: ', dir)
+        console.log('storage dir path: ', dir)
+        await createFolderInGCS(`.flowise/storage/${chatflowid}`)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
-
         const splitDataURI = fileBase64.split(',')
         const filename = splitDataURI.pop()?.split(':')[1] ?? ''
         const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
 
         const filePath = path.join(dir, filename)
+        const gcsFilePath = `.flowise/storage/${chatflowid}/${filename}`
         fs.writeFileSync(filePath, bf)
+        await uploadFileToGCS(filePath, gcsFilePath)
+        console.log('storage file path: ', filePath)
         fileNames.push(filename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     }
@@ -79,6 +100,7 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
 
         const filePath = path.join(dir, fileName)
         fs.writeFileSync(filePath, bf)
+        console.log('storage addArrayFilesToStorage: ', filePath)
         fileNames.push(fileName)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     }
@@ -105,12 +127,15 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
         return 'FILE-STORAGE::' + fileName
     } else {
         const dir = path.join(getStoragePath(), ...paths)
+        console.log('storage dir: ', dir)
+
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
 
         const filePath = path.join(dir, fileName)
         fs.writeFileSync(filePath, bf)
+        console.log('storage addSingleFileToStorage: ', filePath)
         return 'FILE-STORAGE::' + fileName
     }
 }
@@ -143,6 +168,8 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         return buffer
     } else {
         const fileInStorage = path.join(getStoragePath(), ...paths, file)
+        console.log('storage fileInStorage: ', fileInStorage)
+
         return fs.readFileSync(fileInStorage)
     }
 }
