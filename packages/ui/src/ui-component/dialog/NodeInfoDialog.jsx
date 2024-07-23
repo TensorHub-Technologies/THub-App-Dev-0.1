@@ -130,6 +130,8 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                     <a
                                         href={`https://docs.thub.tech/${dialogProps.data.category.replace(/\s+/g, '-').toLowerCase()}`}
                                         style={{ textDecoration: 'none' }}
+                                        target='_blank'
+                                        rel='noreferrer'
                                     >
                                         <span style={{ color: '#fff', fontSize: '0.825rem' }}>Documentation</span>
                                     </a>
