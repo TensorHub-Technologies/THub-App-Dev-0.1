@@ -145,8 +145,8 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
  * @param filePath - Path to the file in GCS
  */
 
-async function getFileFromGCS(filePath: string): Promise<Buffer> {
-    const file = storage.bucket(bucketName).file(filePath)
+async function getFileFromGCS(filePaths: string): Promise<Buffer> {
+    const file = storage.bucket(bucketName).file(filePaths)
     const [fileBuffer] = await file.download()
     return fileBuffer
 }
@@ -179,8 +179,9 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         return buffer
     } else if (storageType != 's3') {
         const filePath = path.join('.flowise/storage', ...paths, file)
-        console.log('GCS file path: ', filePath)
-        const fileBuffer = await getFileFromGCS(filePath)
+        const filePaths = filePath.replace(/\\/g, '/')
+        console.log('GCS file path: ', filePaths)
+        const fileBuffer = await getFileFromGCS(filePaths)
         return fileBuffer
     } else {
         const fileInStorage = path.join(getStoragePath(), ...paths, file)
