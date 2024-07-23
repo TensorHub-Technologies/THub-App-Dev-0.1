@@ -140,6 +140,17 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
     }
 }
 
+/**
+ * Read file from Google Cloud Storage and return as Buffer
+ * @param filePath - Path to the file in GCS
+ */
+
+async function getFileFromGCS(filePath: string): Promise<Buffer> {
+    const file = storage.bucket(bucketName).file(filePath)
+    const [fileBuffer] = await file.download()
+    return fileBuffer
+}
+
 export const getFileFromStorage = async (file: string, ...paths: string[]): Promise<Buffer> => {
     const storageType = getStorageType()
     if (storageType === 's3') {
@@ -166,10 +177,14 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         // @ts-ignore
         const buffer = Buffer.concat(response.Body.toArray())
         return buffer
+    } else if (storageType != 's3') {
+        const filePath = path.join('.flowise/storage', ...paths, file)
+        console.log('GCS file path: ', filePath)
+        const fileBuffer = await getFileFromGCS(filePath)
+        return fileBuffer
     } else {
         const fileInStorage = path.join(getStoragePath(), ...paths, file)
         console.log('storage fileInStorage: ', fileInStorage)
-
         return fs.readFileSync(fileInStorage)
     }
 }
