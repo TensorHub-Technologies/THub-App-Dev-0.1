@@ -10,7 +10,6 @@ import { useTheme } from '@mui/material/styles'
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
-import WorkflowEmptySVG from '@/assets/images/workflow_empty.svg'
 import LoginDialog from '@/ui-component/dialog/LoginDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 
@@ -317,13 +316,13 @@ const Chatflows = () => {
                 </Stack>
                 {!isLoading && (!getAllChatflowsApi.data || getAllChatflowsApi.data.length === 0) && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        <Box sx={{ p: 2, height: 'auto' }}>
+                        {/* <Box sx={{ p: 2, height: 'auto' }}>
                             <img
                                 style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
                                 src={WorkflowEmptySVG}
                                 alt='WorkflowEmptySVG'
                             />
-                        </Box>
+                        </Box> */}
                         {/*<div>No AI Apps workspaces Yet</div>*/}
                         <div>No AI Apps workspaces have been created yet.</div>
                     </Stack>

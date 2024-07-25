@@ -44,7 +44,6 @@ import useNotifier from '@/utils/useNotifier'
 
 // Icons
 import { IconTrash, IconEdit, IconCopy, IconChevronsUp, IconChevronsDown, IconX, IconPlus, IconEye, IconEyeOff } from '@tabler/icons'
-import APIEmptySVG from '@/assets/images/api_empty.svg'
 import * as PropTypes from 'prop-types'
 import moment from 'moment/moment'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
@@ -428,9 +427,9 @@ const APIKey = () => {
                 </Stack>
                 {apiKeys.length <= 0 && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        <Box sx={{ p: 2, height: 'auto' }}>
+                        {/* <Box sx={{ p: 2, height: 'auto' }}>
                             <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={APIEmptySVG} alt='APIEmptySVG' />
-                        </Box>
+                        </Box> */}
                         <div>No API Keys Yet</div>
                     </Stack>
                 )}
