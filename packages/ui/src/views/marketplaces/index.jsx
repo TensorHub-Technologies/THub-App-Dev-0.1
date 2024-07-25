@@ -30,7 +30,6 @@ import IconFilterList from '@mui/icons-material/FilterList'
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
-import WorkflowEmptySVG from '@/assets/images/workflow_empty.svg'
 import ToolDialog from '@/views/tools/ToolDialog'
 
 // API
@@ -532,13 +531,13 @@ const Marketplace = () => {
 
                 {!isLoading && (!getAllTemplatesMarketplacesApi.data || getAllTemplatesMarketplacesApi.data.length === 0) && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        <Box sx={{ p: 2, height: 'auto' }}>
+                        {/* <Box sx={{ p: 2, height: 'auto' }}>
                             <img
                                 style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
                                 src={WorkflowEmptySVG}
                                 alt='WorkflowEmptySVG'
                             />
-                        </Box>
+                        </Box> */}
                         <div>No Templates Yet</div>
                     </Stack>
                 )}

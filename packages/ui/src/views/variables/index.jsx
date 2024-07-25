@@ -41,7 +41,6 @@ import useNotifier from '@/utils/useNotifier'
 
 // Icons
 import { IconTrash, IconEdit, IconX, IconPlus, IconVariable } from '@tabler/icons'
-import VariablesEmptySVG from '@/assets/images/variables_empty.svg'
 
 // const
 import AddEditVariableDialog from './AddEditVariableDialog'
@@ -289,13 +288,13 @@ const Variables = () => {
                 </Stack>
                 {variables.length === 0 && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        <Box sx={{ p: 2, height: 'auto' }}>
+                        {/* <Box sx={{ p: 2, height: 'auto' }}>
                             <img
                                 style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
                                 src={VariablesEmptySVG}
                                 alt='VariablesEmptySVG'
                             />
-                        </Box>
+                        </Box> */}
                         <div>No Variables Yet</div>
                     </Stack>
                 )}
