@@ -260,6 +260,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             try {
                 await chatflowsApi.deleteChatflow(chatflow.id)
                 await updateFlowsApi.request()
+                // window.location.reload()
             } catch (error) {
                 if (setError) setError(error)
                 const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
