@@ -42,7 +42,6 @@ import useNotifier from '@/utils/useNotifier'
 
 // Icons
 import { IconTrash, IconEdit, IconX, IconPlus } from '@tabler/icons'
-import CredentialEmptySVG from '@/assets/images/credential_empty.svg'
 
 // const
 import { baseURL } from '@/store/constant'
@@ -308,13 +307,13 @@ const Credentials = () => {
                 </Stack>
                 {credentials.length <= 0 && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        <Box sx={{ p: 2, height: 'auto' }}>
+                        {/* <Box sx={{ p: 2, height: 'auto' }}>
                             <img
                                 style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
                                 src={CredentialEmptySVG}
                                 alt='CredentialEmptySVG'
                             />
-                        </Box>
+                        </Box> */}
                         <div>No Credentials Yet</div>
                     </Stack>
                 )}
