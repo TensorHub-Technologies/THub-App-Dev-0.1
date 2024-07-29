@@ -12,6 +12,7 @@ import { gridSpacing } from '@/store/constant'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import AssistantDialog from './AssistantDialog'
 import LoadAssistantDialog from './LoadAssistantDialog'
+import emptyImage from '../../assets/images/testing.svg'
 
 // API
 import assistantsApi from '@/api/assistants'
@@ -145,9 +146,9 @@ const Assistants = () => {
                 </Grid>
                 {!getAllAssistantsApi.loading && (!getAllAssistantsApi.data || getAllAssistantsApi.data.length === 0) && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        {/* <Box sx={{ p: 2, height: 'auto' }}>
-                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={ToolEmptySVG} alt='ToolEmptySVG' />
-                        </Box> */}
+                        <Box sx={{ p: 2, height: 'auto' }}>
+                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={emptyImage} alt='ToolEmptySVG' />
+                        </Box>
                         <div>No Assistants Added Yet</div>
                     </Stack>
                 )}

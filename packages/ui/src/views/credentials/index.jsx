@@ -29,6 +29,7 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 import CredentialListDialog from './CredentialListDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import AddEditCredentialDialog from './AddEditCredentialDialog'
+import emptyImage from '../../assets/images/testing.svg'
 
 // API
 import credentialsApi from '@/api/credentials'
@@ -307,13 +308,9 @@ const Credentials = () => {
                 </Stack>
                 {credentials.length <= 0 && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        {/* <Box sx={{ p: 2, height: 'auto' }}>
-                            <img
-                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
-                                src={CredentialEmptySVG}
-                                alt='CredentialEmptySVG'
-                            />
-                        </Box> */}
+                        <Box sx={{ p: 2, height: 'auto' }}>
+                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={emptyImage} alt='CredentialEmptySVG' />
+                        </Box>
                         <div>No Credentials Yet</div>
                     </Stack>
                 )}
