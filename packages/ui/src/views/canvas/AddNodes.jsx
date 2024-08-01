@@ -46,6 +46,7 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
 import LayersIcon from '@mui/icons-material/Layers'
 import ArchitectureIcon from '@mui/icons-material/Architecture'
 import QrCodeIcon from '@mui/icons-material/QrCode'
+import SwitchAccountIcon from '@mui/icons-material/SwitchAccount'
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -88,6 +89,7 @@ const allIconsObj = {
     Prompts: <IntegrationInstructionsIcon />,
     'Record Manager': <ContactsIcon />,
     Retrievers: <QueryStatsIcon />,
+    'Sequential Agents': <SwitchAccountIcon />,
     'Text Splitters': <ContentCutIcon />,
     Tools: <BuildIcon />,
     Utilities: <AutoFixHighIcon />,
