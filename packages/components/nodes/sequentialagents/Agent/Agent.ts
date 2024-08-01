@@ -169,7 +169,7 @@ class Agent_SeqAgents implements INode {
         this.name = 'seqAgent'
         this.version = 1.0
         this.type = 'Agent'
-        this.icon = 'seqAgent.png'
+        this.icon = 'seqAgent.svg'
         this.category = 'Sequential Agents'
         this.description = 'Agent that can execute tools'
         this.baseClasses = [this.type]
