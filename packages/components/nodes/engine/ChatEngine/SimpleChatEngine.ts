@@ -20,7 +20,7 @@ class SimpleChatEngine_LlamaIndex implements INode {
         this.name = 'simpleChatEngine'
         this.version = 1.0
         this.type = 'SimpleChatEngine'
-        this.icon = 'chat-engine.png'
+        this.icon = 'chat-engine.svg'
         this.category = 'Engine'
         this.description = 'Simple engine to handle back and forth conversations'
         this.baseClasses = [this.type]
