@@ -21,7 +21,7 @@ class ContextChatEngine_LlamaIndex implements INode {
         this.name = 'contextChatEngine'
         this.version = 1.0
         this.type = 'ContextChatEngine'
-        this.icon = 'context-chat-engine.png'
+        this.icon = 'context-chat-engine.svg'
         this.category = 'Engine'
         this.description = 'Answer question based on retrieved documents (context) with built-in memory to remember conversation'
         this.baseClasses = [this.type]

@@ -30,7 +30,7 @@ class QueryEngine_LlamaIndex implements INode {
         this.name = 'queryEngine'
         this.version = 2.0
         this.type = 'QueryEngine'
-        this.icon = 'query-engine.png'
+        this.icon = 'query-engine.svg'
         this.category = 'Engine'
         this.description = 'Simple query engine built to answer question over your data, without memory'
         this.baseClasses = [this.type, 'BaseQueryEngine']

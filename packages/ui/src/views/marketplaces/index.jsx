@@ -43,7 +43,8 @@ import { baseURL } from '@/store/constant'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { MarketplaceTable } from '@/ui-component/table/MarketplaceTable'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import emptyImage from '../../assets/images/testing.svg'
+import emptyImage from '../../assets/images/glass.svg'
+import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props
@@ -533,7 +534,11 @@ const Marketplace = () => {
                 {!isLoading && (!getAllTemplatesMarketplacesApi.data || getAllTemplatesMarketplacesApi.data.length === 0) && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                         <Box sx={{ p: 2, height: 'auto' }}>
-                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={emptyImage} alt='WorkflowEmptySVG' />
+                            <img
+                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                src={customization.isDarkMode ? emptyImage : emptyImagelite}
+                                alt='WorkflowEmptySVG'
+                            />
                         </Box>
                         <div>No Templates Yet</div>
                     </Stack>

@@ -12,7 +12,9 @@ import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
 import LoginDialog from '@/ui-component/dialog/LoginDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
-import emptyImage from '../../assets/images/testing.svg'
+import emptyImage from '../../assets/images/glass.svg'
+import emptyImagelite from '../../assets/images/glass-lite.svg'
+
 // API
 import chatflowsApi from '@/api/chatflows'
 
@@ -317,7 +319,11 @@ const Chatflows = () => {
                 {!isLoading && (!getAllChatflowsApi.data || getAllChatflowsApi.data.length === 0) && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                         <Box sx={{ p: 2, height: 'auto' }}>
-                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={emptyImage} alt='WorkflowEmptySVG' />
+                            <img
+                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                src={customization.isDarkMode ? emptyImage : emptyImagelite}
+                                alt='WorkflowEmptySVG'
+                            />
                         </Box>
                         {/*<div>No AI Apps workspaces Yet</div>*/}
                         <div>No AI Apps workspaces have been created yet.</div>

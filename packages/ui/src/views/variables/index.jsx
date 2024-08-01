@@ -28,7 +28,8 @@ import { useTheme } from '@mui/material/styles'
 import MainCard from '@/ui-component/cards/MainCard'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
-import emptyImage from '../../assets/images/testing.svg'
+import emptyImage from '../../assets/images/glass.svg'
+import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 // API
 import variablesApi from '@/api/variables'
@@ -290,7 +291,11 @@ const Variables = () => {
                 {variables.length === 0 && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                         <Box sx={{ p: 2, height: 'auto' }}>
-                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={emptyImage} alt='VariablesEmptySVG' />
+                            <img
+                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                src={customization.isDarkMode ? emptyImage : emptyImagelite}
+                                alt='VariablesEmptySVG'
+                            />
                         </Box>
                         <div>No Variables Yet</div>
                     </Stack>

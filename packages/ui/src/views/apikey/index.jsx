@@ -47,7 +47,8 @@ import { IconTrash, IconEdit, IconCopy, IconChevronsUp, IconChevronsDown, IconX,
 import * as PropTypes from 'prop-types'
 import moment from 'moment/moment'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import emptyImage from '../../assets/images/testing.svg'
+import emptyImage from '../../assets/images/glass.svg'
+import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 // ==============================|| APIKey ||============================== //
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -429,7 +430,11 @@ const APIKey = () => {
                 {apiKeys.length <= 0 && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                         <Box sx={{ p: 2, height: 'auto' }}>
-                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={emptyImage} alt='APIEmptySVG' />
+                            <img
+                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                src={customization.isDarkMode ? emptyImage : emptyImagelite}
+                                alt='APIEmptySVG'
+                            />
                         </Box>
                         <div>No API Keys Yet</div>
                     </Stack>
