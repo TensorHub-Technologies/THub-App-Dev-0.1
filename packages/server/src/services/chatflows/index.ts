@@ -167,9 +167,6 @@ const saveChatflow = async (newChatFlow: ChatFlow): Promise<any> => {
         const appServer = getRunningExpressApp()
         let dbResponse: ChatFlow
         if (containsBase64File(newChatFlow)) {
-            // we need a 2-step process, as we need to save the chatflow first and then update the file paths
-            // this is because we need the chatflow id to create the file paths
-
             // step 1 - save with empty flowData
             const incomingFlowData = newChatFlow.flowData
             newChatFlow.flowData = JSON.stringify({})
@@ -211,10 +208,7 @@ const updateChatflow = async (chatflow: ChatFlow, updateChatFlow: ChatFlow): Pro
         await _checkAndUpdateDocumentStoreUsage(newDbChatflow)
         const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).save(newDbChatflow)
 
-        // chatFlowPool is initialized only when a flow is opened
-        // if the user attempts to rename/update category without opening any flow, chatFlowPool will be undefined
         if (appServer.chatflowPool) {
-            // Update chatflowpool inSync to false, to build flow from scratch again because data has been changed
             appServer.chatflowPool.updateInSync(chatflow.id, false)
         }
         return dbResponse

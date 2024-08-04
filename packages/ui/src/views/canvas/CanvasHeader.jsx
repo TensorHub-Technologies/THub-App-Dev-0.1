@@ -56,12 +56,14 @@ import { generateExportFlowData, getUpsertDetails } from '@/utils/genericHelper'
 import { uiBaseURL } from '@/store/constant'
 import { SET_CHATFLOW } from '@/store/actions'
 import UpsertHistoryDialog from '../vectorstore/UpsertHistoryDialog'
+import ViewLeadsDialog from '@/ui-component/dialog/ViewLeadsDialog'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
 const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFlow }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const [viewLeadsDialogProps, setViewLeadsDialogProps] = useState({})
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const flowNameRef = useRef()
@@ -78,6 +80,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
     const [viewMessagesDialogProps, setViewMessagesDialogProps] = useState({})
     const [chatflowConfigurationDialogOpen, setChatflowConfigurationDialogOpen] = useState(false)
     const [chatflowConfigurationDialogProps, setChatflowConfigurationDialogProps] = useState({})
+    const [viewLeadsDialogOpen, setViewLeadsDialogOpen] = useState(false)
 
     // navigation
     const [anchorEl, setAnchorEl] = React.useState(null)
@@ -118,6 +121,12 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 chatflow: chatflow
             })
             setUpsertHistoryDialogOpen(true)
+        } else if (setting === 'viewLeads') {
+            setViewLeadsDialogProps({
+                title: 'View Leads',
+                chatflow: chatflow
+            })
+            setViewLeadsDialogOpen(true)
         } else if (setting === 'chatflowConfiguration') {
             setChatflowConfigurationDialogProps({
                 title: 'Workflow Configuration',
@@ -715,6 +724,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 dialogProps={viewMessagesDialogProps}
                 onCancel={() => setViewMessagesDialogOpen(false)}
             />
+            <ViewLeadsDialog show={viewLeadsDialogOpen} dialogProps={viewLeadsDialogProps} onCancel={() => setViewLeadsDialogOpen(false)} />
             <UpsertHistoryDialog
                 show={upsertHistoryDialogOpen}
                 dialogProps={upsertHistoryDialogProps}
