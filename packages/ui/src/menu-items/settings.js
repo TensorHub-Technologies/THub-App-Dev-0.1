@@ -4,6 +4,7 @@ import {
     IconTrash,
     IconFileUpload,
     IconFileExport,
+    IconUsers,
     IconCopy,
     IconMessage,
     IconDatabaseExport,
@@ -16,6 +17,7 @@ const icons = {
     IconFileUpload,
     IconFileExport,
     IconCopy,
+    IconUsers,
     IconMessage,
     IconDatabaseExport,
     IconAdjustmentsHorizontal,
@@ -59,7 +61,13 @@ const settings = {
             url: '',
             icon: icons.IconMessage
         },
-
+        {
+            id: 'viewLeads',
+            title: 'View Leads',
+            type: 'item',
+            url: '',
+            icon: icons.IconUsers
+        },
         {
             id: 'loadChatflow',
             title: 'Load Workflow',

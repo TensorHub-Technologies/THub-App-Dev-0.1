@@ -164,7 +164,7 @@ const Marketplace = () => {
     }
 
     function filterByFramework(data) {
-        return frameworkFilter.length > 0 ? frameworkFilter.includes(data.framework) : true
+        return frameworkFilter.length > 0 ? (data.framework || []).some((item) => frameworkFilter.includes(item)) : true
     }
 
     const onUseTemplate = (selectedTool) => {
