@@ -58,7 +58,12 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                         padding: 1
                     }}
                 >
-                    <CardWrapper border={false} content={false} onClick={onClick}>
+                    <CardWrapper
+                        // sx={{ background: customization.isDarkMode ? 'theme.palette.common.black': `url(${image1}) !important`,}}
+                        border={false}
+                        content={false}
+                        onClick={onClick}
+                    >
                         <div
                             style={{
                                 height: '270px',
