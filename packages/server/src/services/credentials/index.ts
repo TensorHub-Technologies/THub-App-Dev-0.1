@@ -6,6 +6,8 @@ import { transformToCredentialEntity, decryptCredentialData } from '../../utils'
 import { ICredentialReturnResponse } from '../../Interface'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
+import { getEncryptionKey } from '../../utils'
+import { AES, enc } from 'crypto-js'
 
 const createCredential = async (requestBody: any) => {
     try {
@@ -40,7 +42,6 @@ const deleteCredentials = async (credentialId: string): Promise<any> => {
 }
 
 const getAllCredentials = async (paramCredentialName: any, tenantId: any) => {
-    console.log('service.tenantId: ', tenantId)
     try {
         const appServer = getRunningExpressApp()
         let dbResponse = []
@@ -79,6 +80,7 @@ const getAllCredentials = async (paramCredentialName: any, tenantId: any) => {
 }
 
 const getCredentialById = async (credentialId: string): Promise<any> => {
+    const encryptKey = await getEncryptionKey()
     try {
         const appServer = getRunningExpressApp()
         const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
@@ -87,6 +89,12 @@ const getCredentialById = async (credentialId: string): Promise<any> => {
         if (!credential) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
         }
+        console.log('*** getCredentialById encryptKey: ', encryptKey)
+        console.log('*** getCredentialById.credential name: ', credential.credentialName)
+
+        //delete these 2 lines for encryption key details to be diaplayed
+        const decryptedData = AES.decrypt(credential.encryptedData, encryptKey)
+        console.log('*** getCredentialById.credential data: ', JSON.parse(decryptedData.toString(enc.Utf8)))
         // Decrpyt credentialData
         const decryptedCredentialData = await decryptCredentialData(
             credential.encryptedData,
