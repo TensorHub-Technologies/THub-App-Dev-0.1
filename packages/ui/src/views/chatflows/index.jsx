@@ -14,7 +14,7 @@ import LoginDialog from '@/ui-component/dialog/LoginDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import emptyImage from '../../assets/images/glass.svg'
 import emptyImagelite from '../../assets/images/glass-lite.svg'
-import image1 from '../../assets/images/1.jpg'
+import image1 from '../../assets/images/check.jpg'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -220,6 +220,7 @@ const Chatflows = () => {
                             />
 
                             <TextField
+                                style={{ marginLeft: '40px' }}
                                 size='small'
                                 sx={{
                                     display: { xs: 'none', sm: 'block' },
@@ -251,7 +252,16 @@ const Chatflows = () => {
                                             size='small'
                                             value={sortBy}
                                             onChange={(e) => setSortBy(e.target.value)}
-                                            sx={{ ml: 2, marginLeft: '-10px' }}
+                                            sx={{
+                                                ml: 2,
+                                                marginLeft: '10px',
+                                                '.MuiSelect-select': {},
+                                                '.MuiOutlinedInput-notchedOutline': {},
+                                                '&:hover .MuiOutlinedInput-notchedOutline': {},
+                                                '.MuiSelect-icon': {
+                                                    color: customization.isDarkMode ? '#fff' : '#000' // Dropdown icon color
+                                                }
+                                            }}
                                         >
                                             <MenuItem value='name'>Sort by Name</MenuItem>
                                             <MenuItem value='created'>Sort by Created Date</MenuItem>

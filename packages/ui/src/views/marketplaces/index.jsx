@@ -31,7 +31,7 @@ import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
 import ToolDialog from '@/views/tools/ToolDialog'
-import image1 from '../../assets/images/1.jpg'
+import image1 from '../../assets/images/check.jpg'
 
 // API
 import marketplacesApi from '@/api/marketplaces'

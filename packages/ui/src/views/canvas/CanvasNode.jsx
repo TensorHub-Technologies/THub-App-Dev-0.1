@@ -38,6 +38,7 @@ const CanvasNode = ({ data }) => {
     const [open, setOpen] = useState(false)
     const menuRef = useRef()
     const dispatch = useDispatch()
+    const customization = useSelector((state) => state.customization)
 
     const { minMax, uniqueId } = useSelector((state) => state.minMax)
 
@@ -296,7 +297,7 @@ const CanvasNode = ({ data }) => {
                                                     sx={{
                                                         fontWeight: 500,
                                                         textAlign: 'center',
-                                                        color: '#2F5597'
+                                                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                                     }}
                                                 >
                                                     Inputs
@@ -311,7 +312,7 @@ const CanvasNode = ({ data }) => {
                                     {data.inputParams
                                         .filter((inputParam) => !inputParam.hidden)
                                         .map((inputParam, index) => (
-                                            <NodeInputHandler key={index} inputParam={inputParam} data={data} />
+                                            <NodeInputHandler key={index} inputParam={inputParam} data={data} background='red' />
                                         ))}
                                     {data.inputParams.find((param) => param.additionalParams) && (
                                         <div
@@ -339,7 +340,7 @@ const CanvasNode = ({ data }) => {
                                             sx={{
                                                 fontWeight: 500,
                                                 textAlign: 'center',
-                                                color: '#EC73FF'
+                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                             }}
                                         >
                                             Output
