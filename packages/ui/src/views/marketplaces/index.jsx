@@ -31,6 +31,7 @@ import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
 import ToolDialog from '@/views/tools/ToolDialog'
+import image1 from '../../assets/images/check.jpg'
 
 // API
 import marketplacesApi from '@/api/marketplaces'
@@ -43,7 +44,8 @@ import { baseURL } from '@/store/constant'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { MarketplaceTable } from '@/ui-component/table/MarketplaceTable'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import emptyImage from '../../assets/images/testing.svg'
+import emptyImage from '../../assets/images/glass.svg'
+import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props
@@ -162,7 +164,7 @@ const Marketplace = () => {
     }
 
     function filterByFramework(data) {
-        return frameworkFilter.length > 0 ? frameworkFilter.includes(data.framework) : true
+        return frameworkFilter.length > 0 ? (data.framework || []).some((item) => frameworkFilter.includes(item)) : true
     }
 
     const onUseTemplate = (selectedTool) => {
@@ -230,7 +232,7 @@ const Marketplace = () => {
 
     return (
         <>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '' }}>
+            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : `url(${image1}) !important` }}>
                 <Box sx={{ flexGrow: 1 }}>
                     <Toolbar
                         disableGutters={true}
@@ -533,7 +535,11 @@ const Marketplace = () => {
                 {!isLoading && (!getAllTemplatesMarketplacesApi.data || getAllTemplatesMarketplacesApi.data.length === 0) && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                         <Box sx={{ p: 2, height: 'auto' }}>
-                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={emptyImage} alt='WorkflowEmptySVG' />
+                            <img
+                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                src={customization.isDarkMode ? emptyImage : emptyImagelite}
+                                alt='WorkflowEmptySVG'
+                            />
                         </Box>
                         <div>No Templates Yet</div>
                     </Stack>

@@ -11,7 +11,8 @@ import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import ToolDialog from './ToolDialog'
-import emptyImage from '../../assets/images/testing.svg'
+import emptyImage from '../../assets/images/glass.svg'
+import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 // API
 import toolsApi from '@/api/tools'
@@ -155,7 +156,11 @@ const Tools = () => {
                 {!getAllToolsApi.loading && (!getAllToolsApi.data || getAllToolsApi.data.length === 0) && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                         <Box sx={{ p: 2, height: 'auto' }}>
-                            <img style={{ objectFit: 'cover', height: '30vh', width: 'auto' }} src={emptyImage} alt='ToolEmptySVG' />
+                            <img
+                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                src={customization.isDarkMode ? emptyImage : emptyImagelite}
+                                alt='ToolEmptySVG'
+                            />
                         </Box>
                         <div>No Tools Created Yet</div>
                     </Stack>
