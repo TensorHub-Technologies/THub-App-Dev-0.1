@@ -31,6 +31,7 @@ import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
 import ToolDialog from '@/views/tools/ToolDialog'
+import image1 from '../../assets/images/1.jpg'
 
 // API
 import marketplacesApi from '@/api/marketplaces'
@@ -231,7 +232,7 @@ const Marketplace = () => {
 
     return (
         <>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '' }}>
+            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : `url(${image1}) !important` }}>
                 <Box sx={{ flexGrow: 1 }}>
                     <Toolbar
                         disableGutters={true}
