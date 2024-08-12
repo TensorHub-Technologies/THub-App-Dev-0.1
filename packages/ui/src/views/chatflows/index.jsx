@@ -14,7 +14,6 @@ import LoginDialog from '@/ui-component/dialog/LoginDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import emptyImage from '../../assets/images/glass.svg'
 import emptyImagelite from '../../assets/images/glass-lite.svg'
-import image1 from '../../assets/images/check.jpg'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -157,7 +156,7 @@ const Chatflows = () => {
     return (
         <>
             {showModal && <UserInfo showModal={showModal} setShowModal={setShowModal} />}
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : `url(${image1}) !important` }}>
+            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : ` #e3f2fd` }}>
                 <Stack flexDirection='column'>
                     <Box sx={{ flexGrow: 1 }}>
                         <Toolbar
@@ -188,7 +187,13 @@ const Chatflows = () => {
                                     display: { xs: 'none', sm: 'block' },
                                     ml: 3,
                                     transition: 'all .2s ease-in-out',
-                                    '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                    '& input': {
+                                        color: customization.isDarkMode ? '#fff' : '#000',
+                                        '::placeholder': {
+                                            color: customization.isDarkMode ? '#fff' : '#000',
+                                            opacity: 1
+                                        }
+                                    },
                                     '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
@@ -207,7 +212,7 @@ const Chatflows = () => {
                                             <SearchOutlinedIcon
                                                 sx={{
                                                     cursor: 'default',
-                                                    color: customization?.isDarkMode ? '#fff' : '#fff',
+                                                    color: customization?.isDarkMode ? '#fff' : '#000',
                                                     background: 'transparent !important',
                                                     borderRadius: '20%',
                                                     padding: '2px',
