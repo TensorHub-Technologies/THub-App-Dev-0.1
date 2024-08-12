@@ -40,17 +40,74 @@ export const ChatPopUp = ({ chatflowid }) => {
 
     const anchorRef = useRef(null)
     const prevOpen = useRef(open)
+    const paperRef = useRef(null)
+    const [position, setPosition] = useState({ x: 0, y: 0 })
+    const [dragging, setDragging] = useState(false)
+    const [isDragging, setIsDragging] = useState(false)
+
+    const handleMouseDown = (e) => {
+        setDragging(true)
+        const { left, top, right } = paperRef.current.getBoundingClientRect()
+
+        // Calculate the initial values relative to the viewport width and height
+        const initialRight = window.innerWidth - right
+
+        setPosition({
+            x: e.clientX,
+            y: e.clientY,
+            right: initialRight > 0 ? initialRight : 0,
+            top
+        })
+    }
+
+    const handleMouseMove = (e) => {
+        if (dragging) {
+            const deltaX = e.clientX - position.x
+            const deltaY = e.clientY - position.y
+
+            const newRight = Math.max(0, position.right - deltaX)
+            const newTop = position.top + deltaY
+
+            paperRef.current.style.right = `${newRight}px`
+            paperRef.current.style.top = `${newTop}px`
+        }
+    }
+
+    const handleMouseUp = () => {
+        console.log('mouse button left')
+        setDragging(false)
+    }
 
     const handleClose = (event) => {
+        if (dragging || isDragging) {
+            return
+        }
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return
         }
-        setOpen(false)
+        console.log('close chat')
+        // setOpen(false);
     }
+
     const customization = useSelector((state) => state.customization)
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen)
     }
+
+    useEffect(() => {
+        if (dragging) {
+            window.addEventListener('mousemove', handleMouseMove)
+            window.addEventListener('mouseup', handleMouseUp)
+        } else {
+            window.removeEventListener('mousemove', handleMouseMove)
+            window.removeEventListener('mouseup', handleMouseUp)
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove)
+            window.removeEventListener('mouseup', handleMouseUp)
+        }
+    }, [dragging])
 
     const expandChat = () => {
         const props = {
@@ -128,8 +185,6 @@ export const ChatPopUp = ({ chatflowid }) => {
             anchorRef.current.focus()
         }
         prevOpen.current = open
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, chatflowid])
 
     return (
@@ -139,7 +194,6 @@ export const ChatPopUp = ({ chatflowid }) => {
                     position: 'absolute',
                     right: 20,
                     top: 20,
-                    // background: 'transparent',
                     boxShadow: '0',
                     color: customization.isDarkMode ? 'white' : 'black',
                     backgroundColor: open ? (customization?.isDarkMode ? '#23262c' : '#fff') : ''
@@ -221,7 +275,13 @@ export const ChatPopUp = ({ chatflowid }) => {
             >
                 {({ TransitionProps }) => (
                     <Transitions in={open} {...TransitionProps}>
-                        <Paper sx={{ marginTop: '-58px' }}>
+                        <Paper
+                            ref={paperRef}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onMouseDown={handleMouseDown}
+                            sx={{ marginTop: '-58px', position: 'absolute', right: '0px' }}
+                        >
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MainCard
                                     border={false}
