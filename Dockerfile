@@ -23,8 +23,6 @@ WORKDIR /usr/src
 # Copy app source
 COPY . .
 
-RUN pnpm i
-
 RUN pnpm install
 
 RUN pnpm build
