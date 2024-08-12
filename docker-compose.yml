@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  flowise:
+  thub:
     build: .  # Build the image from the current directory
     restart: always
     environment:
@@ -32,5 +32,5 @@ services:
     ports:
       - '${PORT}:${PORT}'
     volumes:
-      - ~/.flowise:/root/.flowise
-    command: /bin/sh -c "sleep 3; pnpm start"
+      - ~/.thub:/root/.thub
+    command: /bin/sh -c "sleep 3; thub start"
