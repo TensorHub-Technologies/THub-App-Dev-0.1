@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: This template creates resources for Flowise application
+Description: This template creates resources for Thub application
 
 Parameters:
   Stage:
     Description: Prefix of resource names
     Type: String
-    Default: flowise
+    Default: thub
 
 Mappings:
   SubnetConfig:
@@ -377,17 +377,17 @@ Resources:
                 Resource: !GetAtt EFSFileSystem.Arn
 
   ####
-  # Flowise ECS service related resources
+  # Thub ECS service related resources
   ####
-  ServiceFlowise:
+  ServiceThub:
     Type: AWS::ECS::Service
     DependsOn:
       - PrivateRouteOne
       - PrivateRouteTwo
-      - ListenerRuleFlowise
+      - ListenerRuleThub
     Properties:
       Cluster: !Ref ECSCluster
-      TaskDefinition: !Ref TaskDefinitionFlowise
+      TaskDefinition: !Ref TaskDefinitionThub
       LaunchType: FARGATE
       DesiredCount: 2
       NetworkConfiguration:
@@ -399,19 +399,19 @@ Resources:
           SecurityGroups:
             - !Ref ContainerSecurityGroup
       LoadBalancers:
-        - ContainerName: "flowise-service"
+        - ContainerName: "thub-service"
           ContainerPort: 3000
-          TargetGroupArn: !Ref TargetGroupFlowise
+          TargetGroupArn: !Ref TargetGroupThub
 
-  TaskDefinitionFlowise:
+  TaskDefinitionThub:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
       ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
       RequiresCompatibilities:
         - FARGATE
       ContainerDefinitions:
-        - Name: "flowise-service"
-          Image: "flowiseai/flowise:latest"
+        - Name: "thub-service"
+          Image: "asyovan/thub-dev-0.1:latest"
           Essential: true
           PortMappings:
             - ContainerPort: 3000
@@ -423,16 +423,16 @@ Resources:
               Value: ""
             - Name: IFRAME_ORIGINS
               Value: ""
-            - Name: FLOWISE_USERNAME
+            - Name: THUB_USERNAME
               Value: ""
-            - Name: FLOWISE_PASSWORD
+            - Name: THUB_PASSWORD
               Value: ""
-            - Name: FLOWISE_FILE_SIZE_LIMIT
+            - Name: THUB_FILE_SIZE_LIMIT
               Value: ""
             - Name: DEBUG
               Value: ""
             - Name: DATABASE_PATH
-              Value: "/root/.flowise"
+              Value: "/root/.thub"
             - Name: DATABASE_TYPE
               Value: ""
             - Name: DATABASE_PORT
@@ -450,30 +450,30 @@ Resources:
             - Name: DATABASE_SSL_KEY_BASE64
               Value: ""
             - Name: APIKEY_PATH
-              Value: "/root/.flowise"
+              Value: "/root/.thub"
             - Name: SECRETKEY_PATH
-              Value: "/root/.flowise"
-            - Name: FLOWISE_SECRETKEY_OVERWRITE
+              Value: "/root/.thub"
+            - Name: THUB_SECRETKEY_OVERWRITE
               Value: ""
             - Name: LOG_LEVEL
               Value: ""
             - Name: LOG_PATH
-              Value: "/root/.flowise/logs"
+              Value: "/root/.thub/logs"
             - Name: BLOB_STORAGE_PATH
-              Value: "/root/.flowise/storage"
-            - Name: DISABLE_FLOWISE_TELEMETRY
+              Value: "/root/.thub/storage"
+            - Name: DISABLE_THUB_TELEMETRY
               Value: ""
           EntryPoint:
             - /bin/sh
             - -c
-            - "sleep 3; flowise start"
+            - "sleep 3; thub start"
           MountPoints:
             - SourceVolume: efs-volume
-              ContainerPath: "/root/.flowise"
+              ContainerPath: "/root/.thub"
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Ref CloudWatchLogsGroupFlowise
+              awslogs-group: !Ref CloudWatchLogsGroupThub
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Ref Stage
       NetworkMode: awsvpc
@@ -486,13 +486,13 @@ Resources:
             RootDirectory: /
             TransitEncryption: ENABLED
 
-  CloudWatchLogsGroupFlowise:
+  CloudWatchLogsGroupThub:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Ref AWS::StackName
       RetentionInDays: 7
 
-  TargetGroupFlowise:
+  TargetGroupThub:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       VpcId: !Ref VPC
@@ -507,7 +507,7 @@ Resources:
       HealthyThresholdCount: 2
       TargetType: ip
 
-  ListenerRuleFlowise:
+  ListenerRuleThub:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
     Properties:
       ListenerArn: !Ref PublicLoadBalancerListener
@@ -517,10 +517,10 @@ Resources:
           Values:
             - /*
       Actions:
-        - TargetGroupArn: !Ref TargetGroupFlowise
+        - TargetGroupArn: !Ref TargetGroupThub
           Type: forward
 
 Outputs:
   ExternalUrl:
-    Description: The url of Flowise application
+    Description: The url of Thub application
     Value: !Sub http://${PublicLoadBalancer.DNSName}
