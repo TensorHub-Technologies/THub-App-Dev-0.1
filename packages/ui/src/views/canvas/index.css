@@ -37,9 +37,8 @@
 .reactflow-parent-wrapper .reactflow-wrapper {
     flex-grow: 1;
     height: 100%;
-    background: linear-gradient(to left, #e22a90, #3c5ba4);
+    /* background: linear-gradient(to left, #e22a90, #3c5ba4); */
 }
-
 #minmax-parent {
     padding: 2px;
     margin-right: 0.5px;
