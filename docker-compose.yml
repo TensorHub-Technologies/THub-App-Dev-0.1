@@ -5,7 +5,7 @@ services:
         image: thub/thub
         restart: always
         environment:
-            - PORT="3000"
+            - PORT=3000
             - CORS_ORIGINS=${CORS_ORIGINS}
             - IFRAME_ORIGINS=${IFRAME_ORIGINS}
             - FLOWISE_USERNAME=${FLOWISE_USERNAME}
@@ -30,7 +30,7 @@ services:
             - DISABLE_FLOWISE_TELEMETRY=${DISABLE_FLOWISE_TELEMETRY}
             - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
         ports:
-            - '${PORT}:${PORT}'
+            - '3000:3000'
         volumes:
             - ~/.THub-App-Dev-0.1:/root/.flowise
         command: /bin/sh -c "sleep 3; thub start"
