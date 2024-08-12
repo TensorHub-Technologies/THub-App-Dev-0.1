@@ -50,6 +50,7 @@ import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 import { baseURL } from '@/store/constant'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 
+import { useSelector } from 'react-redux'
 function TabPanel(props) {
     const { children, value, index, ...other } = props
     return (
@@ -96,6 +97,7 @@ const VectorStoreDialog = ({ show, dialogProps, onCancel, onIndexResult }) => {
     const [tabValue, setTabValue] = useState(0)
     const [expandedVectorNodeId, setExpandedVectorNodeId] = useState('')
     const [configData, setConfigData] = useState({})
+    const customization = useSelector((state) => state.customization)
 
     const reformatConfigData = (configData, nodes) => {
         return configData.filter((item1) => nodes.some((item2) => item1.nodeId === item2.id))
@@ -465,14 +467,19 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                                     flexDirection: 'row',
                                                                     width: 'max-content',
                                                                     borderRadius: 15,
-                                                                    background: 'rgb(254,252,191)',
+                                                                    background: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                                                                     padding: 5,
                                                                     paddingLeft: 10,
                                                                     paddingRight: 10,
                                                                     marginLeft: 10
                                                                 }}
                                                             >
-                                                                <span style={{ color: 'rgb(116,66,16)', fontSize: '0.825rem' }}>
+                                                                <span
+                                                                    style={{
+                                                                        color: customization.isDarkMode ? '#fff' : '#000',
+                                                                        fontSize: '0.825rem'
+                                                                    }}
+                                                                >
                                                                     {node.data.id}
                                                                 </span>
                                                             </div>
@@ -593,10 +600,11 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                         {loading && <BackdropLoader open={loading} />}
                                         {!loading && (
                                             <Button
-                                                sx={{ color: 'white' }}
+                                                sx={{ color: customization.isDarkMode ? '#fff' : '#000' }}
                                                 fullWidth
                                                 variant='contained'
                                                 color='teal'
+                                                style={{ backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
                                                 title='Upsert'
                                                 onClick={() => onUpsertClicked(data.vectorNode)}
                                             >
