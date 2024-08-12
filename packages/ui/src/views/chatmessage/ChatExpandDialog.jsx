@@ -15,7 +15,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
         <Dialog
             open={show}
             fullWidth
-            maxWidth='md'
+            maxWidth='3000px'
             onClose={onCancel}
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
