@@ -10,6 +10,24 @@ import {
 } from '@aws-sdk/client-s3'
 import { Readable } from 'node:stream'
 import { getUserHome } from './utils'
+const { Storage } = require('@google-cloud/storage')
+
+const storage = new Storage({
+    keyFilename: path.join(__dirname, '..', '..', '..', 'server', 'uploads', 'serviceAccountKey.json')
+})
+
+const bucketName = 'thub-files'
+
+async function createFolderInGCS(folderPath: string): Promise<void> {
+    const file = storage.bucket(bucketName).file(`${folderPath}/`)
+    await file.save('')
+}
+
+async function uploadFileToGCS(filePath: string, destination: string): Promise<void> {
+    await storage.bucket(bucketName).upload(filePath, {
+        destination
+    })
+}
 
 export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: string, fileNames: string[]) => {
     const storageType = getStorageType()
@@ -35,16 +53,20 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else {
         const dir = path.join(getStoragePath(), chatflowid)
+        console.log('storage dir path: ', dir)
+        await createFolderInGCS(`.flowise/storage/${chatflowid}`)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
-
         const splitDataURI = fileBase64.split(',')
         const filename = splitDataURI.pop()?.split(':')[1] ?? ''
         const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
 
         const filePath = path.join(dir, filename)
+        const gcsFilePath = `.flowise/storage/${chatflowid}/${filename}`
         fs.writeFileSync(filePath, bf)
+        await uploadFileToGCS(filePath, gcsFilePath)
+        console.log('storage file path: ', filePath)
         fileNames.push(filename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     }
@@ -78,6 +100,7 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
 
         const filePath = path.join(dir, fileName)
         fs.writeFileSync(filePath, bf)
+        console.log('storage addArrayFilesToStorage: ', filePath)
         fileNames.push(fileName)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     }
@@ -104,14 +127,28 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
         return 'FILE-STORAGE::' + fileName
     } else {
         const dir = path.join(getStoragePath(), ...paths)
+        console.log('storage dir: ', dir)
+
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
 
         const filePath = path.join(dir, fileName)
         fs.writeFileSync(filePath, bf)
+        console.log('storage addSingleFileToStorage: ', filePath)
         return 'FILE-STORAGE::' + fileName
     }
+}
+
+/**
+ * Read file from Google Cloud Storage and return as Buffer
+ * @param filePath - Path to the file in GCS
+ */
+
+async function getFileFromGCS(filePaths: string): Promise<Buffer> {
+    const file = storage.bucket(bucketName).file(filePaths)
+    const [fileBuffer] = await file.download()
+    return fileBuffer
 }
 
 export const getFileFromStorage = async (file: string, ...paths: string[]): Promise<Buffer> => {
@@ -140,8 +177,15 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         // @ts-ignore
         const buffer = Buffer.concat(response.Body.toArray())
         return buffer
+    } else if (storageType != 's3') {
+        const filePath = path.join('.flowise/storage', ...paths, file)
+        const filePaths = filePath.replace(/\\/g, '/')
+        console.log('GCS file path: ', filePaths)
+        const fileBuffer = await getFileFromGCS(filePaths)
+        return fileBuffer
     } else {
         const fileInStorage = path.join(getStoragePath(), ...paths, file)
+        console.log('storage fileInStorage: ', fileInStorage)
         return fs.readFileSync(fileInStorage)
     }
 }
@@ -318,8 +362,6 @@ export const getS3Config = () => {
     const secretAccessKey = process.env.S3_STORAGE_SECRET_ACCESS_KEY
     const region = process.env.S3_STORAGE_REGION
     const Bucket = process.env.S3_STORAGE_BUCKET_NAME
-    const customURL = process.env.S3_ENDPOINT_URL
-
     if (!region || !Bucket) {
         throw new Error('S3 storage configuration is missing')
     }
@@ -334,8 +376,7 @@ export const getS3Config = () => {
 
     const s3Client = new S3Client({
         credentials,
-        region,
-        endpoint: customURL
+        region
     })
     return { s3Client, Bucket }
 }
