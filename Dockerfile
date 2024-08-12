@@ -4,6 +4,8 @@
 # Run image
 # docker run -d -p 3000:3000 flowise
 
+#test trigger with cicd docker
+
 FROM node:18-alpine
 RUN apk add --update libc6-compat python3 make g++
 # needed for pdfjs-dist
