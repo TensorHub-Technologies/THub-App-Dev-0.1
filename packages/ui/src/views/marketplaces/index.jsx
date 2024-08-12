@@ -18,19 +18,19 @@ import {
     FormControl,
     Checkbox,
     Button,
-    useMediaQuery,
-    IconButton,
     FormControlLabel,
-    FormGroup
+    InputLabel,
+    Select,
+    Skeleton
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { IconChevronsDown, IconChevronsUp, IconLayoutGrid, IconList } from '@tabler/icons'
-import IconFilterList from '@mui/icons-material/FilterList'
+import { IconLayoutGrid, IconList } from '@tabler/icons'
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
 import ToolDialog from '@/views/tools/ToolDialog'
+import image1 from '../../assets/images/check.jpg'
 
 // API
 import marketplacesApi from '@/api/marketplaces'
@@ -45,6 +45,7 @@ import { MarketplaceTable } from '@/ui-component/table/MarketplaceTable'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import emptyImage from '../../assets/images/glass.svg'
 import emptyImagelite from '../../assets/images/glass-lite.svg'
+import { IconX } from '@tabler/icons-react'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props
@@ -67,19 +68,9 @@ TabPanel.propTypes = {
     value: PropTypes.number.isRequired
 }
 
-// const ITEM_HEIGHT = 48
-// const ITEM_PADDING_TOP = 8
-// const badges = ['POPULAR', 'NEW']
-const types = ['Chatflow', 'Tool']
+const types = ['Chatflow', 'Tool', 'Agentflow']
 const framework = ['Langchain', 'LlamaIndex']
-// const MenuProps = {
-//     PaperProps: {
-//         style: {
-//             maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-//             width: 250
-//         }
-//     }
-// }
+
 // ==============================|| Marketplace ||============================== //
 
 const Marketplace = () => {
@@ -90,6 +81,10 @@ const Marketplace = () => {
 
     const [isLoading, setLoading] = useState(true)
     const [images, setImages] = useState({})
+    const [error, setError] = useState(null)
+    const [usecases, setUsecases] = useState([])
+    const [eligibleUsecases, setEligibleUsecases] = useState([])
+    const [selectedUsecases, setSelectedUsecases] = useState([])
 
     const [showToolDialog, setShowToolDialog] = useState(false)
     const [toolDialogProps, setToolDialogProps] = useState({})
@@ -103,20 +98,15 @@ const Marketplace = () => {
     const [badgeFilter] = useState([])
     const [typeFilter, setTypeFilter] = useState([])
     const [frameworkFilter, setFrameworkFilter] = useState([])
-    const [open, setOpen] = useState(false)
-    const minScreen = useMediaQuery('(max-width:600px)')
 
-    // const handleBadgeFilterChange = (event) => {
-    //     const {
-    //         target: { value }
-    //     } = event
-    //     setBadgeFilter(
-    //         // On autofill we get a stringified value.
-    //         typeof value === 'string' ? value.split(',') : value
-    //     )
-    // }
+    const clearAllUsecases = () => {
+        setSelectedUsecases([])
+    }
 
     const [isInputFocused, setInputFocused] = useState(false)
+
+    console.log(usecases, 'usecases')
+
     const handleTypeFilterChange = (event) => {
         const {
             target: { value, checked }
@@ -125,7 +115,9 @@ const Marketplace = () => {
         const updatedTypeFilter = checked ? [...typeFilter, value] : typeFilter.filter((item) => item !== value)
 
         setTypeFilter(updatedTypeFilter)
+        getEligibleUsecases({ typeFilter: typeof value === 'string' ? value.split(',') : value, badgeFilter, frameworkFilter, search })
     }
+
     const handleFrameworkFilterChange = (event) => {
         const {
             target: { value, checked }
@@ -134,6 +126,7 @@ const Marketplace = () => {
         const updatedFilter = checked ? [...frameworkFilter, value] : frameworkFilter.filter((item) => item !== value)
 
         setFrameworkFilter(updatedFilter)
+        getEligibleUsecases({ typeFilter, badgeFilter, frameworkFilter: typeof value === 'string' ? value.split(',') : value, search })
     }
 
     const handleViewChange = (event, nextView) => {
@@ -144,18 +137,15 @@ const Marketplace = () => {
 
     const onSearchChange = (event) => {
         setSearch(event.target.value)
+        getEligibleUsecases({ typeFilter, badgeFilter, frameworkFilter, search: event.target.value })
     }
 
     function filterFlows(data) {
         return (
-            data.categories?.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
+            (data.categories ? data.categories.join(',') : '').toLowerCase().indexOf(search.toLowerCase()) > -1 ||
             data.templateName.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
             (data.description && data.description.toLowerCase().indexOf(search.toLowerCase()) > -1)
         )
-    }
-
-    function filterByBadge(data) {
-        return badgeFilter.length > 0 ? badgeFilter.includes(data.badge) : true
     }
 
     function filterByType(data) {
@@ -164,6 +154,35 @@ const Marketplace = () => {
 
     function filterByFramework(data) {
         return frameworkFilter.length > 0 ? (data.framework || []).some((item) => frameworkFilter.includes(item)) : true
+    }
+    function filterByUsecases(data) {
+        return selectedUsecases.length > 0 ? (data.usecases || []).some((item) => selectedUsecases.includes(item)) : true
+    }
+
+    const getEligibleUsecases = (filter) => {
+        if (!getAllTemplatesMarketplacesApi.data) return
+
+        let filteredData = getAllTemplatesMarketplacesApi.data
+        if (filter.badgeFilter.length > 0) filteredData = filteredData.filter((data) => filter.badgeFilter.includes(data.badge))
+        if (filter.typeFilter.length > 0) filteredData = filteredData.filter((data) => filter.typeFilter.includes(data.type))
+        if (filter.frameworkFilter.length > 0)
+            filteredData = filteredData.filter((data) => (data.framework || []).some((item) => filter.frameworkFilter.includes(item)))
+        if (filter.search) {
+            filteredData = filteredData.filter(
+                (data) =>
+                    (data.categories ? data.categories.join(',') : '').toLowerCase().indexOf(filter.search.toLowerCase()) > -1 ||
+                    data.templateName.toLowerCase().indexOf(filter.search.toLowerCase()) > -1 ||
+                    (data.description && data.description.toLowerCase().indexOf(filter.search.toLowerCase()) > -1)
+            )
+        }
+
+        const usecases = []
+        for (let i = 0; i < filteredData.length; i += 1) {
+            if (filteredData[i].flowData) {
+                usecases.push(...filteredData[i].usecases)
+            }
+        }
+        setEligibleUsecases(Array.from(new Set(usecases)).sort())
     }
 
     const onUseTemplate = (selectedTool) => {
@@ -189,7 +208,7 @@ const Marketplace = () => {
     }
 
     const goToCanvas = (selectedChatflow) => {
-        navigate(`/templates/${selectedChatflow.id}`, { state: selectedChatflow })
+        navigate(`/marketplace/${selectedChatflow.id}`, { state: selectedChatflow })
     }
 
     useEffect(() => {
@@ -206,12 +225,13 @@ const Marketplace = () => {
         if (getAllTemplatesMarketplacesApi.data) {
             try {
                 const flows = getAllTemplatesMarketplacesApi.data
-
+                const usecases = []
                 const images = {}
                 for (let i = 0; i < flows.length; i += 1) {
                     if (flows[i].flowData) {
                         const flowDataStr = flows[i].flowData
                         const flowData = JSON.parse(flowDataStr)
+                        usecases.push(...flows[i].usecases)
                         const nodes = flowData.nodes || []
                         images[flows[i].id] = []
                         for (let j = 0; j < nodes.length; j += 1) {
@@ -223,15 +243,25 @@ const Marketplace = () => {
                     }
                 }
                 setImages(images)
+                setUsecases(Array.from(new Set(usecases)).sort())
+                setEligibleUsecases(Array.from(new Set(usecases)).sort())
             } catch (e) {
                 console.error(e)
             }
         }
     }, [getAllTemplatesMarketplacesApi.data])
 
+    useEffect(() => {
+        if (getAllTemplatesMarketplacesApi.error) {
+            setError(getAllTemplatesMarketplacesApi.error)
+        }
+    }, [getAllTemplatesMarketplacesApi.error])
+
+    console.log(eligibleUsecases, 'eligibleUsecases')
+
     return (
         <>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#e3f2fd' }}>
+            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : `url(${image1}) !important` }}>
                 <Box sx={{ flexGrow: 1 }}>
                     <Toolbar
                         disableGutters={true}
@@ -244,23 +274,6 @@ const Marketplace = () => {
                             width: '100%'
                         }}
                     >
-                        {/*<h1>Templates</h1>*/}
-                        {/*<TextField*/}
-                        {/*    size='small'*/}
-                        {/*    id='search-filter-textbox'*/}
-                        {/*    sx={{ display: { xs: 'none', sm: 'block' }, ml: 3 }}*/}
-                        {/*    variant='outlined'*/}
-                        {/*    fullWidth='true'*/}
-                        {/*    placeholder='Search name or description or node name'*/}
-                        {/*    onChange={onSearchChange}*/}
-                        {/*    InputProps={{*/}
-                        {/*        startAdornment: (*/}
-                        {/*            <InputAdornment position='start'>*/}
-                        {/*                <IconSearch />*/}
-                        {/*            </InputAdornment>*/}
-                        {/*        )*/}
-                        {/*    }}*/}
-                        {/*/>*/}
                         <h1
                             style={{
                                 background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
@@ -316,29 +329,184 @@ const Marketplace = () => {
                                 )
                             }}
                         />
-                        {minScreen ? (
-                            <IconButton sx={{ ml: 3 }} onClick={() => setOpen(!open)} aria-label={open ? 'Hide Filters' : 'Show Filters'}>
-                                {open ? <IconFilterList /> : <IconFilterList />}
-                            </IconButton>
-                        ) : (
-                            <Button
-                                sx={{
-                                    width: '220px',
-                                    ml: 3,
-                                    mr: 5,
-                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    '&:hover': {
-                                        borderColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
-                                    }
+                        <Box sx={{ flexGrow: 1, mb: 2 }}>
+                            <Toolbar
+                                disableGutters={true}
+                                style={{
+                                    margin: 1,
+                                    padding: 1,
+                                    paddingBottom: 10,
+                                    display: 'flex',
+                                    justifyContent: 'flex-start',
+                                    width: '100%'
                                 }}
-                                variant='outlined'
-                                onClick={() => setOpen(!open)}
-                                startIcon={open ? <IconChevronsUp /> : <IconChevronsDown />}
                             >
-                                {open ? 'Hide Filters' : 'Show Filters'}
-                            </Button>
-                        )}
+                                <Stack direction={{ base: 'column', md: 'row' }} mr={8} spacing={8}>
+                                    <FormControl variant='standard' style={{ width: '130px' }}>
+                                        <InputLabel
+                                            id='demo-simple-select-standard-label'
+                                            sx={{
+                                                color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                '&.Mui-focused': {
+                                                    color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4'
+                                                }
+                                            }}
+                                        >
+                                            AI Workspace
+                                        </InputLabel>
+                                        <Select
+                                            labelId='ai-workspace-label'
+                                            id='ai-workspace'
+                                            multiple
+                                            value={typeFilter}
+                                            onChange={handleTypeFilterChange}
+                                            renderValue={(selected) => selected.join(', ')}
+                                            sx={{
+                                                '&::before': {
+                                                    borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
+                                                },
+                                                '&::after': {
+                                                    borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
+                                                },
+                                                '& .MuiSelect-icon': {
+                                                    background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                    color: '#ffff'
+                                                }
+                                            }}
+                                        >
+                                            {types.map((name) => (
+                                                <FormControlLabel
+                                                    key={name}
+                                                    sx={{ display: 'flex', ml: 1, gap: 1 }}
+                                                    control={
+                                                        <Checkbox
+                                                            checked={typeFilter.indexOf(name) > -1}
+                                                            onChange={handleTypeFilterChange}
+                                                            value={name}
+                                                        />
+                                                    }
+                                                    label={name}
+                                                />
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl variant='standard' style={{ width: '130px' }}>
+                                        <InputLabel
+                                            id='framework-label'
+                                            sx={{
+                                                color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                '&.Mui-focused': {
+                                                    color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4'
+                                                }
+                                            }}
+                                        >
+                                            Framework
+                                        </InputLabel>
+                                        <Select
+                                            labelId='framework-label'
+                                            id='framework'
+                                            multiple
+                                            value={frameworkFilter}
+                                            onChange={handleFrameworkFilterChange}
+                                            renderValue={(selected) => selected.join(', ')}
+                                            sx={{
+                                                '&::before': {
+                                                    borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
+                                                },
+                                                '&::after': {
+                                                    borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
+                                                },
+                                                '& .MuiSelect-icon': {
+                                                    background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                    color: '#ffff'
+                                                }
+                                            }}
+                                        >
+                                            {framework.map((name) => (
+                                                <FormControlLabel
+                                                    key={name}
+                                                    sx={{ display: 'flex', ml: 2, gap: 2, p: 1 }}
+                                                    control={
+                                                        <Checkbox
+                                                            checked={frameworkFilter.indexOf(name) > -1}
+                                                            sx={{ p: 0 }}
+                                                            onChange={handleFrameworkFilterChange}
+                                                            value={name}
+                                                        />
+                                                    }
+                                                    label={name}
+                                                />
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                    <FormControl variant='standard' style={{ width: '130px' }}>
+                                        <InputLabel
+                                            id='Select-label'
+                                            sx={{
+                                                color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                '&.Mui-focused': {
+                                                    color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4'
+                                                }
+                                            }}
+                                        >
+                                            Select Usecases
+                                        </InputLabel>
+                                        <Select
+                                            labelId='usecases-label'
+                                            id='usecases'
+                                            multiple
+                                            value={selectedUsecases}
+                                            onChange={handleFrameworkFilterChange}
+                                            renderValue={(selected) => selected.join(', ')}
+                                            sx={{
+                                                '&::before': {
+                                                    borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
+                                                },
+                                                '&::after': {
+                                                    borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
+                                                },
+                                                '& .MuiSelect-icon': {
+                                                    background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                    color: '#ffff'
+                                                }
+                                            }}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    sx: {
+                                                        top: '170px !important',
+                                                        height: '320px !important',
+                                                        width: '250px !important'
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            {usecases.map((usecase, index) => (
+                                                <FormControlLabel
+                                                    sx={{ display: 'flex', ml: 2, gap: 2, p: 1 }}
+                                                    key={index}
+                                                    size='small'
+                                                    control={
+                                                        <Checkbox
+                                                            checked={selectedUsecases.includes(usecase)}
+                                                            onChange={(event) => {
+                                                                setSelectedUsecases(
+                                                                    event.target.checked
+                                                                        ? [...selectedUsecases, usecase]
+                                                                        : selectedUsecases.filter((item) => item !== usecase)
+                                                                )
+                                                            }}
+                                                        />
+                                                    }
+                                                    label={usecase}
+                                                />
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Stack>
+                            </Toolbar>
+                        </Box>
+
                         <Box sx={{ flexGrow: 1 }} />
                         <ButtonGroup sx={{ maxHeight: 40 }} disableElevation variant='contained' aria-label='outlined primary button group'>
                             <ButtonGroup disableElevation variant='contained' aria-label='outlined primary button group'>
@@ -351,7 +519,6 @@ const Marketplace = () => {
                                 >
                                     <ToggleButton
                                         sx={{
-                                            // color: theme?.customization?.isDarkMode ? 'white' : 'inherit',
                                             color: theme?.customization?.isDarkMode ? '#E22A90' : '#E22A90',
                                             borderRadius: '20px 0 0 20px',
                                             '&.Mui-selected': {
@@ -366,7 +533,6 @@ const Marketplace = () => {
                                     </ToggleButton>
                                     <ToggleButton
                                         sx={{
-                                            // color: theme?.customization?.isDarkMode ? 'white' : 'inherit',
                                             color: customization.isDarkMode ? '#E22A90' : '#E22A90',
                                             borderRadius: '0 20px 20px 0',
                                             '&.Mui-selected': {
@@ -384,150 +550,72 @@ const Marketplace = () => {
                         </ButtonGroup>
                     </Toolbar>
                 </Box>
-                {open && (
-                    <Box sx={{ flexGrow: 1, mb: 2 }}>
-                        <Toolbar
-                            disableGutters={true}
-                            style={{
-                                margin: 1,
-                                padding: 1,
-                                paddingBottom: 10,
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                width: '100%',
-                                borderBottom: '1px solid'
-                            }}
-                        >
-                            {/* <FormControl sx={{ m: 1, width: 250 }}>
-                                <InputLabel size='small' id='filter-badge-label'>
-                                    Tag
-                                </InputLabel>
-                                <Select
-                                    labelId='filter-badge-label'
-                                    id='filter-badge-checkbox'
-                                    size='small'
-                                    multiple
-                                    value={badgeFilter}
-                                    onChange={handleBadgeFilterChange}
-                                    input={<OutlinedInput label='Badge' />}
-                                    renderValue={(selected) => selected.join(', ')}
-                                    MenuProps={MenuProps}
-                                >
-                                    {badges.map((name) => (
-                                        <MenuItem key={name} value={name}>
-                                            <Checkbox checked={badgeFilter.indexOf(name) > -1} />
-                                            <ListItemText primary={name} />
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl> */}
-                            <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
-                                <FormControl
-                                    component='fieldset'
-                                    sx={{
-                                        width: 280,
-                                        border: `1.5px solid ${customization.isDarkMode ? '#E22A90' : '#3C5BA4'}`,
-                                        borderRadius: '10px'
-                                    }}
-                                >
-                                    <legend style={{ marginLeft: '28px' }}>AI Workspace</legend>
-                                    <FormGroup row sx={{ paddingLeft: '26px', marginBottom: '8px' }}>
-                                        {types.map((name) => (
-                                            <FormControlLabel
-                                                key={name}
-                                                control={
-                                                    <Checkbox
-                                                        checked={typeFilter.indexOf(name) > -1}
-                                                        onChange={handleTypeFilterChange}
-                                                        value={name}
-                                                        // sx={{
-                                                        //     color: `${customization.isDarkMode ? '#E22A90' : '#3C5BA4'}`
-                                                        // }}
-                                                    />
-                                                }
-                                                label={name}
-                                            />
-                                        ))}
-                                    </FormGroup>
-                                </FormControl>
-                                <FormControl
-                                    component='fieldset'
-                                    sx={{
-                                        width: 280,
-                                        border: `1.5px solid ${customization.isDarkMode ? '#E22A90' : '#3C5BA4'}`,
-                                        borderRadius: '10px'
-                                    }}
-                                >
-                                    <legend style={{ marginLeft: '28px' }}>Framework</legend>
-                                    <FormGroup row sx={{ paddingLeft: '26px', marginBottom: '8px' }}>
-                                        {framework.map((name) => (
-                                            <FormControlLabel
-                                                key={name}
-                                                control={
-                                                    <Checkbox
-                                                        checked={frameworkFilter.indexOf(name) > -1}
-                                                        onChange={handleFrameworkFilterChange}
-                                                        value={name}
-                                                        // sx={{
-                                                        //     color: `${customization.isDarkMode ? '#E22A90' : '#3C5BA4'}`
-                                                        // }}
-                                                    />
-                                                }
-                                                label={name}
-                                            />
-                                        ))}
-                                    </FormGroup>
-                                </FormControl>
-                            </Stack>
-                        </Toolbar>
-                    </Box>
-                )}
 
-                {!isLoading && (!view || view === 'card') && getAllTemplatesMarketplacesApi?.data && (
-                    <>
-                        <Grid container spacing={gridSpacing}>
-                            {getAllTemplatesMarketplacesApi?.data
-                                .filter(filterByBadge)
-                                .filter(filterByType)
-                                .filter(filterFlows)
-                                .filter(filterByFramework)
-                                .map((data, index) => (
-                                    <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
-                                        {data.badge && (
-                                            <Badge
-                                                sx={{
-                                                    '& .MuiBadge-badge': {
-                                                        right: 20
-                                                    }
-                                                }}
-                                                // badgeContent={data.badge}
-                                                color={data.badge === 'POPULAR' ? 'primary' : 'error'}
-                                            >
-                                                {(data.type === 'Chatflow' || data.type === 'Agentflow') && (
-                                                    <ItemCard onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
-                                                )}
-                                                {data.type === 'Tool' && <ItemCard data={data} onClick={() => goToTool(data)} />}
-                                            </Badge>
-                                        )}
-                                        {!data.badge && (data.type === 'Chatflow' || data.type === 'Agentflow') && (
-                                            <ItemCard onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
-                                        )}
-                                        {!data.badge && data.type === 'Tool' && <ItemCard data={data} onClick={() => goToTool(data)} />}
-                                    </Grid>
-                                ))}
-                        </Grid>
-                    </>
+                {selectedUsecases.length > 0 && (
+                    <Button
+                        sx={{ width: 'max-content', borderRadius: '20px' }}
+                        variant='outlined'
+                        onClick={() => clearAllUsecases()}
+                        startIcon={<IconX />}
+                    >
+                        Clear All
+                    </Button>
                 )}
-                {!isLoading && view === 'list' && getAllTemplatesMarketplacesApi.data && (
+                {!view || view === 'card' ? (
+                    <>
+                        {isLoading ? (
+                            <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+                                <Skeleton variant='rounded' height={250} />
+                                <Skeleton variant='rounded' height={250} />
+                                <Skeleton variant='rounded' height={250} />
+                                <Skeleton variant='rounded' height={250} />
+                            </Box>
+                        ) : (
+                            <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+                                {getAllTemplatesMarketplacesApi?.data
+                                    ?.filter(filterByType)
+                                    .filter(filterFlows)
+                                    .filter(filterByFramework)
+                                    .filter(filterByUsecases)
+                                    .map((data, index) => (
+                                        <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
+                                            {data.badge && (
+                                                <Badge
+                                                    sx={{
+                                                        '& .MuiBadge-badge': {
+                                                            right: 20
+                                                        }
+                                                    }}
+                                                    // badgeContent={data.badge}
+                                                    color={data.badge === 'POPULAR' ? 'primary' : 'error'}
+                                                >
+                                                    {(data.type === 'Chatflow' || data.type === 'Agentflow') && (
+                                                        <ItemCard onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
+                                                    )}
+                                                    {data.type === 'Tool' && <ItemCard data={data} onClick={() => goToTool(data)} />}
+                                                </Badge>
+                                            )}
+                                            {!data.badge && (data.type === 'Chatflow' || data.type === 'Agentflow') && (
+                                                <ItemCard onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
+                                            )}
+                                            {!data.badge && data.type === 'Tool' && <ItemCard data={data} onClick={() => goToTool(data)} />}
+                                        </Grid>
+                                    ))}
+                            </Box>
+                        )}
+                    </>
+                ) : (
                     <MarketplaceTable
                         sx={{ mt: 20 }}
                         data={getAllTemplatesMarketplacesApi.data}
                         filterFunction={filterFlows}
                         filterByType={filterByType}
-                        filterByBadge={filterByBadge}
                         filterByFramework={filterByFramework}
+                        filterByUsecases={filterByUsecases}
                         goToTool={goToTool}
                         goToCanvas={goToCanvas}
+                        isLoading={isLoading}
+                        setError={setError}
                     />
                 )}
 
