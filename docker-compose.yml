@@ -5,7 +5,7 @@ services:
         image: thub/thub
         restart: always
         environment:
-            - PORT=3000
+            - PORT="3000"
             - CORS_ORIGINS=${CORS_ORIGINS}
             - IFRAME_ORIGINS=${IFRAME_ORIGINS}
             - FLOWISE_USERNAME=${FLOWISE_USERNAME}
