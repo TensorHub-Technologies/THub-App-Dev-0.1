@@ -30,5 +30,7 @@ RUN pnpm install
 RUN pnpm build
 
 EXPOSE 3000
+EXPOSE 8080
+
 
 CMD [ "pnpm", "start" ]
