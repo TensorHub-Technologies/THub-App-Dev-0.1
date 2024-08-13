@@ -49,7 +49,6 @@ export const ChatPopUp = ({ chatflowid }) => {
         setDragging(true)
         const { left, top, right } = paperRef.current.getBoundingClientRect()
 
-        // Calculate the initial values relative to the viewport width and height
         const initialRight = window.innerWidth - right
 
         setPosition({
@@ -74,7 +73,6 @@ export const ChatPopUp = ({ chatflowid }) => {
     }
 
     const handleMouseUp = () => {
-        console.log('mouse button left')
         setDragging(false)
     }
 
@@ -291,7 +289,13 @@ export const ChatPopUp = ({ chatflowid }) => {
                                     boxShadow
                                     shadow={theme.shadows[16]}
                                 >
-                                    <ChatMessage chatflowid={chatflowid} open={open} previews={previews} setPreviews={setPreviews} />
+                                    <ChatMessage
+                                        chatflowid={chatflowid}
+                                        open={open}
+                                        previews={previews}
+                                        className='text_area'
+                                        setPreviews={setPreviews}
+                                    />
                                 </MainCard>
                             </ClickAwayListener>
                         </Paper>
