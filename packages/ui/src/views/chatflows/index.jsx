@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 // material-ui
-import { Grid, Box, Stack, Toolbar, ToggleButton, ButtonGroup, InputAdornment, TextField, MenuItem, Select } from '@mui/material'
+import { Grid, Box, Stack, Toolbar, ToggleButton, Skeleton, ButtonGroup, InputAdornment, TextField, MenuItem, Select } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
@@ -366,6 +366,18 @@ const Chatflows = () => {
                             </Select> */}
                         </Toolbar>
                     </Box>
+                    {isLoading && (
+                        <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+                            <Skeleton variant='rounded' width='100%' height={280} />
+                            <Skeleton variant='rounded' width='100%' height={280} />
+                            <Skeleton variant='rounded' width='100%' height={280} />
+                            <Skeleton variant='rounded' width='100%' height={280} />
+                            <Skeleton variant='rounded' width='100%' height={280} />
+                            <Skeleton variant='rounded' width='100%' height={280} />
+                            <Skeleton variant='rounded' width='100%' height={280} />
+                            <Skeleton variant='rounded' width='100%' height={280} />
+                        </Box>
+                    )}
                     {!isLoading && (!view || view === 'card') && getAllChatflowsApi.data && (
                         <Grid container spacing={gridSpacing}>
                             {sortData(getAllChatflowsApi.data) // Apply sorting

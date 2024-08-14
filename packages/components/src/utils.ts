@@ -466,10 +466,10 @@ export const getEncryptionKeyPath = (): string => {
  * @returns {Promise<string>}
  */
 const getEncryptionKey = async (): Promise<string> => {
-    /*if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
+    if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
         console.log('*** component.getEncryptionKey  encryption key: ', process.env.FLOWISE_SECRETKEY_OVERWRITE)
         return process.env.FLOWISE_SECRETKEY_OVERWRITE
-    }*/
+    }
     try {
         console.log('*** component.getEncryptionKey from path encryption key: ', await fs.promises.readFile(getEncryptionKeyPath(), 'utf8'))
         return await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
