@@ -75,6 +75,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 // Utils
 import { isValidURL, removeDuplicateURL, setLocalStorageChatflow, getLocalStorageChatflow } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
+import TextToSpeech from './TextToSpeech'
 
 const messageImageStyle = {
     width: '128px',
@@ -140,6 +141,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const [isRecording, setIsRecording] = useState(false)
     const [recordingNotSupported, setRecordingNotSupported] = useState(false)
     const [isLoadingRecording, setIsLoadingRecording] = useState(false)
+    const [rec, setRec] = useState(false)
 
     const isFileAllowedForUpload = (file) => {
         const constraints = getAllowChatFlowUploads.data
@@ -365,6 +367,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
 
     const onRecordingStopped = async () => {
         setIsLoadingRecording(true)
+        setRec(true)
         stopAudioRecording(addRecordingToPreviews)
     }
 
@@ -383,7 +386,13 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         }
     }
 
-    const onChange = useCallback((e) => setUserInput(e.target.value), [setUserInput])
+    const onChange = useCallback(
+        (e) => {
+            setUserInput(e.target.value)
+            setRec(false)
+        },
+        [setUserInput]
+    )
 
     const updateLastMessage = (text) => {
         setMessages((prevMessages) => {
@@ -1314,6 +1323,10 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                     >
                                                         {message.message}
                                                     </MemoizedReactMarkdown>
+                                                    {!loading &&
+                                                        rec &&
+                                                        messages?.length > 1 &&
+                                                        message === messages[messages.length - 1] && <TextToSpeech messages={message} />}
                                                 </>
                                             )}
                                         </div>
