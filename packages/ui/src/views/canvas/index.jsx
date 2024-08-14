@@ -647,7 +647,11 @@ const Canvas = () => {
 
                     <Box sx={{ width: '100%' }} onClick={handleClick}>
                         <div className='reactflow-parent-wrapper'>
-                            <div className='reactflow-wrapper' ref={reactFlowWrapper}>
+                            <div
+                                className='reactflow-wrapper'
+                                style={{ background: customization.isDarkMode ? '#000' : '#fff' }}
+                                ref={reactFlowWrapper}
+                            >
                                 <ReactFlow
                                     nodes={nodes}
                                     edges={edges}
