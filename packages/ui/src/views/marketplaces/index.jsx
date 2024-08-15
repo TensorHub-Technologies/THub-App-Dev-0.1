@@ -565,10 +565,14 @@ const Marketplace = () => {
                     <>
                         {isLoading ? (
                             <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
-                                <Skeleton variant='rounded' height={250} />
-                                <Skeleton variant='rounded' height={250} />
-                                <Skeleton variant='rounded' height={250} />
-                                <Skeleton variant='rounded' height={250} />
+                                <Skeleton variant='rounded' width='100%' height={280} />
+                                <Skeleton variant='rounded' width='100%' height={280} />
+                                <Skeleton variant='rounded' width='100%' height={280} />
+                                <Skeleton variant='rounded' width='100%' height={280} />
+                                <Skeleton variant='rounded' width='100%' height={280} />
+                                <Skeleton variant='rounded' width='100%' height={280} />
+                                <Skeleton variant='rounded' width='100%' height={280} />
+                                <Skeleton variant='rounded' width='100%' height={280} />
                             </Box>
                         ) : (
                             <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>

@@ -32,7 +32,6 @@ import {
     FlowiseMemory,
     IFileUpload
 } from 'thub-components'
-import { randomBytes } from 'crypto'
 import { AES, enc } from 'crypto-js'
 
 import { ChatFlow } from '../database/entities/ChatFlow'
@@ -1197,7 +1196,7 @@ async function uploadToGCS(remotePath: string, content: string): Promise<void> {
  * @returns {string}
  */
 export const generateEncryptKey = (): string => {
-    return randomBytes(24).toString('base64')
+    return 'noBCQuIDsUMOQ1+dzj6koOmlAympDpwO'
 }
 
 /**
@@ -1205,10 +1204,10 @@ export const generateEncryptKey = (): string => {
  * @returns {Promise<string>}
  */
 export const getEncryptionKey = async (): Promise<string> => {
-    /*if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
+    if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
         console.log('*** server.getEncryptionKey encryption_key_SECRETKEY_OVERWRITE: ', process.env.FLOWISE_SECRETKEY_OVERWRITE)
         return process.env.FLOWISE_SECRETKEY_OVERWRITE
-    }*/
+    }
     try {
         const key = await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
         await uploadToGCS('.flowise/encryption.key', key)
