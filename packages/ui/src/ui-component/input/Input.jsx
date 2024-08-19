@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { FormControl, OutlinedInput, InputBase, Popover } from '@mui/material'
+import { FormControl, Popover, TextField } from '@mui/material'
 import SelectVariable from '@/ui-component/json/SelectVariable'
 import { getAvailableNodesForVariable } from '@/utils/genericHelper'
+import { useSelector } from 'react-redux'
 
 export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disabled = false }) => {
     const [myValue, setMyValue] = useState(value ?? '')
     const [anchorEl, setAnchorEl] = useState(null)
     const [availableNodesForVariable, setAvailableNodesForVariable] = useState([])
     const ref = useRef(null)
+    const customization = useSelector((state) => state.customization)
 
     const openPopOver = Boolean(anchorEl)
 
@@ -52,10 +54,10 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
         <>
             {inputParam.name === 'note' ? (
                 <FormControl sx={{ width: '100%', height: 'auto' }} size='small'>
-                    <InputBase
-                        id={nodeId}
+                    <TextField
+                        id='standard-basic'
                         size='small'
-                        disabled={disabled}
+                        variant='standard'
                         type={getInputType(inputParam.type)}
                         placeholder={inputParam.placeholder}
                         multiline={!!inputParam.rows}
@@ -84,13 +86,23 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                                 }
                             }
                         }}
+                        InputProps={{
+                            disableUnderline: true,
+                            sx: {
+                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                '&:hover': {
+                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                }
+                            }
+                        }}
                     />
                 </FormControl>
             ) : inputParam.name === 'temperature' ? (
                 <FormControl sx={{ mt: 1, width: '100%' }} size='small'>
-                    <OutlinedInput
-                        id={inputParam.name}
+                    <TextField
+                        id='standard-basic'
                         size='small'
+                        variant='standard'
                         disabled={disabled}
                         type={getInputType(inputParam.type)}
                         placeholder={inputParam.placeholder}
@@ -111,14 +123,23 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                                 height: inputParam.rows ? '90px' : 'inherit'
                             }
                         }}
+                        InputProps={{
+                            disableUnderline: true,
+                            sx: {
+                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                '&:hover': {
+                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                }
+                            }
+                        }}
                     />
                 </FormControl>
             ) : (
                 <FormControl sx={{ mt: 1, width: '100%' }} size='small'>
-                    <OutlinedInput
-                        id={inputParam.name}
+                    <TextField
+                        id='standard-basic'
                         size='small'
-                        disabled={disabled}
+                        variant='standard'
                         type={getInputType(inputParam.type)}
                         placeholder={inputParam.placeholder}
                         multiline={!!inputParam.rows}
@@ -133,6 +154,15 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                             step: inputParam.step ?? 0.1,
                             style: {
                                 height: inputParam.rows ? '90px' : 'inherit'
+                            }
+                        }}
+                        InputProps={{
+                            disableUnderline: true,
+                            sx: {
+                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                '&:hover': {
+                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                }
                             }
                         }}
                     />

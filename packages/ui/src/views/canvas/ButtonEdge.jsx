@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useContext } from 'react'
 import { SET_DIRTY } from '@/store/actions'
 import { flowContext } from '@/store/context/ReactFlowContext'
+import { useSelector } from 'react-redux'
 
 import './index.css'
 
@@ -24,6 +25,7 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
     const { deleteEdge } = useContext(flowContext)
 
     const dispatch = useDispatch()
+    const customization = useSelector((state) => state.customization)
 
     const onEdgeClick = (evt, id) => {
         evt.stopPropagation()
@@ -33,7 +35,13 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
 
     return (
         <>
-            <path id={id} style={style} className='react-flow__edge-path' d={edgePath} markerEnd={markerEnd} />
+            <path
+                id={id}
+                style={{ stroke: customization?.isDarkMode ? '#fff' : '#000', strokeWidth: '1px' }}
+                className='react-flow__edge-path'
+                d={edgePath}
+                markerEnd={markerEnd}
+            />
             {data && data.label && (
                 <EdgeText
                     x={sourceX + 10}
@@ -54,7 +62,14 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
                 requiredExtensions='http://www.w3.org/1999/xhtml'
             >
                 <div>
-                    <button className='edgebutton' onClick={(event) => onEdgeClick(event, id)}>
+                    <button
+                        className='edgebutton'
+                        onClick={(event) => onEdgeClick(event, id)}
+                        style={{
+                            background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                            color: customization?.isDarkMode ? '#000' : '#fff'
+                        }}
+                    >
                         ×
                     </button>
                 </div>

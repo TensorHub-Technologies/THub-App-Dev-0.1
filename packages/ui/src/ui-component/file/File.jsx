@@ -4,9 +4,12 @@ import { useTheme } from '@mui/material/styles'
 import { FormControl, Button } from '@mui/material'
 import { IconUpload } from '@tabler/icons'
 import { getFileName } from '@/utils/genericHelper'
+import { useSelector } from 'react-redux'
 
 export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChange, disabled = false }) => {
     const theme = useTheme()
+
+    const customization = useSelector((state) => state.customization)
 
     const [myValue, setMyValue] = useState(value ?? '')
 
@@ -97,7 +100,14 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                 component='label'
                 fullWidth
                 startIcon={<IconUpload />}
-                sx={{ marginRight: '1rem' }}
+                sx={{
+                    marginRight: '1rem',
+                    color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                    borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                    '&:hover': {
+                        borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                    }
+                }}
             >
                 {'Upload File'}
                 <input
@@ -106,6 +116,13 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                     accept={fileType}
                     hidden
                     onChange={(e) => (formDataUpload ? handleFormDataUpload(e) : handleFileUpload(e))}
+                    style={{
+                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                        borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                        '&:hover': {
+                            borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                        }
+                    }}
                 />
             </Button>
         </FormControl>
