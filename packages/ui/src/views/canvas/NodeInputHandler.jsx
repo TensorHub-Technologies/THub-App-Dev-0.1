@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles'
-import { Box, Typography, Tooltip, IconButton, Button } from '@mui/material'
+import { Box, Typography, Tooltip, IconButton, Button, TextField } from '@mui/material'
 import IconAutoFixHigh from '@mui/icons-material/AutoFixHigh'
 import { tooltipClasses } from '@mui/material/Tooltip'
 import { IconArrowsMaximize, IconEdit, IconAlertTriangle } from '@tabler/icons'
@@ -20,7 +20,6 @@ import { File } from '@/ui-component/file/File'
 import { SwitchInput } from '@/ui-component/switch/Switch'
 import { flowContext } from '@/store/context/ReactFlowContext'
 import { isValidConnection } from '@/utils/genericHelper'
-import { JsonEditorInput } from '@/ui-component/json/JsonEditor'
 import { TooltipWithParser } from '@/ui-component/tooltip/TooltipWithParser'
 import { CodeEditor } from '@/ui-component/editor/CodeEditor'
 import ToolDialog from '@/views/tools/ToolDialog'
@@ -223,13 +222,13 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                             style={{
                                 height: 10,
                                 width: 10,
-                                backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
+                                backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                                 top: position
                             }}
                         />
                     </CustomWidthTooltip>
                     <Box sx={{ p: 2 }}>
-                        <Typography>
+                        <Typography style={{ color: customization.isDarkMode ? '#fff' : '#000' }}>
                             {inputAnchor.label}
                             {!inputAnchor.optional && <span style={{ color: 'red' }}>&nbsp;*</span>}
                             {inputAnchor.description && <TooltipWithParser style={{ marginLeft: 10 }} title={inputAnchor.description} />}
@@ -268,7 +267,17 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                             width: '100%'
                                         }}
                                         disabled={disabled}
-                                        sx={{ borderRadius: 25, width: '100%', mb: 2, mt: 0 }}
+                                        sx={{
+                                            borderRadius: 25,
+                                            width: '100%',
+                                            mb: 2,
+                                            mt: 0,
+                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            '&:hover': {
+                                                borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                            }
+                                        }}
                                         variant='outlined'
                                         onClick={() => onShowPromptHubButtonClicked()}
                                         endIcon={<IconAutoFixHigh />}
@@ -284,7 +293,7 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                 </>
                             )}
                         <div style={{ display: 'flex', flexDirection: 'row' }}>
-                            <Typography>
+                            <Typography style={{ color: customization.isDarkMode ? '#fff' : '#000' }}>
                                 {inputParam.label}
                                 {!inputParam.optional && <span style={{ color: 'red' }}>&nbsp;*</span>}
                                 {inputParam.description && <TooltipWithParser style={{ marginLeft: 10 }} title={inputParam.description} />}
@@ -332,6 +341,15 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                 onSelect={(newValue) => {
                                     data.credential = newValue
                                     data.inputs[FLOWISE_CREDENTIAL_ID] = newValue // in case data.credential is not updated
+                                }}
+                                InputProps={{
+                                    disableUnderline: true,
+                                    sx: {
+                                        borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                        '&:hover': {
+                                            borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                        }
+                                    }
                                 }}
                             />
                         )}
@@ -392,7 +410,9 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                         {inputParam.type === 'json' && (
                             <>
                                 {!inputParam?.acceptVariable && (
-                                    <JsonEditorInput
+                                    <TextField
+                                        id='standard-basic'
+                                        variant='standard'
                                         disabled={disabled}
                                         onChange={(newValue) => (data.inputs[inputParam.name] = newValue)}
                                         value={
@@ -402,6 +422,15 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                             ''
                                         }
                                         isDarkMode={customization.isDarkMode}
+                                        InputProps={{
+                                            disableUnderline: true,
+                                            sx: {
+                                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                                '&:hover': {
+                                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                                }
+                                            }
+                                        }}
                                     />
                                 )}
                                 {inputParam?.acceptVariable && (
@@ -411,7 +440,12 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                                 borderRadius: 25,
                                                 width: '100%',
                                                 mb: 0,
-                                                mt: 2
+                                                mt: 2,
+                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                '&:hover': {
+                                                    borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                                }
                                             }}
                                             variant='outlined'
                                             disabled={disabled}
@@ -485,7 +519,16 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                             width: '100%'
                                         }}
                                         disabled={disabled}
-                                        sx={{ borderRadius: '12px', width: '100%', mt: 1 }}
+                                        sx={{
+                                            borderRadius: '12px',
+                                            width: '100%',
+                                            mt: 1,
+                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            '&:hover': {
+                                                borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                            }
+                                        }}
                                         variant='outlined'
                                         onClick={() =>
                                             onManageLinksDialogClicked(

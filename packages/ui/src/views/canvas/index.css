@@ -1,8 +1,7 @@
 .edgebutton {
     width: 20px;
     height: 20px;
-    /*background: #eee;*/
-    background: #e22a90;
+    /* background: #e22a90; */
     border: 1px solid #fff;
     cursor: pointer;
     border-radius: 50%;

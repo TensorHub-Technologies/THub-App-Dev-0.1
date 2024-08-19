@@ -156,7 +156,7 @@ const Chatflows = () => {
     return (
         <>
             {showModal && <UserInfo showModal={showModal} setShowModal={setShowModal} />}
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : ` #e3f2fd` }}>
+            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : `#f5faff` }}>
                 <Stack flexDirection='column'>
                     <Box sx={{ flexGrow: 1 }}>
                         <Toolbar

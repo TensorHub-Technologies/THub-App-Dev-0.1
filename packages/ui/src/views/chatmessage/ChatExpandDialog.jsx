@@ -2,9 +2,8 @@ import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 
-import { Dialog, DialogContent, DialogTitle, Button } from '@mui/material'
+import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { ChatMessage } from './ChatMessage'
-import { StyledButton } from '@/ui-component/button/StyledButton'
 import { IconX, IconEraser, IconMinus } from '@tabler/icons'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 
@@ -25,7 +24,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {dialogProps.title}
                     <div style={{ flex: 1 }}></div>
-                    {open && customization.isDarkMode && (
+                    {/* {open && customization.isDarkMode && (
                         <StyledButton
                             variant='outlined'
                             color='error'
@@ -35,7 +34,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                         >
                             Clear Chat
                         </StyledButton>
-                    )}
+                    )} */}
                     <StyledFab
                         sx={{
                             position: 'absolute',
@@ -89,11 +88,11 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                     >
                         <IconX />
                     </StyledFab>
-                    {open && !customization.isDarkMode && (
+                    {/* {open && !customization.isDarkMode && (
                         <Button variant='outlined' color='error' title='Clear Conversation' onClick={onClear} startIcon={<IconEraser />}>
                             Clear Chat
                         </Button>
-                    )}
+                    )} */}
                 </div>
             </DialogTitle>
             <DialogContent

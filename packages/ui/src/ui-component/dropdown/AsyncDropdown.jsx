@@ -139,16 +139,25 @@ export const AsyncDropdown = ({
                 loading={loading}
                 renderInput={(params) => (
                     <TextField
+                        id='standard-basic'
+                        variant='standard'
                         {...params}
                         value={internalValue}
                         InputProps={{
                             ...params.InputProps,
+                            disableUnderline: true,
                             endAdornment: (
                                 <Fragment>
                                     {loading ? <CircularProgress color='inherit' size={20} /> : null}
                                     {params.InputProps.endAdornment}
                                 </Fragment>
-                            )
+                            ),
+                            sx: {
+                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                '&:hover': {
+                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                }
+                            }
                         }}
                     />
                 )}

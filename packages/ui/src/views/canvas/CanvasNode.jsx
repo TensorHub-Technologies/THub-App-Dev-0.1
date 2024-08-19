@@ -330,7 +330,11 @@ const CanvasNode = ({ data }) => {
                                                     borderRadius: 25,
                                                     width: '90%',
                                                     mb: 2,
-                                                    color: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                                    color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                    borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                    '&:hover': {
+                                                        borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                                    }
                                                 }}
                                                 variant='outlined'
                                                 onClick={onDialogClicked}
