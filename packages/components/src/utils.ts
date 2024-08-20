@@ -26,6 +26,22 @@ export const availableDependencies = [
     '@google-ai/generativelanguage',
     '@google/generative-ai',
     '@huggingface/inference',
+    '@langchain/anthropic',
+    '@langchain/aws',
+    '@langchain/cohere',
+    '@langchain/community',
+    '@langchain/core',
+    '@langchain/google-genai',
+    '@langchain/google-vertexai',
+    '@langchain/groq',
+    '@langchain/langgraph',
+    '@langchain/mistralai',
+    '@langchain/mongodb',
+    '@langchain/ollama',
+    '@langchain/openai',
+    '@langchain/pinecone',
+    '@langchain/qdrant',
+    '@langchain/weaviate',
     '@notionhq/client',
     '@opensearch-project/opensearch',
     '@pinecone-database/pinecone',
@@ -450,7 +466,6 @@ const getEncryptionKeyFilePath = (): string => {
     ]
     for (const checkPath of checkPaths) {
         if (fs.existsSync(checkPath)) {
-            console.log('*** component.getEncryptionKeyFilePath encryption key path: ', checkPath)
             return checkPath
         }
     }
@@ -467,11 +482,9 @@ export const getEncryptionKeyPath = (): string => {
  */
 const getEncryptionKey = async (): Promise<string> => {
     if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
-        console.log('*** component.getEncryptionKey  encryption key: ', process.env.FLOWISE_SECRETKEY_OVERWRITE)
         return process.env.FLOWISE_SECRETKEY_OVERWRITE
     }
     try {
-        console.log('*** component.getEncryptionKey from path encryption key: ', await fs.promises.readFile(getEncryptionKeyPath(), 'utf8'))
         return await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
     } catch (error) {
         throw new Error(error)
@@ -487,10 +500,7 @@ const getEncryptionKey = async (): Promise<string> => {
  */
 const decryptCredentialData = async (encryptedData: string): Promise<ICommonObject> => {
     const encryptKey = await getEncryptionKey()
-    console.log('*** component.decryptCredentialData encryption key in decryptCredentialData: ', encryptKey)
-    console.log('*** component.decryptCredentialData encryptedData: ', encryptedData)
     const decryptedData = AES.decrypt(encryptedData, encryptKey)
-    console.log('*** component.decryptCredentialData decryptedData: ', decryptedData)
     try {
         return JSON.parse(decryptedData.toString(enc.Utf8))
     } catch (e) {
