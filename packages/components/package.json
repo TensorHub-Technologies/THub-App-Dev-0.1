@@ -14,10 +14,6 @@
     },
     "keywords": [],
     "homepage": "https://thub.tech",
-    "author": {
-        "name": "Henry Heng",
-        "email": "henryheng@flowiseai.com"
-    },
     "license": "SEE LICENSE IN LICENSE.md",
     "dependencies": {
         "@aws-sdk/client-bedrock-runtime": "3.422.0",
@@ -35,9 +31,10 @@
         "@google/generative-ai": "^0.15.0",
         "@huggingface/inference": "^2.6.1",
         "@langchain/anthropic": "^0.2.1",
-        "@langchain/aws": "^0.0.6",
+        "@langchain/aws": "^0.0.9",
         "@langchain/cohere": "^0.0.7",
         "@langchain/community": "^0.2.17",
+        "@langchain/core": "0.2.18",
         "@langchain/exa": "^0.0.5",
         "@langchain/google-genai": "^0.0.22",
         "@langchain/google-vertexai": "^0.0.19",
@@ -93,6 +90,7 @@
         "lodash": "^4.17.21",
         "lunary": "^0.6.16",
         "mammoth": "^1.5.1",
+        "meilisearch": "^0.41.0",
         "moment": "^2.29.3",
         "mongodb": "6.3.0",
         "mysql2": "^3.9.2",
@@ -112,6 +110,7 @@
         "socket.io": "^4.6.1",
         "srt-parser-2": "^1.2.3",
         "typeorm": "^0.3.6",
+        "typesense": "^1.8.2",
         "vm2": "^3.9.19",
         "weaviate-ts-client": "^1.1.0",
         "winston": "^3.9.0",
