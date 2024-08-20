@@ -1,10 +1,10 @@
 version: '3.1'
 
 services:
-  thub:
-    build: .  # Build the image from the current directory
-    restart: always
-    environment:
+    thub:
+        image: thub-app/thub
+        restart: always
+        environment:
             - PORT=${PORT}
             - CORS_ORIGINS=${CORS_ORIGINS}
             - IFRAME_ORIGINS=${IFRAME_ORIGINS}
