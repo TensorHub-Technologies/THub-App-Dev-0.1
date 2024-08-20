@@ -521,11 +521,8 @@ const Canvas = () => {
         } else if (updateChatflowApi.error) {
             errorFailed(`Failed to save workspace: ${updateChatflowApi.error.response.data.message}`)
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateChatflowApi.data, updateChatflowApi.error])
 
-    // Test chatflow failed
     useEffect(() => {
         if (testChatflowApi.error) {
             enqueueSnackbar({
@@ -542,8 +539,6 @@ const Canvas = () => {
                 }
             })
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [testChatflowApi.error])
 
     useEffect(() => {

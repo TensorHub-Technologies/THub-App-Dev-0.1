@@ -75,6 +75,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 // Utils
 import { isValidURL, removeDuplicateURL, setLocalStorageChatflow, getLocalStorageChatflow } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
+import TextToSpeech from './TextToSpeech'
 
 const messageImageStyle = {
     width: '128px',
@@ -119,7 +120,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const [starterPrompts, setStarterPrompts] = useState([])
 
     // feedback
-    const [chatFeedbackStatus, setChatFeedbackStatus] = useState(false)
+    const [chatFeedbackStatus, setChatFeedbackStatus] = useState(true)
     const [feedbackId, setFeedbackId] = useState('')
     const [showFeedbackContentDialog, setShowFeedbackContentDialog] = useState(false)
 
@@ -140,12 +141,10 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const [isRecording, setIsRecording] = useState(false)
     const [recordingNotSupported, setRecordingNotSupported] = useState(false)
     const [isLoadingRecording, setIsLoadingRecording] = useState(false)
+    const [rec, setRec] = useState(false)
 
     const isFileAllowedForUpload = (file) => {
         const constraints = getAllowChatFlowUploads.data
-        /**
-         * {isImageUploadAllowed: boolean, imgUploadSizeAndTypes: Array<{ fileTypes: string[], maxUploadSize: number }>}
-         */
         let acceptFile = false
         if (constraints.isImageUploadAllowed) {
             const fileType = file.type
@@ -365,6 +364,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
 
     const onRecordingStopped = async () => {
         setIsLoadingRecording(true)
+        setRec(true)
         stopAudioRecording(addRecordingToPreviews)
     }
 
@@ -383,7 +383,13 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         }
     }
 
-    const onChange = useCallback((e) => setUserInput(e.target.value), [setUserInput])
+    const onChange = useCallback(
+        (e) => {
+            setUserInput(e.target.value)
+            setRec(false)
+        },
+        [setUserInput]
+    )
 
     const updateLastMessage = (text) => {
         setMessages((prevMessages) => {
@@ -683,6 +689,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 }
                 if (config.chatFeedback) {
                     setChatFeedbackStatus(config.chatFeedback.status)
+                    console.log(config.chatFeedback.status)
                 }
 
                 if (config.leads) {
@@ -1288,7 +1295,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                 </Box>
                                             ) : (
                                                 <>
-                                                    {/* Messages are being rendered in Markdown format */}
                                                     <MemoizedReactMarkdown
                                                         remarkPlugins={[remarkGfm, remarkMath]}
                                                         rehypePlugins={[rehypeMathjax, rehypeRaw]}
@@ -1314,6 +1320,10 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                     >
                                                         {message.message}
                                                     </MemoizedReactMarkdown>
+                                                    {!loading &&
+                                                        rec &&
+                                                        messages?.length > 1 &&
+                                                        message === messages[messages.length - 1] && <TextToSpeech messages={message} />}
                                                 </>
                                             )}
                                         </div>

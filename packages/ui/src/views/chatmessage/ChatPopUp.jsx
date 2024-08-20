@@ -196,7 +196,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                     top: 20,
                     boxShadow: '0',
                     color: customization.isDarkMode ? 'white' : 'black',
-                    backgroundColor: open ? (customization?.isDarkMode ? '#23262c' : '#fff') : ''
+                    backgroundColor: open ? (customization?.isDarkMode ? '#000' : '#fff') : ''
                 }}
                 ref={anchorRef}
                 size='small'
@@ -208,7 +208,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                 {open ? (
                     <IconX
                         style={{
-                            color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4',
+                            display: customization?.isDarkMode ? 'none' : 'none',
                             backgroundColor: customization.isDarkMode ? '' : ''
                         }}
                     />
@@ -216,7 +216,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                     <IconMessage style={{ color: customization?.isDarkMode ? '#fff' : '#fff' }} />
                 )}
             </StyledFab>
-            {open && (
+            {/* {open && (
                 <StyledFab
                     sx={{
                         position: 'absolute',
@@ -234,8 +234,8 @@ export const ChatPopUp = ({ chatflowid }) => {
                 >
                     <IconEraser />
                 </StyledFab>
-            )}
-            {open && (
+            )} */}
+            {/* {open && (
                 <StyledFab
                     sx={{
                         position: 'absolute',
@@ -253,7 +253,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                 >
                     <IconArrowsMaximize />
                 </StyledFab>
-            )}
+            )} */}
             <Popper
                 placement='bottom-end'
                 open={open}
@@ -273,7 +273,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                 }}
                 sx={{ zIndex: 1000 }}
             >
-                {({ TransitionProps }) => (
+                {/* {({ TransitionProps }) => (
                     <Transitions in={open} {...TransitionProps}>
                         <Paper
                             ref={paperRef}
@@ -282,6 +282,83 @@ export const ChatPopUp = ({ chatflowid }) => {
                             onMouseDown={handleMouseDown}
                             sx={{ marginTop: '-58px', position: 'absolute', right: '0px' }}
                         >
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MainCard
+                                    border={false}
+                                    className='cloud-wrapper'
+                                    elevation={16}
+                                    content={false}
+                                    boxShadow
+                                    shadow={theme.shadows[16]}
+                                >
+                                    <ChatMessage chatflowid={chatflowid} open={open} previews={previews} setPreviews={setPreviews} />
+                                </MainCard>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Transitions>
+                )} */}
+
+                {({ TransitionProps }) => (
+                    <Transitions in={open} {...TransitionProps}>
+                        <Paper
+                            ref={paperRef}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onMouseDown={handleMouseDown}
+                            sx={{
+                                position: 'relative',
+                                padding: '8px', // Add padding for spacing
+                                display: 'flex',
+                                flexDirection: 'column', // Arrange items vertically
+                                gap: '8px' // Space between items
+                            }}
+                        >
+                            {/* Icons are placed at the top-right corner */}
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginBottom: '-57px' }}>
+                                <StyledFab
+                                    sx={{
+                                        background: 'transparent',
+                                        boxShadow: '0',
+                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    }}
+                                    onClick={expandChat}
+                                    size='small'
+                                    color='primary'
+                                    aria-label='expand'
+                                    title='Expand Chat'
+                                >
+                                    <IconArrowsMaximize />
+                                </StyledFab>
+                                <StyledFab
+                                    sx={{
+                                        background: 'transparent',
+                                        boxShadow: '0',
+                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    }}
+                                    onClick={clearChat}
+                                    size='small'
+                                    color='error'
+                                    aria-label='clear'
+                                    title='Clear Chat History'
+                                >
+                                    <IconEraser />
+                                </StyledFab>
+
+                                <StyledFab
+                                    sx={{
+                                        background: 'transparent',
+                                        boxShadow: '0',
+                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    }}
+                                    onClick={handleToggle}
+                                    size='small'
+                                    aria-label='close'
+                                    title='Close Chat'
+                                >
+                                    <IconX />
+                                </StyledFab>
+                            </div>
+
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MainCard
                                     border={false}

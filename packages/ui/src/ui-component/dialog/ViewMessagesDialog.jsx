@@ -502,8 +502,6 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
             setStats([])
             setLeadEmail('')
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dialogProps])
 
     useEffect(() => {
@@ -514,13 +512,11 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
 
     useEffect(() => {
         if (dialogProps.chatflow) {
-            // when the filter is cleared fetch all messages
             if (feedbackTypeFilter.length === 0) {
                 getChatmessageApi.request(dialogProps.chatflow.id)
                 getStatsApi.request(dialogProps.chatflow.id)
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [feedbackTypeFilter])
 
     const component = show ? (

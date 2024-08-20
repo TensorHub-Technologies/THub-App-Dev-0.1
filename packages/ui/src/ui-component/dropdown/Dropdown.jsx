@@ -41,7 +41,22 @@ export const Dropdown = ({ name, value, loading, options, onSelect, disabled = f
                 }}
                 PopperComponent={StyledPopper}
                 renderInput={(params) => (
-                    <TextField {...params} value={internalValue} sx={{ height: '100%', '& .MuiInputBase-root': { height: '100%' } }} />
+                    <TextField
+                        id='standard-basic'
+                        variant='standard'
+                        {...params}
+                        value={internalValue}
+                        InputProps={{
+                            disableUnderline: true,
+                            sx: {
+                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                '&:hover': {
+                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                }
+                            }
+                        }}
+                        sx={{ height: '100%', '& .MuiInputBase-root': { height: '100%' } }}
+                    />
                 )}
                 renderOption={(props, option) => (
                     <Box component='li' {...props}>

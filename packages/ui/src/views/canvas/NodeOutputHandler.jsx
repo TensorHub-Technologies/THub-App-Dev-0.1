@@ -9,6 +9,7 @@ import { tooltipClasses } from '@mui/material/Tooltip'
 import { flowContext } from '@/store/context/ReactFlowContext'
 import { isValidConnection } from '@/utils/genericHelper'
 import { Dropdown } from '@/ui-component/dropdown/Dropdown'
+import { useSelector } from 'react-redux'
 
 const CustomWidthTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -25,6 +26,7 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
     const [position, setPosition] = useState(0)
     const [dropdownValue, setDropdownValue] = useState(null)
     const { reactFlowInstance } = useContext(flowContext)
+    const customization = useSelector((state) => state.customization)
 
     useEffect(() => {
         if (ref.current && ref.current?.offsetTop && ref.current?.clientHeight) {
@@ -63,7 +65,7 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                             style={{
                                 height: 10,
                                 width: 10,
-                                backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
+                                backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                                 top: position
                             }}
                         />

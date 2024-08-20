@@ -467,7 +467,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                                     flexDirection: 'row',
                                                                     width: 'max-content',
                                                                     borderRadius: 15,
-                                                                    background: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                                    // background: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                                                                     padding: 5,
                                                                     paddingLeft: 10,
                                                                     paddingRight: 10,
@@ -480,7 +480,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                                         fontSize: '0.825rem'
                                                                     }}
                                                                 >
-                                                                    {node.data.id}
+                                                                    {/* {node.data.id} */}
                                                                 </span>
                                                             </div>
                                                         </div>
