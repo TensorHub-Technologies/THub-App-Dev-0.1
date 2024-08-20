@@ -29,7 +29,7 @@ services:
       - DISABLE_FLOWISE_TELEMETRY=${DISABLE_FLOWISE_TELEMETRY}
       - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
     ports:
-      - "${PORT}:${PORT}"
+      - "${PORT}:${PORT}"  # Ensure both HOST_PORT and CONTAINER_PORT are set
     volumes:
       - ~/.thub:/root/.thub
     command: /bin/sh -c "sleep 3; thub start"
