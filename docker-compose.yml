@@ -1,7 +1,7 @@
 version: "3.1"
 services:
   thub:
-    image: thub-app/thub
+    build: .
     restart: always
     environment:
       - PORT=${PORT}
