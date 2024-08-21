@@ -137,6 +137,7 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
             fs.mkdirSync(dir, { recursive: true })
         }
         const filePath = path.join(dir, fileName)
+        fs.writeFileSync(filePath, bf)
         const gcsFilePath = `.flowise/storage/${filePaths}/${fileName}`
         await uploadFileToGCS(filePath, gcsFilePath)
         return 'FILE-STORAGE::' + fileName
