@@ -411,7 +411,7 @@ Resources:
         - FARGATE
       ContainerDefinitions:
         - Name: "thub-service"
-          Image: "asyovan/thub-dev-0.1"
+          Image: "asyovan/thub-alpha"
           Essential: true
           PortMappings:
             - ContainerPort: 3000
