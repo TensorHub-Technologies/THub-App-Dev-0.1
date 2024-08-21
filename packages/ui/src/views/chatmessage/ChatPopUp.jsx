@@ -56,7 +56,7 @@ export const ChatPopUp = ({ chatflowid }) => {
             x: e.clientX,
             y: e.clientY,
             right: initialRight > 0 ? initialRight : 0,
-            top
+            top: 0
         })
     }
 

@@ -532,7 +532,15 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {dialogProps.title}
                     <div style={{ flex: 1 }} />
-                    <Button variant='outlined' onClick={() => exportMessages()} startIcon={<IconFileExport />}>
+                    <Button
+                        variant='outlined'
+                        sx={{
+                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                            borderColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                        }}
+                        onClick={() => exportMessages()}
+                        startIcon={<IconFileExport />}
+                    >
                         Export
                     </Button>
                 </div>

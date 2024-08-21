@@ -46,15 +46,15 @@ export const Dropdown = ({ name, value, loading, options, onSelect, disabled = f
                         variant='standard'
                         {...params}
                         value={internalValue}
-                        InputProps={{
-                            disableUnderline: true,
-                            sx: {
-                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
-                                '&:hover': {
-                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
-                                }
-                            }
-                        }}
+                        // InputProps={{
+                        //     disableUnderline: true,
+                        //     sx: {
+                        //         borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                        //         '&:hover': {
+                        //             borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                        //         }
+                        //     }
+                        // }}
                         sx={{ height: '100%', '& .MuiInputBase-root': { height: '100%' } }}
                     />
                 )}

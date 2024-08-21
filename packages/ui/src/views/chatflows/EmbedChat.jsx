@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 
 import { Tabs, Tab, Box } from '@mui/material'
 import { CopyBlock, atomOneDark } from 'react-code-blocks'
@@ -280,6 +281,7 @@ const EmbedChat = ({ chatflowid }) => {
     const codes = ['Popup Html', 'Fullpage Html', 'Popup React', 'Fullpage React']
     const [value, setValue] = useState(0)
     const [embedChatCheckboxVal, setEmbedChatCheckbox] = useState(false)
+    const customization = useSelector((state) => state.customization)
 
     const onCheckBoxEmbedChatChanged = (newVal) => {
         setEmbedChatCheckbox(newVal)
@@ -323,7 +325,25 @@ const EmbedChat = ({ chatflowid }) => {
         <>
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <div style={{ flex: 80 }}>
-                    <Tabs value={value} onChange={handleChange} aria-label='tabs'>
+                    <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        aria-label='tabs'
+                        TabIndicatorProps={{
+                            style: {
+                                backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                            }
+                        }}
+                        sx={{
+                            '& .MuiTab-root': {
+                                textTransform: 'none',
+                                color: customization.isDarkMode ? '#fff' : '#000'
+                            },
+                            '& .Mui-selected': {
+                                color: customization.isDarkMode ? '#E22A90 !important' : '#3C5BA4 !important'
+                            }
+                        }}
+                    >
                         {codes.map((codeLang, index) => (
                             <Tab key={index} label={codeLang} {...a11yProps(index)}></Tab>
                         ))}
