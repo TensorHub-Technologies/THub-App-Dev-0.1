@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useTheme } from '@mui/material/styles'
-import { FormControl, Button } from '@mui/material'
+import { FormControl, Button, Divider } from '@mui/material'
 import { IconUpload } from '@tabler/icons'
 import { getFileName } from '@/utils/genericHelper'
 import { useSelector } from 'react-redux'
@@ -87,7 +87,7 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                 <span
                     style={{
                         fontStyle: 'italic',
-                        color: theme.palette.grey['800'],
+                        color: customization.isDarkMode ? '#fff' : '#000',
                         marginBottom: '1rem'
                     }}
                 >
@@ -96,7 +96,7 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
             )}
             <Button
                 disabled={disabled}
-                variant='outlined'
+                variant='text'
                 component='label'
                 fullWidth
                 startIcon={<IconUpload />}
@@ -125,6 +125,7 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                     }}
                 />
             </Button>
+            <Divider sx={{ borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4', borderWidth: 1, borderStyle: 'solid' }} />
         </FormControl>
     )
 }

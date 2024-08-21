@@ -100,6 +100,7 @@ const APICodeDialog = ({ show, dialogProps, onCancel }) => {
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const getIsChatflowStreamingApi = useApi(chatflowsApi.getIsChatflowStreaming)
     const getConfigApi = useApi(configApi.getConfig)
+    const customization = useSelector((state) => state.customization)
 
     const onCheckBoxChanged = (newVal) => {
         setCheckbox(newVal)
@@ -582,7 +583,25 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
             <DialogContent>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <div style={{ flex: 80 }}>
-                        <Tabs value={value} onChange={handleChange} aria-label='tabs'>
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            aria-label='tabs'
+                            TabIndicatorProps={{
+                                style: {
+                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                }
+                            }}
+                            sx={{
+                                '& .MuiTab-root': {
+                                    textTransform: 'none',
+                                    color: customization.isDarkMode ? '#fff' : '#000'
+                                },
+                                '& .Mui-selected': {
+                                    color: customization.isDarkMode ? '#E22A90 !important' : '#3C5BA4 !important'
+                                }
+                            }}
+                        >
                             {codes.map((codeLang, index) => (
                                 <Tab
                                     icon={
