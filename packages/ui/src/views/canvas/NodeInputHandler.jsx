@@ -303,6 +303,8 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                 <IconButton
                                     size='small'
                                     sx={{
+                                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+
                                         height: 25,
                                         width: 25
                                     }}

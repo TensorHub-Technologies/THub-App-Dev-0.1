@@ -440,7 +440,9 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                 </>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onCancel}>Close</Button>
+                <Button sx={{ color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} onClick={onCancel}>
+                    Close
+                </Button>
             </DialogActions>
         </Dialog>
     ) : null

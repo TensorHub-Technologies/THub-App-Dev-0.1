@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { createPortal } from 'react-dom'
 import { Box, Dialog, DialogContent, DialogTitle, Tabs, Tab } from '@mui/material'
 import SpeechToText from '@/ui-component/extended/SpeechToText'
@@ -68,6 +69,7 @@ function a11yProps(index) {
 const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const [tabValue, setTabValue] = useState(0)
+    const customization = useSelector((state) => state.customization)
 
     const component = show ? (
         <Dialog
@@ -87,10 +89,22 @@ const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
                     value={tabValue}
                     onChange={(event, value) => setTabValue(value)}
                     aria-label='tabs'
+                    TabIndicatorProps={{ sx: { backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' } }}
                 >
                     {CHATFLOW_CONFIGURATION_TABS.map((item, index) => (
                         <Tab
-                            sx={{ minHeight: '40px', height: '40px', textAlign: 'left', display: 'flex', alignItems: 'start', mb: 1 }}
+                            sx={{
+                                minHeight: '40px',
+                                height: '40px',
+                                textAlign: 'left',
+                                display: 'flex',
+                                alignItems: 'start',
+                                mb: 1,
+                                color: customization.isDarkMode ? '#fff' : '#000',
+                                '&.Mui-selected': {
+                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                }
+                            }}
                             key={index}
                             label={item.label}
                             {...a11yProps(index)}
