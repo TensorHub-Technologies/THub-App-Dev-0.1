@@ -10,7 +10,7 @@
         "components"
     ],
     "scripts": {
-        "build": "turbo run build --reporter ndjson",
+        "build": "turbo run build",
         "build-force": "pnpm clean && turbo run build --force",
         "dev": "turbo run dev --parallel",
         "start": "run-script-os",
