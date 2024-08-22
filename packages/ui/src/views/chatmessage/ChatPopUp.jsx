@@ -213,7 +213,23 @@ export const ChatPopUp = ({ chatflowid }) => {
                         }}
                     />
                 ) : (
-                    <IconMessage style={{ color: customization?.isDarkMode ? '#fff' : '#fff' }} />
+                    // <IconMessage style={{ color: customization?.isDarkMode ? '#fff' : '#fff' }} />
+                    <IconMessage
+                        style={{
+                            color: customization?.isDarkMode ? '#fff' : '#fff',
+                            transition: 'color 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                            if (!customization?.isDarkMode) {
+                                e.currentTarget.style.color = '#000'
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (!customization?.isDarkMode) {
+                                e.currentTarget.style.color = '#fff'
+                            }
+                        }}
+                    />
                 )}
             </StyledFab>
             {/* {open && (
