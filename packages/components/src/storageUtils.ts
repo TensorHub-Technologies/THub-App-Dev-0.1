@@ -18,17 +18,6 @@ const storage = new Storage({
 
 const bucketName = 'thub-files'
 
-async function createFolderInGCS(folderPath: string): Promise<void> {
-    const file = storage.bucket(bucketName).file(`${folderPath}/`)
-    await file.save('')
-}
-
-async function uploadFileToGCS(filePath: string, destination: string): Promise<void> {
-    await storage.bucket(bucketName).upload(filePath, {
-        destination
-    })
-}
-
 export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: string, fileNames: string[]) => {
     const storageType = getStorageType()
     if (storageType === 's3') {
@@ -52,19 +41,29 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         fileNames.push(filename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else if (process.env.NODE_ENV === 'production') {
-        console.log(process.env.NODE_ENV, 'process.env.NODE_ENV11')
-        const dir = path.join(getStoragePath(), chatflowid)
-        await createFolderInGCS(`.flowise/storage/${chatflowid}`)
-
         const splitDataURI = fileBase64.split(',')
         const filename = splitDataURI.pop()?.split(':')[1] ?? ''
         const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
-        const filePath = path.join(dir, filename)
-        fs.writeFileSync(filePath, bf)
-        const gcsFilePath = `.flowise/storage/${chatflowid}/${filename}`
-        await uploadFileToGCS(filePath, gcsFilePath)
-        fileNames.push(filename)
-        return 'FILE-STORAGE::' + JSON.stringify(fileNames)
+        const mime = splitDataURI[0].split(':')[1].split(';')[0]
+
+        const bucket = storage.bucket(bucketName)
+        const file = bucket.file(`.flowise/storage/${chatflowid}/${filename}`)
+
+        try {
+            await file.save(bf, {
+                metadata: {
+                    contentType: mime,
+                    contentEncoding: 'base64'
+                },
+                resumable: false
+            })
+
+            fileNames.push(filename)
+            return 'FILE-STORAGE::' + JSON.stringify(fileNames)
+        } catch (error) {
+            console.error(`Failed to save file in GCS. Filename: ${filename}, Error: ${error.message}`)
+            throw error
+        }
     } else {
         const dir = path.join(getStoragePath(), chatflowid)
         if (!fs.existsSync(dir)) {
@@ -94,13 +93,37 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
         const putObjCmd = new PutObjectCommand({
             Bucket,
             Key,
-            ContentEncoding: 'base64', // required for binary data
+            ContentEncoding: 'base64',
             ContentType: mime,
             Body: bf
         })
         await s3Client.send(putObjCmd)
         fileNames.push(fileName)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
+    } else if (process.env.NODE_ENV === 'production') {
+        let filePath = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + fileName
+        if (filePath.startsWith('/')) {
+            filePath = filePath.substring(1)
+        }
+        const gcsFilePath = `.flowise/storage/${filePath}`
+        const bucket = storage.bucket(bucketName)
+        const file = bucket.file(gcsFilePath)
+
+        try {
+            await file.save(bf, {
+                metadata: {
+                    contentType: mime,
+                    contentEncoding: 'base64'
+                },
+                resumable: false
+            })
+
+            fileNames.push(fileName)
+            return 'FILE-STORAGE::' + JSON.stringify(fileNames)
+        } catch (error) {
+            console.error(`Failed to save file in GCS. FileName: ${fileName}, Error: ${error.message}`)
+            throw error // Re-throw the error to ensure the calling code handles it
+        }
     } else {
         const dir = path.join(getStoragePath(), ...paths)
         if (!fs.existsSync(dir)) {
@@ -127,24 +150,36 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
         const putObjCmd = new PutObjectCommand({
             Bucket,
             Key,
-            ContentEncoding: 'base64', // required for binary data
+            ContentEncoding: 'base64',
             ContentType: mime,
             Body: bf
         })
         await s3Client.send(putObjCmd)
         return 'FILE-STORAGE::' + fileName
     } else if (process.env.NODE_ENV === 'production') {
-        console.log(process.env.NODE_ENV, 'process.env.NODE_ENV22')
-        const dir = path.join(getStoragePath(), ...paths)
-        const relativeDir = path.join(...paths)
-        const filePaths = relativeDir.replace(/\\/g, '/')
-        await createFolderInGCS(`.flowise/storage/${filePaths}`)
+        let filePath = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + fileName
+        if (filePath.startsWith('/')) {
+            filePath = filePath.substring(1)
+        }
 
-        const filePath = path.join(dir, fileName)
-        fs.writeFileSync(filePath, bf)
-        const gcsFilePath = `.flowise/storage/${filePaths}/${fileName}`
-        await uploadFileToGCS(filePath, gcsFilePath)
-        return 'FILE-STORAGE::' + fileName
+        const gcsFilePath = `.flowise/storage/${filePath}`
+        const bucket = storage.bucket(bucketName)
+        const file = bucket.file(gcsFilePath)
+
+        try {
+            await file.save(bf, {
+                metadata: {
+                    contentType: mime,
+                    contentEncoding: 'base64'
+                },
+                resumable: false
+            })
+
+            return 'FILE-STORAGE::' + fileName
+        } catch (error) {
+            console.error(`Failed to save file in GCS. FileName: ${fileName}, Error: ${error.message}`)
+            throw error
+        }
     } else {
         const dir = path.join(getStoragePath(), ...paths)
         if (!fs.existsSync(dir)) {
@@ -223,11 +258,25 @@ export const removeFilesFromStorage = async (...paths: string[]) => {
     const storageType = getStorageType()
     if (storageType === 's3') {
         let Key = paths.reduce((acc, cur) => acc + '/' + cur, '')
-        // remove the first '/' if it exists
         if (Key.startsWith('/')) {
             Key = Key.substring(1)
         }
         await _deleteS3Folder(Key)
+    } else if (process.env.NODE_ENV === 'production') {
+        let gcsFilePath = paths.reduce((acc, cur) => acc + '/' + cur, '')
+        if (gcsFilePath.startsWith('/')) {
+            gcsFilePath = gcsFilePath.substring(1)
+        }
+
+        const bucket = storage.bucket(bucketName)
+        const file = bucket.file(`.flowise/storage/${gcsFilePath}`)
+
+        try {
+            await file.delete()
+        } catch (error) {
+            console.error(`Failed to delete file from GCS. Path: ${gcsFilePath}, Error: ${error.message}`)
+            throw error
+        }
     } else {
         const directory = path.join(getStoragePath(), ...paths)
         _deleteLocalFolderRecursive(directory)
@@ -243,6 +292,21 @@ export const removeSpecificFileFromStorage = async (...paths: string[]) => {
             Key = Key.substring(1)
         }
         await _deleteS3Folder(Key)
+    } else if (process.env.NODE_ENV === 'production') {
+        let gcsFilePath = paths.reduce((acc, cur) => acc + '/' + cur, '')
+        if (gcsFilePath.startsWith('/')) {
+            gcsFilePath = gcsFilePath.substring(1)
+        }
+
+        const bucket = storage.bucket(bucketName)
+        const file = bucket.file(`.flowise/storage/${gcsFilePath}`)
+
+        try {
+            await file.delete()
+        } catch (error) {
+            console.error(`Failed to delete specific file from GCS. Path: ${gcsFilePath}, Error: ${error.message}`)
+            throw error
+        }
     } else {
         const file = path.join(getStoragePath(), ...paths)
         fs.unlinkSync(file)
@@ -258,6 +322,22 @@ export const removeFolderFromStorage = async (...paths: string[]) => {
             Key = Key.substring(1)
         }
         await _deleteS3Folder(Key)
+    } else if (process.env.NODE_ENV === 'production') {
+        let gcsFolderPath = paths.reduce((acc, cur) => acc + '/' + cur, '')
+        if (gcsFolderPath.startsWith('/')) {
+            gcsFolderPath = gcsFolderPath.substring(1)
+        }
+
+        const bucket = storage.bucket(bucketName)
+        const [files] = await bucket.getFiles({ prefix: `.flowise/storage/${gcsFolderPath}` })
+
+        if (files.length > 0) {
+            await Promise.all(
+                files.map(async (file: { delete: () => Promise<void> }) => {
+                    await file.delete()
+                })
+            )
+        }
     } else {
         const directory = path.join(getStoragePath(), ...paths)
         _deleteLocalFolderRecursive(directory, true)
