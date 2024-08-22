@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  thub:
+  thub-alpha:
     image: asyovan/thub-alpha
     restart: always
     environment:
@@ -30,7 +30,7 @@ services:
       - DISABLE_FLOWISE_TELEMETRY=${DISABLE_FLOWISE_TELEMETRY}
       - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
     ports:
-      - "${PORT}:${PORT}"  # Ensure both HOST_PORT and CONTAINER_PORT are set
+      - '${PORT}:${PORT}' 
     volumes:
       - ~/.flowise:/root/.flowise
-    command: /bin/sh -c "sleep 3; thub-alpha start"
+    entrypoint: /bin/sh -c "sleep 3; thub-alpha start"
