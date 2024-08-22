@@ -52,14 +52,19 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         fileNames.push(filename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else if (process.env.NODE_ENV === 'production') {
+        console.log(process.env.NODE_ENV, 'process.env.NODE_ENV11')
         const dir = path.join(getStoragePath(), chatflowid)
         await createFolderInGCS(`.flowise/storage/${chatflowid}`)
 
         const splitDataURI = fileBase64.split(',')
         const filename = splitDataURI.pop()?.split(':')[1] ?? ''
+        const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
         const filePath = path.join(dir, filename)
+        fs.writeFileSync(filePath, bf)
         const gcsFilePath = `.flowise/storage/${chatflowid}/${filename}`
         await uploadFileToGCS(filePath, gcsFilePath)
+        fileNames.push(filename)
+        return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     } else {
         const dir = path.join(getStoragePath(), chatflowid)
         if (!fs.existsSync(dir)) {
@@ -129,13 +134,12 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
         await s3Client.send(putObjCmd)
         return 'FILE-STORAGE::' + fileName
     } else if (process.env.NODE_ENV === 'production') {
+        console.log(process.env.NODE_ENV, 'process.env.NODE_ENV22')
         const dir = path.join(getStoragePath(), ...paths)
         const relativeDir = path.join(...paths)
         const filePaths = relativeDir.replace(/\\/g, '/')
         await createFolderInGCS(`.flowise/storage/${filePaths}`)
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true })
-        }
+
         const filePath = path.join(dir, fileName)
         fs.writeFileSync(filePath, bf)
         const gcsFilePath = `.flowise/storage/${filePaths}/${fileName}`
@@ -190,6 +194,7 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         const buffer = Buffer.concat(response.Body.toArray())
         return buffer
     } else if (process.env.NODE_ENV === 'production') {
+        console.log(process.env.NODE_ENV, 'process.env.NODE_ENV33')
         const filePath = path.join('.flowise/storage', ...paths, file)
         const filePaths = filePath.replace(/\\/g, '/')
         const fileBuffer = await getFileFromGCS(filePaths)
