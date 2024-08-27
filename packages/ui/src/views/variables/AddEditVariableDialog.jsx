@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 
 // Material
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Typography, OutlinedInput } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Typography, TextField } from '@mui/material'
 
 // Project imports
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -40,6 +40,7 @@ const variableTypes = [
 const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     const portalElement = document.getElementById('portal')
     const dispatch = useDispatch()
+    const customization = useSelector((state) => state.customization)
 
     useNotifier()
 
@@ -217,19 +218,49 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                         </Typography>
                         <div style={{ flexGrow: 1 }}></div>
                     </div>
-                    <OutlinedInput
+                    <TextField
+                        // id='assistantName'
+                        variant='standard'
+                        id='standard-basic'
                         size='small'
-                        sx={{ mt: 1 }}
+                        sx={{
+                            mt: 1,
+                            transition: 'all .2s ease-in-out',
+                            '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                            '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                            '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                            '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                            '&:hover': {
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                }
+                            }
+                        }}
                         type='string'
                         fullWidth
                         key='variableName'
                         onChange={(e) => setVariableName(e.target.value)}
                         value={variableName ?? ''}
-                        id='txtInput_variableName'
+                        // id='txtInput_variableName'
                     />
                 </Box>
                 <Box sx={{ p: 2 }}>
-                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            transition: 'all .2s ease-in-out',
+                            '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                            '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                            '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                            '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                            '&:hover': {
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                }
+                            }
+                        }}
+                    >
                         <Typography>
                             Type<span style={{ color: 'red' }}>&nbsp;*</span>
                         </Typography>
@@ -252,15 +283,31 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                             </Typography>
                             <div style={{ flexGrow: 1 }}></div>
                         </div>
-                        <OutlinedInput
+                        <TextField
+                            // id='assistantName'
+                            variant='standard'
+                            id='standard-basic'
                             size='small'
-                            sx={{ mt: 1 }}
+                            sx={{
+                                mt: 1,
+
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='string'
                             fullWidth
                             key='variableValue'
                             onChange={(e) => setVariableValue(e.target.value)}
                             value={variableValue ?? ''}
-                            id='txtInput_variableValue'
+                            // id='txtInput_variableValue'
                         />
                     </Box>
                 )}

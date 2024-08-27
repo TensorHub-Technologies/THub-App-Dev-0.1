@@ -367,7 +367,11 @@ const Credentials = () => {
                                         <TableCell>{moment(credential.updatedDate).format('DD-MMM-YY')}</TableCell>
                                         <TableCell>{moment(credential.createdDate).format('DD-MMM-YY')}</TableCell>
                                         <TableCell>
-                                            <IconButton title='Edit' color='primary' onClick={() => edit(credential)}>
+                                            <IconButton
+                                                title='Edit'
+                                                style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }}
+                                                onClick={() => edit(credential)}
+                                            >
                                                 <IconEdit />
                                             </IconButton>
                                         </TableCell>

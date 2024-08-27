@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import { cloneDeep } from 'lodash'
 
-import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Stack, OutlinedInput } from '@mui/material'
+import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@mui/material'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { Grid } from '@/ui-component/grid/Grid'
 import { TooltipWithParser } from '@/ui-component/tooltip/TooltipWithParser'
@@ -422,8 +422,21 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                             </Typography>
                             <TooltipWithParser title={'Tool name must be small capital letter with underscore. Ex: my_tool'} />
                         </Stack>
-                        <OutlinedInput
-                            id='toolName'
+                        <TextField
+                            variant='standard'
+                            id='standard-basic'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='string'
                             fullWidth
                             disabled={dialogProps.type === 'TEMPLATE'}
@@ -443,9 +456,23 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                                 title={'Description of what the tool does. This is for ChatGPT to determine when to use this tool.'}
                             />
                         </Stack>
-                        <OutlinedInput
-                            id='toolDesc'
+                        <TextField
+                            variant='standard'
+                            id='standard-basic'
+                            // id='toolDesc'
                             type='string'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             fullWidth
                             disabled={dialogProps.type === 'TEMPLATE'}
                             placeholder='Description of what the tool does. This is for ChatGPT to determine when to use this tool.'
@@ -460,8 +487,22 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                         <Stack sx={{ position: 'relative' }} direction='row'>
                             <Typography variant='overline'>Tool Icon Source</Typography>
                         </Stack>
-                        <OutlinedInput
-                            id='toolIcon'
+                        <TextField
+                            variant='standard'
+                            id='standard-basic'
+                            // id='toolIcon'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='string'
                             fullWidth
                             disabled={dialogProps.type === 'TEMPLATE'}
@@ -478,7 +519,15 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                                 <TooltipWithParser title={'What is the input format in JSON?'} />
                             </Stack>
                             {dialogProps.type !== 'TEMPLATE' && (
-                                <Button variant='outlined' onClick={addNewRow} startIcon={<IconPlus />}>
+                                <Button
+                                    variant='outlined'
+                                    style={{
+                                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                        border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
+                                    }}
+                                    onClick={addNewRow}
+                                    startIcon={<IconPlus />}
+                                >
                                     Add Item
                                 </Button>
                             )}
@@ -493,7 +542,12 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                             </Stack>
                             <Stack direction='row'>
                                 <Button
-                                    style={{ marginBottom: 10, marginRight: 10 }}
+                                    style={{
+                                        marginBottom: 10,
+                                        marginRight: 10,
+                                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                        border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
+                                    }}
                                     color='secondary'
                                     variant='text'
                                     onClick={() => setShowHowToDialog(true)}
@@ -501,7 +555,15 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                                     How to use Function
                                 </Button>
                                 {dialogProps.type !== 'TEMPLATE' && (
-                                    <Button style={{ marginBottom: 10 }} variant='outlined' onClick={() => setToolFunc(exampleAPIFunc)}>
+                                    <Button
+                                        style={{
+                                            marginBottom: 10,
+                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
+                                        }}
+                                        variant='outlined'
+                                        onClick={() => setToolFunc(exampleAPIFunc)}
+                                    >
                                         See Example
                                     </Button>
                                 )}
