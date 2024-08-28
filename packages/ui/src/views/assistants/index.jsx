@@ -115,7 +115,7 @@ const Assistants = () => {
                                     color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                                     borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
                                     '&:hover': {
-                                        borderColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                        borderColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
                                     }
                                 }}
                                 onClick={loadExisting}

@@ -199,7 +199,7 @@ const Chatflows = () => {
                                     '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '&:hover': {
                                         '& .MuiInput-underline:before': {
-                                            borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                            borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
                                         }
                                     }
                                 }}
@@ -243,7 +243,7 @@ const Chatflows = () => {
                                     },
                                     '&:hover': {
                                         '& .MuiInput-underline:before': {
-                                            borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important',
+                                            borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important',
                                             width: '50%'
                                         }
                                     }
@@ -260,11 +260,17 @@ const Chatflows = () => {
                                             sx={{
                                                 ml: 2,
                                                 marginLeft: '10px',
-                                                '.MuiSelect-select': {},
-                                                '.MuiOutlinedInput-notchedOutline': {},
-                                                '&:hover .MuiOutlinedInput-notchedOutline': {},
-                                                '.MuiSelect-icon': {
-                                                    color: customization.isDarkMode ? '#fff' : '#000' // Dropdown icon color
+                                                width: '130px',
+
+                                                '&::before': {
+                                                    borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
+                                                },
+                                                '&::after': {
+                                                    borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
+                                                },
+                                                '& .MuiSelect-icon': {
+                                                    background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                    color: '#ffff'
                                                 }
                                             }}
                                         >

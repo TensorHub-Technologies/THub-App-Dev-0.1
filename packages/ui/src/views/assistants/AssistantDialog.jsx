@@ -18,7 +18,7 @@ import {
     DialogContent,
     DialogTitle,
     Stack,
-    OutlinedInput
+    TextField
 } from '@mui/material'
 
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -725,8 +725,22 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
                             <Typography variant='overline'>Assistant Name</Typography>
                             <TooltipWithParser title={'The name of the assistant. The maximum length is 256 characters.'} />
                         </Stack>
-                        <OutlinedInput
-                            id='assistantName'
+                        <TextField
+                            // id='assistantName'
+                            variant='standard'
+                            id='standard-basic'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='string'
                             size='small'
                             fullWidth
@@ -741,8 +755,22 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
                             <Typography variant='overline'>Assistant Description</Typography>
                             <TooltipWithParser title={'The description of the assistant. The maximum length is 512 characters.'} />
                         </Stack>
-                        <OutlinedInput
-                            id='assistantDesc'
+                        <TextField
+                            variant='standard'
+                            id='standard-basic'
+                            // id='assistantDesc'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='string'
                             size='small'
                             fullWidth
@@ -778,8 +806,23 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
                                 src={assistantIcon}
                             />
                         </div>
-                        <OutlinedInput
-                            id='assistantIcon'
+                        <TextField
+                            // id='assistantName'
+                            variant='standard'
+                            id='standard-basic'
+                            // id='assistantIcon'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='string'
                             size='small'
                             fullWidth
@@ -796,8 +839,23 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
                                 title={'The system instructions that the assistant uses. The maximum length is 32768 characters.'}
                             />
                         </Stack>
-                        <OutlinedInput
-                            id='assistantInstructions'
+                        <TextField
+                            // id='assistantName'
+                            variant='standard'
+                            id='standard-basic'
+                            // id='assistantInstructions'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='string'
                             size='small'
                             fullWidth
@@ -818,8 +876,23 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
                                 }
                             />
                         </Stack>
-                        <OutlinedInput
-                            id='assistantTemp'
+                        <TextField
+                            // id='assistantName'
+                            variant='standard'
+                            id='standard-basic'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
+                            // id='assistantTemp'
                             type='number'
                             size='small'
                             fullWidth
@@ -837,8 +910,23 @@ const AssistantDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) =
                                 }
                             />
                         </Stack>
-                        <OutlinedInput
-                            id='assistantTopP'
+                        <TextField
+                            // id='assistantName'
+                            variant='standard'
+                            id='standard-basic'
+                            // id='assistantTopP'
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='number'
                             fullWidth
                             size='small'

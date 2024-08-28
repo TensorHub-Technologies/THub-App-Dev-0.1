@@ -301,7 +301,7 @@ const AddNodes = ({ nodesData, node }) => {
                                         },
                                         '&:hover': {
                                             '& .MuiInput-underline:before': {
-                                                borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                                borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
                                             }
                                         }
                                     }}
@@ -351,6 +351,11 @@ const AddNodes = ({ nodesData, node }) => {
                             value={tabValue}
                             onChange={handleTabChange}
                             aria-label='tabs'
+                            TabIndicatorProps={{
+                                style: {
+                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                }
+                            }}
                         >
                             {['LangChain', 'LlamaIndex'].map((item, index) => (
                                 <Tab
@@ -376,7 +381,17 @@ const AddNodes = ({ nodesData, node }) => {
                                         </div>
                                     }
                                     iconPosition='start'
-                                    sx={{ minHeight: '50px', height: '50px' }}
+                                    sx={{
+                                        minHeight: '50px',
+                                        height: '50px',
+                                        color: customization.isDarkMode ? '#fff' : '#000',
+                                        '&.Mui-selected': {
+                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                        },
+                                        '&:hover': {
+                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                        }
+                                    }}
                                     key={index}
                                     label={item}
                                     {...a11yProps(index)}

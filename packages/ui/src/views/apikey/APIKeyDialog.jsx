@@ -14,8 +14,8 @@ import {
     DialogTitle,
     Stack,
     IconButton,
-    OutlinedInput,
-    Popover
+    Popover,
+    TextField
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -33,6 +33,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     const portalElement = document.getElementById('portal')
 
     const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
 
     const userData = useSelector((state) => state.user.userData)
     const tenantId = userData?.uid
@@ -161,7 +162,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                                 sx={{
                                     p: 1,
                                     borderRadius: 10,
-                                    backgroundColor: theme.palette.primary.light,
+                                    // backgroundColor: theme.palette.primary.light,
                                     width: 'max-content',
                                     height: 'max-content'
                                 }}
@@ -171,7 +172,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                             </Typography>
                             <IconButton
                                 title='Copy API Key'
-                                color='success'
+                                style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }}
                                 onClick={(event) => {
                                     navigator.clipboard.writeText(dialogProps.key.apiKey)
                                     setAnchorEl(event.currentTarget)
@@ -207,8 +208,22 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                     <Stack sx={{ position: 'relative' }} direction='row'>
                         <Typography variant='overline'>Key Name</Typography>
                     </Stack>
-                    <OutlinedInput
-                        id='keyName'
+                    <TextField
+                        id='standard-basic'
+                        variant='standard'
+                        // id='keyName'
+                        sx={{
+                            transition: 'all .2s ease-in-out',
+                            '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                            '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                            '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                            '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                            '&:hover': {
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                }
+                            }
+                        }}
                         type='string'
                         fullWidth
                         placeholder='My New Key'

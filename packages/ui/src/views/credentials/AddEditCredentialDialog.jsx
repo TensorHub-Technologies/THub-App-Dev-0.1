@@ -6,7 +6,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 import parser from 'html-react-parser'
 
 // Material
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, OutlinedInput, Typography } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, Typography, TextField } from '@mui/material'
 
 // Project imports
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -46,6 +46,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
 
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
+    const customization = useSelector((state) => state.customization)
 
     const getSpecificCredentialApi = useApi(credentialsApi.getSpecificCredential)
     const getSpecificComponentCredentialApi = useApi(credentialsApi.getSpecificComponentCredential)
@@ -281,8 +282,23 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                                 <span style={{ color: 'red' }}>&nbsp;*</span>
                             </Typography>
                         </Stack>
-                        <OutlinedInput
-                            id='credName'
+                        <TextField
+                            id='standard-basic'
+                            variant='standard'
+                            // id='credName'
+
+                            sx={{
+                                transition: 'all .2s ease-in-out',
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
+                                '&:hover': {
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
+                                    }
+                                }
+                            }}
                             type='string'
                             fullWidth
                             placeholder={componentCredential.label}
