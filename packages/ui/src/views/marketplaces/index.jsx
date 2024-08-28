@@ -297,7 +297,7 @@ const Marketplace = () => {
                                 '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                 '&:hover': {
                                     '& .MuiInput-underline:before': {
-                                        borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
                                     }
                                 }
                             }}
@@ -345,9 +345,9 @@ const Marketplace = () => {
                                         <InputLabel
                                             id='demo-simple-select-standard-label'
                                             sx={{
-                                                color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                color: customization?.isDarkMode ? '#fff' : '#000',
                                                 '&.Mui-focused': {
-                                                    color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4'
+                                                    color: customization?.isDarkMode ? '#fff' : '#000'
                                                 }
                                             }}
                                         >
@@ -394,9 +394,9 @@ const Marketplace = () => {
                                         <InputLabel
                                             id='framework-label'
                                             sx={{
-                                                color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                color: customization?.isDarkMode ? '#fff' : '#000',
                                                 '&.Mui-focused': {
-                                                    color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4'
+                                                    color: customization?.isDarkMode ? '#fff' : '#000'
                                                 }
                                             }}
                                         >
@@ -443,9 +443,9 @@ const Marketplace = () => {
                                         <InputLabel
                                             id='Select-label'
                                             sx={{
-                                                color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                color: customization?.isDarkMode ? '#fff' : '#000',
                                                 '&.Mui-focused': {
-                                                    color: customization?.isDarkMode ? '#e22a90' : '#3C5BA4'
+                                                    color: customization?.isDarkMode ? '#fff' : '#000'
                                                 }
                                             }}
                                         >

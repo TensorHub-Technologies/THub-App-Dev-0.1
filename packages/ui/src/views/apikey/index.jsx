@@ -66,6 +66,7 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 function APIKeyRow(props) {
     const [open, setOpen] = useState(false)
+    const customization = useSelector((state) => state.customization)
     return (
         <>
             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
@@ -76,7 +77,11 @@ function APIKeyRow(props) {
                         : `${props.apiKey.apiKey.substring(0, 2)}${'•'.repeat(18)}${props.apiKey.apiKey.substring(
                               props.apiKey.apiKey.length - 5
                           )}`}
-                    <IconButton title='Copy' color='success' onClick={props.onCopyClick}>
+                    <IconButton
+                        title='Copy'
+                        style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }}
+                        onClick={props.onCopyClick}
+                    >
                         <IconCopy />
                     </IconButton>
                     <IconButton title='Show' color='inherit' onClick={props.onShowAPIClick}>
@@ -110,7 +115,11 @@ function APIKeyRow(props) {
                 </TableCell>
                 <TableCell>{props.apiKey.createdAt}</TableCell>
                 <TableCell>
-                    <IconButton title='Edit' color='primary' onClick={props.onEditClick}>
+                    <IconButton
+                        title='Edit'
+                        style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }}
+                        onClick={props.onEditClick}
+                    >
                         <IconEdit />
                     </IconButton>
                 </TableCell>
@@ -375,7 +384,7 @@ const APIKey = () => {
                                     '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '&:hover': {
                                         '& .MuiInput-underline:before': {
-                                            borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                            borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
                                         }
                                     }
                                 }}

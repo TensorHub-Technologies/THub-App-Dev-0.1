@@ -222,7 +222,7 @@ const Variables = () => {
                                     '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '&:hover': {
                                         '& .MuiInput-underline:before': {
-                                            borderBottomColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                            borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
                                         }
                                     }
                                 }}
@@ -261,7 +261,7 @@ const Variables = () => {
                                     color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                                     borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
                                     '&:hover': {
-                                        borderColor: customization.isDarkMode ? '#3C5BA4 !important' : '#E22A90 !important'
+                                        borderColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
                                     }
                                 }}
                                 onClick={() => setShowHowToDialog(true)}
@@ -356,7 +356,11 @@ const Variables = () => {
                                         <TableCell>{moment(variable.updatedDate).format('DD-MMM-YY')}</TableCell>
                                         <TableCell>{moment(variable.createdDate).format('DD-MMM-YY')}</TableCell>
                                         <TableCell>
-                                            <IconButton title='Edit' color='primary' onClick={() => edit(variable)}>
+                                            <IconButton
+                                                title='Edit'
+                                                style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }}
+                                                onClick={() => edit(variable)}
+                                            >
                                                 <IconEdit />
                                             </IconButton>
                                         </TableCell>
