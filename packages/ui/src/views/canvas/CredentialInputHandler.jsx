@@ -9,6 +9,7 @@ import { IconEdit } from '@tabler/icons'
 import { AsyncDropdown } from '@/ui-component/dropdown/AsyncDropdown'
 import AddEditCredentialDialog from '@/views/credentials/AddEditCredentialDialog'
 import CredentialListDialog from '@/views/credentials/CredentialListDialog'
+import { useSelector } from 'react-redux'
 
 // API
 import credentialsApi from '@/api/credentials'
@@ -23,6 +24,7 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
     const [showSpecificCredentialDialog, setShowSpecificCredentialDialog] = useState(false)
     const [specificCredentialDialogProps, setSpecificCredentialDialogProps] = useState({})
     const [reloadTimestamp, setReloadTimestamp] = useState(Date.now().toString())
+    const customization = useSelector((state) => state.customization)
 
     const editCredential = (credentialId) => {
         const dialogProp = {
@@ -112,7 +114,12 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
                                 onCreateNew={() => addAsyncOption(inputParam.name)}
                             />
                             {credentialId && (
-                                <IconButton title='Edit' color='primary' size='small' onClick={() => editCredential(credentialId)}>
+                                <IconButton
+                                    title='Edit'
+                                    style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }}
+                                    size='small'
+                                    onClick={() => editCredential(credentialId)}
+                                >
                                     <IconEdit />
                                 </IconButton>
                             )}
