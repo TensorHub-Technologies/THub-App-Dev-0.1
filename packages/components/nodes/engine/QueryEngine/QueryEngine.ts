@@ -30,7 +30,7 @@ class QueryEngine_LlamaIndex implements INode {
         this.name = 'queryEngine'
         this.version = 2.0
         this.type = 'QueryEngine'
-        this.icon = 'query-engine.svg'
+        this.icon = 'query-engine.png'
         this.category = 'Engine'
         this.description = 'Simple query engine built to answer question over your data, without memory'
         this.baseClasses = [this.type, 'BaseQueryEngine']
@@ -46,7 +46,7 @@ class QueryEngine_LlamaIndex implements INode {
                 name: 'responseSynthesizer',
                 type: 'ResponseSynthesizer',
                 description:
-                    'ResponseSynthesizer is responsible for sending the query, nodes, and prompt templates to the LLM to generate a response. See <a target="_blank" href="https://ts.llamaindex.ai/modules/low_level/response_synthesizer">more</a>',
+                    'ResponseSynthesizer is responsible for sending the query, nodes, and prompt templates to the LLM to generate a response. See <a target="_blank" href="https://ts.llamaindex.ai/modules/response_synthesizer">more</a>',
                 optional: true
             },
             {
