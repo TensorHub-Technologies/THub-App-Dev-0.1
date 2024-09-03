@@ -147,12 +147,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
         window.history.replaceState({}, '', url)
     }
 
-    const signOutClicked = () => {
-        localStorage.removeItem('username')
-        localStorage.removeItem('password')
-        navigate('/', { replace: true })
-        navigate(0)
-    }
     return (
         <>
             <Box
@@ -177,7 +171,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 />
             </IconButton>
             <Box sx={{ ml: 2 }}></Box>
-            <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
+            <ProfileSection username={localStorage.getItem('username') ?? ''} />
             <React.Fragment>
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                     <Tooltip title={userFName}>

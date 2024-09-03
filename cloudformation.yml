@@ -411,7 +411,7 @@ Resources:
         - FARGATE
       ContainerDefinitions:
         - Name: "thub-service"
-          Image: "asyovan/thub-dev-0.1:latest"
+          Image: "asyovan/thub-alpha"
           Essential: true
           PortMappings:
             - ContainerPort: 3000
@@ -423,16 +423,16 @@ Resources:
               Value: ""
             - Name: IFRAME_ORIGINS
               Value: ""
-            - Name: THUB_USERNAME
+            - Name: FLOWISE_USERNAME
               Value: ""
-            - Name: THUB_PASSWORD
+            - Name: FLOWISE_PASSWORD
               Value: ""
-            - Name: THUB_FILE_SIZE_LIMIT
+            - Name: FLOWISE_FILE_SIZE_LIMIT
               Value: ""
             - Name: DEBUG
               Value: ""
             - Name: DATABASE_PATH
-              Value: "/root/.thub"
+              Value: "/root/.flowise"
             - Name: DATABASE_TYPE
               Value: ""
             - Name: DATABASE_PORT
@@ -450,17 +450,17 @@ Resources:
             - Name: DATABASE_SSL_KEY_BASE64
               Value: ""
             - Name: APIKEY_PATH
-              Value: "/root/.thub"
+              Value: "/root/.flowise"
             - Name: SECRETKEY_PATH
-              Value: "/root/.thub"
+              Value: "/root/.flowise"
             - Name: THUB_SECRETKEY_OVERWRITE
               Value: ""
             - Name: LOG_LEVEL
               Value: ""
             - Name: LOG_PATH
-              Value: "/root/.thub/logs"
+              Value: "/root/.flowise/logs"
             - Name: BLOB_STORAGE_PATH
-              Value: "/root/.thub/storage"
+              Value: "/root/.flowise/storage"
             - Name: DISABLE_THUB_TELEMETRY
               Value: ""
           EntryPoint:
