@@ -1,6 +1,6 @@
 {
     "name": "thub-components",
-    "version": "2.0.0",
+    "version": "2.0.7",
     "description": "THub Components",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -110,7 +110,6 @@
         "socket.io": "^4.6.1",
         "srt-parser-2": "^1.2.3",
         "typeorm": "^0.3.6",
-        "typesense": "^1.8.2",
         "vm2": "^3.9.19",
         "weaviate-ts-client": "^1.1.0",
         "winston": "^3.9.0",
