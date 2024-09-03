@@ -1,4 +1,3 @@
-import { SET_DARKMODE } from '@/store/actions'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -15,6 +14,8 @@ const RequireUID = ({ children }) => {
         const localTheme = localStorage.getItem('isDarkMode')
         const uid = params.get('uid') || localStorage.getItem('userId')
 
+        // commented for routing to aws
+        /*
         if (!uid) {
             const isLocalhost = window.location.hostname === 'localhost'
             const redirectUrl = customization.isDarkMode
@@ -37,7 +38,8 @@ const RequireUID = ({ children }) => {
             localStorage.setItem('userId', uid)
             sessionStorage.setItem('userId_session', uid)
         }
-    }, [navigate])
+*/
+    }, [])
 
     return children
 }
