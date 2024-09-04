@@ -104,8 +104,6 @@ const Marketplace = () => {
 
     const [isInputFocused, setInputFocused] = useState(false)
 
-    console.log(usecases, 'usecases')
-
     const handleTypeFilterChange = (event) => {
         const {
             target: { value, checked }
@@ -255,8 +253,6 @@ const Marketplace = () => {
             setError(getAllTemplatesMarketplacesApi.error)
         }
     }, [getAllTemplatesMarketplacesApi.error])
-
-    console.log(eligibleUsecases, 'eligibleUsecases')
 
     return (
         <>

@@ -77,7 +77,6 @@ export const ChatPopUp = ({ chatflowid }) => {
     }
 
     const handleMouseUp = () => {
-        console.log('mouse button left')
         setDragging(false)
     }
 
