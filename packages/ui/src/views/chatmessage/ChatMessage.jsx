@@ -413,8 +413,25 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const updateLastMessageAgentReasoning = (agentReasoning) => {
         setMessages((prevMessages) => {
             let allMessages = [...cloneDeep(prevMessages)]
+
+            // Check if the last message type is 'userMessage'
             if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
-            allMessages[allMessages.length - 1].agentReasoning = JSON.parse(agentReasoning)
+
+            try {
+                // Check if agentReasoning is a string and parse it, otherwise use it as-is
+                if (typeof agentReasoning === 'string') {
+                    allMessages[allMessages.length - 1].agentReasoning = JSON.parse(agentReasoning)
+                } else if (typeof agentReasoning === 'object') {
+                    allMessages[allMessages.length - 1].agentReasoning = agentReasoning
+                } else {
+                    console.warn('Unexpected type of agentReasoning:', typeof agentReasoning)
+                    allMessages[allMessages.length - 1].agentReasoning = {} // or any default value
+                }
+            } catch (error) {
+                console.error('Error parsing agentReasoning:', error)
+                allMessages[allMessages.length - 1].agentReasoning = {} // or any default value
+            }
+
             return allMessages
         })
     }
@@ -689,7 +706,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 }
                 if (config.chatFeedback) {
                     setChatFeedbackStatus(config.chatFeedback.status)
-                    console.log(config.chatFeedback.status)
                 }
 
                 if (config.leads) {

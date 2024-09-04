@@ -88,8 +88,6 @@ const Assistants = () => {
         getAllAssistantsApi.request(tenantId)
     }, [])
 
-    console.log(getAllAssistantsApi.data)
-
     return (
         <>
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>

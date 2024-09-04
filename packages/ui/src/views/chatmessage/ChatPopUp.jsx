@@ -74,7 +74,6 @@ export const ChatPopUp = ({ chatflowid }) => {
     }
 
     const handleMouseUp = () => {
-        console.log('mouse button left')
         setDragging(false)
     }
 
@@ -85,7 +84,6 @@ export const ChatPopUp = ({ chatflowid }) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return
         }
-        console.log('close chat')
         // setOpen(false);
     }
 
