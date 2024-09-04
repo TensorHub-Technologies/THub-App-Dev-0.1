@@ -24,6 +24,9 @@ import useNotifier from '@/utils/useNotifier'
 // Const
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 
+// Utils
+import { getLocalStorageChatflow, removeLocalStorageChatHistory } from '@/utils/genericHelper'
+
 export const ChatPopUp = ({ chatflowid }) => {
     const theme = useTheme()
     const { confirm } = useConfirm()
@@ -84,7 +87,7 @@ export const ChatPopUp = ({ chatflowid }) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return
         }
-        // setOpen(false);
+        setOpen(false)
     }
 
     const customization = useSelector((state) => state.customization)
@@ -142,11 +145,10 @@ export const ChatPopUp = ({ chatflowid }) => {
 
         if (isConfirmed) {
             try {
-                const chatDetails = localStorage.getItem(`${chatflowid}_INTERNAL`)
-                if (!chatDetails) return
-                const objChatDetails = JSON.parse(chatDetails)
+                const objChatDetails = getLocalStorageChatflow(chatflowid)
+                if (!objChatDetails.chatId) return
                 await chatmessageApi.deleteChatmessage(chatflowid, { chatId: objChatDetails.chatId, chatType: 'INTERNAL' })
-                localStorage.removeItem(`${chatflowid}_INTERNAL`)
+                removeLocalStorageChatHistory(chatflowid)
                 resetChatDialog()
                 enqueueSnackbar({
                     message: 'Succesfully cleared all chat history',
@@ -183,6 +185,7 @@ export const ChatPopUp = ({ chatflowid }) => {
             anchorRef.current.focus()
         }
         prevOpen.current = open
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, chatflowid])
 
     return (
@@ -194,7 +197,17 @@ export const ChatPopUp = ({ chatflowid }) => {
                     top: 20,
                     boxShadow: '0',
                     color: customization.isDarkMode ? 'white' : 'black',
-                    backgroundColor: open ? (customization?.isDarkMode ? '#000' : '#fff') : ''
+                    backgroundColor: open ? (customization?.isDarkMode ? '#000' : '#fff') : '',
+
+                    '&:hover': {
+                        backgroundColor: open
+                            ? customization?.isDarkMode
+                                ? '000'
+                                : '#fff'
+                            : customization.isDarkMode
+                            ? '#e22a90'
+                            : '#3c5ba4'
+                    }
                 }}
                 ref={anchorRef}
                 size='small'
@@ -211,23 +224,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                         }}
                     />
                 ) : (
-                    // <IconMessage style={{ color: customization?.isDarkMode ? '#fff' : '#fff' }} />
-                    <IconMessage
-                        style={{
-                            color: customization?.isDarkMode ? '#fff' : '#fff',
-                            transition: 'color 0.3s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                            if (!customization?.isDarkMode) {
-                                e.currentTarget.style.color = '#000'
-                            }
-                        }}
-                        onMouseLeave={(e) => {
-                            if (!customization?.isDarkMode) {
-                                e.currentTarget.style.color = '#fff'
-                            }
-                        }}
-                    />
+                    <IconMessage style={{ color: customization?.isDarkMode ? '#fff' : '#fff' }} />
                 )}
             </StyledFab>
             {/* {open && (
