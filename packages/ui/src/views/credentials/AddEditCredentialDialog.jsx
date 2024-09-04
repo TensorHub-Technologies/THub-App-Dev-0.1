@@ -63,7 +63,6 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 setName(getSpecificCredentialApi.data.name)
             }
             if (getSpecificCredentialApi.data.plainDataObj) {
-                console.log('plainDataObj: ', getSpecificCredentialApi.data.plainDataObj)
                 setCredentialData(getSpecificCredentialApi.data.plainDataObj)
             }
             let credentialName

@@ -112,7 +112,6 @@ class OpenAIFunctionAgent_LlamaIndex_Agents implements INode {
                 verbose: process.env.DEBUG === 'true' ? true : false
             })
             for await (const chunk of stream) {
-                //console.log('chunk', chunk)
                 text += chunk.response.delta
                 if (!isStreamingStarted) {
                     isStreamingStarted = true

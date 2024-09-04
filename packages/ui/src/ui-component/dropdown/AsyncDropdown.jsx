@@ -59,7 +59,7 @@ export const AsyncDropdown = ({
     const customization = useSelector((state) => state.customization)
     const userData = useSelector((state) => state.user.userData)
     // const tenantId = userData['uid']
-    const tenantId = userData?.uid
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     const [open, setOpen] = useState(false)
     const [options, setOptions] = useState([])
@@ -68,7 +68,6 @@ export const AsyncDropdown = ({
     const getDefaultOptionValue = () => ''
     const addNewOption = [{ label: '- Create New -', name: '-create-' }]
     let [internalValue, setInternalValue] = useState(value ?? 'choose an option')
-
     const fetchCredentialList = async () => {
         try {
             let names = ''
