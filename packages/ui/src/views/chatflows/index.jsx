@@ -56,7 +56,8 @@ const Chatflows = () => {
     const userData = useSelector(userDataSelector)
     if (!userData?.uid) {
         console.log('user id not present')
-        return
+        return <div>Loading...</div>;
+
     }
     const tenantId = userData?.uid
 
