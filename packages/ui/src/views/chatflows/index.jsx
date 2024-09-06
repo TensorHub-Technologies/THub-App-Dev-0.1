@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { createSelector } from 'reselect'
 
 // material-ui
 import { Grid, Box, Stack, Toolbar, ToggleButton, Skeleton, ButtonGroup, InputAdornment, TextField, MenuItem, Select } from '@mui/material'
@@ -50,7 +51,13 @@ const Chatflows = () => {
     const [showModal, setShowModal] = useState(false)
     const [sortBy, setSortBy] = useState('name')
 
-    const userData = useSelector((state) => state.user.userData)
+    const selectUser = (state) => state.user.userData
+    const userDataSelector = createSelector([selectUser], (userData) => userData)
+    const userData = useSelector(userDataSelector)
+    if (!userData?.uid) {
+        console.log('user id not present')
+        return
+    }
     const tenantId = userData?.uid
 
     const getAllChatflowsApi = useApi(chatflowsApi.getAllChatflows)
