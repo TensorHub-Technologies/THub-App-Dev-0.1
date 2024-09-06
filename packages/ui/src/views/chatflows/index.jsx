@@ -108,8 +108,9 @@ const Chatflows = () => {
     }, [tenantId])
 
     useEffect(() => {
-        getAllChatflowsApi.request(tenantId)
-
+        if (tenantId) {
+            getAllChatflowsApi.request(tenantId)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
