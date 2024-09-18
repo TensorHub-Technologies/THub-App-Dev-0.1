@@ -87,6 +87,10 @@ export const ChatPopUp = ({ chatflowid }) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return
         }
+        if (event && event.target.closest('.clear-chat')) {
+            return
+        }
+
         setOpen(false)
     }
 
@@ -134,6 +138,51 @@ export const ChatPopUp = ({ chatflowid }) => {
         }, 500)
     }
 
+    // const clearChat = async () => {
+    //     const confirmPayload = {
+    //         title: `Clear Chat History`,
+    //         description: `Are you sure you want to clear all chat history?`,
+    //         confirmButtonName: 'Clear',
+    //         cancelButtonName: 'Cancel'
+    //     }
+    //     const isConfirmed = await confirm(confirmPayload)
+
+    //     if (isConfirmed) {
+    //         try {
+    //             const objChatDetails = getLocalStorageChatflow(chatflowid)
+    //             if (!objChatDetails.chatId) return
+    //             await chatmessageApi.deleteChatmessage(chatflowid, { chatId: objChatDetails.chatId, chatType: 'INTERNAL' })
+    //             removeLocalStorageChatHistory(chatflowid)
+    //             resetChatDialog()
+    //             enqueueSnackbar({
+    //                 message: 'Succesfully cleared all chat history',
+    //                 options: {
+    //                     key: new Date().getTime() + Math.random(),
+    //                     variant: 'success',
+    //                     action: (key) => (
+    //                         <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+    //                             <IconX />
+    //                         </Button>
+    //                     )
+    //                 }
+    //             })
+    //         } catch (error) {
+    //             enqueueSnackbar({
+    //                 message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+    //                 options: {
+    //                     key: new Date().getTime() + Math.random(),
+    //                     variant: 'error',
+    //                     persist: true,
+    //                     action: (key) => (
+    //                         <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+    //                             <IconX />
+    //                         </Button>
+    //                     )
+    //                 }
+    //             })
+    //         }
+    //     }
+    // }
     const clearChat = async () => {
         const confirmPayload = {
             title: `Clear Chat History`,
@@ -149,9 +198,14 @@ export const ChatPopUp = ({ chatflowid }) => {
                 if (!objChatDetails.chatId) return
                 await chatmessageApi.deleteChatmessage(chatflowid, { chatId: objChatDetails.chatId, chatType: 'INTERNAL' })
                 removeLocalStorageChatHistory(chatflowid)
+
                 resetChatDialog()
+
+                // Force the chat popup to remain visible
+                setOpen(true)
+
                 enqueueSnackbar({
-                    message: 'Succesfully cleared all chat history',
+                    message: 'Successfully cleared all chat history',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -341,6 +395,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                                     <IconArrowsMaximize />
                                 </StyledFab>
                                 <StyledFab
+                                    className='clear-chat'
                                     sx={{
                                         background: 'transparent',
                                         boxShadow: '0',
