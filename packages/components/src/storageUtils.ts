@@ -10,13 +10,7 @@ import {
 } from '@aws-sdk/client-s3'
 import { Readable } from 'node:stream'
 import { getUserHome } from './utils'
-const { Storage } = require('@google-cloud/storage')
-
-const storage = new Storage({
-    keyFilename: path.join(__dirname, '..', '..', '..', 'server', 'uploads', 'serviceAccountKey.json')
-})
-
-const bucketName = 'thub-files'
+import sanitize from 'sanitize-filename'
 
 export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: string, fileNames: string[]) => {
     const storageType = getStorageType()
@@ -28,7 +22,9 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
         const mime = splitDataURI[0].split(':')[1].split(';')[0]
 
-        const Key = chatflowid + '/' + filename
+        const sanitizedFilename = _sanitizeFilename(filename)
+
+        const Key = chatflowid + '/' + sanitizedFilename
         const putObjCmd = new PutObjectCommand({
             Bucket,
             Key,
@@ -38,54 +34,34 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         })
         await s3Client.send(putObjCmd)
 
-        fileNames.push(filename)
+        fileNames.push(sanitizedFilename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
-    } else if (process.env.NODE_ENV === 'production') {
-        const splitDataURI = fileBase64.split(',')
-        const filename = splitDataURI.pop()?.split(':')[1] ?? ''
-        const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
-        const mime = splitDataURI[0].split(':')[1].split(';')[0]
-
-        const bucket = storage.bucket(bucketName)
-        const file = bucket.file(`.flowise/storage/${chatflowid}/${filename}`)
-
-        try {
-            await file.save(bf, {
-                metadata: {
-                    contentType: mime,
-                    contentEncoding: 'base64'
-                },
-                resumable: false
-            })
-
-            fileNames.push(filename)
-            return 'FILE-STORAGE::' + JSON.stringify(fileNames)
-        } catch (error) {
-            console.error(`Failed to save file in GCS. Filename: ${filename}, Error: ${error.message}`)
-            throw error
-        }
     } else {
         const dir = path.join(getStoragePath(), chatflowid)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
+
         const splitDataURI = fileBase64.split(',')
         const filename = splitDataURI.pop()?.split(':')[1] ?? ''
         const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
+        const sanitizedFilename = _sanitizeFilename(filename)
 
-        const filePath = path.join(dir, filename)
+        const filePath = path.join(dir, sanitizedFilename)
         fs.writeFileSync(filePath, bf)
-        fileNames.push(filename)
+        fileNames.push(sanitizedFilename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     }
 }
 
 export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName: string, fileNames: string[], ...paths: string[]) => {
     const storageType = getStorageType()
+
+    const sanitizedFilename = _sanitizeFilename(fileName)
     if (storageType === 's3') {
         const { s3Client, Bucket } = getS3Config()
 
-        let Key = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + fileName
+        let Key = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + sanitizedFilename
         if (Key.startsWith('/')) {
             Key = Key.substring(1)
         }
@@ -93,56 +69,33 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
         const putObjCmd = new PutObjectCommand({
             Bucket,
             Key,
-            ContentEncoding: 'base64',
+            ContentEncoding: 'base64', // required for binary data
             ContentType: mime,
             Body: bf
         })
         await s3Client.send(putObjCmd)
-        fileNames.push(fileName)
+        fileNames.push(sanitizedFilename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
-    } else if (process.env.NODE_ENV === 'production') {
-        let filePath = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + fileName
-        if (filePath.startsWith('/')) {
-            filePath = filePath.substring(1)
-        }
-        const gcsFilePath = `.flowise/storage/${filePath}`
-        const bucket = storage.bucket(bucketName)
-        const file = bucket.file(gcsFilePath)
-
-        try {
-            await file.save(bf, {
-                metadata: {
-                    contentType: mime,
-                    contentEncoding: 'base64'
-                },
-                resumable: false
-            })
-
-            fileNames.push(fileName)
-            return 'FILE-STORAGE::' + JSON.stringify(fileNames)
-        } catch (error) {
-            console.error(`Failed to save file in GCS. FileName: ${fileName}, Error: ${error.message}`)
-            throw error // Re-throw the error to ensure the calling code handles it
-        }
     } else {
         const dir = path.join(getStoragePath(), ...paths)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
-
-        const filePath = path.join(dir, fileName)
+        const filePath = path.join(dir, sanitizedFilename)
         fs.writeFileSync(filePath, bf)
-        fileNames.push(fileName)
+        fileNames.push(sanitizedFilename)
         return 'FILE-STORAGE::' + JSON.stringify(fileNames)
     }
 }
 
 export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName: string, ...paths: string[]) => {
     const storageType = getStorageType()
+    const sanitizedFilename = _sanitizeFilename(fileName)
+
     if (storageType === 's3') {
         const { s3Client, Bucket } = getS3Config()
 
-        let Key = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + fileName
+        let Key = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + sanitizedFilename
         if (Key.startsWith('/')) {
             Key = Key.substring(1)
         }
@@ -150,56 +103,21 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
         const putObjCmd = new PutObjectCommand({
             Bucket,
             Key,
-            ContentEncoding: 'base64',
+            ContentEncoding: 'base64', // required for binary data
             ContentType: mime,
             Body: bf
         })
         await s3Client.send(putObjCmd)
-        return 'FILE-STORAGE::' + fileName
-    } else if (process.env.NODE_ENV === 'production') {
-        let filePath = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + fileName
-        if (filePath.startsWith('/')) {
-            filePath = filePath.substring(1)
-        }
-
-        const gcsFilePath = `.flowise/storage/${filePath}`
-        const bucket = storage.bucket(bucketName)
-        const file = bucket.file(gcsFilePath)
-
-        try {
-            await file.save(bf, {
-                metadata: {
-                    contentType: mime,
-                    contentEncoding: 'base64'
-                },
-                resumable: false
-            })
-
-            return 'FILE-STORAGE::' + fileName
-        } catch (error) {
-            console.error(`Failed to save file in GCS. FileName: ${fileName}, Error: ${error.message}`)
-            throw error
-        }
+        return 'FILE-STORAGE::' + sanitizedFilename
     } else {
         const dir = path.join(getStoragePath(), ...paths)
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true })
         }
-        const filePath = path.join(dir, fileName)
+        const filePath = path.join(dir, sanitizedFilename)
         fs.writeFileSync(filePath, bf)
-        return 'FILE-STORAGE::' + fileName
+        return 'FILE-STORAGE::' + sanitizedFilename
     }
-}
-
-/**
- * Read file from Google Cloud Storage and return as Buffer
- * @param filePath - Path to the file in GCS
- */
-
-async function getFileFromGCS(filePaths: string): Promise<Buffer> {
-    const file = storage.bucket(bucketName).file(filePaths)
-    const [fileBuffer] = await file.download()
-    return fileBuffer
 }
 
 export const getFileFromStorage = async (file: string, ...paths: string[]): Promise<Buffer> => {
@@ -228,12 +146,6 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         // @ts-ignore
         const buffer = Buffer.concat(response.Body.toArray())
         return buffer
-    } else if (process.env.NODE_ENV === 'production') {
-        console.log(process.env.NODE_ENV, 'process.env.NODE_ENV33')
-        const filePath = path.join('.flowise/storage', ...paths, file)
-        const filePaths = filePath.replace(/\\/g, '/')
-        const fileBuffer = await getFileFromGCS(filePaths)
-        return fileBuffer
     } else {
         const fileInStorage = path.join(getStoragePath(), ...paths, file)
         return fs.readFileSync(fileInStorage)
@@ -258,25 +170,11 @@ export const removeFilesFromStorage = async (...paths: string[]) => {
     const storageType = getStorageType()
     if (storageType === 's3') {
         let Key = paths.reduce((acc, cur) => acc + '/' + cur, '')
+        // remove the first '/' if it exists
         if (Key.startsWith('/')) {
             Key = Key.substring(1)
         }
         await _deleteS3Folder(Key)
-    } else if (process.env.NODE_ENV === 'production') {
-        let gcsFilePath = paths.reduce((acc, cur) => acc + '/' + cur, '')
-        if (gcsFilePath.startsWith('/')) {
-            gcsFilePath = gcsFilePath.substring(1)
-        }
-
-        const bucket = storage.bucket(bucketName)
-        const file = bucket.file(`.flowise/storage/${gcsFilePath}`)
-
-        try {
-            await file.delete()
-        } catch (error) {
-            console.error(`Failed to delete file from GCS. Path: ${gcsFilePath}, Error: ${error.message}`)
-            throw error
-        }
     } else {
         const directory = path.join(getStoragePath(), ...paths)
         _deleteLocalFolderRecursive(directory)
@@ -292,22 +190,12 @@ export const removeSpecificFileFromStorage = async (...paths: string[]) => {
             Key = Key.substring(1)
         }
         await _deleteS3Folder(Key)
-    } else if (process.env.NODE_ENV === 'production') {
-        let gcsFilePath = paths.reduce((acc, cur) => acc + '/' + cur, '')
-        if (gcsFilePath.startsWith('/')) {
-            gcsFilePath = gcsFilePath.substring(1)
-        }
-
-        const bucket = storage.bucket(bucketName)
-        const file = bucket.file(`.flowise/storage/${gcsFilePath}`)
-
-        try {
-            await file.delete()
-        } catch (error) {
-            console.error(`Failed to delete specific file from GCS. Path: ${gcsFilePath}, Error: ${error.message}`)
-            throw error
-        }
     } else {
+        const fileName = paths.pop()
+        if (fileName) {
+            const sanitizedFilename = _sanitizeFilename(fileName)
+            paths.push(sanitizedFilename)
+        }
         const file = path.join(getStoragePath(), ...paths)
         fs.unlinkSync(file)
     }
@@ -322,22 +210,6 @@ export const removeFolderFromStorage = async (...paths: string[]) => {
             Key = Key.substring(1)
         }
         await _deleteS3Folder(Key)
-    } else if (process.env.NODE_ENV === 'production') {
-        let gcsFolderPath = paths.reduce((acc, cur) => acc + '/' + cur, '')
-        if (gcsFolderPath.startsWith('/')) {
-            gcsFolderPath = gcsFolderPath.substring(1)
-        }
-
-        const bucket = storage.bucket(bucketName)
-        const [files] = await bucket.getFiles({ prefix: `.flowise/storage/${gcsFolderPath}` })
-
-        if (files.length > 0) {
-            await Promise.all(
-                files.map(async (file: { delete: () => Promise<void> }) => {
-                    await file.delete()
-                })
-            )
-        }
     } else {
         const directory = path.join(getStoragePath(), ...paths)
         _deleteLocalFolderRecursive(directory, true)
@@ -421,10 +293,11 @@ export const streamStorageFile = async (
     fileName: string
 ): Promise<fs.ReadStream | Buffer | undefined> => {
     const storageType = getStorageType()
+    const sanitizedFilename = sanitize(fileName)
     if (storageType === 's3') {
         const { s3Client, Bucket } = getS3Config()
 
-        const Key = chatflowId + '/' + chatId + '/' + fileName
+        const Key = chatflowId + '/' + chatId + '/' + sanitizedFilename
         const getParams = {
             Bucket,
             Key
@@ -436,7 +309,7 @@ export const streamStorageFile = async (
             return Buffer.from(blob)
         }
     } else {
-        const filePath = path.join(getStoragePath(), chatflowId, chatId, fileName)
+        const filePath = path.join(getStoragePath(), chatflowId, chatId, sanitizedFilename)
         //raise error if file path is not absolute
         if (!path.isAbsolute(filePath)) throw new Error(`Invalid file path`)
         //raise error if file path contains '..'
@@ -477,4 +350,13 @@ export const getS3Config = () => {
         endpoint: customURL
     })
     return { s3Client, Bucket }
+}
+
+const _sanitizeFilename = (filename: string): string => {
+    if (filename) {
+        let sanitizedFilename = sanitize(filename)
+        // remove all leading .
+        return sanitizedFilename.replace(/^\.+/, '')
+    }
+    return ''
 }
