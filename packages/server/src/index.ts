@@ -15,10 +15,12 @@ import { ChatFlow } from './database/entities/ChatFlow'
 import { ChatflowPool } from './ChatflowPool'
 import { CachePool } from './CachePool'
 import { initializeRateLimiter } from './utils/rateLimit'
+import { getAPIKeys } from './utils/apiKey'
 import { sanitizeMiddleware, getCorsOptions, getAllowedIframeOrigins } from './utils/XSS'
 import { Telemetry } from './utils/telemetry'
 import flowiseApiV1Router from './routes'
 import errorHandlerMiddleware from './middlewares/errors'
+import { SSEStreamer } from './utils/SSEStreamer'
 
 declare global {
     namespace Express {
@@ -35,13 +37,13 @@ export class App {
     cachePool: CachePool
     telemetry: Telemetry
     AppDataSource: DataSource = getDataSource()
+    sseStreamer: SSEStreamer
 
     constructor() {
         this.app = express()
     }
 
     async initDatabase() {
-        //   const tenantId = 'oNELkPmgkmgmskauGSHwvHXo22S2'
         // Initialize database
         try {
             await this.AppDataSource.initialize()
@@ -58,7 +60,7 @@ export class App {
             this.chatflowPool = new ChatflowPool()
 
             // Initialize API keys
-            // await getAPIKeys(tenantId)
+            await getAPIKeys()
 
             // Initialize encryption key
             await getEncryptionKey()
@@ -148,6 +150,7 @@ export class App {
         }
 
         this.app.use('/api/v1', flowiseApiV1Router)
+        this.sseStreamer = new SSEStreamer(this.app)
 
         // ----------------------------------------
         // Configure number of proxies in Host Environment

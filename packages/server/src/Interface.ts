@@ -1,4 +1,4 @@
-import { ICommonObject, IFileUpload, IAction, INode, INodeData as INodeDataFromComponent, INodeParams } from 'thub-components'
+import { IAction, ICommonObject, IFileUpload, INode, INodeData as INodeDataFromComponent, INodeParams } from 'thub-components'
 
 export type MessageType = 'apiMessage' | 'userMessage'
 
@@ -43,6 +43,7 @@ export interface IChatMessage {
     fileAnnotations?: string
     agentReasoning?: string
     fileUploads?: string
+    artifacts?: string
     chatType: string
     chatId: string
     memoryType?: string
@@ -234,6 +235,7 @@ export interface IActiveChatflows {
         endingNodeData?: INodeData
         inSync: boolean
         overrideConfig?: ICommonObject
+        chatId?: string
     }
 }
 
@@ -275,6 +277,19 @@ export interface IApiKey {
     apiKey: string
     apiSecret: string
     updatedDate: Date
+}
+
+export interface ICustomTemplate {
+    id: string
+    name: string
+    flowData: string
+    updatedDate: Date
+    createdDate: Date
+    description?: string
+    type?: string
+    badge?: string
+    framework?: string
+    usecases?: string
 }
 
 // DocumentStore related
