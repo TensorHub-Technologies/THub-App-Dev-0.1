@@ -45,22 +45,22 @@ const convertExportInput = (body: any): ExportInput => {
 }
 
 const FileDefaultName = 'ExportData.json'
-const exportData = async (exportInput: ExportInput): Promise<{ FileDefaultName: string } & ExportData> => {
+const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{ FileDefaultName: string } & ExportData> => {
     try {
         // step 1 - get all Tool
         let allTool: Tool[] = []
-        if (exportInput.tool === true) allTool = await toolsService.getAllTools()
+        if (exportInput.tool) allTool = await toolsService.getAllTools(tenantId)
 
         // step 2 - get all ChatFlow
         let allChatflow: ChatFlow[] = []
-        if (exportInput.chatflow === true) allChatflow = await chatflowService.getAllChatflows('CHATFLOW')
+        if (exportInput.chatflow) allChatflow = await chatflowService.getAllChatflows('CHATFLOW', tenantId)
 
         // step 3 - get all MultiAgent
         let allMultiAgent: ChatFlow[] = []
-        if (exportInput.agentflow === true) allMultiAgent = await chatflowService.getAllChatflows('MULTIAGENT')
+        if (exportInput.agentflow) allMultiAgent = await chatflowService.getAllChatflows('MULTIAGENT', tenantId)
 
         let allVars: Variable[] = []
-        if (exportInput.variable === true) allVars = await variableService.getAllVariables()
+        if (exportInput.variable) allVars = await variableService.getAllVariables(tenantId)
 
         let allAssistants: Assistant[] = []
         if (exportInput.assistant === true) allAssistants = await assistantService.getAllAssistants()
