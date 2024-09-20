@@ -31,6 +31,7 @@ const blurStyle = {
 }
 
 const UserInfo = ({ setShowModal, showModal }) => {
+    const navigate = useNavigate();
     const { uid } = useSelector((state) => state.user.userData)
     const dispatch = useDispatch()
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
@@ -71,7 +72,6 @@ const UserInfo = ({ setShowModal, showModal }) => {
     }
 
     const handleSubmit = async () => {
-        const navigate = useNavigate();
         if (!formData.department || !formData.role || !formData.designation || !formData.company || !formData.workspace) {
             enqueueSnackbar({
                 message: 'Please fill out all required fields.',
