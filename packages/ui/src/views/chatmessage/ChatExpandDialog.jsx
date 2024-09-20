@@ -7,9 +7,21 @@ import { ChatMessage } from './ChatMessage'
 import { IconX, IconEraser, IconMinus } from '@tabler/icons'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 
-const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setPreviews, open, setOpen, setShowExpandDialog }) => {
+const ChatExpandDialog = ({
+    show,
+    dialogProps,
+    isAgentCanvas,
+    onClear,
+    onCancel,
+    previews,
+    setPreviews,
+    open,
+    setOpen,
+    setShowExpandDialog
+}) => {
     const portalElement = document.getElementById('portal')
     const customization = useSelector((state) => state.customization)
+
     const component = show ? (
         <Dialog
             open={show}
@@ -102,6 +114,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                 <ChatMessage
                     isDialog={true}
                     open={dialogProps.open}
+                    isAgentCanvas={isAgentCanvas}
                     chatflowid={dialogProps.chatflowid}
                     previews={previews}
                     setPreviews={setPreviews}
@@ -116,6 +129,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
 ChatExpandDialog.propTypes = {
     show: PropTypes.bool,
     dialogProps: PropTypes.object,
+    isAgentCanvas: PropTypes.bool,
     onClear: PropTypes.func,
     onCancel: PropTypes.func,
     previews: PropTypes.array,

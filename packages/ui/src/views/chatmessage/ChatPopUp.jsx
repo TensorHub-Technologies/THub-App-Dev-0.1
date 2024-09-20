@@ -27,7 +27,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 // Utils
 import { getLocalStorageChatflow, removeLocalStorageChatHistory } from '@/utils/genericHelper'
 
-export const ChatPopUp = ({ chatflowid }) => {
+export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
     const theme = useTheme()
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
@@ -138,51 +138,6 @@ export const ChatPopUp = ({ chatflowid }) => {
         }, 500)
     }
 
-    // const clearChat = async () => {
-    //     const confirmPayload = {
-    //         title: `Clear Chat History`,
-    //         description: `Are you sure you want to clear all chat history?`,
-    //         confirmButtonName: 'Clear',
-    //         cancelButtonName: 'Cancel'
-    //     }
-    //     const isConfirmed = await confirm(confirmPayload)
-
-    //     if (isConfirmed) {
-    //         try {
-    //             const objChatDetails = getLocalStorageChatflow(chatflowid)
-    //             if (!objChatDetails.chatId) return
-    //             await chatmessageApi.deleteChatmessage(chatflowid, { chatId: objChatDetails.chatId, chatType: 'INTERNAL' })
-    //             removeLocalStorageChatHistory(chatflowid)
-    //             resetChatDialog()
-    //             enqueueSnackbar({
-    //                 message: 'Succesfully cleared all chat history',
-    //                 options: {
-    //                     key: new Date().getTime() + Math.random(),
-    //                     variant: 'success',
-    //                     action: (key) => (
-    //                         <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
-    //                             <IconX />
-    //                         </Button>
-    //                     )
-    //                 }
-    //             })
-    //         } catch (error) {
-    //             enqueueSnackbar({
-    //                 message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
-    //                 options: {
-    //                     key: new Date().getTime() + Math.random(),
-    //                     variant: 'error',
-    //                     persist: true,
-    //                     action: (key) => (
-    //                         <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
-    //                             <IconX />
-    //                         </Button>
-    //                     )
-    //                 }
-    //             })
-    //         }
-    //     }
-    // }
     const clearChat = async () => {
         const confirmPayload = {
             title: `Clear Chat History`,
@@ -239,6 +194,7 @@ export const ChatPopUp = ({ chatflowid }) => {
             anchorRef.current.focus()
         }
         prevOpen.current = open
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, chatflowid])
 
@@ -281,16 +237,9 @@ export const ChatPopUp = ({ chatflowid }) => {
                     <IconMessage style={{ color: customization?.isDarkMode ? '#fff' : '#fff' }} />
                 )}
             </StyledFab>
-            {/* {open && (
+            {open && (
                 <StyledFab
-                    sx={{
-                        position: 'absolute',
-                        right: 55,
-                        top: 20,
-                        background: 'transparent',
-                        boxShadow: '0',
-                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                    }}
+                    sx={{ position: 'absolute', right: 80, top: 20 }}
                     onClick={clearChat}
                     size='small'
                     color='error'
@@ -299,17 +248,10 @@ export const ChatPopUp = ({ chatflowid }) => {
                 >
                     <IconEraser />
                 </StyledFab>
-            )} */}
-            {/* {open && (
+            )}
+            {open && (
                 <StyledFab
-                    sx={{
-                        position: 'absolute',
-                        right: 90,
-                        top: 20,
-                        background: 'transparent',
-                        boxShadow: '0',
-                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                    }}
+                    sx={{ position: 'absolute', right: 140, top: 20 }}
                     onClick={expandChat}
                     size='small'
                     color='primary'
@@ -318,7 +260,7 @@ export const ChatPopUp = ({ chatflowid }) => {
                 >
                     <IconArrowsMaximize />
                 </StyledFab>
-            )} */}
+            )}
             <Popper
                 placement='bottom-end'
                 open={open}
@@ -338,31 +280,6 @@ export const ChatPopUp = ({ chatflowid }) => {
                 }}
                 sx={{ zIndex: 1000 }}
             >
-                {/* {({ TransitionProps }) => (
-                    <Transitions in={open} {...TransitionProps}>
-                        <Paper
-                            ref={paperRef}
-                            onMouseMove={handleMouseMove}
-                            onMouseUp={handleMouseUp}
-                            onMouseDown={handleMouseDown}
-                            sx={{ marginTop: '-58px', position: 'absolute', right: '0px' }}
-                        >
-                            <ClickAwayListener onClickAway={handleClose}>
-                                <MainCard
-                                    border={false}
-                                    className='cloud-wrapper'
-                                    elevation={16}
-                                    content={false}
-                                    boxShadow
-                                    shadow={theme.shadows[16]}
-                                >
-                                    <ChatMessage chatflowid={chatflowid} open={open} previews={previews} setPreviews={setPreviews} />
-                                </MainCard>
-                            </ClickAwayListener>
-                        </Paper>
-                    </Transitions>
-                )} */}
-
                 {({ TransitionProps }) => (
                     <Transitions in={open} {...TransitionProps}>
                         <Paper
@@ -434,7 +351,13 @@ export const ChatPopUp = ({ chatflowid }) => {
                                     boxShadow
                                     shadow={theme.shadows[16]}
                                 >
-                                    <ChatMessage chatflowid={chatflowid} open={open} previews={previews} setPreviews={setPreviews} />
+                                    <ChatMessage
+                                        isAgentCanvas={isAgentCanvas}
+                                        chatflowid={chatflowid}
+                                        open={open}
+                                        previews={previews}
+                                        setPreviews={setPreviews}
+                                    />
                                 </MainCard>
                             </ClickAwayListener>
                         </Paper>
@@ -444,6 +367,7 @@ export const ChatPopUp = ({ chatflowid }) => {
             <ChatExpandDialog
                 show={showExpandDialog}
                 dialogProps={expandDialogProps}
+                isAgentCanvas={isAgentCanvas}
                 onClear={clearChat}
                 onCancel={() => setShowExpandDialog(false)}
                 previews={previews}
@@ -456,4 +380,4 @@ export const ChatPopUp = ({ chatflowid }) => {
     )
 }
 
-ChatPopUp.propTypes = { chatflowid: PropTypes.string }
+ChatPopUp.propTypes = { chatflowid: PropTypes.string, isAgentCanvas: PropTypes.bool }
