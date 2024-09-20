@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import { IconX } from '@tabler/icons'
+import { useNavigate } from 'react-router-dom';
 
 const style = {
     position: 'absolute',
@@ -70,6 +71,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
     }
 
     const handleSubmit = async () => {
+        const navigate = useNavigate();
         if (!formData.department || !formData.role || !formData.designation || !formData.company || !formData.workspace) {
             enqueueSnackbar({
                 message: 'Please fill out all required fields.',
@@ -112,7 +114,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                 company: '',
                 workspace: ''
             })
-            window.location.href = `http://${formData.workspace}.thub.tech/?theme=dark&uid=${emailUserId}`;
+            navigate(`http://${formData.workspace}.thub.tech/?theme=dark&uid=${emailUserId}`);    
             handleClose()
         } catch (error) {
             console.error('Error fetching data:', error)
