@@ -70,7 +70,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
     }
 
     const handleSubmit = async () => {
-        if (!formData.department || !formData.role || !formData.designation || !formData.company) {
+        if (!formData.department || !formData.role || !formData.designation || !formData.company || !formData.workspace) {
             enqueueSnackbar({
                 message: 'Please fill out all required fields.',
                 options: {
@@ -112,6 +112,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                 company: '',
                 workspace: ''
             })
+            window.location.href = `http://${formData.workspace}.thub.tech/?theme=dark&uid=${emailUserId}`;
             handleClose()
         } catch (error) {
             console.error('Error fetching data:', error)
