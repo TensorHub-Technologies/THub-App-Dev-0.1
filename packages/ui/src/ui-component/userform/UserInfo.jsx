@@ -114,6 +114,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                 company: '',
                 workspace: ''
             })
+            console.log("formData.workspace: ",formData.workspace);
             navigate(`http://${formData.workspace}.thub.tech/?theme=dark&uid=${emailUserId}`);    
             handleClose()
         } catch (error) {
