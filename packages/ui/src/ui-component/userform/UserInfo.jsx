@@ -115,7 +115,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                 workspace: ''
             })
             console.log("formData.workspace: ",formData.workspace);
-            navigate(`http://${formData.workspace}.thub.tech/?theme=dark&uid=${emailUserId}`);    
+            navigate(`http://${formData.workspace}.thub.tech/?theme=dark&uid=${uid}`);    
             handleClose()
         } catch (error) {
             console.error('Error fetching data:', error)
