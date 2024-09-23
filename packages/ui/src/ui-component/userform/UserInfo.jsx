@@ -44,6 +44,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
     })
 
     const [workspaceError, setWorkspaceError] = useState('')
+    const customization = useSelector((state) => state.customization)
 
     const handleClose = () => setShowModal(false)
 
@@ -122,7 +123,10 @@ const UserInfo = ({ setShowModal, showModal }) => {
         <div style={showModal ? blurStyle : null}>
             <Modal open={showModal} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
                 <Box sx={style}>
-                    <IconButton sx={{ position: 'absolute', top: 8, right: 8, color: '#E22A90' }} onClick={handleSkip}>
+                    <IconButton
+                        sx={{ position: 'absolute', top: 8, right: 8, color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                        onClick={handleSkip}
+                    >
                         <IconX />
                     </IconButton>
                     <Typography id='modal-modal-title' variant='h3' component='h2' sx={{ textAlign: 'center' }}>
@@ -130,12 +134,13 @@ const UserInfo = ({ setShowModal, showModal }) => {
                     </Typography>
 
                     <FormControl variant='outlined' fullWidth required sx={{ mt: '14px' }}>
-                        <Stack spacing={1}>
+                        <Stack spacing={2}>
                             <FormLabel htmlFor='company'>Company Name</FormLabel>
+
                             <TextField
-                                id='company'
+                                id='standard-basic'
+                                variant='standard'
                                 name='company'
-                                variant='outlined'
                                 placeholder='Company Name'
                                 value={formData.company}
                                 onChange={handleInputChange}
@@ -143,9 +148,9 @@ const UserInfo = ({ setShowModal, showModal }) => {
                             />
                             <FormLabel htmlFor='department'>Department</FormLabel>
                             <TextField
-                                id='department'
+                                id='standard-basic'
+                                variant='standard'
                                 name='department'
-                                variant='outlined'
                                 placeholder='Department'
                                 value={formData.department}
                                 onChange={handleInputChange}
@@ -153,9 +158,9 @@ const UserInfo = ({ setShowModal, showModal }) => {
                             />
                             <FormLabel htmlFor='role'>Role</FormLabel>
                             <TextField
-                                id='role'
+                                id='standard-basic'
+                                variant='standard'
                                 name='role'
-                                variant='outlined'
                                 placeholder='Role'
                                 value={formData.role}
                                 onChange={handleInputChange}
@@ -163,9 +168,9 @@ const UserInfo = ({ setShowModal, showModal }) => {
                             />
                             <FormLabel htmlFor='designation'>Designation</FormLabel>
                             <TextField
-                                id='designation'
+                                id='standard-basic'
+                                variant='standard'
                                 name='designation'
-                                variant='outlined'
                                 placeholder='Designation'
                                 value={formData.designation}
                                 onChange={handleInputChange}
@@ -173,9 +178,9 @@ const UserInfo = ({ setShowModal, showModal }) => {
                             />
                             <FormLabel htmlFor='workspace'>Workspace Name</FormLabel>
                             <TextField
-                                id='workspace'
+                                id='standard-basic'
+                                variant='standard'
                                 name='workspace'
-                                variant='outlined'
                                 placeholder='Workspace Name'
                                 value={formData.workspace}
                                 onChange={handleInputChange}
