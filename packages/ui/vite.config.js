@@ -32,7 +32,10 @@ export default defineConfig(async ({ mode }) => {
         },
         root: resolve(__dirname),
         build: {
-            outDir: './build'
+            outDir: './build',
+            rollupOptions: {
+                external: ['@microsoft/fetch-event-source']
+            }
         },
         server: {
             open: true,

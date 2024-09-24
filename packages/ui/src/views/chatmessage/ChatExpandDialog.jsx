@@ -36,17 +36,6 @@ const ChatExpandDialog = ({
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {dialogProps.title}
                     <div style={{ flex: 1 }}></div>
-                    {/* {open && customization.isDarkMode && (
-                        <StyledButton
-                            variant='outlined'
-                            color='error'
-                            title='Clear Conversation'
-                            onClick={onClear}
-                            startIcon={<IconEraser />}
-                        >
-                            Clear Chat
-                        </StyledButton>
-                    )} */}
                     <StyledFab
                         sx={{
                             position: 'absolute',
@@ -100,11 +89,6 @@ const ChatExpandDialog = ({
                     >
                         <IconX />
                     </StyledFab>
-                    {/* {open && !customization.isDarkMode && (
-                        <Button variant='outlined' color='error' title='Clear Conversation' onClick={onClear} startIcon={<IconEraser />}>
-                            Clear Chat
-                        </Button>
-                    )} */}
                 </div>
             </DialogTitle>
             <DialogContent

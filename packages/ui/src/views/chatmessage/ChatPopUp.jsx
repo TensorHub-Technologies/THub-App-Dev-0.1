@@ -194,7 +194,6 @@ export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
             anchorRef.current.focus()
         }
         prevOpen.current = open
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, chatflowid])
 
@@ -237,30 +236,7 @@ export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
                     <IconMessage style={{ color: customization?.isDarkMode ? '#fff' : '#fff' }} />
                 )}
             </StyledFab>
-            {open && (
-                <StyledFab
-                    sx={{ position: 'absolute', right: 80, top: 20 }}
-                    onClick={clearChat}
-                    size='small'
-                    color='error'
-                    aria-label='clear'
-                    title='Clear Chat History'
-                >
-                    <IconEraser />
-                </StyledFab>
-            )}
-            {open && (
-                <StyledFab
-                    sx={{ position: 'absolute', right: 140, top: 20 }}
-                    onClick={expandChat}
-                    size='small'
-                    color='primary'
-                    aria-label='expand'
-                    title='Expand Chat'
-                >
-                    <IconArrowsMaximize />
-                </StyledFab>
-            )}
+
             <Popper
                 placement='bottom-end'
                 open={open}
@@ -289,7 +265,6 @@ export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
                             onMouseDown={handleMouseDown}
                             sx={{
                                 position: 'relative',
-                                padding: '8px', // Add padding for spacing
                                 display: 'flex',
                                 flexDirection: 'column', // Arrange items vertically
                                 gap: '8px' // Space between items
