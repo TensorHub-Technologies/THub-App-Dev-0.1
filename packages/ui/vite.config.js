@@ -6,15 +6,17 @@ import dotenv from 'dotenv'
 export default defineConfig(async ({ mode }) => {
     let proxy = undefined
     if (mode === 'development') {
-        const serverPort = parseInt(dotenv.config({ processEnv: {}, path: '../server/.env' }).parsed?.['PORT'])
+        const serverEnv = dotenv.config({ processEnv: {}, path: '../server/.env' }).parsed
+        const serverHost = serverEnv?.['HOST'] ?? 'localhost'
+        const serverPort = parseInt(serverEnv?.['PORT'] ?? 3000)
         if (!Number.isNaN(serverPort) && serverPort > 0 && serverPort < 65535) {
             proxy = {
                 '/api': {
-                    target: `http://localhost:${serverPort}`,
+                    target: `http://${serverHost}:${serverPort}`,
                     changeOrigin: true
                 },
                 '/socket.io': {
-                    target: `http://localhost:${serverPort}`,
+                    target: `http://${serverHost}:${serverPort}`,
                     changeOrigin: true
                 }
             }
@@ -30,7 +32,10 @@ export default defineConfig(async ({ mode }) => {
         },
         root: resolve(__dirname),
         build: {
-            outDir: './build'
+            outDir: './build',
+            rollupOptions: {
+                external: ['@microsoft/fetch-event-source']
+            }
         },
         server: {
             open: true,
