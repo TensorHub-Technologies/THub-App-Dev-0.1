@@ -8,7 +8,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
-import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source'
+import { fetchEventSource } from '@microsoft/fetch-event-source'
 
 import {
     Box,
@@ -786,11 +786,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 'Content-Type': 'application/json',
                 Authorization: username && password ? `Basic ${btoa(`${username}:${password}`)}` : undefined,
                 'x-request-from': 'internal'
-            },
-            async onopen(response) {
-                if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
-                    //console.log('EventSource Open')
-                }
             },
             async onmessage(ev) {
                 const payload = JSON.parse(ev.data)
