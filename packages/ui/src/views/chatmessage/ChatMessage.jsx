@@ -1033,8 +1033,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         }
     }, [isDialog, inputRef])
 
-    console.log(messages.message.message, 'messages')
-
     useEffect(() => {
         if (open && chatflowid) {
             // API request
