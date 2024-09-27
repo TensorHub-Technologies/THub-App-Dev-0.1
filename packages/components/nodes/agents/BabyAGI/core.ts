@@ -177,15 +177,10 @@ export class BabyAGI {
     }
 
     printTaskList() {
-        // eslint-disable-next-line no-console
-        console.log('\x1b[95m\x1b[1m\n*****TASK LIST*****\n\x1b[0m\x1b[0m')
-        // eslint-disable-next-line no-console
         this.taskList.forEach((t) => console.log(`${t.task_id}: ${t.task_name}`))
     }
 
     printNextTask(task: Task) {
-        // eslint-disable-next-line no-console
-        console.log('\x1b[92m\x1b[1m\n*****NEXT TASK*****\n\x1b[0m\x1b[0m')
         // eslint-disable-next-line no-console
         console.log(`${task.task_id}: ${task.task_name}`)
     }
@@ -194,7 +189,6 @@ export class BabyAGI {
         // eslint-disable-next-line no-console
         console.log('\x1b[93m\x1b[1m\n*****TASK RESULT*****\n\x1b[0m\x1b[0m')
         // eslint-disable-next-line no-console
-        console.log(result)
     }
 
     getInputKeys(): string[] {
