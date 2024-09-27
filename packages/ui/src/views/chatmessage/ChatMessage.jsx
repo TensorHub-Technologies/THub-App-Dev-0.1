@@ -1012,7 +1012,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 }
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getChatflowConfig.data])
 
     // Auto scroll chat to bottom
@@ -1404,7 +1403,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                     {messages &&
                         messages.map((message, index) => {
                             return (
-                                // The latest message sent by the user will be animated while waiting for a response
                                 <Box
                                     sx={{
                                         background:
@@ -1424,7 +1422,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                             : 'usermessage'
                                     }
                                 >
-                                    {/* Display the correct icon depending on the message type */}
                                     {message.type === 'apiMessage' || message.type === 'leadCaptureMessage' ? (
                                         <img src={Logo} alt='AI' width='26' height='26' className='boticon' />
                                     ) : (
@@ -1798,7 +1795,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                 </Box>
                                             ) : (
                                                 <>
-                                                    {/* Messages are being rendered in Markdown format */}
                                                     <MemoizedReactMarkdown
                                                         remarkPlugins={[remarkGfm, remarkMath]}
                                                         rehypePlugins={[rehypeMathjax, rehypeRaw]}

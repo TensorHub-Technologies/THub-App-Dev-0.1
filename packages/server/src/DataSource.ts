@@ -29,7 +29,6 @@ async function createFolderInGCS(folderPath: string): Promise<void> {
 export const init = async (): Promise<void> => {
     let homePath
     let flowisePath = path.join(getUserHome(), '.flowise')
-    console.log('flowisePath :', flowisePath)
 
     if (!fs.existsSync(flowisePath)) {
         fs.mkdirSync(flowisePath)
