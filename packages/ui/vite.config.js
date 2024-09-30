@@ -1,10 +1,13 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import dotenv from 'dotenv'
 
 export default defineConfig(async ({ mode }) => {
+    const env = loadEnv(mode, process.cwd())
+
     let proxy = undefined
+
     if (mode === 'development') {
         const serverEnv = dotenv.config({ processEnv: {}, path: '../server/.env' }).parsed
         const serverHost = serverEnv?.['HOST'] ?? 'localhost'
@@ -22,7 +25,7 @@ export default defineConfig(async ({ mode }) => {
             }
         }
     }
-    dotenv.config()
+
     return {
         plugins: [react()],
         resolve: {
@@ -34,14 +37,14 @@ export default defineConfig(async ({ mode }) => {
         build: {
             outDir: './build',
             rollupOptions: {
-                external: ['@microsoft/fetch-event-source']
+                external: []
             }
         },
         server: {
             open: true,
             proxy,
-            port: process.env.VITE_PORT ?? 8080,
-            host: process.env.VITE_HOST
+            port: env.VITE_PORT ?? 8080,
+            host: env.VITE_HOST ?? 'localhost'
         }
     }
 })

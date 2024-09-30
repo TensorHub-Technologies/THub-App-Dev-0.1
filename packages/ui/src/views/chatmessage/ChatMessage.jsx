@@ -1059,8 +1059,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 }
             ])
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, chatflowid])
 
     useEffect(() => {
