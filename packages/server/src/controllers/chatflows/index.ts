@@ -68,7 +68,7 @@ const getChatflowByApiKey = async (req: Request, res: Response, next: NextFuncti
                 `Error: chatflowsRouter.getChatflowByApiKey - apikey not provided!`
             )
         }
-        const apikey = await getApiKey(req.params.apikey, tenantId)
+        const apikey = await getApiKey(req.params.apikey)
         if (!apikey) {
             return res.status(401).send('Unauthorized')
         }
@@ -100,6 +100,16 @@ const saveChatflow = async (req: Request, res: Response, next: NextFunction) => 
         const newChatFlow = new ChatFlow()
         Object.assign(newChatFlow, body)
         const apiResponse = await chatflowsService.saveChatflow(newChatFlow)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const importChatflows = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const chatflows: Partial<ChatFlow>[] = req.body.Chatflows
+        const apiResponse = await chatflowsService.importChatflows(chatflows)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -168,6 +178,7 @@ export default {
     getChatflowByApiKey,
     getChatflowById,
     saveChatflow,
+    importChatflows,
     updateChatflow,
     getSinglePublicChatflow,
     getSinglePublicChatbotConfig

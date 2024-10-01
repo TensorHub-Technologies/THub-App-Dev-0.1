@@ -315,11 +315,11 @@ const APIKey = () => {
 
     const onConfirm = () => {
         setShowDialog(false)
-        getAllAPIKeysApi.request(tenantId)
+        getAllAPIKeysApi.request()
     }
 
     useEffect(() => {
-        getAllAPIKeysApi.request(tenantId)
+        getAllAPIKeysApi.request()
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -329,6 +329,8 @@ const APIKey = () => {
             setAPIKeys(getAllAPIKeysApi.data)
         }
     }, [getAllAPIKeysApi.data])
+
+    console.log(apiKeys, 'apiKeys')
 
     return (
         <>
@@ -462,7 +464,7 @@ const APIKey = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {apiKeys.filter(filterKeys).map((key, index) => (
+                                {apiKeys?.filter(filterKeys).map((key, index) => (
                                     <APIKeyRow
                                         key={index}
                                         apiKey={key}

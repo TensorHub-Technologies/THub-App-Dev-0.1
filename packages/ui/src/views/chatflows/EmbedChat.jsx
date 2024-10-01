@@ -164,7 +164,7 @@ const chatwindowConfig = (isReact = false) => {
                         textColor: '#303235',
                         text: 'Powered by',
                         company: 'Flowise',
-                        companyLink: 'https://flowiseai.com',
+                        companyLink: 'https://thub.tech/',
                     }
                 }`
         : `chatWindow: {
@@ -206,7 +206,7 @@ const chatwindowConfig = (isReact = false) => {
                     textColor: '#303235',
                     text: 'Powered by',
                     company: 'Flowise',
-                    companyLink: 'https://flowiseai.com',
+                    companyLink: 'https://thub.tech/',
                 }
             }`
 }

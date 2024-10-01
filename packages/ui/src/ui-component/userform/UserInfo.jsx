@@ -6,6 +6,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import { IconX } from '@tabler/icons'
+
+import BusinessIcon from '@mui/icons-material/Business'
+import WorkIcon from '@mui/icons-material/Work'
+import ApartmentIcon from '@mui/icons-material/Apartment'
+import BadgeIcon from '@mui/icons-material/Badge'
+import AccountBoxIcon from '@mui/icons-material/AccountBox'
 import { useNavigate } from 'react-router-dom';
 
 const style = {
@@ -137,10 +143,12 @@ const UserInfo = ({ setShowModal, showModal }) => {
                         User Info
                     </Typography>
 
-                    <FormControl variant='outlined' fullWidth required sx={{ mt: '14px' }}>
+                    <FormControl variant='outlined' fullWidth required sx={{ mt: '14px', p: 3, boxShadow: 10, borderRadius: '8px' }}>
                         <Stack spacing={2}>
-                            <FormLabel htmlFor='company'>Company Name</FormLabel>
-
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <BusinessIcon sx={{ mr: 1 }} />
+                                <FormLabel htmlFor='company'>Company Name</FormLabel>
+                            </Box>
                             <TextField
                                 id='standard-basic'
                                 variant='standard'
@@ -150,7 +158,11 @@ const UserInfo = ({ setShowModal, showModal }) => {
                                 onChange={handleInputChange}
                                 required
                             />
-                            <FormLabel htmlFor='department'>Department</FormLabel>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <ApartmentIcon sx={{ mr: 1 }} />
+                                <FormLabel htmlFor='department'>Department</FormLabel>
+                            </Box>
+
                             <TextField
                                 id='standard-basic'
                                 variant='standard'
@@ -160,7 +172,10 @@ const UserInfo = ({ setShowModal, showModal }) => {
                                 onChange={handleInputChange}
                                 required
                             />
-                            <FormLabel htmlFor='role'>Role</FormLabel>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <AccountBoxIcon sx={{ mr: 1 }} />
+                                <FormLabel htmlFor='role'>Role</FormLabel>
+                            </Box>
                             <TextField
                                 id='standard-basic'
                                 variant='standard'
@@ -170,7 +185,10 @@ const UserInfo = ({ setShowModal, showModal }) => {
                                 onChange={handleInputChange}
                                 required
                             />
-                            <FormLabel htmlFor='designation'>Designation</FormLabel>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <BadgeIcon sx={{ mr: 1 }} />
+                                <FormLabel htmlFor='designation'>Designation</FormLabel>
+                            </Box>
                             <TextField
                                 id='standard-basic'
                                 variant='standard'
@@ -180,7 +198,10 @@ const UserInfo = ({ setShowModal, showModal }) => {
                                 onChange={handleInputChange}
                                 required
                             />
-                            <FormLabel htmlFor='workspace'>Workspace Name</FormLabel>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <WorkIcon sx={{ mr: 1 }} />
+                                <FormLabel htmlFor='workspace'>Workspace Name</FormLabel>
+                            </Box>
                             <TextField
                                 id='standard-basic'
                                 variant='standard'
@@ -194,6 +215,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                             />
                         </Stack>
                     </FormControl>
+
                     <Stack direction='row' gap={38} mt={4}>
                         <StyledButton onClick={handleSkip}>Skip</StyledButton>
                         <StyledButton onClick={handleSubmit} disabled={!!workspaceError}>

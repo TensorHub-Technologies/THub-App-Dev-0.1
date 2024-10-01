@@ -7,9 +7,21 @@ import { ChatMessage } from './ChatMessage'
 import { IconX, IconEraser, IconMinus } from '@tabler/icons'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 
-const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setPreviews, open, setOpen, setShowExpandDialog }) => {
+const ChatExpandDialog = ({
+    show,
+    dialogProps,
+    isAgentCanvas,
+    onClear,
+    onCancel,
+    previews,
+    setPreviews,
+    open,
+    setOpen,
+    setShowExpandDialog
+}) => {
     const portalElement = document.getElementById('portal')
     const customization = useSelector((state) => state.customization)
+
     const component = show ? (
         <Dialog
             open={show}
@@ -24,17 +36,6 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {dialogProps.title}
                     <div style={{ flex: 1 }}></div>
-                    {/* {open && customization.isDarkMode && (
-                        <StyledButton
-                            variant='outlined'
-                            color='error'
-                            title='Clear Conversation'
-                            onClick={onClear}
-                            startIcon={<IconEraser />}
-                        >
-                            Clear Chat
-                        </StyledButton>
-                    )} */}
                     <StyledFab
                         sx={{
                             position: 'absolute',
@@ -88,11 +89,6 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                     >
                         <IconX />
                     </StyledFab>
-                    {/* {open && !customization.isDarkMode && (
-                        <Button variant='outlined' color='error' title='Clear Conversation' onClick={onClear} startIcon={<IconEraser />}>
-                            Clear Chat
-                        </Button>
-                    )} */}
                 </div>
             </DialogTitle>
             <DialogContent
@@ -102,6 +98,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
                 <ChatMessage
                     isDialog={true}
                     open={dialogProps.open}
+                    isAgentCanvas={isAgentCanvas}
                     chatflowid={dialogProps.chatflowid}
                     previews={previews}
                     setPreviews={setPreviews}
@@ -116,6 +113,7 @@ const ChatExpandDialog = ({ show, dialogProps, onClear, onCancel, previews, setP
 ChatExpandDialog.propTypes = {
     show: PropTypes.bool,
     dialogProps: PropTypes.object,
+    isAgentCanvas: PropTypes.bool,
     onClear: PropTypes.func,
     onCancel: PropTypes.func,
     previews: PropTypes.array,
