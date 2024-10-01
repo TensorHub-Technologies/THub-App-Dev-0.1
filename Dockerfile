@@ -22,6 +22,8 @@ ENV NODE_OPTIONS=--max-old-space-size=8192
 
 WORKDIR /usr/src
 
+VOLUME /usr/src/data
+
 # Copy app source
 COPY . .
 
