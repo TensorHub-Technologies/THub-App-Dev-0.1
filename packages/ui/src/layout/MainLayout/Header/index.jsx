@@ -175,7 +175,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 />
             </IconButton>
             <Box sx={{ ml: 2 }}></Box>
-            <ProfileSection username={localStorage.getItem('username') ?? ''} />
+            <ProfileSection username={localStorage.getItem('username') ?? ''} handleLogout={handleLogout} />
             <React.Fragment>
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                     <Tooltip title={userFName}>

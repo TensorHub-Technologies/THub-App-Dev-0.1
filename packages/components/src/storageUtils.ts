@@ -165,7 +165,7 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
         await s3Client.send(putObjCmd)
         return 'FILE-STORAGE::' + sanitizedFilename
     } else if (process.env.NODE_ENV === 'production') {
-        let filePath = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + fileName
+        let filePath = paths.reduce((acc, cur) => acc + '/' + cur, '') + '/' + sanitizedFilename
         if (filePath.startsWith('/')) {
             filePath = filePath.substring(1)
         }
@@ -450,6 +450,10 @@ export const streamStorageFile = async (
             const blob = await body.transformToByteArray()
             return Buffer.from(blob)
         }
+    } else if (process.env.NODE_ENV === 'production') {
+        const filePath = `.flowise/storage/${chatflowId}/${chatId}/${sanitizedFilename}`
+        const fileBuffer = await getFileFromGCS(filePath)
+        return fileBuffer
     } else {
         const filePath = path.join(getStoragePath(), chatflowId, chatId, sanitizedFilename)
         //raise error if file path is not absolute

@@ -6,11 +6,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import { IconX } from '@tabler/icons'
+
 import BusinessIcon from '@mui/icons-material/Business'
 import WorkIcon from '@mui/icons-material/Work'
 import ApartmentIcon from '@mui/icons-material/Apartment'
 import BadgeIcon from '@mui/icons-material/Badge'
 import AccountBoxIcon from '@mui/icons-material/AccountBox'
+import { useNavigate } from 'react-router-dom'
 
 const style = {
     position: 'absolute',
@@ -35,6 +37,7 @@ const blurStyle = {
 }
 
 const UserInfo = ({ setShowModal, showModal }) => {
+    const navigate = useNavigate()
     const { uid } = useSelector((state) => state.user.userData)
     const dispatch = useDispatch()
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
@@ -76,7 +79,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
     }
 
     const handleSubmit = async () => {
-        if (!formData.department || !formData.role || !formData.designation || !formData.company) {
+        if (!formData.department || !formData.role || !formData.designation || !formData.company || !formData.workspace) {
             enqueueSnackbar({
                 message: 'Please fill out all required fields.',
                 options: {
@@ -118,6 +121,8 @@ const UserInfo = ({ setShowModal, showModal }) => {
                 company: '',
                 workspace: ''
             })
+            console.log('formData.workspace: ', formData.workspace)
+            window.location.href = `http://${formData.workspace}.thub.tech/?theme=dark&uid=${uid}`
             handleClose()
         } catch (error) {
             console.error('Error fetching data:', error)
