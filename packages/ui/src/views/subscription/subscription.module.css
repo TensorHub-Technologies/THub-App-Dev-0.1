@@ -1,0 +1,34 @@
+.toggleGroup {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50px;
+    background-color: #5e7185;
+}
+
+.toggleButton {
+    flex: 1;
+    background-color: transparent;
+    border-radius: 50px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.toggleButton:hover {
+    color: #cc3193;
+}
+
+.toggleButtonSelected {
+    color: #f71212;
+    background-color: whitesmoke;
+}
+
+.heading {
+    font-size: larger;
+}
+
+.button_click:hover {
+    background-color: #cc3193;
+}

@@ -478,28 +478,7 @@ const Chatflows = () => {
                                     </StyledButton>
                                 </ButtonGroup>
                             </ButtonGroup>
-
                             <Box sx={{ flexGrow: 1 }} />
-
-                            {/* <Select
-
-                                size='small'
-
-                                value={sortBy}
-
-                                onChange={(e) => setSortBy(e.target.value)}
-
-                                sx={{ ml: 2 }}
-
-                            >
-
-                                <MenuItem value='name'>Sort by Name</MenuItem>
-
-                                <MenuItem value='created'>Sort by Created Date</MenuItem>
-
-                                <MenuItem value='updated'>Sort by Updated Date</MenuItem>
-
-                            </Select> */}
                         </Toolbar>
                     </Box>
 

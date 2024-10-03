@@ -35,6 +35,8 @@ const DocumentStoreDetail = Loadable(lazy(() => import('@/views/docstore/Documen
 const ShowStoredChunks = Loadable(lazy(() => import('@/views/docstore/ShowStoredChunks')))
 const LoaderConfigPreviewChunks = Loadable(lazy(() => import('@/views/docstore/LoaderConfigPreviewChunks')))
 
+// subscription routing
+const Subscription = Loadable(lazy(() => import('@/views/subscription')))
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -96,6 +98,10 @@ const MainRoutes = {
         {
             path: '/document-stores/:id/:name',
             element: <LoaderConfigPreviewChunks />
+        },
+        {
+            path: '/subscription',
+            element: <Subscription />
         }
     ]
 }

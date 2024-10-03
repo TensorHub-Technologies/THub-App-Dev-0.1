@@ -12,7 +12,7 @@ import WorkIcon from '@mui/icons-material/Work'
 import ApartmentIcon from '@mui/icons-material/Apartment'
 import BadgeIcon from '@mui/icons-material/Badge'
 import AccountBoxIcon from '@mui/icons-material/AccountBox'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 const style = {
     position: 'absolute',
@@ -37,7 +37,7 @@ const blurStyle = {
 }
 
 const UserInfo = ({ setShowModal, showModal }) => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
     const { uid } = useSelector((state) => state.user.userData)
     const dispatch = useDispatch()
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
@@ -121,8 +121,8 @@ const UserInfo = ({ setShowModal, showModal }) => {
                 company: '',
                 workspace: ''
             })
-            console.log("formData.workspace: ",formData.workspace);
-            window.location.href = `http://${formData.workspace}.thub.tech/?theme=dark&uid=${uid}`;    
+            console.log('formData.workspace: ', formData.workspace)
+            window.location.href = `http://${formData.workspace}.thub.tech/?theme=dark&uid=${uid}`
             handleClose()
         } catch (error) {
             console.error('Error fetching data:', error)

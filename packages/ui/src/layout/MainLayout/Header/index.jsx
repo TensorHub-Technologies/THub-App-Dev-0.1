@@ -80,6 +80,10 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
+    const handleSubscriptionClick = () => {
+        navigate('/subscription')
+        handleClose()
+    }
 
     const handleClose = () => {
         setAnchorEl(null)
@@ -249,7 +253,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         </ListItemIcon>
                         Settings
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleSubscriptionClick}>
                         <ListItemIcon>
                             <PersonAdd fontSize='small' />
                         </ListItemIcon>
