@@ -133,7 +133,23 @@ const Chatflows = () => {
     }
 
     const addNew = () => {
-        navigate('/canvas')
+        const chatflows = getAllChatflowsApi.data
+        console.log('userData: ', userData?.subscription_type)
+        console.log('chatflows: ', chatflows.length)
+
+        if (userData?.subscription_type === 'free') {
+            if (chatflows.length > 5) {
+                // TODO: Add banner to show free tier limit reached
+            } else {
+                navigate('/canvas')
+            }
+        } else if (userData?.subscription_type === 'pro') {
+            if (chatflows.length > 25) {
+                // TODO: Add banner to show pro tier limit reached
+            } else {
+                navigate('/canvas')
+            }
+        }
     }
 
     const goToCanvas = (selectedChatflow) => {
