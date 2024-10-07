@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography'
 const Subscription = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    // color: customization.isDarkMode ? '#fff' : '#000'
 
     const [selectedPlan, setSelectedPlan] = useState('monthly')
 
@@ -140,7 +141,18 @@ const Subscription = () => {
                                             className={subStyle.radio}
                                             checked={selectedPlan === 'monthly'}
                                         />
-                                        <label htmlFor='monthly' style={{ color: selectedPlan === 'monthly' ? 'black' : 'white' }}>
+                                        <label
+                                            htmlFor='monthly'
+                                            style={{
+                                                color: customization.isDarkMode
+                                                    ? selectedPlan === 'monthly'
+                                                        ? 'black'
+                                                        : 'white'
+                                                    : selectedPlan === 'monthly'
+                                                    ? 'white'
+                                                    : 'black'
+                                            }}
+                                        >
                                             Monthly
                                         </label>
                                     </button>
@@ -155,13 +167,21 @@ const Subscription = () => {
                                         <label
                                             htmlFor='yearly'
                                             className={subStyle.switch_item}
-                                            style={{ color: selectedPlan === 'yearly' ? 'black' : 'white' }}
+                                            style={{
+                                                color: customization.isDarkMode
+                                                    ? selectedPlan === 'yearly'
+                                                        ? 'black'
+                                                        : 'white'
+                                                    : selectedPlan === 'yearly'
+                                                    ? 'white'
+                                                    : 'black'
+                                            }}
                                         >
                                             Yearly
                                         </label>
                                     </button>
                                     <div
-                                        className={subStyle.highlighter}
+                                        className={customization.isDarkMode ? subStyle.highlighter_dark : subStyle.highlighter_light}
                                         style={{ transform: selectedPlan === 'yearly' ? 'translateX(100%)' : 'none' }}
                                     ></div>
                                 </div>
@@ -171,10 +191,24 @@ const Subscription = () => {
                 </Stack>
                 <Grid container spacing={4} className={subStyle.grid_container}>
                     {pricingData[selectedPlan].map((plan, index) => (
-                        <Grid item xs={12} md={4} key={index} className={subStyle.card_selection}>
-                            <Card sx={{ maxWidth: 345 }} className={subStyle.card_content}>
+                        <Grid
+                            item
+                            xs={12}
+                            md={4}
+                            key={index}
+                            className={customization.isDarkMode ? subStyle.card_selection_dark : subStyle.card_selection_light}
+                        >
+                            <Card
+                                sx={{ maxWidth: 345 }}
+                                className={customization.isDarkMode ? subStyle.card_content_dark : subStyle.card_content_light}
+                            >
                                 <CardContent>
-                                    <Typography gutterBottom variant='h5' component='div' className={subStyle.price_title}>
+                                    <Typography
+                                        gutterBottom
+                                        variant='h5'
+                                        component='div'
+                                        className={customization.isDarkMode ? subStyle.price_title_dark : subStyle.price_title_light}
+                                    >
                                         {plan.title}
                                     </Typography>
                                     <Typography variant='body2' className={subStyle.price_amount}>
@@ -184,14 +218,26 @@ const Subscription = () => {
                                         {plan.description}
                                     </Typography>
                                     <div>
-                                        <Button variant='contained' size='large' sx={{ width: '100%' }} className={subStyle.button_click}>
+                                        <Button
+                                            variant='contained'
+                                            size='large'
+                                            sx={{ width: '100%' }}
+                                            className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
+                                        >
                                             {plan.buttonInfo}
                                         </Button>
                                     </div>
                                     <div>
                                         <ul>
                                             {plan.list.map((feature, index) => (
-                                                <li className={subStyle.list_features} key={index}>
+                                                <li
+                                                    className={
+                                                        customization.isDarkMode
+                                                            ? subStyle.list_features_dark
+                                                            : subStyle.list_features_light
+                                                    }
+                                                    key={index}
+                                                >
                                                     {feature}
                                                 </li>
                                             ))}

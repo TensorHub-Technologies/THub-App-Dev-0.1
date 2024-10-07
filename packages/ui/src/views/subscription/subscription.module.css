@@ -44,7 +44,7 @@ label:hover {
     color: #e22a90;
 }
 
-.highlighter {
+.highlighter_dark {
     position: absolute;
     top: 8px;
     left: 8px;
@@ -55,38 +55,68 @@ label:hover {
     transition: 0.3s;
     z-index: 1;
 }
+.highlighter_light {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: calc(50% - 8px);
+    height: calc(100% - 16px);
+    border-radius: 8px;
+    background: #3c5ba4;
+    transition: 0.3s;
+    z-index: 1;
+}
 
 .grid_container {
-    /* border: 2px solid red; */
     margin-top: 20px;
 }
 
-.price_title,
-.price_amount,
-.price_description,
-.button_click,
-ul li {
-    font-family: 'Cambria Math', serif;
+.button_click_dark {
+    background-color: #191a28;
+    font-size: 18px;
+    margin-bottom: 20px;
 }
 
-.card_selection:hover .button_click {
+.button_click_light {
+    color: #ffffff;
+    background-color: #191a28;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.card_selection_dark:hover .button_click_dark {
     background-color: #e22a90;
     color: #191a28;
 }
 
-.card_content {
+.card_selection_light:hover .button_click_light {
+    background-color: #3c5ba4;
+    color: #191a28;
+}
+
+.card_content_dark,
+.card_content_light {
     /* border: 2px solid red; */
     height: 600px;
     position: relative;
 }
 
-.card_selection:hover .card_content {
+.card_selection_dark:hover .card_content_dark {
     border: 0.5px solid #e22a90;
     box-sizing: border-box;
 }
-
-.price_title {
+.card_selection_light:hover .card_content_light {
+    border: 0.5px solid #3c5ba4;
+    box-sizing: border-box;
+}
+.price_title_dark {
     color: #e22a90;
+    font-size: 32px;
+    font-weight: lighter;
+}
+
+.price_title_light {
+    color: #3c5ba4;
     font-size: 32px;
     font-weight: lighter;
 }
@@ -100,21 +130,14 @@ ul li {
     margin-bottom: 20px;
 }
 
-.button_click {
-    background-color: #191a28;
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-
-.list_features {
-    /* border: 2px solid red; */
+.list_features_dark,
+.list_features_light {
     list-style-type: none;
     font-size: 18px;
     margin: 18px 0px 0px -10px;
 }
 
-.list_features::before {
-    /* border: 2px solid yellow; */
+.list_features_dark::before {
     content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="grey" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
     position: absolute;
     left: 20px;
@@ -122,6 +145,28 @@ ul li {
     transition: filter 0.3s ease;
 }
 
-.card_selection:hover .list_features::before {
+.list_features_light::before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="grey" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
+    position: absolute;
+    left: 20px;
+    margin-top: -4px;
+    transition: filter 0.3s ease;
+}
+
+.card_selection_dark:hover .list_features_dark::before {
     content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23e22a90" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
+}
+
+.card_selection_light:hover .list_features_light::before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="rgb(60,91,164)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
+}
+
+.price_title_dark,
+.price_title_light,
+.price_amount,
+.price_description,
+.button_click_dark,
+.button_click_light,
+ul li {
+    font-family: 'Cambria Math', serif;
 }
