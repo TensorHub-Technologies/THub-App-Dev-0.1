@@ -218,9 +218,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
 
     const isFileAllowedForUpload = (file) => {
         const constraints = getAllowChatFlowUploads.data
-        /**
-         * {isImageUploadAllowed: boolean, imgUploadSizeAndTypes: Array<{ fileTypes: string[], maxUploadSize: number }>}
-         */
         let acceptFile = false
         if (constraints.isImageUploadAllowed) {
             const fileType = file.type

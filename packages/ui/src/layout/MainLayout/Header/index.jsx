@@ -80,6 +80,10 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
+    const handleSubscriptionClick = () => {
+        navigate('/subscription')
+        handleClose()
+    }
 
     const handleClose = () => {
         setAnchorEl(null)
@@ -124,6 +128,45 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         console.log(userData?.picture)
                         const proPicture = userData?.picture
                         setUserImg(proPicture)
+
+                        const dateObj = new Date(userData?.subscription_date)
+
+                        const monthlySubscription = new Date(dateObj)
+                        monthlySubscription.setUTCDate(monthlySubscription.getUTCDate() + 30)
+                        monthlySubscription.setUTCFullYear(yearlySubscription.getUTCFullYear() + 1)
+
+                        if (userData?.subscription_duration === 'monthly') {
+                            // check if user subscription limit is reached
+                            const SubscriptionDay = monthlySubscription.getUTCDate()
+                            const SubscriptionMonth = monthlySubscription.getUTCMonth() + 1
+
+                            const currentDate = new Date() // Get the current date
+
+                            const currentmonth = currentDate.getMonth() + 1
+                            const currentday = currentDate.getDate()
+
+                            if (SubscriptionMonth === currentmonth && currentDate >= SubscriptionDay) {
+                                // subscription date complete, update subscription
+                                console.log('monthly subscription expired')
+                            }
+                        } else if (userData?.subscription_duration === 'yearly') {
+                            // check if user subscription limit is reached
+                            const SubscriptionDay = monthlySubscription.getUTCDate()
+                            const SubscriptionMonth = monthlySubscription.getUTCMonth() + 1
+                            const SubscriptionYear = monthlySubscription.getUTCFullYear()
+
+                            const currentDate = new Date() // Get the current date
+
+                            // Extract the year, month, and day
+                            const currentyear = currentDate.getFullYear()
+                            const currentmonth = currentDate.getMonth() + 1
+                            const currentday = currentDate.getDate()
+
+                            if (SubscriptionYear === currentyear && currentmonth === SubscriptionMonth && currentDate >= SubscriptionDay) {
+                                // subscription date complete, update subscription
+                                console.log('yearly subscription expired')
+                            }
+                        }
                     } else {
                         console.error('Error:', response.statusText)
                     }
@@ -249,7 +292,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         </ListItemIcon>
                         Settings
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleSubscriptionClick}>
                         <ListItemIcon>
                             <PersonAdd fontSize='small' />
                         </ListItemIcon>
