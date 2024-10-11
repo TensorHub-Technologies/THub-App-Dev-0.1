@@ -133,7 +133,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
                         const monthlySubscription = new Date(dateObj)
                         monthlySubscription.setUTCDate(monthlySubscription.getUTCDate() + 30)
-                        monthlySubscription.setUTCFullYear(yearlySubscription.getUTCFullYear() + 1)
+                        monthlySubscription.setUTCFullYear(monthlySubscription.getUTCFullYear() + 1)
 
                         if (userData?.subscription_duration === 'monthly') {
                             // check if user subscription limit is reached
@@ -145,7 +145,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                             const currentmonth = currentDate.getMonth() + 1
                             const currentday = currentDate.getDate()
 
-                            if (SubscriptionMonth === currentmonth && currentDate >= SubscriptionDay) {
+                            if (SubscriptionMonth === currentmonth && currentday >= SubscriptionDay) {
                                 // subscription date complete, update subscription
                                 console.log('monthly subscription expired')
                             }
@@ -162,7 +162,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                             const currentmonth = currentDate.getMonth() + 1
                             const currentday = currentDate.getDate()
 
-                            if (SubscriptionYear === currentyear && currentmonth === SubscriptionMonth && currentDate >= SubscriptionDay) {
+                            if (SubscriptionYear === currentyear && currentmonth === SubscriptionMonth && currentday >= SubscriptionDay) {
                                 // subscription date complete, update subscription
                                 console.log('yearly subscription expired')
                             }
