@@ -108,7 +108,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const storeUserData = async () => {
             const urlParams = new URLSearchParams(window.location.search)
             const userId = localStorage.getItem('userId') || urlParams.get('uid')
             if (userId) {
@@ -178,7 +178,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             }
         }
 
-        fetchUserData()
+        storeUserData()
     }, [dispatch])
 
     const changeDarkMode = () => {
