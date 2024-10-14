@@ -108,7 +108,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const storeUserData = async () => {
             const urlParams = new URLSearchParams(window.location.search)
             const userId = localStorage.getItem('userId') || urlParams.get('uid')
             if (userId) {
@@ -133,7 +133,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
                         const monthlySubscription = new Date(dateObj)
                         monthlySubscription.setUTCDate(monthlySubscription.getUTCDate() + 30)
-                        monthlySubscription.setUTCFullYear(yearlySubscription.getUTCFullYear() + 1)
+                        // monthlySubscription.setUTCFullYear(yearlySubscription.getUTCFullYear() + 1)
 
                         if (userData?.subscription_duration === 'monthly') {
                             // check if user subscription limit is reached
@@ -178,7 +178,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             }
         }
 
-        fetchUserData()
+        storeUserData()
     }, [dispatch])
 
     const changeDarkMode = () => {
