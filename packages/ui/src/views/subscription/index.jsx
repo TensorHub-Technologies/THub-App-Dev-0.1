@@ -17,7 +17,6 @@ const Subscription = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const user = useSelector((state) => state.user)
-    console.log(user, 'redux@@@@')
     const [selectedPlan, setSelectedPlan] = useState('monthly')
     const [sdkLoaded, setSdkLoaded] = useState(false)
 
@@ -30,7 +29,6 @@ const Subscription = () => {
     }
 
     const receiptId = generateReceiptId()
-    // console.log(receiptId,"receiptId");
 
     useEffect(() => {
         const loadRazorpayScript = () => {
@@ -53,10 +51,8 @@ const Subscription = () => {
     const paymentHandler = async (e, price) => {
         if (e) e.preventDefault()
         let amount = parseFloat(price.replace(/₹|,/g, '').trim())
-        // amount=String(amount*100);
-        amount = '100'
-        console.log(amount)
-        console.log(typeof amount)
+        amount = String(amount * 100)
+        // amount = '100'
         const url =
             window.location.hostname === 'localhost' ? 'http://localhost:4000/order' : 'https://thub-dev-420204.uc.r.appspot.com/order'
         try {
@@ -78,7 +74,6 @@ const Subscription = () => {
             }
 
             const order = await response.json()
-            console.log(order)
 
             if (!window.Razorpay) {
                 alert('Razorpay SDK not loaded.')
@@ -92,7 +87,6 @@ const Subscription = () => {
                 name: 'THub',
                 description: 'Test Transaction',
                 image: user.picture,
-                method: ['upi'],
                 order_id: order.id,
                 handler: async function (response) {
                     const body = {
@@ -111,12 +105,11 @@ const Subscription = () => {
                     })
 
                     const validateStatus = await validateResponse.json()
-                    console.log(validateStatus)
                 },
                 prefill: {
                     name: 'THub',
                     email: user.email,
-                    contact: '9000090000'
+                    contact: user.phone ? user.phone : '9000090000'
                 },
                 notes: {
                     address: 'Razorpay Corporate Office'
@@ -158,7 +151,7 @@ const Subscription = () => {
             },
             {
                 title: 'Pro',
-                price: '₹ 1',
+                price: '₹ 19,999',
                 description: 'For small & medium businesses',
                 buttonInfo: 'Choose Plan',
                 list: [
