@@ -140,7 +140,7 @@ const AddNodes = ({ nodesData, node }) => {
 
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
 
-    const allowedMenu = allowedPlan[userData.subscription_type]
+    const allowedMenu = allowedPlan[userData?.subscription_type]
     const allowedMenuItemKeys = Object.keys(allowedMenu)
     const [tab, setTab] = useState(['LangChain'])
 
