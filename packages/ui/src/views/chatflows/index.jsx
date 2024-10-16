@@ -149,6 +149,8 @@ const Chatflows = () => {
             } else {
                 navigate('/canvas')
             }
+        } else {
+            navigate('/canvas')
         }
     }
 

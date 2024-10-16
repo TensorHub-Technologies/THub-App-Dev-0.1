@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 // project-imports
@@ -16,9 +16,30 @@ import Typography from '@mui/material/Typography'
 const Subscription = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
-    // color: customization.isDarkMode ? '#fff' : '#000'
-
+    const user = useSelector((state) => state.user)
     const [selectedPlan, setSelectedPlan] = useState('monthly')
+    const [sdkLoaded, setSdkLoaded] = useState(false)
+
+    // const amount = 100;
+    const currency = 'INR'
+    function generateReceiptId() {
+        const timestamp = Date.now()
+        const randomNum = Math.floor(Math.random() * 10000)
+        return `R-${timestamp}-${randomNum}`
+    }
+
+    const receiptId = generateReceiptId()
+
+    useEffect(() => {
+        const loadRazorpayScript = () => {
+            const script = document.createElement('script')
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+            script.onload = () => setSdkLoaded(true)
+            script.onerror = () => console.error('Failed to load Razorpay SDK')
+            document.body.appendChild(script)
+        }
+        loadRazorpayScript()
+    }, [])
 
     const handleMonthly = () => {
         setSelectedPlan('monthly')
@@ -27,11 +48,94 @@ const Subscription = () => {
         setSelectedPlan('yearly')
     }
 
+    const paymentHandler = async (e, price) => {
+        if (e) e.preventDefault()
+        let amount = parseFloat(price.replace(/₹|,/g, '').trim())
+        amount = String(amount * 100)
+        // amount = '100'
+        const url =
+            window.location.hostname === 'localhost' ? 'http://localhost:4000/order' : 'https://thub-dev-420204.uc.r.appspot.com/order'
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    amount,
+                    currency,
+                    receipt: receiptId
+                })
+            })
+
+            if (!response.ok) {
+                console.error('Failed to create order:', response.statusText)
+                return
+            }
+
+            const order = await response.json()
+
+            if (!window.Razorpay) {
+                alert('Razorpay SDK not loaded.')
+                return
+            }
+
+            var options = {
+                key: 'rzp_live_L6Fy6yBDycyCzw',
+                amount: amount,
+                currency,
+                name: 'THub',
+                description: 'Test Transaction',
+                image: user.picture,
+                order_id: order.id,
+                handler: async function (response) {
+                    const body = {
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        order_id: order.id
+                    }
+
+                    const validateResponse = await fetch('http://localhost:4000/validate', {
+                        method: 'POST',
+                        body: JSON.stringify(body),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+
+                    const validateStatus = await validateResponse.json()
+                },
+                prefill: {
+                    name: 'THub',
+                    email: user.email,
+                    contact: user.phone ? user.phone : '9000090000'
+                },
+                notes: {
+                    address: 'Razorpay Corporate Office'
+                },
+                theme: {
+                    color: '#3399ff'
+                }
+            }
+
+            var rzp1 = new window.Razorpay(options)
+            rzp1.on('payment.failed', function (response) {
+                console.error('Payment Failed:', response)
+                alert(`Payment failed: ${response.error.description}`)
+            })
+
+            rzp1.open()
+        } catch (error) {
+            console.error('Error in payment process:', error)
+        }
+    }
+
     const pricingData = {
         monthly: [
             {
                 title: 'Free',
-                price: '$0',
+                price: '₹0',
                 description: 'For starters to explore and integrate',
                 buttonInfo: 'Start for Free',
                 list: [
@@ -47,8 +151,8 @@ const Subscription = () => {
             },
             {
                 title: 'Pro',
-                price: '$199',
-                description: 'For growing teams.',
+                price: '₹ 19,999',
+                description: 'For small & medium businesses',
                 buttonInfo: 'Choose Plan',
                 list: [
                     'All Free Features',
@@ -72,7 +176,7 @@ const Subscription = () => {
         yearly: [
             {
                 title: 'Free',
-                price: '$0',
+                price: '₹0',
                 description: 'For starters to explore and integrate',
                 buttonInfo: 'Start for Free',
                 list: [
@@ -88,8 +192,8 @@ const Subscription = () => {
             },
             {
                 title: 'Pro',
-                price: '$1999',
-                description: 'For growing teams.',
+                price: '₹ 2,19,000',
+                description: 'For small & medium businesses',
                 buttonInfo: 'Choose Plan',
                 list: [
                     'All Free Features',
@@ -219,6 +323,9 @@ const Subscription = () => {
                                     </Typography>
                                     <div>
                                         <Button
+                                            onClick={(e) => {
+                                                paymentHandler(e, plan.price)
+                                            }}
                                             variant='contained'
                                             size='large'
                                             sx={{ width: '100%' }}

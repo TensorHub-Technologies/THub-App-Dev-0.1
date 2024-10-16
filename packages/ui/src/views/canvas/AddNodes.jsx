@@ -65,6 +65,7 @@ import { SHOW_MENU } from '@/store/constant'
 import './Node.css'
 import { IconChartScatter3d } from '@tabler/icons-react'
 import { IconUsersGroup } from '@tabler/icons-react'
+import subscriptionPlan from './subscriptionPlan'
 
 // ==============================|| ADD NODES||============================== //
 function a11yProps(index) {
@@ -73,6 +74,25 @@ function a11yProps(index) {
         'aria-controls': `attachment-tabpanel-${index}`
     }
 }
+
+/*
+//TODO: change to better json format
+const temp_subscriptionPlan = [
+    {
+        plan: 'free',
+        menuItems: [
+            {
+                name: 'Document Loadrs',
+                subMenuItems: [
+                    {
+                        name: 'airtable'
+                    }
+                ]
+            }
+        ]
+    }
+]
+*/
 
 const allIconsObj = {
     Agents: <PersonIcon />,
@@ -116,6 +136,34 @@ const AddNodes = ({ nodesData, node }) => {
     // const [open, setOpen] = useState(false)
     const [categoryExpanded, setCategoryExpanded] = useState({})
     const [tabValue, setTabValue] = useState(0)
+    const userData = useSelector((state) => state.user.userData)
+
+    const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
+
+    const allowedMenu = allowedPlan[userData?.subscription_type]
+    const allowedMenuItemKeys = Object.keys(allowedMenu)
+    const [tab, setTab] = useState(['LangChain'])
+
+    useEffect(() => {
+        if (userData.subscription_type === 'premium') {
+            setTab(['LangChain', 'LlamaIndex'])
+        }
+    }, [])
+
+    console.log('tab: ', tab)
+    //console.log("nodes: ",nodes)
+
+    for (let nodeKey in nodes) {
+        if (Object.prototype.hasOwnProperty.call(nodes, nodeKey) && !allowedMenuItemKeys.includes(nodeKey)) {
+            delete nodes[nodeKey]
+        } else {
+            const allowedSubMenuItems = allowedMenu[nodeKey]
+            const subMenuItemToCheck = nodes[nodeKey]
+
+            const updatedSubMenuItems = subMenuItemToCheck.filter((val) => allowedSubMenuItems.includes(val.label))
+            nodes[nodeKey] = updatedSubMenuItems
+        }
+    }
 
     // const anchorRef = useRef(null)
     // const prevOpen = useRef(open)
@@ -357,7 +405,7 @@ const AddNodes = ({ nodesData, node }) => {
                                 }
                             }}
                         >
-                            {['LangChain', 'LlamaIndex'].map((item, index) => (
+                            {tab.map((item, index) => (
                                 <Tab
                                     icon={
                                         <div
@@ -373,6 +421,7 @@ const AddNodes = ({ nodesData, node }) => {
                                                     width: '25px',
                                                     height: '25px',
                                                     borderRadius: '50%',
+
                                                     objectFit: 'contain'
                                                 }}
                                                 src={index === 0 ? LangChainPNG : LlamaindexPNG}
