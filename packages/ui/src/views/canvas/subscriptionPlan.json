@@ -1,18 +1,137 @@
 [
     {
         "free": {
-            "Document Loaders": ["Csv File", "Docx File", "Json File", "Pdf File", "Plain Text", "Text File"],
-            "Cache": ["InMemory Cache", "InMemory Embedding Cache"],
-            "Chat Models": ["ChatOllama", "ChatOpenAI"],
-            "Embeddings": ["Ollama Embeddings", "OpenAI Embeddings"],
-            "LLMs": ["Ollama", "OpenAI"],
-            "Chains": ["Conversational Retrieval QA Chain"],
-            "Vector Stores;NEW": ["In-Memory Vector Store"],
-            "Memory": ["Buffer Memory"]
+            "Agents": [
+                "Airtable Agent",
+                "AutoGPT",
+                "BabyAGI",
+                "Conversational Agent",
+                "CSV Agent",
+                "OpenAI Assistant",
+                "ReAct Agent for Chat Models",
+                "ReAct Agent for LLMs"
+            ],
+            "Tools": [
+                "Calculator",
+                "Chain Tool",
+                "Chatflow Tool",
+                "Google Custom Search",
+                "OpenAPI Toolkit",
+                "Python Interpreter",
+                "Read File",
+                "Requests Get",
+                "Requests Post",
+                "Retriever Tool",
+                "Write File"
+            ],
+            "Text Splitters": [
+                "Character Text Splitter",
+                "Code Text Splitter",
+                "HtmlToMarkdown Text Splitter",
+                "Markdown Text Splitter",
+                "Recursive Character Text Splitter"
+            ],
+            "Retrievers": ["Custom Retriever"],
+            "Chains": [
+                "GET API Chain",
+                "OpenAPI Chain",
+                "POST API Chain",
+                "Conversational Retrieval QA Chain",
+                "Conversation Chain",
+                "LLM Chain",
+                "Multi Prompt Chain",
+                "Multi Retrieval QA Chain",
+                "Retrieval QA Chain"
+            ],
+            "Vector Stores;NEW": [
+                "Astra",
+                "Chroma",
+                "Document Store (Vector)",
+                "Faiss",
+                "Vectara",
+                "Zep Collection - Open Source",
+                "Zep Collection - Cloud"
+            ],
+            "Document Loaders": [
+                "Airtable",
+                "API Loader",
+                "Confluence",
+                "Csv File",
+                "Custom Document Loader",
+                "Document Store",
+                "Docx File",
+                "File Loader",
+                "Folder with Files",
+                "GitBook",
+                "Github",
+                "Json File",
+                "Json Lines File",
+                "Notion Database",
+                "Notion Folder",
+                "Notion Page",
+                "Pdf File",
+                "Plain Text",
+                "S3 Directory",
+                "S3",
+                "Spider Document Loaders",
+                "Text File",
+                "Unstructured File Loader",
+                "Unstructured Folder Loader",
+                "VectorStore To Document"
+            ],
+            "Chat Models": ["Azure ChatOpenAI", "ChatAnthropic", "ChatGoogleGenerativeAI", "ChatHuggingFace", "ChatOpenAI"],
+            "Embeddings": [
+                "Azure OpenAI Embeddings",
+                "Cohere Embeddings",
+                "GoogleGenerativeAI Embeddings",
+                "HuggingFace Inference Embeddings",
+                "MistralAI Embeddings",
+                "OpenAI Embeddings Custom"
+            ],
+            "LLMs": ["Azure OpenAI", "GoogleVertexAI", "HuggingFace Inference", "Ollama", "OpenAI", "Replicate"]
         }
     },
     {
         "pro": {
+            "Agents": [
+                "Airtable Agent",
+                "AutoGPT",
+                "BabyAGI",
+                "Conversational Agent",
+                "CSV Agent",
+                "OpenAI Assistant",
+                "ReAct Agent for Chat Models",
+                "ReAct Agent for LLMs",
+                "Anthropic Agent",
+                "OpenAI Tool Agent"
+            ],
+            "Sequential Agents": ["Agent", "Condition", "Condition Agent", "End", "LLM Node", "Loop", "Start", "State", "Tool Node"],
+            "Tools": [
+                "BraveSearch API",
+                "Calculator",
+                "Chain Tool",
+                "Chatflow Tool",
+                "Code Interpreter by E2B",
+                "Custom Tool",
+                "Exa Search",
+                "Google Custom Search",
+                "OpenAPI Toolkit",
+                "Python Interpreter",
+                "Read File",
+                "Requests Get",
+                "Requests Post",
+                "Retriever Tool",
+                "SearchApi",
+                "SearXNG",
+                "Serp API",
+                "Serper",
+                "Web Browser",
+                "Write File",
+                "QueryEngineTool"
+            ],
+            "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
+            "Moderation": ["OpenAI Moderation", "Simple Prompt Moderation"],
+            "Multi Agents": ["Supervisor", "Worker"],
             "Text Splitters": [
                 "Character Text Splitter",
                 "Code Text Splitter",
@@ -84,7 +203,9 @@
                 "Vectara",
                 "Weaviate",
                 "Zep Collection - Open Source",
-                "Zep Collection - Cloud"
+                "Zep Collection - Cloud",
+                "Pinecone",
+                "SimpleStore"
             ],
             "Output Parsers": [
                 "CSV Output Parser",
@@ -153,7 +274,14 @@
                 "ChatOpenAI",
                 "ChatOpenAI Custom",
                 "ChatTogetherAI",
-                "GroqChat"
+                "GroqChat",
+                "AzureChatOpenAI",
+                "ChatAnthropic",
+                "ChatMistral",
+                "ChatOllama",
+                "ChatOpenAI",
+                "ChatTogetherAI",
+                "ChatGroq"
             ],
             "Embeddings": [
                 "AWS Bedrock Embeddings",
@@ -169,7 +297,9 @@
                 "OpenAI Embeddings",
                 "OpenAI Embeddings Custom",
                 "TogetherAIEmbedding",
-                "VoyageAI Embeddings"
+                "VoyageAI Embeddings",
+                "Azure OpenAI Embeddings",
+                "OpenAI Embedding"
             ],
             "LLMs": [
                 "AWS Bedrock",
@@ -183,7 +313,9 @@
                 "OpenAI",
                 "Replicate",
                 "TogetherAI"
-            ]
+            ],
+            "Engine": ["Context Chat Engine", "Simple Chat Engine", "Query Engine", "QueryEngine Tools"],
+            "Response Synthesizer": ["Refine", "TreeSummarize", "Compact And Refine", "Sub Question Query Engine"]
         }
     },
     {
