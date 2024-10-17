@@ -138,13 +138,13 @@ const Chatflows = () => {
         console.log('chatflows: ', chatflows.length)
 
         if (userData?.subscription_type === 'free') {
-            if (chatflows.length > 5) {
+            if (chatflows.length >= 5) {
                 // TODO: Add banner to show free tier limit reached
             } else {
                 navigate('/canvas')
             }
         } else if (userData?.subscription_type === 'pro') {
-            if (chatflows.length > 25) {
+            if (chatflows.length >= 25) {
                 // TODO: Add banner to show pro tier limit reached
             } else {
                 navigate('/canvas')
