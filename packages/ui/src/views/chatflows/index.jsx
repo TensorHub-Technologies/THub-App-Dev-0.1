@@ -154,7 +154,7 @@ const Chatflows = () => {
                 navigate('/canvas')
             }
         } else if (userData?.subscription_type === 'pro') {
-            if (chatflows.length > 25) {
+            if (chatflows.length >= 25) {
                 // TODO: Add banner to show pro tier limit reached
             } else {
                 navigate('/canvas')

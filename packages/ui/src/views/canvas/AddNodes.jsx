@@ -145,7 +145,7 @@ const AddNodes = ({ nodesData, node }) => {
     const [tab, setTab] = useState(['LangChain'])
 
     useEffect(() => {
-        if (userData.subscription_type === 'premium') {
+        if (userData.subscription_type !== 'free') {
             setTab(['LangChain', 'LlamaIndex'])
         }
     }, [])
