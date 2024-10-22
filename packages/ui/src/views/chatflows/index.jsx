@@ -82,6 +82,10 @@ const Chatflows = () => {
     const [sortBy, setSortBy] = useState('name')
 
     const userData = useSelector((state) => state.user.userData)
+    console.log(userData, 'userDatauserDAta@@@@@@')
+    localStorage.setItem('subscription_type', userData?.subscription_type)
+    const subscription = localStorage.getItem('subscription_type')
+    console.log(subscription, '##############')
 
     const tenantId = userData?.uid
 
@@ -133,12 +137,18 @@ const Chatflows = () => {
     }
 
     const addNew = () => {
-        const chatflows = getAllChatflowsApi.data
+        const chatflows = getAllChatflowsApi.data || []
         console.log('userData: ', userData?.subscription_type)
+
         console.log('chatflows: ', chatflows.length)
 
-        if (userData?.subscription_type === 'free') {
-            if (chatflows.length > 5) {
+        userData.subscription_type === null ? (userData.subscription_type = 'premium') : userData.subscription_type
+
+        console.log(userData.subscription_type, 'Subscription type')
+
+        if (userData?.subscription_type === 'free' || localStorage.getItem('subscription_type') === 'free') {
+            if (chatflows.length > 4) {
+                navigate('/subscription')
                 // TODO: Add banner to show free tier limit reached
             } else {
                 navigate('/canvas')
