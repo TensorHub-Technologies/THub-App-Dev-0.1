@@ -96,8 +96,8 @@ const UserInfo = ({ setShowModal, showModal }) => {
         }
         const Url =
             window.location.hostname === 'localhost'
-                ? 'http://localhost:4000/updateUser'
-                : 'https://thub-dev-420204.uc.r.appspot.com/updateUser'
+                ? 'http://localhost:2000/updateUser'
+                : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/updateUser'
         try {
             const response = await axios.post(Url, formData)
             if (response.status === 200) {
