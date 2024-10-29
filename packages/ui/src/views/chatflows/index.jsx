@@ -82,10 +82,8 @@ const Chatflows = () => {
     const [sortBy, setSortBy] = useState('name')
 
     const userData = useSelector((state) => state.user.userData)
-    console.log(userData, 'userDatauserDAta@@@@@@')
     localStorage.setItem('subscription_type', userData?.subscription_type)
     const subscription = localStorage.getItem('subscription_type')
-    console.log(subscription, '##############')
 
     const tenantId = userData?.uid
 
