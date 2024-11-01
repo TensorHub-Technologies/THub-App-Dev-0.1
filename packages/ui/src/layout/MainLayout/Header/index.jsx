@@ -98,10 +98,10 @@ const Header = ({ handleLeftDrawerToggle }) => {
         const isLocalhost = window.location.hostname === 'localhost'
         const redirectUrl = customization.isDarkMode
             ? isLocalhost
-                ? 'http://localhost:5001/index.html'
+                ? 'http://localhost:5173/'
                 : 'https://thub.tech/index.html'
             : isLocalhost
-            ? 'http://localhost:5001/index-lite.html'
+            ? 'http://localhost:5173/'
             : 'https://thub.tech/index-lite.html'
         window.location.href = redirectUrl
         setAnchorEl(null)
