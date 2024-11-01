@@ -151,7 +151,7 @@ const Subscription = () => {
             },
             {
                 title: 'Pro',
-                price: '₹ 1',
+                price: '₹ 19,999',
                 description: 'For small & medium businesses',
                 buttonInfo: 'Choose Plan',
                 list: [
@@ -192,7 +192,7 @@ const Subscription = () => {
             },
             {
                 title: 'Pro',
-                price: '₹ 1',
+                price: '₹ 2,19,999',
                 description: 'For small & medium businesses',
                 buttonInfo: 'Choose Plan',
                 list: [
