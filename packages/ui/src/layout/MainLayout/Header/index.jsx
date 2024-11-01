@@ -115,7 +115,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 const apiUrl =
                     window.location.hostname === 'localhost'
                         ? 'http://localhost:2000/userdata'
-                        : 'https://thub-dev-420204.uc.r.appspot.com/user'
+                        : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/userdata'
 
                 try {
                     const response = await axios.post(apiUrl, { userId })
