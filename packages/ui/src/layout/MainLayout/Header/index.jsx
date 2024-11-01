@@ -114,7 +114,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             if (userId) {
                 const apiUrl =
                     window.location.hostname === 'localhost'
-                        ? 'http://localhost:4000/user'
+                        ? 'http://localhost:2000/userdata'
                         : 'https://thub-dev-420204.uc.r.appspot.com/user'
 
                 try {
