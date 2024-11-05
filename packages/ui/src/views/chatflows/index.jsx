@@ -140,7 +140,7 @@ const Chatflows = () => {
 
         console.log('chatflows: ', chatflows.length)
 
-        userData.subscription_type === null ? (userData.subscription_type = 'premium') : userData.subscription_type
+        userData.subscription_type === null ? (userData.subscription_type = 'free') : userData.subscription_type
 
         console.log(userData.subscription_type, 'Subscription type')
 
