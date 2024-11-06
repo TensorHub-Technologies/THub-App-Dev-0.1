@@ -101,7 +101,7 @@ const Subscription = () => {
                     const url =
                         window.location.hostname === 'localhost'
                             ? 'http://localhost:2000/validate'
-                            : 'https://thub-dev-420204.uc.r.appspot.com/validatehttps://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/validate'
+                            : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/validate'
 
                     const validateResponse = await fetch(url, {
                         method: 'POST',
