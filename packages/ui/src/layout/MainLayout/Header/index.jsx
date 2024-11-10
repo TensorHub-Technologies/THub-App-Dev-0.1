@@ -98,11 +98,11 @@ const Header = ({ handleLeftDrawerToggle }) => {
         const isLocalhost = window.location.hostname === 'localhost'
         const redirectUrl = customization.isDarkMode
             ? isLocalhost
-                ? 'http://localhost:5173/'
-                : 'https://thub.tech/index.html'
+                ? 'http://localhost:5173'
+                : 'https://thub.tech'
             : isLocalhost
-            ? 'http://localhost:5173/'
-            : 'https://thub.tech/index-lite.html'
+            ? 'http://localhost:5173'
+            : 'https://thub.tech'
         window.location.href = redirectUrl
         setAnchorEl(null)
     }
@@ -121,7 +121,10 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     const response = await axios.post(apiUrl, { userId })
                     if (response.status === 200) {
                         const userData = response?.data[0]
+                        console.log(userData, 'profile user data')
+
                         dispatch(setUserData(userData))
+
                         const name = userData?.name[0].toUpperCase()
                         setUserFullName(userData?.name)
                         setUserName(name)

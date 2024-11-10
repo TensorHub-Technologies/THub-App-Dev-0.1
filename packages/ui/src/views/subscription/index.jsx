@@ -50,11 +50,11 @@ const Subscription = () => {
 
     const paymentHandler = async (e, price) => {
         if (e) e.preventDefault()
-        let amount = parseFloat(price.replace(/₹|,/g, '').trim())
-        amount = String(amount * 100)
-        // amount = '100'
+        let amount = parseFloat(price.replace(/₹|,|€|£|\$/g, '').trim()) * 100
         const url =
-            window.location.hostname === 'localhost' ? 'http://localhost:4000/order' : 'https://thub-dev-420204.uc.r.appspot.com/order'
+            window.location.hostname === 'localhost'
+                ? 'http://localhost:2000/order'
+                : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/order'
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -74,6 +74,8 @@ const Subscription = () => {
             }
 
             const order = await response.json()
+            const userId = localStorage.getItem('userId')
+            console.log(userId, 'userId')
 
             if (!window.Razorpay) {
                 alert('Razorpay SDK not loaded.')
@@ -93,10 +95,15 @@ const Subscription = () => {
                         razorpay_order_id: response.razorpay_order_id,
                         razorpay_payment_id: response.razorpay_payment_id,
                         razorpay_signature: response.razorpay_signature,
-                        order_id: order.id
+                        order_id: order.id,
+                        user_id: userId
                     }
+                    const url =
+                        window.location.hostname === 'localhost'
+                            ? 'http://localhost:2000/validate'
+                            : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/validate'
 
-                    const validateResponse = await fetch('http://localhost:4000/validate', {
+                    const validateResponse = await fetch(url, {
                         method: 'POST',
                         body: JSON.stringify(body),
                         headers: {
@@ -105,6 +112,12 @@ const Subscription = () => {
                     })
 
                     const validateStatus = await validateResponse.json()
+                    if (validateResponse.ok && validateStatus.msg === 'success') {
+                        alert('Plan upgraded to ' + validateStatus.subscriptionType)
+                        location.reload()
+                    } else {
+                        alert('Payment validation failed. Please contact support.')
+                    }
                 },
                 prefill: {
                     name: 'THub',
@@ -151,7 +164,7 @@ const Subscription = () => {
             },
             {
                 title: 'Pro',
-                price: '₹ 19,999',
+                price: '₹ 1',
                 description: 'For small & medium businesses',
                 buttonInfo: 'Choose Plan',
                 list: [
