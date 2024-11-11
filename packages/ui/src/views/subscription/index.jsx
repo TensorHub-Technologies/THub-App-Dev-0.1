@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography'
 const Subscription = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
-    const user = useSelector((state) => state.user)
+    const user = useSelector((state) => state.user.userData)
     const [selectedPlan, setSelectedPlan] = useState('monthly')
     const [sdkLoaded, setSdkLoaded] = useState(false)
 
@@ -75,7 +75,6 @@ const Subscription = () => {
 
             const order = await response.json()
             const userId = localStorage.getItem('userId')
-            console.log(userId, 'userId')
 
             if (!window.Razorpay) {
                 alert('Razorpay SDK not loaded.')
@@ -113,7 +112,7 @@ const Subscription = () => {
 
                     const validateStatus = await validateResponse.json()
                     if (validateResponse.ok && validateStatus.msg === 'success') {
-                        alert('Plan upgraded to ' + validateStatus.subscriptionType)
+                        console.log('Plan upgraded to ' + validateStatus.subscriptionType)
                         location.reload()
                     } else {
                         alert('Payment validation failed. Please contact support.')
@@ -230,7 +229,7 @@ const Subscription = () => {
     }
 
     return (
-        <>
+        <div>
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
                 <Stack flexDirection='row'>
                     <Grid sx={{ mb: 1.25 }} container direction='row'>
@@ -319,6 +318,18 @@ const Subscription = () => {
                                 sx={{ maxWidth: 345 }}
                                 className={customization.isDarkMode ? subStyle.card_content_dark : subStyle.card_content_light}
                             >
+                                {plan.title === 'Free' && user.subscription_type === 'free' ? (
+                                    <div className={customization.isDarkMode ? subStyle.activeBadge_dark : subStyle.activeBadge_light}>
+                                        Active
+                                    </div>
+                                ) : plan.title === 'Pro' &&
+                                  user.subscription_type === 'pro' &&
+                                  user.subscription_duration === selectedPlan ? (
+                                    <div className={customization.isDarkMode ? subStyle.activeBadge_dark : subStyle.activeBadge_light}>
+                                        Active
+                                    </div>
+                                ) : null}
+
                                 <CardContent>
                                     <Typography
                                         gutterBottom
@@ -343,6 +354,17 @@ const Subscription = () => {
                                             size='large'
                                             sx={{ width: '100%' }}
                                             className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
+                                            disabled={
+                                                (plan.title === 'Pro' &&
+                                                    user.subscription_type === 'pro' &&
+                                                    user.subscription_duration === selectedPlan) ||
+                                                (plan.title === 'Pro' &&
+                                                    selectedPlan === 'monthly' &&
+                                                    user.subscription_duration === 'monthly') ||
+                                                (plan.title === 'Pro' &&
+                                                    selectedPlan === 'yearly' &&
+                                                    user.subscription_duration === 'yearly')
+                                            }
                                         >
                                             {plan.buttonInfo}
                                         </Button>
@@ -369,7 +391,7 @@ const Subscription = () => {
                     ))}
                 </Grid>
             </MainCard>
-        </>
+        </div>
     )
 }
 export default Subscription

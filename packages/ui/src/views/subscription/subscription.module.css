@@ -84,12 +84,12 @@ label:hover {
     margin-bottom: 20px;
 }
 
-.card_selection_dark:hover .button_click_dark {
+.card_selection_dark:hover .button_click_dark:not(:disabled) {
     background-color: #e22a90;
     color: #191a28;
 }
 
-.card_selection_light:hover .button_click_light {
+.card_selection_light:hover .button_click_light:not(:disabled) {
     background-color: #3c5ba4;
     color: #191a28;
 }
@@ -159,6 +159,33 @@ label:hover {
 
 .card_selection_light:hover .list_features_light::before {
     content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="rgb(60,91,164)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
+}
+
+/* Badge for active plan */
+.activeBadge_light {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #3c5ba4; /* Green color for active status */
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+.activeBadge_dark {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #e22a90; /* Green color for active status */
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 5px;
+    text-transform: uppercase;
 }
 
 .price_title_dark,
