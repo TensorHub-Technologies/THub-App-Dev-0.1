@@ -96,13 +96,20 @@ const Header = ({ handleLeftDrawerToggle }) => {
         setUserName('')
         setUserImg('')
         const isLocalhost = window.location.hostname === 'localhost'
-        const redirectUrl = customization.isDarkMode
-            ? isLocalhost
+        let redirectUrl
+
+        if (window.location.hostname === 'demo.thub.tech') {
+            redirectUrl = 'https://thub-web-2-0-0-378678297066.us-central1.run.app/'
+        } else {
+            redirectUrl = customization.isDarkMode
+                ? isLocalhost
+                    ? 'http://localhost:5173'
+                    : 'https://thub.tech'
+                : isLocalhost
                 ? 'http://localhost:5173'
                 : 'https://thub.tech'
-            : isLocalhost
-            ? 'http://localhost:5173'
-            : 'https://thub.tech'
+        }
+
         window.location.href = redirectUrl
         setAnchorEl(null)
     }
