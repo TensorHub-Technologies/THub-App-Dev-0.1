@@ -277,6 +277,10 @@ const Chatflows = () => {
                                     display: { xs: 'none', sm: 'block' },
 
                                     ml: 3,
+                                    minWidth: 200,
+
+                                    maxWidth: 'none',
+                                    flexGrow: 1,
 
                                     transition: 'all .2s ease-in-out',
 
