@@ -141,6 +141,9 @@ const AddNodes = ({ nodesData, node }) => {
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
     userData.subscription_type === null ? (userData.subscription_type = 'free') : userData.subscription_type
     console.log(userData.subscription_type, 'AddNodes subscription type')
+    if (!userData.subscription_type) {
+        userData.subscription_type = localStorage.getItem('subscription_type')
+    }
     const allowedMenu = allowedPlan[userData?.subscription_type]
     // const allowedMenu="Premium"
     const allowedMenuItemKeys = Object.keys(allowedMenu)
@@ -253,8 +256,6 @@ const AddNodes = ({ nodesData, node }) => {
         setCategoryExpanded(accordianCategories)
     }
 
-    const [isInputFocused, setInputFocused] = useState(false)
-
     const onDragStart = (event, node) => {
         event.dataTransfer.setData('application/reactflow', JSON.stringify(node))
         event.dataTransfer.effectAllowed = 'move'
@@ -356,8 +357,6 @@ const AddNodes = ({ nodesData, node }) => {
                                     id='input-search-node'
                                     value={searchValue}
                                     onChange={(e) => filterSearch(e.target.value)}
-                                    onFocus={() => setInputFocused(true)}
-                                    onBlur={() => setInputFocused(false)}
                                     placeholder='Search'
                                     InputProps={{
                                         'aria-label': 'weight',
