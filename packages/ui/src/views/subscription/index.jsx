@@ -54,7 +54,7 @@ const Subscription = () => {
         const url =
             window.location.hostname === 'localhost'
                 ? 'http://localhost:2000/order'
-                : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/order'
+                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/order'
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -97,10 +97,10 @@ const Subscription = () => {
                         order_id: order.id,
                         user_id: userId
                     }
-                    const url =
-                        window.location.hostname === 'localhost'
-                            ? 'http://localhost:2000/validate'
-                            : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/validate'
+                    const url = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/validate'
+                    // window.location.hostname === 'localhost'
+                    //     ? 'http://localhost:2000/validate'
+                    //     : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/validate'
 
                     const validateResponse = await fetch(url, {
                         method: 'POST',

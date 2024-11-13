@@ -431,12 +431,12 @@ const Chatflows = () => {
                                     >
                                         <ToggleButton
                                             sx={{
-                                                color: customization.isDarkMode ? '#3C5BA4' : '#3C5BA4',
+                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
 
                                                 borderRadius: '20px 0 0 20px',
 
                                                 '&.Mui-selected': {
-                                                    color: customization?.isDarkMode ? '#E22A90' : '#E22A90'
+                                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                                 }
                                             }}
                                             variant='contained'
@@ -454,12 +454,12 @@ const Chatflows = () => {
 
                                         <ToggleButton
                                             sx={{
-                                                color: customization.isDarkMode ? '#E22A90' : '#E22A90',
+                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
 
                                                 borderRadius: '0 20px 20px 0',
 
                                                 '&.Mui-selected': {
-                                                    color: customization?.isDarkMode ? '#3C5BA4' : '#3C5BA4'
+                                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                                 }
                                             }}
                                             variant='contained'
