@@ -142,8 +142,7 @@ const AddNodes = ({ nodesData, node }) => {
     userData.subscription_type === null ? (userData.subscription_type = 'free') : userData.subscription_type
     console.log(userData.subscription_type, 'AddNodes subscription type')
     if (!userData.subscription_type) {
-        userData.subscription_type = 'pro'
-        console.log(userData.subscription_type, 'after error')
+        userData.subscription_type = localStorage.getItem('subscription_type')
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
     // const allowedMenu="Premium"
