@@ -198,7 +198,8 @@
                 "ReAct Agent for Chat Models",
                 "ReAct Agent for LLMs",
                 "Anthropic Agent",
-                "OpenAI Tool Agent"
+                "OpenAI Tool Agent",
+                "Tool Agent"
             ],
             "Sequential Agents": ["Agent", "Condition", "Condition Agent", "End", "LLM Node", "Loop", "Start", "State", "Tool Node"],
             "Tools": [

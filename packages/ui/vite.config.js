@@ -1,20 +1,17 @@
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import dotenv from 'dotenv'
 
 export default defineConfig(async ({ mode }) => {
-    const env = loadEnv(mode, process.cwd())
-
     let proxy = undefined
-
     if (mode === 'development') {
         const serverEnv = dotenv.config({ processEnv: {}, path: '../server/.env' }).parsed
         const serverHost = serverEnv?.['HOST'] ?? 'localhost'
         const serverPort = parseInt(serverEnv?.['PORT'] ?? 3000)
         if (!Number.isNaN(serverPort) && serverPort > 0 && serverPort < 65535) {
             proxy = {
-                '/api': {
+                '^/api(/|$).*': {
                     target: `http://${serverHost}:${serverPort}`,
                     changeOrigin: true
                 },
@@ -25,7 +22,7 @@ export default defineConfig(async ({ mode }) => {
             }
         }
     }
-
+    dotenv.config()
     return {
         plugins: [react()],
         resolve: {
@@ -35,16 +32,13 @@ export default defineConfig(async ({ mode }) => {
         },
         root: resolve(__dirname),
         build: {
-            outDir: './build',
-            rollupOptions: {
-                external: []
-            }
+            outDir: './build'
         },
         server: {
             open: true,
             proxy,
-            port: env.VITE_PORT ?? 8080,
-            host: env.VITE_HOST ?? 'localhost'
+            port: process.env.VITE_PORT ?? 8080,
+            host: process.env.VITE_HOST
         }
     }
 })

@@ -137,11 +137,12 @@ const AddNodes = ({ nodesData, node }) => {
     const [categoryExpanded, setCategoryExpanded] = useState({})
     const [tabValue, setTabValue] = useState(0)
     const userData = useSelector((state) => state.user.userData)
+    console.log(userData, 'userData')
 
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
     userData.subscription_type === null ? (userData.subscription_type = 'free') : userData.subscription_type
     console.log(userData.subscription_type, 'AddNodes subscription type')
-    const allowedMenu = allowedPlan[userData?.subscription_type]
+    const allowedMenu = 'premium'
     // const allowedMenu="Premium"
     const allowedMenuItemKeys = Object.keys(allowedMenu)
     const [tab, setTab] = useState(['LangChain'])
@@ -151,6 +152,8 @@ const AddNodes = ({ nodesData, node }) => {
             setTab(['LangChain', 'LlamaIndex'])
         }
     }, [])
+
+    console.log(nodes, 'nodes')
 
     console.log('tab: ', tab)
     //console.log("nodes: ",nodes)

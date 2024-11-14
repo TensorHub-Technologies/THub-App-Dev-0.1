@@ -128,6 +128,35 @@ const removeAllChatMessages = async (
     }
 }
 
+const removeChatMessagesByMessageIds = async (
+    chatflowid: string,
+    chatIdMap: Map<string, ChatMessage[]>,
+    messageIds: string[]
+): Promise<DeleteResult> => {
+    try {
+        const appServer = getRunningExpressApp()
+
+        for (const [composite_key] of chatIdMap) {
+            const [chatId] = composite_key.split('_')
+
+            // Remove all related feedback records
+            const feedbackDeleteOptions: FindOptionsWhere<ChatMessageFeedback> = { chatId }
+            await appServer.AppDataSource.getRepository(ChatMessageFeedback).delete(feedbackDeleteOptions)
+
+            // Delete all uploads corresponding to this chatflow/chatId
+            await removeFilesFromStorage(chatflowid, chatId)
+        }
+
+        const dbResponse = await appServer.AppDataSource.getRepository(ChatMessage).delete(messageIds)
+        return dbResponse
+    } catch (error) {
+        throw new InternalFlowiseError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            `Error: chatMessagesService.removeAllChatMessages - ${getErrorMessage(error)}`
+        )
+    }
+}
+
 const abortChatMessage = async (chatId: string, chatflowid: string) => {
     try {
         const appServer = getRunningExpressApp()
@@ -155,5 +184,6 @@ export default {
     getAllChatMessages,
     getAllInternalChatMessages,
     removeAllChatMessages,
+    removeChatMessagesByMessageIds,
     abortChatMessage
 }
