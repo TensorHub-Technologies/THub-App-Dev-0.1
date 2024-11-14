@@ -206,7 +206,7 @@ export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
                     top: 20,
                     boxShadow: '0',
                     color: customization.isDarkMode ? 'white' : 'black',
-                    backgroundColor: open ? (customization?.isDarkMode ? '#000' : '#fff') : '',
+                    backgroundColor: open ? (customization?.isDarkMode ? 'transparent' : 'transparent') : '',
 
                     '&:hover': {
                         backgroundColor: open
