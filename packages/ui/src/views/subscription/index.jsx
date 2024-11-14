@@ -48,13 +48,16 @@ const Subscription = () => {
         setSelectedPlan('yearly')
     }
 
-    const paymentHandler = async (e, price) => {
+    const paymentHandler = async (e, planTitle, planId, duration) => {
         if (e) e.preventDefault()
-        let amount = parseFloat(price.replace(/₹|,|€|£|\$/g, '').trim()) * 100
+        console.log(planTitle, planId, duration, 'paymentHandler')
+        let plan_Id = planId.trim()
+        const uid = user.uid
         const url =
             window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/order'
-                : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/order'
+                ? 'http://localhost:2000/create-subscription'
+                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/create-subscription'
+
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -62,19 +65,20 @@ const Subscription = () => {
                     'Content-type': 'application/json'
                 },
                 body: JSON.stringify({
-                    amount,
-                    currency,
-                    receipt: receiptId
+                    planId: plan_Id,
+                    duration: duration,
+                    customerEmail: user.email,
+                    user_id: uid
                 })
             })
 
             if (!response.ok) {
-                console.error('Failed to create order:', response.statusText)
+                console.error('Failed to create subscription:', response.statusText)
                 return
             }
 
-            const order = await response.json()
-            const userId = localStorage.getItem('userId')
+            const subscription = await response.json()
+            const userId = localStorage.getItem('userId') || user.uid
 
             if (!window.Razorpay) {
                 alert('Razorpay SDK not loaded.')
@@ -82,37 +86,34 @@ const Subscription = () => {
             }
 
             var options = {
-                key: 'rzp_live_L6Fy6yBDycyCzw',
-                amount: amount,
-                currency,
+                key: 'rzp_test_pMR0oNtQh7JOlN',
+                subscription_id: subscription.id,
                 name: 'THub',
-                description: 'Test Transaction',
+                description: `${planTitle} Subscription`,
                 image: user.picture,
-                order_id: order.id,
                 handler: async function (response) {
-                    const body = {
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_signature: response.razorpay_signature,
-                        order_id: order.id,
-                        user_id: userId
-                    }
-                    const url =
+                    const validateUrl =
                         window.location.hostname === 'localhost'
-                            ? 'http://localhost:2000/validate'
-                            : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/validate'
+                            ? 'http://localhost:2000/validate-subscription'
+                            : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/validate-subscription'
 
-                    const validateResponse = await fetch(url, {
+                    const validateResponse = await fetch(validateUrl, {
                         method: 'POST',
-                        body: JSON.stringify(body),
                         headers: {
                             'Content-Type': 'application/json'
-                        }
+                        },
+                        body: JSON.stringify({
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_subscription_id: response.razorpay_subscription_id,
+                            razorpay_signature: response.razorpay_signature,
+                            planId: plan_Id,
+                            user_id: userId
+                        })
                     })
 
                     const validateStatus = await validateResponse.json()
                     if (validateResponse.ok && validateStatus.msg === 'success') {
-                        console.log('Plan upgraded to ' + validateStatus.subscriptionType)
+                        console.log(`Plan upgraded to ${validateStatus.subscriptionType}`)
                         location.reload()
                     } else {
                         alert('Payment validation failed. Please contact support.')
@@ -122,9 +123,6 @@ const Subscription = () => {
                     name: 'THub',
                     email: user.email,
                     contact: user.phone ? user.phone : '9000090000'
-                },
-                notes: {
-                    address: 'Razorpay Corporate Office'
                 },
                 theme: {
                     color: '#3399ff'
@@ -148,6 +146,8 @@ const Subscription = () => {
             {
                 title: 'Free',
                 price: '₹0',
+                planId: '',
+                duration: 'monthly',
                 description: 'For starters to explore and integrate',
                 buttonInfo: 'Start for Free',
                 list: [
@@ -164,6 +164,8 @@ const Subscription = () => {
             {
                 title: 'Pro',
                 price: '₹ 1',
+                planId: 'plan_PKKqYOHRkFFVTZ',
+                duration: 'monthly',
                 description: 'For small & medium businesses',
                 buttonInfo: 'Choose Plan',
                 list: [
@@ -180,6 +182,7 @@ const Subscription = () => {
             {
                 title: 'Enterprise',
                 price: 'Contact for Price',
+                duration: 'monthly',
                 description: 'For large teams and enterprises.',
                 buttonInfo: 'Choose Plan',
                 list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
@@ -205,6 +208,8 @@ const Subscription = () => {
             {
                 title: 'Pro',
                 price: '₹ 2,19,999',
+                planId: 'plan_PKhfVyO6JCxaeR',
+                duration: 'yearly',
                 description: 'For small & medium businesses',
                 buttonInfo: 'Choose Plan',
                 list: [
@@ -221,6 +226,8 @@ const Subscription = () => {
             {
                 title: 'Enterprise',
                 price: 'Contact for Price',
+                planId: 'YOUR_ENTERPRISE_PLAN_ID',
+                duration: 'yearly',
                 description: 'For large teams and enterprises.',
                 buttonInfo: 'Choose Plan',
                 list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
@@ -347,9 +354,7 @@ const Subscription = () => {
                                     </Typography>
                                     <div>
                                         <Button
-                                            onClick={(e) => {
-                                                paymentHandler(e, plan.price)
-                                            }}
+                                            onClick={(e) => paymentHandler(e, plan.title, plan.planId, plan.duration)}
                                             variant='contained'
                                             size='large'
                                             sx={{ width: '100%' }}
