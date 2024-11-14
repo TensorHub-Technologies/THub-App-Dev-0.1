@@ -69,3 +69,13 @@
 .minmax-btn #ExpandIcon:hover {
     color: #e22a90;
 }
+@keyframes dashAnimation {
+    to {
+        stroke-dashoffset: -40;
+    }
+}
+
+.react-flow__edge-path {
+    stroke-dasharray: 4 4;
+    animation: dashAnimation 1s linear infinite;
+}

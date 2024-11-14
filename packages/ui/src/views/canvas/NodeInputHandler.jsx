@@ -220,10 +220,11 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                             id={inputAnchor.id}
                             isValidConnection={(connection) => isValidConnection(connection, reactFlowInstance)}
                             style={{
-                                height: 10,
-                                width: 10,
+                                height: 25,
+                                width: 15,
                                 backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                top: position
+                                top: position,
+                                borderRadius: 5
                             }}
                         />
                     </CustomWidthTooltip>
@@ -272,7 +273,7 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                             width: '100%',
                                             mb: 2,
                                             mt: 0,
-                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            color: customization.isDarkMode ? 'red' : '#3C5BA4',
                                             borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
                                             '&:hover': {
                                                 borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'

@@ -277,6 +277,10 @@ const Chatflows = () => {
                                     display: { xs: 'none', sm: 'block' },
 
                                     ml: 3,
+                                    minWidth: 200,
+
+                                    maxWidth: 'none',
+                                    flexGrow: 1,
 
                                     transition: 'all .2s ease-in-out',
 
@@ -427,12 +431,12 @@ const Chatflows = () => {
                                     >
                                         <ToggleButton
                                             sx={{
-                                                color: customization.isDarkMode ? '#3C5BA4' : '#3C5BA4',
+                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
 
                                                 borderRadius: '20px 0 0 20px',
 
                                                 '&.Mui-selected': {
-                                                    color: customization?.isDarkMode ? '#E22A90' : '#E22A90'
+                                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                                 }
                                             }}
                                             variant='contained'
@@ -450,12 +454,12 @@ const Chatflows = () => {
 
                                         <ToggleButton
                                             sx={{
-                                                color: customization.isDarkMode ? '#E22A90' : '#E22A90',
+                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
 
                                                 borderRadius: '0 20px 20px 0',
 
                                                 '&.Mui-selected': {
-                                                    color: customization?.isDarkMode ? '#3C5BA4' : '#3C5BA4'
+                                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                                 }
                                             }}
                                             variant='contained'
