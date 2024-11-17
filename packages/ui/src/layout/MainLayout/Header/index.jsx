@@ -122,9 +122,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 const apiUrl =
                     window.location.hostname === 'localhost'
                         ? 'http://localhost:2000/userdata'
-
                         : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
-
 
                 try {
                     const response = await axios.post(apiUrl, { userId })
