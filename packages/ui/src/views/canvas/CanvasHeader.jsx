@@ -240,7 +240,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
         // setUserId(uid)
         // localStorage.setItem('userId', uid)
         const userId = localStorage.getItem('userId')
-        setUserId(userId)
+        // setUserId(userId)
 
         const apiUrl =
             window.location.hostname === 'localhost'
