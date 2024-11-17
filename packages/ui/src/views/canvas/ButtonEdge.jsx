@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux'
 import './index.css'
 
 const foreignObjectSize = 40
-const animationDuration = 8000
 
 const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style = {}, data, markerEnd }) => {
     const [edgePath] = getSmoothStepPath({
@@ -63,8 +62,11 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
             <path
                 id={id}
                 ref={pathRef}
-                style={{ stroke: customization?.isDarkMode ? '#fff' : '#000', strokeWidth: '1px' }}
-                className='react-flow__edge-path'
+                style={{
+                    stroke: customization?.isDarkMode ? '#e22a90' : '#3c5ba4',
+                    strokeWidth: '2px'
+                }}
+                className='react-flow__edge-path' // This class applies the dotted line animation
                 d={edgePath}
                 markerEnd={markerEnd}
             />
@@ -107,17 +109,7 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
                 y={buttonPosition.y - foreignObjectSize / 2}
                 className='edgebutton-foreignobject'
                 requiredExtensions='http://www.w3.org/1999/xhtml'
-            >
-                <div>
-                    <button
-                        className='edgebutton'
-                        style={{
-                            background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                            color: customization?.isDarkMode ? '#000' : '#fff'
-                        }}
-                    ></button>
-                </div>
-            </foreignObject>
+            ></foreignObject>
         </>
     )
 }

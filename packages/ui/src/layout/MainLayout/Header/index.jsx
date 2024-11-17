@@ -96,13 +96,20 @@ const Header = ({ handleLeftDrawerToggle }) => {
         setUserName('')
         setUserImg('')
         const isLocalhost = window.location.hostname === 'localhost'
-        const redirectUrl = customization.isDarkMode
-            ? isLocalhost
+        let redirectUrl
+
+        if (window.location.hostname === 'demo.thub.tech') {
+            redirectUrl = 'https://thub-web-2-0-0-378678297066.us-central1.run.app/'
+        } else {
+            redirectUrl = customization.isDarkMode
+                ? isLocalhost
+                    ? 'http://localhost:5173'
+                    : 'https://thub.tech'
+                : isLocalhost
                 ? 'http://localhost:5173'
                 : 'https://thub.tech'
-            : isLocalhost
-            ? 'http://localhost:5173'
-            : 'https://thub.tech'
+        }
+
         window.location.href = redirectUrl
         setAnchorEl(null)
     }
@@ -115,7 +122,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 const apiUrl =
                     window.location.hostname === 'localhost'
                         ? 'http://localhost:2000/userdata'
-                        : 'https://thub-dev-420204.uc.r.appspot.com/user'
+                        : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
 
                 try {
                     const response = await axios.post(apiUrl, { userId })

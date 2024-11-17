@@ -233,6 +233,52 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
         }
     }, [chatflow, title, chatflowConfigurationDialogOpen])
 
+    useEffect(() => {
+        // let url = new URL(window.location.href)
+        // let params = new URLSearchParams(url.search)
+        // const uid = params.get('uid') || ''
+        // setUserId(uid)
+        // localStorage.setItem('userId', uid)
+        const userId = localStorage.getItem('userId')
+        setUserId(userId)
+
+        const apiUrl =
+            window.location.hostname === 'localhost'
+                ? 'http://localhost:2000/userdata'
+                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId
+            })
+        })
+            .then((response) => {
+                if (response.ok) {
+                    response.json().then((user) => {
+                        const name = user[0].name[0]
+                        const img = user[0].picture
+                        const showName = name.toUpperCase()
+                        setUser(showName)
+                        setuserImg(img)
+                    })
+                } else {
+                    console.error('Error:', response.statusText)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+            })
+    }, [])
+
+    const handleUrlChange = () => {
+        window.history.state && window.history.state.idx > 0
+            ? navigate(`/?theme=${customization.isDarkMode ? 'dark' : 'lite'}&uid=${userId}`)
+            : navigate('/', { replace: true })
+    }
     return (
         <>
             <Stack flexDirection='row' justifyContent='space-between' sx={{ width: '100%' }}>

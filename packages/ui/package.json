@@ -48,6 +48,7 @@
         "react-say": "1.1.1-master.5b4782e",
         "react-speech": "^1.0.2",
         "react-syntax-highlighter": "^15.5.0",
+        "react-toastify": "^10.0.6",
         "reactflow": "^11.5.6",
         "redux": "^4.0.5",
         "rehype-mathjax": "^4.0.2",
