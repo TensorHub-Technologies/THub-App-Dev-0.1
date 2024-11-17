@@ -8,7 +8,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
-import { fetchEventSource } from '@microsoft/fetch-event-source'
+import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source'
 
 import {
     Box,
@@ -38,7 +38,8 @@ import {
     IconSquareFilled,
     IconDeviceSdCard,
     IconCheck,
-    IconPaperclip
+    IconPaperclip,
+    IconSparkles
 } from '@tabler/icons-react'
 import Logo from '@/assets/images/THub_icon_colorful_logo.png'
 import PersonIcon from '@mui/icons-material/Person'
@@ -66,6 +67,7 @@ import chatmessageApi from '@/api/chatmessage'
 import chatflowsApi from '@/api/chatflows'
 import predictionApi from '@/api/prediction'
 import vectorstoreApi from '@/api/vectorstore'
+import attachmentsApi from '@/api/attachments'
 import chatmessagefeedbackApi from '@/api/chatmessagefeedback'
 import leadsApi from '@/api/lead'
 
@@ -79,6 +81,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 // Utils
 import { isValidURL, removeDuplicateURL, setLocalStorageChatflow, getLocalStorageChatflow } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
+import FollowUpPromptsCard from '@/ui-component/cards/FollowUpPromptsCard'
 import TextToSpeech from './TextToSpeech'
 
 const messageImageStyle = {
@@ -87,7 +90,7 @@ const messageImageStyle = {
     objectFit: 'cover'
 }
 
-const CardWithDeleteOverlay = ({ item, customization, onDelete }) => {
+const CardWithDeleteOverlay = ({ item, disabled, customization, onDelete }) => {
     const [isHovered, setIsHovered] = useState(false)
     const defaultBackgroundColor = customization.isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'transparent'
 
@@ -124,8 +127,9 @@ const CardWithDeleteOverlay = ({ item, customization, onDelete }) => {
                     {item.name}
                 </span>
             </Card>
-            {isHovered && (
+            {isHovered && !disabled && (
                 <Button
+                    disabled={disabled}
                     onClick={() => onDelete(item)}
                     startIcon={<IconTrash color='white' size={22} />}
                     title='Remove attachment'
@@ -149,6 +153,7 @@ const CardWithDeleteOverlay = ({ item, customization, onDelete }) => {
 CardWithDeleteOverlay.propTypes = {
     item: PropTypes.object,
     customization: PropTypes.object,
+    disabled: PropTypes.bool,
     onDelete: PropTypes.func
 }
 
@@ -190,6 +195,9 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
 
     const [starterPrompts, setStarterPrompts] = useState([])
 
+    // full file upload
+    const [fullFileUpload, setFullFileUpload] = useState(false)
+
     // feedback
     const [chatFeedbackStatus, setChatFeedbackStatus] = useState(true)
     const [feedbackId, setFeedbackId] = useState('')
@@ -203,11 +211,20 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const [isLeadSaving, setIsLeadSaving] = useState(false)
     const [isLeadSaved, setIsLeadSaved] = useState(false)
 
+    // follow-up prompts
+    const [followUpPromptsStatus, setFollowUpPromptsStatus] = useState(false)
+    const [followUpPrompts, setFollowUpPrompts] = useState([])
+
+    console.log(followUpPromptsStatus, 'followUpPromptsStatus', followUpPrompts, 'followUpPrompts')
+
+    console.log(messages, 'messages')
+
     // drag & drop and file input
     const imgUploadRef = useRef(null)
     const fileUploadRef = useRef(null)
     const [isChatFlowAvailableForImageUploads, setIsChatFlowAvailableForImageUploads] = useState(false)
     const [isChatFlowAvailableForFileUploads, setIsChatFlowAvailableForFileUploads] = useState(false)
+    const [isChatFlowAvailableForRAGFileUploads, setIsChatFlowAvailableForRAGFileUploads] = useState(false)
     const [isDragActive, setIsDragActive] = useState(false)
 
     // recording
@@ -218,6 +235,9 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
 
     const isFileAllowedForUpload = (file) => {
         const constraints = getAllowChatFlowUploads.data
+        /**
+         * {isImageUploadAllowed: boolean, imgUploadSizeAndTypes: Array<{ fileTypes: string[], maxUploadSize: number }>}
+         */
         let acceptFile = false
         if (constraints.isImageUploadAllowed) {
             const fileType = file.type
@@ -228,7 +248,10 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 }
             })
         }
-        if (constraints.isFileUploadAllowed) {
+
+        if (fullFileUpload) {
+            return true
+        } else if (constraints.isRAGFileUploadAllowed) {
             const fileExt = file.name.split('.').pop()
             if (fileExt) {
                 constraints.fileUploadSizeAndTypes.map((allowed) => {
@@ -264,7 +287,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 const { name } = file
                 // Only add files
                 if (!imageUploadAllowedTypes.includes(file.type)) {
-                    uploadedFiles.push(file)
+                    uploadedFiles.push({ file, type: fullFileUpload ? 'file:full' : 'file:rag' })
                 }
                 files.push(
                     new Promise((resolve) => {
@@ -343,7 +366,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
             }
             // Only add files
             if (!imageUploadAllowedTypes.includes(file.type)) {
-                uploadedFiles.push(file)
+                uploadedFiles.push({ file, type: fullFileUpload ? 'file:full' : 'file:rag' })
             }
             const reader = new FileReader()
             const { name } = file
@@ -627,6 +650,12 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         handleSubmit(undefined, promptStarterInput)
     }
 
+    const handleFollowUpPromptClick = async (promptStarterInput) => {
+        setUserInput(promptStarterInput)
+        setFollowUpPrompts([])
+        handleSubmit(undefined, promptStarterInput)
+    }
+
     const handleActionClick = async (elem, action) => {
         setUserInput(elem.label)
         setMessages((prevMessages) => {
@@ -664,6 +693,71 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 return allMessages
             })
         }
+
+        if (data.followUpPrompts) {
+            const followUpPrompts = JSON.parse(data.followUpPrompts)
+            setFollowUpPrompts(followUpPrompts)
+        }
+    }
+
+    const handleFileUploads = async (uploads) => {
+        if (!uploadedFiles.length) return uploads
+
+        if (fullFileUpload) {
+            const filesWithFullUploadType = uploadedFiles.filter((file) => file.type === 'file:full')
+
+            if (filesWithFullUploadType.length > 0) {
+                const formData = new FormData()
+                for (const file of filesWithFullUploadType) {
+                    formData.append('files', file.file)
+                }
+                formData.append('chatId', chatId)
+
+                const response = await attachmentsApi.createAttachment(chatflowid, chatId, formData)
+                const data = response.data
+                for (const extractedFileData of data) {
+                    const content = extractedFileData.content
+                    const fileName = extractedFileData.name
+
+                    // find matching name in previews and replace data with content
+                    const uploadIndex = uploads.findIndex((upload) => upload.name === fileName)
+                    if (uploadIndex !== -1) {
+                        uploads[uploadIndex] = {
+                            ...uploads[uploadIndex],
+                            data: content,
+                            name: fileName,
+                            type: 'file:full'
+                        }
+                    }
+                }
+            }
+        } else if (isChatFlowAvailableForRAGFileUploads) {
+            const filesWithRAGUploadType = uploadedFiles.filter((file) => file.type === 'file:rag')
+
+            if (filesWithRAGUploadType.length > 0) {
+                const formData = new FormData()
+                for (const file of filesWithRAGUploadType) {
+                    formData.append('files', file.file)
+                }
+                formData.append('chatId', chatId)
+
+                await vectorstoreApi.upsertVectorStoreWithFormData(chatflowid, formData)
+
+                // delay for vector store to be updated
+                const delay = (delayInms) => {
+                    return new Promise((resolve) => setTimeout(resolve, delayInms))
+                }
+                await delay(2500) //TODO: check if embeddings can be retrieved using file name as metadata filter
+
+                uploads = uploads.map((upload) => {
+                    return {
+                        ...upload,
+                        type: 'file:rag'
+                    }
+                })
+            }
+        }
+        return uploads
     }
 
     // Handle form submission
@@ -682,7 +776,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         if (selectedInput !== undefined && selectedInput.trim() !== '') input = selectedInput
 
         setLoading(true)
-        const uploads = previews.map((item) => {
+        let uploads = previews.map((item) => {
             return {
                 data: item.data,
                 type: item.type,
@@ -690,6 +784,14 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 mime: item.mime
             }
         })
+
+        try {
+            uploads = await handleFileUploads(uploads)
+        } catch (error) {
+            handleError('Unable to upload documents')
+            return
+        }
+
         clearPreviews()
         setMessages((prevMessages) => [...prevMessages, { message: input, type: 'userMessage', fileUploads: uploads }])
 
@@ -701,27 +803,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
             }
             if (uploads && uploads.length > 0) params.uploads = uploads
             if (leadEmail) params.leadEmail = leadEmail
-
             if (action) params.action = action
-
-            if (uploadedFiles.length > 0) {
-                const formData = new FormData()
-                for (const file of uploadedFiles) {
-                    formData.append('files', file)
-                }
-                formData.append('chatId', chatId)
-
-                const response = await vectorstoreApi.upsertVectorStoreWithFormData(chatflowid, formData)
-                if (!response.data) {
-                    setMessages((prevMessages) => [...prevMessages, { message: 'Unable to upload documents', type: 'apiMessage' }])
-                } else {
-                    // delay for vector store to be updated
-                    const delay = (delayInms) => {
-                        return new Promise((resolve) => setTimeout(resolve, delayInms))
-                    }
-                    await delay(2500) //TODO: check if embeddings can be retrieved using file name as metadata filter
-                }
-            }
 
             if (isChatFlowAvailableToStream) {
                 fetchResponseFromEventStream(chatflowid, params)
@@ -784,6 +866,11 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 Authorization: username && password ? `Basic ${btoa(`${username}:${password}`)}` : undefined,
                 'x-request-from': 'internal'
             },
+            async onopen(response) {
+                if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
+                    //console.log('EventSource Open')
+                }
+            },
             async onmessage(ev) {
                 const payload = JSON.parse(ev.data)
                 switch (payload.event) {
@@ -836,6 +923,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
             async onerror(err) {
                 console.error('EventSource Error: ', err)
                 closeResponse()
+                throw err
             }
         })
     }
@@ -880,6 +968,11 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         }
 
         return ''
+    }
+
+    const getFileUploadAllowedTypes = () => {
+        if (fullFileUpload) return '*'
+        return fileUploadAllowedTypes.includes('*') ? '*' : fileUploadAllowedTypes || '*'
     }
 
     const downloadFile = async (fileAnnotation) => {
@@ -948,6 +1041,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                         }
                     })
                 }
+                if (message.followUpPrompts) obj.followUpPrompts = JSON.parse(message.followUpPrompts)
                 return obj
             })
             setMessages((prevMessages) => [...prevMessages, ...loadedMessages])
@@ -969,7 +1063,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     useEffect(() => {
         if (getAllowChatFlowUploads.data) {
             setIsChatFlowAvailableForImageUploads(getAllowChatFlowUploads.data?.isImageUploadAllowed ?? false)
-            setIsChatFlowAvailableForFileUploads(getAllowChatFlowUploads.data?.isFileUploadAllowed ?? false)
+            setIsChatFlowAvailableForRAGFileUploads(getAllowChatFlowUploads.data?.isRAGFileUploadAllowed ?? false)
             setIsChatFlowAvailableForSpeech(getAllowChatFlowUploads.data?.isSpeechToTextEnabled ?? false)
             setImageUploadAllowedTypes(getAllowChatFlowUploads.data?.imgUploadSizeAndTypes.map((allowed) => allowed.fileTypes).join(','))
             setFileUploadAllowedTypes(getAllowChatFlowUploads.data?.fileUploadSizeAndTypes.map((allowed) => allowed.fileTypes).join(','))
@@ -1007,9 +1101,28 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                         })
                     }
                 }
+
+                if (config.followUpPrompts) {
+                    setFollowUpPromptsStatus(config.followUpPrompts.status)
+                }
+
+                if (config.fullFileUpload) {
+                    setFullFileUpload(config.fullFileUpload.status)
+                }
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getChatflowConfig.data])
+
+    useEffect(() => {
+        if (fullFileUpload) {
+            setIsChatFlowAvailableForFileUploads(true)
+        } else if (isChatFlowAvailableForRAGFileUploads) {
+            setIsChatFlowAvailableForFileUploads(true)
+        } else {
+            setIsChatFlowAvailableForFileUploads(false)
+        }
+    }, [isChatFlowAvailableForRAGFileUploads, fullFileUpload])
 
     // Auto scroll chat to bottom
     useEffect(() => {
@@ -1056,6 +1169,8 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 }
             ])
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, chatflowid])
 
     useEffect(() => {
@@ -1068,6 +1183,17 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         }
         // eslint-disable-next-line
     }, [previews])
+
+    useEffect(() => {
+        if (followUpPromptsStatus && messages.length > 0) {
+            const lastMessage = messages[messages.length - 1]
+            if (lastMessage.type === 'apiMessage' && lastMessage.followUpPrompts) {
+                setFollowUpPrompts(lastMessage.followUpPrompts)
+            } else if (lastMessage.type === 'userMessage') {
+                setFollowUpPrompts([])
+            }
+        }
+    }, [followUpPromptsStatus, messages])
 
     const copyMessageToClipboard = async (text) => {
         try {
@@ -1196,6 +1322,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                         marginRight: '10px',
                         flex: '0 0 auto'
                     }}
+                    disabled={getInputDisabled()}
                     onClick={() => handleDeletePreview(item)}
                 >
                     <ImageSrc style={{ backgroundImage: `url(${item.data})` }} />
@@ -1221,13 +1348,20 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                     variant='outlined'
                 >
                     <CardMedia component='audio' sx={{ color: 'transparent' }} controls src={item.data} />
-                    <IconButton onClick={() => handleDeletePreview(item)} size='small'>
+                    <IconButton disabled={getInputDisabled()} onClick={() => handleDeletePreview(item)} size='small'>
                         <IconTrash size={20} color='white' />
                     </IconButton>
                 </Card>
             )
         } else {
-            return <CardWithDeleteOverlay item={item} customization={customization} onDelete={() => handleDeletePreview(item)} />
+            return (
+                <CardWithDeleteOverlay
+                    disabled={getInputDisabled()}
+                    item={item}
+                    customization={customization}
+                    onDelete={() => handleDeletePreview(item)}
+                />
+            )
         }
     }
 
@@ -1373,11 +1507,14 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                     onDrop={handleDrop}
                 />
             )}
-            {isDragActive && (getAllowChatFlowUploads.data?.isImageUploadAllowed || getAllowChatFlowUploads.data?.isFileUploadAllowed) && (
-                <Box className='drop-overlay'>
-                    <Typography variant='h2'>Drop here to upload</Typography>
-                    {[...getAllowChatFlowUploads.data.imgUploadSizeAndTypes, ...getAllowChatFlowUploads.data.fileUploadSizeAndTypes].map(
-                        (allowed) => {
+            {isDragActive &&
+                (getAllowChatFlowUploads.data?.isImageUploadAllowed || getAllowChatFlowUploads.data?.isRAGFileUploadAllowed) && (
+                    <Box className='drop-overlay'>
+                        <Typography variant='h2'>Drop here to upload</Typography>
+                        {[
+                            ...getAllowChatFlowUploads.data.imgUploadSizeAndTypes,
+                            ...getAllowChatFlowUploads.data.fileUploadSizeAndTypes
+                        ].map((allowed) => {
                             return (
                                 <>
                                     <Typography variant='subtitle1'>{allowed.fileTypes?.join(', ')}</Typography>
@@ -1386,10 +1523,9 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                     )}
                                 </>
                             )
-                        }
-                    )}
-                </Box>
-            )}
+                        })}
+                    </Box>
+                )}
             <div style={{ marginBottom: '8px' }}>
                 <img src={Logo} alt='AI' width='26' height='26' className='boticon' />
             </div>
@@ -1398,6 +1534,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                     {messages &&
                         messages.map((message, index) => {
                             return (
+                                // The latest message sent by the user will be animated while waiting for a response
                                 <Box
                                     sx={{
                                         background:
@@ -1417,6 +1554,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                             : 'usermessage'
                                     }
                                 >
+                                    {/* Display the correct icon depending on the message type */}
                                     {message.type === 'apiMessage' || message.type === 'leadCaptureMessage' ? (
                                         <img src={Logo} alt='AI' width='26' height='26' className='boticon' />
                                     ) : (
@@ -1790,6 +1928,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                 </Box>
                                             ) : (
                                                 <>
+                                                    {/* Messages are being rendered in Markdown format */}
                                                     <MemoizedReactMarkdown
                                                         remarkPlugins={[remarkGfm, remarkMath]}
                                                         rehypePlugins={[rehypeMathjax, rehypeRaw]}
@@ -1990,6 +2129,26 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 </div>
             )}
 
+            {messages && messages.length > 2 && followUpPromptsStatus && followUpPrompts.length > 0 && (
+                <>
+                    <Divider sx={{ width: '100%' }} />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', position: 'relative', pt: 1.5 }}>
+                        <Stack sx={{ flexDirection: 'row', alignItems: 'center', px: 1.5, gap: 0.5 }}>
+                            <IconSparkles size={12} />
+                            <Typography sx={{ fontSize: '0.75rem' }} variant='body2'>
+                                Try these prompts
+                            </Typography>
+                        </Stack>
+                        <FollowUpPromptsCard
+                            sx={{ bottom: previews && previews.length > 0 ? 70 : 0 }}
+                            followUpPrompts={followUpPrompts || []}
+                            onPromptClick={handleFollowUpPromptClick}
+                            isGrid={isDialog}
+                        />
+                    </Box>
+                </>
+            )}
+
             <Divider sx={{ width: '100%' }} />
 
             <div className='center'>
@@ -2074,7 +2233,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                     borderColor: customization.isDarkMode ? '#A93B97' : undefined
                                 }
                             }}
-                            disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
+                            disabled={getInputDisabled()}
                             onKeyDown={handleEnter}
                             id='userInput'
                             name='userInput'
@@ -2244,7 +2403,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                 ref={fileUploadRef}
                                 type='file'
                                 onChange={handleFileChange}
-                                accept={fileUploadAllowedTypes.includes('*') ? '*' : fileUploadAllowedTypes || '*'}
+                                accept={getFileUploadAllowedTypes()}
                             />
                         )}
                     </form>

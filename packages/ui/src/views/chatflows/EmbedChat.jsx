@@ -41,7 +41,7 @@ function a11yProps(index) {
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.5.8/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@2.0.8/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -50,7 +50,7 @@ const embedPopupHtmlCode = (chatflowid) => {
 }
 
 const embedPopupReactCode = (chatflowid) => {
-    return `import { BubbleChat } from 'flowise-embed-react'
+    return `import { BubbleChat } from 'thub-embed-react'
 
 const App = () => {
     return (
@@ -60,9 +60,9 @@ const App = () => {
 }
 
 const embedFullpageHtmlCode = (chatflowid) => {
-    return `<flowise-fullchatbot></flowise-fullchatbot>
+    return `<thub-fullchatbot></thub-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.5.8/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@2.0.8/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -71,7 +71,7 @@ const embedFullpageHtmlCode = (chatflowid) => {
 }
 
 const embedFullpageReactCode = (chatflowid) => {
-    return `import { FullPageChat } from "flowise-embed-react"
+    return `import { FullPageChat } from "thub-embed-react"
 
 const App = () => {
     return (
@@ -93,6 +93,11 @@ const buttonConfig = (isReact = false) => {
                     dragAndDrop: true,
                     iconColor: "white",
                     customIconSrc: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg",
+                    autoWindowOpen: {
+                        autoOpen: true, //parameter to control automatic window opening
+                        openDelay: 2, // Optional parameter for delay time in seconds
+                        autoOpenOnMobile: false, //parameter to control automatic window opening in mobile
+                        },
                 }`
         : `button: {
                 backgroundColor: "#3B81F6",
@@ -102,6 +107,11 @@ const buttonConfig = (isReact = false) => {
                 dragAndDrop: true,
                 iconColor: "white",
                 customIconSrc: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg",
+                autoWindowOpen: {
+                    autoOpen: true, //parameter to control automatic window opening
+                    openDelay: 2, // Optional parameter for delay time in seconds
+                    autoOpenOnMobile: false, //parameter to control automatic window opening in mobile
+                    },
             }`
 }
 
@@ -129,13 +139,17 @@ const chatwindowConfig = (isReact = false) => {
                     showTitle: true,
                     title: 'Flowise Bot',
                     titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
+                    showAgentMessages: true,
                     welcomeMessage: 'Hello! This is custom welcome message',
                     errorMessage: 'This is a custom error message',
                     backgroundColor: "#ffffff",
+                    backgroundImage: 'enter image path or link', // If set, this will overlap the background color of the chat window.
                     height: 700,
                     width: 400,
                     fontSize: 16,
-                    poweredByTextColor: "#303235",
+                    //starterPrompts: ['What is a bot?', 'Who are you?'], // It overrides the starter prompts set by the chat flow passed
+                    starterPromptFontSize: 15,
+                    clearChatOnReload: false, // If set to true, the chat will be cleared when the page reloads.
                     botMessage: {
                         backgroundColor: "#f7f8ff",
                         textColor: "#303235",
@@ -156,6 +170,10 @@ const chatwindowConfig = (isReact = false) => {
                         maxChars: 50,
                         maxCharsWarningMessage: 'You exceeded the characters limit. Please input less than 50 characters.',
                         autoFocus: true, // If not used, autofocus is disabled on mobile and enabled on desktop. true enables it on both, false disables it on both.
+                        sendMessageSound: true,
+                        // sendSoundLocation: "send_message.mp3", // If this is not used, the default sound effect will be played if sendSoundMessage is true.
+                        receiveMessageSound: true,
+                        // receiveSoundLocation: "receive_message.mp3", // If this is not used, the default sound effect will be played if receiveSoundMessage is true.
                     },
                     feedback: {
                         color: '#303235',
@@ -171,13 +189,17 @@ const chatwindowConfig = (isReact = false) => {
                 showTitle: true,
                 title: 'Flowise Bot',
                 titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
+                showAgentMessages: true,
                 welcomeMessage: 'Hello! This is custom welcome message',
                 errorMessage: 'This is a custom error message',
                 backgroundColor: "#ffffff",
+                backgroundImage: 'enter image path or link', // If set, this will overlap the background color of the chat window.
                 height: 700,
                 width: 400,
                 fontSize: 16,
-                poweredByTextColor: "#303235",
+                //starterPrompts: ['What is a bot?', 'Who are you?'], // It overrides the starter prompts set by the chat flow passed
+                starterPromptFontSize: 15,
+                clearChatOnReload: false, // If set to true, the chat will be cleared when the page reloads.
                 botMessage: {
                     backgroundColor: "#f7f8ff",
                     textColor: "#303235",
@@ -198,6 +220,10 @@ const chatwindowConfig = (isReact = false) => {
                     maxChars: 50,
                     maxCharsWarningMessage: 'You exceeded the characters limit. Please input less than 50 characters.',
                     autoFocus: true, // If not used, autofocus is disabled on mobile and enabled on desktop. true enables it on both, false disables it on both.
+                    sendMessageSound: true,
+                    // sendSoundLocation: "send_message.mp3", // If this is not used, the default sound effect will be played if sendSoundMessage is true.
+                    receiveMessageSound: true,
+                    // receiveSoundLocation: "receive_message.mp3", // If this is not used, the default sound effect will be played if receiveSoundMessage is true. 
                 },
                 feedback: {
                     color: '#303235',
@@ -206,14 +232,14 @@ const chatwindowConfig = (isReact = false) => {
                     textColor: '#303235',
                     text: 'Powered by',
                     company: 'Flowise',
-                    companyLink: 'https://thub.tech/',
+                    companyLink: 'https://flowiseai.com',
                 }
             }`
 }
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.5.8/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@2.0.8/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -230,7 +256,7 @@ const embedPopupHtmlCodeCustomization = (chatflowid) => {
 }
 
 const embedPopupReactCodeCustomization = (chatflowid) => {
-    return `import { BubbleChat } from 'flowise-embed-react'
+    return `import { BubbleChat } from 'thub-embed-react'
 
 const App = () => {
     return (
@@ -250,7 +276,7 @@ const App = () => {
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
     return `<flowise-fullchatbot></flowise-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@1.5.8/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@2.0.8/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -262,7 +288,7 @@ const embedFullpageHtmlCodeCustomization = (chatflowid) => {
 }
 
 const embedFullpageReactCodeCustomization = (chatflowid) => {
-    return `import { FullPageChat } from "flowise-embed-react"
+    return `import { FullPageChat } from "thub-embed-react"
 
 const App = () => {
     return (

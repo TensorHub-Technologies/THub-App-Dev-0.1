@@ -153,14 +153,9 @@ export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
                 if (!objChatDetails.chatId) return
                 await chatmessageApi.deleteChatmessage(chatflowid, { chatId: objChatDetails.chatId, chatType: 'INTERNAL' })
                 removeLocalStorageChatHistory(chatflowid)
-
                 resetChatDialog()
-
-                // Force the chat popup to remain visible
-                setOpen(true)
-
                 enqueueSnackbar({
-                    message: 'Successfully cleared all chat history',
+                    message: 'Succesfully cleared all chat history',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -194,6 +189,7 @@ export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
             anchorRef.current.focus()
         }
         prevOpen.current = open
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, chatflowid])
 
