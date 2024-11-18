@@ -78,8 +78,8 @@ label:hover {
 }
 
 .button_click_light {
-    color: #ffffff;
-    background-color: #191a28;
+    color: #3c5ba4;
+    background-color: white;
     font-size: 18px;
     margin-bottom: 20px;
 }
@@ -109,6 +109,7 @@ label:hover {
     box-sizing: border-box;
     box-shadow: 1px 2px 5px black;
 }
+
 .price_title_dark {
     color: #e22a90;
     font-size: 32px;
