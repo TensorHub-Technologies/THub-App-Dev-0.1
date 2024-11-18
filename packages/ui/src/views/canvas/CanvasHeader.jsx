@@ -54,7 +54,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     const [upsertHistoryDialogProps, setUpsertHistoryDialogProps] = useState({})
     const [chatflowConfigurationDialogOpen, setChatflowConfigurationDialogOpen] = useState(false)
     const [chatflowConfigurationDialogProps, setChatflowConfigurationDialogProps] = useState({})
-    cosnt[(userId, setUserId)] = useState()
+    const [userId, setUserId] = useState()
 
     const [exportAsTemplateDialogOpen, setExportAsTemplateDialogOpen] = useState(false)
     const [exportAsTemplateDialogProps, setExportAsTemplateDialogProps] = useState({})
@@ -235,13 +235,8 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     }, [chatflow, title, chatflowConfigurationDialogOpen])
 
     useEffect(() => {
-        // let url = new URL(window.location.href)
-        // let params = new URLSearchParams(url.search)
-        // const uid = params.get('uid') || ''
-        // setUserId(uid)
-        // localStorage.setItem('userId', uid)
-        const userId = localStorage.getItem('userId')
-        setUserId(userId)
+        const uid = localStorage.getItem('userId')
+        setUserId(uid)
 
         const apiUrl =
             window.location.hostname === 'localhost'
