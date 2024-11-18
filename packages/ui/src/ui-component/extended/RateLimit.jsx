@@ -8,9 +8,10 @@ import { Box, Typography, Button, OutlinedInput } from '@mui/material'
 // Project import
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { TooltipWithParser } from '@/ui-component/tooltip/TooltipWithParser'
+import { SwitchInput } from '@/ui-component/switch/Switch'
 
 // Icons
-import { IconX } from '@tabler/icons'
+import { IconX } from '@tabler/icons-react'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -18,38 +19,56 @@ import chatflowsApi from '@/api/chatflows'
 // utils
 import useNotifier from '@/utils/useNotifier'
 
-const RateLimit = ({ dialogProps }) => {
+const RateLimit = () => {
     const dispatch = useDispatch()
     const chatflow = useSelector((state) => state.canvas.chatflow)
-    const chatflowid = chatflow?.id || dialogProps?.chatflow?.id
-    const apiConfig = chatflow?.apiConfig ? JSON.parse(chatflow.apiConfig) : {}
+    const chatflowid = chatflow.id
+    const apiConfig = chatflow.apiConfig ? JSON.parse(chatflow.apiConfig) : {}
 
     useNotifier()
 
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
+    const [rateLimitStatus, setRateLimitStatus] = useState(apiConfig?.rateLimit?.status !== undefined ? apiConfig.rateLimit.status : false)
     const [limitMax, setLimitMax] = useState(apiConfig?.rateLimit?.limitMax ?? '')
     const [limitDuration, setLimitDuration] = useState(apiConfig?.rateLimit?.limitDuration ?? '')
     const [limitMsg, setLimitMsg] = useState(apiConfig?.rateLimit?.limitMsg ?? '')
 
     const formatObj = () => {
         const obj = {
-            rateLimit: {}
+            rateLimit: { status: rateLimitStatus }
         }
-        const rateLimitValuesBoolean = [!limitMax, !limitDuration, !limitMsg]
-        const rateLimitFilledValues = rateLimitValuesBoolean.filter((value) => value === false)
-        if (rateLimitFilledValues.length >= 1 && rateLimitFilledValues.length <= 2) {
-            throw new Error('Need to fill all rate limit input fields')
-        } else if (rateLimitFilledValues.length === 3) {
-            obj.rateLimit = {
-                limitMax,
-                limitDuration,
-                limitMsg
+
+        if (rateLimitStatus) {
+            const rateLimitValuesBoolean = [!limitMax, !limitDuration, !limitMsg]
+            const rateLimitFilledValues = rateLimitValuesBoolean.filter((value) => value === false)
+            if (rateLimitFilledValues.length >= 1 && rateLimitFilledValues.length <= 2) {
+                throw new Error('Need to fill all rate limit input fields')
+            } else if (rateLimitFilledValues.length === 3) {
+                obj.rateLimit = {
+                    ...obj.rateLimit,
+                    limitMax,
+                    limitDuration,
+                    limitMsg
+                }
             }
         }
 
         return obj
+    }
+
+    const handleChange = (value) => {
+        setRateLimitStatus(value)
+    }
+
+    const checkDisabled = () => {
+        if (rateLimitStatus) {
+            if (limitMax === '' || limitDuration === '' || limitMsg === '') {
+                return true
+            }
+        }
+        return false
     }
 
     const onSave = async () => {
@@ -75,7 +94,7 @@ const RateLimit = ({ dialogProps }) => {
         } catch (error) {
             enqueueSnackbar({
                 message: `Failed to save Rate Limit Configuration: ${
-                    typeof error.response?.data === 'object' ? error.response.data.message : error.response?.data || error.message
+                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
@@ -101,8 +120,6 @@ const RateLimit = ({ dialogProps }) => {
                 break
             case 'limitMsg':
                 setLimitMsg(value)
-                break
-            default:
                 break
         }
     }
@@ -141,11 +158,20 @@ const RateLimit = ({ dialogProps }) => {
                     }
                 />
             </Typography>
-            {textField(limitMax, 'limitMax', 'Message Limit per Duration', 'number', '5')}
-            {textField(limitDuration, 'limitDuration', 'Duration in Second', 'number', '60')}
-            {textField(limitMsg, 'limitMsg', 'Limit Message', 'string', 'You have reached the quota')}
-
-            <StyledButton style={{ marginBottom: 10, marginTop: 10 }} variant='contained' onClick={() => onSave()}>
+            <SwitchInput label='Enable Rate Limit' onChange={handleChange} value={rateLimitStatus} />
+            {rateLimitStatus && (
+                <>
+                    {textField(limitMax, 'limitMax', 'Message Limit per Duration', 'number', '5')}
+                    {textField(limitDuration, 'limitDuration', 'Duration in Second', 'number', '60')}
+                    {textField(limitMsg, 'limitMsg', 'Limit Message', 'string', 'You have reached the quota')}
+                </>
+            )}
+            <StyledButton
+                disabled={checkDisabled()}
+                style={{ marginBottom: 10, marginTop: 10 }}
+                variant='contained'
+                onClick={() => onSave()}
+            >
                 Save Changes
             </StyledButton>
         </>
@@ -153,8 +179,7 @@ const RateLimit = ({ dialogProps }) => {
 }
 
 RateLimit.propTypes = {
-    isSessionMemory: PropTypes.bool,
-    dialogProps: PropTypes.object
+    isSessionMemory: PropTypes.bool
 }
 
 export default RateLimit

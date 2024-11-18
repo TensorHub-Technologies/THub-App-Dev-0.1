@@ -237,7 +237,7 @@ const Chatflows = () => {
             {showModal && <UserInfo showModal={showModal} setShowModal={setShowModal} />}
 
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : `#f5faff` }}>
-                <Stack flexDirection='column'>
+                <Stack flexDirection='column' gap={10}>
                     <Box sx={{ flexGrow: 1 }}>
                         <Toolbar
                             disableGutters={true}
@@ -265,7 +265,8 @@ const Chatflows = () => {
 
                                     fontSize: '24px',
 
-                                    lineHeight: '1.3'
+                                    lineHeight: '1.3',
+                                    whiteSpace: 'nowrap'
                                 }}
                             >
                                 AI Apps Workspace
@@ -322,7 +323,7 @@ const Chatflows = () => {
 
                                                     borderRadius: '20%',
 
-                                                    padding: '2px',
+                                                    // padding: '2px',
 
                                                     mb: 1
                                                 }}
