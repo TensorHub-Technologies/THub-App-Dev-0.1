@@ -46,7 +46,7 @@ const PriceDropdown = ({ onCurrencyChange }) => {
     }, [])
 
     return (
-        <div style={{ position: 'absolute', right: '95px', bottom: '420px' }} ref={dropdownRef}>
+        <div style={{ position: 'absolute', zIndex: '1000', right: '60px', top: '185px' }} ref={dropdownRef}>
             <button
                 onClick={toggleDropdown}
                 style={{
@@ -73,16 +73,12 @@ const PriceDropdown = ({ onCurrencyChange }) => {
             {isOpen && (
                 <div
                     style={{
-                        position: 'absolute',
                         fontFamily: 'Cambria Math',
-                        top: '100%',
-                        right: 0,
                         width: '180px',
                         border: '1px solid #ccc',
                         borderRadius: '5px',
                         background: '#fff',
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                        zIndex: 1000
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                     }}
                 >
                     {currencyOptions.map(({ code, flag }) => (

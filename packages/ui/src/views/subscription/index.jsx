@@ -221,13 +221,14 @@ const Subscription = () => {
                                         style={{ transform: selectedPlan === 'yearly' ? 'translateX(100%)' : 'none' }}
                                     ></div>
                                 </div>
+                                <div>
+                                    <PriceDropdown onCurrencyChange={handleCurrencyChange} />
+                                </div>
                             </div>
                         </Grid>
                     </Grid>
                 </Stack>
-                <div>
-                    <PriceDropdown onCurrencyChange={handleCurrencyChange} />
-                </div>
+
                 <Grid container spacing={4} className={subStyle.grid_container}>
                     {pricingData[selectedPlan].map((plan, index) => (
                         <Grid
