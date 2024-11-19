@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux'
 // project-imports
 import MainCard from '@/ui-component/cards/MainCard'
 import subStyle from './subscription.module.css'
+import { pricingData } from './PricingData'
+import PriceDropdown from './PriceDropdown'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
@@ -19,14 +21,19 @@ const Subscription = () => {
     const user = useSelector((state) => state.user.userData)
     const [selectedPlan, setSelectedPlan] = useState('monthly')
     const [sdkLoaded, setSdkLoaded] = useState(false)
+    const [currency, setCurrency] = useState('INR')
 
     // const amount = 100;
-    const currency = 'INR'
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)
         return `R-${timestamp}-${randomNum}`
     }
+    const getPrice = (plan) => {
+        return plan.prices[currency] || plan.prices['INR']
+    }
+
+    const handleCurrencyChange = (selectedCurrency) => setCurrency(selectedCurrency)
 
     const receiptId = generateReceiptId()
 
@@ -141,100 +148,6 @@ const Subscription = () => {
         }
     }
 
-    const pricingData = {
-        monthly: [
-            {
-                title: 'Free',
-                price: '₹0',
-                planId: '',
-                duration: 'monthly',
-                description: 'For starters to explore and integrate',
-                buttonInfo: 'Start for Free',
-                list: [
-                    'Single Seat',
-                    '5 GenAI Apps',
-                    'API based access to LLM',
-                    'Embedding Model',
-                    ' Vector Database etc',
-                    'Shared or your own API keys',
-                    'Basic Analytics',
-                    'Standard Support'
-                ]
-            },
-            {
-                title: 'Pro',
-                price: '₹ 1',
-                planId: 'plan_PKKqYOHRkFFVTZ',
-                duration: 'monthly',
-                description: 'For small & medium businesses',
-                buttonInfo: 'Choose Plan',
-                list: [
-                    'All Free Features',
-                    '5 Seats',
-                    '25 GenAI Apps',
-                    'Team collaboration',
-                    'Train your own local LLM',
-                    'Fine Tune open source LLM',
-                    'Advanced Analytics',
-                    'Priority support'
-                ]
-            },
-            {
-                title: 'Enterprise',
-                price: 'Contact for Price',
-                duration: 'monthly',
-                description: 'For large teams and enterprises.',
-                buttonInfo: 'Choose Plan',
-                list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
-            }
-        ],
-        yearly: [
-            {
-                title: 'Free',
-                price: '₹0',
-                description: 'For starters to explore and integrate',
-                buttonInfo: 'Start for Free',
-                list: [
-                    'Single Seat',
-                    '5 GenAI Apps',
-                    'API based access to LLM',
-                    'Embedding Model',
-                    ' Vector Database etc',
-                    'Shared or your own API keys',
-                    'Basic Analytics',
-                    'Standard Support'
-                ]
-            },
-            {
-                title: 'Pro',
-                price: '₹ 2,19,999',
-                planId: 'plan_PKhfVyO6JCxaeR',
-                duration: 'yearly',
-                description: 'For small & medium businesses',
-                buttonInfo: 'Choose Plan',
-                list: [
-                    'All Free Features',
-                    '5 Seats',
-                    '25 GenAI Apps',
-                    'Team collaboration',
-                    'Train your own local LLM',
-                    'Fine Tune open source LLM',
-                    'Advanced Analytics',
-                    'Priority support'
-                ]
-            },
-            {
-                title: 'Enterprise',
-                price: 'Contact for Price',
-                planId: 'YOUR_ENTERPRISE_PLAN_ID',
-                duration: 'yearly',
-                description: 'For large teams and enterprises.',
-                buttonInfo: 'Choose Plan',
-                list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
-            }
-        ]
-    }
-
     return (
         <div>
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
@@ -312,6 +225,9 @@ const Subscription = () => {
                         </Grid>
                     </Grid>
                 </Stack>
+                <div>
+                    <PriceDropdown onCurrencyChange={handleCurrencyChange} />
+                </div>
                 <Grid container spacing={4} className={subStyle.grid_container}>
                     {pricingData[selectedPlan].map((plan, index) => (
                         <Grid
@@ -347,7 +263,7 @@ const Subscription = () => {
                                         {plan.title}
                                     </Typography>
                                     <Typography variant='body2' className={subStyle.price_amount}>
-                                        {plan.price}
+                                        {getPrice(plan)}
                                     </Typography>
                                     <Typography variant='body2' className={subStyle.price_description}>
                                         {plan.description}
