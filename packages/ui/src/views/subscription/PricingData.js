@@ -56,7 +56,7 @@ export const pricingData = {
             },
             duration: 'monthly',
             description: 'For large teams and enterprises.',
-            buttonInfo: 'Choose Plan',
+            buttonInfo: 'Get in Touch',
             list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
         }
     ],
@@ -116,7 +116,7 @@ export const pricingData = {
             planId: 'YOUR_ENTERPRISE_PLAN_ID',
             duration: 'yearly',
             description: 'For large teams and enterprises.',
-            buttonInfo: 'Choose Plan',
+            buttonInfo: 'Get in Touch',
             list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
         }
     ]

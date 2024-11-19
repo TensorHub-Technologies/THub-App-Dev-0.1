@@ -72,13 +72,18 @@ label:hover {
 }
 
 .button_click_dark {
-    background-color: #191a28;
+    background-color: #23262c;
+    color: #e22a90;
     font-size: 18px;
     margin-bottom: 20px;
+    border: 1px solid #e22a90;
+    box-shadow: none;
 }
 
 .button_click_light {
     color: #3c5ba4;
+    border: 1px solid #3c5ba4;
+    box-shadow: none;
     background-color: white;
     font-size: 18px;
     margin-bottom: 20px;
@@ -94,8 +99,13 @@ label:hover {
     color: #191a28;
 }
 
-.card_content_dark,
 .card_content_light {
+    height: 600px;
+    border: 0.5px solid;
+    position: relative;
+}
+
+.card_content_dark {
     height: 600px;
     position: relative;
 }
@@ -104,10 +114,16 @@ label:hover {
     border: 0.5px solid #e22a90;
     box-sizing: border-box;
 }
+
 .card_selection_light:hover .card_content_light {
     border: 0.5px solid #3c5ba4;
-    box-sizing: border-box;
-    box-shadow: 1px 2px 5px black;
+}
+
+.parent_pricing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
 .price_title_dark {
@@ -167,7 +183,7 @@ label:hover {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #3c5ba4; /* Green color for active status */
+    background-color: #3c5ba4;
     color: white;
     padding: 5px 10px;
     font-size: 0.75rem;
@@ -180,7 +196,7 @@ label:hover {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #e22a90; /* Green color for active status */
+    background-color: #e22a90;
     color: white;
     padding: 5px 10px;
     font-size: 0.75rem;
