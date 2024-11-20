@@ -263,10 +263,18 @@ const Subscription = () => {
                                     >
                                         {plan.title}
                                     </Typography>
-                                    <Typography variant='body2' className={subStyle.price_amount}>
+                                    <Typography
+                                        variant='body2'
+                                        className={customization.isDarkMode ? subStyle.price_amount_dark : subStyle.price_amount_light}
+                                    >
                                         {getPrice(plan)}
                                     </Typography>
-                                    <Typography variant='body2' className={subStyle.price_description}>
+                                    <Typography
+                                        variant='body2'
+                                        className={
+                                            customization.isDarkMode ? subStyle.price_description_dark : subStyle.price_description_light
+                                        }
+                                    >
                                         {plan.description}
                                     </Typography>
                                     <div>
