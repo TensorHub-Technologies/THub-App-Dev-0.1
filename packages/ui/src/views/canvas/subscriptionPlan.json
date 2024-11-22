@@ -14,7 +14,7 @@
             "Tools": [
                 "Calculator",
                 "Chain Tool",
-                "Chatflow Tool",
+                "Workflow Tool",
                 "Google Custom Search",
                 "OpenAPI Toolkit",
                 "Python Interpreter",
@@ -110,7 +110,7 @@
                 "BraveSearch API",
                 "Calculator",
                 "Chain Tool",
-                "Chatflow Tool",
+                "Workflow Tool",
                 "Code Interpreter by E2B",
                 "Custom Tool",
                 "Exa Search",

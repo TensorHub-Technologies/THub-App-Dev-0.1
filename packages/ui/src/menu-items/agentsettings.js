@@ -51,7 +51,7 @@ const agent_settings = {
             icon: icons.IconAdjustmentsHorizontal
         },
         {
-            id: 'duplicateChatflow',
+            id: 'duplicateWorkflow',
             title: 'Duplicate Agents',
             type: 'item',
             url: '',

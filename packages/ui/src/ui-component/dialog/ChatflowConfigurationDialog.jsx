@@ -39,7 +39,7 @@ const CHATFLOW_CONFIGURATION_TABS = [
         id: 'allowedDomains'
     },
     {
-        label: 'Analyse Chatflow',
+        label: 'Analyse Workflow',
         id: 'analyseChatflow'
     },
     {
