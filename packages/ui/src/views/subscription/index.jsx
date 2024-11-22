@@ -13,6 +13,11 @@ import { Grid, Box, Stack, Button } from '@mui/material'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
+import EnterpriceForm from './Enterprice_Form'
+
+// toastify
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 // project import
 const Subscription = () => {
@@ -22,6 +27,7 @@ const Subscription = () => {
     const [selectedPlan, setSelectedPlan] = useState('monthly')
     const [sdkLoaded, setSdkLoaded] = useState(false)
     const [currency, setCurrency] = useState('INR')
+    const [showForm, setShowForm] = useState(false)
 
     // const amount = 100;
     function generateReceiptId() {
@@ -55,10 +61,34 @@ const Subscription = () => {
         setSelectedPlan('yearly')
     }
 
+    const handleLoading = (message) => {
+        toast.success(message, {
+            theme: 'colored',
+            style: {
+                background: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                color: 'white'
+            }
+        })
+    }
+
+    const handleError = (message) => {
+        toast.error(message, {
+            theme: 'colored',
+            style: {
+                background: 'red',
+                color: 'white'
+            }
+        })
+    }
+
     const paymentHandler = async (e, planTitle, planId, duration) => {
         if (e) e.preventDefault()
         console.log(planTitle, planId, duration, 'paymentHandler')
-        let plan_Id = planId.trim()
+        if (planTitle === 'Enterprise') {
+            console.log(planTitle === 'Enterprise')
+            setShowForm(true)
+        }
+        let plan_Id = planId
         const uid = user.uid
         const url =
             window.location.hostname === 'localhost'
@@ -151,6 +181,7 @@ const Subscription = () => {
     return (
         <div>
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
+                <ToastContainer />
                 <Stack flexDirection='row'>
                     <Grid sx={{ mb: 1.25 }} container direction='row'>
                         <h1
@@ -221,9 +252,7 @@ const Subscription = () => {
                                         style={{ transform: selectedPlan === 'yearly' ? 'translateX(100%)' : 'none' }}
                                     ></div>
                                 </div>
-                                <div>
-                                    <PriceDropdown onCurrencyChange={handleCurrencyChange} />
-                                </div>
+                                {!showForm && <PriceDropdown onCurrencyChange={handleCurrencyChange} />}
                             </div>
                         </Grid>
                     </Grid>
@@ -321,6 +350,7 @@ const Subscription = () => {
                     ))}
                 </Grid>
             </MainCard>
+            <div>{showForm && <EnterpriceForm setShowForm={setShowForm} handleError={handleError} handleLoading={handleLoading} />}</div>
         </div>
     )
 }
