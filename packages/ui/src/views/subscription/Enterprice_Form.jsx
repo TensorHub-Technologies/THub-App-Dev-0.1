@@ -106,7 +106,11 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                             onBlur={handleBlur}
                                             variant='standard'
                                             InputLabelProps={{
-                                                style: { textAlign: 'left', color: customization.isDarkMode ? 'white' : '#9E9E9E' }
+                                                style: {
+                                                    textAlign: 'left',
+                                                    color: customization.isDarkMode ? 'white' : '#9E9E9E',
+                                                    fontFamily: "'Cambria Math', serif"
+                                                }
                                             }}
                                             helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
                                             sx={{
@@ -132,7 +136,11 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                             onBlur={handleBlur}
                                             variant='standard'
                                             InputLabelProps={{
-                                                style: { textAlign: 'left', color: customization.isDarkMode ? 'white' : '#9E9E9E' }
+                                                style: {
+                                                    textAlign: 'left',
+                                                    color: customization.isDarkMode ? 'white' : '#9E9E9E',
+                                                    fontFamily: "'Cambria Math', serif"
+                                                }
                                             }}
                                             helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
                                             sx={{
@@ -158,7 +166,11 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                             onBlur={handleBlur}
                                             variant='standard'
                                             InputLabelProps={{
-                                                style: { textAlign: 'left', color: customization.isDarkMode ? 'white' : '#9E9E9E' }
+                                                style: {
+                                                    textAlign: 'left',
+                                                    color: customization.isDarkMode ? 'white' : '#9E9E9E',
+                                                    fontFamily: "'Cambria Math', serif"
+                                                }
                                             }}
                                             helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
                                             sx={{
@@ -184,7 +196,11 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                             onBlur={handleBlur}
                                             variant='standard'
                                             InputLabelProps={{
-                                                style: { textAlign: 'left', color: customization.isDarkMode ? 'white' : '#9E9E9E' }
+                                                style: {
+                                                    textAlign: 'left',
+                                                    color: customization.isDarkMode ? 'white' : '#9E9E9E',
+                                                    fontFamily: "'Cambria Math', serif"
+                                                }
                                             }}
                                             helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
                                             sx={{
@@ -210,7 +226,11 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                             onBlur={handleBlur}
                                             variant='standard'
                                             InputLabelProps={{
-                                                style: { textAlign: 'left', color: customization.isDarkMode ? 'white' : '#9E9E9E' }
+                                                style: {
+                                                    textAlign: 'left',
+                                                    color: customization.isDarkMode ? 'white' : '#9E9E9E',
+                                                    fontFamily: "'Cambria Math', serif"
+                                                }
                                             }}
                                             helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
                                             sx={{
@@ -236,7 +256,11 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                             onBlur={handleBlur}
                                             variant='standard'
                                             InputLabelProps={{
-                                                style: { textAlign: 'left', color: customization.isDarkMode ? 'white' : '#9E9E9E' }
+                                                style: {
+                                                    textAlign: 'left',
+                                                    color: customization.isDarkMode ? 'white' : '#9E9E9E',
+                                                    fontFamily: "'Cambria Math', serif"
+                                                }
                                             }}
                                             helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
                                             sx={{
@@ -264,7 +288,11 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                             rows={4}
                                             variant='standard'
                                             InputLabelProps={{
-                                                style: { textAlign: 'left', color: customization.isDarkMode ? 'white' : '#9E9E9E' }
+                                                style: {
+                                                    textAlign: 'left',
+                                                    color: customization.isDarkMode ? 'white' : '#9E9E9E',
+                                                    fontFamily: "'Cambria Math', serif"
+                                                }
                                             }}
                                             helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
                                             sx={{
