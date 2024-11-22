@@ -285,7 +285,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         setAnchorEl(null)
         try {
             localStorage.setItem('duplicatedFlowData', chatflow.flowData)
-            window.open(`${uiBaseURL}/canvas`, '_blank')
+            window.open(`${uiBaseURL}/canvas`, '_self')
         } catch (e) {
             console.error(e)
         }

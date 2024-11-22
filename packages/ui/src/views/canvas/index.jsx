@@ -77,7 +77,7 @@ const Canvas = () => {
     const chatflowId =
         URLpath[URLpath.length - 1] === 'canvas' || URLpath[URLpath.length - 1] === 'agentcanvas' ? '' : URLpath[URLpath.length - 1]
     const isAgentCanvas = URLpath.includes('agentcanvas') ? true : false
-    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Chatflow'
+    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Workflow'
 
     const { confirm } = useConfirm()
 
@@ -86,7 +86,7 @@ const Canvas = () => {
     const customization = useSelector((state) => state.customization)
     const userData = useSelector((state) => state.user.userData)
     // const tenantId = userData['uid']
-    const tenantId = userData?.uid
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     const [canvasDataStore, setCanvasDataStore] = useState(canvas)
     const [chatflow, setChatflow] = useState(null)
     const { reactFlowInstance, setReactFlowInstance } = useContext(flowContext)
@@ -297,7 +297,7 @@ const Canvas = () => {
                     name: chatflowName,
                     deployed: false,
                     isPublic: false,
-                    tenantId,
+                    tenantId: tenantId,
                     flowData
                 }
                 createNewChatflowApi.request(newChatflowBody)
