@@ -202,6 +202,10 @@ label:hover {
 
 /* Badge for active plan */
 .activeBadge_light {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -215,6 +219,10 @@ label:hover {
 }
 
 .activeBadge_dark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -225,6 +233,11 @@ label:hover {
     font-weight: bold;
     border-radius: 5px;
     text-transform: uppercase;
+}
+
+.subscriptionDetails div {
+    font-family: 'Cambria Math', serif;
+    margin-bottom: 5px;
 }
 
 .price_title_dark,
