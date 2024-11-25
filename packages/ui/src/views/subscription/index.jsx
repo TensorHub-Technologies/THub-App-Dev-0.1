@@ -388,15 +388,25 @@ const Subscription = () => {
                                             disabled={
                                                 (user.subscription_type === 'free' && plan.title === 'Free') ||
                                                 (user.subscription_type === 'pro' &&
+                                                    user.subscription_duration === 'yearly' &&
+                                                    plan.title === 'Pro' &&
+                                                    selectedPlan === 'monthly') || // Disable Pro-Monthly if user is on Pro-Yearly
+                                                (user.subscription_type === 'pro' &&
+                                                    user.subscription_duration === 'yearly' &&
+                                                    plan.title === 'Free') || // Disable Free button if user is on Pro-Yearly
+                                                (user.subscription_type === 'pro' &&
+                                                    user.subscription_duration === 'monthly' &&
+                                                    plan.title === 'Free') ||
+                                                (user.subscription_type === 'pro' &&
                                                     ((user.subscription_duration === 'monthly' &&
                                                         plan.title === 'Pro' &&
-                                                        selectedPlan === 'monthly') ||
+                                                        selectedPlan === 'monthly') || // Disable Pro-Monthly if already on Pro-Monthly
                                                         (user.subscription_duration === 'yearly' &&
                                                             plan.title === 'Pro' &&
-                                                            selectedPlan === 'yearly'))) ||
+                                                            selectedPlan === 'yearly'))) || // Disable Pro-Yearly if already on Pro-Yearly
                                                 (user.subscription_type === 'pro' &&
                                                     plan.title === 'Pro' &&
-                                                    user.subscription_duration === selectedPlan)
+                                                    user.subscription_duration === selectedPlan) // Disable Pro if Pro is already selected
                                             }
                                         >
                                             {plan.buttonInfo}
