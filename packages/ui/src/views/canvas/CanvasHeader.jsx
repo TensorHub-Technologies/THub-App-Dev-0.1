@@ -85,7 +85,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     const [exportAsTemplateDialogProps, setExportAsTemplateDialogProps] = useState({})
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
-    const title = isAgentCanvas ? 'Agents' : 'Chatflow'
+    const title = isAgentCanvas ? 'Agents' : 'Workflow'
 
     // navigation
     const [anchorEl, setAnchorEl] = useState(null)
@@ -140,13 +140,13 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
             setChatflowConfigurationDialogOpen(true)
         } else if (setting === 'apiEndpoint') {
             onAPIDialogClick()
-        } else if (setting === 'duplicateChatflow') {
+        } else if (setting === 'duplicateWorkflow') {
             try {
                 let flowData = chatflow.flowData
                 const parsedFlowData = JSON.parse(flowData)
                 flowData = JSON.stringify(parsedFlowData)
                 localStorage.setItem('duplicatedFlowData', flowData)
-                window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_blank')
+                window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_self')
             } catch (e) {
                 console.error(e)
             }

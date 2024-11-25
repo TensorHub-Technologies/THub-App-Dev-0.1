@@ -77,7 +77,7 @@ const settings = {
         },
 
         {
-            id: 'duplicateChatflow',
+            id: 'duplicateWorkflow',
             title: 'Duplicate Workflow',
             type: 'item',
             url: '',
