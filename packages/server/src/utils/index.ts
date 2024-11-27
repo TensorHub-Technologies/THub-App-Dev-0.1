@@ -1,8 +1,8 @@
-import { Storage } from '@google-cloud/storage'
 import path from 'path'
 import fs from 'fs'
 import logger from './logger'
 import {
+    IChatFlow,
     IComponentCredentials,
     IComponentNodes,
     ICredentialDataDecrypted,
@@ -31,6 +31,7 @@ import {
     FlowiseMemory,
     IFileUpload
 } from 'thub-components'
+import { randomBytes } from 'crypto'
 import { AES, enc } from 'crypto-js'
 
 import { ChatFlow } from '../database/entities/ChatFlow'
@@ -434,6 +435,9 @@ type BuildFlowParams = {
     apiMessageId: string
     appDataSource: DataSource
     overrideConfig?: ICommonObject
+    apiOverrideStatus?: boolean
+    nodeOverrides?: ICommonObject
+    variableOverrides?: ICommonObject[]
     cachePool?: CachePool
     isUpsert?: boolean
     stopNodeId?: string
@@ -462,6 +466,9 @@ export const buildFlow = async ({
     chatflowid,
     appDataSource,
     overrideConfig,
+    apiOverrideStatus = false,
+    nodeOverrides = {},
+    variableOverrides = [],
     cachePool,
     isUpsert,
     stopNodeId,
@@ -509,7 +516,11 @@ export const buildFlow = async ({
             const newNodeInstance = new nodeModule.nodeClass()
 
             let flowNodeData = cloneDeep(reactFlowNode.data)
-            if (overrideConfig) flowNodeData = replaceInputsWithConfig(flowNodeData, overrideConfig)
+
+            // Only override the config if its status is true
+            if (overrideConfig && apiOverrideStatus) {
+                flowNodeData = replaceInputsWithConfig(flowNodeData, overrideConfig, nodeOverrides, variableOverrides)
+            }
 
             if (isUpsert) upsertHistory['flowData'] = saveUpsertFlowData(flowNodeData, upsertHistory)
 
@@ -520,7 +531,8 @@ export const buildFlow = async ({
                 question,
                 chatHistory,
                 flowData,
-                uploadedFilesContent
+                uploadedFilesContent,
+                variableOverrides
             )
 
             if (isUpsert && stopNodeId && nodeId === stopNodeId) {
@@ -713,13 +725,19 @@ export const clearSessionMemory = async (
     }
 }
 
-const getGlobalVariable = async (appDataSource: DataSource, overrideConfig?: ICommonObject) => {
+const getGlobalVariable = async (appDataSource: DataSource, overrideConfig?: ICommonObject, variableOverrides?: ICommonObject[]) => {
     const variables = await appDataSource.getRepository(Variable).find()
 
     // override variables defined in overrideConfig
     // nodeData.inputs.vars is an Object, check each property and override the variable
-    if (overrideConfig?.vars) {
+    if (overrideConfig?.vars && variableOverrides) {
         for (const propertyName of Object.getOwnPropertyNames(overrideConfig.vars)) {
+            // Check if this variable is enabled for override
+            const override = variableOverrides.find((v) => v.name === propertyName)
+            if (!override?.enabled) {
+                continue // Skip this variable if it's not enabled for override
+            }
+
             const foundVar = variables.find((v) => v.name === propertyName)
             if (foundVar) {
                 // even if the variable was defined as runtime, we override it with static value
@@ -777,7 +795,8 @@ export const getVariableValue = async (
     chatHistory: IMessage[],
     isAcceptVariable = false,
     flowData?: ICommonObject,
-    uploadedFilesContent?: string
+    uploadedFilesContent?: string,
+    variableOverrides: ICommonObject[] = []
 ) => {
     const isObject = typeof paramValue === 'object'
     const initialValue = (isObject ? JSON.stringify(paramValue) : paramValue) ?? ''
@@ -819,7 +838,7 @@ export const getVariableValue = async (
             }
 
             if (variableFullPath.startsWith('$vars.')) {
-                const vars = await getGlobalVariable(appDataSource, flowData)
+                const vars = await getGlobalVariable(appDataSource, flowData, variableOverrides)
                 const variableValue = get(vars, variableFullPath.replace('$vars.', ''))
                 if (variableValue) {
                     variableDict[`{{${variableFullPath}}}`] = variableValue
@@ -928,7 +947,8 @@ export const resolveVariables = async (
     question: string,
     chatHistory: IMessage[],
     flowData?: ICommonObject,
-    uploadedFilesContent?: string
+    uploadedFilesContent?: string,
+    variableOverrides: ICommonObject[] = []
 ): Promise<INodeData> => {
     let flowNodeData = cloneDeep(reactFlowNodeData)
     const types = 'inputs'
@@ -947,7 +967,8 @@ export const resolveVariables = async (
                         chatHistory,
                         undefined,
                         flowData,
-                        uploadedFilesContent
+                        uploadedFilesContent,
+                        variableOverrides
                     )
                     resolvedInstances.push(resolvedInstance)
                 }
@@ -962,7 +983,8 @@ export const resolveVariables = async (
                     chatHistory,
                     isAcceptVariable,
                     flowData,
-                    uploadedFilesContent
+                    uploadedFilesContent,
+                    variableOverrides
                 )
                 paramsObj[key] = resolvedInstance
             }
@@ -979,18 +1001,63 @@ export const resolveVariables = async (
  * Loop through each inputs and replace their value with override config values
  * @param {INodeData} flowNodeData
  * @param {ICommonObject} overrideConfig
+ * @param {ICommonObject} nodeOverrides
+ * @param {ICommonObject[]} variableOverrides
  * @returns {INodeData}
  */
-export const replaceInputsWithConfig = (flowNodeData: INodeData, overrideConfig: ICommonObject) => {
+export const replaceInputsWithConfig = (
+    flowNodeData: INodeData,
+    overrideConfig: ICommonObject,
+    nodeOverrides: ICommonObject,
+    variableOverrides: ICommonObject[]
+) => {
     const types = 'inputs'
+
+    const isParameterEnabled = (nodeType: string, paramName: string): boolean => {
+        if (!nodeOverrides[nodeType]) return false
+        const parameter = nodeOverrides[nodeType].find((param: any) => param.name === paramName)
+        return parameter?.enabled ?? false
+    }
 
     const getParamValues = (inputsObj: ICommonObject) => {
         for (const config in overrideConfig) {
-            // If overrideConfig[key] is object
-            if (overrideConfig[config] && typeof overrideConfig[config] === 'object') {
+            /**
+             * Several conditions:
+             * 1. If config is 'analytics', always allow it
+             * 2. If config is 'vars', check its object and filter out the variables that are not enabled for override
+             * 3. If typeof config is an object, check if the node id is in the overrideConfig object and if the parameter (systemMessagePrompt) is enabled
+             * Example:
+             * "systemMessagePrompt": {
+             *  "chatPromptTemplate_0": "You are an assistant"
+             * }
+             * 4. If typeof config is a string, check if the parameter is enabled
+             * Example:
+             * "systemMessagePrompt": "You are an assistant"
+             */
+
+            if (config === 'analytics') {
+                // pass
+            } else if (config === 'vars') {
+                if (typeof overrideConfig[config] === 'object') {
+                    const filteredVars: ICommonObject = {}
+
+                    const vars = overrideConfig[config]
+                    for (const variable in vars) {
+                        const override = variableOverrides.find((v) => v.name === variable)
+                        if (!override?.enabled) {
+                            continue // Skip this variable if it's not enabled for override
+                        }
+                        filteredVars[variable] = vars[variable]
+                    }
+                    overrideConfig[config] = filteredVars
+                }
+            } else if (overrideConfig[config] && typeof overrideConfig[config] === 'object') {
                 const nodeIds = Object.keys(overrideConfig[config])
                 if (nodeIds.includes(flowNodeData.id)) {
-                    inputsObj[config] = overrideConfig[config][flowNodeData.id]
+                    // Check if this parameter is enabled
+                    if (isParameterEnabled(flowNodeData.label, config)) {
+                        inputsObj[config] = overrideConfig[config][flowNodeData.id]
+                    }
                     continue
                 } else if (nodeIds.some((nodeId) => nodeId.includes(flowNodeData.name))) {
                     /*
@@ -998,6 +1065,11 @@ export const replaceInputsWithConfig = (flowNodeData: INodeData, overrideConfig:
                      *   "chatPromptTemplate_0": "You are an assistant" <---- continue for loop if current node is chatPromptTemplate_1
                      * }
                      */
+                    continue
+                }
+            } else {
+                // Only proceed if the parameter is enabled
+                if (!isParameterEnabled(flowNodeData.label, config)) {
                     continue
                 }
             }
@@ -1281,23 +1353,13 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
 
     return isChatOrLLMsExist && isValidChainOrAgent && !isOutputParserExist
 }
-const storage = new Storage({
-    keyFilename: path.join(__dirname, '..', '..', 'uploads', 'serviceAccountKey.json')
-})
 
-const bucketName = 'thub-files'
-
-async function uploadToGCS(remotePath: string, content: string): Promise<void> {
-    const file = storage.bucket(bucketName).file(remotePath)
-    await file.save(content)
-    console.log(`File ${remotePath} uploaded to bucket ${bucketName}`)
-}
 /**
  * Generate an encryption key
  * @returns {string}
  */
 export const generateEncryptKey = (): string => {
-    return 'noBCQuIDsUMOQ1+dzj6koOmlAympDpwO'
+    return randomBytes(24).toString('base64')
 }
 
 /**
@@ -1306,14 +1368,10 @@ export const generateEncryptKey = (): string => {
  */
 export const getEncryptionKey = async (): Promise<string> => {
     if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
-        console.log('*** server.getEncryptionKey encryption_key_SECRETKEY_OVERWRITE: ', process.env.FLOWISE_SECRETKEY_OVERWRITE)
         return process.env.FLOWISE_SECRETKEY_OVERWRITE
     }
     try {
-        const key = await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
-        await uploadToGCS('.flowise/encryption.key', key)
-        console.log('*** server.getEncryptionKey encryption key file: ', key)
-        return key
+        return await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
     } catch (error) {
         const encryptKey = generateEncryptKey()
         const defaultLocation = process.env.SECRETKEY_PATH
@@ -1331,7 +1389,6 @@ export const getEncryptionKey = async (): Promise<string> => {
  */
 export const encryptCredentialData = async (plainDataObj: ICredentialDataDecrypted): Promise<string> => {
     const encryptKey = await getEncryptionKey()
-    console.log('*** server.encryptCredentialData encryption key: ', encryptKey)
     return AES.encrypt(JSON.stringify(plainDataObj), encryptKey).toString()
 }
 
@@ -1348,8 +1405,6 @@ export const decryptCredentialData = async (
     componentCredentials?: IComponentCredentials
 ): Promise<ICredentialDataDecrypted> => {
     const encryptKey = await getEncryptionKey()
-    console.log('*** server.decryptCredentialData encryptKey key: ', encryptKey)
-    console.log('*** server.decryptCredentialData credentialName: ', componentCredentialName)
     const decryptedData = AES.decrypt(encryptedData, encryptKey)
     const decryptedDataStr = decryptedData.toString(enc.Utf8)
     if (!decryptedDataStr) return {}
@@ -1373,7 +1428,6 @@ export const decryptCredentialData = async (
 export const transformToCredentialEntity = async (body: ICredentialReqBody): Promise<Credential> => {
     const credentialBody: ICommonObject = {
         name: body.name,
-        tenantId: body.tenantId,
         credentialName: body.credentialName
     }
 
@@ -1618,4 +1672,17 @@ export const aMonthAgo = () => {
     const date = new Date()
     date.setMonth(new Date().getMonth() - 1)
     return date
+}
+
+export const getAPIOverrideConfig = (chatflow: IChatFlow) => {
+    try {
+        const apiConfig = chatflow.apiConfig ? JSON.parse(chatflow.apiConfig) : {}
+        const nodeOverrides = apiConfig.overrideConfig && apiConfig.overrideConfig.nodes ? apiConfig.overrideConfig.nodes : {}
+        const variableOverrides = apiConfig.overrideConfig && apiConfig.overrideConfig.variables ? apiConfig.overrideConfig.variables : []
+        const apiOverrideStatus = apiConfig.overrideConfig && apiConfig.overrideConfig.status ? apiConfig.overrideConfig.status : false
+
+        return { nodeOverrides, variableOverrides, apiOverrideStatus }
+    } catch (error) {
+        return { nodeOverrides: {}, variableOverrides: [], apiOverrideStatus: false }
+    }
 }
