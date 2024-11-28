@@ -21,6 +21,7 @@ import { Telemetry } from './utils/telemetry'
 import flowiseApiV1Router from './routes'
 import errorHandlerMiddleware from './middlewares/errors'
 import { SSEStreamer } from './utils/SSEStreamer'
+import { IMetricsProvider } from './Interface.Metrics'
 
 declare global {
     namespace Express {
@@ -29,7 +30,6 @@ declare global {
         }
     }
 }
-
 export class App {
     app: express.Application
     nodesPool: NodesPool
@@ -38,6 +38,7 @@ export class App {
     telemetry: Telemetry
     AppDataSource: DataSource = getDataSource()
     sseStreamer: SSEStreamer
+    metricsProvider: IMetricsProvider
 
     constructor() {
         this.app = express()
@@ -140,7 +141,10 @@ export class App {
                 '/api/v1/leads',
                 '/api/v1/get-upload-file',
                 '/api/v1/ip',
-                '/api/v1/ping'
+                '/api/v1/ping',
+                '/api/v1/version',
+                '/api/v1/attachments',
+                '/api/v1/metrics'
             ]
             this.app.use((req, res, next) => {
                 if (/\/api\/v1\//i.test(req.url)) {

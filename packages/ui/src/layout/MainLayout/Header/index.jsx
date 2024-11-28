@@ -119,10 +119,10 @@ const Header = ({ handleLeftDrawerToggle }) => {
             const urlParams = new URLSearchParams(window.location.search)
             const userId = localStorage.getItem('userId') || urlParams.get('uid')
             if (userId) {
-                const apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
-                // window.location.hostname === 'localhost'
-                //     ? 'http://localhost:2000/userdata'
-                //     : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
+                const apiUrl =
+                    window.location.hostname === 'localhost'
+                        ? 'http://localhost:2000/userdata'
+                        : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
 
                 try {
                     const response = await axios.post(apiUrl, { userId })

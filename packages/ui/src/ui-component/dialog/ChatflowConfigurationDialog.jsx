@@ -1,14 +1,17 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
 import { createPortal } from 'react-dom'
 import { Box, Dialog, DialogContent, DialogTitle, Tabs, Tab } from '@mui/material'
+import { tabsClasses } from '@mui/material/Tabs'
 import SpeechToText from '@/ui-component/extended/SpeechToText'
 import RateLimit from '@/ui-component/extended/RateLimit'
 import AllowedDomains from '@/ui-component/extended/AllowedDomains'
 import ChatFeedback from '@/ui-component/extended/ChatFeedback'
 import AnalyseFlow from '@/ui-component/extended/AnalyseFlow'
 import StarterPrompts from '@/ui-component/extended/StarterPrompts'
+import Leads from '@/ui-component/extended/Leads'
+import FollowUpPrompts from '@/ui-component/extended/FollowUpPrompts'
+import FileUpload from '@/ui-component/extended/FileUpload'
 
 const CHATFLOW_CONFIGURATION_TABS = [
     {
@@ -18,6 +21,10 @@ const CHATFLOW_CONFIGURATION_TABS = [
     {
         label: 'Starter Prompts',
         id: 'conversationStarters'
+    },
+    {
+        label: 'Follow-up Prompts',
+        id: 'followUpPrompts'
     },
     {
         label: 'Speech to Text',
@@ -34,6 +41,14 @@ const CHATFLOW_CONFIGURATION_TABS = [
     {
         label: 'Analyse Workflow',
         id: 'analyseChatflow'
+    },
+    {
+        label: 'Leads',
+        id: 'leads'
+    },
+    {
+        label: 'File Upload',
+        id: 'fileUpload'
     }
 ]
 
@@ -69,14 +84,13 @@ function a11yProps(index) {
 const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const [tabValue, setTabValue] = useState(0)
-    const customization = useSelector((state) => state.customization)
 
     const component = show ? (
         <Dialog
             onClose={onCancel}
             open={show}
             fullWidth
-            maxWidth={'md'}
+            maxWidth={'lg'}
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
         >
@@ -85,26 +99,23 @@ const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
             </DialogTitle>
             <DialogContent>
                 <Tabs
-                    sx={{ position: 'relative', minHeight: '40px', height: '40px' }}
+                    sx={{
+                        position: 'relative',
+                        minHeight: '40px',
+                        height: '40px',
+                        [`& .${tabsClasses.scrollButtons}`]: {
+                            '&.Mui-disabled': { opacity: 0.3 }
+                        }
+                    }}
                     value={tabValue}
                     onChange={(event, value) => setTabValue(value)}
                     aria-label='tabs'
-                    TabIndicatorProps={{ sx: { backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' } }}
+                    variant='scrollable'
+                    scrollButtons='auto'
                 >
                     {CHATFLOW_CONFIGURATION_TABS.map((item, index) => (
                         <Tab
-                            sx={{
-                                minHeight: '40px',
-                                height: '40px',
-                                textAlign: 'left',
-                                display: 'flex',
-                                alignItems: 'start',
-                                mb: 1,
-                                color: customization.isDarkMode ? '#fff' : '#000',
-                                '&.Mui-selected': {
-                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                }
-                            }}
+                            sx={{ minHeight: '40px', height: '40px', textAlign: 'left', display: 'flex', alignItems: 'start', mb: 1 }}
                             key={index}
                             label={item.label}
                             {...a11yProps(index)}
@@ -113,12 +124,15 @@ const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
                 </Tabs>
                 {CHATFLOW_CONFIGURATION_TABS.map((item, index) => (
                     <TabPanel key={index} value={tabValue} index={index}>
-                        {item.id === 'rateLimiting' ? <RateLimit dialogProps={dialogProps} /> : null}
+                        {item.id === 'rateLimiting' && <RateLimit />}
                         {item.id === 'conversationStarters' ? <StarterPrompts dialogProps={dialogProps} /> : null}
+                        {item.id === 'followUpPrompts' ? <FollowUpPrompts dialogProps={dialogProps} /> : null}
                         {item.id === 'speechToText' ? <SpeechToText dialogProps={dialogProps} /> : null}
                         {item.id === 'chatFeedback' ? <ChatFeedback dialogProps={dialogProps} /> : null}
                         {item.id === 'allowedDomains' ? <AllowedDomains dialogProps={dialogProps} /> : null}
                         {item.id === 'analyseChatflow' ? <AnalyseFlow dialogProps={dialogProps} /> : null}
+                        {item.id === 'leads' ? <Leads dialogProps={dialogProps} /> : null}
+                        {item.id === 'fileUpload' ? <FileUpload dialogProps={dialogProps} /> : null}
                     </TabPanel>
                 ))}
             </DialogContent>

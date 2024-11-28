@@ -2,10 +2,8 @@ import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
-import { SET_DARKMODE } from '@/store/actions'
 
 // navigation
-import * as React from 'react'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -25,8 +23,8 @@ import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 import { IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX } from '@tabler/icons'
 import MenuIcon from '@mui/icons-material/Menu'
 import ListIcon from '@mui/icons-material/List'
-
 import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
+import { SET_DARKMODE } from '@/store/actions'
 
 //Logo
 // import logo from '@/assets/images/THub_logo_dark.png'
@@ -54,13 +52,14 @@ import { styled } from '@mui/material/styles'
 import { Switch, Link } from '@mui/material'
 import { generateExportFlowData, getUpsertDetails } from '@/utils/genericHelper'
 import { uiBaseURL } from '@/store/constant'
-import { SET_CHATFLOW } from '@/store/actions'
 import UpsertHistoryDialog from '../vectorstore/UpsertHistoryDialog'
 import ViewLeadsDialog from '@/ui-component/dialog/ViewLeadsDialog'
+import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction, SET_CHATFLOW } from '@/store/actions'
+import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
-const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFlow }) => {
+const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlow, handleLoadFlow }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const [viewLeadsDialogProps, setViewLeadsDialogProps] = useState({})
@@ -82,8 +81,14 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
     const [chatflowConfigurationDialogProps, setChatflowConfigurationDialogProps] = useState({})
     const [viewLeadsDialogOpen, setViewLeadsDialogOpen] = useState(false)
 
+    const [exportAsTemplateDialogOpen, setExportAsTemplateDialogOpen] = useState(false)
+    const [exportAsTemplateDialogProps, setExportAsTemplateDialogProps] = useState({})
+    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
+    const title = isAgentCanvas ? 'Agents' : 'Workflow'
+
     // navigation
-    const [anchorEl, setAnchorEl] = React.useState(null)
+    const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
 
     // user
@@ -135,13 +140,13 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             setChatflowConfigurationDialogOpen(true)
         } else if (setting === 'apiEndpoint') {
             onAPIDialogClick()
-        } else if (setting === 'duplicateChatflow') {
+        } else if (setting === 'duplicateWorkflow') {
             try {
                 let flowData = chatflow.flowData
                 const parsedFlowData = JSON.parse(flowData)
                 flowData = JSON.stringify(parsedFlowData)
                 localStorage.setItem('duplicatedFlowData', flowData)
-                window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_blank')
+                window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_self')
             } catch (e) {
                 console.error(e)
             }
@@ -276,7 +281,8 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
             chatflowid: chatflow.id,
             chatflowApiKeyId: chatflow.apikeyid,
             isFormDataRequired,
-            isSessionMemory
+            isSessionMemory,
+            isAgentCanvas
         })
         setAPIDialogOpen(true)
     }
@@ -340,7 +346,8 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 })
             }
         }
-    }, [chatflow, chatflowConfigurationDialogOpen])
+    }, [chatflow, title, chatflowConfigurationDialogOpen])
+
     const StyledLink = styled(Link)(({ theme }) => ({
         color: customization?.isDarkMode ? '#fff' : '#000',
         fontSize: '0.87rem', // Adjust font size as needed
@@ -362,10 +369,10 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
         const userId = localStorage.getItem('userId')
         setUserId(userId)
 
-        const apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
-        // window.location.hostname === 'localhost'
-        //     ? 'http://localhost:2000/userdata'
-        //     : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
+        const apiUrl =
+            window.location.hostname === 'localhost'
+                ? 'http://localhost:2000/userdata'
+                : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/userdata'
 
         fetch(apiUrl, {
             method: 'POST',
@@ -709,6 +716,7 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 onClose={() => setSettingsOpen(false)}
                 onSettingsItemClick={onSettingsItemClick}
                 onUploadFile={onUploadFile}
+                isAgentCanvas={isAgentCanvas}
             />
             <SaveChatflowDialog
                 show={flowDialogOpen}
@@ -727,6 +735,13 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                 onCancel={() => setViewMessagesDialogOpen(false)}
             />
             <ViewLeadsDialog show={viewLeadsDialogOpen} dialogProps={viewLeadsDialogProps} onCancel={() => setViewLeadsDialogOpen(false)} />
+            {exportAsTemplateDialogOpen && (
+                <ExportAsTemplateDialog
+                    show={exportAsTemplateDialogOpen}
+                    dialogProps={exportAsTemplateDialogProps}
+                    onCancel={() => setExportAsTemplateDialogOpen(false)}
+                />
+            )}
             <UpsertHistoryDialog
                 show={upsertHistoryDialogOpen}
                 dialogProps={upsertHistoryDialogProps}
@@ -746,7 +761,8 @@ CanvasHeader.propTypes = {
     chatflow: PropTypes.object,
     handleSaveFlow: PropTypes.func,
     handleDeleteFlow: PropTypes.func,
-    handleLoadFlow: PropTypes.func
+    handleLoadFlow: PropTypes.func,
+    isAgentCanvas: PropTypes.bool
 }
 
 export default CanvasHeader

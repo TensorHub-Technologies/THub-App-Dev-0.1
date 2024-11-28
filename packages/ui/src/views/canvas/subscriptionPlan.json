@@ -14,7 +14,7 @@
             "Tools": [
                 "Calculator",
                 "Chain Tool",
-                "Chatflow Tool",
+                "Workflow Tool",
                 "Google Custom Search",
                 "OpenAPI Toolkit",
                 "Python Interpreter",
@@ -110,7 +110,7 @@
                 "BraveSearch API",
                 "Calculator",
                 "Chain Tool",
-                "Chatflow Tool",
+                "Workflow Tool",
                 "Code Interpreter by E2B",
                 "Custom Tool",
                 "Exa Search",
@@ -330,7 +330,8 @@
                 "ReAct Agent for Chat Models",
                 "ReAct Agent for LLMs",
                 "Anthropic Agent",
-                "OpenAI Tool Agent"
+                "OpenAI Tool Agent",
+                "Tool Agent"
             ],
             "Sequential Agents": ["Agent", "Condition", "Condition Agent", "End", "LLM Node", "Loop", "Start", "State", "Tool Node"],
             "Tools": [

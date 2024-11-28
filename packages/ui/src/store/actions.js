@@ -51,7 +51,6 @@ export const removeSnackbar = (key) => ({
     type: REMOVE_SNACKBAR,
     key
 })
-
 export const setUserData = (userData) => ({
     type: SET_USER_DATA,
     payload: userData

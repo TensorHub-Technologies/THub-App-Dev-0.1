@@ -67,7 +67,7 @@ TabPanel.propTypes = {
     value: PropTypes.number.isRequired
 }
 
-const types = ['Chatflow', 'Tool', 'Agentflow']
+const types = ['Workflow', 'Tool', 'Agentflow']
 const framework = ['Langchain', 'LlamaIndex']
 
 // ==============================|| Marketplace ||============================== //
@@ -588,13 +588,13 @@ const Marketplace = () => {
                                                     // badgeContent={data.badge}
                                                     color={data.badge === 'POPULAR' ? 'primary' : 'error'}
                                                 >
-                                                    {(data.type === 'Chatflow' || data.type === 'Agentflow') && (
+                                                    {(data.type === 'Workflow' || data.type === 'Agentflow') && (
                                                         <ItemCard onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
                                                     )}
                                                     {data.type === 'Tool' && <ItemCard data={data} onClick={() => goToTool(data)} />}
                                                 </Badge>
                                             )}
-                                            {!data.badge && (data.type === 'Chatflow' || data.type === 'Agentflow') && (
+                                            {!data.badge && (data.type === 'Workflow' || data.type === 'Agentflow') && (
                                                 <ItemCard onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
                                             )}
                                             {!data.badge && data.type === 'Tool' && <ItemCard data={data} onClick={() => goToTool(data)} />}

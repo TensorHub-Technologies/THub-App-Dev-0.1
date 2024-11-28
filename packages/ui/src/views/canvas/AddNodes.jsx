@@ -110,6 +110,7 @@ const AddNodes = ({ nodesData, node }) => {
     const [categoryExpanded, setCategoryExpanded] = useState({})
     const [tabValue, setTabValue] = useState(0)
     const userData = useSelector((state) => state.user.userData)
+    console.log(userData, 'userData')
 
     const allIconsObj = {
         Agents: (
@@ -190,6 +191,8 @@ const AddNodes = ({ nodesData, node }) => {
             setTab(['LangChain', 'LlamaIndex'])
         }
     }, [])
+
+    console.log(nodes, 'nodes')
 
     console.log('tab: ', tab)
     //console.log("nodes: ",nodes)

@@ -4,13 +4,23 @@ import { useSelector } from 'react-redux'
 // project-imports
 import MainCard from '@/ui-component/cards/MainCard'
 import subStyle from './subscription.module.css'
+import { pricingData } from './PricingData'
+import PriceDropdown from './PriceDropdown'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import { Grid, Box, Stack, Button } from '@mui/material'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
+import { Grid, Box, Stack, Button, Modal, Typography, Card, CardContent, Tooltip } from '@mui/material'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableRow from '@mui/material/TableRow'
+import Paper from '@mui/material/Paper'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import EnterpriceForm from './Enterprice_Form'
+
+// toastify
+import { ToastContainer, toast } from 'react-toastify'
 
 // project import
 const Subscription = () => {
@@ -19,14 +29,32 @@ const Subscription = () => {
     const user = useSelector((state) => state.user.userData)
     const [selectedPlan, setSelectedPlan] = useState('monthly')
     const [sdkLoaded, setSdkLoaded] = useState(false)
+    const [currency, setCurrency] = useState('INR')
+    const [showForm, setShowForm] = useState(false)
+    const [modalOpen, setModalOpen] = useState(false)
+    const [subscriptionDetails, setSubscriptionDetails] = useState({
+        subscriptionType: user.subscription_type || '',
+        subscriptionDuration: user.subscription_duration || '',
+        startDate: '',
+        expiryDate: '',
+        isActive: true
+    })
+
+    console.log(subscriptionDetails)
+    // user.subscriptionDuration=null;
+    // console.log(user.subscriptionDuration,"subscribtion duration")
 
     // const amount = 100;
-    const currency = 'INR'
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)
         return `R-${timestamp}-${randomNum}`
     }
+    const getPrice = (plan) => {
+        return plan.prices[currency] || plan.prices['INR']
+    }
+
+    const handleCurrencyChange = (selectedCurrency) => setCurrency(selectedCurrency)
 
     const receiptId = generateReceiptId()
 
@@ -48,15 +76,61 @@ const Subscription = () => {
         setSelectedPlan('yearly')
     }
 
+    const handleLoading = (message) => {
+        toast.success(message, {
+            theme: 'colored',
+            style: {
+                background: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                color: 'white'
+            }
+        })
+    }
+
+    const handleError = (message) => {
+        toast.error(message, {
+            theme: 'colored',
+            style: {
+                background: 'red',
+                color: 'white'
+            }
+        })
+    }
+
+    const handleDetails = () => {
+        console.log('handle details')
+        setModalOpen(true)
+    }
+
+    const handleCloseModal = () => setModalOpen(false)
+
+    const formatDate = (dateString) => {
+        const options = { day: '2-digit', month: 'short', year: 'numeric' }
+        return new Date(dateString).toLocaleDateString('en-US', options)
+    }
+
+    useEffect(() => {
+        setSubscriptionDetails({
+            subscriptionType: user.subscription_type || '',
+            subscriptionDuration: user.subscription_duration,
+            startDate: formatDate(user.subscription_date) || user.subscription_date,
+            expiryDate: formatDate(user.expiry_date) || null,
+            isActive: user.subscription_status === 'active'
+        })
+    }, [user])
+
     const paymentHandler = async (e, planTitle, planId, duration) => {
         if (e) e.preventDefault()
         console.log(planTitle, planId, duration, 'paymentHandler')
-        let plan_Id = planId.trim()
+        if (planTitle === 'Enterprise') {
+            console.log(planTitle === 'Enterprise')
+            setShowForm(true)
+        }
+        let plan_Id = planId
         const uid = user.uid
-        const url = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/'
-        // window.location.hostname === 'localhost'
-        //     ? 'http://localhost:2000/create-subscription'
-        //     : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/create-subscription'
+        const url =
+            window.location.hostname === 'localhost'
+                ? 'http://localhost:2000/create-subscription'
+                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/create-subscription'
 
         try {
             const response = await fetch(url, {
@@ -113,8 +187,15 @@ const Subscription = () => {
 
                     const validateStatus = await validateResponse.json()
                     if (validateResponse.ok && validateStatus.msg === 'success') {
-                        console.log(`Plan upgraded to ${validateStatus.subscriptionType}`)
                         location.reload()
+                        console.log(`Plan upgraded to ${validateStatus.subscriptionType}`)
+                        setSubscriptionDetails({
+                            subscriptionType: validateStatus.subscriptionType,
+                            subscriptionDuration: validateStatus.subscriptionDuration,
+                            startDate: validateStatus.startDate,
+                            expiryDate: validateStatus.expiryDate,
+                            isActive: true
+                        })
                     } else {
                         alert('Payment validation failed. Please contact support.')
                     }
@@ -141,103 +222,10 @@ const Subscription = () => {
         }
     }
 
-    const pricingData = {
-        monthly: [
-            {
-                title: 'Free',
-                price: '₹0',
-                planId: '',
-                duration: 'monthly',
-                description: 'For starters to explore and integrate',
-                buttonInfo: 'Start for Free',
-                list: [
-                    'Single Seat',
-                    '5 GenAI Apps',
-                    'API based access to LLM',
-                    'Embedding Model',
-                    ' Vector Database etc',
-                    'Shared or your own API keys',
-                    'Basic Analytics',
-                    'Standard Support'
-                ]
-            },
-            {
-                title: 'Pro',
-                price: '₹ 1',
-                planId: 'plan_PKKqYOHRkFFVTZ',
-                duration: 'monthly',
-                description: 'For small & medium businesses',
-                buttonInfo: 'Choose Plan',
-                list: [
-                    'All Free Features',
-                    '5 Seats',
-                    '25 GenAI Apps',
-                    'Team collaboration',
-                    'Train your own local LLM',
-                    'Fine Tune open source LLM',
-                    'Advanced Analytics',
-                    'Priority support'
-                ]
-            },
-            {
-                title: 'Enterprise',
-                price: 'Contact for Price',
-                duration: 'monthly',
-                description: 'For large teams and enterprises.',
-                buttonInfo: 'Choose Plan',
-                list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
-            }
-        ],
-        yearly: [
-            {
-                title: 'Free',
-                price: '₹0',
-                description: 'For starters to explore and integrate',
-                buttonInfo: 'Start for Free',
-                list: [
-                    'Single Seat',
-                    '5 GenAI Apps',
-                    'API based access to LLM',
-                    'Embedding Model',
-                    ' Vector Database etc',
-                    'Shared or your own API keys',
-                    'Basic Analytics',
-                    'Standard Support'
-                ]
-            },
-            {
-                title: 'Pro',
-                price: '₹ 2,19,999',
-                planId: 'plan_PKhfVyO6JCxaeR',
-                duration: 'yearly',
-                description: 'For small & medium businesses',
-                buttonInfo: 'Choose Plan',
-                list: [
-                    'All Free Features',
-                    '5 Seats',
-                    '25 GenAI Apps',
-                    'Team collaboration',
-                    'Train your own local LLM',
-                    'Fine Tune open source LLM',
-                    'Advanced Analytics',
-                    'Priority support'
-                ]
-            },
-            {
-                title: 'Enterprise',
-                price: 'Contact for Price',
-                planId: 'YOUR_ENTERPRISE_PLAN_ID',
-                duration: 'yearly',
-                description: 'For large teams and enterprises.',
-                buttonInfo: 'Choose Plan',
-                list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
-            }
-        ]
-    }
-
     return (
         <div>
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
+                <ToastContainer />
                 <Stack flexDirection='row'>
                     <Grid sx={{ mb: 1.25 }} container direction='row'>
                         <h1
@@ -308,10 +296,12 @@ const Subscription = () => {
                                         style={{ transform: selectedPlan === 'yearly' ? 'translateX(100%)' : 'none' }}
                                     ></div>
                                 </div>
+                                {!showForm && <PriceDropdown onCurrencyChange={handleCurrencyChange} />}
                             </div>
                         </Grid>
                     </Grid>
                 </Stack>
+
                 <Grid container spacing={4} className={subStyle.grid_container}>
                     {pricingData[selectedPlan].map((plan, index) => (
                         <Grid
@@ -327,13 +317,41 @@ const Subscription = () => {
                             >
                                 {plan.title === 'Free' && user.subscription_type === 'free' ? (
                                     <div className={customization.isDarkMode ? subStyle.activeBadge_dark : subStyle.activeBadge_light}>
-                                        Active
+                                        <div style={{ fontSize: '16px' }}>Active</div>
+                                        {user.subscription_type !== 'free' && (
+                                            <Tooltip title='subscription details' arrow>
+                                                <div>
+                                                    <InfoOutlinedIcon
+                                                        sx={{
+                                                            fontSize: 22,
+                                                            paddingTop: '4px',
+                                                            cursor: 'pointer',
+                                                            backgroundColor: 'transparent'
+                                                        }}
+                                                        onClick={handleDetails}
+                                                    />
+                                                </div>
+                                            </Tooltip>
+                                        )}
                                     </div>
                                 ) : plan.title === 'Pro' &&
                                   user.subscription_type === 'pro' &&
                                   user.subscription_duration === selectedPlan ? (
                                     <div className={customization.isDarkMode ? subStyle.activeBadge_dark : subStyle.activeBadge_light}>
-                                        Active
+                                        <div style={{ fontSize: '16px' }}>Active</div>
+                                        <Tooltip title='subscription details' arrow>
+                                            <div>
+                                                <InfoOutlinedIcon
+                                                    sx={{
+                                                        fontSize: 22,
+                                                        paddingTop: '4px',
+                                                        cursor: 'pointer',
+                                                        backgroundColor: 'transparent'
+                                                    }}
+                                                    onClick={handleDetails}
+                                                />
+                                            </div>
+                                        </Tooltip>
                                     </div>
                                 ) : null}
 
@@ -346,10 +364,18 @@ const Subscription = () => {
                                     >
                                         {plan.title}
                                     </Typography>
-                                    <Typography variant='body2' className={subStyle.price_amount}>
-                                        {plan.price}
+                                    <Typography
+                                        variant='body2'
+                                        className={customization.isDarkMode ? subStyle.price_amount_dark : subStyle.price_amount_light}
+                                    >
+                                        {getPrice(plan)}
                                     </Typography>
-                                    <Typography variant='body2' className={subStyle.price_description}>
+                                    <Typography
+                                        variant='body2'
+                                        className={
+                                            customization.isDarkMode ? subStyle.price_description_dark : subStyle.price_description_light
+                                        }
+                                    >
                                         {plan.description}
                                     </Typography>
                                     <div>
@@ -360,15 +386,27 @@ const Subscription = () => {
                                             sx={{ width: '100%' }}
                                             className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
                                             disabled={
-                                                (plan.title === 'Pro' &&
-                                                    user.subscription_type === 'pro' &&
-                                                    user.subscription_duration === selectedPlan) ||
-                                                (plan.title === 'Pro' &&
-                                                    selectedPlan === 'monthly' &&
-                                                    user.subscription_duration === 'monthly') ||
-                                                (plan.title === 'Pro' &&
-                                                    selectedPlan === 'yearly' &&
-                                                    user.subscription_duration === 'yearly')
+                                                (user.subscription_type === 'free' && plan.title === 'Free') ||
+                                                (user.subscription_type === 'pro' &&
+                                                    user.subscription_duration === 'yearly' &&
+                                                    plan.title === 'Pro' &&
+                                                    selectedPlan === 'monthly') || // Disable Pro-Monthly if user is on Pro-Yearly
+                                                (user.subscription_type === 'pro' &&
+                                                    user.subscription_duration === 'yearly' &&
+                                                    plan.title === 'Free') || // Disable Free button if user is on Pro-Yearly
+                                                (user.subscription_type === 'pro' &&
+                                                    user.subscription_duration === 'monthly' &&
+                                                    plan.title === 'Free') ||
+                                                (user.subscription_type === 'pro' &&
+                                                    ((user.subscription_duration === 'monthly' &&
+                                                        plan.title === 'Pro' &&
+                                                        selectedPlan === 'monthly') || // Disable Pro-Monthly if already on Pro-Monthly
+                                                        (user.subscription_duration === 'yearly' &&
+                                                            plan.title === 'Pro' &&
+                                                            selectedPlan === 'yearly'))) || // Disable Pro-Yearly if already on Pro-Yearly
+                                                (user.subscription_type === 'pro' &&
+                                                    plan.title === 'Pro' &&
+                                                    user.subscription_duration === selectedPlan) // Disable Pro if Pro is already selected
                                             }
                                         >
                                             {plan.buttonInfo}
@@ -396,6 +434,67 @@ const Subscription = () => {
                     ))}
                 </Grid>
             </MainCard>
+            <div>{showForm && <EnterpriceForm setShowForm={setShowForm} handleError={handleError} handleLoading={handleLoading} />}</div>
+            <Modal open={modalOpen} onClose={handleCloseModal}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 4,
+                        borderRadius: 2,
+                        width: 400
+                    }}
+                >
+                    {subscriptionDetails.isActive && (
+                        <div className={subStyle.subscriptionDetails}>
+                            <Typography
+                                variant='h2'
+                                component='div'
+                                style={{
+                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                    marginBottom: '20px'
+                                }}
+                            >
+                                Active Subscription Details
+                            </Typography>
+                            <TableContainer component={Paper} style={{ marginTop: '10px' }}>
+                                <Table>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell>
+                                                <strong>Plan</strong>
+                                            </TableCell>
+                                            <TableCell>{subscriptionDetails.subscriptionType.toUpperCase()}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                <strong>Duration</strong>
+                                            </TableCell>
+                                            <TableCell>{subscriptionDetails.subscriptionDuration.toUpperCase()}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                <strong>Start Date</strong>
+                                            </TableCell>
+                                            <TableCell>{subscriptionDetails.startDate}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                <strong>Next Payment On</strong>
+                                            </TableCell>
+                                            <TableCell>{subscriptionDetails.expiryDate}</TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </div>
+                    )}
+                </Box>
+            </Modal>
         </div>
     )
 }
