@@ -53,10 +53,10 @@ const Subscription = () => {
         console.log(planTitle, planId, duration, 'paymentHandler')
         let plan_Id = planId.trim()
         const uid = user.uid
-        const url =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/create-subscription'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/create-subscription'
+        const url = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/'
+        // window.location.hostname === 'localhost'
+        //     ? 'http://localhost:2000/create-subscription'
+        //     : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/create-subscription'
 
         try {
             const response = await fetch(url, {

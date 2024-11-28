@@ -94,10 +94,10 @@ const UserInfo = ({ setShowModal, showModal }) => {
             })
             return
         }
-        const Url =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/updateUser'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/updateUser'
+        const Url = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/updateUser'
+        // window.location.hostname === 'localhost'
+        //     ? 'http://localhost:2000/updateUser'
+        //     : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/updateUser'
         try {
             const response = await axios.post(Url, formData)
             if (response.status === 200) {

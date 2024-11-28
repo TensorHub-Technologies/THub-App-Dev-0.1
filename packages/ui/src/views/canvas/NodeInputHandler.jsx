@@ -273,7 +273,7 @@ const NodeInputHandler = ({ inputAnchor, inputParam, data, disabled = false, isA
                                             width: '100%',
                                             mb: 2,
                                             mt: 0,
-                                            color: customization.isDarkMode ? 'red' : '#3C5BA4',
+                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
                                             borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
                                             '&:hover': {
                                                 borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
