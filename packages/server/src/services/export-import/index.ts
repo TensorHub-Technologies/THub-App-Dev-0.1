@@ -53,7 +53,7 @@ const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{
 
         // step 2 - get all ChatFlow
         let allChatflow: ChatFlow[] = []
-        if (exportInput.chatflow) allChatflow = await chatflowService.getAllChatflows('CHATFLOW', tenantId)
+        if (exportInput.chatflow) allChatflow = await chatflowService.getAllChatflows('WORKFLOW', tenantId)
 
         // step 3 - get all MultiAgent
         let allMultiAgent: ChatFlow[] = []

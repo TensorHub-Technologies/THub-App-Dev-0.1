@@ -17,7 +17,7 @@
         "@mui/material": "5.15.0",
         "@mui/x-data-grid": "6.8.0",
         "@tabler/icons": "^1.39.1",
-        "@tabler/icons-react": "^3.5.0",
+        "@tabler/icons-react": "^3.3.0",
         "@uiw/codemirror-theme-sublime": "^4.21.21",
         "@uiw/codemirror-theme-vscode": "^4.21.21",
         "@uiw/react-codemirror": "^4.21.21",
@@ -63,6 +63,7 @@
     },
     "scripts": {
         "dev": "vite",
+        "start": "vite",
         "build": "vite build",
         "clean": "rimraf build",
         "nuke": "rimraf build node_modules .turbo"

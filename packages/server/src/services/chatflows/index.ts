@@ -109,9 +109,9 @@ const getAllChatflows = async (type?: ChatflowType, tenantId?: any): Promise<Cha
         const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findBy({ tenantId: tenantId })
         if (type === 'MULTIAGENT') {
             return dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
-        } else if (type === 'CHATFLOW') {
+        } else if (type === 'WORKFLOW') {
             // fetch all chatflows that are not agentflow
-            return dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
+            return dbResponse.filter((chatflow) => chatflow.type === 'WORKFLOW' || !chatflow.type)
         }
         return dbResponse
     } catch (error) {
