@@ -31,7 +31,8 @@ import chainIconlite from '../../assets/icons/chain_dark.svg'
 import cacheIcondark from '../../assets/icons/cache_lite.svg'
 import cacheIconlite from '../../assets/icons/cache_dark.svg'
 import ThreePIcon from '@mui/icons-material/ThreeP'
-import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
+import docsIcondark from '../../assets/icons/document_dark.svg'
+import docsIconlite from '../../assets/icons/document_lite.svg'
 // import FingerprintIcon from '@mui/icons-material/Fingerprint'
 import ViewInArIcon from '@mui/icons-material/ViewInAr'
 // import CallMergeIcon from '@mui/icons-material/CallMerge'
@@ -117,25 +118,31 @@ const AddNodes = ({ nodesData, node }) => {
             <img
                 src={customization?.isDarkMode ? agentsIconlite : agentsIcondark}
                 alt='Agents'
-                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
+                style={{ width: '25px', height: '25px', backgroundColor: 'transparent' }}
             />
         ),
         Cache: (
             <img
                 src={customization?.isDarkMode ? cacheIconlite : cacheIcondark}
                 alt='cache'
-                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
+                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
             />
         ),
         Chains: (
             <img
                 src={customization?.isDarkMode ? chainIcondark : chainIconlite}
                 alt='chain'
-                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
+                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
             />
         ),
         'Chat Models': <ThreePIcon />,
-        'Document Loaders': <DriveFolderUploadIcon />,
+        'Document Loaders': (
+            <img
+                src={customization?.isDarkMode ? docsIcondark : docsIconlite}
+                alt='chain'
+                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
+            />
+        ),
         Embeddings: <IconChartScatter3d />,
         Memory: <MemoryIcon />,
         LLMs: <ViewInArIcon />,
