@@ -41,10 +41,7 @@ const Subscription = () => {
     })
 
     console.log(subscriptionDetails)
-    // user.subscriptionDuration=null;
-    // console.log(user.subscriptionDuration,"subscribtion duration")
 
-    // const amount = 100;
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)

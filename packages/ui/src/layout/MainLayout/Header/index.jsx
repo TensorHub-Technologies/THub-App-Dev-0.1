@@ -85,6 +85,10 @@ const Header = ({ handleLeftDrawerToggle }) => {
         handleClose()
     }
 
+    const handleSettingClick = () => {
+        navigate('/setting')
+    }
+
     const handleClose = () => {
         setAnchorEl(null)
     }
@@ -296,7 +300,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleSettingClick}>
                         <ListItemIcon>
                             <Settings fontSize='small' />
                         </ListItemIcon>
