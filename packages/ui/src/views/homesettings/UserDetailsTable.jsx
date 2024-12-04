@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
+import { Typography, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Button } from '@mui/material'
 
 const UserDetailsTable = () => {
     const user = useSelector((state) => state.user.userData)
@@ -17,12 +17,12 @@ const UserDetailsTable = () => {
         <TableContainer
             component={Paper}
             className={customization.isDarkMode ? 'table-dark-mode' : 'table-light-mode'}
-            sx={{ marginTop: '20px', padding: '16px', maxHeight: '500px' }}
+            sx={{ marginTop: '20px', padding: '16px', maxHeight: '500px', border: '1px solid gray' }}
         >
             <Typography
-                variant='h4'
+                variant='h3'
                 sx={{
-                    fontFamily: 'Cambria, serif',
+                    fontFamily: 'Cambria Math',
                     fontWeight: 'bold',
                     color: customization.isDarkMode ? '#E22A90' : '#3c5ba4',
                     marginBottom: '5px'
@@ -31,33 +31,27 @@ const UserDetailsTable = () => {
                 User Details
             </Typography>
             <Table stickyHeader>
-                <TableHead>
-                    <TableRow>
-                        <TableCell
-                            sx={{
-                                fontWeight: 'bold',
-                                fontFamily: 'Cambria, serif',
-                                backgroundColor: customization.isDarkMode ? '#23262C' : 'white'
-                            }}
-                        >
-                            Field
-                        </TableCell>
-                        <TableCell
-                            sx={{
-                                fontWeight: 'bold',
-                                fontFamily: 'Cambria, serif',
-                                backgroundColor: customization.isDarkMode ? '#23262C' : 'white'
-                            }}
-                        >
-                            Details
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
                 <TableBody>
                     {userFields.map((field, index) => (
                         <TableRow key={index}>
-                            <TableCell sx={{ fontFamily: 'Cambria, serif' }}>{field.label}</TableCell>
-                            <TableCell sx={{ fontFamily: 'Cambria, serif' }}>{field.value || 'N/A'}</TableCell>
+                            <TableCell sx={{ fontFamily: 'Cambria Math', padding: '16px 16px 0px 16px', fontSize: '18px' }}>
+                                {field.label}
+                            </TableCell>
+                            <TableCell sx={{ fontFamily: 'Cambria Math', padding: '16px 16px 0px 16px', fontSize: '18px' }}>
+                                {field.value || 'N/A'}
+                            </TableCell>
+                            <TableCell sx={{ padding: '16px 16px 0px 16px', fontSize: '18px' }}>
+                                {(field.label === 'Name' || field.label === 'Email') && (
+                                    <Button
+                                        variant='contained'
+                                        className={customization.isDarkMode ? 'button-edit-dark' : 'button-edit-light'}
+                                        // sx={{backgroundColor:customization.isDarkMode?"#e22a90":"#3c5ba4"}}
+                                        onClick={() => handleUpdate(field)}
+                                    >
+                                        edit
+                                    </Button>
+                                )}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

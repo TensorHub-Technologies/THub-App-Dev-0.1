@@ -114,13 +114,14 @@ const HomeSettings = () => {
                                     className={customization.isDarkMode ? 'parent-right-content-dark' : 'parent-right-content-light'}
                                 >
                                     <Typography
-                                        variant='h2'
+                                        variant='h1'
                                         gutterBottom
                                         sx={{ fontFamily: 'Cambria, serif', fontWeight: 'bold', color: '#E22A90' }}
                                         className={customization.isDarkMode ? 'typography-plan-dark' : 'typography-plan-light'}
                                     >
                                         {subscription_active.toUpperCase()}
                                     </Typography>
+
                                     <Typography
                                         sx={{ fontFamily: 'Cambria, serif' }}
                                         className={customization.isDarkMode ? 'typography-expiry-dark' : 'typography-expiry-light'}

@@ -86,8 +86,38 @@
 
 .typography-plan-dark {
     color: #e22a90;
+    font-weight: bolder;
 }
 
 .typography-plan-light {
     color: #3c5ba4;
+    font-weight: bolder;
+}
+
+.button-edit-dark {
+    border: 0.5px solid #e22a90;
+    background-color: #232527;
+    color: #e22a90;
+    width: 80px;
+    margin-bottom: 2px;
+    font-weight: normal;
+}
+
+.button-edit-dark:hover {
+    background-color: #e22a90;
+    color: white;
+}
+
+.button-edit-light {
+    background-color: white;
+    color: #3c5ba4;
+    border: 0.5px solid #3c5ba4;
+    width: 80px;
+    font-weight: normal;
+    margin-bottom: 6px;
+}
+
+.button-edit-light:hover {
+    background-color: #3c5ba4;
+    color: white;
 }
