@@ -1,15 +1,19 @@
 import { useRef, useState } from 'react'
 import Avatar from '@mui/material/Avatar'
 import { useSelector } from 'react-redux'
-import { Typography, Box, Button } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 import './ImageUpload.css'
+import axios from 'axios'
+import CreateIcon from '@mui/icons-material/Create'
 
 function ImageUpload() {
     const user = useSelector((state) => state.user.userData)
     const customization = useSelector((state) => state.customization)
     const inputRef = useRef(null)
-    const [showImage, setShowImage] = useState(user.picture || '')
-    const splitted = user.name.split(' ')
+    const pic = user.picture
+    const [showImage, setShowImage] = useState(pic || '')
+    const userName = user.name || ''
+    const splitted = userName.split(' ')
     const profileName = splitted
         .filter((_, id, arr) => id === 0 || id === arr.length - 1)
         .map((ele) => ele[0])
@@ -19,11 +23,27 @@ function ImageUpload() {
     const handleImageClick = () => {
         inputRef.current.click()
     }
+    const handleImageChange = async (event) => {
+        const file = event.target.files[0]
+        if (file) {
+            const formData = new FormData()
+            formData.append('file', file)
+            formData.append('userId', user.id)
 
-    const handleImageChange = (event) => {
-        const file = event.target.files
-        console.log(file)
-        setShowImage(file)
+            try {
+                const response = await axios.post('/api/upload', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                })
+
+                if (response.data.success) {
+                    setShowImage(response.data.imageUrl)
+                } else {
+                    console.error('Failed to upload image')
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error)
+            }
+        }
     }
 
     return (
@@ -51,13 +71,7 @@ function ImageUpload() {
                     >
                         {profileName}
                     </Avatar>
-                    <Button
-                        variant='contained'
-                        sx={{ textTransform: 'none', fontFamily: 'Cambria, serif', backgroundColor: '#E22A90' }}
-                        className={customization.isDarkMode ? 'button-upgrade-dark' : 'button-upgrade-light'}
-                    >
-                        edit
-                    </Button>
+                    <CreateIcon className='edit_image_icon' />
                     <input
                         type='file'
                         style={{ width: '90px', marginTop: '4px', display: 'none' }}

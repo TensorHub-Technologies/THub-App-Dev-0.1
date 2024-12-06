@@ -48,3 +48,14 @@
     background-color: #3c5ba4;
     color: white;
 }
+
+.edit_image_icon {
+    position: absolute;
+    background-color: gray;
+    color: white;
+    margin: -24px 0px 0px 57px;
+    border: 1px solid white;
+    border-radius: 50%;
+    padding: 2px;
+    cursor: pointer;
+}
