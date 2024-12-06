@@ -1,0 +1,61 @@
+.image-parent {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.typography-plan-dark {
+    color: white;
+    font-weight: bolder;
+    background-color: #e22a90;
+    border-radius: 20px;
+    padding: 2px 5px;
+}
+
+.typography-plan-light {
+    color: white;
+    padding: 2px 5px;
+    font-weight: bolder;
+    background-color: #3c5ba4;
+    border-radius: 20px;
+}
+
+.button-upgrade-dark {
+    box-shadow: 0px 2px 1px rgb(56, 55, 55);
+    background-color: #23262c;
+    color: #e22a90;
+    border: 0.5px solid #e22a90;
+    padding: 0px 10px;
+    margin: 5px 10px;
+}
+
+.button-upgrade-dark:hover {
+    background-color: #e22a90;
+    color: white;
+}
+
+.button-upgrade-light {
+    background-color: white;
+    color: #3c5ba4;
+    border: 0.5px solid #3c5ba4;
+    padding: 0px 10px;
+    margin: 5px 10px;
+}
+
+.button-upgrade-light:hover {
+    background-color: #3c5ba4;
+    color: white;
+}
+
+.edit_image_icon {
+    position: absolute;
+    background-color: gray;
+    color: white;
+    margin: -24px 0px 0px 57px;
+    border: 1px solid white;
+    border-radius: 50%;
+    padding: 2px;
+    cursor: pointer;
+}

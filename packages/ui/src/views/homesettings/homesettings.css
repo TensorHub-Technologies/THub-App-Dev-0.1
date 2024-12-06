@@ -24,19 +24,23 @@
 }
 
 .parent-right-content-light {
-    padding: 30px;
+    padding: 10px 30px;
+    height: 100vh;
 }
 
 .parent-right-content-dark {
-    padding: 30px;
+    padding: 10px 30px;
+    height: 100vh;
 }
 
 .typography-expiry-dark {
     color: white;
+    margin-top: -10px;
 }
 
 .typography-expiry-light {
     color: black;
+    margin-top: -10px;
 }
 
 .button-upgrade-dark {
@@ -82,16 +86,6 @@
 .button-invoices-light:hover {
     background-color: #3c5ba4;
     color: white;
-}
-
-.typography-plan-dark {
-    color: #e22a90;
-    font-weight: bolder;
-}
-
-.typography-plan-light {
-    color: #3c5ba4;
-    font-weight: bolder;
 }
 
 .button-edit-dark {
