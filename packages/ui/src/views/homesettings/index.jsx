@@ -11,6 +11,7 @@ import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined'
 import UserDetailsTable from './UserDetailsTable'
 import { useNavigate } from 'react-router'
+import ImageUpload from './ImageUpload'
 
 const HomeSettings = () => {
     const theme = useTheme()
@@ -18,7 +19,6 @@ const HomeSettings = () => {
     const customization = useSelector((state) => state.customization)
     const [selectedSection, setSelectedSection] = useState('Profile')
     const navigate = useNavigate()
-    const subscription_active = user.subscription_type
     const expire = user?.expiry_date ?? ''
 
     return (
@@ -113,17 +113,9 @@ const HomeSettings = () => {
                                     sx={{ padding: '1rem', height: '100%' }}
                                     className={customization.isDarkMode ? 'parent-right-content-dark' : 'parent-right-content-light'}
                                 >
+                                    <ImageUpload />
                                     <Typography
-                                        variant='h1'
-                                        gutterBottom
-                                        sx={{ fontFamily: 'Cambria, serif', fontWeight: 'bold', color: '#E22A90' }}
-                                        className={customization.isDarkMode ? 'typography-plan-dark' : 'typography-plan-light'}
-                                    >
-                                        {subscription_active.toUpperCase()}
-                                    </Typography>
-
-                                    <Typography
-                                        sx={{ fontFamily: 'Cambria, serif' }}
+                                        sx={{ fontFamily: 'Cambria, serif', textAlign: 'center' }}
                                         className={customization.isDarkMode ? 'typography-expiry-dark' : 'typography-expiry-light'}
                                     >
                                         Next Payment On{' '}
@@ -131,13 +123,12 @@ const HomeSettings = () => {
                                             {expire ? expire.split('T')[0] : 'Not available'}
                                         </span>
                                     </Typography>
-
                                     {/* Buttons Section */}
                                     <Box
                                         sx={{
                                             display: 'flex',
                                             justifyContent: 'start',
-                                            gap: '10px',
+                                            gap: '30px',
                                             marginTop: '26px'
                                         }}
                                     >
