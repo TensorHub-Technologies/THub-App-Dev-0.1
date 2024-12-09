@@ -1,4 +1,4 @@
-.table-dark-mode {
+/* .table-dark-mode {
     background-color: #191b1f;
     color: white;
 }
@@ -14,4 +14,16 @@
 
 .typography-expiry-light {
     color: black;
+} */
+
+.edit-dark,
+.edit-light {
+    cursor: pointer;
+}
+
+.edit-light:hover {
+    color: #3c5ba4;
+}
+.edit-dark:hover {
+    color: #e22a90;
 }
