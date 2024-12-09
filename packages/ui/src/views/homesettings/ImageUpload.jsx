@@ -5,6 +5,7 @@ import { Typography, Box } from '@mui/material'
 import './ImageUpload.css'
 import axios from 'axios'
 import CreateIcon from '@mui/icons-material/Create'
+import toast, { Toaster } from 'react-hot-toast'
 
 function ImageUpload() {
     const user = useSelector((state) => state.user.userData)
@@ -16,44 +17,69 @@ function ImageUpload() {
     const splitted = userName.split(' ')
     const profileName = splitted
         .filter((_, id, arr) => id === 0 || id === arr.length - 1)
-        .map((ele) => ele[0])
+        .map((ele) => ele?.[0])
         .join('')
-        .toUpperCase()
+        ?.toUpperCase()
 
     const handleImageClick = () => {
         inputRef.current.click()
     }
     const handleImageChange = async (event) => {
         const file = event.target.files[0]
+        const apiUrl =
+            window.location.hostname === 'localhost'
+                ? 'http://localhost:2000'
+                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+
         if (file) {
             const formData = new FormData()
             formData.append('file', file)
-            formData.append('userId', user.id)
+            formData.append('userId', user.uid)
 
-            try {
-                const response = await axios.post('/api/upload', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                })
+            const uploadPromise = axios.post(`${apiUrl}/api/image-upload`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
 
-                if (response.data.success) {
-                    setShowImage(response.data.imageUrl)
-                } else {
-                    console.error('Failed to upload image')
+            toast.promise(
+                uploadPromise.then((response) => {
+                    if (response.data.success) {
+                        setShowImage(response.data.imageUrl)
+                        return 'Image uploaded successfully!'
+                    } else {
+                        throw new Error('Image upload failed')
+                    }
+                }),
+                {
+                    loading: 'Uploading image...',
+                    success: (message) => message,
+                    error: (err) => `Error uploading image: ${err.message || 'Unknown error'}`
                 }
-            } catch (error) {
-                console.error('Error uploading image:', error)
-            }
+            )
         }
     }
 
     return (
         <div className='image-parent'>
+            <Toaster position='top-right' reverseOrder={false} />
             {showImage ? (
-                <Avatar
-                    alt='G'
-                    src={user.picture || ''}
-                    sx={{ width: 86, height: 86, border: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4' }}
-                />
+                <Box onClick={handleImageClick}>
+                    <Avatar
+                        alt='G'
+                        src={showImage || ''}
+                        sx={{
+                            width: 86,
+                            height: 86,
+                            border: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4',
+                            cursor: 'pointer'
+                        }}
+                    />
+                    <input
+                        type='file'
+                        style={{ width: '90px', marginTop: '4px', display: 'none' }}
+                        ref={inputRef}
+                        onChange={handleImageChange}
+                    />
+                </Box>
             ) : (
                 <Box onClick={handleImageClick}>
                     <Avatar
@@ -88,7 +114,7 @@ function ImageUpload() {
                     sx={{ fontFamily: 'Cambria math', fontWeight: 'bold' }}
                     className={customization.isDarkMode ? 'typography-plan-dark' : 'typography-plan-light'}
                 >
-                    {user.subscription_type.toUpperCase()}
+                    {user.subscription_type?.toUpperCase()}
                 </Typography>
             </Box>
         </div>

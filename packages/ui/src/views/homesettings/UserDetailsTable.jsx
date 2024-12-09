@@ -1,5 +1,7 @@
 import { useSelector } from 'react-redux'
-import { Table, TableBody, TableCell, TableContainer, TableRow, Paper, Button } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableRow, Paper, Tooltip } from '@mui/material'
+import CreateIcon from '@mui/icons-material/Create'
+import './UserDetailsTable.css'
 
 const UserDetailsTable = () => {
     const user = useSelector((state) => state.user.userData)
@@ -30,15 +32,11 @@ const UserDetailsTable = () => {
                                 {field.value || 'N/A'}
                             </TableCell>
                             <TableCell sx={{ padding: '16px 16px 0px 16px', fontSize: '18px' }}>
-                                {field.label === 'Name' && (
-                                    <Button
-                                        variant='contained'
-                                        className={customization.isDarkMode ? 'button-edit-dark' : 'button-edit-light'}
-                                        onClick={() => handleUpdate(field)}
-                                    >
-                                        edit
-                                    </Button>
-                                )}
+                                <Tooltip title='edit'>
+                                    {(field.label === 'Name' || field.label === 'Department') && (
+                                        <CreateIcon className={customization.isDarkMode ? 'edit-dark' : 'edit-light'} />
+                                    )}
+                                </Tooltip>
                             </TableCell>
                         </TableRow>
                     ))}
