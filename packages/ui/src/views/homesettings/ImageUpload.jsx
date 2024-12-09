@@ -5,6 +5,7 @@ import { Typography, Box } from '@mui/material'
 import './ImageUpload.css'
 import axios from 'axios'
 import CreateIcon from '@mui/icons-material/Create'
+import toast, { Toaster } from 'react-hot-toast'
 
 function ImageUpload() {
     const user = useSelector((state) => state.user.userData)
@@ -29,33 +30,37 @@ function ImageUpload() {
             window.location.hostname === 'localhost'
                 ? 'http://localhost:2000'
                 : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+
         if (file) {
             const formData = new FormData()
             formData.append('file', file)
             formData.append('userId', user.uid)
-            console.log(user.uid)
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}=>${value}`)
-            }
-            try {
-                const response = await axios.post(`${apiUrl}/api/image-upload`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                })
-                console.log(response, 'response')
-                if (response.data.success) {
-                    setShowImage(response.data.imageUrl)
-                } else {
-                    console.error('Failed to upload image')
+
+            const uploadPromise = axios.post(`${apiUrl}/api/image-upload`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
+
+            toast.promise(
+                uploadPromise.then((response) => {
+                    if (response.data.success) {
+                        setShowImage(response.data.imageUrl)
+                        return 'Image uploaded successfully!'
+                    } else {
+                        throw new Error('Image upload failed')
+                    }
+                }),
+                {
+                    loading: 'Uploading image...',
+                    success: (message) => message,
+                    error: (err) => `Error uploading image: ${err.message || 'Unknown error'}`
                 }
-            } catch (error) {
-                console.error('Error uploading image:', error)
-            }
+            )
         }
     }
-    console.log(showImage, 'image link')
 
     return (
         <div className='image-parent'>
+            <Toaster position='top-right' reverseOrder={false} />
             {showImage ? (
                 <Box onClick={handleImageClick}>
                     <Avatar
