@@ -24,11 +24,15 @@ import {
     Stack
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import PersonIcon from '@mui/icons-material/Person'
-import LinkIcon from '@mui/icons-material/Link'
-import CachedIcon from '@mui/icons-material/Cached'
+import agentsIcondark from '../../assets/icons/agent_lite.svg'
+import agentsIconlite from '../../assets/icons/agent_dark.svg'
+import chainIcondark from '../../assets/icons/chain_lite.svg'
+import chainIconlite from '../../assets/icons/chain_dark.svg'
+import cacheIcondark from '../../assets/icons/cache_lite.svg'
+import cacheIconlite from '../../assets/icons/cache_dark.svg'
 import ThreePIcon from '@mui/icons-material/ThreeP'
-import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
+import docsIcondark from '../../assets/icons/document_dark.svg'
+import docsIconlite from '../../assets/icons/document_lite.svg'
 // import FingerprintIcon from '@mui/icons-material/Fingerprint'
 import ViewInArIcon from '@mui/icons-material/ViewInAr'
 // import CallMergeIcon from '@mui/icons-material/CallMerge'
@@ -36,15 +40,19 @@ import MemoryIcon from '@mui/icons-material/Memory'
 import AddModeratorIcon from '@mui/icons-material/AddModerator'
 
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
-import IntegrationInstructionsIcon from '@mui/icons-material/IntegrationInstructions'
+import promptsIcondark from '../../assets/icons/prompt_lite.svg'
+import promptsIconlite from '../../assets/icons/prompt_dark.svg'
 
 import QueryStatsIcon from '@mui/icons-material/QueryStats'
 import ContentCutIcon from '@mui/icons-material/ContentCut'
 import ContactsIcon from '@mui/icons-material/Contacts'
-import BuildIcon from '@mui/icons-material/Build'
+import toolsIcondark from '../../assets/icons/tools_lite.svg'
+import toolsIconlite from '../../assets/icons/tools_dark.svg'
+// import BuildIcon from '@mui/icons-material/Build'
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
 import LayersIcon from '@mui/icons-material/Layers'
-import ArchitectureIcon from '@mui/icons-material/Architecture'
+import engineIconlite from '../../assets/icons/engine_dark.svg'
+import engineIcondark from '../../assets/icons/engine_lite.svg'
 import QrCodeIcon from '@mui/icons-material/QrCode'
 import SwitchAccountIcon from '@mui/icons-material/SwitchAccount'
 
@@ -94,39 +102,6 @@ const temp_subscriptionPlan = [
 ]
 */
 
-const allIconsObj = {
-    Agents: <PersonIcon />,
-    Cache: <CachedIcon />,
-    Chains: <LinkIcon />,
-    'Chat Models': <ThreePIcon />,
-    'Document Loaders': <DriveFolderUploadIcon />,
-    Embeddings: <IconChartScatter3d />,
-    Memory: <MemoryIcon />,
-    LLMs: <ViewInArIcon />,
-    'Multi Agents': <IconUsersGroup />,
-    Moderation: <AddModeratorIcon />,
-    'Output Parsers': <ExitToAppIcon />,
-    Prompts: <IntegrationInstructionsIcon />,
-    'Record Manager': <ContactsIcon />,
-    Retrievers: <QueryStatsIcon />,
-    'Sequential Agents': <SwitchAccountIcon />,
-    'Text Splitters': <ContentCutIcon />,
-    Tools: <BuildIcon />,
-    Utilities: <AutoFixHighIcon />,
-    'Vector Stores': <LayersIcon />,
-    Engine: <ArchitectureIcon />,
-    'Response Synthesizer': <QrCodeIcon />
-}
-
-const getIconWithClass = (iconName, className) => {
-    const Icon = allIconsObj[iconName]
-    if (Icon) {
-        return React.cloneElement(Icon, { className })
-    } else {
-        return null
-    }
-}
-
 const AddNodes = ({ nodesData, node }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
@@ -138,6 +113,81 @@ const AddNodes = ({ nodesData, node }) => {
     const [tabValue, setTabValue] = useState(0)
     const userData = useSelector((state) => state.user.userData)
     console.log(userData, 'userData')
+
+    const allIconsObj = {
+        Agents: (
+            <img
+                src={customization?.isDarkMode ? agentsIconlite : agentsIcondark}
+                alt='Agents'
+                style={{ width: '25px', height: '25px', backgroundColor: 'transparent' }}
+            />
+        ),
+        Cache: (
+            <img
+                src={customization?.isDarkMode ? cacheIconlite : cacheIcondark}
+                alt='cache'
+                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
+            />
+        ),
+        Chains: (
+            <img
+                src={customization?.isDarkMode ? chainIcondark : chainIconlite}
+                alt='chain'
+                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
+            />
+        ),
+        'Chat Models': <ThreePIcon />,
+        'Document Loaders': (
+            <img
+                src={customization?.isDarkMode ? docsIcondark : docsIconlite}
+                alt='chain'
+                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
+            />
+        ),
+        Embeddings: <IconChartScatter3d />,
+        Memory: <MemoryIcon />,
+        LLMs: <ViewInArIcon />,
+        'Multi Agents': <IconUsersGroup />,
+        Moderation: <AddModeratorIcon />,
+        'Output Parsers': <ExitToAppIcon />,
+        Prompts: (
+            <img
+                src={customization?.isDarkMode ? promptsIconlite : promptsIcondark}
+                alt='prompts'
+                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
+            />
+        ),
+        'Record Manager': <ContactsIcon />,
+        Retrievers: <QueryStatsIcon />,
+        'Sequential Agents': <SwitchAccountIcon />,
+        'Text Splitters': <ContentCutIcon />,
+        Tools: (
+            <img
+                src={customization?.isDarkMode ? toolsIconlite : toolsIcondark}
+                alt='tools'
+                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
+            />
+        ),
+        Utilities: <AutoFixHighIcon />,
+        'Vector Stores': <LayersIcon />,
+        Engine: (
+            <img
+                src={customization?.isDarkMode ? engineIconlite : engineIcondark}
+                alt='tools'
+                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
+            />
+        ),
+        'Response Synthesizer': <QrCodeIcon />
+    }
+
+    const getIconWithClass = (iconName, className) => {
+        const Icon = allIconsObj[iconName]
+        if (Icon) {
+            return React.cloneElement(Icon, { className })
+        } else {
+            return null
+        }
+    }
 
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
     userData.subscription_type === null ? (userData.subscription_type = 'free') : userData.subscription_type
