@@ -137,9 +137,11 @@ const AddNodes = ({ nodesData, node }) => {
     const [categoryExpanded, setCategoryExpanded] = useState({})
     const [tabValue, setTabValue] = useState(0)
     const userData = useSelector((state) => state.user.userData)
+    console.log(userData, 'userData')
 
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
     userData.subscription_type === null ? (userData.subscription_type = 'free') : userData.subscription_type
+    console.log(userData.subscription_type, 'AddNodes subscription type')
     if (!userData.subscription_type) {
         userData.subscription_type = localStorage.getItem('subscription_type')
     }
@@ -157,7 +159,6 @@ const AddNodes = ({ nodesData, node }) => {
     console.log(nodes, 'nodes')
 
     console.log('tab: ', tab)
-    //console.log("nodes: ",nodes)
 
     for (let nodeKey in nodes) {
         if (Object.prototype.hasOwnProperty.call(nodes, nodeKey) && !allowedMenuItemKeys.includes(nodeKey)) {
@@ -447,30 +448,9 @@ const AddNodes = ({ nodesData, node }) => {
                                 ></Tab>
                             ))}
                             {customization.menu_open && (
-                                <div
-                                // style={{
-                                //     display: 'flex',
-                                //     flexDirection: 'row',
-                                //     alignItems: 'center',
-                                //     borderRadius: 10,
-                                //     background: 'rgb(254,252,191)',
-                                //     padding: '1px 6px',
-                                //     width: 'max-content',
-                                //     position: 'absolute',
-                                //     top: 0,
-                                //     right: 0,
-                                //     fontSize: '0.6rem',
-                                //     lineHeight: '1.5',
-                                //     fontWeight: 700
-                                // }}
-                                >
-                                    {/* {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>} */}
-                                </div>
+                                <div>{/* {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>} */}</div>
                             )}
                         </Tabs>
-
-                        {/* )} */}
-
                         <Divider />
                     </Box>
 
@@ -485,7 +465,6 @@ const AddNodes = ({ nodesData, node }) => {
                                 p: 2,
                                 pt: 0,
                                 height: '100%'
-                                // marginTop:customization.menu_open ? "" :"21px"
                             }}
                         >
                             <List
@@ -653,33 +632,7 @@ const AddNodes = ({ nodesData, node }) => {
                                         </Accordion>
                                     ))}
                             </List>
-                            <Box sx={{ mr: 2 }}>
-                                {/* <ButtonBase title='Toggle' sx={{ marginLeft: customization.menu_open ? "325px" : "75px", marginTop: customization.menu_open ? "-1200px" : "-1000px" }}
-                                    onClick={() => dispatch({ type: SHOW_MENU })}>
-                                    <Avatar className='sideAvatar'
-                                        variant='rounded'
-                                        sx={{
-                                            ...theme.typography.commonAvatar,
-                                            ...theme.typography.mediumAvatar,
-                                            transition: 'all .2s ease-in-out',
-                                            // background: theme.palette.canvasHeader.settingsLight,
-                                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                            // color: theme.palette.canvasHeader.settingsDark,
-                                            color: '#fff',
-                                            '&:hover': {
-                                                // background: theme.palette.canvasHeader.settingsDark,
-                                                // background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                                // color: theme.palette.canvasHeader.settingsLight
-                                                // color: '#fff'
-                                            }
-                                        }}
-                                      
-                                    >
-
-                                        <KeyboardArrowRightIcon stroke={1.5} size='1.3rem' sx={{ background: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
-                                    </Avatar>
-                                </ButtonBase> */}
-                            </Box>
+                            <Box sx={{ mr: 2 }}></Box>
                         </Box>
                     </PerfectScrollbar>
                 </MainCard>

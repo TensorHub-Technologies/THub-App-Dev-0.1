@@ -29,6 +29,8 @@ export const SHOW_MENU = 'SHOW_MENU'
 
 export const SET_USER_DATA = 'SET_USER_DATA'
 
+export const UPDATE_USER_FIELD = 'UPDATE_USER_FIELD'
+
 export const enqueueSnackbar = (notification) => {
     const key = notification.options && notification.options.key
 
@@ -43,7 +45,7 @@ export const enqueueSnackbar = (notification) => {
 
 export const closeSnackbar = (key) => ({
     type: CLOSE_SNACKBAR,
-    dismissAll: !key, // dismiss all if no key has been defined
+    dismissAll: !key,
     key
 })
 
@@ -54,6 +56,11 @@ export const removeSnackbar = (key) => ({
 export const setUserData = (userData) => ({
     type: SET_USER_DATA,
     payload: userData
+})
+
+export const updateUserField = ({ field, value }) => ({
+    type: UPDATE_USER_FIELD,
+    payload: { field, value }
 })
 
 export const SET_MINMAX = 'SET_MINMAX'

@@ -27,3 +27,25 @@
 .edit-dark:hover {
     color: #e22a90;
 }
+
+.button-upgrade-dark {
+    box-shadow: 0px 2px 1px rgb(56, 55, 55);
+    background-color: #23262c;
+    color: #e22a90;
+    border: 0.5px solid #e22a90;
+}
+
+.button-upgrade-dark:hover {
+    background-color: #e22a90;
+    color: white;
+}
+
+.button-upgrade-light {
+    background-color: white;
+    color: #3c5ba4;
+    border: 0.5px solid #3c5ba4;
+}
+.button-upgrade-light:hover {
+    background-color: #3c5ba4;
+    color: white;
+}
