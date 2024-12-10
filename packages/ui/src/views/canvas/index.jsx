@@ -20,7 +20,6 @@ import CallMadeIcon from '@mui/icons-material/CallMade'
 // material-ui
 import { Toolbar, Box, AppBar, Button, Switch, Link } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
 // project imports
@@ -60,6 +59,7 @@ import { usePrompt } from '@/utils/usePrompt'
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
 import { IconArrowBackUp } from '@tabler/icons-react'
+import { IconArrowForwardUp } from '@tabler/icons-react'
 
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
 const edgeTypes = { buttonedge: ButtonEdge }
@@ -149,10 +149,12 @@ const Canvas = () => {
     }
 
     // =================// undo // =====================
+    const [redoStack, setRedoStack] = useState([])
+
     const handleUndo = () => {
         if (deletedNode.length > 0) {
             const lastDeletedNode = deletedNode[deletedNode.length - 1]
-            setSelectedNode(lastDeletedNode)
+            setRedoStack((prevRedoStack) => [...prevRedoStack, lastDeletedNode])
             setDeletedNodes(deletedNode.slice(0, -1))
             setNodes((nds) =>
                 nds.concat(lastDeletedNode).map((node) => {
@@ -171,11 +173,30 @@ const Canvas = () => {
                 })
             )
         }
-        if (getSpecificChatflowApi.data) {
-            const chatflow = getSpecificChatflowApi.data
-            const initialFlow = chatflow.flowData ? JSON.parse(chatflow.flowData) : []
-            setEdges(initialFlow.edges || [])
-            dispatch({ type: SET_CHATFLOW, chatflow })
+    }
+
+    // =================// Redo // =====================
+    const handleRedo = () => {
+        if (redoStack.length > 0) {
+            const lastRedoNode = redoStack[redoStack.length - 1]
+            setRedoStack(redoStack.slice(0, -1))
+            setDeletedNodes((prevDeletedNodes) => [...prevDeletedNodes, lastRedoNode])
+            setNodes((nds) =>
+                nds.concat(lastRedoNode).map((node) => {
+                    if (node.id === lastRedoNode.id) {
+                        node.data = {
+                            ...node.data,
+                            selected: true
+                        }
+                    } else {
+                        node.data = {
+                            ...node.data,
+                            selected: false
+                        }
+                    }
+                    return node
+                })
+            )
         }
     }
 
@@ -645,6 +666,9 @@ const Canvas = () => {
     }, [templateFlowData])
 
     usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
+    const [notesVisible, setNotesVisible] = useState(false)
+    const [noteContent, setNoteContent] = useState('')
+    const handleNotesToggle = () => setNotesVisible(!notesVisible)
 
     return (
         <>
@@ -708,13 +732,182 @@ const Canvas = () => {
                                             left: '50%',
                                             transform: 'translate(-50%, -50%)'
                                         }}
-                                    />
+                                    >
+                                        {/* <div
+     onClick={handleNotesToggle} // Function to handle note-taking toggle
+    style={{
+      backgroundColor: '#fefefe',
+      borderBottom:'1px solid #eee',
+  boxSizing:'content-box',
+  height:'16px',
+      padding: '5px',
+      cursor: 'pointer',
+      boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+      marginLeft: '0px', // Add spacing from the previous button
+      justifyContent:'center',
+      alignItems:'center',
+    }}
+    title="Add Notes"
+  >
+    <FiEdit size={16} color="#000000"/>
+  </div> */}
+
+                                        <MenuItem
+                                            sx={{
+                                                backgroundColor: '#fefefe',
+                                                borderBottom: '1px solid #eee',
+                                                boxSizing: 'content-box',
+                                                height: '16px',
+
+                                                padding: '5px',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                marginLeft: '0px', // Add spacing from the previous button
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                '&:hover': {
+                                                    backgroundColor: 'white'
+                                                }
+                                            }}
+                                            title='Undo'
+                                            onClick={handleUndo}
+                                        >
+                                            <IconArrowBackUp id='MinimizeIcon' size={19} color='#000000' />
+                                        </MenuItem>
+
+                                        <MenuItem
+                                            sx={{
+                                                backgroundColor: '#fefefe',
+                                                borderBottom: '1px solid #eee',
+                                                boxSizing: 'content-box',
+                                                height: '16px',
+
+                                                padding: '5px',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                marginLeft: '0px', // Add spacing from the previous button
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                '&:hover': {
+                                                    backgroundColor: 'white'
+                                                }
+                                            }}
+                                            title='Redo'
+                                            onClick={handleRedo}
+                                        >
+                                            <IconArrowForwardUp id='MinimizeIcon' size={19} color='#000000' />
+                                        </MenuItem>
+
+                                        <MenuItem
+                                            sx={{
+                                                backgroundColor: '#fefefe',
+                                                borderBottom: '1px solid #eee',
+                                                boxSizing: 'content-box',
+                                                height: '16px',
+
+                                                padding: '5px',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                marginLeft: '0px', // Add spacing from the previous button
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                '&:hover': {
+                                                    backgroundColor: 'white'
+                                                }
+                                            }}
+                                            title='Expand All Node'
+                                            onClick={handleMin}
+                                            // disabled={minMax && nodeMinMax}
+                                        >
+                                            <CallMadeIcon
+                                                id='ExpandIcon'
+                                                sx={{
+                                                    fontSize: '16px',
+                                                    backgroundColor: 'transparent',
+                                                    color: theme.palette.mode === 'dark' ? '#fff' : '#000'
+                                                }}
+                                            />
+                                        </MenuItem>
+                                        <MenuItem
+                                            sx={{
+                                                backgroundColor: '#fefefe',
+                                                borderBottom: '1px solid #eee',
+                                                boxSizing: 'content-box',
+                                                height: '16px',
+                                                color: '#000000',
+                                                padding: '5px',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                marginLeft: '0px', // Add spacing from the previous button
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                '&:hover': {
+                                                    backgroundColor: 'white'
+                                                }
+                                            }}
+                                            title='Collpase All Node'
+                                            onClick={handleMax}
+                                            // disabled={!minMax && !nodeMinMax}
+                                        >
+                                            <HorizontalRuleIcon
+                                                id='MinimizeIcon'
+                                                size={19}
+                                                sx={{
+                                                    color: theme.palette.mode === 'dark' ? '#fff' : '#000' // Adjust color based on theme mode
+                                                }}
+                                            />
+                                        </MenuItem>
+                                    </Controls>
                                     <Background color='#aaa' gap={16} />
+                                    {notesVisible && (
+                                        <div
+                                            style={{
+                                                position: 'absolute',
+                                                top: '20%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -20%)',
+                                                backgroundColor: '#fff',
+                                                padding: '16px',
+                                                boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                                                borderRadius: '8px',
+                                                zIndex: 10,
+                                                width: '300px'
+                                            }}
+                                        >
+                                            <textarea
+                                                value={noteContent}
+                                                onChange={(e) => setNoteContent(e.target.value)}
+                                                placeholder='Write your notes here...'
+                                                style={{
+                                                    width: '100%',
+                                                    height: '150px',
+                                                    padding: '8px',
+                                                    borderRadius: '4px',
+                                                    border: '1px solid #ccc',
+                                                    resize: 'none'
+                                                }}
+                                            />
+                                            <button
+                                                onClick={handleNotesToggle}
+                                                style={{
+                                                    marginTop: '8px',
+                                                    padding: '8px 12px',
+                                                    backgroundColor: '#007BFF',
+                                                    color: '#fff',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Close
+                                            </button>
+                                        </div>
+                                    )}
 
                                     {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
                                     <ChatPopUp chatflowid={chatflowId} />
                                 </ReactFlow>
-                                <Menu
+                                {/* <Menu
                                     open={menuPosition !== null}
                                     onClose={handleClose}
                                     anchorReference='anchorPosition'
@@ -786,7 +979,7 @@ const Canvas = () => {
                                         <IconArrowBackUp id='MinimizeIcon' sx={{ mr: '12px' }} />
                                         Undo
                                     </MenuItem>
-                                </Menu>
+                                </Menu> */}
                             </div>
                         </div>
                     </Box>

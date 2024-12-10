@@ -5,7 +5,7 @@ import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
-import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
+import FormatShapesIcon from '@mui/icons-material/FormatShapes'
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined'
 
 const icons = {
@@ -13,7 +13,7 @@ const icons = {
     DynamicFeedOutlinedIcon,
     ConstructionOutlinedIcon,
     SmartToyOutlinedIcon,
-    InventoryOutlinedIcon,
+    FormatShapesIcon,
     HttpsOutlinedIcon,
     VpnKeyOutlinedIcon,
     InsertDriveFileOutlinedIcon
@@ -59,14 +59,14 @@ const dashboard = {
             icon: icons.ConstructionOutlinedIcon,
             breadcrumbs: true
         },
-        {
-            id: 'assistants',
-            title: 'Assistants',
-            type: 'item',
-            url: '/assistants',
-            icon: icons.SmartToyOutlinedIcon,
-            breadcrumbs: true
-        },
+        // {
+        //     id: 'assistants',
+        //     title: 'Assistants',
+        //     type: 'item',
+        //     url: '/assistants',
+        //     icon: icons.SmartToyOutlinedIcon,
+        //     breadcrumbs: true
+        // },
         {
             id: 'credentials',
             title: 'Credentials',
@@ -80,7 +80,7 @@ const dashboard = {
             title: 'Variables',
             type: 'item',
             url: '/variables',
-            icon: icons.InventoryOutlinedIcon,
+            icon: icons.FormatShapesIcon,
             breadcrumbs: true
         },
         {

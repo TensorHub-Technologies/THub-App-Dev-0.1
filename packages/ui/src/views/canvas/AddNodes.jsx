@@ -51,7 +51,8 @@ import toolsIconlite from '../../assets/icons/tools_dark.svg'
 // import BuildIcon from '@mui/icons-material/Build'
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
 import LayersIcon from '@mui/icons-material/Layers'
-import ArchitectureIcon from '@mui/icons-material/Architecture'
+import engineIconlite from '../../assets/icons/engine_dark.svg'
+import engineIcondark from '../../assets/icons/engine_lite.svg'
 import QrCodeIcon from '@mui/icons-material/QrCode'
 import SwitchAccountIcon from '@mui/icons-material/SwitchAccount'
 
@@ -169,7 +170,13 @@ const AddNodes = ({ nodesData, node }) => {
         ),
         Utilities: <AutoFixHighIcon />,
         'Vector Stores': <LayersIcon />,
-        Engine: <ArchitectureIcon />,
+        Engine: (
+            <img
+                src={customization?.isDarkMode ? engineIconlite : engineIcondark}
+                alt='tools'
+                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
+            />
+        ),
         'Response Synthesizer': <QrCodeIcon />
     }
 
