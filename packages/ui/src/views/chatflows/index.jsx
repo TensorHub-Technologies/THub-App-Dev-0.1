@@ -25,7 +25,6 @@ import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import emptyImage from '../../assets/images/glass.svg'
 
 import emptyImagelite from '../../assets/images/glass-lite.svg'
-import axios from 'axios'
 // API
 
 import chatflowsApi from '@/api/chatflows'
@@ -82,8 +81,8 @@ const Chatflows = () => {
     const [sortBy, setSortBy] = useState('name')
 
     const userData = useSelector((state) => state.user.userData)
-    localStorage.setItem('subscription_type', userData?.subscription_type)
-    const subscription = localStorage.getItem('subscription_type')
+    // localStorage.setItem('subscription_type', userData?.subscription_type)
+    // const subscription = localStorage.getItem('subscription_type')
 
     const tenantId = userData?.uid
 
@@ -136,15 +135,15 @@ const Chatflows = () => {
 
     const addNew = async () => {
         const chatflows = getAllChatflowsApi.data || []
-        console.log('userData: ', userData?.subscription_type)
 
         console.log('chatflows: ', chatflows.length)
 
-        userData.subscription_type === null ? (userData.subscription_type = 'free') : userData.subscription_type
+        let subscriptionType = userData?.subscription_type
+        if (!subscriptionType) {
+            subscriptionType = 'free'
+        }
 
-        console.log(userData.subscription_type, 'Subscription type')
-
-        if (userData?.subscription_type === 'free' || localStorage.getItem('subscription_type') === 'free') {
+        if (subscriptionType === 'free') {
             if (chatflows.length > 4) {
                 navigate('/subscription')
                 // TODO: Add banner to show free tier limit reached
@@ -156,29 +155,32 @@ const Chatflows = () => {
             let workspace_count = 0
             //getusers with email and check number of users and number of workspace
             console.log('userData for pro plan users: ', userData.email)
-
+            workspace_count = chatflows.length
+            console.log(workspace_count, 'workspace_count')
             const userDomain = userData?.email.split('@')[1].split('.')[0]
+            console.log(userDomain, 'userDomain')
 
-            if (userDomain !== 'gmail' && userDomain !== 'github' && userDomain !== 'yahoo') {
-                const apiUrl =
-                    window.location.hostname === 'localhost'
-                        ? 'http://localhost:2000/proUsers'
-                        : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/proUsers'
+            // if (userDomain !== 'gmail' && userDomain !== 'github' && userDomain !== 'yahoo') {
+            //     const apiUrl =
+            //         window.location.hostname === 'localhost'
+            //             ? 'http://localhost:2000/proUsers'
+            //             : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/proUsers'
 
-                try {
-                    const response = await axios.post(apiUrl, { userDomain })
-                    console.log('response: ', response)
-                    if (response.status === 200) {
-                        workspace_count += response?.data
-                    } else {
-                        console.error('Error:', response.statusText)
-                    }
-                } catch (error) {
-                    console.error('Error:', error)
-                }
-            } else {
-                workspace_count = chatflows.length
-            }
+            //     try {
+            //         const response = await axios.post(apiUrl, { userDomain })
+            //         console.log('response: ', response)
+            //         if (response.status === 200) {
+            //             workspace_count += response?.data
+            //             console.log(workspace_count,"workspace count")
+            //         } else {
+            //             console.error('Error:', response.statusText)
+            //         }
+            //     } catch (error) {
+            //         console.error('Error:', error)
+            //     }
+            // } else {
+            //     workspace_count = chatflows.length
+            // }
             if (workspace_count >= 25) {
                 // TODO: Add banner to show pro tier limit reached
                 console.log('maximum workspace apps reached! upgrade plan to continue')

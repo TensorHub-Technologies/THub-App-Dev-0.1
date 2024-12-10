@@ -85,6 +85,10 @@ const Header = ({ handleLeftDrawerToggle }) => {
         handleClose()
     }
 
+    const handleSettingClick = () => {
+        navigate('/setting')
+    }
+
     const handleClose = () => {
         setAnchorEl(null)
     }
@@ -128,7 +132,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     const response = await axios.post(apiUrl, { userId })
                     if (response.status === 200) {
                         const userData = response?.data[0]
-                        console.log(userData, 'profile user data')
 
                         dispatch(setUserData(userData))
 
@@ -296,7 +299,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={handleSettingClick}>
                         <ListItemIcon>
                             <Settings fontSize='small' />
                         </ListItemIcon>
