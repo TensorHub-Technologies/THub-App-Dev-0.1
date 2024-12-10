@@ -1,16 +1,18 @@
 import { useRef, useState } from 'react'
 import Avatar from '@mui/material/Avatar'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Typography, Box } from '@mui/material'
 import './ImageUpload.css'
 import axios from 'axios'
 import CreateIcon from '@mui/icons-material/Create'
+import { updateUserField } from '@/store/actions'
 import toast, { Toaster } from 'react-hot-toast'
 
 function ImageUpload() {
     const user = useSelector((state) => state.user.userData)
     const customization = useSelector((state) => state.customization)
     const inputRef = useRef(null)
+    const dispatch = useDispatch()
     const pic = user.picture
     const [showImage, setShowImage] = useState(pic || '')
     const userName = user.name || ''
@@ -44,6 +46,7 @@ function ImageUpload() {
                 uploadPromise.then((response) => {
                     if (response.data.success) {
                         setShowImage(response.data.imageUrl)
+                        dispatch(updateUserField({ field: 'picture', value: response.data.imageUrl }))
                         return 'Image uploaded successfully!'
                     } else {
                         throw new Error('Image upload failed')
