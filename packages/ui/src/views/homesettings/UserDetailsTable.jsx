@@ -40,7 +40,7 @@ const UserDetailsTable = () => {
             userId: user.uid
         }
 
-        const updateRequest = axios.put(`${url}/api/users/update`, payload)
+        const updateRequest = axios.post(`${url}/api/users/update`, payload)
 
         toast.promise(
             updateRequest
