@@ -76,6 +76,7 @@ const Subscription = () => {
     const handleLoading = (message) => {
         toast.success(message, {
             theme: 'colored',
+            autoClose: 2000,
             style: {
                 background: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                 color: 'white'
@@ -117,6 +118,7 @@ const Subscription = () => {
 
     const paymentHandler = async (e, planTitle, planId, duration) => {
         if (e) e.preventDefault()
+        handleLoading('Loading Razorpay Payment Gateway')
         console.log(planTitle, planId, duration, 'paymentHandler')
         if (planTitle === 'Enterprise') {
             console.log(planTitle === 'Enterprise')

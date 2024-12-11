@@ -132,7 +132,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     const response = await axios.post(apiUrl, { userId })
                     if (response.status === 200) {
                         const userData = response?.data[0]
-                        console.log(userData, 'profile user data')
 
                         dispatch(setUserData(userData))
 
