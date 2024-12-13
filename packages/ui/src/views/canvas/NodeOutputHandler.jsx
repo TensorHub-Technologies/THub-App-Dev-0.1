@@ -95,7 +95,7 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                                 style={{
                                     height: 10,
                                     width: 10,
-                                    backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
+                                    backgroundColor: 'red',
                                     top: position - 25
                                 }}
                             />
@@ -152,10 +152,11 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                                 id={outputAnchor.options.find((opt) => opt.name === data.outputs?.[outputAnchor.name])?.id ?? ''}
                                 isValidConnection={(connection) => isValidConnection(connection, reactFlowInstance)}
                                 style={{
-                                    height: 10,
-                                    width: 10,
-                                    backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                                    top: position
+                                    height: 25,
+                                    width: 15,
+                                    backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                    top: position,
+                                    borderRadius: 5
                                 }}
                             />
                         </CustomWidthTooltip>

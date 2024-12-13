@@ -20,6 +20,7 @@ import CallMadeIcon from '@mui/icons-material/CallMade'
 // material-ui
 import { Toolbar, Box, AppBar, Button, Switch, Link } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
 // project imports
@@ -125,6 +126,10 @@ const Canvas = () => {
     useEffect(() => {
         dispatch(setNodesMinMax(minMax))
     }, [minMax, uniqueId])
+
+    useEffect(() => {
+        handleMax()
+    }, [])
 
     const handleMin = () => {
         dispatch(setMinMax(true))
@@ -670,8 +675,16 @@ const Canvas = () => {
     const [noteContent, setNoteContent] = useState('')
     const handleNotesToggle = () => setNotesVisible(!notesVisible)
 
+    useEffect(() => {
+        document.body.classList.toggle('dark-mode', customization.isDarkMode)
+        document.body.classList.toggle('light-mode', !customization.isDarkMode)
+    }, [customization.isDarkMode])
+
     return (
         <>
+            <div>
+                <button className='react-flow__controls-button'>Control</button>
+            </div>
             <Box>
                 <AppBar
                     enableColorOnDark
@@ -723,140 +736,146 @@ const Canvas = () => {
                                     fitView
                                     deleteKeyCode={canvas.canvasDialogShow ? null : ['Delete']}
                                     minZoom={0.1}
-                                    onContextMenu={handleContextMenu}
                                 >
                                     <Controls
                                         style={{
                                             display: 'flex',
                                             flexDirection: 'row',
                                             left: '50%',
-                                            transform: 'translate(-50%, -50%)'
+                                            transform: 'translate(-50%, -50%)',
+                                            padding: '5px 10px',
+                                            position: 'absolute',
+                                            marginLeft: '20px',
+                                            boxShadow: 'none'
                                         }}
                                     >
-                                        {/* <div
-     onClick={handleNotesToggle} // Function to handle note-taking toggle
-    style={{
-      backgroundColor: '#fefefe',
-      borderBottom:'1px solid #eee',
-  boxSizing:'content-box',
-  height:'16px',
-      padding: '5px',
-      cursor: 'pointer',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-      marginLeft: '0px', // Add spacing from the previous button
-      justifyContent:'center',
-      alignItems:'center',
-    }}
-    title="Add Notes"
-  >
-    <FiEdit size={16} color="#000000"/>
-  </div> */}
-
-                                        <MenuItem
-                                            sx={{
-                                                backgroundColor: '#fefefe',
-                                                borderBottom: '1px solid #eee',
-                                                boxSizing: 'content-box',
-                                                height: '16px',
-
-                                                padding: '5px',
-                                                cursor: 'pointer',
-                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                                marginLeft: '0px', // Add spacing from the previous button
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                '&:hover': {
-                                                    backgroundColor: 'white'
-                                                }
-                                            }}
-                                            title='Undo'
-                                            onClick={handleUndo}
-                                        >
-                                            <IconArrowBackUp id='MinimizeIcon' size={19} color='#000000' />
-                                        </MenuItem>
-
-                                        <MenuItem
-                                            sx={{
-                                                backgroundColor: '#fefefe',
-                                                borderBottom: '1px solid #eee',
-                                                boxSizing: 'content-box',
-                                                height: '16px',
-
-                                                padding: '5px',
-                                                cursor: 'pointer',
-                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                                marginLeft: '0px', // Add spacing from the previous button
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                '&:hover': {
-                                                    backgroundColor: 'white'
-                                                }
-                                            }}
-                                            title='Redo'
-                                            onClick={handleRedo}
-                                        >
-                                            <IconArrowForwardUp id='MinimizeIcon' size={19} color='#000000' />
-                                        </MenuItem>
-
-                                        <MenuItem
-                                            sx={{
-                                                backgroundColor: '#fefefe',
-                                                borderBottom: '1px solid #eee',
-                                                boxSizing: 'content-box',
-                                                height: '16px',
-
-                                                padding: '5px',
-                                                cursor: 'pointer',
-                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                                marginLeft: '0px', // Add spacing from the previous button
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                '&:hover': {
-                                                    backgroundColor: 'white'
-                                                }
-                                            }}
-                                            title='Expand All Node'
-                                            onClick={handleMin}
-                                            // disabled={minMax && nodeMinMax}
-                                        >
-                                            <CallMadeIcon
-                                                id='ExpandIcon'
+                                        <Box sx={{ display: 'flex', gap: '20px', padding: '5px' }}>
+                                            {/* First Rectangle: Undo and Redo */}
+                                            <Box
                                                 sx={{
-                                                    fontSize: '16px',
-                                                    backgroundColor: 'transparent',
-                                                    color: theme.palette.mode === 'dark' ? '#fff' : '#000'
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    backgroundColor: '#fefefe',
+                                                    border: '1px solid #eee',
+                                                    padding: '5px',
+                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                    borderRadius: '14px',
+                                                    marginLeft: '17px'
                                                 }}
-                                            />
-                                        </MenuItem>
-                                        <MenuItem
-                                            sx={{
-                                                backgroundColor: '#fefefe',
-                                                borderBottom: '1px solid #eee',
-                                                boxSizing: 'content-box',
-                                                height: '16px',
-                                                color: '#000000',
-                                                padding: '5px',
-                                                cursor: 'pointer',
-                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                                marginLeft: '0px', // Add spacing from the previous button
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                '&:hover': {
-                                                    backgroundColor: 'white'
-                                                }
-                                            }}
-                                            title='Collpase All Node'
-                                            onClick={handleMax}
-                                            // disabled={!minMax && !nodeMinMax}
-                                        >
-                                            <HorizontalRuleIcon
-                                                id='MinimizeIcon'
-                                                size={19}
+                                            >
+                                                <MenuItem
+                                                    sx={{
+                                                        borderRight: '3px solid #eee',
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Undo'
+                                                    onClick={handleUndo}
+                                                >
+                                                    <IconArrowBackUp id='UndoIcon' size={19} color='#000000' />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Redo'
+                                                    onClick={handleRedo}
+                                                >
+                                                    <IconArrowForwardUp id='RedoIcon' size={19} color='#000000' />
+                                                </MenuItem>
+                                            </Box>
+
+                                            {/* Second Rectangle: Expand and Collapse */}
+                                            <Box
                                                 sx={{
-                                                    color: theme.palette.mode === 'dark' ? '#fff' : '#000' // Adjust color based on theme mode
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    backgroundColor: '#fefefe',
+                                                    border: '1px solid #eee',
+                                                    padding: '5px',
+                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                    borderRadius: '14px'
                                                 }}
-                                            />
-                                        </MenuItem>
+                                            >
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Expand All Nodes'
+                                                    onClick={handleMin}
+                                                >
+                                                    <CallMadeIcon
+                                                        id='ExpandIcon'
+                                                        sx={{
+                                                            fontSize: '16px',
+                                                            backgroundColor: 'transparent',
+                                                            color: theme.palette.mode === 'dark' ? '#fff' : '#000'
+                                                        }}
+                                                    />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Collapse All Nodes'
+                                                    onClick={handleMax}
+                                                >
+                                                    <HorizontalRuleIcon
+                                                        id='CollapseIcon'
+                                                        size={19}
+                                                        sx={{
+                                                            backgroundColor: 'transparent',
+                                                            color: theme.palette.mode === 'dark' ? '#fff' : '#000'
+                                                        }}
+                                                    />
+                                                </MenuItem>
+                                            </Box>
+                                        </Box>
                                     </Controls>
                                     <Background color='#aaa' gap={16} />
                                     {notesVisible && (
@@ -906,80 +925,80 @@ const Canvas = () => {
 
                                     {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
                                     <ChatPopUp chatflowid={chatflowId} />
-                                </ReactFlow>
-                                {/* <Menu
-                                    open={menuPosition !== null}
-                                    onClose={handleClose}
-                                    anchorReference='anchorPosition'
-                                    anchorPosition={
-                                        menuPosition !== null ? { top: menuPosition.mouseY, left: menuPosition.mouseX } : undefined
-                                    }
-                                    sx={{
-                                        '& .MuiPaper-root': {
-                                            position: 'relative',
-                                            top: '65px',
-                                            width: '200px',
-                                            fontSize: '0.875rem',
-                                            padding: '12px',
-                                            overflow: 'hidden',
-                                            height: 'auto',
-                                            fontFamily: 'roboto sans-serif',
-                                            maxHeight: 'calc(-235px + 100vh)'
+                                    <Menu
+                                        open={menuPosition !== null}
+                                        onClose={handleClose}
+                                        anchorReference='anchorPosition'
+                                        anchorPosition={
+                                            menuPosition !== null ? { top: menuPosition.mouseY, left: menuPosition.mouseX } : undefined
                                         }
-                                    }}
-                                >
-                                    <MenuItem
                                         sx={{
-                                            color: customization.isDarkMode ? '#FFF' : '#616161',
-                                            lineHeight: '3em',
-                                            '&:hover': {
-                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
-                                                '& .MuiSvgIcon-root': {
-                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                                }
+                                            '& .MuiPaper-root': {
+                                                position: 'relative',
+                                                top: '65px',
+                                                width: '200px',
+                                                fontSize: '0.875rem',
+                                                padding: '12px',
+                                                overflow: 'hidden',
+                                                height: 'auto',
+                                                fontFamily: 'roboto sans-serif',
+                                                maxHeight: 'calc(-235px + 100vh)'
                                             }
                                         }}
-                                        onClick={handleMin}
-                                        disabled={minMax && nodeMinMax}
                                     >
-                                        <CallMadeIcon id='ExpandIcon' sx={{ mr: '12px' }} />
-                                        Expand All Node
-                                    </MenuItem>
-                                    <MenuItem
-                                        sx={{
-                                            color: customization.isDarkMode ? '#FFF' : '#616161',
-                                            lineHeight: '3em',
-                                            '&:hover': {
-                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
-                                                '& .MuiSvgIcon-root': {
-                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                        <MenuItem
+                                            sx={{
+                                                color: customization.isDarkMode ? '#FFF' : '#616161',
+                                                lineHeight: '3em',
+                                                '&:hover': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                    '& .MuiSvgIcon-root': {
+                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                    }
                                                 }
-                                            }
-                                        }}
-                                        onClick={handleMax}
-                                        disabled={!minMax && !nodeMinMax}
-                                    >
-                                        <HorizontalRuleIcon id='MinimizeIcon' sx={{ mr: '12px' }} />
-                                        Collapse All Node
-                                    </MenuItem>
+                                            }}
+                                            onClick={handleMin}
+                                            disabled={minMax && nodeMinMax}
+                                        >
+                                            <CallMadeIcon id='ExpandIcon' sx={{ mr: '12px' }} />
+                                            Expand All Node
+                                        </MenuItem>
+                                        <MenuItem
+                                            sx={{
+                                                color: customization.isDarkMode ? '#FFF' : '#616161',
+                                                lineHeight: '3em',
+                                                '&:hover': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                    '& .MuiSvgIcon-root': {
+                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                    }
+                                                }
+                                            }}
+                                            onClick={handleMax}
+                                            disabled={!minMax && !nodeMinMax}
+                                        >
+                                            <HorizontalRuleIcon id='MinimizeIcon' sx={{ mr: '12px' }} />
+                                            Collapse All Node
+                                        </MenuItem>
 
-                                    <MenuItem
-                                        sx={{
-                                            color: customization.isDarkMode ? '#FFF' : '#616161',
-                                            lineHeight: '3em',
-                                            '&:hover': {
-                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
-                                                '& .MuiSvgIcon-root': {
-                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                        <MenuItem
+                                            sx={{
+                                                color: customization.isDarkMode ? '#FFF' : '#616161',
+                                                lineHeight: '3em',
+                                                '&:hover': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                    '& .MuiSvgIcon-root': {
+                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                    }
                                                 }
-                                            }
-                                        }}
-                                        onClick={handleUndo}
-                                    >
-                                        <IconArrowBackUp id='MinimizeIcon' sx={{ mr: '12px' }} />
-                                        Undo
-                                    </MenuItem>
-                                </Menu> */}
+                                            }}
+                                            onClick={handleUndo}
+                                        >
+                                            <IconArrowBackUp id='MinimizeIcon' sx={{ mr: '12px' }} />
+                                            Undo
+                                        </MenuItem>
+                                    </Menu>
+                                </ReactFlow>
                             </div>
                         </div>
                     </Box>

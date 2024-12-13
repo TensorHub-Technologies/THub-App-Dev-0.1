@@ -79,3 +79,57 @@
     stroke-dasharray: 4 4;
     animation: dashAnimation 1s linear infinite;
 }
+
+/* zoom out */
+
+.react-flow__controls-button {
+    margin-top: 5px;
+    border: 2px solid #eee;
+}
+
+.react-flow__controls-button:nth-of-type(1) {
+    background-color: #ffffff;
+    color: #fff;
+    padding: 12px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    display: 'flex';
+}
+
+.react-flow__controls-button:nth-of-type(2) {
+    background-color: #ffffff;
+    color: #fff;
+    padding: 12px;
+}
+
+.react-flow__controls-button:nth-of-type(3) {
+    background-color: #ffffff;
+    color: #fff;
+    padding: 12px;
+}
+
+.react-flow__controls-button:nth-of-type(4) {
+    background-color: #ffffff;
+    color: #fff;
+    padding: 12px;
+    border-top-right-radius: 13px;
+    border-bottom-right-radius: 13px;
+}
+
+/* Dark mode hover styles */
+body.dark-mode .react-flow__controls-button:nth-of-type(1):hover,
+body.dark-mode .react-flow__controls-button:nth-of-type(2):hover,
+body.dark-mode .react-flow__controls-button:nth-of-type(3):hover,
+body.dark-mode .react-flow__controls-button:nth-of-type(4):hover {
+    background-color: #e22a90;
+    color: #fff;
+}
+
+/* Light mode hover styles */
+body.light-mode .react-flow__controls-button:nth-of-type(1):hover,
+body.light-mode .react-flow__controls-button:nth-of-type(2):hover,
+body.light-mode .react-flow__controls-button:nth-of-type(3):hover,
+body.light-mode .react-flow__controls-button:nth-of-type(4):hover {
+    background-color: #3c5ba4;
+    color: #fff;
+}
