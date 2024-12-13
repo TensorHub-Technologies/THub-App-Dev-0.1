@@ -475,10 +475,11 @@ const NodeInputHandler = ({
                                 id={inputParam.id}
                                 isValidConnection={(connection) => isValidConnection(connection, reactFlowInstance)}
                                 style={{
-                                    height: 10,
-                                    width: 10,
-                                    backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                                    top: position
+                                    height: 25,
+                                    width: 15,
+                                    backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                    top: position,
+                                    borderRadius: 5
                                 }}
                             />
                         </CustomWidthTooltip>

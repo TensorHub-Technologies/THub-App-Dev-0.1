@@ -5,7 +5,7 @@ import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
-import FormatShapesIcon from '@mui/icons-material/FormatShapes'
+import { IconMathIntegral } from '@tabler/icons-react'
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined'
 
 const icons = {
@@ -13,7 +13,7 @@ const icons = {
     DynamicFeedOutlinedIcon,
     ConstructionOutlinedIcon,
     SmartToyOutlinedIcon,
-    FormatShapesIcon,
+    IconMathIntegral,
     HttpsOutlinedIcon,
     VpnKeyOutlinedIcon,
     InsertDriveFileOutlinedIcon
@@ -80,7 +80,7 @@ const dashboard = {
             title: 'Variables',
             type: 'item',
             url: '/variables',
-            icon: icons.FormatShapesIcon,
+            icon: icons.IconMathIntegral,
             breadcrumbs: true
         },
         {

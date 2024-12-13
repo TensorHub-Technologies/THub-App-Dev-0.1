@@ -16,7 +16,7 @@ import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
 import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
-import FormatShapesIcon from '@mui/icons-material/FormatShapes'
+import { IconMathIntegral } from '@tabler/icons-react'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 
 // icons
@@ -406,6 +406,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
             ? navigate(`/?theme=${customization.isDarkMode ? 'dark' : 'lite'}&uid=${userId}`)
             : navigate('/', { replace: true })
     }
+
     return (
         <>
             <img src={ColorfulLogo} alt='THub_Logo' width={35} />
@@ -648,7 +649,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
                                 { icon: <ConstructionOutlinedIcon />, text: 'Tools', href: '/tools' },
                                 { icon: <SmartToyOutlinedIcon />, text: 'Assistants', href: '/assistants' },
                                 { icon: <HttpsOutlinedIcon />, text: 'Credentials', href: '/credentials' },
-                                { icon: <FormatShapesIcon />, text: 'Variables', href: '/variables' },
+                                { icon: <IconMathIntegral />, text: 'Variables', href: '/variables' },
                                 { icon: <VpnKeyOutlinedIcon />, text: 'API Keys', href: '/apikey' }
                             ].map((item, index) => (
                                 <MenuItem
