@@ -9,9 +9,11 @@ import '../homesettings/homesettings.css'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined'
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle'
 import UserDetailsTable from './UserDetailsTable'
 import { useNavigate } from 'react-router'
 import ImageUpload from './ImageUpload'
+import InviteUsers from './InviteUsers'
 
 const HomeSettings = () => {
     const theme = useTheme()
@@ -71,6 +73,32 @@ const HomeSettings = () => {
                                             fontFamily: 'cambria math',
                                             fontWeight: selectedSection === 'Profile' ? 'bold' : 'normal',
                                             color: selectedSection === 'Profile' ? 'white' : 'pink'
+                                        }}
+                                    />
+                                    <ArrowRightOutlinedIcon style={{ backgroundColor: 'transparent' }} />
+                                </Button>
+                            </ListItem>
+                            <ListItem>
+                                <Button
+                                    fullWidth
+                                    onClick={() => setSelectedSection('Users')}
+                                    sx={{
+                                        justifyContent: 'flex-start',
+                                        textTransform: 'none'
+                                    }}
+                                    className={`${customization.isDarkMode ? 'button_parent_dark' : 'button_parent_light'} ${
+                                        selectedSection === 'Users' ? 'active' : ''
+                                    }`}
+                                >
+                                    <SupervisedUserCircleIcon style={{ backgroundColor: 'transparent' }} />
+                                    <ListItemText
+                                        primary='Users'
+                                        primaryTypographyProps={{
+                                            fontSize: '20px',
+                                            width: '68px',
+                                            fontFamily: 'cambria math',
+                                            fontWeight: selectedSection === 'Users' ? 'bold' : 'normal',
+                                            color: selectedSection === 'Users' ? 'white' : 'pink'
                                         }}
                                     />
                                     <ArrowRightOutlinedIcon style={{ backgroundColor: 'transparent' }} />
@@ -157,6 +185,11 @@ const HomeSettings = () => {
                                         </Button>
                                     </Box>
                                     <UserDetailsTable />
+                                </Paper>
+                            )}
+                            {selectedSection === 'Users' && (
+                                <Paper sx={{ padding: '1rem', height: '100%' }}>
+                                    <InviteUsers />
                                 </Paper>
                             )}
 
