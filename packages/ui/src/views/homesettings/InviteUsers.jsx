@@ -10,6 +10,9 @@ function InviteUsers() {
     const [error, setError] = useState('')
     const [successMessage, setSuccessMessage] = useState('')
     const customization = useSelector((state) => state.customization)
+    const userData = useSelector((state) => state.user.userData)
+    const workspace = userData.workspace
+    const uid = userData.uid
 
     const handleInputChange = (e) => {
         setEmail(e.target.value)
@@ -25,9 +28,13 @@ function InviteUsers() {
             setError('Please enter a valid email address.')
             return
         }
-        console.log(email, 'submitted email')
+        const apiUrl =
+            window.location.hostname === 'localhost'
+                ? 'http://localhost:2000'
+                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+
         try {
-            const response = await axios.post('/api/invite', { email })
+            const response = await axios.post(`${apiUrl}/api/invite`, { email, workspace, uid })
 
             if (response.status === 200) {
                 setSuccessMessage(`Invitation sent to ${email}!`)

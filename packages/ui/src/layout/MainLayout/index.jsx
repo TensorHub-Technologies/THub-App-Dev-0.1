@@ -11,6 +11,8 @@ import Header from './Header'
 import Sidebar from './Sidebar'
 import { drawerWidth } from '@/store/constant'
 import { SET_MENU } from '@/store/actions'
+import RegisterationForm from '../../views/register/RegisterationForm'
+import LoginForm from '@/views/register/LoginForm'
 
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -62,6 +64,12 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 const MainLayout = () => {
     const theme = useTheme()
     const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'))
+    // const customization = useSelector((state) => state.customization)
+    const user = useSelector((state) => state.user.userData)
+    const showRegisterModalState = useSelector((state) => state.modal.showRegisterModal)
+    const showLoginModal = useSelector((state) => state.modal.showLoginModal)
+
+    console.log(showRegisterModalState)
 
     // Handle left drawer
     const leftDrawerOpened = useSelector((state) => state.customization.opened)
@@ -72,7 +80,6 @@ const MainLayout = () => {
 
     useEffect(() => {
         setTimeout(() => dispatch({ type: SET_MENU, opened: !matchDownMd }), 0)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matchDownMd])
 
     return (
@@ -97,6 +104,10 @@ const MainLayout = () => {
             </AppBar>
 
             <Sidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
+
+            {showRegisterModalState && <RegisterationForm />}
+
+            {showLoginModal && <LoginForm />}
 
             <Main theme={theme} open={leftDrawerOpened}>
                 <Outlet />
