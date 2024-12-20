@@ -8,6 +8,7 @@ import dialogReducer from './reducers/dialogReducer'
 import userReducer from './reducers/userReducer'
 import minMaxReducer from './reducers/minMaxReducer'
 import NodeMinMaxReducer from './reducers/nodemMinMaxReducer'
+import modalReducer from './reducers/registerReducer'
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -18,7 +19,8 @@ const reducer = combineReducers({
     dialog: dialogReducer,
     user: userReducer,
     minMax: minMaxReducer,
-    nodeMinMax: NodeMinMaxReducer
+    nodeMinMax: NodeMinMaxReducer,
+    modal: modalReducer
 })
 
 export default reducer
