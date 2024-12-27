@@ -1381,7 +1381,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                         flex: '0 0 auto'
                     }}
                 >
-                    <CardMedia component='img' image={item.data} sx={{ height: 64 }} alt={'preview'} style={messageImageStyle} />
+                    <CardMedia component='img' image={item.data} sx={{ height: 30, width: 30 }} alt={'preview'} style={messageImageStyle} />
                 </Card>
             )
         } else if (item?.mime?.startsWith('audio/')) {

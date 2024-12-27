@@ -241,8 +241,8 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                                                     <div
                                                         key={img}
                                                         style={{
-                                                            width: 35,
-                                                            height: 35,
+                                                            width: 30,
+                                                            height: 30,
                                                             marginRight: 5,
                                                             borderRadius: '20%',
                                                             boxShadow: '2px 2px 14px 2px rgb(32 40 45 / 8%)',

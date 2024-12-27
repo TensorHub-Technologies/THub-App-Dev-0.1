@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, useCallback, useContext } from 'react'
 import ReactFlow, { addEdge, Controls, Background, useNodesState, useEdgesState } from 'reactflow'
 import 'reactflow/dist/style.css'
+import * as htmlToImage from 'html-to-image'
+import DownloadIcon from '@mui/icons-material/Download'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -700,6 +702,22 @@ const Canvas = () => {
         setNodes(updatedNodes) // Update nodes state
     }
 
+    const downloadImage = () => {
+        if (reactFlowWrapper.current) {
+            htmlToImage
+                .toPng(reactFlowWrapper.current)
+                .then((dataUrl) => {
+                    const link = document.createElement('a')
+                    link.href = dataUrl
+                    link.download = 'reactflow-diagram.png'
+                    link.click()
+                })
+                .catch((error) => {
+                    console.error('Error generating the image:', error)
+                })
+        }
+    }
+
     return (
         <>
             <div>
@@ -921,6 +939,39 @@ const Canvas = () => {
                                                 </MenuItem>
                                             </Box>
                                         </Box>
+                                        <button
+                                            onClick={downloadImage}
+                                            style={{
+                                                height: '38px',
+                                                marginTop: '6px',
+                                                marginLeft: '15px',
+                                                // padding: '5px',
+                                                backgroundColor: '#fefefe',
+                                                boxSizing: 'content-box',
+                                                border: '1px solid #eee',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                borderRadius: '14px',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                '&:hover': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                }
+                                            }}
+                                            onMouseEnter={(e) =>
+                                                (e.currentTarget.style.backgroundColor = customization.isDarkMode ? '#e22a90' : '#3c5ba4')
+                                            }
+                                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fefefe')}
+                                        >
+                                            Download as Image
+                                            <DownloadIcon
+                                                style={{
+                                                    color: customization.isDarkMode ? '#000' : '#000', // Change color based on mode
+                                                    fontSize: '18px', // Adjust icon size
+                                                    marginTop: '2px' // Optional vertical alignment tweak
+                                                }}
+                                            />
+                                        </button>
                                     </Controls>
                                     <Background color='#aaa' gap={16} />
 

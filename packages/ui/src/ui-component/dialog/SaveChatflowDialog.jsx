@@ -11,6 +11,8 @@ const SaveChatflowDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const [chatflowName, setChatflowName] = useState('')
     const [isReadyToSave, setIsReadyToSave] = useState(false)
 
+    const [chatflowDescription, setChatflowDescription] = useState('') // Declare description state
+
     useEffect(() => {
         if (chatflowName) setIsReadyToSave(true)
         else setIsReadyToSave(false)
@@ -28,6 +30,7 @@ const SaveChatflowDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
                 {dialogProps.title}
             </DialogTitle>
+
             <DialogContent>
                 <OutlinedInput
                     sx={{ mt: 1 }}
@@ -38,7 +41,17 @@ const SaveChatflowDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                     value={chatflowName}
                     onChange={(e) => setChatflowName(e.target.value)}
                 />
+                <OutlinedInput
+                    sx={{ mt: 2 }}
+                    id='chatflow-description'
+                    type='text'
+                    fullWidth
+                    placeholder='Add a description'
+                    value={chatflowDescription}
+                    onChange={(e) => setChatflowDescription(e.target.value)}
+                />
             </DialogContent>
+
             <DialogActions>
                 <Button onClick={onCancel}>{dialogProps.cancelButtonName}</Button>
                 <StyledButton disabled={!isReadyToSave} variant='contained' onClick={() => onConfirm(chatflowName)}>
