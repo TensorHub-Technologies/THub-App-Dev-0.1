@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, useCallback, useContext } from 'react'
 import ReactFlow, { addEdge, Controls, Background, useNodesState, useEdgesState } from 'reactflow'
 import 'reactflow/dist/style.css'
+import * as htmlToImage from 'html-to-image'
+import DownloadIcon from '@mui/icons-material/Download'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -16,6 +18,7 @@ import {
 import { omit, cloneDeep } from 'lodash'
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
 import CallMadeIcon from '@mui/icons-material/CallMade'
+import GridViewIcon from '@mui/icons-material/GridView'
 
 // material-ui
 import { Toolbar, Box, AppBar, Button, Switch, Link } from '@mui/material'
@@ -680,6 +683,41 @@ const Canvas = () => {
         document.body.classList.toggle('light-mode', !customization.isDarkMode)
     }, [customization.isDarkMode])
 
+    const handleOrganizeNodes = () => {
+        // Create a copy of nodes to modify their positions
+        const updatedNodes = nodes.map((node, index) => {
+            // Arrange nodes in a grid layout
+            const row = Math.floor(index / 5) // 5 nodes per row
+            const col = index % 5 // Column index
+            const x = col * 350 // Horizontal spacing
+            const y = row * 150 // Vertical spacing
+
+            return {
+                ...node,
+                position: { x, y }, // Update position
+                data: { ...node.data }
+            }
+        })
+
+        setNodes(updatedNodes) // Update nodes state
+    }
+
+    const downloadImage = () => {
+        if (reactFlowWrapper.current) {
+            htmlToImage
+                .toPng(reactFlowWrapper.current)
+                .then((dataUrl) => {
+                    const link = document.createElement('a')
+                    link.href = dataUrl
+                    link.download = 'reactflow-diagram.png'
+                    link.click()
+                })
+                .catch((error) => {
+                    console.error('Error generating the image:', error)
+                })
+        }
+    }
+
     return (
         <>
             <div>
@@ -874,54 +912,68 @@ const Canvas = () => {
                                                         }}
                                                     />
                                                 </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                        }
+                                                    }}
+                                                    title='Organize Nodes'
+                                                    onClick={handleOrganizeNodes}
+                                                >
+                                                    <GridViewIcon
+                                                        style={{
+                                                            fontSize: 19,
+                                                            color: customization.isDarkMode ? '#000000' : '#000000',
+                                                            background: 'transparent'
+                                                        }}
+                                                    />
+                                                </MenuItem>
                                             </Box>
                                         </Box>
-                                    </Controls>
-                                    <Background color='#aaa' gap={16} />
-                                    {notesVisible && (
-                                        <div
+                                        <button
+                                            onClick={downloadImage}
                                             style={{
-                                                position: 'absolute',
-                                                top: '20%',
-                                                left: '50%',
-                                                transform: 'translate(-50%, -20%)',
-                                                backgroundColor: '#fff',
-                                                padding: '16px',
-                                                boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-                                                borderRadius: '8px',
-                                                zIndex: 10,
-                                                width: '300px'
+                                                height: '38px',
+                                                marginTop: '6px',
+                                                marginLeft: '15px',
+                                                // padding: '5px',
+                                                backgroundColor: '#fefefe',
+                                                boxSizing: 'content-box',
+                                                border: '1px solid #eee',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                borderRadius: '14px',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                '&:hover': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                }
                                             }}
+                                            onMouseEnter={(e) =>
+                                                (e.currentTarget.style.backgroundColor = customization.isDarkMode ? '#e22a90' : '#3c5ba4')
+                                            }
+                                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fefefe')}
                                         >
-                                            <textarea
-                                                value={noteContent}
-                                                onChange={(e) => setNoteContent(e.target.value)}
-                                                placeholder='Write your notes here...'
+                                            Download as Image
+                                            <DownloadIcon
                                                 style={{
-                                                    width: '100%',
-                                                    height: '150px',
-                                                    padding: '8px',
-                                                    borderRadius: '4px',
-                                                    border: '1px solid #ccc',
-                                                    resize: 'none'
+                                                    color: customization.isDarkMode ? '#000' : '#000', // Change color based on mode
+                                                    fontSize: '18px', // Adjust icon size
+                                                    marginTop: '2px' // Optional vertical alignment tweak
                                                 }}
                                             />
-                                            <button
-                                                onClick={handleNotesToggle}
-                                                style={{
-                                                    marginTop: '8px',
-                                                    padding: '8px 12px',
-                                                    backgroundColor: '#007BFF',
-                                                    color: '#fff',
-                                                    border: 'none',
-                                                    borderRadius: '4px',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                Close
-                                            </button>
-                                        </div>
-                                    )}
+                                        </button>
+                                    </Controls>
+                                    <Background color='#aaa' gap={16} />
 
                                     {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
                                     <ChatPopUp chatflowid={chatflowId} />
