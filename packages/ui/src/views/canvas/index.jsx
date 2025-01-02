@@ -937,41 +937,34 @@ const Canvas = () => {
                                                         }}
                                                     />
                                                 </MenuItem>
+                                                <button
+                                                    title='Download as Image'
+                                                    onClick={downloadImage}
+                                                    style={{
+                                                        background: 'transparent',
+                                                        border: '0px',
+                                                        '&:hover': {
+                                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                        }
+                                                    }}
+                                                    onMouseEnter={(e) =>
+                                                        (e.currentTarget.style.backgroundColor = customization.isDarkMode
+                                                            ? '#e22a90'
+                                                            : '#3c5ba4')
+                                                    }
+                                                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fefefe')}
+                                                >
+                                                    <DownloadIcon
+                                                        style={{
+                                                            background: 'transparent',
+                                                            color: customization.isDarkMode ? '#000' : '#000', // Change color based on mode
+                                                            fontSize: '21px',
+                                                            marginTop: '5px'
+                                                        }}
+                                                    />
+                                                </button>
                                             </Box>
                                         </Box>
-                                        <button
-                                            onClick={downloadImage}
-                                            style={{
-                                                height: '38px',
-                                                marginTop: '6px',
-                                                marginLeft: '15px',
-                                                // padding: '5px',
-                                                backgroundColor: '#fefefe',
-                                                boxSizing: 'content-box',
-                                                border: '1px solid #eee',
-                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                                borderRadius: '14px',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                '&:hover': {
-                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                                }
-                                            }}
-                                            onMouseEnter={(e) =>
-                                                (e.currentTarget.style.backgroundColor = customization.isDarkMode ? '#e22a90' : '#3c5ba4')
-                                            }
-                                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fefefe')}
-                                        >
-                                            Download as Image
-                                            <DownloadIcon
-                                                style={{
-                                                    color: customization.isDarkMode ? '#000' : '#000', // Change color based on mode
-                                                    fontSize: '18px', // Adjust icon size
-                                                    marginTop: '2px' // Optional vertical alignment tweak
-                                                }}
-                                            />
-                                        </button>
                                     </Controls>
                                     <Background color='#aaa' gap={16} />
 
