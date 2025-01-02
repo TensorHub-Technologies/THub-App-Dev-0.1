@@ -133,7 +133,6 @@ const Chatflows = () => {
 
     const addNew = async () => {
         const chatflows = getAllChatflowsApi.data || []
-
         console.log('chatflows: ', chatflows.length)
         let subscriptionType = userData?.subscription_type
         if (!subscriptionType) {
@@ -149,13 +148,13 @@ const Chatflows = () => {
                 navigate('/canvas')
             }
         } else if (userData?.subscription_type === 'pro') {
-            let workspace_count
+            let chatflowCount
             //getusers with email and check number of users and number of workspace
-            workspace_count = chatflows.length
-            console.log(workspace_count, 'workspace_count')
+            chatflowCount = chatflows.length
+            console.log(chatflowCount, 'chatflowCount')
             const userDomain = userData?.workspace || userData?.email.split('@')[1].split('.')[0]
             console.log(userDomain, 'userDomain')
-            if (workspace_count >= 25) {
+            if (chatflowCount >= 25) {
                 // TODO: Add banner to show pro tier limit reached
                 console.log('maximum workspace apps reached! upgrade plan to continue')
             } else {
@@ -189,7 +188,6 @@ const Chatflows = () => {
             if (getAllChatflowsApi.error?.response?.status === 401) {
                 setLoginDialogProps({
                     title: 'Login',
-
                     confirmButtonName: 'Login'
                 })
 

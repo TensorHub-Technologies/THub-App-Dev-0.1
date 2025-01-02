@@ -17,7 +17,6 @@ const RegistrationForm = () => {
     console.log(user, 'user data')
     const [workspace, setWorkspace] = useState('')
     const url = window.location.href || ''
-    console.log(url, 'location')
 
     useEffect(() => {
         const workspaceHost = new URL(url).hostname
