@@ -36,6 +36,7 @@
     0% {
         background-position: -100% 0;
     }
+
     100% {
         background-position: 100% 0;
     }
@@ -50,6 +51,7 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -141,7 +143,8 @@
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 2001; /* Ensure it's above other content */
+    z-index: 2001;
+    /* Ensure it's above other content */
 }
 
 .cloud,
@@ -174,8 +177,10 @@
     z-index: 1000;
     display: flex;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* For momentum scroll on mobile devices */
-    scrollbar-width: none; /* For Firefox */
+    -webkit-overflow-scrolling: touch;
+    /* For momentum scroll on mobile devices */
+    scrollbar-width: none;
+    /* For Firefox */
 }
 
 .file-drop-field {
@@ -188,20 +193,95 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(137, 134, 134, 0.83); /* Semi-transparent white */
+    background-color: rgba(137, 134, 134, 0.83);
+    /* Semi-transparent white */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 2000; /* Ensure it's above other content */
-    border: 2px dashed #0094ff; /* Example style */
+    z-index: 2000;
+    /* Ensure it's above other content */
+    border: 2px dashed #0094ff;
+    /* Example style */
 }
 
 .center audio {
     height: 100%;
     border-radius: 0;
 }
+
 .minimized {
-    height: 100px; /* Adjust as needed */
+    height: 100px;
+    /* Adjust as needed */
     overflow: hidden;
+}
+
+.logo-part {
+    position: absolute;
+    transition: transform 1s ease-in-out infinite;
+}
+
+.toppart {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    animation: slide-in-top 1s ease-in-out forwards infinite;
+}
+
+.relative {
+    position: relative;
+}
+
+.logo-size {
+    width: 24px;
+    height: 62px;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.gap-2 {
+    gap: 0.5rem /* 8px */;
+}
+
+.leftpart {
+    left: 0;
+    top: 50%;
+    transform: translate(-100%, -50%);
+    animation: slide-in-left 1s ease-in-out forwards infinite;
+}
+
+.rightpart {
+    right: 0;
+    top: 50%;
+    transform: translate(100%, -50%);
+    animation: slide-in-right 1s ease-in-out forwards infinite;
+}
+
+/* Keyframes for animations */
+@keyframes slide-in-top {
+    to {
+        transform: translate(-50%, 0%);
+    }
+}
+
+@keyframes slide-in-left {
+    to {
+        transform: translate(0, -50%);
+    }
+}
+
+@keyframes slide-in-right {
+    to {
+        transform: translate(0, -50%);
+    }
 }

@@ -81,8 +81,6 @@ const Chatflows = () => {
     const [sortBy, setSortBy] = useState('name')
 
     const userData = useSelector((state) => state.user.userData)
-    // localStorage.setItem('subscription_type', userData?.subscription_type)
-    // const subscription = localStorage.getItem('subscription_type')
 
     const tenantId = userData?.uid
 
@@ -135,9 +133,7 @@ const Chatflows = () => {
 
     const addNew = async () => {
         const chatflows = getAllChatflowsApi.data || []
-
         console.log('chatflows: ', chatflows.length)
-
         let subscriptionType = userData?.subscription_type
         if (!subscriptionType) {
             subscriptionType = 'free'
@@ -152,36 +148,13 @@ const Chatflows = () => {
                 navigate('/canvas')
             }
         } else if (userData?.subscription_type === 'pro') {
-            let workspace_count = 0
+            let chatflowCount
             //getusers with email and check number of users and number of workspace
-            console.log('userData for pro plan users: ', userData.email)
-            workspace_count = chatflows.length
-            console.log(workspace_count, 'workspace_count')
-            const userDomain = userData?.email.split('@')[1].split('.')[0]
+            chatflowCount = chatflows.length
+            console.log(chatflowCount, 'chatflowCount')
+            const userDomain = userData?.workspace || userData?.email.split('@')[1].split('.')[0]
             console.log(userDomain, 'userDomain')
-
-            // if (userDomain !== 'gmail' && userDomain !== 'github' && userDomain !== 'yahoo') {
-            //     const apiUrl =
-            //         window.location.hostname === 'localhost'
-            //             ? 'http://localhost:2000/proUsers'
-            //             : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/proUsers'
-
-            //     try {
-            //         const response = await axios.post(apiUrl, { userDomain })
-            //         console.log('response: ', response)
-            //         if (response.status === 200) {
-            //             workspace_count += response?.data
-            //             console.log(workspace_count,"workspace count")
-            //         } else {
-            //             console.error('Error:', response.statusText)
-            //         }
-            //     } catch (error) {
-            //         console.error('Error:', error)
-            //     }
-            // } else {
-            //     workspace_count = chatflows.length
-            // }
-            if (workspace_count >= 25) {
+            if (chatflowCount >= 25) {
                 // TODO: Add banner to show pro tier limit reached
                 console.log('maximum workspace apps reached! upgrade plan to continue')
             } else {
@@ -208,8 +181,6 @@ const Chatflows = () => {
         if (tenantId) {
             getAllChatflowsApi.request(tenantId)
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tenantId])
 
     useEffect(() => {
@@ -217,7 +188,6 @@ const Chatflows = () => {
             if (getAllChatflowsApi.error?.response?.status === 401) {
                 setLoginDialogProps({
                     title: 'Login',
-
                     confirmButtonName: 'Login'
                 })
 
@@ -267,7 +237,7 @@ const Chatflows = () => {
             {showModal && <UserInfo showModal={showModal} setShowModal={setShowModal} />}
 
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : `#f5faff` }}>
-                <Stack flexDirection='column' gap={10}>
+                <Stack flexDirection='column' gap={2}>
                     <Box sx={{ flexGrow: 1 }}>
                         <Toolbar
                             disableGutters={true}

@@ -31,6 +31,14 @@ export const SET_USER_DATA = 'SET_USER_DATA'
 
 export const UPDATE_USER_FIELD = 'UPDATE_USER_FIELD'
 
+export const SHOW_REGISTER_MODAL = 'SHOW_REGISTER_MODAL'
+
+export const HIDE_REGISTER_MODAL = 'HIDE_REGISTER_MODAL'
+
+export const SHOW_LOGIN_MODAL = 'SHOW_LOGIN_MODAL'
+
+export const HIDE_LOGIN_MODAL = 'HIDE_LOGIN_MODAL'
+
 export const enqueueSnackbar = (notification) => {
     const key = notification.options && notification.options.key
 
@@ -75,4 +83,20 @@ export const SET_NODEMINMAX = 'SET_NODEMINMAX'
 export const setNodesMinMax = (NodeMinMax) => ({
     type: SET_NODEMINMAX,
     payload: NodeMinMax
+})
+
+export const showRegisterModal = () => ({
+    type: SHOW_REGISTER_MODAL
+})
+
+export const hideRegisterModal = () => ({
+    type: HIDE_REGISTER_MODAL
+})
+
+export const showLoginModal = () => ({
+    type: SHOW_LOGIN_MODAL
+})
+
+export const hideLoginModal = () => ({
+    type: 'HIDE_LOGIN_MODAL'
 })

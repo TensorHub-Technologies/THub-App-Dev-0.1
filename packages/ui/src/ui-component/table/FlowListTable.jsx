@@ -90,18 +90,21 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                         }}
                     >
                         <TableRow>
-                            <StyledTableCell component='th' scope='row' style={{ width: '20%' }} key='0'>
+                            <StyledTableCell component='th' scope='row' style={{ width: '16%' }} key='0'>
                                 <TableSortLabel active={orderBy === 'name'} direction={order} onClick={() => handleRequestSort('name')}>
                                     Name
                                 </TableSortLabel>
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '25%' }} key='1'>
+                            <StyledTableCell style={{ width: '10%' }} key='1'>
+                                Description
+                            </StyledTableCell>
+                            <StyledTableCell style={{ width: '10%' }} key='2'>
                                 Category
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '30%' }} key='2'>
+                            <StyledTableCell style={{ width: '25%' }} key='3'>
                                 Nodes
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }} key='3'>
+                            <StyledTableCell style={{ width: '15%' }} key='4'>
                                 <TableSortLabel
                                     active={orderBy === 'updatedDate'}
                                     direction={order}
@@ -110,7 +113,7 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                     Last Modified Date
                                 </TableSortLabel>
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '10%' }} key='4'>
+                            <StyledTableCell style={{ width: '5%' }} key='5'>
                                 Actions
                             </StyledTableCell>
                         </TableRow>
@@ -183,6 +186,9 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                             </Tooltip>
                                         </StyledTableCell>
                                         <StyledTableCell key='1'>
+                                            <Typography>{row.type}</Typography>
+                                        </StyledTableCell>
+                                        <StyledTableCell key='2'>
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -200,7 +206,7 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                                         ))}
                                             </div>
                                         </StyledTableCell>
-                                        <StyledTableCell key='2'>
+                                        <StyledTableCell key='3'>
                                             {images[row.id] && (
                                                 <Box
                                                     sx={{
@@ -251,8 +257,8 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='3'>{moment(row.updatedDate).format('MMMM Do, YYYY')}</StyledTableCell>
-                                        <StyledTableCell key='4'>
+                                        <StyledTableCell key='4'>{moment(row.updatedDate).format('MMMM Do, YYYY')}</StyledTableCell>
+                                        <StyledTableCell key='5'>
                                             <Stack
                                                 direction={{ xs: 'column', sm: 'row' }}
                                                 spacing={1}
