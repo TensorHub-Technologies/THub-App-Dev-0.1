@@ -260,7 +260,7 @@ const CanvasNode = ({ data }) => {
                                             fontSize: '0.94rem',
                                             fontWeight: 500,
                                             mr: 2,
-                                            color: customization.isDarkMode ? '#fff' : '#000'
+                                            color: customization.isDarkMode ? '#000' : '#000'
                                         }}
                                     >
                                         {data.label}
