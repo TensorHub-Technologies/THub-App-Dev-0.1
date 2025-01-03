@@ -302,7 +302,8 @@ const Canvas = () => {
         }
     }
 
-    const handleSaveFlow = (chatflowName) => {
+    const handleSaveFlow = (chatflowName, chatflowDescription) => {
+        console.log('chatflowDescription:', chatflowDescription)
         if (reactFlowInstance) {
             const nodes = reactFlowInstance.getNodes().map((node) => {
                 const nodeData = cloneDeep(node.data)
@@ -324,6 +325,7 @@ const Canvas = () => {
             if (!chatflow.id) {
                 const newChatflowBody = {
                     name: chatflowName,
+                    description: chatflowDescription,
                     deployed: false,
                     isPublic: false,
                     tenantId: tenantId,
@@ -333,6 +335,7 @@ const Canvas = () => {
             } else {
                 const updateBody = {
                     name: chatflowName,
+                    description: chatflowDescription,
                     flowData
                 }
                 updateChatflowApi.request(chatflow.id, updateBody)
@@ -374,7 +377,6 @@ const Canvas = () => {
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
             let nodeData = event.dataTransfer.getData('application/reactflow')
 
-            // check if the dropped element is valid
             if (typeof nodeData === 'undefined' || !nodeData) {
                 return
             }

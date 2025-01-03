@@ -17,7 +17,6 @@ const RegistrationForm = () => {
     console.log(user, 'user data')
     const [workspace, setWorkspace] = useState('')
     const url = window.location.href || ''
-    console.log(url, 'location')
 
     useEffect(() => {
         const workspaceHost = new URL(url).hostname
@@ -99,7 +98,7 @@ const RegistrationForm = () => {
                 workspace
             }
 
-            const response = await axios.post(`${apiUrl}/user/register`, finalValues)
+            const response = await axios.post(`${apiUrl}/user/invite/register`, finalValues)
             console.log(response, 'from register backend')
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)

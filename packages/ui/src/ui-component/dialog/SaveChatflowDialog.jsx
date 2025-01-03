@@ -11,12 +11,17 @@ const SaveChatflowDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const [chatflowName, setChatflowName] = useState('')
     const [isReadyToSave, setIsReadyToSave] = useState(false)
 
-    const [chatflowDescription, setChatflowDescription] = useState('') // Declare description state
+    const [chatflowDescription, setChatflowDescription] = useState('')
 
     useEffect(() => {
         if (chatflowName) setIsReadyToSave(true)
         else setIsReadyToSave(false)
     }, [chatflowName])
+
+    const handleConfirm = () => {
+        onConfirm(chatflowName, chatflowDescription)
+        console.log(chatflowName, chatflowDescription, 'chatflowDescription')
+    }
 
     const component = show ? (
         <Dialog
@@ -54,7 +59,7 @@ const SaveChatflowDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
 
             <DialogActions>
                 <Button onClick={onCancel}>{dialogProps.cancelButtonName}</Button>
-                <StyledButton disabled={!isReadyToSave} variant='contained' onClick={() => onConfirm(chatflowName)}>
+                <StyledButton disabled={!isReadyToSave} variant='contained' onClick={handleConfirm}>
                     {dialogProps.confirmButtonName}
                 </StyledButton>
             </DialogActions>
