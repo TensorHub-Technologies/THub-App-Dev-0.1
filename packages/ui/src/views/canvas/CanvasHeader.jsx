@@ -288,13 +288,17 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     }
 
     const onSaveChatflowClick = () => {
+        console.log('onSaveChatflowClick workspace')
         if (chatflow.id) handleSaveFlow(flowName)
         else setFlowDialogOpen(true)
     }
 
-    const onConfirmSaveName = (flowName) => {
+    const onConfirmSaveName = (flowName, chatflowDescription) => {
         setFlowDialogOpen(false)
-        handleSaveFlow(flowName)
+        // console.log("flowName:", flowName);
+        // console.log("chatflowDescription:", chatflowDescription);
+        // console.log("onConfirmSaveName workspace");
+        handleSaveFlow(flowName, chatflowDescription)
     }
 
     useEffect(() => {
@@ -323,7 +327,6 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
             dispatch({ type: SET_CHATFLOW, chatflow: updateChatflowApi.data })
         }
         setEditingFlowName(false)
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateChatflowApi.data])
 

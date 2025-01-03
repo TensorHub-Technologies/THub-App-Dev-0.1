@@ -9,6 +9,9 @@ import remarkMath from 'remark-math'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source'
+import thubTop from '../../assets/images/thub_top.png'
+import thubLeft from '../../assets/images/thub_left.png'
+import thubRight from '../../assets/images/thub_right.png'
 
 import {
     Box,
@@ -1378,7 +1381,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                         flex: '0 0 auto'
                     }}
                 >
-                    <CardMedia component='img' image={item.data} sx={{ height: 64 }} alt={'preview'} style={messageImageStyle} />
+                    <CardMedia component='img' image={item.data} sx={{ height: 30, width: 30 }} alt={'preview'} style={messageImageStyle} />
                 </Card>
             )
         } else if (item?.mime?.startsWith('audio/')) {
@@ -1623,27 +1626,59 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                             }}
                                                         >
                                                             <CardContent>
-                                                                <Stack
-                                                                    sx={{
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'flex-start',
-                                                                        width: '100%'
-                                                                    }}
-                                                                    flexDirection='row'
-                                                                >
-                                                                    <Box sx={{ height: 'auto', pr: 1 }}>
-                                                                        <img
-                                                                            style={{
-                                                                                objectFit: 'cover',
-                                                                                height: '35px',
-                                                                                width: 'auto'
-                                                                            }}
-                                                                            src={nextAgentGIF}
-                                                                            alt='agentPNG'
-                                                                        />
-                                                                    </Box>
-                                                                    <div>{agent.nextAgent}</div>
-                                                                </Stack>
+                                                                {loading ? (
+                                                                    <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-white dark:bg-gray-900 z-50'>
+                                                                        <div className='relative logo-size flex flex-col items-start gap-1'>
+                                                                            <div className='logo-part toppart'>
+                                                                                <img
+                                                                                    src={thubTop}
+                                                                                    alt='Loading Part 1'
+                                                                                    style={{ width: '24px', height: '4px' }} // Inline style for stricter control
+                                                                                />
+                                                                            </div>
+                                                                            <div className='flex items-center gap-1'>
+                                                                                <div className='logo-part leftpart'>
+                                                                                    <img
+                                                                                        src={thubLeft}
+                                                                                        alt='Loading Part 2'
+                                                                                        className='w-4 h-4'
+                                                                                        style={{ width: '10px' }} // Smaller size
+                                                                                    />
+                                                                                </div>
+                                                                                <div className='logo-part rightpart'>
+                                                                                    <img
+                                                                                        src={thubRight}
+                                                                                        alt='Loading Part 3'
+                                                                                        className='w-4 h-4'
+                                                                                        style={{ width: '10px' }} // Smaller size
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <Stack
+                                                                        sx={{
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'flex-start',
+                                                                            width: '100%'
+                                                                        }}
+                                                                        flexDirection='row'
+                                                                    >
+                                                                        <Box sx={{ height: 'auto', pr: 1 }}>
+                                                                            <img
+                                                                                style={{
+                                                                                    objectFit: 'cover',
+                                                                                    height: '20px', // Reduced height
+                                                                                    width: 'auto'
+                                                                                }}
+                                                                                src={nextAgentGIF}
+                                                                                alt='agentPNG'
+                                                                            />
+                                                                        </Box>
+                                                                        <div>{agent.nextAgent}</div>
+                                                                    </Stack>
+                                                                )}
                                                             </CardContent>
                                                         </Card>
                                                     ) : (
