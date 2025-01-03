@@ -97,6 +97,7 @@ const ChatExpandDialog = ({
             >
                 <ChatMessage
                     isDialog={true}
+                    show={show}
                     open={dialogProps.open}
                     isAgentCanvas={isAgentCanvas}
                     chatflowid={dialogProps.chatflowid}
