@@ -69,8 +69,6 @@ const MainLayout = () => {
     const showRegisterModalState = useSelector((state) => state.modal.showRegisterModal)
     const showLoginModal = useSelector((state) => state.modal.showLoginModal)
 
-    console.log(showRegisterModalState)
-
     // Handle left drawer
     const leftDrawerOpened = useSelector((state) => state.customization.opened)
     const dispatch = useDispatch()
