@@ -219,17 +219,18 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                                     </Typography>
                                 </div>
                                 {data.description && (
-                                    <Tooltip title={data?.description}>
+                                    <Tooltip title={data?.description || ''}>
                                         <span
                                             style={{
-                                                padding: '0px 10px',
+                                                display: 'block',
+                                                padding: '0px 20px',
                                                 overflowWrap: 'break-word',
-                                                whiteSpace: 'pre-line',
-                                                overflow: 'auto',
-                                                height: '40px',
-                                                WebkitOverflowScrolling: 'touch',
-                                                scrollbarWidth: 'none'
-                                                // '-ms-overflow-style': 'none'
+                                                whiteSpace: 'pre-line', // Allows multi-line text wrapping
+                                                overflow: 'hidden', // Ensures overflow content is hidden
+                                                height: '40px', // Limits to two lines based on line height
+                                                lineHeight: '20px', // Adjust to control the height for two lines
+                                                width: '250px',
+                                                fontFamily: 'Roboto, sans-serif'
                                             }}
                                         >
                                             {data.description}

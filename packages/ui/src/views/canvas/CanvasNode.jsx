@@ -163,7 +163,7 @@ const CanvasNode = ({ data }) => {
                         style={{
                             position: 'absolute',
                             margin: '14px 0px 0px 270px',
-                            color: customization.isDarkMode ? '#fff' : '#000',
+                            color: customization.isDarkMode ? '#000' : '#000',
                             backgroundColor: 'rgb(0,0,0,0)',
                             cursor: 'pointer'
                         }}

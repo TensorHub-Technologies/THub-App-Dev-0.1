@@ -162,52 +162,58 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                     <StyledTableRow key={index}>
                                         <StyledTableCell key='0'>
                                             {console.log(row, 'flowlist description')}
-                                            <Tooltip title={row.templateName || row.name}>
-                                                <Typography
-                                                    sx={{
-                                                        display: '-webkit-box',
-                                                        fontSize: 14,
-                                                        fontWeight: 500,
-                                                        WebkitLineClamp: 2,
-                                                        WebkitBoxOrient: 'vertical',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden'
+                                            {/* <Tooltip title={row.templateName || row.name}> */}
+                                            <Typography
+                                                sx={{
+                                                    display: '-webkit-box',
+                                                    fontSize: 14,
+                                                    fontWeight: 500,
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    textOverflow: 'ellipsis',
+                                                    overflow: 'hidden',
+                                                    fontFamily: 'Roboto, sans-serif'
+                                                }}
+                                            >
+                                                <Link
+                                                    to={`/${isAgentCanvas ? 'agentcanvas' : 'canvas'}/${row.id}`}
+                                                    style={{
+                                                        color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                        textDecoration: 'none'
                                                     }}
                                                 >
-                                                    <Link
-                                                        to={`/${isAgentCanvas ? 'agentcanvas' : 'canvas'}/${row.id}`}
-                                                        style={{
-                                                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                                            textDecoration: 'none'
-                                                        }}
-                                                    >
-                                                        {row.templateName || row.name}
-                                                    </Link>
-                                                </Typography>
-                                            </Tooltip>
+                                                    {row.templateName || row.name}
+                                                </Link>
+                                            </Typography>
+                                            {/* </Tooltip> */}
                                         </StyledTableCell>
                                         <StyledTableCell key='1'>
                                             {console.log(row, 'flowlist description')}
                                             <Tooltip title={row?.description}>
                                                 <Typography
                                                     sx={{
-                                                        display: '-webkit-box',
+                                                        cursor: 'pointer',
+                                                        display: 'block',
                                                         fontSize: 14,
                                                         fontWeight: 500,
                                                         WebkitLineClamp: 2,
                                                         WebkitBoxOrient: 'vertical',
                                                         textOverflow: 'ellipsis',
-                                                        overflow: 'hidden'
+                                                        overflowWrap: 'break-word',
+                                                        whiteSpace: 'pre-line', // Allows multi-line text wrapping
+                                                        overflow: 'hidden', // Ensures overflow content is hidden
+                                                        height: '40px', // Limits to two lines based on line height
+                                                        lineHeight: '20px', // Adjust to control the height for two lines
+                                                        width: '200px',
+                                                        fontFamily: 'Roboto, sans-serif'
                                                     }}
                                                 >
                                                     {row?.description}
                                                 </Typography>
                                             </Tooltip>
                                         </StyledTableCell>
+
                                         <StyledTableCell key='2'>
-                                            <Typography>{row.type}</Typography>
-                                        </StyledTableCell>
-                                        <StyledTableCell key='3'>
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -225,7 +231,7 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                                         ))}
                                             </div>
                                         </StyledTableCell>
-                                        <StyledTableCell key='4'>
+                                        <StyledTableCell key='3'>
                                             {images[row.id] && (
                                                 <Box
                                                     sx={{
@@ -276,8 +282,8 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='5'>{moment(row.updatedDate).format('MMMM Do, YYYY')}</StyledTableCell>
-                                        <StyledTableCell key='6'>
+                                        <StyledTableCell key='4'>{moment(row.updatedDate).format('MMMM Do, YYYY')}</StyledTableCell>
+                                        <StyledTableCell key='5'>
                                             <Stack
                                                 direction={{ xs: 'column', sm: 'row' }}
                                                 spacing={1}
