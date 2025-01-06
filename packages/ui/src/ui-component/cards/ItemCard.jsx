@@ -11,7 +11,7 @@ import SkeletonChatflowCard from '@/ui-component/cards/Skeleton/ChatflowCard'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import FlowListMenu from '@/ui-component/button/FlowListMenu'
 import IconButton from '@mui/material/IconButton'
-import { Typography } from '@mui/material'
+import { Typography, Tooltip } from '@mui/material'
 import Dark from '@/assets/images/Pink.png'
 import Light from '@/assets/images/Light.png'
 
@@ -219,20 +219,22 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                                     </Typography>
                                 </div>
                                 {data.description && (
-                                    <span
-                                        style={{
-                                            padding: '0px 10px',
-                                            overflowWrap: 'break-word',
-                                            whiteSpace: 'pre-line',
-                                            overflow: 'auto',
-                                            height: '40px',
-                                            WebkitOverflowScrolling: 'touch',
-                                            scrollbarWidth: 'none'
-                                            // '-ms-overflow-style': 'none'
-                                        }}
-                                    >
-                                        {data.description}
-                                    </span>
+                                    <Tooltip title={data?.description}>
+                                        <span
+                                            style={{
+                                                padding: '0px 10px',
+                                                overflowWrap: 'break-word',
+                                                whiteSpace: 'pre-line',
+                                                overflow: 'auto',
+                                                height: '40px',
+                                                WebkitOverflowScrolling: 'touch',
+                                                scrollbarWidth: 'none'
+                                                // '-ms-overflow-style': 'none'
+                                            }}
+                                        >
+                                            {data.description}
+                                        </span>
+                                    </Tooltip>
                                 )}
                                 <div
                                     style={{

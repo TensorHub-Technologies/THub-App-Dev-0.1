@@ -160,7 +160,7 @@ CardWithDeleteOverlay.propTypes = {
     onDelete: PropTypes.func
 }
 
-export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
+export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
@@ -1442,23 +1442,26 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 <Card
                     key={index}
                     sx={{
-                        p: 0,
+                        p: show ? 20 : 0,
                         m: 0,
                         mt: 2,
                         mb: 2,
-                        flex: '0 0 auto'
+                        flex: '0 0 auto',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
                     }}
                 >
                     <CardMedia
                         component='img'
                         image={item.data}
-                        sx={{ height: 'auto' }}
-                        alt={'artifact'}
-                        style={{
+                        sx={{
                             width: isAgentReasoning ? '200px' : '100%',
                             height: isAgentReasoning ? '200px' : 'auto',
-                            objectFit: 'cover'
+                            objectFit: 'contain', // Keeps full image visible without cropping
+                            display: 'block' // Prevents inline spacing issues
                         }}
+                        alt='artifact'
                     />
                 </Card>
             )
@@ -2456,6 +2459,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
 
 ChatMessage.propTypes = {
     open: PropTypes.bool,
+    show: PropTypes.bool,
     chatflowid: PropTypes.string,
     isAgentCanvas: PropTypes.bool,
     isDialog: PropTypes.bool,

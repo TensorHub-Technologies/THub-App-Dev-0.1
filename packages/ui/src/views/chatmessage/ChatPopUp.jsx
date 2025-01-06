@@ -323,6 +323,7 @@ export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
                                     shadow={theme.shadows[16]}
                                 >
                                     <ChatMessage
+                                        show={showExpandDialog}
                                         isAgentCanvas={isAgentCanvas}
                                         chatflowid={chatflowid}
                                         open={open}
