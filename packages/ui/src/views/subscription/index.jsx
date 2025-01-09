@@ -116,9 +116,9 @@ const Subscription = () => {
         })
     }, [user])
 
-    const paymentHandler = async (e, planTitle, planId, duration) => {
+    const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
-        handleLoading('Loading Razorpay Payment Gateway')
+        handleLoading(message)
         console.log(planTitle, planId, duration, 'paymentHandler')
         if (planTitle === 'Enterprise') {
             console.log(planTitle === 'Enterprise')
@@ -317,7 +317,8 @@ const Subscription = () => {
                                 {plan.title === 'Free' && user.subscription_type === 'free' ? (
                                     <div className={customization.isDarkMode ? subStyle.activeBadge_dark : subStyle.activeBadge_light}>
                                         <div style={{ fontSize: '16px' }}>Active</div>
-                                        {user.subscription_type !== 'free' && (
+
+                                        {user.subscription_type && (
                                             <Tooltip title='subscription details' arrow>
                                                 <div>
                                                     <InfoOutlinedIcon
@@ -363,12 +364,32 @@ const Subscription = () => {
                                     >
                                         {plan.title}
                                     </Typography>
-                                    <Typography
-                                        variant='body2'
-                                        className={customization.isDarkMode ? subStyle.price_amount_dark : subStyle.price_amount_light}
-                                    >
-                                        {getPrice(plan)}
-                                    </Typography>
+                                    {plan.title === 'Pro' ? (
+                                        <Typography
+                                            variant='body2'
+                                            className={customization.isDarkMode ? subStyle.price_amount_dark : subStyle.price_amount_light}
+                                        >
+                                            {getPrice(plan)}
+                                            <span
+                                                style={{
+                                                    fontSize: '16px',
+                                                    verticalAlign: 'super',
+                                                    marginLeft: '4px',
+                                                    fontWeight: 'bolder',
+                                                    color: customization.isDarkMode ? 'white' : 'black'
+                                                }}
+                                            >
+                                                /seat
+                                            </span>
+                                        </Typography>
+                                    ) : (
+                                        <Typography
+                                            variant='body2'
+                                            className={customization.isDarkMode ? subStyle.price_amount_dark : subStyle.price_amount_light}
+                                        >
+                                            {getPrice(plan)}
+                                        </Typography>
+                                    )}
                                     <Typography
                                         variant='body2'
                                         className={
@@ -379,7 +400,7 @@ const Subscription = () => {
                                     </Typography>
                                     <div>
                                         <Button
-                                            onClick={(e) => paymentHandler(e, plan.title, plan.planId, plan.duration)}
+                                            onClick={(e) => paymentHandler(e, plan.title, plan.planId, plan.duration, plan.messagePopup)}
                                             variant='contained'
                                             size='large'
                                             sx={{ width: '100%' }}
@@ -467,25 +488,25 @@ const Subscription = () => {
                                             <TableCell>
                                                 <strong>Plan</strong>
                                             </TableCell>
-                                            <TableCell>{subscriptionDetails.subscriptionType.toUpperCase()}</TableCell>
+                                            <TableCell>{subscriptionDetails.subscriptionType?.toUpperCase()}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>
                                                 <strong>Duration</strong>
                                             </TableCell>
-                                            <TableCell>{subscriptionDetails.subscriptionDuration.toUpperCase()}</TableCell>
+                                            <TableCell>{subscriptionDetails.subscriptionDuration?.toUpperCase() || '3 months'}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>
                                                 <strong>Start Date</strong>
                                             </TableCell>
-                                            <TableCell>{subscriptionDetails.startDate}</TableCell>
+                                            <TableCell>{subscriptionDetails?.startDate}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>
                                                 <strong>Next Payment On</strong>
                                             </TableCell>
-                                            <TableCell>{subscriptionDetails.expiryDate}</TableCell>
+                                            <TableCell>{subscriptionDetails?.expiryDate}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
