@@ -1,4 +1,7 @@
 {
+    "description": "Designs, develops, and maintains software solutions to meet user and business requirements.",
+    "usecases": ["Agent"],
+    "framework": ["Langchain"],
     "nodes": [
         {
             "id": "cheerioWebScraper_0",

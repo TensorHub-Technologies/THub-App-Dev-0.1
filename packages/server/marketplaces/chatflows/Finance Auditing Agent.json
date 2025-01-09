@@ -1,4 +1,7 @@
 {
+    "description": "Evaluates financial data and trends to  optimize financial performance.",
+    "usecases": ["Agent"],
+    "framework": ["Langchain"],
     "nodes": [
         {
             "id": "cheerioWebScraper_0",

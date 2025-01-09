@@ -1,4 +1,7 @@
 {
+    "description": "Assists customers with queries, resolves issues, and ensures a seamless customer experience.",
+    "usecases": ["Agent"],
+    "framework": ["Langchain"],
     "nodes": [
         {
             "id": "cheerioWebScraper_0",

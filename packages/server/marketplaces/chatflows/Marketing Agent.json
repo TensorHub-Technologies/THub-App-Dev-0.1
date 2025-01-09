@@ -1,4 +1,7 @@
 {
+    "description": "Develops and executes marketing strategies to promote products, build brand awareness, and drive sales.",
+    "usecases": ["Agent"],
+    "framework": ["Langchain"],
     "nodes": [
         {
             "id": "cheerioWebScraper_0",

@@ -1,4 +1,7 @@
 {
+    "description": "Provides technical assistance, troubleshoots issues, and ensures smooth IT operations.",
+    "usecases": ["Agent"],
+    "framework": ["Langchain"],
     "nodes": [
         {
             "id": "cheerioWebScraper_0",

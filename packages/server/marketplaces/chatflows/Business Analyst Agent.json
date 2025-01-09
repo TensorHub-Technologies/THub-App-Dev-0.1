@@ -1,4 +1,7 @@
 {
+    "description": "Analyzes business needs and processes to provide actionable insights and improve organizational efficiency.",
+    "usecases": ["Agent"],
+    "framework": ["Langchain"],
     "nodes": [
         {
             "id": "cheerioWebScraper_0",
