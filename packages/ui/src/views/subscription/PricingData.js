@@ -31,10 +31,11 @@ export const pricingData = {
                 GBP: '£ 159',
                 Euro: '€ 189'
             },
-            planId: 'plan_PKKqYOHRkFFVTZ',
+            planId: 'plan_PguBI476fHCWGG',
             duration: 'monthly',
             description: 'For small & medium businesses',
             buttonInfo: 'Choose Plan',
+            messagePopup: 'Loading Razorpay Payment Gateway',
             list: [
                 'All Free Features',
                 '5 Seats',
@@ -57,6 +58,7 @@ export const pricingData = {
             duration: 'monthly',
             description: 'For large teams and enterprises.',
             buttonInfo: 'Get in Touch',
+            messagePopup: 'Form Is Loading',
             list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
         }
     ],
@@ -90,10 +92,11 @@ export const pricingData = {
                 GBP: '£ 1,699',
                 Euro: '€ 2,099'
             },
-            planId: 'plan_PKhfVyO6JCxaeR',
+            planId: 'plan_PhI7FQUr7Jb47R',
             duration: 'yearly',
             description: 'For small & medium businesses',
             buttonInfo: 'Choose Plan',
+            messagePopup: 'Loading Razorpay Payment Gateway',
             list: [
                 'All Free Features',
                 '5 Seats',
@@ -117,6 +120,7 @@ export const pricingData = {
             duration: 'yearly',
             description: 'For large teams and enterprises.',
             buttonInfo: 'Get in Touch',
+            messagePopup: 'Form Is Loading',
             list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
         }
     ]
