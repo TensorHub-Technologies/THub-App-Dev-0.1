@@ -1,6 +1,5 @@
 // assets
 import {
-    IconCode,
     IconTrash,
     IconFileUpload,
     IconFileExport,
@@ -8,7 +7,8 @@ import {
     IconCopy,
     IconMessage,
     IconDatabaseExport,
-    IconAdjustmentsHorizontal
+    IconAdjustmentsHorizontal,
+    IconTemplate
 } from '@tabler/icons'
 
 // constant
@@ -21,7 +21,7 @@ const icons = {
     IconMessage,
     IconDatabaseExport,
     IconAdjustmentsHorizontal,
-    IconCode
+    IconTemplate
 }
 
 // ==============================|| SETTINGS MENU ITEMS ||============================== //
@@ -69,6 +69,13 @@ const settings = {
             icon: icons.IconUsers
         },
         {
+            id: 'saveAsTemplate',
+            title: 'Save As Template',
+            type: 'item',
+            url: '',
+            icon: icons.IconTemplate
+        },
+        {
             id: 'loadChatflow',
             title: 'Load Workflow',
             type: 'item',
@@ -83,7 +90,13 @@ const settings = {
             url: '',
             icon: icons.IconCopy
         },
-
+        {
+            id: 'loadChatflow',
+            title: 'Load Chatflow',
+            type: 'item',
+            url: '',
+            icon: icons.IconFileUpload
+        },
         {
             id: 'exportChatflow',
             title: 'Export Workflow',

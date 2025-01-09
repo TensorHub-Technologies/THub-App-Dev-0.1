@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, Fragment } from 'react'
+import React, { useState, useRef, useEffect, useCallback, Fragment } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 import { cloneDeep } from 'lodash'
@@ -39,7 +39,6 @@ import {
     IconX,
     IconTool,
     IconSquareFilled,
-    IconDeviceSdCard,
     IconCheck,
     IconPaperclip,
     IconSparkles
@@ -221,6 +220,55 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     console.log(followUpPromptsStatus, 'followUpPromptsStatus', followUpPrompts, 'followUpPrompts')
 
     console.log(messages, 'messages')
+
+    const [isStreaming, setIsStreaming] = useState(false)
+    const audioStreamRef = useRef(null)
+    const mediaRecorderRef = useRef(null)
+    const audioChunksRef = useRef([])
+
+    const startVoiceStreaming = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            audioStreamRef.current = stream
+            const mediaRecorder = new MediaRecorder(stream)
+            mediaRecorderRef.current = mediaRecorder
+            audioChunksRef.current = []
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunksRef.current.push(event.data)
+                    sendAudioChunk(event.data)
+                }
+            }
+
+            mediaRecorder.start(1000) // Sends data every second
+            setIsStreaming(true)
+        } catch (error) {
+            console.error('Error accessing microphone:', error)
+        }
+    }
+
+    // Function to stop voice streaming
+    const stopVoiceStreaming = () => {
+        if (mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop()
+        }
+        if (audioStreamRef.current) {
+            audioStreamRef.current.getTracks().forEach((track) => track.stop())
+        }
+        setIsStreaming(false)
+    }
+
+    // Function to send audio chunk to server
+    const sendAudioChunk = async (audioBlob) => {
+        const formData = new FormData()
+        formData.append('audio', audioBlob)
+        try {
+            await axios.post(`${baseURL}/api/v1/audio-stream`, formData)
+        } catch (error) {
+            console.error('Error sending audio chunk:', error)
+        }
+    }
 
     // drag & drop and file input
     const imgUploadRef = useRef(null)
@@ -1696,7 +1744,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                                 mb: 1
                                                             }}
                                                         >
-                                                            <CardContent>
+                                                            {/* <CardContent>
                                                                 <Stack
                                                                     sx={{
                                                                         alignItems: 'center',
@@ -1843,7 +1891,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                                         })}
                                                                     </div>
                                                                 )}
-                                                            </CardContent>
+                                                            </CardContent> */}
                                                         </Card>
                                                     )
                                                 })}
@@ -1888,6 +1936,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                 })}
                                             </div>
                                         )}
+
                                         <div className='markdownanswer'>
                                             {message.type === 'leadCaptureMessage' &&
                                             !getLocalStorageChatflow(chatflowid)?.lead &&
@@ -1987,11 +2036,38 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                                         {children}
                                                                     </code>
                                                                 )
+                                                            },
+                                                            a({ href, children, ...props }) {
+                                                                return (
+                                                                    <a href={href} target='_blank' rel='noopener noreferrer' {...props}>
+                                                                        {children}
+                                                                    </a>
+                                                                )
+                                                            },
+                                                            p({ children, ...props }) {
+                                                                return (
+                                                                    <p {...props}>
+                                                                        {React.Children.map(children, (child) =>
+                                                                            typeof child === 'string'
+                                                                                ? child
+                                                                                : React.cloneElement(child, {
+                                                                                      style: {
+                                                                                          padding: '15px',
+                                                                                          width: '100%',
+                                                                                          height: 'auto',
+                                                                                          objectFit: 'contain',
+                                                                                          display: 'block'
+                                                                                      }
+                                                                                  })
+                                                                        )}
+                                                                    </p>
+                                                                )
                                                             }
                                                         }}
                                                     >
                                                         {message.message}
                                                     </MemoizedReactMarkdown>
+
                                                     {!loading &&
                                                         rec &&
                                                         messages?.length > 1 &&
@@ -2444,6 +2520,22 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                 accept={getFileUploadAllowedTypes()}
                             />
                         )}
+                        <Box sx={{ padding: 2 }}>
+                            <Typography variant='h4' gutterBottom>
+                                Chat with Voice Streaming
+                            </Typography>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                                <Button
+                                    variant={isStreaming ? 'contained' : 'outlined'}
+                                    color='primary'
+                                    startIcon={<IconMicrophone />}
+                                    onClick={isStreaming ? stopVoiceStreaming : startVoiceStreaming}
+                                >
+                                    {isStreaming ? 'Stop Streaming' : 'Start Streaming'}
+                                </Button>
+                            </Box>
+                        </Box>
                     </form>
                 )}
             </div>

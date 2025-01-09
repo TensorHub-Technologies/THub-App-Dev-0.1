@@ -15,6 +15,7 @@ import PictureInPictureAltIcon from '@mui/icons-material/PictureInPictureAlt'
 import ThumbsUpDownOutlinedIcon from '@mui/icons-material/ThumbsUpDownOutlined'
 import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
+import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
 import Button from '@mui/material/Button'
 import { IconX } from '@tabler/icons'
 import { IconDeviceAnalytics } from '@tabler/icons'
@@ -216,6 +217,14 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         setCategoryDialogOpen(true)
     }
 
+    const handleExportTemplate = () => {
+        setAnchorEl(null)
+        setExportTemplateDialogProps({
+            chatflow: chatflow
+        })
+        setExportTemplateDialogOpen(true)
+    }
+
     const saveFlowCategory = async (categories) => {
         setCategoryDialogOpen(false)
         // save categories as string
@@ -361,6 +370,10 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 <MenuItem onClick={handleExport} disableRipple>
                     <FileDownloadIcon />
                     Export
+                </MenuItem>
+                <MenuItem onClick={handleExportTemplate} disableRipple>
+                    <ExportTemplateOutlinedIcon />
+                    Save As Template1
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleRateLimit} disableRipple>
