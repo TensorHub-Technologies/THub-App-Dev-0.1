@@ -31,7 +31,7 @@ export const pricingData = {
                 GBP: '£ 159',
                 Euro: '€ 189'
             },
-            planId: 'plan_PguBI476fHCWGG',
+            planId: 'plan_PhdG5GMrYCqm6Z',
             duration: 'monthly',
             description: 'For small & medium businesses',
             buttonInfo: 'Choose Plan',
@@ -92,7 +92,7 @@ export const pricingData = {
                 GBP: '£ 1,699',
                 Euro: '€ 2,099'
             },
-            planId: 'plan_PhI7FQUr7Jb47R',
+            planId: 'plan_PhdbTzJPTel2e3',
             duration: 'yearly',
             description: 'For small & medium businesses',
             buttonInfo: 'Choose Plan',
