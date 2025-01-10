@@ -497,6 +497,8 @@
                 "ChatHuggingFace",
                 "ChatLocalAI",
                 "ChatMistralAI",
+                "Chat Nemo Guardrails",
+                "ChatNvdiaNIM",
                 "ChatOllama",
                 "ChatOllama Function",
                 "ChatOpenAI",

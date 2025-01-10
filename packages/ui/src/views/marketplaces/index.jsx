@@ -278,7 +278,7 @@ const Marketplace = () => {
                                 lineHeight: '1.3'
                             }}
                         >
-                            Templates
+                            Templates1
                         </h1>
                         <TextField
                             size='small'
@@ -576,6 +576,11 @@ const Marketplace = () => {
                                     .filter(filterFlows)
                                     .filter(filterByFramework)
                                     .filter(filterByUsecases)
+                                    .sort((a, b) => {
+                                        const aHasAgent = a.usecases?.includes('Agent') ? 0 : 1
+                                        const bHasAgent = b.usecases?.includes('Agent') ? 0 : 1
+                                        return aHasAgent - bHasAgent
+                                    })
                                     .map((data, index) => (
                                         <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
                                             {data.badge && (
@@ -585,7 +590,6 @@ const Marketplace = () => {
                                                             right: 20
                                                         }
                                                     }}
-                                                    // badgeContent={data.badge}
                                                     color={data.badge === 'POPULAR' ? 'primary' : 'error'}
                                                 >
                                                     {(data.type === 'Workflow' || data.type === 'Agentflow') && (
