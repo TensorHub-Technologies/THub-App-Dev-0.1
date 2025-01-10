@@ -8,7 +8,8 @@ import {
     IconMessage,
     IconDatabaseExport,
     IconAdjustmentsHorizontal,
-    IconTemplate
+    IconTemplate,
+    IconCode
 } from '@tabler/icons'
 
 // constant
@@ -21,7 +22,8 @@ const icons = {
     IconMessage,
     IconDatabaseExport,
     IconAdjustmentsHorizontal,
-    IconTemplate
+    IconTemplate,
+    IconCode
 }
 
 // ==============================|| SETTINGS MENU ITEMS ||============================== //
