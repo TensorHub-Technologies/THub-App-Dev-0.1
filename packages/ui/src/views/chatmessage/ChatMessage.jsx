@@ -2520,7 +2520,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                 accept={getFileUploadAllowedTypes()}
                             />
                         )}
-                        <Box sx={{ padding: 2 }}>
+                        {/* <Box sx={{ padding: 2 }}>
                             <Typography variant='h4' gutterBottom>
                                 Chat with Voice Streaming
                             </Typography>
@@ -2535,7 +2535,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                     {isStreaming ? 'Stop Streaming' : 'Start Streaming'}
                                 </Button>
                             </Box>
-                        </Box>
+                        </Box> */}
                     </form>
                 )}
             </div>
