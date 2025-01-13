@@ -16,7 +16,6 @@ function InviteUsers() {
 
     const handleInputChange = (e) => {
         setEmail(e.target.value)
-        console.log(e.target.value)
         setError('')
         setSuccessMessage('')
     }
