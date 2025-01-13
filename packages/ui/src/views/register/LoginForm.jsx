@@ -13,7 +13,6 @@ const LoginForm = () => {
     const dispatch = useDispatch()
     const [workspace, setWorkspace] = useState('')
     const url = window.location.href || ''
-    console.log(url, 'location')
 
     const validationSchema = Yup.object().shape({
         email: Yup.string().email('Invalid email').required('Email is required'),
@@ -33,7 +32,6 @@ const LoginForm = () => {
     useEffect(() => {
         const workspaceHost = new URL(url).hostname
         const workspace = workspaceHost.split('.')[0]
-        console.log(workspace, 'workspace')
         setWorkspace(workspace)
     }, [])
 
