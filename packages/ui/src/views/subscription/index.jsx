@@ -155,9 +155,9 @@ const Subscription = () => {
                 alert('Razorpay SDK not loaded.')
                 return
             }
-
+            console.log(process.env.REACT_APP_RAZORPAY_API_LIVE_KEY, 'REACT_APP_RAZORPAY_API_LIVE_KEY')
             var options = {
-                key: 'rzp_test_pMR0oNtQh7JOlN',
+                key: process.env.REACT_APP_RAZORPAY_API_LIVE_KEY,
                 subscription_id: subscription.id,
                 name: 'THub',
                 description: `${planTitle} Subscription`,
