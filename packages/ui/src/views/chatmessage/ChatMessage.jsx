@@ -12,6 +12,7 @@ import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event
 import thubTop from '../../assets/images/thub_top.png'
 import thubLeft from '../../assets/images/thub_left.png'
 import thubRight from '../../assets/images/thub_right.png'
+import { IconDeviceSdCard } from '@tabler/icons-react'
 
 import {
     Box,
@@ -1744,7 +1745,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                                 mb: 1
                                                             }}
                                                         >
-                                                            {/* <CardContent>
+                                                            <CardContent>
                                                                 <Stack
                                                                     sx={{
                                                                         alignItems: 'center',
@@ -1891,7 +1892,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                                         })}
                                                                     </div>
                                                                 )}
-                                                            </CardContent> */}
+                                                            </CardContent>
                                                         </Card>
                                                     )
                                                 })}

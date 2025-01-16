@@ -119,9 +119,7 @@ const Subscription = () => {
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
         handleLoading(message)
-        console.log(planTitle, planId, duration, 'paymentHandler')
         if (planTitle === 'Enterprise') {
-            console.log(planTitle === 'Enterprise')
             setShowForm(true)
         }
         let plan_Id = planId
@@ -157,9 +155,9 @@ const Subscription = () => {
                 alert('Razorpay SDK not loaded.')
                 return
             }
-
+            console.log(process.env.REACT_APP_RAZORPAY_API_LIVE_KEY, 'REACT_APP_RAZORPAY_API_LIVE_KEY')
             var options = {
-                key: 'rzp_test_pMR0oNtQh7JOlN',
+                key: process.env.REACT_APP_RAZORPAY_API_LIVE_KEY,
                 subscription_id: subscription.id,
                 name: 'THub',
                 description: `${planTitle} Subscription`,
@@ -187,7 +185,6 @@ const Subscription = () => {
                     const validateStatus = await validateResponse.json()
                     if (validateResponse.ok && validateStatus.msg === 'success') {
                         location.reload()
-                        console.log(`Plan upgraded to ${validateStatus.subscriptionType}`)
                         setSubscriptionDetails({
                             subscriptionType: validateStatus.subscriptionType,
                             subscriptionDuration: validateStatus.subscriptionDuration,
