@@ -11,7 +11,6 @@ import {
 import {
     chatType,
     DocumentStoreStatus,
-    IDocumentStoreFileChunkPagedResponse,
     IDocumentStoreLoader,
     IDocumentStoreLoaderFile,
     IDocumentStoreLoaderForPreview,
@@ -195,7 +194,7 @@ const getDocumentStoreFileChunks = async (storeId: string, fileId: string, pageN
         }
         let totalChars = 0
         loaders.forEach((loader: IDocumentStoreLoader) => {
-            totalChars += loader.totalChars
+            // totalChars += loader.totalChars
         })
         if (found) {
             found.totalChars = totalChars
@@ -225,15 +224,15 @@ const getDocumentStoreFileChunks = async (storeId: string, fileId: string, pageN
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `File ${fileId} not found`)
         }
 
-        const response: IDocumentStoreFileChunkPagedResponse = {
-            chunks: chunksWithCount,
-            count: count,
-            file: found,
-            currentPage: pageNo,
-            storeName: entity.name,
-            description: entity.description
-        }
-        return response
+        // const response: IDocumentStoreFileChunkPagedResponse = {
+        //     chunks: chunksWithCount,
+        //     count: count,
+        //     file: found,
+        //     currentPage: pageNo,
+        //     storeName: entity.name,
+        //     description: entity.description
+        // }
+        // return response
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
@@ -461,44 +460,44 @@ const _saveFileToStorage = async (fileBase64: string, entity: DocumentStore) => 
     }
 }
 
-const _splitIntoChunks = async (data: IDocumentStoreLoaderForPreview) => {
-    try {
-        const appServer = getRunningExpressApp()
-        let splitterInstance = null
-        if (data.splitterConfig && Object.keys(data.splitterConfig).length > 0) {
-            const nodeInstanceFilePath = appServer.nodesPool.componentNodes[data.splitterId].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
-            const newNodeInstance = new nodeModule.nodeClass()
-            let nodeData = {
-                inputs: { ...data.splitterConfig },
-                id: 'splitter_0'
-            }
-            splitterInstance = await newNodeInstance.init(nodeData)
-        }
-        const nodeInstanceFilePath = appServer.nodesPool.componentNodes[data.loaderId].filePath as string
-        const nodeModule = await import(nodeInstanceFilePath)
-        // doc loader configs
-        const nodeData = {
-            credential: data.credential || undefined,
-            inputs: { ...data.loaderConfig, textSplitter: splitterInstance },
-            outputs: { output: 'document' }
-        }
-        const options: ICommonObject = {
-            chatflowid: uuidv4(),
-            appDataSource: appServer.AppDataSource,
-            databaseEntities,
-            logger
-        }
-        const docNodeInstance = new nodeModule.nodeClass()
-        let docs: IDocument[] = await docNodeInstance.init(nodeData, '', options)
-        return docs
-    } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: documentStoreServices.splitIntoChunks - ${getErrorMessage(error)}`
-        )
-    }
-}
+// const _splitIntoChunks = async (data: IDocumentStoreLoaderForPreview) => {
+//     try {
+//         const appServer = getRunningExpressApp()
+//         let splitterInstance = null
+//         if (data.splitterConfig && Object.keys(data.splitterConfig).length > 0) {
+//             const nodeInstanceFilePath = appServer.nodesPool.componentNodes[data.splitterId].filePath as string
+//             const nodeModule = await import(nodeInstanceFilePath)
+//             const newNodeInstance = new nodeModule.nodeClass()
+//             let nodeData = {
+//                 inputs: { ...data.splitterConfig },
+//                 id: 'splitter_0'
+//             }
+//             splitterInstance = await newNodeInstance.init(nodeData)
+//         }
+//         const nodeInstanceFilePath = appServer.nodesPool.componentNodes[data.loaderId].filePath as string
+//         const nodeModule = await import(nodeInstanceFilePath)
+//         // doc loader configs
+//         const nodeData = {
+//             credential: data.credential || undefined,
+//             inputs: { ...data.loaderConfig, textSplitter: splitterInstance },
+//             outputs: { output: 'document' }
+//         }
+//         const options: ICommonObject = {
+//             chatflowid: uuidv4(),
+//             appDataSource: appServer.AppDataSource,
+//             databaseEntities,
+//             logger
+//         }
+//         const docNodeInstance = new nodeModule.nodeClass()
+//         let docs: IDocument[] = await docNodeInstance.init(nodeData, '', options)
+//         return docs
+//     } catch (error) {
+//         throw new InternalFlowiseError(
+//             StatusCodes.INTERNAL_SERVER_ERROR,
+//             `Error: documentStoreServices.splitIntoChunks - ${getErrorMessage(error)}`
+//         )
+//     }
+// }
 
 const _normalizeFilePaths = async (data: IDocumentStoreLoaderForPreview, entity: DocumentStore | null) => {
     const keys = Object.getOwnPropertyNames(data.loaderConfig)
@@ -549,37 +548,37 @@ const _normalizeFilePaths = async (data: IDocumentStoreLoaderForPreview, entity:
     data.rehydrated = rehydrated
 }
 
-const previewChunks = async (data: IDocumentStoreLoaderForPreview) => {
-    try {
-        if (data.preview) {
-            if (
-                data.loaderId === 'cheerioWebScraper' ||
-                data.loaderId === 'puppeteerWebScraper' ||
-                data.loaderId === 'playwrightWebScraper'
-            ) {
-                data.loaderConfig['limit'] = 3
-            }
-        }
-        if (!data.rehydrated) {
-            await _normalizeFilePaths(data, null)
-        }
-        let docs = await _splitIntoChunks(data)
-        const totalChunks = docs.length
-        // if -1, return all chunks
-        if (data.previewChunkCount === -1) data.previewChunkCount = totalChunks
-        // return all docs if the user ask for more than we have
-        if (totalChunks <= data.previewChunkCount) data.previewChunkCount = totalChunks
-        // return only the first n chunks
-        if (totalChunks > data.previewChunkCount) docs = docs.slice(0, data.previewChunkCount)
+// const previewChunks = async (data: IDocumentStoreLoaderForPreview) => {
+//     try {
+//         if (data.preview) {
+//             if (
+//                 data.loaderId === 'cheerioWebScraper' ||
+//                 data.loaderId === 'puppeteerWebScraper' ||
+//                 data.loaderId === 'playwrightWebScraper'
+//             ) {
+//                 data.loaderConfig['limit'] = 3
+//             }
+//         }
+//         if (!data.rehydrated) {
+//             await _normalizeFilePaths(data, null)
+//         }
+//         let docs = await _splitIntoChunks(data)
+//         const totalChunks = docs.length
+//         // if -1, return all chunks
+//         if (data.previewChunkCount === -1) data.previewChunkCount = totalChunks
+//         // return all docs if the user ask for more than we have
+//         if (totalChunks <= data.previewChunkCount) data.previewChunkCount = totalChunks
+//         // return only the first n chunks
+//         if (totalChunks > data.previewChunkCount) docs = docs.slice(0, data.previewChunkCount)
 
-        return { chunks: docs, totalChunks: totalChunks, previewChunkCount: data.previewChunkCount }
-    } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: documentStoreServices.previewChunks - ${getErrorMessage(error)}`
-        )
-    }
-}
+//         return { chunks: docs, totalChunks: totalChunks, previewChunkCount: data.previewChunkCount }
+//     } catch (error) {
+//         throw new InternalFlowiseError(
+//             StatusCodes.INTERNAL_SERVER_ERROR,
+//             `Error: documentStoreServices.previewChunks - ${getErrorMessage(error)}`
+//         )
+//     }
+// }
 
 const processAndSaveChunks = async (data: IDocumentStoreLoaderForPreview) => {
     try {
@@ -666,99 +665,99 @@ const _saveChunksToStorage = async (data: IDocumentStoreLoaderForPreview, entity
         //step 1: restore the full paths, if any
         await _normalizeFilePaths(data, entity)
         //step 2: split the file into chunks
-        previewChunks(data).then(async (response) => {
-            //step 3: remove all files associated with the loader
-            const existingLoaders = JSON.parse(entity.loaders)
-            const loader = existingLoaders.find((ldr: IDocumentStoreLoader) => ldr.id === newLoaderId)
-            if (data.id) {
-                const index = existingLoaders.indexOf(loader)
-                if (index > -1) {
-                    existingLoaders.splice(index, 1)
-                    if (!data.rehydrated) {
-                        if (loader.files) {
-                            loader.files.map(async (file: IDocumentStoreLoaderFile) => {
-                                await removeSpecificFileFromStorage(DOCUMENT_STORE_BASE_FOLDER, entity.id, file.name)
-                            })
-                        }
-                    }
-                }
-            }
-            //step 4: save new file to storage
-            let filesWithMetadata = []
-            const keys = Object.getOwnPropertyNames(data.loaderConfig)
-            for (let i = 0; i < keys.length; i++) {
-                const input = data.loaderConfig[keys[i]]
-                if (!input) {
-                    continue
-                }
-                if (typeof input !== 'string') {
-                    continue
-                }
-                if (input.startsWith('[') && input.endsWith(']')) {
-                    const files = JSON.parse(input)
-                    const fileNames: string[] = []
-                    for (let j = 0; j < files.length; j++) {
-                        const file = files[j]
-                        if (re.test(file)) {
-                            const fileMetadata = await _saveFileToStorage(file, entity)
-                            fileNames.push(fileMetadata.name)
-                            filesWithMetadata.push(fileMetadata)
-                        }
-                    }
-                    data.loaderConfig[keys[i]] = 'FILE-STORAGE::' + JSON.stringify(fileNames)
-                } else if (re.test(input)) {
-                    const fileNames: string[] = []
-                    const fileMetadata = await _saveFileToStorage(input, entity)
-                    fileNames.push(fileMetadata.name)
-                    filesWithMetadata.push(fileMetadata)
-                    data.loaderConfig[keys[i]] = 'FILE-STORAGE::' + JSON.stringify(fileNames)
-                    break
-                }
-            }
-            //step 5: update with the new files and loaderConfig
-            if (filesWithMetadata.length > 0) {
-                loader.loaderConfig = data.loaderConfig
-                loader.files = filesWithMetadata
-            }
-            //step 6: update the loaders with the new loaderConfig
-            if (data.id) {
-                existingLoaders.push(loader)
-            }
-            //step 7: remove all previous chunks
-            await appServer.AppDataSource.getRepository(DocumentStoreFileChunk).delete({ docId: newLoaderId })
-            if (response.chunks) {
-                //step 8: now save the new chunks
-                const totalChars = response.chunks.reduce((acc, chunk) => {
-                    if (chunk.pageContent) {
-                        return acc + chunk.pageContent.length
-                    }
-                    return acc
-                }, 0)
-                response.chunks.map(async (chunk: IDocument, index: number) => {
-                    const docChunk: DocumentStoreFileChunk = {
-                        docId: newLoaderId,
-                        storeId: data.storeId || '',
-                        id: uuidv4(),
-                        chunkNo: index + 1,
-                        pageContent: chunk.pageContent,
-                        metadata: JSON.stringify(chunk.metadata)
-                    }
-                    const dChunk = appServer.AppDataSource.getRepository(DocumentStoreFileChunk).create(docChunk)
-                    await appServer.AppDataSource.getRepository(DocumentStoreFileChunk).save(dChunk)
-                })
-                // update the loader with the new metrics
-                loader.totalChunks = response.totalChunks
-                loader.totalChars = totalChars
-            }
-            loader.status = 'SYNC'
-            // have a flag and iterate over the loaders and update the entity status to SYNC
-            const allSynced = existingLoaders.every((ldr: IDocumentStoreLoader) => ldr.status === 'SYNC')
-            entity.status = allSynced ? DocumentStoreStatus.SYNC : DocumentStoreStatus.STALE
-            entity.loaders = JSON.stringify(existingLoaders)
-            //step 9: update the entity in the database
-            await appServer.AppDataSource.getRepository(DocumentStore).save(entity)
-            return
-        })
+        // previewChunks(data).then(async (response) => {
+        //     //step 3: remove all files associated with the loader
+        //     const existingLoaders = JSON.parse(entity.loaders)
+        //     const loader = existingLoaders.find((ldr: IDocumentStoreLoader) => ldr.id === newLoaderId)
+        //     if (data.id) {
+        //         const index = existingLoaders.indexOf(loader)
+        //         if (index > -1) {
+        //             existingLoaders.splice(index, 1)
+        //             if (!data.rehydrated) {
+        //                 if (loader.files) {
+        //                     loader.files.map(async (file: IDocumentStoreLoaderFile) => {
+        //                         await removeSpecificFileFromStorage(DOCUMENT_STORE_BASE_FOLDER, entity.id, file.name)
+        //                     })
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     //step 4: save new file to storage
+        //     let filesWithMetadata = []
+        //     const keys = Object.getOwnPropertyNames(data.loaderConfig)
+        //     for (let i = 0; i < keys.length; i++) {
+        //         const input = data.loaderConfig[keys[i]]
+        //         if (!input) {
+        //             continue
+        //         }
+        //         if (typeof input !== 'string') {
+        //             continue
+        //         }
+        //         if (input.startsWith('[') && input.endsWith(']')) {
+        //             const files = JSON.parse(input)
+        //             const fileNames: string[] = []
+        //             for (let j = 0; j < files.length; j++) {
+        //                 const file = files[j]
+        //                 if (re.test(file)) {
+        //                     const fileMetadata = await _saveFileToStorage(file, entity)
+        //                     fileNames.push(fileMetadata.name)
+        //                     filesWithMetadata.push(fileMetadata)
+        //                 }
+        //             }
+        //             data.loaderConfig[keys[i]] = 'FILE-STORAGE::' + JSON.stringify(fileNames)
+        //         } else if (re.test(input)) {
+        //             const fileNames: string[] = []
+        //             const fileMetadata = await _saveFileToStorage(input, entity)
+        //             fileNames.push(fileMetadata.name)
+        //             filesWithMetadata.push(fileMetadata)
+        //             data.loaderConfig[keys[i]] = 'FILE-STORAGE::' + JSON.stringify(fileNames)
+        //             break
+        //         }
+        //     }
+        //     //step 5: update with the new files and loaderConfig
+        //     if (filesWithMetadata.length > 0) {
+        //         loader.loaderConfig = data.loaderConfig
+        //         loader.files = filesWithMetadata
+        //     }
+        //     //step 6: update the loaders with the new loaderConfig
+        //     if (data.id) {
+        //         existingLoaders.push(loader)
+        //     }
+        //     //step 7: remove all previous chunks
+        //     await appServer.AppDataSource.getRepository(DocumentStoreFileChunk).delete({ docId: newLoaderId })
+        //     if (response.chunks) {
+        //         //step 8: now save the new chunks
+        //         const totalChars = response.chunks.reduce((acc, chunk) => {
+        //             if (chunk.pageContent) {
+        //                 return acc + chunk.pageContent.length
+        //             }
+        //             return acc
+        //         }, 0)
+        //         response.chunks.map(async (chunk: IDocument, index: number) => {
+        //             const docChunk: DocumentStoreFileChunk = {
+        //                 docId: newLoaderId,
+        //                 storeId: data.storeId || '',
+        //                 id: uuidv4(),
+        //                 chunkNo: index + 1,
+        //                 pageContent: chunk.pageContent,
+        //                 metadata: JSON.stringify(chunk.metadata)
+        //             }
+        //             const dChunk = appServer.AppDataSource.getRepository(DocumentStoreFileChunk).create(docChunk)
+        //             await appServer.AppDataSource.getRepository(DocumentStoreFileChunk).save(dChunk)
+        //         })
+        //         // update the loader with the new metrics
+        //         loader.totalChunks = response.totalChunks
+        //         loader.totalChars = totalChars
+        //     }
+        //     loader.status = 'SYNC'
+        //     // have a flag and iterate over the loaders and update the entity status to SYNC
+        //     const allSynced = existingLoaders.every((ldr: IDocumentStoreLoader) => ldr.status === 'SYNC')
+        //     entity.status = allSynced ? DocumentStoreStatus.SYNC : DocumentStoreStatus.STALE
+        //     entity.loaders = JSON.stringify(existingLoaders)
+        //     //step 9: update the entity in the database
+        //     await appServer.AppDataSource.getRepository(DocumentStore).save(entity)
+        //     return
+        // })
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
@@ -1259,7 +1258,7 @@ export default {
     getUsedChatflowNames,
     getDocumentStoreFileChunks,
     updateDocumentStore,
-    previewChunks,
+    // previewChunks,
     processAndSaveChunks,
     deleteDocumentStoreFileChunk,
     editDocumentStoreFileChunk,
