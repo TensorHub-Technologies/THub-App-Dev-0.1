@@ -232,8 +232,8 @@ const previewFileChunks = async (req: Request, res: Response, next: NextFunction
         }
         const body = req.body
         body.preview = true
-        const apiResponse = await documentStoreService.previewChunks(body)
-        return res.json(apiResponse)
+        // const apiResponse = await documentStoreService.previewChunks(body)
+        // return res.json(apiResponse)
     } catch (error) {
         next(error)
     }
