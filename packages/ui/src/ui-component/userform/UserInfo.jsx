@@ -208,10 +208,10 @@ const UserInfo = ({ setShowModal, showModal }) => {
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                         <Button
                                             variant='contained'
-                                            color='primary'
                                             sx={{
                                                 mt: 3,
                                                 width: '40%',
+                                                bgcolor: isDarkMode ? '#e22a90' : '#3c5ba4',
                                                 '&:hover': {
                                                     bgcolor: isDarkMode ? '#c91d78' : '#2c4883'
                                                 }
@@ -222,10 +222,10 @@ const UserInfo = ({ setShowModal, showModal }) => {
                                         </Button>
                                         <Button
                                             variant='contained'
-                                            color='primary'
                                             sx={{
                                                 mt: 3,
                                                 width: '40%',
+                                                bgcolor: isDarkMode ? '#e22a90' : '#3c5ba4',
                                                 '&:hover': {
                                                     bgcolor: isDarkMode ? '#c91d78' : '#2c4883'
                                                 }
