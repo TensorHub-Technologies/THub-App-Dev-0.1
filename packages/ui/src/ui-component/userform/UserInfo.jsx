@@ -1,40 +1,15 @@
-import { useState } from 'react'
+import './UserInfo.css'
 import axios from 'axios'
-import { Box, Button, FormControl, FormLabel, IconButton, Modal, Stack, TextField, Typography } from '@mui/material'
-import { StyledButton } from '../button/StyledButton'
-import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
+import userImage_light from '../../assets/images/userForm/userForm.svg'
+import userImage_dark from '../../assets/images/userForm/userForm_dark.svg'
+import { Box, Button, FormControl, Stack, TextField, Typography, IconButton } from '@mui/material'
+import { useSelector, useDispatch } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
+import { useNavigate } from 'react-router'
 import { IconX } from '@tabler/icons'
-
-import BusinessIcon from '@mui/icons-material/Business'
-import WorkIcon from '@mui/icons-material/Work'
-import ApartmentIcon from '@mui/icons-material/Apartment'
-import BadgeIcon from '@mui/icons-material/Badge'
-import AccountBoxIcon from '@mui/icons-material/AccountBox'
-import { useNavigate } from 'react-router-dom'
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 500,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4
-}
-
-const blurStyle = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backdropFilter: 'blur(5px)',
-    zIndex: 10
-}
+import { Formik } from 'formik'
+import * as Yup from 'yup'
 
 const UserInfo = ({ setShowModal, showModal }) => {
     const navigate = useNavigate()
@@ -42,18 +17,9 @@ const UserInfo = ({ setShowModal, showModal }) => {
     const dispatch = useDispatch()
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
-    const [formData, setFormData] = useState({
-        uid,
-        department: '',
-        role: '',
-        designation: '',
-        company: '',
-        workspace: ''
-    })
-
-    const [workspaceError, setWorkspaceError] = useState('')
+    const isDarkMode = useSelector((state) => state.customization.isDarkMode)
     const customization = useSelector((state) => state.customization)
-
+    console.log(showModal, 'showModal')
     const handleClose = () => setShowModal(false)
 
     const handleSkip = () => {
@@ -62,44 +28,32 @@ const UserInfo = ({ setShowModal, showModal }) => {
         handleClose()
     }
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target
-        if (name === 'workspace') {
-            const isValid = /^[a-zA-Z0-9]*$/.test(value)
-            if (!isValid) {
-                setWorkspaceError('Workspace name can only contain letters and numbers without spaces or special characters.')
-            } else {
-                setWorkspaceError('')
-            }
-        }
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: value
-        }))
+    const initialValues = {
+        company: '',
+        department: '',
+        role: '',
+        designation: '',
+        workspace: ''
     }
 
-    const handleSubmit = async () => {
-        if (!formData.department || !formData.role || !formData.designation || !formData.company || !formData.workspace) {
-            enqueueSnackbar({
-                message: 'Please fill out all required fields.',
-                options: {
-                    key: new Date().getTime() + Math.random(),
-                    variant: 'error',
-                    action: (key) => (
-                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
-                            <IconX />
-                        </Button>
-                    )
-                }
-            })
-            return
-        }
+    const validationSchema = Yup.object().shape({
+        company: Yup.string().required('Company Name is required'),
+        department: Yup.string().required('Department is required'),
+        role: Yup.string().required('Role is required'),
+        designation: Yup.string().required('Designation is required'),
+        workspace: Yup.string()
+            .matches(/^[a-zA-Z0-9]*$/, 'Workspace name can only contain letters and numbers')
+            .required('Workspace Name is required')
+    })
+
+    const handleSubmit = async (values, { resetForm }) => {
         const Url =
             window.location.hostname === 'localhost'
                 ? 'http://localhost:2000/updateUser'
                 : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/updateUser'
+
         try {
-            const response = await axios.post(Url, formData)
+            const response = await axios.post(Url, { ...values, uid })
             if (response.status === 200) {
                 enqueueSnackbar({
                     message: 'User data updated successfully',
@@ -113,123 +67,187 @@ const UserInfo = ({ setShowModal, showModal }) => {
                         )
                     }
                 })
+                resetForm()
+                window.location.href = `https://${values.workspace}.thub.tech/?theme=dark&uid=${uid}`
+                handleClose()
             }
-            setFormData({
-                department: '',
-                role: '',
-                designation: '',
-                company: '',
-                workspace: ''
-            })
-            console.log('formData.workspace: ', formData.workspace)
-            window.location.href = `http://${formData.workspace}.thub.tech/?theme=dark&uid=${uid}`
-            handleClose()
         } catch (error) {
-            console.error('Error fetching data:', error)
+            enqueueSnackbar({
+                message: 'Failed to update user data',
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error'
+                }
+            })
+            console.error('Error:', error)
         }
     }
 
     return (
-        <div style={showModal ? blurStyle : null}>
-            <Modal open={showModal} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
-                <Box sx={style}>
-                    <IconButton
-                        sx={{ position: 'absolute', top: 8, right: 8, color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
-                        onClick={handleSkip}
+        <div>
+            <Box
+                sx={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backdropFilter: 'blur(8px)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 2000
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        width: '800px',
+                        boxShadow: 3,
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        backgroundColor: isDarkMode ? '#191B1F' : 'white'
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: '50%',
+                            backgroundImage: isDarkMode ? `url(${userImage_dark})` : `url(${userImage_light})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
+                        }}
+                    ></Box>
+
+                    <Box
+                        sx={{
+                            width: '50%',
+                            padding: '32px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            position: 'relative'
+                        }}
                     >
-                        <IconX />
-                    </IconButton>
-                    <Typography id='modal-modal-title' variant='h3' component='h2' sx={{ textAlign: 'center' }}>
-                        User Info
-                    </Typography>
+                        <IconButton
+                            sx={{ position: 'absolute', top: '2px', right: '4px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                            onClick={handleSkip}
+                        >
+                            <IconX />
+                        </IconButton>
+                        <Typography
+                            variant='h2'
+                            gutterBottom
+                            className={`typography-font ${isDarkMode ? 'user-form-heading-dark' : 'user-form-heading-light'}`}
+                        >
+                            User Details
+                        </Typography>
+                        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                            {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
+                                <form onSubmit={handleSubmit}>
+                                    <FormControl fullWidth>
+                                        <Stack spacing={2}>
+                                            <TextField
+                                                label='Company Name'
+                                                name='company'
+                                                variant='outlined'
+                                                value={values.company}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={touched.company && !!errors.company}
+                                                helperText={touched.company && errors.company}
+                                                required
+                                            />
+                                            <TextField
+                                                label='Department'
+                                                name='department'
+                                                variant='outlined'
+                                                value={values.department}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={touched.department && !!errors.department}
+                                                helperText={touched.department && errors.department}
+                                                required
+                                            />
+                                            <TextField
+                                                label='Role'
+                                                name='role'
+                                                variant='outlined'
+                                                value={values.role}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={touched.role && !!errors.role}
+                                                helperText={touched.role && errors.role}
+                                                required
+                                            />
+                                            <TextField
+                                                label='Designation'
+                                                name='designation'
+                                                variant='outlined'
+                                                value={values.designation}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={touched.designation && !!errors.designation}
+                                                helperText={touched.designation && errors.designation}
+                                                required
+                                            />
+                                            <TextField
+                                                label='Workspace Name'
+                                                name='workspace'
+                                                variant='outlined'
+                                                value={values.workspace}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={touched.workspace && !!errors.workspace}
+                                                helperText={touched.workspace && errors.workspace}
+                                                required
+                                            />
+                                        </Stack>
+                                    </FormControl>
 
-                    <FormControl variant='outlined' fullWidth required sx={{ mt: '14px', p: 3, boxShadow: 10, borderRadius: '8px' }}>
-                        <Stack spacing={2}>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <BusinessIcon sx={{ mr: 1 }} />
-                                <FormLabel htmlFor='company'>Company Name</FormLabel>
-                            </Box>
-                            <TextField
-                                id='standard-basic'
-                                variant='standard'
-                                name='company'
-                                placeholder='Company Name'
-                                value={formData.company}
-                                onChange={handleInputChange}
-                                required
-                            />
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <ApartmentIcon sx={{ mr: 1 }} />
-                                <FormLabel htmlFor='department'>Department</FormLabel>
-                            </Box>
-
-                            <TextField
-                                id='standard-basic'
-                                variant='standard'
-                                name='department'
-                                placeholder='Department'
-                                value={formData.department}
-                                onChange={handleInputChange}
-                                required
-                            />
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <AccountBoxIcon sx={{ mr: 1 }} />
-                                <FormLabel htmlFor='role'>Role</FormLabel>
-                            </Box>
-                            <TextField
-                                id='standard-basic'
-                                variant='standard'
-                                name='role'
-                                placeholder='Role'
-                                value={formData.role}
-                                onChange={handleInputChange}
-                                required
-                            />
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <BadgeIcon sx={{ mr: 1 }} />
-                                <FormLabel htmlFor='designation'>Designation</FormLabel>
-                            </Box>
-                            <TextField
-                                id='standard-basic'
-                                variant='standard'
-                                name='designation'
-                                placeholder='Designation'
-                                value={formData.designation}
-                                onChange={handleInputChange}
-                                required
-                            />
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <WorkIcon sx={{ mr: 1 }} />
-                                <FormLabel htmlFor='workspace'>Workspace Name</FormLabel>
-                            </Box>
-                            <TextField
-                                id='standard-basic'
-                                variant='standard'
-                                name='workspace'
-                                placeholder='Workspace Name'
-                                value={formData.workspace}
-                                onChange={handleInputChange}
-                                error={!!workspaceError}
-                                helperText={workspaceError}
-                                required
-                            />
-                        </Stack>
-                    </FormControl>
-
-                    <Stack direction='row' gap={38} mt={4}>
-                        <StyledButton onClick={handleSkip}>Skip</StyledButton>
-                        <StyledButton onClick={handleSubmit} disabled={!!workspaceError}>
-                            Submit
-                        </StyledButton>
-                    </Stack>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <Button
+                                            variant='contained'
+                                            color='primary'
+                                            sx={{
+                                                mt: 3,
+                                                width: '40%',
+                                                '&:hover': {
+                                                    bgcolor: isDarkMode ? '#c91d78' : '#2c4883'
+                                                }
+                                            }}
+                                            onClick={handleSkip}
+                                        >
+                                            Skip
+                                        </Button>
+                                        <Button
+                                            variant='contained'
+                                            color='primary'
+                                            sx={{
+                                                mt: 3,
+                                                width: '40%',
+                                                '&:hover': {
+                                                    bgcolor: isDarkMode ? '#c91d78' : '#2c4883'
+                                                }
+                                            }}
+                                            type='submit'
+                                        >
+                                            Submit
+                                        </Button>
+                                    </Box>
+                                </form>
+                            )}
+                        </Formik>
+                    </Box>
                 </Box>
-            </Modal>
+            </Box>
         </div>
     )
 }
 
 UserInfo.propTypes = {
-    setShowModal: PropTypes.func,
-    showModal: PropTypes.bool
+    setShowModal: PropTypes.func.isRequired,
+    showModal: PropTypes.bool.isRequired
 }
+
 export default UserInfo
