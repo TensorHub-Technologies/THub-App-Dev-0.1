@@ -122,6 +122,25 @@ const getAllChatflows = async (type?: ChatflowType, tenantId?: any): Promise<Cha
     }
 }
 
+const getAllChatflowsWp = async (type?: ChatflowType, workspaceUid?: any): Promise<ChatFlow[]> => {
+    try {
+        const appServer = getRunningExpressApp()
+        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findBy({ workspaceUid: workspaceUid })
+        if (type === 'MULTIAGENT') {
+            return dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
+        } else if (type === 'CHATFLOW') {
+            // fetch all chatflows that are not agentflow
+            return dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
+        }
+        return dbResponse
+    } catch (error) {
+        throw new InternalFlowiseError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            `Error: chatflowsService.getAllChatflowsWp - ${getErrorMessage(error)}`
+        )
+    }
+}
+
 const getChatflowByApiKey = async (apiKeyId: string, keyonly?: unknown): Promise<any> => {
     try {
         // Here we only get chatflows that are bounded by the apikeyid and chatflows that are not bounded by any apikey
@@ -351,6 +370,7 @@ export default {
     checkIfChatflowIsValidForUploads,
     deleteChatflow,
     getAllChatflows,
+    getAllChatflowsWp,
     getChatflowByApiKey,
     getChatflowById,
     saveChatflow,

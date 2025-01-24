@@ -112,7 +112,6 @@ const AddNodes = ({ nodesData, node }) => {
     const [categoryExpanded, setCategoryExpanded] = useState({})
     const [tabValue, setTabValue] = useState(0)
     const userData = useSelector((state) => state.user.userData)
-    console.log(userData, 'userData')
 
     const allIconsObj = {
         Agents: (
@@ -191,7 +190,6 @@ const AddNodes = ({ nodesData, node }) => {
 
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
     userData.subscription_type === null || undefined ? (userData.subscription_type = 'free') : userData.subscription_type
-    console.log(userData.subscription_type, 'AddNodes subscription type')
     if (!userData.subscription_type) {
         userData.subscription_type = localStorage.getItem('subscription_type')
     }
@@ -205,10 +203,6 @@ const AddNodes = ({ nodesData, node }) => {
             setTab(['LangChain', 'LlamaIndex'])
         }
     }, [])
-
-    console.log(nodes, 'nodes')
-
-    console.log('tab: ', tab)
 
     for (let nodeKey in nodes) {
         if (Object.prototype.hasOwnProperty.call(nodes, nodeKey) && !allowedMenuItemKeys.includes(nodeKey)) {

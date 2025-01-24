@@ -13,6 +13,9 @@ export class ChatFlow implements IChatFlow {
     @Column()
     tenantId: string
 
+    @Column()
+    workspaceUid: string
+
     @Column({ type: 'text' })
     flowData: string
 

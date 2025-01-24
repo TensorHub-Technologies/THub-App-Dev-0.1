@@ -57,6 +57,14 @@ const getAllChatflows = async (req: Request, res: Response, next: NextFunction) 
         next(error)
     }
 }
+const getAllChatflowsWp = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        let apiResponse = await chatflowsService.getAllChatflowsWp(req.query?.type as ChatflowType, req.params.workspaceUid)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
 
 // Get specific chatflow via api key
 const getChatflowByApiKey = async (req: Request, res: Response, next: NextFunction) => {
@@ -175,6 +183,7 @@ export default {
     checkIfChatflowIsValidForUploads,
     deleteChatflow,
     getAllChatflows,
+    getAllChatflowsWp,
     getChatflowByApiKey,
     getChatflowById,
     saveChatflow,
