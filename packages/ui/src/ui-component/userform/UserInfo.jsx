@@ -19,7 +19,6 @@ const UserInfo = ({ setShowModal, showModal }) => {
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const isDarkMode = useSelector((state) => state.customization.isDarkMode)
     const customization = useSelector((state) => state.customization)
-    console.log(showModal, 'showModal')
     const handleClose = () => setShowModal(false)
 
     const handleSkip = () => {

@@ -138,7 +138,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         const name = userData?.name[0].toUpperCase()
                         setUserFullName(userData?.name)
                         setUserName(name)
-                        console.log(userData?.picture)
                         const proPicture = userData?.picture
                         setUserImg(proPicture)
 
@@ -160,7 +159,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
                             if (SubscriptionMonth === currentmonth && currentday >= SubscriptionDay) {
                                 // subscription date complete, update subscription
-                                console.log('monthly subscription expired')
                             }
                         } else if (userData?.subscription_duration === 'yearly') {
                             // check if user subscription limit is reached
@@ -177,7 +175,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
                             if (SubscriptionYear === currentyear && currentmonth === SubscriptionMonth && currentday >= SubscriptionDay) {
                                 // subscription date complete, update subscription
-                                console.log('yearly subscription expired')
                             }
                         }
                     } else {

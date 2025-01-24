@@ -2,6 +2,8 @@ import client from './client'
 
 const getAllChatflows = (tenantId) => client.get(`/chatflows/${tenantId}`)
 
+const getAllChatflowsWp = (workspaceUid) => client.get(`/chatflows/workspaces/${workspaceUid}`)
+
 const getSpecificChatflow = (chatflowId) => client.get(`/chatflows/getChatflowById/${chatflowId}`)
 
 const getSpecificChatflowFromPublicEndpoint = (id) => client.get(`/public-chatflows/${id}`)
@@ -22,6 +24,7 @@ const getAllowChatflowUploads = (id) => client.get(`/chatflows-uploads/${id}`)
 
 export default {
     getAllChatflows,
+    getAllChatflowsWp,
     getAllAgentflows,
     getSpecificChatflow,
     getSpecificChatflowFromPublicEndpoint,

@@ -84,7 +84,12 @@ const Chatflows = () => {
 
     const tenantId = userData?.uid
 
-    const getAllChatflowsApi = useApi(chatflowsApi.getAllChatflows)
+    const workspaceUid = userData?.workspaceUid
+
+    // const chatFlowsApi = workspaceUid ? useApi(chatflowsApi.getAllChatflowsWp) : useApi(chatflowsApi.getAllChatflows) || []
+    const apiToUse = workspaceUid ? chatflowsApi.getAllChatflowsWp : chatflowsApi.getAllChatflows
+
+    const chatFlowsApi = useApi(apiToUse) || []
 
     const [view, setView] = React.useState(localStorage.getItem('flowDisplayStyle') || 'card')
 
@@ -132,13 +137,12 @@ const Chatflows = () => {
     }
 
     const addNew = async () => {
-        const chatflows = getAllChatflowsApi.data || []
-        console.log('chatflows: ', chatflows.length)
+        const chatflows = chatFlowsApi.data || []
+        console.log('chatflows: ', chatflows)
         let subscriptionType = userData?.subscription_type
         if (!subscriptionType) {
             subscriptionType = 'free'
         }
-
         if (subscriptionType === 'free') {
             if (chatflows.length > 4) {
                 navigate('/subscription')
@@ -153,7 +157,6 @@ const Chatflows = () => {
             chatflowCount = chatflows.length
             console.log(chatflowCount, 'chatflowCount')
             const userDomain = userData?.workspace || userData?.email.split('@')[1].split('.')[0]
-            console.log(userDomain, 'userDomain')
             if (chatflowCount >= 25) {
                 // TODO: Add banner to show pro tier limit reached
                 console.log('maximum workspace apps reached! upgrade plan to continue')
@@ -178,14 +181,18 @@ const Chatflows = () => {
     }, [tenantId])
 
     useEffect(() => {
-        if (tenantId) {
-            getAllChatflowsApi.request(tenantId)
+        if (workspaceUid) {
+            chatFlowsApi.request(workspaceUid)
+        } else if (tenantId) {
+            chatFlowsApi.request(tenantId)
+        } else {
+            console.log('tenantId not found')
         }
-    }, [tenantId])
+    }, [tenantId, workspaceUid])
 
     useEffect(() => {
-        if (getAllChatflowsApi.error) {
-            if (getAllChatflowsApi.error?.response?.status === 401) {
+        if (chatFlowsApi.error) {
+            if (chatFlowsApi.error?.response?.status === 401) {
                 setLoginDialogProps({
                     title: 'Login',
                     confirmButtonName: 'Login'
@@ -194,16 +201,16 @@ const Chatflows = () => {
                 setLoginDialogOpen(true)
             }
         }
-    }, [getAllChatflowsApi.error])
+    }, [chatFlowsApi.error])
 
     useEffect(() => {
-        setLoading(getAllChatflowsApi.loading)
-    }, [getAllChatflowsApi.loading])
+        setLoading(chatFlowsApi.loading)
+    }, [chatFlowsApi.loading])
 
     useEffect(() => {
-        if (getAllChatflowsApi.data) {
+        if (chatFlowsApi.data) {
             try {
-                const chatflows = getAllChatflowsApi.data
+                const chatflows = chatFlowsApi.data
 
                 const images = {}
 
@@ -230,7 +237,39 @@ const Chatflows = () => {
                 console.error(e)
             }
         }
-    }, [getAllChatflowsApi.data])
+    }, [chatFlowsApi.data])
+
+    useEffect(() => {
+        if (chatFlowsApi.data) {
+            try {
+                const chatflows = chatFlowsApi.data
+
+                const images = {}
+
+                for (let i = 0; i < chatflows.length; i += 1) {
+                    const flowDataStr = chatflows[i].flowData
+
+                    const flowData = JSON.parse(flowDataStr)
+
+                    const nodes = flowData.nodes || []
+
+                    images[chatflows[i].id] = []
+
+                    for (let j = 0; j < nodes.length; j += 1) {
+                        const imageSrc = `${baseURL}/api/v1/node-icon/${nodes[j].data.name}`
+
+                        if (!images[chatflows[i].id].includes(imageSrc)) {
+                            images[chatflows[i].id].push(imageSrc)
+                        }
+                    }
+                }
+
+                setImages(images)
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    }, [chatFlowsApi.data])
 
     return (
         <>
@@ -535,7 +574,7 @@ const Chatflows = () => {
                         </Box>
                     )}
 
-                    {!isLoading && (!view || view === 'card') && getAllChatflowsApi.data && (
+                    {!isLoading && (!view || view === 'card') && chatFlowsApi.data && (
                         <Box
                             display='grid'
                             sx={{
@@ -552,14 +591,14 @@ const Chatflows = () => {
                                 gap: gridSpacing
                             }}
                         >
-                            {sortData(getAllChatflowsApi.data)
+                            {sortData(chatFlowsApi.data)
                                 .filter(filterFlows)
 
                                 .map((data, index) => (
                                     <Box key={index}>
                                         <ItemCard
                                             onClick={() => goToCanvas(data)}
-                                            updateFlowsApi={getAllChatflowsApi}
+                                            updateFlowsApi={chatFlowsApi}
                                             data={data}
                                             images={images[data.id]}
                                         />
@@ -568,18 +607,18 @@ const Chatflows = () => {
                         </Box>
                     )}
 
-                    {!isLoading && view === 'list' && getAllChatflowsApi.data && (
+                    {!isLoading && view === 'list' && chatFlowsApi.data && (
                         <FlowListTable
                             sx={{ mt: 20 }}
-                            data={sortData(getAllChatflowsApi.data)}
+                            data={sortData(chatFlowsApi.data)}
                             images={images}
                             filterFunction={filterFlows}
-                            updateFlowsApi={getAllChatflowsApi}
+                            updateFlowsApi={chatFlowsApi}
                         />
                     )}
                 </Stack>
 
-                {!isLoading && (!getAllChatflowsApi.data || getAllChatflowsApi.data.length === 0) && (
+                {!isLoading && (!chatFlowsApi.data || chatFlowsApi.data.length === 0) && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                         <Box sx={{ p: 2, height: 'auto' }}>
                             <img

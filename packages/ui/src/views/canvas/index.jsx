@@ -91,6 +91,8 @@ const Canvas = () => {
     const userData = useSelector((state) => state.user.userData)
     // const tenantId = userData['uid']
     const tenantId = userData?.uid || localStorage.getItem('userId')
+    const workspaceId = userData?.workspaceUid || localStorage.getItem('userId')
+
     const [canvasDataStore, setCanvasDataStore] = useState(canvas)
     const [chatflow, setChatflow] = useState(null)
     const { reactFlowInstance, setReactFlowInstance } = useContext(flowContext)
@@ -303,7 +305,6 @@ const Canvas = () => {
     }
 
     const handleSaveFlow = (chatflowName, chatflowDescription) => {
-        console.log('chatflowDescription:', chatflowDescription)
         if (reactFlowInstance) {
             const nodes = reactFlowInstance.getNodes().map((node) => {
                 const nodeData = cloneDeep(node.data)
@@ -329,6 +330,7 @@ const Canvas = () => {
                     deployed: false,
                     isPublic: false,
                     tenantId: tenantId,
+                    workspaceUid: workspaceId,
                     flowData
                 }
                 createNewChatflowApi.request(newChatflowBody)
