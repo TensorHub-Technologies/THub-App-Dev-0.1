@@ -34,6 +34,25 @@ export interface IChatFlow {
     type?: ChatflowType
 }
 
+export interface IWorkspace {
+    id: string
+    name: string
+    createdBy: string
+    createdDate: Date
+    updatedDate?: Date
+    description?: string
+    isActive: boolean
+}
+
+export interface IWorkspaceUser {
+    id: string
+    workspaceId: string
+    userId: string
+    role?: 'admin' | 'member'
+    joinedDate: Date
+    status: 'active' | 'inactive'
+}
+
 export interface IChatMessage {
     id: string
     role: MessageType

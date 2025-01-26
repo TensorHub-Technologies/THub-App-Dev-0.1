@@ -288,16 +288,12 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     }
 
     const onSaveChatflowClick = () => {
-        console.log('onSaveChatflowClick workspace')
         if (chatflow.id) handleSaveFlow(flowName)
         else setFlowDialogOpen(true)
     }
 
     const onConfirmSaveName = (flowName, chatflowDescription) => {
         setFlowDialogOpen(false)
-        // console.log("flowName:", flowName);
-        // console.log("chatflowDescription:", chatflowDescription);
-        // console.log("onConfirmSaveName workspace");
         handleSaveFlow(flowName, chatflowDescription)
     }
 

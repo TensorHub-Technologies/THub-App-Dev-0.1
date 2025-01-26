@@ -9,6 +9,8 @@ router.post('/importchatflows', chatflowsController.importChatflows)
 // READ
 router.get('/:tenantId', chatflowsController.getAllChatflows)
 
+router.get('/workspaces/:workspaceUid', chatflowsController.getAllChatflowsWp)
+
 router.get(['/', '/getChatflowById/:chatflowId'], chatflowsController.getChatflowById)
 
 router.get(['/apikey/', '/apikey/:apikey'], chatflowsController.getChatflowByApiKey)
