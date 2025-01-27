@@ -71,13 +71,24 @@ const UserInfo = ({ setShowModal, showModal }) => {
                 handleClose()
             }
         } catch (error) {
-            enqueueSnackbar({
-                message: 'Failed to update user data',
-                options: {
-                    key: new Date().getTime() + Math.random(),
-                    variant: 'error'
-                }
-            })
+            if (error.response) {
+                alert(error.response.data.message)
+                enqueueSnackbar({
+                    message: error.response.data.message || 'Failed to update user data',
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error'
+                    }
+                })
+            } else {
+                enqueueSnackbar({
+                    message: 'Failed to update user data due to a network error',
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error'
+                    }
+                })
+            }
             console.error('Error:', error)
         }
     }
