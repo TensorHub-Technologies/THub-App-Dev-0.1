@@ -79,7 +79,15 @@
                 "Unstructured Folder Loader",
                 "VectorStore To Document"
             ],
-            "Chat Models": ["Azure ChatOpenAI", "ChatAnthropic", "ChatGoogleGenerativeAI", "ChatHuggingFace", "ChatOpenAI"],
+            "Chat Models": [
+                "Azure ChatOpenAI",
+                "DeepseekAI API",
+                "ChatDeepseek",
+                "ChatAnthropic",
+                "ChatGoogleGenerativeAI",
+                "ChatHuggingFace",
+                "ChatOpenAI"
+            ],
             "Embeddings": [
                 "Azure OpenAI Embeddings",
                 "Cohere Embeddings",
@@ -259,6 +267,8 @@
             "Chat Models": [
                 "AWS ChatBedrock",
                 "Azure ChatOpenAI",
+                "ChatDeepseek",
+                "DeepseekAI API",
                 "ChatAnthropic",
                 "ChatBaiduWenxin",
                 "ChatCohere",
@@ -488,6 +498,8 @@
             "Chat Models": [
                 "AWS ChatBedrock",
                 "Azure ChatOpenAI",
+                "DeepseekAI API",
+                "ChatDeepseek",
                 "ChatAnthropic",
                 "ChatBaiduWenxin",
                 "ChatCohere",
