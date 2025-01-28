@@ -409,6 +409,9 @@ const Chatflows = () => {
                                 // placeholder='Search name or category'
 
                                 onChange={onSearchChange}
+                                inputProps={{
+                                    readOnly: true
+                                }}
                                 InputProps={{
                                     startAdornment: (
                                         <Select
