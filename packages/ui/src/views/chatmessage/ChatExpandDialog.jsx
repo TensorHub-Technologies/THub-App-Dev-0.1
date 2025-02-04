@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { ChatMessage } from './ChatMessage'
-import { IconX, IconEraser, IconMinus } from '@tabler/icons'
+import { IconX, IconEraser } from '@tabler/icons'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 
 const ChatExpandDialog = ({
@@ -26,17 +26,30 @@ const ChatExpandDialog = ({
         <Dialog
             open={show}
             fullWidth
-            maxWidth='3000px'
+            // maxWidth='3000px'
             onClose={onCancel}
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
             sx={{ overflow: 'visible' }}
+            PaperProps={{
+                sx: {
+                    margin: 0,
+                    position: 'absolute',
+                    top: 0,
+                    right: '0',
+                    bottom: 0,
+                    height: '100vh',
+                    maxHeight: '100vh',
+                    width: '110vh',
+                    maxWidth: '110vh'
+                }
+            }}
         >
             <DialogTitle sx={{ fontSize: '1rem', p: 1.5, padding: '0px' }} id='alert-dialog-title'>
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {dialogProps.title}
                     <div style={{ flex: 1 }}></div>
-                    <StyledFab
+                    {/* <StyledFab
                         sx={{
                             position: 'absolute',
                             right: 100,
@@ -55,7 +68,7 @@ const ChatExpandDialog = ({
                         }}
                     >
                         <IconMinus />
-                    </StyledFab>
+                    </StyledFab> */}
                     <StyledFab
                         sx={{
                             position: 'absolute',
