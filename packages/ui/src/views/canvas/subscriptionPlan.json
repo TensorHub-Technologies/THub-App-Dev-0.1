@@ -134,6 +134,7 @@
                 "Serp API",
                 "Serper",
                 "Web Browser",
+                "WolframAlpha",
                 "Write File",
                 "QueryEngineTool"
             ],
@@ -146,6 +147,7 @@
                 "HtmlToMarkdown Text Splitter",
                 "Markdown Text Splitter",
                 "Recursive Character Text Splitter",
+                "Recursive JSON Text Splitter",
                 "Token Text Splitter"
             ],
             "Retrievers": [
@@ -365,6 +367,7 @@
                 "Serp API",
                 "Serper",
                 "Web Browser",
+                "WolframAlpha",
                 "Write File",
                 "QueryEngineTool"
             ],
@@ -377,7 +380,8 @@
                 "HtmlToMarkdown Text Splitter",
                 "Markdown Text Splitter",
                 "Recursive Character Text Splitter",
-                "Token Text Splitter"
+                "Token Text Splitter",
+                "Recursive JSON Text Splitter"
             ],
             "Retrievers": [
                 "AWS Bedrock Knowledge Base Retriever",
