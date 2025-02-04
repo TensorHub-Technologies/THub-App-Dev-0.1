@@ -31,6 +31,7 @@
         "html-react-parser": "^3.0.4",
         "html-to-image": "^1.11.11",
         "lodash": "^4.17.21",
+        "microsoft-cognitiveservices-speech-sdk": "^1.42.0",
         "moment": "^2.29.3",
         "notistack": "^2.0.4",
         "prop-types": "^15.7.2",
