@@ -1566,8 +1566,8 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const synthesizer = useRef(null)
     const [conversations, setConversations] = useState([])
 
-    const SPEECH_KEY = import.meta.env.VITE_APP_AZURE_SPEECH_KEY
-    const SPEECH_REGION = import.meta.env.VITE_APP_AZURE_REGION
+    const SPEECH_KEY = 'EjLXp4e86y6XCiDHklrFKQ3FsMATnDn65X2DhezX3SrDaEdQGJQtJQQJ99BAACYeBjFXJ3w3AAAYACOGt5mT'
+    const SPEECH_REGION = 'eastus'
 
     const [myTranscript, setMyTranscript] = useState('')
     const [recognizingTranscript, setRecTranscript] = useState('')
