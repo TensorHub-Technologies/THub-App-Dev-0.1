@@ -1680,6 +1680,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
     const stopListening = () => {
         setIsListening(false)
+        setIsSpeaking(false)
         stopSpeaking()
         recognizer.current?.stopContinuousRecognitionAsync(() => {
             console.log('Speech recognition stopped.')
