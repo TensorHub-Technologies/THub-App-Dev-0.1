@@ -1582,6 +1582,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     ]
 
     useEffect(() => {
+        console.log(SPEECH_KEY, 'SPEECH_KEY')
         speechConfig.current = sdk.SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION)
         speechConfig.current.speechRecognitionLanguage = language
 
@@ -1633,33 +1634,18 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
     useEffect(() => {
         if (lastres) {
-            // Ensure lastres is not empty before adding to conversations
+            const sanitizedText = lastres.replace(/[^\w\s]/g, '')
+
             setConversations((prev) => [...prev, { sender: 'AI', text: lastres }])
 
             player.current = new sdk.SpeakerAudioDestination()
             audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
             synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
 
-            synthesizer.current?.speakTextAsync(lastres, () => {
+            synthesizer.current?.speakTextAsync(sanitizedText, () => {
                 console.log('Speech synthesis started.')
                 setIsSpeaking(true)
             })
-            // } else if (call) {
-            //     console.log(call, '$$$call')
-
-            //     const lastMessage = messages[messages.length - 1]
-            //     console.log(lastMessage, '$$$lastMessage')
-
-            //     setConversations((prev) => [...prev, { sender: 'AI', text: lastMessage.message }])
-
-            //     player.current = new sdk.SpeakerAudioDestination()
-            //     audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
-            //     synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
-
-            //     synthesizer.current?.speakTextAsync(lastMessage.message, () => {
-            //         console.log('Speech synthesis started.')
-            //         setIsSpeaking(true)
-            //     })
         }
     }, [lastres])
 
@@ -1679,9 +1665,10 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     }
 
     const stopListening = () => {
+        stopSpeaking()
         setIsListening(false)
         setIsSpeaking(false)
-        stopSpeaking()
+        pauseListening()
         recognizer.current?.stopContinuousRecognitionAsync(() => {
             console.log('Speech recognition stopped.')
         })
