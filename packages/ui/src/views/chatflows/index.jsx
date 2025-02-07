@@ -138,13 +138,12 @@ const Chatflows = () => {
 
     const addNew = async () => {
         const chatflows = chatFlowsApi.data || []
-        console.log('chatflows: ', chatflows)
         let subscriptionType = userData?.subscription_type
         if (!subscriptionType) {
             subscriptionType = 'free'
         }
         if (subscriptionType === 'free') {
-            if (chatflows.length > 4) {
+            if (chatflows.length > 3) {
                 navigate('/subscription')
                 // TODO: Add banner to show free tier limit reached
                 console.log('maximum workspace apps reached! upgrade plan to continue')

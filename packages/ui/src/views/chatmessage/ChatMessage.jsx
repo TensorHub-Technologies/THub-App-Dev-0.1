@@ -218,8 +218,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const [followUpPromptsStatus, setFollowUpPromptsStatus] = useState(false)
     const [followUpPrompts, setFollowUpPrompts] = useState([])
 
-    console.log(followUpPromptsStatus, 'followUpPromptsStatus', followUpPrompts, 'followUpPrompts')
-
     console.log(messages, 'messages')
 
     const [isStreaming, setIsStreaming] = useState(false)

@@ -40,8 +40,6 @@ const Subscription = () => {
         isActive: true
     })
 
-    console.log(subscriptionDetails)
-
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)
@@ -49,6 +47,13 @@ const Subscription = () => {
     }
     const getPrice = (plan) => {
         return plan.prices[currency] || plan.prices['INR']
+    }
+
+    const getIncreasePrice = (plan) => {
+        if (plan.extraPrice) {
+            return plan.extraPrice[currency] || plan.extraPrice['INR']
+        }
+        return null
     }
 
     const handleCurrencyChange = (selectedCurrency) => setCurrency(selectedCurrency)
@@ -376,7 +381,7 @@ const Subscription = () => {
                                                     color: customization.isDarkMode ? 'white' : 'black'
                                                 }}
                                             >
-                                                /seat
+                                                /agent
                                             </span>
                                         </Typography>
                                     ) : (
@@ -440,7 +445,9 @@ const Subscription = () => {
                                                     }
                                                     key={index}
                                                 >
-                                                    {feature}
+                                                    {feature.includes('₹ 17,999/per Additional Agents') && plan.title === 'Pro'
+                                                        ? `${getIncreasePrice(plan)}/Per Additional Agents`
+                                                        : feature}
                                                 </li>
                                             ))}
                                         </ul>

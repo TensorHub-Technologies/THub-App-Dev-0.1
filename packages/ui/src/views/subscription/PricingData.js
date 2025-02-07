@@ -13,8 +13,8 @@ export const pricingData = {
             description: 'For starters to explore and integrate',
             buttonInfo: 'Start for Free',
             list: [
-                'Single Seat',
-                '5 GenAI Apps',
+                'Single User',
+                '3 Agents',
                 'API based access to LLM',
                 'Embedding Model',
                 ' Vector Database etc',
@@ -31,6 +31,12 @@ export const pricingData = {
                 GBP: '£ 159',
                 Euro: '€ 189'
             },
+            extraPrice: {
+                INR: '₹17,999',
+                USD: '$206',
+                GBP: '£166',
+                Euro: '€199'
+            },
             planId: 'plan_PhdG5GMrYCqm6Z',
             duration: 'monthly',
             description: 'For small & medium businesses',
@@ -38,8 +44,9 @@ export const pricingData = {
             messagePopup: 'Loading Razorpay Payment Gateway',
             list: [
                 'All Free Features',
-                '5 Seats',
-                '25 GenAI Apps',
+                '5 Users',
+                '25 Agents',
+                '₹ 17,999/per Additional Agents',
                 'Team collaboration',
                 'Train your own local LLM',
                 'Fine Tune open source LLM',
@@ -59,7 +66,7 @@ export const pricingData = {
             description: 'For large teams and enterprises.',
             buttonInfo: 'Get in Touch',
             messagePopup: 'Form Is Loading',
-            list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
+            list: ['All Pro Features', 'Unlimited Users', 'Unlimited Agents']
         }
     ],
     yearly: [
@@ -74,11 +81,11 @@ export const pricingData = {
             description: 'For starters to explore and integrate',
             buttonInfo: 'Start for Free',
             list: [
-                'Single Seat',
-                '5 GenAI Apps',
+                'Single User',
+                '5 Agents',
                 'API based access to LLM',
                 'Embedding Model',
-                ' Vector Database etc',
+                'Vector Database etc',
                 'Shared or your own API keys',
                 'Basic Analytics',
                 'Standard Support'
@@ -92,6 +99,12 @@ export const pricingData = {
                 GBP: '£ 1,699',
                 Euro: '€ 2,099'
             },
+            extraPrice: {
+                INR: '₹1,99,999',
+                USD: '$2,288',
+                GBP: '£1,837',
+                Euro: '€2,203'
+            },
             planId: 'plan_PhdbTzJPTel2e3',
             duration: 'yearly',
             description: 'For small & medium businesses',
@@ -99,8 +112,9 @@ export const pricingData = {
             messagePopup: 'Loading Razorpay Payment Gateway',
             list: [
                 'All Free Features',
-                '5 Seats',
-                '25 GenAI Apps',
+                '5 Users',
+                '25 Agents',
+                '₹ 17,999/per Additional Agents',
                 'Team collaboration',
                 'Train your own local LLM',
                 'Fine Tune open source LLM',
@@ -121,7 +135,7 @@ export const pricingData = {
             description: 'For large teams and enterprises.',
             buttonInfo: 'Get in Touch',
             messagePopup: 'Form Is Loading',
-            list: ['All Pro Features', 'Unlimited Seats', 'Unlimited GenAI Apps']
+            list: ['All Pro Features', 'Unlimited Users', 'Unlimited Agents']
         }
     ]
 }

@@ -55,7 +55,6 @@ const LoginForm = () => {
                 ...values,
                 workspace
             }
-            console.log(finalValues, 'finalvalues')
             const response = await axios.post(`${apiUrl}/loginUser`, finalValues)
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
