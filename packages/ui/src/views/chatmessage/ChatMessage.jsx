@@ -12,7 +12,6 @@ import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event
 import thubTop from '../../assets/images/thub_top.png'
 import thubLeft from '../../assets/images/thub_left.png'
 import thubRight from '../../assets/images/thub_right.png'
-import { IconDeviceSdCard } from '@tabler/icons-react'
 
 import {
     Box,
@@ -29,6 +28,7 @@ import {
     CardContent,
     Stack
 } from '@mui/material'
+
 import { useTheme } from '@mui/material/styles'
 import {
     IconCircleDot,
@@ -42,7 +42,9 @@ import {
     IconSquareFilled,
     IconCheck,
     IconPaperclip,
-    IconSparkles
+    IconSparkles,
+    IconPhoneOff,
+    IconPhoneCall
 } from '@tabler/icons-react'
 import Logo from '@/assets/images/THub_icon_colorful_logo.png'
 import PersonIcon from '@mui/icons-material/Person'
@@ -62,6 +64,9 @@ import CopyToClipboardButton from '@/ui-component/button/CopyToClipboardButton'
 import ThumbsUpButton from '@/ui-component/button/ThumbsUpButton'
 import ThumbsDownButton from '@/ui-component/button/ThumbsDownButton'
 import { cancelAudioRecording, startAudioRecording, stopAudioRecording } from './audio-recording'
+import TextToSpeech from './TextToSpeech'
+
+import * as sdk from 'microsoft-cognitiveservices-speech-sdk'
 import './audio-recording.css'
 import './ChatMessage.css'
 
@@ -85,7 +90,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 import { isValidURL, removeDuplicateURL, setLocalStorageChatflow, getLocalStorageChatflow } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
 import FollowUpPromptsCard from '@/ui-component/cards/FollowUpPromptsCard'
-import TextToSpeech from './TextToSpeech'
+import { IconDeviceSdCard } from '@tabler/icons-react'
 
 const messageImageStyle = {
     width: '128px',
@@ -217,8 +222,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     // follow-up prompts
     const [followUpPromptsStatus, setFollowUpPromptsStatus] = useState(false)
     const [followUpPrompts, setFollowUpPrompts] = useState([])
-
-    console.log(messages, 'messages')
 
     const [isStreaming, setIsStreaming] = useState(false)
     const audioStreamRef = useRef(null)
@@ -809,7 +812,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
         }
         return uploads
     }
-
+    const [lastres, setLastres] = useState('')
     // Handle form submission
     const handleSubmit = async (e, selectedInput, action) => {
         if (e) e.preventDefault()
@@ -861,14 +864,14 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                 const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
                 if (response.data) {
                     const data = response.data
-
                     updateMetadata(data, input)
 
                     let text = ''
                     if (data.text) text = data.text
                     else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
                     else text = JSON.stringify(data, null, 2)
-
+                    console.log(text, '$$$$text')
+                    setLastres(text)
                     setMessages((prevMessages) => [
                         ...prevMessages,
                         {
@@ -917,10 +920,12 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                 'x-request-from': 'internal'
             },
             async onopen(response) {
+                console.log(response, '$$$$response')
                 if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
                     //console.log('EventSource Open')
                 }
             },
+
             async onmessage(ev) {
                 const payload = JSON.parse(ev.data)
                 switch (payload.event) {
@@ -1547,6 +1552,137 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                 </MemoizedReactMarkdown>
             )
         }
+    }
+
+    const [isListening, setIsListening] = useState(false)
+    const [isSpeaking, setIsSpeaking] = useState(false)
+    const [language, setLanguage] = useState('en-US')
+    const speechConfig = useRef(null)
+    const audioConfigForRecognization = useRef(null)
+    const audioConfigForSynthesizer = useRef(null)
+    const player = useRef(null)
+
+    const recognizer = useRef(null)
+    const synthesizer = useRef(null)
+    const [conversations, setConversations] = useState([])
+
+    const SPEECH_KEY = 'EjLXp4e86y6XCiDHklrFKQ3FsMATnDn65X2DhezX3SrDaEdQGJQtJQQJ99BAACYeBjFXJ3w3AAAYACOGt5mT'
+    const SPEECH_REGION = 'eastus'
+
+    const [myTranscript, setMyTranscript] = useState('')
+    const [recognizingTranscript, setRecTranscript] = useState('')
+
+    const [call, setCall] = useState(false)
+
+    const languageOptions = [
+        { code: 'en-US', name: 'English (US)' },
+        { code: 'hi-IN', name: 'Hindi (India)' },
+        { code: 'ta-IN', name: 'Tamil (India)' },
+        { code: 'kn-IN', name: 'Kannada (India)' }
+    ]
+
+    useEffect(() => {
+        console.log(SPEECH_KEY, 'SPEECH_KEY')
+        speechConfig.current = sdk.SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION)
+        speechConfig.current.speechRecognitionLanguage = language
+
+        audioConfigForRecognization.current = sdk.AudioConfig.fromDefaultMicrophoneInput()
+        recognizer.current = new sdk.SpeechRecognizer(speechConfig.current, audioConfigForRecognization.current)
+
+        const processRecognizedTranscript = async (event) => {
+            if (!speechConfig.current) {
+                return
+            }
+            const result = event.result
+            if (result.reason === sdk.ResultReason.RecognizedSpeech) {
+                const transcript = result.text
+                setMyTranscript(transcript)
+
+                setConversations((prev) => [...prev, { sender: 'User', text: transcript }])
+
+                if (player.current) {
+                    player.current.pause()
+                }
+                setUserInput(transcript)
+
+                handleSubmit(undefined, transcript)
+                setCall(true)
+            }
+        }
+
+        const processRecognizingTranscript = (event) => {
+            const result = event.result
+            console.log('Recognition result:', result)
+            if (result.reason === sdk.ResultReason.RecognizingSpeech) {
+                const transcript = result.text
+                console.log('Transcript: -->', transcript)
+                setRecTranscript(transcript)
+                stopSpeaking()
+            }
+        }
+
+        recognizer.current.recognized = (s, e) => processRecognizedTranscript(e)
+        recognizer.current.recognizing = (s, e) => processRecognizingTranscript(e)
+
+        return () => {
+            if (recognizer.current)
+                recognizer.current?.stopContinuousRecognitionAsync(() => {
+                    setIsListening(false)
+                })
+        }
+    }, [language])
+
+    useEffect(() => {
+        if (lastres) {
+            const sanitizedText = lastres.replace(/[^\w\s]/g, '')
+
+            setConversations((prev) => [...prev, { sender: 'AI', text: lastres }])
+
+            player.current = new sdk.SpeakerAudioDestination()
+            audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
+            synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
+
+            synthesizer.current?.speakTextAsync(sanitizedText, () => {
+                console.log('Speech synthesis started.')
+                setIsSpeaking(true)
+            })
+        }
+    }, [lastres])
+
+    const pauseListening = () => {
+        setIsListening(false)
+        recognizer.current?.stopContinuousRecognitionAsync()
+        console.log('Paused listening.')
+    }
+
+    const resumeListening = () => {
+        if (!isListening) {
+            setIsListening(true)
+            recognizer.current?.startContinuousRecognitionAsync(() => {
+                console.log('Resumed listening...')
+            })
+        }
+    }
+
+    const stopListening = () => {
+        stopSpeaking()
+        setIsListening(false)
+        setIsSpeaking(false)
+        pauseListening()
+        recognizer.current?.stopContinuousRecognitionAsync(() => {
+            console.log('Speech recognition stopped.')
+        })
+    }
+
+    const stopSpeaking = () => {
+        setIsSpeaking(false)
+        if (player.current) {
+            player.current.pause()
+        }
+    }
+
+    const handleLanguageChange = (event) => {
+        setLanguage(event.target.value)
     }
 
     return (
@@ -2436,6 +2572,42 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                             </IconButton>
                                         </InputAdornment>
                                     )}
+                                    {userInput === '' && (
+                                        <InputAdornment position='end' sx={{ paddingRight: '3px' }}>
+                                            <IconButton
+                                                type='submit'
+                                                disabled={getInputDisabled()}
+                                                edge='end'
+                                                onClick={isListening ? stopListening : resumeListening}
+                                            >
+                                                {isListening ? (
+                                                    <>
+                                                        <IconPhoneOff
+                                                            color={
+                                                                loading || !chatflowid
+                                                                    ? '#9e9e9e'
+                                                                    : customization.isDarkMode
+                                                                    ? '#A93B97'
+                                                                    : '#1e88e5'
+                                                            }
+                                                        />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <IconPhoneCall
+                                                            color={
+                                                                loading || !chatflowid
+                                                                    ? '#9e9e9e'
+                                                                    : customization.isDarkMode
+                                                                    ? '#A93B97'
+                                                                    : '#1e88e5'
+                                                            }
+                                                        />
+                                                    </>
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )}
                                     {!isAgentCanvas && (
                                         <InputAdornment position='end' sx={{ paddingRight: '15px' }}>
                                             <IconButton type='submit' disabled={getInputDisabled()} edge='end'>
@@ -2444,16 +2616,17 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                         <CircularProgress color='inherit' size={20} />
                                                     </div>
                                                 ) : (
-                                                    // Send icon SVG in input field
-                                                    <IconSend
-                                                        color={
-                                                            loading || !chatflowid
-                                                                ? '#9e9e9e'
-                                                                : customization.isDarkMode
-                                                                ? '#A93B97'
-                                                                : '#1e88e5'
-                                                        }
-                                                    />
+                                                    !isListening && (
+                                                        <IconSend
+                                                            color={
+                                                                loading || !chatflowid
+                                                                    ? '#9e9e9e'
+                                                                    : customization.isDarkMode
+                                                                    ? '#A93B97'
+                                                                    : '#1e88e5'
+                                                            }
+                                                        />
+                                                    )
                                                 )}
                                             </IconButton>
                                         </InputAdornment>
@@ -2519,22 +2692,18 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                 accept={getFileUploadAllowedTypes()}
                             />
                         )}
-                        {/* <Box sx={{ padding: 2 }}>
-                            <Typography variant='h4' gutterBottom>
-                                Chat with Voice Streaming
-                            </Typography>
+                        {/* <div className='flex items-center gap-4'>
+                            <div style={{ padding: '8px', borderRadius: '50px' }}>
+                                <select value={language} onChange={handleLanguageChange} className='bg-transparent outline-none'>
+                                    {languageOptions.map((option) => (
+                                        <option key={option.code} value={option.code}>
+                                            {option.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                                <Button
-                                    variant={isStreaming ? 'contained' : 'outlined'}
-                                    color='primary'
-                                    startIcon={<IconMicrophone />}
-                                    onClick={isStreaming ? stopVoiceStreaming : startVoiceStreaming}
-                                >
-                                    {isStreaming ? 'Stop Streaming' : 'Start Streaming'}
-                                </Button>
-                            </Box>
-                        </Box> */}
+                        </div> */}
                     </form>
                 )}
             </div>

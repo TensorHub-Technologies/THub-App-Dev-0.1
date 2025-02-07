@@ -96,6 +96,9 @@ export const ChatPopUp = ({ chatflowid, isAgentCanvas }) => {
 
     const customization = useSelector((state) => state.customization)
     const handleToggle = () => {
+        if (!open) {
+            expandChat()
+        }
         setOpen((prevOpen) => !prevOpen)
     }
 
