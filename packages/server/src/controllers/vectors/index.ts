@@ -15,6 +15,7 @@ const upsertVectorMiddleware = async (req: Request, res: Response, next: NextFun
         const apiResponse = await vectorsService.upsertVectorMiddleware(req)
         return res.json(apiResponse)
     } catch (error) {
+        console.error('Error in upsertVectorMiddleware:', error)
         next(error)
     }
 }
