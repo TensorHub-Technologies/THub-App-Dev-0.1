@@ -86,13 +86,10 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                 const allNodeDetails = getNodesApi.data //.map(x => ({ type: x.type, label: x.label }))//.filter((x, index, arr) => arr.indexOf(x) === index);
                 //console.log('allNodes', allNodeDetails);
 
-                console.log('sourceNode', sourceNode)
-
                 const outputTypes = sourceNode.baseClasses
 
                 const outputNodes = allNodeDetails.filter((x) => x.inputs?.some((z) => outputTypes.includes(z.type)))
                 setOutputNodes(outputNodes)
-                console.log('outputNodes:$$$$', outputNodes)
             }
         }
     }, [getNodesApi.data, dialogProps.data])
