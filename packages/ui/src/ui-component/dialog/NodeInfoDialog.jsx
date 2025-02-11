@@ -61,8 +61,9 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
         if (!outputNodes) return null
 
         return outputNodes.map((ele, index) => (
-            <span key={index} style={{ padding: '5px 10px' }}>
+            <span key={index} style={{ padding: '5px' }}>
                 {ele.label}
+                {index !== outputNodes.length - 1 ? ',' : ''}
             </span>
         ))
     }
@@ -248,11 +249,18 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
 
             <DialogContent>
                 <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', right: '0px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '25px', marginBottom: '5px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
                         <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Input</b>
-                        {dialogProps?.data?.inputAnchors.map((anchor, index) => (
-                            <span key={index}>{anchor.label}</span>
-                        ))}
+                        {dialogProps?.data?.inputAnchors?.length > 0 ? (
+                            dialogProps.data.inputAnchors.map((anchor, index, array) => (
+                                <span key={index}>
+                                    {anchor.label}
+                                    {index !== array.length - 1 ? ', ' : ''}
+                                </span>
+                            ))
+                        ) : (
+                            <span>No Inputs</span>
+                        )}
                     </div>
 
                     {/* <div> 
