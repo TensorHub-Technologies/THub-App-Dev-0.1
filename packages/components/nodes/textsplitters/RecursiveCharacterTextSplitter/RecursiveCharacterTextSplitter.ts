@@ -58,7 +58,6 @@ class RecursiveCharacterTextSplitter_TextSplitters implements INode {
         const separators = nodeData.inputs?.separators
 
         const obj = {} as RecursiveCharacterTextSplitterParams
-
         if (chunkSize) obj.chunkSize = parseInt(chunkSize, 10)
         if (chunkOverlap) obj.chunkOverlap = parseInt(chunkOverlap, 10)
         if (separators) {

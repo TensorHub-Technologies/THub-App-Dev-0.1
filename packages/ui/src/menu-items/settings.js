@@ -93,13 +93,6 @@ const settings = {
             icon: icons.IconCopy
         },
         {
-            id: 'loadChatflow',
-            title: 'Load Chatflow',
-            type: 'item',
-            url: '',
-            icon: icons.IconFileUpload
-        },
-        {
             id: 'exportChatflow',
             title: 'Export Workflow',
             type: 'item',
