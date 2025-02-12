@@ -170,6 +170,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const customization = useSelector((state) => state.customization)
 
     const ps = useRef()
+    const questions = useRef(0)
 
     const dispatch = useDispatch()
 
@@ -859,49 +860,50 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             if (action) params.action = action
 
             if (isChatFlowAvailableToStream) {
-                fetchResponseFromEventStream(chatflowid, params)
+                await fetchResponseFromEventStream(chatflowid, params)
             } else {
                 const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
-                if (response.data) {
-                    const data = response.data
-                    updateMetadata(data, input)
-
-                    let text = ''
-                    if (data.text) text = data.text
-                    else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
-                    else text = JSON.stringify(data, null, 2)
-                    console.log(text, '$$$$text')
-                    setLastres(text)
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        {
-                            message: text,
-                            id: data?.chatMessageId,
-                            sourceDocuments: data?.sourceDocuments,
-                            usedTools: data?.usedTools,
-                            fileAnnotations: data?.fileAnnotations,
-                            agentReasoning: data?.agentReasoning,
-                            action: data?.action,
-                            artifacts: data?.artifacts,
-                            type: 'apiMessage',
-                            feedback: null
-                        }
-                    ])
-
-                    setLocalStorageChatflow(chatflowid, data.chatId)
-                    setLoading(false)
-                    setUserInput('')
-                    setUploadedFiles([])
-                    setTimeout(() => {
-                        inputRef.current?.focus()
-                        scrollToBottom()
-                    }, 100)
-                }
+                setAiResponseInChatMessages(response.data, params)
             }
         } catch (error) {
             handleError(error.response.data.message)
             return
         }
+    }
+
+    const setAiResponseInChatMessages = (data, params) => {
+        updateMetadata(data, params.question)
+        let text = ''
+        if (data.text) text = data.text
+        else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
+        else text = JSON.stringify(data, null, 2)
+        console.log(text, '$$$$text')
+        setLastres(text)
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+                message: text,
+                id: data?.chatMessageId,
+                sourceDocuments: data?.sourceDocuments,
+                usedTools: data?.usedTools,
+                fileAnnotations: data?.fileAnnotations,
+                agentReasoning: data?.agentReasoning,
+                action: data?.action,
+                artifacts: data?.artifacts,
+                type: 'apiMessage',
+                feedback: null
+            }
+        ])
+
+        setLocalStorageChatflow(chatflowid, data.chatId)
+        setLoading(false)
+        setUserInput('')
+        setUploadedFiles([])
+        setTimeout(() => {
+            inputRef.current?.focus()
+            scrollToBottom()
+        }, 100)
+        return text
     }
 
     const fetchResponseFromEventStream = async (chatflowid, params) => {
@@ -1556,7 +1558,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
     const [isListening, setIsListening] = useState(false)
     const [isSpeaking, setIsSpeaking] = useState(false)
-    const [language, setLanguage] = useState('en-US')
+    const [language, setLanguage] = useState('en-IN')
     const speechConfig = useRef(null)
     const audioConfigForRecognization = useRef(null)
     const audioConfigForSynthesizer = useRef(null)
@@ -1566,20 +1568,11 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const synthesizer = useRef(null)
     const [conversations, setConversations] = useState([])
 
-    const SPEECH_KEY = 'EjLXp4e86y6XCiDHklrFKQ3FsMATnDn65X2DhezX3SrDaEdQGJQtJQQJ99BAACYeBjFXJ3w3AAAYACOGt5mT'
+    const SPEECH_KEY = 'BPjTQypxZk7YBxpRcTxIDjg3fu1RjImqTgubDg1u16AyVSe0ErjMJQQJ99BAACYeBjFXJ3w3AAAYACOG1tYn'
     const SPEECH_REGION = 'eastus'
 
     const [myTranscript, setMyTranscript] = useState('')
     const [recognizingTranscript, setRecTranscript] = useState('')
-
-    const [call, setCall] = useState(false)
-
-    const languageOptions = [
-        { code: 'en-US', name: 'English (US)' },
-        { code: 'hi-IN', name: 'Hindi (India)' },
-        { code: 'ta-IN', name: 'Tamil (India)' },
-        { code: 'kn-IN', name: 'Kannada (India)' }
-    ]
 
     useEffect(() => {
         console.log(SPEECH_KEY, 'SPEECH_KEY')
@@ -1597,16 +1590,40 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             if (result.reason === sdk.ResultReason.RecognizedSpeech) {
                 const transcript = result.text
                 setMyTranscript(transcript)
-
                 setConversations((prev) => [...prev, { sender: 'User', text: transcript }])
-
-                if (player.current) {
-                    player.current.pause()
-                }
+                stopSpeaking()
                 setUserInput(transcript)
 
-                handleSubmit(undefined, transcript)
-                setCall(true)
+                setLoading(true)
+                clearPreviews()
+                setMessages((prevMessages) => [...prevMessages, { message: transcript, type: 'userMessage' }])
+
+                const params = {
+                    question: transcript,
+                    chatId: chatflowid
+                }
+                questions.current += 1
+                const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
+                if (questions.current > 1) {
+                    questions.current -= 1
+                    return
+                }
+
+                const aiResponseText = setAiResponseInChatMessages(response.data, params)
+
+                const sanitizedText = aiResponseText.replace(/[^\w\s]/g, '')
+                stopSpeaking()
+
+                setConversations((prev) => [...prev, { sender: 'AI', text: aiResponseText }])
+                player.current = new sdk.SpeakerAudioDestination()
+                audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
+                synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
+
+                synthesizer.current?.speakTextAsync(sanitizedText, () => {
+                    console.log('Speech synthesis started.')
+                    questions.current -= 1
+                    setIsSpeaking(true)
+                })
             }
         }
 
@@ -1632,23 +1649,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
         }
     }, [language])
 
-    useEffect(() => {
-        if (lastres) {
-            const sanitizedText = lastres.replace(/[^\w\s]/g, '')
-
-            setConversations((prev) => [...prev, { sender: 'AI', text: lastres }])
-
-            player.current = new sdk.SpeakerAudioDestination()
-            audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
-            synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
-
-            synthesizer.current?.speakTextAsync(sanitizedText, () => {
-                console.log('Speech synthesis started.')
-                setIsSpeaking(true)
-            })
-        }
-    }, [lastres])
-
     const pauseListening = () => {
         setIsListening(false)
         recognizer.current?.stopContinuousRecognitionAsync()
@@ -1665,9 +1665,8 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     }
 
     const stopListening = () => {
-        stopSpeaking()
         setIsListening(false)
-        setIsSpeaking(false)
+        stopSpeaking()
         pauseListening()
         recognizer.current?.stopContinuousRecognitionAsync(() => {
             console.log('Speech recognition stopped.')
@@ -1679,10 +1678,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
         if (player.current) {
             player.current.pause()
         }
-    }
-
-    const handleLanguageChange = (event) => {
-        setLanguage(event.target.value)
     }
 
     return (
