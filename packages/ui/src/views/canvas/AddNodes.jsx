@@ -144,6 +144,7 @@ const AddNodes = ({ nodesData, node }) => {
             />
         ),
         Embeddings: <IconChartScatter3d />,
+        Graph: <graphDark />,
         Memory: <MemoryIcon />,
         LLMs: <ViewInArIcon />,
         'Multi Agents': <IconUsersGroup />,
@@ -194,7 +195,7 @@ const AddNodes = ({ nodesData, node }) => {
         userData.subscription_type = localStorage.getItem('subscription_type')
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
-    // const allowedMenu="Premium"
+
     const allowedMenuItemKeys = Object.keys(allowedMenu)
     const [tab, setTab] = useState(['LangChain'])
 
