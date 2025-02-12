@@ -12,7 +12,6 @@ import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event
 import thubTop from '../../assets/images/thub_top.png'
 import thubLeft from '../../assets/images/thub_left.png'
 import thubRight from '../../assets/images/thub_right.png'
-
 import {
     Box,
     Button,
