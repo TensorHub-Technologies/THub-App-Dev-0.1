@@ -1558,7 +1558,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
     const [isListening, setIsListening] = useState(false)
     const [isSpeaking, setIsSpeaking] = useState(false)
-    const [language, setLanguage] = useState('en-IN	')
+    const [language, setLanguage] = useState('en-IN')
     const speechConfig = useRef(null)
     const audioConfigForRecognization = useRef(null)
     const audioConfigForSynthesizer = useRef(null)
@@ -1568,7 +1568,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const synthesizer = useRef(null)
     const [conversations, setConversations] = useState([])
 
-    const SPEECH_KEY = 'EjLXp4e86y6XCiDHklrFKQ3FsMATnDn65X2DhezX3SrDaEdQGJQtJQQJ99BAACYeBjFXJ3w3AAAYACOGt5mT'
+    const SPEECH_KEY = 'BPjTQypxZk7YBxpRcTxIDjg3fu1RjImqTgubDg1u16AyVSe0ErjMJQQJ99BAACYeBjFXJ3w3AAAYACOG1tYn'
     const SPEECH_REGION = 'eastus'
 
     const [myTranscript, setMyTranscript] = useState('')
@@ -1579,7 +1579,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
         speechConfig.current = sdk.SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION)
         speechConfig.current.speechRecognitionLanguage = language
 
-        // Configure audio with noise suppression
         audioConfigForRecognization.current = sdk.AudioConfig.fromDefaultMicrophoneInput()
         recognizer.current = new sdk.SpeechRecognizer(speechConfig.current, audioConfigForRecognization.current)
 
