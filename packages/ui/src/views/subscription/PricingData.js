@@ -101,9 +101,9 @@ export const pricingData = {
             },
             extraPrice: {
                 INR: '₹1,99,999',
-                USD: '$2,288',
-                GBP: '£1,837',
-                Euro: '€2,203'
+                USD: '$1,999',
+                GBP: '£1,599',
+                Euro: '€1,899'
             },
             planId: 'plan_PhdbTzJPTel2e3',
             duration: 'yearly',
