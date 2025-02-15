@@ -2181,11 +2181,11 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                                                 ? child
                                                                                 : React.cloneElement(child, {
                                                                                       style: {
-                                                                                          padding: '15px',
+                                                                                          //   padding: '15px',
                                                                                           width: '100%',
                                                                                           height: 'auto',
-                                                                                          objectFit: 'contain',
-                                                                                          display: 'block'
+                                                                                          objectFit: 'contain'
+                                                                                          //   display: 'block'
                                                                                       }
                                                                                   })
                                                                         )}
