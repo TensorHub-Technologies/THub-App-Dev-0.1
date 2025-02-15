@@ -138,9 +138,8 @@ const AgentCounter = ({ open, handleClose }) => {
                 <p
                     id='child-modal-description'
                     style={{
-                        paddingLeft: '18px',
-                        width: '380px',
-                        textAlign: 'center',
+                        textAlign: 'left',
+                        paddingLeft: '20px',
                         color: isDarkMode ? 'white' : 'black'
                     }}
                 >
