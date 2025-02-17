@@ -876,7 +876,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
         if (data.text) text = data.text
         else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
         else text = JSON.stringify(data, null, 2)
-        console.log(text, '$$$$text')
         setLastres(text)
         setMessages((prevMessages) => [
             ...prevMessages,
@@ -921,7 +920,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                 'x-request-from': 'internal'
             },
             async onopen(response) {
-                console.log(response, '$$$$response')
                 if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
                     //console.log('EventSource Open')
                 }
@@ -1574,7 +1572,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const [recognizingTranscript, setRecTranscript] = useState('')
 
     useEffect(() => {
-        console.log(SPEECH_KEY, 'SPEECH_KEY')
         speechConfig.current = sdk.SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION)
         speechConfig.current.speechRecognitionLanguage = language
 
@@ -1628,10 +1625,8 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
         const processRecognizingTranscript = (event) => {
             const result = event.result
-            console.log('Recognition result:', result)
             if (result.reason === sdk.ResultReason.RecognizingSpeech) {
                 const transcript = result.text
-                console.log('Transcript: -->', transcript)
                 setRecTranscript(transcript)
                 stopSpeaking()
             }
