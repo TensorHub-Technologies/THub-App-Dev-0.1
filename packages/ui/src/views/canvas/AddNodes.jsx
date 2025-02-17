@@ -192,7 +192,7 @@ const AddNodes = ({ nodesData, node }) => {
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
     userData.subscription_type === null || undefined ? (userData.subscription_type = 'free') : userData.subscription_type
     if (!userData.subscription_type) {
-        userData.subscription_type = localStorage.getItem('subscription_type')
+        userData.subscription_type = localStorage.getItem('subscription_type') || 'free'
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
 
