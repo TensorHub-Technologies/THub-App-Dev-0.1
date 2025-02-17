@@ -177,7 +177,14 @@ export const MarketplaceTable = ({
                                                         overflow: 'hidden'
                                                     }}
                                                 >
-                                                    <Button onClick={() => openTemplate(row)} sx={{ textAlign: 'left' }}>
+                                                    <Button
+                                                        onClick={() => openTemplate(row)}
+                                                        sx={{
+                                                            textAlign: 'left',
+                                                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                            textDecoration: 'none'
+                                                        }}
+                                                    >
                                                         {row.templateName || row.name}
                                                     </Button>
                                                 </Typography>
