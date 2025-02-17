@@ -55,10 +55,6 @@
     font-size: 22px;
 }
 
-#MinimizeIcon:hover {
-    fill: #e22a90;
-}
-
 .minmax-btn #ExpandIcon {
     width: 20px;
     color: white;
