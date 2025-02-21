@@ -70,7 +70,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
     const [userImg, setUserImg] = useState('')
     const [userFName, setUserFullName] = useState('')
     const [anchorEl, setAnchorEl] = useState(null)
-
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
