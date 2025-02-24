@@ -2184,7 +2184,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                                                 style={{ width: '100%', height: 'auto' }}
                                                                             >
                                                                                 {React.Children.map(children, (child, index) => {
-                                                                                    console.log('child', child)
                                                                                     if (typeof child === 'string') {
                                                                                         return child
                                                                                     } else if (child.type === 'img') {
