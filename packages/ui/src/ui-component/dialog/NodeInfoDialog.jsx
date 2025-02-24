@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
 // Material
@@ -16,7 +16,15 @@ import { baseURL } from '@/store/constant'
 import configApi from '@/api/config'
 import useApi from '@/hooks/useApi'
 
+import nodesApi from '@/api/nodes'
+
+import { flowContext } from '@/store/context/ReactFlowContext'
+
 const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
+    const { reactFlowInstance } = useContext(flowContext)
+    const getNodesApi = useApi(nodesApi.getAllNodes)
+    const [outputNodes, setOutputNodes] = useState()
+
     const portalElement = document.getElementById('portal')
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
@@ -31,11 +39,61 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dialogProps])
 
+    const getOutputNodeName = () => {
+        const sourceNode = dialogProps.data
+        const outputNode = getOutputNode(sourceNode.id)
+        if (outputNode) {
+            return outputNode.data.label
+        }
+        return null
+    }
+
+    // const getOutputNode = (outputNodes) => {
+    //     if(outputNodes){
+    //         console.log(outputNodes,"#####")
+    // var labelStore=outputNodes.map((ele)=>{
+    //         console.log(ele.label)
+    //         return ele.label;
+    //     })
+    //     }
+    //     return labelStore;
+    const getOutputNode = (outputNodes) => {
+        if (!outputNodes) return null
+
+        return outputNodes.map((ele, index) => (
+            <span key={index} style={{ padding: '8px' }}>
+                {ele.label}
+                {index !== outputNodes.length - 1 ? ',' : ''}
+            </span>
+        ))
+    }
+    // console.log('sourceNodeId',sourceNodeId)
+
     useEffect(() => {
         if (show) dispatch({ type: SHOW_CANVAS_DIALOG })
         else dispatch({ type: HIDE_CANVAS_DIALOG })
         return () => dispatch({ type: HIDE_CANVAS_DIALOG })
     }, [show, dispatch])
+
+    useEffect(() => {
+        getNodesApi.request()
+    }, [])
+
+    useEffect(() => {
+        if (getNodesApi.data) {
+            const sourceNode = dialogProps.data
+
+            if (sourceNode) {
+                const allNodeDetails = getNodesApi.data //.map(x => ({ type: x.type, label: x.label }))//.filter((x, index, arr) => arr.indexOf(x) === index);
+                //console.log('allNodes', allNodeDetails);
+
+                const outputTypes = sourceNode.baseClasses
+
+                const outputNodes = allNodeDetails.filter((x) => x.inputs?.some((z) => outputTypes.includes(z.type)))
+                setOutputNodes(outputNodes)
+            }
+        }
+    }, [getNodesApi.data, dialogProps.data])
 
     const component = show ? (
         <Dialog
@@ -111,6 +169,24 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                         {/* <span style={{ color: '#606c38', fontSize: '0.825rem' }}>version {dialogProps.data.version}</span> */}
                                     </div>
                                 )}
+                                {/* <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', right: '0px' }}>
+
+                                    <div style={{ display: "flex", alignItems: "center", gap: "25px" }}>
+                                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>
+                                            Input
+                                        </b>
+                                        {dialogProps?.data?.inputAnchors.map((anchor, index) => (
+                                            <span key={index}>{anchor.label}</span>
+                                        ))}
+                                    </div>
+
+
+                                    <div> 
+                                        {console.log(outputNodes)}
+                                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output</b>
+                                        <span style={{ marginLeft: '18px' }}>{getOutputNode(outputNodes)}</span>
+                                    </div>
+                                </div> */}
 
                                 <div
                                     style={{
@@ -124,7 +200,10 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                         paddingRight: 10,
                                         marginTop: 5,
                                         // marginLeft: '10px',
-                                        marginBottom: 5
+                                        marginBottom: 5,
+                                        position: 'absolute',
+                                        top: '5px',
+                                        right: '21px'
                                     }}
                                 >
                                     <a
@@ -173,12 +252,44 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                     <div
                         style={{
                             padding: 10,
-                            marginBottom: 10
+                            marginBottom: 10,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            position: 'relative',
+                            right: '11px'
                         }}
                     >
-                        <span>{dialogProps.data.description}</span>
+                        <span style={{ color: customization.isDarkMode ? '#fff' : '#000', display: 'flex', gap: '10px' }}>
+                            <strong>Description</strong> {dialogProps.data.description}
+                        </span>
                     </div>
                 )}
+                <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', right: '0px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '17px', marginBottom: '5px' }}>
+                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Input Nodes</b>
+                        {dialogProps?.data?.inputAnchors?.length > 0 ? (
+                            dialogProps.data.inputAnchors.map((anchor, index, array) => (
+                                <span key={index}>
+                                    {anchor.label}
+                                    {index !== array.length - 1 ? ', ' : ''}
+                                </span>
+                            ))
+                        ) : (
+                            <span>No Inputs</span>
+                        )}
+                    </div>
+
+                    {/* <div> 
+    {console.log(outputNodes)}
+    <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output</b>
+    <span style={{ marginLeft: '18px' }}>{getOutputNode(outputNodes)}</span>
+</div> */}
+                    <div style={{ alignItems: 'center', gap: '15px' }}>
+                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output Nodes</b>
+                        {getOutputNode(outputNodes)}
+                    </div>
+                </div>
+
                 {getNodeConfigApi.data && getNodeConfigApi.data.length > 0 && (
                     <TableViewOnly
                         rows={getNodeConfigApi.data.map((obj) => {

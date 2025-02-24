@@ -278,7 +278,7 @@ const Marketplace = () => {
                                 lineHeight: '1.3'
                             }}
                         >
-                            Templates1
+                            Templates
                         </h1>
                         <TextField
                             size='small'
@@ -514,10 +514,10 @@ const Marketplace = () => {
                                 >
                                     <ToggleButton
                                         sx={{
-                                            color: theme?.customization?.isDarkMode ? '#E22A90' : '#E22A90',
+                                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                                             borderRadius: '20px 0 0 20px',
                                             '&.Mui-selected': {
-                                                color: customization?.isDarkMode ? '#3C5BA4' : '#3C5BA4'
+                                                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                             }
                                         }}
                                         variant='contained'
@@ -528,10 +528,10 @@ const Marketplace = () => {
                                     </ToggleButton>
                                     <ToggleButton
                                         sx={{
-                                            color: customization.isDarkMode ? '#E22A90' : '#E22A90',
+                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
                                             borderRadius: '0 20px 20px 0',
                                             '&.Mui-selected': {
-                                                color: customization?.isDarkMode ? '#3C5BA4' : '#3C5BA4'
+                                                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                             }
                                         }}
                                         variant='contained'
@@ -609,6 +609,7 @@ const Marketplace = () => {
                     </>
                 ) : (
                     <MarketplaceTable
+                        images={images}
                         sx={{ mt: 20 }}
                         data={getAllTemplatesMarketplacesApi.data}
                         filterFunction={filterFlows}

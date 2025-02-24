@@ -160,7 +160,6 @@ const Subscription = () => {
                 alert('Razorpay SDK not loaded.')
                 return
             }
-            console.log(process.env.REACT_APP_RAZORPAY_API_LIVE_KEY, 'REACT_APP_RAZORPAY_API_LIVE_KEY')
             var options = {
                 key: process.env.REACT_APP_RAZORPAY_API_LIVE_KEY,
                 subscription_id: subscription.id,
@@ -213,7 +212,6 @@ const Subscription = () => {
 
             var rzp1 = new window.Razorpay(options)
             rzp1.on('payment.failed', function (response) {
-                console.error('Payment Failed:', response)
                 alert(`Payment failed: ${response.error.description}`)
             })
 

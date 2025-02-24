@@ -1,0 +1,18 @@
+#child-modal-title {
+    text-align: center;
+    font-family: Camria Math;
+    color: black;
+    font-size: 28px;
+    font-weight: bolder;
+}
+
+#child-modal-description {
+    font-size: 18px;
+    font-family: Camria Math;
+    line-height: 22px;
+    margin: 0px;
+}
+
+.image_button-dark {
+    border: '2px solid red';
+}

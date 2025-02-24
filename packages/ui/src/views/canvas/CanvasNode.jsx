@@ -184,10 +184,23 @@ const CanvasNode = ({ data }) => {
                             >
                                 <IconButton title='minmax' id='minmax-parent'>
                                     {nodeMinMax ? (
-                                        <HorizontalRuleIcon onClick={handleMin} id='MinimizeIcon' />
+                                        <HorizontalRuleIcon
+                                            onClick={handleMin}
+                                            id='MinimizeIcon'
+                                            style={{ color: customization?.isDarkMode ? '#fff' : '#000' }}
+                                            onMouseEnter={(e) => (e.target.style.color = customization?.isDarkMode ? '#e22a90' : '#3c5ba4')}
+                                            onMouseLeave={(e) => (e.target.style.color = customization?.isDarkMode ? '#fff' : '#000')}
+                                        />
                                     ) : (
                                         <button className='minmax-btn' onClick={handleMin}>
-                                            <CallMadeIcon id='ExpandIcon' />
+                                            <CallMadeIcon
+                                                id='ExpandIcon'
+                                                style={{ color: customization?.isDarkMode ? '#fff' : '#000' }}
+                                                onMouseEnter={(e) =>
+                                                    (e.target.style.color = customization?.isDarkMode ? '#e22a90' : '#3c5ba4')
+                                                }
+                                                onMouseLeave={(e) => (e.target.style.color = customization?.isDarkMode ? '#fff' : '#000')}
+                                            />
                                         </button>
                                     )}
                                 </IconButton>
