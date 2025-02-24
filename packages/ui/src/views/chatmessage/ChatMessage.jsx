@@ -1,4 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback, Fragment } from 'react'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import { Pagination, Autoplay } from 'swiper/modules'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 import { cloneDeep } from 'lodash'
@@ -2060,144 +2064,175 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                 })}
                                             </div>
                                         )}
-
-                                        <div className='markdownanswer'>
-                                            {message.type === 'leadCaptureMessage' &&
-                                            !getLocalStorageChatflow(chatflowid)?.lead &&
-                                            leadsConfig.status ? (
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        gap: 2,
-                                                        marginTop: 2
-                                                    }}
-                                                >
-                                                    <Typography sx={{ lineHeight: '1.5rem', whiteSpace: 'pre-line' }}>
-                                                        {leadsConfig.title || 'Let us know where we can reach you:'}
-                                                    </Typography>
-                                                    <form
-                                                        style={{
+                                        <div className='container'>
+                                            <div className='markdownanswer'>
+                                                {message.type === 'leadCaptureMessage' &&
+                                                !getLocalStorageChatflow(chatflowid)?.lead &&
+                                                leadsConfig.status ? (
+                                                    <Box
+                                                        sx={{
                                                             display: 'flex',
                                                             flexDirection: 'column',
-                                                            gap: '8px',
-                                                            width: isDialog ? '50%' : '100%'
+                                                            gap: 2,
+                                                            marginTop: 2
                                                         }}
-                                                        onSubmit={handleLeadCaptureSubmit}
                                                     >
-                                                        {leadsConfig.name && (
-                                                            <OutlinedInput
-                                                                id='leadName'
-                                                                type='text'
-                                                                fullWidth
-                                                                placeholder='Name'
-                                                                name='leadName'
-                                                                value={leadName}
-                                                                // eslint-disable-next-line
-                                                                autoFocus={true}
-                                                                onChange={(e) => setLeadName(e.target.value)}
-                                                            />
-                                                        )}
-                                                        {leadsConfig.email && (
-                                                            <OutlinedInput
-                                                                id='leadEmail'
-                                                                type='email'
-                                                                fullWidth
-                                                                placeholder='Email Address'
-                                                                name='leadEmail'
-                                                                value={leadEmail}
-                                                                onChange={(e) => setLeadEmail(e.target.value)}
-                                                            />
-                                                        )}
-                                                        {leadsConfig.phone && (
-                                                            <OutlinedInput
-                                                                id='leadPhone'
-                                                                type='number'
-                                                                fullWidth
-                                                                placeholder='Phone Number'
-                                                                name='leadPhone'
-                                                                value={leadPhone}
-                                                                onChange={(e) => setLeadPhone(e.target.value)}
-                                                            />
-                                                        )}
-                                                        <Box
-                                                            sx={{
+                                                        <Typography sx={{ lineHeight: '1.5rem', whiteSpace: 'pre-line' }}>
+                                                            {leadsConfig.title || 'Let us know where we can reach you:'}
+                                                        </Typography>
+                                                        <form
+                                                            style={{
                                                                 display: 'flex',
-                                                                alignItems: 'center'
+                                                                flexDirection: 'column',
+                                                                gap: '8px',
+                                                                width: isDialog ? '50%' : '100%'
+                                                            }}
+                                                            onSubmit={handleLeadCaptureSubmit}
+                                                        >
+                                                            {leadsConfig.name && (
+                                                                <OutlinedInput
+                                                                    id='leadName'
+                                                                    type='text'
+                                                                    fullWidth
+                                                                    placeholder='Name'
+                                                                    name='leadName'
+                                                                    value={leadName}
+                                                                    // eslint-disable-next-line
+                                                                    autoFocus={true}
+                                                                    onChange={(e) => setLeadName(e.target.value)}
+                                                                />
+                                                            )}
+                                                            {leadsConfig.email && (
+                                                                <OutlinedInput
+                                                                    id='leadEmail'
+                                                                    type='email'
+                                                                    fullWidth
+                                                                    placeholder='Email Address'
+                                                                    name='leadEmail'
+                                                                    value={leadEmail}
+                                                                    onChange={(e) => setLeadEmail(e.target.value)}
+                                                                />
+                                                            )}
+                                                            {leadsConfig.phone && (
+                                                                <OutlinedInput
+                                                                    id='leadPhone'
+                                                                    type='number'
+                                                                    fullWidth
+                                                                    placeholder='Phone Number'
+                                                                    name='leadPhone'
+                                                                    value={leadPhone}
+                                                                    onChange={(e) => setLeadPhone(e.target.value)}
+                                                                />
+                                                            )}
+                                                            <Box
+                                                                sx={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'center'
+                                                                }}
+                                                            >
+                                                                <Button
+                                                                    variant='outlined'
+                                                                    fullWidth
+                                                                    type='submit'
+                                                                    sx={{ borderRadius: '20px' }}
+                                                                >
+                                                                    {isLeadSaving ? 'Saving...' : 'Save'}
+                                                                </Button>
+                                                            </Box>
+                                                        </form>
+                                                    </Box>
+                                                ) : (
+                                                    <>
+                                                        {/* Messages are being rendered in Markdown format */}
+                                                        <MemoizedReactMarkdown
+                                                            remarkPlugins={[remarkGfm, remarkMath]}
+                                                            rehypePlugins={[rehypeMathjax, rehypeRaw]}
+                                                            components={{
+                                                                code({ inline, className, children, ...props }) {
+                                                                    const match = /language-(\w+)/.exec(className || '')
+                                                                    return !inline ? (
+                                                                        <CodeBlock
+                                                                            key={Math.random()}
+                                                                            chatflowid={chatflowid}
+                                                                            isDialog={isDialog}
+                                                                            language={(match && match[1]) || ''}
+                                                                            value={String(children).replace(/\n$/, '')}
+                                                                            {...props}
+                                                                        />
+                                                                    ) : (
+                                                                        <code className={className} {...props}>
+                                                                            {children}
+                                                                        </code>
+                                                                    )
+                                                                },
+                                                                a({ href, children, ...props }) {
+                                                                    return (
+                                                                        <a href={href} target='_blank' rel='noopener noreferrer' {...props}>
+                                                                            {children}
+                                                                        </a>
+                                                                    )
+                                                                },
+                                                                p({ children, ...props }) {
+                                                                    return (
+                                                                        <p {...props}>
+                                                                            <Swiper
+                                                                                spaceBetween={10}
+                                                                                slidesPerView={1}
+                                                                                pagination={{ clickable: true }}
+                                                                                // autoplay={{ delay: 3000, disableOnInteraction: false }}
+                                                                                modules={[Pagination, Autoplay]}
+                                                                                style={{ width: '100%', height: 'auto' }}
+                                                                            >
+                                                                                {React.Children.map(children, (child, index) => {
+                                                                                    if (typeof child === 'string') {
+                                                                                        return child
+                                                                                    } else if (child.type === 'img') {
+                                                                                        return (
+                                                                                            <SwiperSlide
+                                                                                                key={index}
+                                                                                                style={{
+                                                                                                    textAlign: 'center',
+                                                                                                    width: '70%',
+                                                                                                    height: '80%'
+                                                                                                }}
+                                                                                            >
+                                                                                                {React.cloneElement(child, {
+                                                                                                    style: {
+                                                                                                        width: '50%',
+                                                                                                        height: '80%',
+                                                                                                        objectFit: 'contain'
+                                                                                                    }
+                                                                                                })}
+                                                                                            </SwiperSlide>
+                                                                                        )
+                                                                                    } else {
+                                                                                        return React.cloneElement(child, {
+                                                                                            style: {
+                                                                                                width: '50%',
+                                                                                                height: '80%',
+                                                                                                objectFit: 'contain'
+                                                                                            }
+                                                                                        })
+                                                                                    }
+                                                                                })}
+                                                                            </Swiper>
+                                                                        </p>
+                                                                    )
+                                                                }
                                                             }}
                                                         >
-                                                            <Button
-                                                                variant='outlined'
-                                                                fullWidth
-                                                                type='submit'
-                                                                sx={{ borderRadius: '20px' }}
-                                                            >
-                                                                {isLeadSaving ? 'Saving...' : 'Save'}
-                                                            </Button>
-                                                        </Box>
-                                                    </form>
-                                                </Box>
-                                            ) : (
-                                                <>
-                                                    {/* Messages are being rendered in Markdown format */}
-                                                    <MemoizedReactMarkdown
-                                                        remarkPlugins={[remarkGfm, remarkMath]}
-                                                        rehypePlugins={[rehypeMathjax, rehypeRaw]}
-                                                        components={{
-                                                            code({ inline, className, children, ...props }) {
-                                                                const match = /language-(\w+)/.exec(className || '')
-                                                                return !inline ? (
-                                                                    <CodeBlock
-                                                                        key={Math.random()}
-                                                                        chatflowid={chatflowid}
-                                                                        isDialog={isDialog}
-                                                                        language={(match && match[1]) || ''}
-                                                                        value={String(children).replace(/\n$/, '')}
-                                                                        {...props}
-                                                                    />
-                                                                ) : (
-                                                                    <code className={className} {...props}>
-                                                                        {children}
-                                                                    </code>
-                                                                )
-                                                            },
-                                                            a({ href, children, ...props }) {
-                                                                return (
-                                                                    <a href={href} target='_blank' rel='noopener noreferrer' {...props}>
-                                                                        {children}
-                                                                    </a>
-                                                                )
-                                                            },
-                                                            p({ children, ...props }) {
-                                                                return (
-                                                                    <p {...props}>
-                                                                        {React.Children.map(children, (child) =>
-                                                                            typeof child === 'string'
-                                                                                ? child
-                                                                                : React.cloneElement(child, {
-                                                                                      style: {
-                                                                                          //   padding: '15px',
-                                                                                          width: '100%',
-                                                                                          height: 'auto',
-                                                                                          objectFit: 'contain'
-                                                                                          //   display: 'block'
-                                                                                      }
-                                                                                  })
-                                                                        )}
-                                                                    </p>
-                                                                )
-                                                            }
-                                                        }}
-                                                    >
-                                                        {message.message}
-                                                    </MemoizedReactMarkdown>
+                                                            {message.message}
+                                                        </MemoizedReactMarkdown>
 
-                                                    {!loading &&
-                                                        rec &&
-                                                        messages?.length > 1 &&
-                                                        message === messages[messages.length - 1] && <TextToSpeech messages={message} />}
-                                                </>
-                                            )}
+                                                        {!loading &&
+                                                            rec &&
+                                                            messages?.length > 1 &&
+                                                            message === messages[messages.length - 1] && (
+                                                                <TextToSpeech messages={message} />
+                                                            )}
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                         {message.fileAnnotations && (
                                             <div

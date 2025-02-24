@@ -61,7 +61,7 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
         if (!outputNodes) return null
 
         return outputNodes.map((ele, index) => (
-            <span key={index} style={{ padding: '5px' }}>
+            <span key={index} style={{ padding: '8px' }}>
                 {ele.label}
                 {index !== outputNodes.length - 1 ? ',' : ''}
             </span>
@@ -248,9 +248,25 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
             </DialogTitle>
 
             <DialogContent>
+                {dialogProps.data?.description && (
+                    <div
+                        style={{
+                            padding: 10,
+                            marginBottom: 10,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            position: 'relative',
+                            right: '11px'
+                        }}
+                    >
+                        <span style={{ color: customization.isDarkMode ? '#fff' : '#000', display: 'flex', gap: '10px' }}>
+                            <strong>Description</strong> {dialogProps.data.description}
+                        </span>
+                    </div>
+                )}
                 <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', right: '0px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
-                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Input</b>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '17px', marginBottom: '5px' }}>
+                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Input Nodes</b>
                         {dialogProps?.data?.inputAnchors?.length > 0 ? (
                             dialogProps.data.inputAnchors.map((anchor, index, array) => (
                                 <span key={index}>
@@ -268,21 +284,12 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
     <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output</b>
     <span style={{ marginLeft: '18px' }}>{getOutputNode(outputNodes)}</span>
 </div> */}
-                    <div style={{ alignItems: 'center', gap: '5px' }}>
-                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output</b>
+                    <div style={{ alignItems: 'center', gap: '15px' }}>
+                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output Nodes</b>
                         {getOutputNode(outputNodes)}
                     </div>
                 </div>
-                {dialogProps.data?.description && (
-                    <div
-                        style={{
-                            padding: 10,
-                            marginBottom: 10
-                        }}
-                    >
-                        <span>{dialogProps.data.description}</span>
-                    </div>
-                )}
+
                 {getNodeConfigApi.data && getNodeConfigApi.data.length > 0 && (
                     <TableViewOnly
                         rows={getNodeConfigApi.data.map((obj) => {
