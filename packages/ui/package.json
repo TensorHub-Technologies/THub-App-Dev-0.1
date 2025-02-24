@@ -61,6 +61,7 @@
         "remark-gfm": "^3.0.1",
         "remark-math": "^5.1.1",
         "socket.io-client": "^4.6.1",
+        "swiper": "^11.2.4",
         "thub-embed": "^9.1.2",
         "thub-embed-react": "1.0.9",
         "thub-react-json-view": "1.21.11",

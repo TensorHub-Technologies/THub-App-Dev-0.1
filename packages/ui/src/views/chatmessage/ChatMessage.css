@@ -78,24 +78,31 @@
     color: #16bed7;
     font-weight: 500;
 }
+
 .markdownanswer ol {
     margin: 1rem;
 
     display: flex;
-    flex-direction: column; /* Stack images in a column */
+    flex-direction: column;
+    /* Stack images in a column */
     justify-content: center;
-    align-items: center; /* Center images horizontally */
-    gap: 10px; /* Space between images */
+    /* align-items: center;  Center images horizontally */
+    gap: 10px;
+    /* Space between images */
     width: 100%;
     padding: 20px;
 }
 
 .markdownanswer ol img {
     width: 100%;
-    max-width: 300px; /* Set uniform width */
-    height: 200px; /* Set uniform height */
-    object-fit: cover; /* Ensures images maintain aspect ratio */
-    border-radius: 10px; /* Optional for rounded corners */
+    max-width: 300px;
+    /* Set uniform width */
+    height: 200px;
+    /* Set uniform height */
+    object-fit: cover;
+    /* Ensures images maintain aspect ratio */
+    border-radius: 10px;
+    /* Optional for rounded corners */
 }
 
 .markdownanswer code {
@@ -106,7 +113,12 @@
 
 .markdownanswer ol,
 .markdownanswer ul {
+    padding-inline-start: 10px !important;
     margin: 1rem;
+}
+
+strong {
+    display: none;
 }
 
 .boticon,
@@ -178,6 +190,7 @@
     justify-content: center;
     align-items: flex-start;
     flex-grow: 1;
+    overflow-x: hidden;
 }
 
 .cloud-message {

@@ -278,7 +278,7 @@ const Marketplace = () => {
                                 lineHeight: '1.3'
                             }}
                         >
-                            Templates1
+                            Templates
                         </h1>
                         <TextField
                             size='small'
@@ -609,6 +609,7 @@ const Marketplace = () => {
                     </>
                 ) : (
                     <MarketplaceTable
+                        images={images}
                         sx={{ mt: 20 }}
                         data={getAllTemplatesMarketplacesApi.data}
                         filterFunction={filterFlows}
