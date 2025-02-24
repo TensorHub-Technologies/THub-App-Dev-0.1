@@ -86,7 +86,7 @@ const Chatflows = () => {
 
     const [sortBy, setSortBy] = useState('name')
 
-    const userData = useSelector((state) => state.user.userData)
+    const userData = useSelector((state) => state?.user.userData)
 
     const tenantId = userData?.uid
 
