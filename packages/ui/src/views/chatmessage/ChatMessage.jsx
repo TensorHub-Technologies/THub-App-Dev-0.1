@@ -168,7 +168,7 @@ CardWithDeleteOverlay.propTypes = {
     onDelete: PropTypes.func
 }
 
-export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
+export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, previews, setPreviews, chatflowName }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
@@ -1563,6 +1563,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const speechConfig = useRef(null)
     const audioConfigForRecognization = useRef(null)
     const audioConfigForSynthesizer = useRef(null)
+    const greetingSpokenOnResume = useRef(false)
     const player = useRef(null)
 
     const recognizer = useRef(null)
@@ -1611,7 +1612,8 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
                 const aiResponseText = setAiResponseInChatMessages(response.data, params)
 
-                const sanitizedText = aiResponseText.replace(/[^\w\s]/g, '')
+                const sanitizedText = aiResponseText.replace(/[^\w\s_,!-]/g, '')
+
                 stopSpeaking()
 
                 setConversations((prev) => [...prev, { sender: 'AI', text: aiResponseText }])
@@ -1659,6 +1661,19 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             recognizer.current?.startContinuousRecognitionAsync(() => {
                 console.log('Resumed listening...')
             })
+
+            // If this is the first resume, speak the greeting
+            if (!greetingSpokenOnResume.current) {
+                greetingSpokenOnResume.current = true
+                const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
+                const welcomeMessage = `Hi, I'm ${cleanName} agent. How can I help you today?`
+                player.current = new sdk.SpeakerAudioDestination()
+                audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
+                synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
+                synthesizer.current?.speakTextAsync(welcomeMessage, () => {
+                    setIsSpeaking(true)
+                })
+            }
         }
     }
 
@@ -1666,6 +1681,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
         setIsListening(false)
         stopSpeaking()
         pauseListening()
+        greetingSpokenOnResume.current = false
         recognizer.current?.stopContinuousRecognitionAsync(() => {
             console.log('Speech recognition stopped.')
         })
@@ -2745,6 +2761,7 @@ ChatMessage.propTypes = {
     open: PropTypes.bool,
     show: PropTypes.bool,
     chatflowid: PropTypes.string,
+    chatflowName: PropTypes.string,
     isAgentCanvas: PropTypes.bool,
     isDialog: PropTypes.bool,
     previews: PropTypes.array,
