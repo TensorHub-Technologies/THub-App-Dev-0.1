@@ -168,9 +168,10 @@ CardWithDeleteOverlay.propTypes = {
     onDelete: PropTypes.func
 }
 
-export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, previews, setPreviews, chatflowName }) => {
+export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const chatflow = useSelector((state) => state.canvas.chatflow)
 
     const ps = useRef()
     const questions = useRef(0)
@@ -2761,7 +2762,6 @@ ChatMessage.propTypes = {
     open: PropTypes.bool,
     show: PropTypes.bool,
     chatflowid: PropTypes.string,
-    chatflowName: PropTypes.string,
     isAgentCanvas: PropTypes.bool,
     isDialog: PropTypes.bool,
     previews: PropTypes.array,
