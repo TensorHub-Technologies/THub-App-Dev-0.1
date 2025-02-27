@@ -41,7 +41,7 @@ function a11yProps(index) {
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.1.4/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.1.9/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -62,7 +62,7 @@ const App = () => {
 const embedFullpageHtmlCode = (chatflowid) => {
     return `<thub-fullchatbot></thub-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.1.4/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.1.9/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -239,7 +239,7 @@ const chatwindowConfig = (isReact = false) => {
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.1.4/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.1.9/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -276,7 +276,7 @@ const App = () => {
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
     return `<flowise-fullchatbot></flowise-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.1.4/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.1.9/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
