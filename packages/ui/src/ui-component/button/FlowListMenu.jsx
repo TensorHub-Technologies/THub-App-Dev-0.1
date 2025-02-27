@@ -373,7 +373,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 </MenuItem>
                 <MenuItem onClick={handleExportTemplate} disableRipple>
                     <ExportTemplateOutlinedIcon />
-                    Save As Template1
+                    Save As Template
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleRateLimit} disableRipple>

@@ -535,9 +535,16 @@ const NodeInputHandler = ({
                                     onClick={() => {
                                         onInputHintDialogClicked(inputParam.hint)
                                     }}
-                                    startIcon={<IconBulb size={17} />}
+                                    startIcon={<IconBulb size={17} style={{ color: customization?.isDarkMode ? '#fff' : '#000' }} />}
                                 >
-                                    {inputParam.hint.label}
+                                    <span
+                                        style={{
+                                            color: customization?.isDarkMode ? '#fff' : '#000'
+                                        }}
+                                    >
+                                        {inputParam.hint.label}
+                                    </span>
+                                    {/* {inputParam.hint.label} */}
                                 </Button>
                             )}
                             {((inputParam.type === 'string' && inputParam.rows) || inputParam.type === 'code') && (

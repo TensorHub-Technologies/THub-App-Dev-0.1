@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction, SET_CHATFLOW } from '@/store/actions'
 
 // material-ui
-import { Button, IconButton, OutlinedInput, Box, List, InputAdornment, Typography } from '@mui/material'
+import { Button, IconButton, Box, List, InputAdornment, Typography, TextField } from '@mui/material'
 import { IconX, IconTrash, IconPlus } from '@tabler/icons-react'
 
 // Project import
@@ -139,7 +139,9 @@ const AllowedDomains = ({ dialogProps }) => {
                         return (
                             <div key={index} style={{ display: 'flex', width: '100%' }}>
                                 <Box sx={{ width: '100%', mb: 1 }}>
-                                    <OutlinedInput
+                                    <TextField
+                                        id='standard-basic'
+                                        variant='standard'
                                         sx={{ width: '100%' }}
                                         key={index}
                                         type='text'
@@ -148,22 +150,24 @@ const AllowedDomains = ({ dialogProps }) => {
                                         value={origin}
                                         name='origin'
                                         placeholder='https://example.com'
-                                        endAdornment={
-                                            <InputAdornment position='end' sx={{ padding: '2px' }}>
-                                                {inputFields.length > 1 && (
-                                                    <IconButton
-                                                        sx={{ height: 30, width: 30 }}
-                                                        size='small'
-                                                        color='error'
-                                                        disabled={inputFields.length === 1}
-                                                        onClick={() => removeInputFields(index)}
-                                                        edge='end'
-                                                    >
-                                                        <IconTrash />
-                                                    </IconButton>
-                                                )}
-                                            </InputAdornment>
-                                        }
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position='end' sx={{ padding: '2px' }}>
+                                                    {inputFields.length > 1 && (
+                                                        <IconButton
+                                                            sx={{ height: 30, width: 30 }}
+                                                            size='small'
+                                                            color='error'
+                                                            disabled={inputFields.length === 1}
+                                                            onClick={() => removeInputFields(index)}
+                                                            edge='end'
+                                                        >
+                                                            <IconTrash />
+                                                        </IconButton>
+                                                    )}
+                                                </InputAdornment>
+                                            )
+                                        }}
                                     />
                                 </Box>
                                 <Box sx={{ width: '5%', mb: 1 }}>
@@ -187,7 +191,9 @@ const AllowedDomains = ({ dialogProps }) => {
                             title={'Custom error message that will be shown when for unauthorized domain'}
                         />
                     </Typography>
-                    <OutlinedInput
+                    <TextField
+                        id='standard-basic'
+                        variant='standard'
                         sx={{ width: '100%' }}
                         type='text'
                         size='small'

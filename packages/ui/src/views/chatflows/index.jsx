@@ -25,6 +25,7 @@ import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import emptyImage from '../../assets/images/glass.svg'
 
 import emptyImagelite from '../../assets/images/glass-lite.svg'
+
 // API
 
 import chatflowsApi from '@/api/chatflows'
@@ -56,6 +57,7 @@ import { FlowListTable } from '@/ui-component/table/FlowListTable'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 
 import UserInfo from '@/ui-component/userform/UserInfo'
+import AgentCounter from './AgentCounter'
 
 // ==============================|| CHATFLOWS ||============================== //
 
@@ -78,9 +80,13 @@ const Chatflows = () => {
 
     const [showModal, setShowModal] = useState(false)
 
+    const [open, setOpen] = useState(false)
+
+    const [showAgentsPopup, setShowshowAgentsPopup] = useState(false)
+
     const [sortBy, setSortBy] = useState('name')
 
-    const userData = useSelector((state) => state.user.userData)
+    const userData = useSelector((state) => state?.user.userData)
 
     const tenantId = userData?.uid
 
@@ -136,6 +142,14 @@ const Chatflows = () => {
         navigate(0)
     }
 
+    const handleOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+    }
+
     const addNew = async () => {
         const chatflows = chatFlowsApi.data || []
         let subscriptionType = userData?.subscription_type
@@ -144,7 +158,6 @@ const Chatflows = () => {
         }
         if (subscriptionType === 'free') {
             if (chatflows.length > 3) {
-                navigate('/subscription')
                 // TODO: Add banner to show free tier limit reached
                 console.log('maximum workspace apps reached! upgrade plan to continue')
             } else {
@@ -156,7 +169,8 @@ const Chatflows = () => {
             chatflowCount = chatflows.length
             console.log(chatflowCount, 'chatflowCount')
             const userDomain = userData?.workspace || userData?.email.split('@')[1].split('.')[0]
-            if (chatflowCount >= 25) {
+            if (chatflows.length > 25) {
+                handleOpen()
                 // TODO: Add banner to show pro tier limit reached
                 console.log('maximum workspace apps reached! upgrade plan to continue')
             } else {
@@ -262,7 +276,6 @@ const Chatflows = () => {
                         }
                     }
                 }
-
                 setImages(images)
             } catch (e) {
                 console.error(e)
@@ -273,6 +286,7 @@ const Chatflows = () => {
     return (
         <>
             {showModal && <UserInfo showModal={showModal} setShowModal={setShowModal} />}
+            <AgentCounter open={open} handleClose={handleClose} />
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : `#f5faff` }}>
                 <Stack flexDirection='column' gap={2}>
                     <Box sx={{ flexGrow: 1 }}>

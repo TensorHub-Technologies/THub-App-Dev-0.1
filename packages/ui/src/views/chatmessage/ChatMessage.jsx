@@ -1,4 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback, Fragment } from 'react'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import { Pagination, Autoplay } from 'swiper/modules'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 import { cloneDeep } from 'lodash'
@@ -12,7 +16,6 @@ import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event
 import thubTop from '../../assets/images/thub_top.png'
 import thubLeft from '../../assets/images/thub_left.png'
 import thubRight from '../../assets/images/thub_right.png'
-
 import {
     Box,
     Button,
@@ -168,8 +171,10 @@ CardWithDeleteOverlay.propTypes = {
 export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const chatflow = useSelector((state) => state.canvas.chatflow)
 
     const ps = useRef()
+    const questions = useRef(0)
 
     const dispatch = useDispatch()
 
@@ -859,49 +864,49 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             if (action) params.action = action
 
             if (isChatFlowAvailableToStream) {
-                fetchResponseFromEventStream(chatflowid, params)
+                await fetchResponseFromEventStream(chatflowid, params)
             } else {
                 const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
-                if (response.data) {
-                    const data = response.data
-                    updateMetadata(data, input)
-
-                    let text = ''
-                    if (data.text) text = data.text
-                    else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
-                    else text = JSON.stringify(data, null, 2)
-                    console.log(text, '$$$$text')
-                    setLastres(text)
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        {
-                            message: text,
-                            id: data?.chatMessageId,
-                            sourceDocuments: data?.sourceDocuments,
-                            usedTools: data?.usedTools,
-                            fileAnnotations: data?.fileAnnotations,
-                            agentReasoning: data?.agentReasoning,
-                            action: data?.action,
-                            artifacts: data?.artifacts,
-                            type: 'apiMessage',
-                            feedback: null
-                        }
-                    ])
-
-                    setLocalStorageChatflow(chatflowid, data.chatId)
-                    setLoading(false)
-                    setUserInput('')
-                    setUploadedFiles([])
-                    setTimeout(() => {
-                        inputRef.current?.focus()
-                        scrollToBottom()
-                    }, 100)
-                }
+                setAiResponseInChatMessages(response.data, params)
             }
         } catch (error) {
             handleError(error.response.data.message)
             return
         }
+    }
+
+    const setAiResponseInChatMessages = (data, params) => {
+        updateMetadata(data, params.question)
+        let text = ''
+        if (data.text) text = data.text
+        else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
+        else text = JSON.stringify(data, null, 2)
+        setLastres(text)
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+                message: text,
+                id: data?.chatMessageId,
+                sourceDocuments: data?.sourceDocuments,
+                usedTools: data?.usedTools,
+                fileAnnotations: data?.fileAnnotations,
+                agentReasoning: data?.agentReasoning,
+                action: data?.action,
+                artifacts: data?.artifacts,
+                type: 'apiMessage',
+                feedback: null
+            }
+        ])
+
+        setLocalStorageChatflow(chatflowid, data.chatId)
+        setLoading(false)
+        setUserInput('')
+        setUploadedFiles([])
+        setTimeout(() => {
+            inputRef.current?.focus()
+            scrollToBottom()
+        }, 100)
+        return text
     }
 
     const fetchResponseFromEventStream = async (chatflowid, params) => {
@@ -920,7 +925,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                 'x-request-from': 'internal'
             },
             async onopen(response) {
-                console.log(response, '$$$$response')
                 if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
                     //console.log('EventSource Open')
                 }
@@ -1556,33 +1560,24 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
     const [isListening, setIsListening] = useState(false)
     const [isSpeaking, setIsSpeaking] = useState(false)
-    const [language, setLanguage] = useState('en-US')
+    const [language, setLanguage] = useState('en-IN')
     const speechConfig = useRef(null)
     const audioConfigForRecognization = useRef(null)
     const audioConfigForSynthesizer = useRef(null)
+    const greetingSpokenOnResume = useRef(false)
     const player = useRef(null)
 
     const recognizer = useRef(null)
     const synthesizer = useRef(null)
     const [conversations, setConversations] = useState([])
 
-    const SPEECH_KEY = 'EjLXp4e86y6XCiDHklrFKQ3FsMATnDn65X2DhezX3SrDaEdQGJQtJQQJ99BAACYeBjFXJ3w3AAAYACOGt5mT'
+    const SPEECH_KEY = 'BPjTQypxZk7YBxpRcTxIDjg3fu1RjImqTgubDg1u16AyVSe0ErjMJQQJ99BAACYeBjFXJ3w3AAAYACOG1tYn'
     const SPEECH_REGION = 'eastus'
 
     const [myTranscript, setMyTranscript] = useState('')
     const [recognizingTranscript, setRecTranscript] = useState('')
 
-    const [call, setCall] = useState(false)
-
-    const languageOptions = [
-        { code: 'en-US', name: 'English (US)' },
-        { code: 'hi-IN', name: 'Hindi (India)' },
-        { code: 'ta-IN', name: 'Tamil (India)' },
-        { code: 'kn-IN', name: 'Kannada (India)' }
-    ]
-
     useEffect(() => {
-        console.log(SPEECH_KEY, 'SPEECH_KEY')
         speechConfig.current = sdk.SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION)
         speechConfig.current.speechRecognitionLanguage = language
 
@@ -1597,25 +1592,48 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             if (result.reason === sdk.ResultReason.RecognizedSpeech) {
                 const transcript = result.text
                 setMyTranscript(transcript)
-
                 setConversations((prev) => [...prev, { sender: 'User', text: transcript }])
-
-                if (player.current) {
-                    player.current.pause()
-                }
+                stopSpeaking()
                 setUserInput(transcript)
 
-                handleSubmit(undefined, transcript)
-                setCall(true)
+                setLoading(true)
+                clearPreviews()
+                setMessages((prevMessages) => [...prevMessages, { message: transcript, type: 'userMessage' }])
+
+                const params = {
+                    question: transcript,
+                    chatId: chatflowid
+                }
+                questions.current += 1
+                const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
+                if (questions.current > 1) {
+                    questions.current -= 1
+                    return
+                }
+
+                const aiResponseText = setAiResponseInChatMessages(response.data, params)
+
+                const sanitizedText = aiResponseText.replace(/[^\w\s_,!-]/g, '')
+
+                stopSpeaking()
+
+                setConversations((prev) => [...prev, { sender: 'AI', text: aiResponseText }])
+                player.current = new sdk.SpeakerAudioDestination()
+                audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
+                synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
+
+                synthesizer.current?.speakTextAsync(sanitizedText, () => {
+                    console.log('Speech synthesis started.')
+                    questions.current -= 1
+                    setIsSpeaking(true)
+                })
             }
         }
 
         const processRecognizingTranscript = (event) => {
             const result = event.result
-            console.log('Recognition result:', result)
             if (result.reason === sdk.ResultReason.RecognizingSpeech) {
                 const transcript = result.text
-                console.log('Transcript: -->', transcript)
                 setRecTranscript(transcript)
                 stopSpeaking()
             }
@@ -1632,23 +1650,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
         }
     }, [language])
 
-    useEffect(() => {
-        if (lastres) {
-            const sanitizedText = lastres.replace(/[^\w\s]/g, '')
-
-            setConversations((prev) => [...prev, { sender: 'AI', text: lastres }])
-
-            player.current = new sdk.SpeakerAudioDestination()
-            audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
-            synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
-
-            synthesizer.current?.speakTextAsync(sanitizedText, () => {
-                console.log('Speech synthesis started.')
-                setIsSpeaking(true)
-            })
-        }
-    }, [lastres])
-
     const pauseListening = () => {
         setIsListening(false)
         recognizer.current?.stopContinuousRecognitionAsync()
@@ -1661,14 +1662,27 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             recognizer.current?.startContinuousRecognitionAsync(() => {
                 console.log('Resumed listening...')
             })
+
+            // If this is the first resume, speak the greeting
+            if (!greetingSpokenOnResume.current) {
+                greetingSpokenOnResume.current = true
+                const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
+                const welcomeMessage = `Hi, I'm ${cleanName} agent. How can I help you today?`
+                player.current = new sdk.SpeakerAudioDestination()
+                audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
+                synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
+                synthesizer.current?.speakTextAsync(welcomeMessage, () => {
+                    setIsSpeaking(true)
+                })
+            }
         }
     }
 
     const stopListening = () => {
-        stopSpeaking()
         setIsListening(false)
-        setIsSpeaking(false)
+        stopSpeaking()
         pauseListening()
+        greetingSpokenOnResume.current = false
         recognizer.current?.stopContinuousRecognitionAsync(() => {
             console.log('Speech recognition stopped.')
         })
@@ -1679,10 +1693,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
         if (player.current) {
             player.current.pause()
         }
-    }
-
-    const handleLanguageChange = (event) => {
-        setLanguage(event.target.value)
     }
 
     return (
@@ -2071,144 +2081,175 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                 })}
                                             </div>
                                         )}
-
-                                        <div className='markdownanswer'>
-                                            {message.type === 'leadCaptureMessage' &&
-                                            !getLocalStorageChatflow(chatflowid)?.lead &&
-                                            leadsConfig.status ? (
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        gap: 2,
-                                                        marginTop: 2
-                                                    }}
-                                                >
-                                                    <Typography sx={{ lineHeight: '1.5rem', whiteSpace: 'pre-line' }}>
-                                                        {leadsConfig.title || 'Let us know where we can reach you:'}
-                                                    </Typography>
-                                                    <form
-                                                        style={{
+                                        <div className='container'>
+                                            <div className='markdownanswer'>
+                                                {message.type === 'leadCaptureMessage' &&
+                                                !getLocalStorageChatflow(chatflowid)?.lead &&
+                                                leadsConfig.status ? (
+                                                    <Box
+                                                        sx={{
                                                             display: 'flex',
                                                             flexDirection: 'column',
-                                                            gap: '8px',
-                                                            width: isDialog ? '50%' : '100%'
+                                                            gap: 2,
+                                                            marginTop: 2
                                                         }}
-                                                        onSubmit={handleLeadCaptureSubmit}
                                                     >
-                                                        {leadsConfig.name && (
-                                                            <OutlinedInput
-                                                                id='leadName'
-                                                                type='text'
-                                                                fullWidth
-                                                                placeholder='Name'
-                                                                name='leadName'
-                                                                value={leadName}
-                                                                // eslint-disable-next-line
-                                                                autoFocus={true}
-                                                                onChange={(e) => setLeadName(e.target.value)}
-                                                            />
-                                                        )}
-                                                        {leadsConfig.email && (
-                                                            <OutlinedInput
-                                                                id='leadEmail'
-                                                                type='email'
-                                                                fullWidth
-                                                                placeholder='Email Address'
-                                                                name='leadEmail'
-                                                                value={leadEmail}
-                                                                onChange={(e) => setLeadEmail(e.target.value)}
-                                                            />
-                                                        )}
-                                                        {leadsConfig.phone && (
-                                                            <OutlinedInput
-                                                                id='leadPhone'
-                                                                type='number'
-                                                                fullWidth
-                                                                placeholder='Phone Number'
-                                                                name='leadPhone'
-                                                                value={leadPhone}
-                                                                onChange={(e) => setLeadPhone(e.target.value)}
-                                                            />
-                                                        )}
-                                                        <Box
-                                                            sx={{
+                                                        <Typography sx={{ lineHeight: '1.5rem', whiteSpace: 'pre-line' }}>
+                                                            {leadsConfig.title || 'Let us know where we can reach you:'}
+                                                        </Typography>
+                                                        <form
+                                                            style={{
                                                                 display: 'flex',
-                                                                alignItems: 'center'
+                                                                flexDirection: 'column',
+                                                                gap: '8px',
+                                                                width: isDialog ? '50%' : '100%'
+                                                            }}
+                                                            onSubmit={handleLeadCaptureSubmit}
+                                                        >
+                                                            {leadsConfig.name && (
+                                                                <OutlinedInput
+                                                                    id='leadName'
+                                                                    type='text'
+                                                                    fullWidth
+                                                                    placeholder='Name'
+                                                                    name='leadName'
+                                                                    value={leadName}
+                                                                    // eslint-disable-next-line
+                                                                    autoFocus={true}
+                                                                    onChange={(e) => setLeadName(e.target.value)}
+                                                                />
+                                                            )}
+                                                            {leadsConfig.email && (
+                                                                <OutlinedInput
+                                                                    id='leadEmail'
+                                                                    type='email'
+                                                                    fullWidth
+                                                                    placeholder='Email Address'
+                                                                    name='leadEmail'
+                                                                    value={leadEmail}
+                                                                    onChange={(e) => setLeadEmail(e.target.value)}
+                                                                />
+                                                            )}
+                                                            {leadsConfig.phone && (
+                                                                <OutlinedInput
+                                                                    id='leadPhone'
+                                                                    type='number'
+                                                                    fullWidth
+                                                                    placeholder='Phone Number'
+                                                                    name='leadPhone'
+                                                                    value={leadPhone}
+                                                                    onChange={(e) => setLeadPhone(e.target.value)}
+                                                                />
+                                                            )}
+                                                            <Box
+                                                                sx={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'center'
+                                                                }}
+                                                            >
+                                                                <Button
+                                                                    variant='outlined'
+                                                                    fullWidth
+                                                                    type='submit'
+                                                                    sx={{ borderRadius: '20px' }}
+                                                                >
+                                                                    {isLeadSaving ? 'Saving...' : 'Save'}
+                                                                </Button>
+                                                            </Box>
+                                                        </form>
+                                                    </Box>
+                                                ) : (
+                                                    <>
+                                                        {/* Messages are being rendered in Markdown format */}
+                                                        <MemoizedReactMarkdown
+                                                            remarkPlugins={[remarkGfm, remarkMath]}
+                                                            rehypePlugins={[rehypeMathjax, rehypeRaw]}
+                                                            components={{
+                                                                code({ inline, className, children, ...props }) {
+                                                                    const match = /language-(\w+)/.exec(className || '')
+                                                                    return !inline ? (
+                                                                        <CodeBlock
+                                                                            key={Math.random()}
+                                                                            chatflowid={chatflowid}
+                                                                            isDialog={isDialog}
+                                                                            language={(match && match[1]) || ''}
+                                                                            value={String(children).replace(/\n$/, '')}
+                                                                            {...props}
+                                                                        />
+                                                                    ) : (
+                                                                        <code className={className} {...props}>
+                                                                            {children}
+                                                                        </code>
+                                                                    )
+                                                                },
+                                                                a({ href, children, ...props }) {
+                                                                    return (
+                                                                        <a href={href} target='_blank' rel='noopener noreferrer' {...props}>
+                                                                            {children}
+                                                                        </a>
+                                                                    )
+                                                                },
+                                                                p({ children, ...props }) {
+                                                                    return (
+                                                                        <p {...props}>
+                                                                            <Swiper
+                                                                                spaceBetween={10}
+                                                                                slidesPerView={1}
+                                                                                pagination={{ clickable: true }}
+                                                                                // autoplay={{ delay: 3000, disableOnInteraction: false }}
+                                                                                modules={[Pagination, Autoplay]}
+                                                                                style={{ width: '100%', height: 'auto' }}
+                                                                            >
+                                                                                {React.Children.map(children, (child, index) => {
+                                                                                    if (typeof child === 'string') {
+                                                                                        return child
+                                                                                    } else if (child.type === 'img') {
+                                                                                        return (
+                                                                                            <SwiperSlide
+                                                                                                key={index}
+                                                                                                style={{
+                                                                                                    textAlign: 'center',
+                                                                                                    width: '70%',
+                                                                                                    height: '80%'
+                                                                                                }}
+                                                                                            >
+                                                                                                {React.cloneElement(child, {
+                                                                                                    style: {
+                                                                                                        width: '50%',
+                                                                                                        height: '80%',
+                                                                                                        objectFit: 'contain'
+                                                                                                    }
+                                                                                                })}
+                                                                                            </SwiperSlide>
+                                                                                        )
+                                                                                    } else {
+                                                                                        return React.cloneElement(child, {
+                                                                                            style: {
+                                                                                                width: '50%',
+                                                                                                height: '80%',
+                                                                                                objectFit: 'contain'
+                                                                                            }
+                                                                                        })
+                                                                                    }
+                                                                                })}
+                                                                            </Swiper>
+                                                                        </p>
+                                                                    )
+                                                                }
                                                             }}
                                                         >
-                                                            <Button
-                                                                variant='outlined'
-                                                                fullWidth
-                                                                type='submit'
-                                                                sx={{ borderRadius: '20px' }}
-                                                            >
-                                                                {isLeadSaving ? 'Saving...' : 'Save'}
-                                                            </Button>
-                                                        </Box>
-                                                    </form>
-                                                </Box>
-                                            ) : (
-                                                <>
-                                                    {/* Messages are being rendered in Markdown format */}
-                                                    <MemoizedReactMarkdown
-                                                        remarkPlugins={[remarkGfm, remarkMath]}
-                                                        rehypePlugins={[rehypeMathjax, rehypeRaw]}
-                                                        components={{
-                                                            code({ inline, className, children, ...props }) {
-                                                                const match = /language-(\w+)/.exec(className || '')
-                                                                return !inline ? (
-                                                                    <CodeBlock
-                                                                        key={Math.random()}
-                                                                        chatflowid={chatflowid}
-                                                                        isDialog={isDialog}
-                                                                        language={(match && match[1]) || ''}
-                                                                        value={String(children).replace(/\n$/, '')}
-                                                                        {...props}
-                                                                    />
-                                                                ) : (
-                                                                    <code className={className} {...props}>
-                                                                        {children}
-                                                                    </code>
-                                                                )
-                                                            },
-                                                            a({ href, children, ...props }) {
-                                                                return (
-                                                                    <a href={href} target='_blank' rel='noopener noreferrer' {...props}>
-                                                                        {children}
-                                                                    </a>
-                                                                )
-                                                            },
-                                                            p({ children, ...props }) {
-                                                                return (
-                                                                    <p {...props}>
-                                                                        {React.Children.map(children, (child) =>
-                                                                            typeof child === 'string'
-                                                                                ? child
-                                                                                : React.cloneElement(child, {
-                                                                                      style: {
-                                                                                          padding: '15px',
-                                                                                          width: '100%',
-                                                                                          height: 'auto',
-                                                                                          objectFit: 'contain',
-                                                                                          display: 'block'
-                                                                                      }
-                                                                                  })
-                                                                        )}
-                                                                    </p>
-                                                                )
-                                                            }
-                                                        }}
-                                                    >
-                                                        {message.message}
-                                                    </MemoizedReactMarkdown>
+                                                            {message.message}
+                                                        </MemoizedReactMarkdown>
 
-                                                    {!loading &&
-                                                        rec &&
-                                                        messages?.length > 1 &&
-                                                        message === messages[messages.length - 1] && <TextToSpeech messages={message} />}
-                                                </>
-                                            )}
+                                                        {!loading &&
+                                                            rec &&
+                                                            messages?.length > 1 &&
+                                                            message === messages[messages.length - 1] && (
+                                                                <TextToSpeech messages={message} />
+                                                            )}
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                         {message.fileAnnotations && (
                                             <div
