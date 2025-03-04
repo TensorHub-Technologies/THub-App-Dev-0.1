@@ -1613,8 +1613,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
                 const aiResponseText = setAiResponseInChatMessages(response.data, params)
 
-                const sanitizedText = aiResponseText.replace(/[^\w\s_,!-]/g, '')
-
+                const sanitizedText = aiResponseText.replace(/[^\w\s₹–.]/g, '').replace(/\b(e\.g\.|eg)\b/gi, 'example')
                 stopSpeaking()
 
                 setConversations((prev) => [...prev, { sender: 'AI', text: aiResponseText }])
