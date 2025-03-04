@@ -154,6 +154,7 @@
                 "StripeAgentToo",
                 "Web Browser",
                 "WolframAlpha",
+                "Tavily API",
                 "Write File"
             ],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
@@ -418,6 +419,7 @@
                 "StripeAgentToo",
                 "Web Browser",
                 "WolframAlpha",
+                "Tavily API",
                 "Write File"
             ],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
