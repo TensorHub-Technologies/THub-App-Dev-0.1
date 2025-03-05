@@ -1,6 +1,6 @@
 {
     "name": "thub",
-    "version": "2.2.5",
+    "version": "2.6.6",
     "private": true,
     "homepage": "https://thub.tech",
     "workspaces": [
