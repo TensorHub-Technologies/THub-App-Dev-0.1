@@ -41,7 +41,7 @@ export const pricingData = {
             duration: 'monthly',
             description: 'For small & medium businesses',
             buttonInfo: 'Choose Plan',
-            messagePopup: 'Loading Razorpay Payment Gateway',
+            messagePopup: 'Loading PayU Payment Gateway',
             list: [
                 'All Free Features',
                 '5 Users',
@@ -109,7 +109,7 @@ export const pricingData = {
             duration: 'yearly',
             description: 'For small & medium businesses',
             buttonInfo: 'Choose Plan',
-            messagePopup: 'Loading Razorpay Payment Gateway',
+            messagePopup: 'Loading PayU Payment Gateway',
             list: [
                 'All Free Features',
                 '5 Users',
