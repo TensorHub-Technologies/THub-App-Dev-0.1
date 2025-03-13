@@ -14,9 +14,10 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { CodeEditor } from '@/ui-component/editor/CodeEditor'
 import HowToUseFunctionDialog from './HowToUseFunctionDialog'
+import PasteJSONDialog from './PasteJSONDialog'
 
 // Icons
-import { IconX, IconFileDownload, IconPlus } from '@tabler/icons'
+import { IconX, IconFileDownload, IconPlus, IconTemplate, IconCode } from '@tabler/icons-react'
 
 // API
 import toolsApi from '@/api/tools'
@@ -30,7 +31,6 @@ import useNotifier from '@/utils/useNotifier'
 import { generateRandomGradient, formatDataGridRows } from '@/utils/genericHelper'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
-import { IconTemplate } from '@tabler/icons-react'
 
 const exampleAPIFunc = `/*
 * You can use any libraries imported in Flowise
@@ -85,6 +85,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
     const [showHowToDialog, setShowHowToDialog] = useState(false)
     const [exportAsTemplateDialogOpen, setExportAsTemplateDialogOpen] = useState(false)
     const [exportAsTemplateDialogProps, setExportAsTemplateDialogProps] = useState({})
+    const [showPasteJSONDialog, setShowPasteJSONDialog] = useState(false)
 
     const deleteItem = useCallback(
         (id) => () => {
@@ -410,6 +411,11 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
         }
     }
 
+    const handlePastedJSON = (formattedData) => {
+        setToolSchema(formattedData)
+        setShowPasteJSONDialog(false)
+    }
+
     const component = show ? (
         <Dialog
             fullWidth
@@ -549,17 +555,30 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                                 <TooltipWithParser title={'What is the input format in JSON?'} />
                             </Stack>
                             {dialogProps.type !== 'TEMPLATE' && (
-                                <Button
-                                    variant='outlined'
-                                    style={{
-                                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                        border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
-                                    }}
-                                    onClick={addNewRow}
-                                    startIcon={<IconPlus />}
-                                >
-                                    Add Item
-                                </Button>
+                                <Stack direction='row' spacing={1}>
+                                    <Button
+                                        variant='outlined'
+                                        style={{
+                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
+                                        }}
+                                        onClick={() => setShowPasteJSONDialog(true)}
+                                        startIcon={<IconCode />}
+                                    >
+                                        Paste JSON
+                                    </Button>
+                                    <Button
+                                        variant='outlined'
+                                        style={{
+                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
+                                        }}
+                                        onClick={addNewRow}
+                                        startIcon={<IconPlus />}
+                                    >
+                                        Add Item
+                                    </Button>
+                                </Stack>
                             )}
                         </Stack>
                         <Grid columns={columns} rows={toolSchema} disabled={dialogProps.type === 'TEMPLATE'} onRowUpdate={onRowUpdate} />
@@ -639,6 +658,14 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                 />
             )}
             <HowToUseFunctionDialog show={showHowToDialog} onCancel={() => setShowHowToDialog(false)} />
+            {showPasteJSONDialog && (
+                <PasteJSONDialog
+                    show={showPasteJSONDialog}
+                    onCancel={() => setShowPasteJSONDialog(false)}
+                    onConfirm={handlePastedJSON}
+                    customization={customization}
+                />
+            )}
         </Dialog>
     ) : null
 
