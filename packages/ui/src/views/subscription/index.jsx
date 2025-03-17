@@ -120,10 +120,14 @@ const Subscription = () => {
         }
         let plan_Id = planId
         const uid = user.uid
-        const apiUrl =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/api/payments/create-subscription'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/api/payments/create-subscription'
+        let apiUrl
+        if (window.location.hostname === 'demo.thub.tech') {
+            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app/'
+        } else if (window.location.hostname === 'localhost') {
+            apiUrl = 'http://localhost:2000/'
+        } else {
+            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/'
+        }
 
         const handleSubscribe = async (plan) => {
             const requestData = {
@@ -138,15 +142,13 @@ const Subscription = () => {
             }
 
             try {
-                const response = await axios.post(apiUrl, requestData)
+                const response = await axios.post(`${apiUrl}api/payments/create-subscription`, requestData)
                 const paymentData = response.data
 
                 // Create a form dynamically to post the paymentData to PayU's payment gateway
                 const form = document.createElement('form')
                 form.method = 'POST'
-                form.action = paymentData.action // this is the PAYU_BASE_URL
-
-                // Append all returned fields as hidden inputs
+                form.action = paymentData.action
                 Object.keys(paymentData).forEach((key) => {
                     const input = document.createElement('input')
                     input.type = 'hidden'
