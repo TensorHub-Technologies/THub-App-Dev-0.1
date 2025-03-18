@@ -108,6 +108,14 @@ const MainRoutes = {
             element: <Subscription />
         },
         {
+            path: '/subscription/api/payments/payment-success',
+            element: <Subscription />
+        },
+        {
+            path: '/subscription/api/payments/payment-failure',
+            element: <Subscription />
+        },
+        {
             path: '/setting',
             element: <Settings />
         }

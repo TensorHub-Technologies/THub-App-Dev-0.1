@@ -143,8 +143,8 @@ const Subscription = () => {
 
             try {
                 const response = await axios.post(`${apiUrl}api/payments/create-subscription`, requestData)
+                console.log(response, 'response from create-subscription')
                 const paymentData = response.data
-
                 // Create a form dynamically to post the paymentData to PayU's payment gateway
                 const form = document.createElement('form')
                 form.method = 'POST'
