@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback, useContext } from 'react'
-import ReactFlow, { addEdge, Controls, Background, useNodesState, useEdgesState } from 'reactflow'
+import ReactFlow, { addEdge, Controls, Background, useNodesState, useEdgesState, MiniMap } from 'reactflow'
 import 'reactflow/dist/style.css'
 import * as htmlToImage from 'html-to-image'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -30,7 +30,8 @@ import MenuItem from '@mui/material/MenuItem'
 import { styled } from '@mui/material/styles'
 import CanvasNode from './CanvasNode'
 import ButtonEdge from './ButtonEdge'
-import StickyNote from './StickyNote'
+// import StickyNote from './StickyNote'
+import StickyNote from '../canvas/StickyNote'
 import CanvasHeader from './CanvasHeader'
 import AddNodes from './AddNodes'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
@@ -63,11 +64,18 @@ import { usePrompt } from '@/utils/usePrompt'
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
 import { IconArrowBackUp } from '@tabler/icons-react'
+
 import { IconArrowForwardUp } from '@tabler/icons-react'
+
+import { IconFilePencil } from '@tabler/icons-react'
+import { IconMapPin2 } from '@tabler/icons-react'
+
 import ElevenLabsWidget from '../chatmessage/ElevenLabsWidget'
 
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
+
 const edgeTypes = { buttonedge: ButtonEdge }
+const nodeClassName = (node) => node.type
 
 // ==============================|| CANVAS ||============================== //
 
@@ -105,6 +113,12 @@ const Canvas = () => {
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
     // ==============================|| ReactFlow ||============================== //
+
+    const [showMinimap, setShowMinimap] = useState(false)
+
+    const handleToggleMinimap = () => {
+        setShowMinimap((prev) => !prev)
+    }
 
     const [nodes, setNodes, onNodesChange] = useNodesState()
     const [edges, setEdges, onEdgesChange] = useEdgesState()
@@ -722,7 +736,30 @@ const Canvas = () => {
                 })
         }
     }
-
+    const addStickyNote = () => {
+        const newNodeId = `node-${nodes.length + 1}`
+        const newNode = {
+            id: newNodeId,
+            type: 'stickyNote',
+            position: { x: Math.random() * 400, y: Math.random() * 400 },
+            data: {
+                id: newNodeId,
+                selected: false,
+                inputParams: [
+                    {
+                        label: '',
+                        name: 'note',
+                        type: 'string',
+                        rows: 1,
+                        placeholder: 'Type something here',
+                        optional: true
+                    }
+                ],
+                inputs: {}
+            }
+        }
+        setNodes((nds) => [...nds, newNode])
+    }
     return (
         <>
             <div>
@@ -969,8 +1006,65 @@ const Canvas = () => {
                                                     />
                                                 </button>
                                             </Box>
+
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    backgroundColor: '#fefefe',
+                                                    border: '1px solid #eee',
+                                                    padding: '5px',
+                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                    borderRadius: '14px',
+                                                    marginLeft: '0px'
+                                                }}
+                                            >
+                                                <MenuItem
+                                                    sx={{
+                                                        borderRight: '3px solid #eee',
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Sticky Notes'
+                                                    onClick={addStickyNote}
+                                                >
+                                                    <IconFilePencil id='NotesIcon' size={19} color='#000000' />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Minimap'
+                                                    onClick={handleToggleMinimap}
+                                                >
+                                                    <IconMapPin2 id='MapIcon' size={19} color='#000000' />
+                                                </MenuItem>
+                                            </Box>
                                         </Box>
                                     </Controls>
+                                    {showMinimap && <MiniMap zoomable pannable nodeClassName={nodeClassName} />}
                                     <Background color='#aaa' gap={16} />
 
                                     {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
