@@ -9,7 +9,7 @@ import { useTheme } from '@mui/material/styles'
 import NodeCardWrapper from '@/ui-component/cards/NodeCardWrapper'
 import NodeTooltip from '@/ui-component/tooltip/NodeTooltip'
 import { IconButton, Box } from '@mui/material'
-import { IconCopy, IconTrash } from '@tabler/icons'
+import { IconTrash } from '@tabler/icons'
 import { Input } from '@/ui-component/input/Input'
 
 // const
@@ -55,7 +55,7 @@ const StickyNote = ({ data }) => {
                                 flexDirection: 'column'
                             }}
                         >
-                            <IconButton
+                            {/* <IconButton
                                 title='Duplicate'
                                 onClick={() => {
                                     duplicateNode(data.id)
@@ -64,7 +64,7 @@ const StickyNote = ({ data }) => {
                                 color={theme?.customization?.isDarkMode ? theme.colors?.paper : 'inherit'}
                             >
                                 <IconCopy />
-                            </IconButton>
+                            </IconButton> */}
                             <IconButton
                                 title='Delete'
                                 onClick={() => {
