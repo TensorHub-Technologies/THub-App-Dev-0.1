@@ -33,6 +33,9 @@ import cacheIconlite from '../../assets/icons/cache_dark.svg'
 import ThreePIcon from '@mui/icons-material/ThreeP'
 import docsIcondark from '../../assets/icons/document_dark.svg'
 import docsIconlite from '../../assets/icons/document_lite.svg'
+import graphdark from '../../assets/icons/graph_dark.svg'
+import graphlite from '../../assets/icons/graph_lite.svg'
+
 // import FingerprintIcon from '@mui/icons-material/Fingerprint'
 import ViewInArIcon from '@mui/icons-material/ViewInAr'
 // import CallMergeIcon from '@mui/icons-material/CallMerge'
@@ -126,7 +129,13 @@ const AddNodes = ({ nodesData, node }) => {
             />
         ),
         Embeddings: <IconChartScatter3d />,
-        Graph: <graphDark />,
+        Graph: (
+            <img
+                src={customization?.isDarkMode ? graphdark : graphlite}
+                alt='graph'
+                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
+            />
+        ),
         Memory: <MemoryIcon />,
         LLMs: <ViewInArIcon />,
         'Multi Agents': <IconUsersGroup />,
