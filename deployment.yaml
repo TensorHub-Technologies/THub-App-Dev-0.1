@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thub-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: thub-app
+  template:
+    metadata:
+      labels:
+        app: thub-app
+    spec:
+      containers:
+      - name: thub-app
+        image: us-central1-docker.pkg.dev/thub-dev-420204/thub-app/thub-app:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thub-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: thub-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
