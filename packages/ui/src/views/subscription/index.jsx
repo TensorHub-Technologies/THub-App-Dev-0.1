@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 // project-imports
 import MainCard from '@/ui-component/cards/MainCard'
@@ -40,6 +41,7 @@ const Subscription = () => {
         isActive: true
     })
 
+    console.log(user, 'user')
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)
@@ -59,17 +61,6 @@ const Subscription = () => {
     const handleCurrencyChange = (selectedCurrency) => setCurrency(selectedCurrency)
 
     const receiptId = generateReceiptId()
-
-    useEffect(() => {
-        const loadRazorpayScript = () => {
-            const script = document.createElement('script')
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-            script.onload = () => setSdkLoaded(true)
-            script.onerror = () => console.error('Failed to load Razorpay SDK')
-            document.body.appendChild(script)
-        }
-        loadRazorpayScript()
-    }, [])
 
     const handleMonthly = () => {
         setSelectedPlan('monthly')
@@ -129,95 +120,55 @@ const Subscription = () => {
         }
         let plan_Id = planId
         const uid = user.uid
-        const url =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/create-subscription'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/create-subscription'
+        let apiUrl
+        if (window.location.hostname === 'demo.thub.tech') {
+            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app/'
+        } else if (window.location.hostname === 'localhost') {
+            apiUrl = 'http://localhost:2000/'
+        } else {
+            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/'
+        }
 
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    planId: plan_Id,
-                    duration: duration,
-                    customerEmail: user.email,
-                    user_id: uid
+        const handleSubscribe = async (plan) => {
+            const requestData = {
+                txnid: 'TXN' + new Date().getTime(),
+                amount: plan.prices.INR.replace(/[^0-9.]/g, ''),
+                firstname: user.name,
+                email: user.email,
+                phone: user.phone || '',
+                productinfo: plan.title,
+                planId: plan.planId,
+                duration: plan.duration
+            }
+
+            try {
+                const response = await axios.post(`${apiUrl}api/payments/create-subscription`, requestData)
+                console.log(response, 'response from create-subscription')
+                const paymentData = response.data
+                // Create a form dynamically to post the paymentData to PayU's payment gateway
+                const form = document.createElement('form')
+                form.method = 'POST'
+                form.action = paymentData.action
+                Object.keys(paymentData).forEach((key) => {
+                    const input = document.createElement('input')
+                    input.type = 'hidden'
+                    input.name = key
+                    input.value = paymentData[key]
+                    form.appendChild(input)
                 })
-            })
 
-            if (!response.ok) {
-                console.error('Failed to create subscription:', response.statusText)
-                return
+                document.body.appendChild(form)
+                form.submit()
+            } catch (error) {
+                console.error('Error initiating subscription:', error)
             }
+        }
 
-            const subscription = await response.json()
-            const userId = localStorage.getItem('userId') || user.uid
-
-            if (!window.Razorpay) {
-                alert('Razorpay SDK not loaded.')
-                return
-            }
-            var options = {
-                key: process.env.REACT_APP_RAZORPAY_API_LIVE_KEY,
-                subscription_id: subscription.id,
-                name: 'THub',
-                description: `${planTitle} Subscription`,
-                image: user.picture,
-                handler: async function (response) {
-                    const validateUrl =
-                        window.location.hostname === 'localhost'
-                            ? 'http://localhost:2000/validate-subscription'
-                            : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/validate-subscription'
-
-                    const validateResponse = await fetch(validateUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_subscription_id: response.razorpay_subscription_id,
-                            razorpay_signature: response.razorpay_signature,
-                            planId: plan_Id,
-                            user_id: userId
-                        })
-                    })
-
-                    const validateStatus = await validateResponse.json()
-                    if (validateResponse.ok && validateStatus.msg === 'success') {
-                        location.reload()
-                        setSubscriptionDetails({
-                            subscriptionType: validateStatus.subscriptionType,
-                            subscriptionDuration: validateStatus.subscriptionDuration,
-                            startDate: validateStatus.startDate,
-                            expiryDate: validateStatus.expiryDate,
-                            isActive: true
-                        })
-                    } else {
-                        alert('Payment validation failed. Please contact support.')
-                    }
-                },
-                prefill: {
-                    name: 'THub',
-                    email: user.email,
-                    contact: user.phone ? user.phone : '9000090000'
-                },
-                theme: {
-                    color: '#3399ff'
-                }
-            }
-
-            var rzp1 = new window.Razorpay(options)
-            rzp1.on('payment.failed', function (response) {
-                alert(`Payment failed: ${response.error.description}`)
-            })
-
-            rzp1.open()
-        } catch (error) {
-            console.error('Error in payment process:', error)
+        // Call handleSubscribe with the appropriate plan details
+        const selectedPlanDetails = pricingData[selectedPlan].find((plan) => plan.planId === planId)
+        if (selectedPlanDetails) {
+            console.log(selectedPlanDetails, 'selectedPlanDetails')
+            await handleSubscribe(selectedPlanDetails)
         }
     }
 

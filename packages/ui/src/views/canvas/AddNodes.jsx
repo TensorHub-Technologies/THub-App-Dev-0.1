@@ -74,7 +74,6 @@ import './Node.css'
 import { IconChartScatter3d } from '@tabler/icons-react'
 import { IconUsersGroup } from '@tabler/icons-react'
 import subscriptionPlan from './subscriptionPlan'
-//
 
 // ==============================|| ADD NODES||============================== //
 function a11yProps(index) {
@@ -83,6 +82,25 @@ function a11yProps(index) {
         'aria-controls': `attachment-tabpanel-${index}`
     }
 }
+
+/*
+//TODO: change to better json format
+const temp_subscriptionPlan = [
+    {
+        plan: 'free',
+        menuItems: [
+            {
+                name: 'Document Loadrs',
+                subMenuItems: [
+                    {
+                        name: 'airtable'
+                    }
+                ]
+            }
+        ]
+    }
+]
+*/
 
 const AddNodes = ({ nodesData, node }) => {
     const theme = useTheme()
@@ -93,7 +111,8 @@ const AddNodes = ({ nodesData, node }) => {
     // const [open, setOpen] = useState(false)
     const [categoryExpanded, setCategoryExpanded] = useState({})
     const [tabValue, setTabValue] = useState(0)
-    const userData = useSelector((state) => state?.user.userData)
+    const userData = useSelector((state) => state.user.userData)
+    console.log(userData, 'userData')
 
     const allIconsObj = {
         Agents: (
@@ -126,7 +145,6 @@ const AddNodes = ({ nodesData, node }) => {
             />
         ),
         Embeddings: <IconChartScatter3d />,
-        Graph: <graphDark />,
         Memory: <MemoryIcon />,
         LLMs: <ViewInArIcon />,
         'Multi Agents': <IconUsersGroup />,
@@ -170,14 +188,15 @@ const AddNodes = ({ nodesData, node }) => {
             return null
         }
     }
+
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
-
-    if (userData.subscription_type == null) {
-        userData.subscription_type = localStorage.getItem('subscription_type') || 'free'
+    userData.subscription_type === null || undefined ? (userData.subscription_type = 'free') : userData.subscription_type
+    console.log(userData.subscription_type, 'AddNodes subscription type')
+    if (!userData.subscription_type) {
+        userData.subscription_type = localStorage.getItem('subscription_type')
     }
-
     const allowedMenu = allowedPlan[userData?.subscription_type]
-
+    // const allowedMenu="Premium"
     const allowedMenuItemKeys = Object.keys(allowedMenu)
     const [tab, setTab] = useState(['LangChain'])
 
@@ -186,6 +205,10 @@ const AddNodes = ({ nodesData, node }) => {
             setTab(['LangChain', 'LlamaIndex'])
         }
     }, [])
+
+    console.log(nodes, 'nodes')
+
+    console.log('tab: ', tab)
 
     for (let nodeKey in nodes) {
         if (Object.prototype.hasOwnProperty.call(nodes, nodeKey) && !allowedMenuItemKeys.includes(nodeKey)) {

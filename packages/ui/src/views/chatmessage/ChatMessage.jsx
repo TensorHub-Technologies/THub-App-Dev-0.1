@@ -233,6 +233,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const mediaRecorderRef = useRef(null)
     const audioChunksRef = useRef([])
 
+    console.log('GKE CI/CD')
     const startVoiceStreaming = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -1613,8 +1614,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
                 const aiResponseText = setAiResponseInChatMessages(response.data, params)
 
-                const sanitizedText = aiResponseText.replace(/[^\w\s_,!-]/g, '')
-
+                const sanitizedText = aiResponseText.replace(/[^\w\s₹–.]/g, '').replace(/\b(e\.g\.|eg)\b/gi, 'example')
                 stopSpeaking()
 
                 setConversations((prev) => [...prev, { sender: 'AI', text: aiResponseText }])

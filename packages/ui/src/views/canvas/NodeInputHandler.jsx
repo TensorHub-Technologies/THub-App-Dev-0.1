@@ -37,6 +37,7 @@ import PromptLangsmithHubDialog from '@/ui-component/dialog/PromptLangsmithHubDi
 import ManageScrapedLinksDialog from '@/ui-component/dialog/ManageScrapedLinksDialog'
 import CredentialInputHandler from './CredentialInputHandler'
 import InputHintDialog from '@/ui-component/dialog/InputHintDialog'
+import NvidiaNIMDialog from '@/ui-component/dialog/NvidiaNIMDialog'
 
 // utils
 import { getInputVariables, getCustomConditionOutputs, isValidConnection, getAvailableNodesForVariable } from '@/utils/genericHelper'
@@ -95,6 +96,7 @@ const NodeInputHandler = ({
     const [inputHintDialogProps, setInputHintDialogProps] = useState({})
     const [showConditionDialog, setShowConditionDialog] = useState(false)
     const [conditionDialogProps, setConditionDialogProps] = useState({})
+    const [isNvidiaNIMDialogOpen, setIsNvidiaNIMDialogOpen] = useState(false)
     const [tabValue, setTabValue] = useState(0)
 
     const onInputHintDialogClicked = (hint) => {
@@ -434,6 +436,13 @@ const NodeInputHandler = ({
         updateNodeInternals(data.id)
     }, [data.id, position, updateNodeInternals])
 
+    const handleNvidiaNIMDialogComplete = (containerData) => {
+        if (containerData) {
+            data.inputs['basePath'] = containerData.baseUrl
+            data.inputs['modelName'] = containerData.image
+        }
+    }
+
     return (
         <div ref={ref}>
             {inputAnchor && (
@@ -520,6 +529,24 @@ const NodeInputHandler = ({
                                     ></PromptLangsmithHubDialog>
                                 </>
                             )}
+
+                        {data.name === 'chatNvidiaNIM' && inputParam.name === 'modelName' && (
+                            <>
+                                <Button
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        width: '100%'
+                                    }}
+                                    sx={{ borderRadius: '12px', width: '100%', mb: 2, mt: -1 }}
+                                    variant='outlined'
+                                    onClick={() => setIsNvidiaNIMDialogOpen(true)}
+                                >
+                                    Setup NIM Locally
+                                </Button>
+                            </>
+                        )}
+
                         <div style={{ display: 'flex', flexDirection: 'row' }}>
                             <Typography style={{ color: customization.isDarkMode ? '#fff' : '#000' }}>
                                 {inputParam.label}
@@ -902,6 +929,11 @@ const NodeInputHandler = ({
                 dialogProps={inputHintDialogProps}
                 onCancel={() => setShowInputHintDialog(false)}
             ></InputHintDialog>
+            <NvidiaNIMDialog
+                open={isNvidiaNIMDialogOpen}
+                onClose={() => setIsNvidiaNIMDialogOpen(false)}
+                onComplete={handleNvidiaNIMDialogComplete}
+            ></NvidiaNIMDialog>
         </div>
     )
 }
