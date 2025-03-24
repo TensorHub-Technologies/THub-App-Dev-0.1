@@ -46,7 +46,7 @@ env:
   DEPLOYMENT_NAME: 'thub-app' # TODO: update to your deployment name
   REPOSITORY: 'thub-gke' # TODO: update to your Artifact Registry docker repository name
   IMAGE: 'static-site'
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider' # TODO: update to your workload identity provider
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/378678297066/locations/global/workloadIdentityPools/github-pool/providers/github-provider' # TODO: update to your workload identity provider
 
 jobs:
   setup-build-publish-deploy:
