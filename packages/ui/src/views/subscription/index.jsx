@@ -41,7 +41,6 @@ const Subscription = () => {
         isActive: true
     })
 
-    console.log(user, 'user')
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)
@@ -91,7 +90,6 @@ const Subscription = () => {
     }
 
     const handleDetails = () => {
-        console.log('handle details')
         setModalOpen(true)
     }
 
@@ -134,6 +132,7 @@ const Subscription = () => {
                 txnid: 'TXN' + new Date().getTime(),
                 amount: plan.prices.INR.replace(/[^0-9.]/g, ''),
                 firstname: user.name,
+                user_id: user.uid,
                 email: user.email,
                 phone: user.phone || '',
                 productinfo: plan.title,
@@ -167,7 +166,6 @@ const Subscription = () => {
         // Call handleSubscribe with the appropriate plan details
         const selectedPlanDetails = pricingData[selectedPlan].find((plan) => plan.planId === planId)
         if (selectedPlanDetails) {
-            console.log(selectedPlanDetails, 'selectedPlanDetails')
             await handleSubscribe(selectedPlanDetails)
         }
     }

@@ -14,14 +14,12 @@ const RegistrationForm = () => {
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const user = useSelector((state) => state.user.userData)
-    console.log(user, 'user data')
     const [workspace, setWorkspace] = useState('')
     const url = window.location.href || ''
 
     useEffect(() => {
         const workspaceHost = new URL(url).hostname
         const workspace = workspaceHost.split('.')[0]
-        console.log(workspace, 'workspace')
         setWorkspace(workspace)
     }, [url])
 
