@@ -233,6 +233,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const mediaRecorderRef = useRef(null)
     const audioChunksRef = useRef([])
 
+    console.log('GKE CI/CD')
     const startVoiceStreaming = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
