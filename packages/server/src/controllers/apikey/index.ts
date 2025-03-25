@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import apikeyService from '../../services/apikey'
 
-// fetch api keys
+// get api keys
 const getAllApiKeys = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const apiResponse = await apikeyService.getAllApiKeys()
