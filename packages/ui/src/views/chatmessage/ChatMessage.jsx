@@ -233,6 +233,8 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const mediaRecorderRef = useRef(null)
     const audioChunksRef = useRef([])
 
+    console.log('GKE CICD')
+
     const startVoiceStreaming = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -2246,6 +2248,13 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                             message === messages[messages.length - 1] && (
                                                                 <TextToSpeech messages={message} />
                                                             )}
+                                                        {/* 
+                                                        {!loading &&
+                                                            rec &&
+                                                            messages?.length > 1 &&
+                                                            message === messages[messages.length - 1] && (
+                                                                <DynamicERDiagram schemaData={schemaInput} />
+                                                            )} */}
                                                     </>
                                                 )}
                                             </div>
