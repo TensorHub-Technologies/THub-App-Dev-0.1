@@ -176,10 +176,10 @@ const getChatflowById = async (chatflowId: string): Promise<any> => {
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: chatflowsService.getChatflowById - ${getErrorMessage(error)}`
-        )
+        // throw new InternalFlowiseError(
+        //     StatusCodes.INTERNAL_SERVER_ERROR,
+        //     `Error: chatflowsService.getChatflowById - ${getErrorMessage(error)}`
+        // )
     }
 }
 
