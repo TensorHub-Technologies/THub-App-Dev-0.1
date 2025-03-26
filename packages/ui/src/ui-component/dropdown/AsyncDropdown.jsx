@@ -26,14 +26,14 @@ const StyledPopper = styled(Popper)({
     }
 })
 
-const fetchList = async ({ name, nodeData }) => {
+const fetchList = async ({ tenantId, name, nodeData }) => {
     const loadMethod = nodeData.inputParams.find((param) => param.name === name)?.loadMethod
     const username = localStorage.getItem('username')
     const password = localStorage.getItem('password')
 
     let lists = await axios
         .post(
-            `${baseURL}/api/v1/node-load-method/${nodeData.name}`,
+            `${baseURL}/api/v1/node-load-method/${nodeData.name}/${tenantId}`,
             { ...nodeData, loadMethod },
             { auth: username && password ? { username, password } : undefined }
         )
@@ -97,7 +97,7 @@ export const AsyncDropdown = ({
         setLoading(true)
         ;(async () => {
             const fetchData = async () => {
-                let response = credentialNames.length ? await fetchCredentialList() : await fetchList({ name, nodeData })
+                let response = credentialNames.length ? await fetchCredentialList() : await fetchList({ tenantId, name, nodeData })
                 if (isCreateNewOption) setOptions([...response, ...addNewOption])
                 else setOptions([...response])
                 setLoading(false)
