@@ -163,7 +163,7 @@ const Chatflows = () => {
             } else {
                 navigate('/canvas')
             }
-        } else if (userData?.subscription_type === 'pro') {
+        } else if (userData?.subscription_type === 'Pro') {
             let chatflowCount
             //getusers with email and check number of users and number of workspace
             chatflowCount = chatflows.length
