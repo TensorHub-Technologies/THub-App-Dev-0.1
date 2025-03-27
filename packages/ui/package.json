@@ -1,6 +1,6 @@
 {
     "name": "thub-ui",
-    "version": "2.6.6",
+    "version": "2.2.7",
     "license": "SEE LICENSE IN LICENSE.md",
     "homepage": "https://thub.tech",
     "dependencies": {
@@ -24,6 +24,7 @@
         "@uiw/react-codemirror": "^4.21.21",
         "axios": "1.6.2",
         "clsx": "^1.1.1",
+        "dagre": "^0.8.5",
         "dotenv": "^16.0.0",
         "formik": "^2.2.6",
         "framer-motion": "^4.1.13",

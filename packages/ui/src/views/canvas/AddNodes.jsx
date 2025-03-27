@@ -75,6 +75,9 @@ import { IconChartScatter3d } from '@tabler/icons-react'
 import { IconUsersGroup } from '@tabler/icons-react'
 import subscriptionPlan from './subscriptionPlan'
 
+import { IconGraph } from '@tabler/icons-react'
+import { IconTools } from '@tabler/icons-react'
+
 // ==============================|| ADD NODES||============================== //
 function a11yProps(index) {
     return {
@@ -145,6 +148,7 @@ const AddNodes = ({ nodesData, node }) => {
             />
         ),
         Embeddings: <IconChartScatter3d />,
+        Graph: <IconGraph />,
         Memory: <MemoryIcon />,
         LLMs: <ViewInArIcon />,
         'Multi Agents': <IconUsersGroup />,
@@ -168,6 +172,7 @@ const AddNodes = ({ nodesData, node }) => {
                 style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
             />
         ),
+        'Tools (MCP)': <IconTools />,
         Utilities: <AutoFixHighIcon />,
         'Vector Stores': <LayersIcon />,
         Engine: (
@@ -508,7 +513,7 @@ const AddNodes = ({ nodesData, node }) => {
                         containerRef={(el) => {
                             ps.current = el
                         }}
-                        style={{ height: '100%', maxHeight: 'calc(100vh - 200px)', overflowX: 'hidden' }}
+                        style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}
                     >
                         <Box
                             sx={{

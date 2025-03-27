@@ -1,4 +1,4 @@
-import { IconClipboard, IconDownload } from '@tabler/icons'
+import { IconClipboard, IconDownload, IconDatabaseImport } from '@tabler/icons'
 import { memo, useState } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -36,6 +36,7 @@ export const CodeBlock = memo(({ language, chatflowid, isDialog, value }) => {
     const theme = useTheme()
     const [anchorEl, setAnchorEl] = useState(null)
     const openPopOver = Boolean(anchorEl)
+    const [showERDiagram, setShowERDiagram] = useState(false)
 
     const handleClosePopOver = () => {
         setAnchorEl(null)
@@ -75,6 +76,10 @@ export const CodeBlock = memo(({ language, chatflowid, isDialog, value }) => {
         URL.revokeObjectURL(url)
     }
 
+    const toggleERDiagram = () => {
+        setShowERDiagram(!showERDiagram)
+    }
+
     return (
         <div style={{ width: isDialog ? '' : 300 }}>
             <Box sx={{ color: 'white', background: theme.palette?.common.dark, p: 1, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
@@ -104,12 +109,25 @@ export const CodeBlock = memo(({ language, chatflowid, isDialog, value }) => {
                     <IconButton size='small' title='Download' color='primary' onClick={downloadAsFile}>
                         <IconDownload />
                     </IconButton>
+                    <IconButton
+                        size='small'
+                        title='Toggle ER Diagram'
+                        color={showERDiagram ? 'secondary' : 'primary'}
+                        onClick={toggleERDiagram}
+                    >
+                        <IconDatabaseImport />
+                    </IconButton>
                 </div>
             </Box>
 
-            <SyntaxHighlighter language={language} style={oneDark} customStyle={{ margin: 0 }}>
-                {value}
-            </SyntaxHighlighter>
+            {showERDiagram ? (
+                // <DynamicERDiagram schemaData={value} />
+                <h2>DynamicERDiagram</h2>
+            ) : (
+                <SyntaxHighlighter language={language} style={oneDark} customStyle={{ margin: 0 }}>
+                    {value}
+                </SyntaxHighlighter>
+            )}
         </div>
     )
 })

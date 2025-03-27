@@ -86,7 +86,7 @@ const getSingleNodeIcon = async (nodeName: string) => {
     }
 }
 
-const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any): Promise<any> => {
+const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any, tenantId?: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
         const nodeData: INodeData = requestBody
@@ -95,10 +95,20 @@ const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any): Pr
                 const nodeInstance = appServer.nodesPool.componentNodes[nodeName]
                 const methodName = nodeData.loadMethod || ''
 
-                const dbResponse: INodeOptionsValue[] = await nodeInstance.loadMethods![methodName]!.call(nodeInstance, nodeData, {
+                const paramsForMethod: ICommonObject = {
                     appDataSource: appServer.AppDataSource,
                     databaseEntities: databaseEntities
-                })
+                }
+
+                if (tenantId) {
+                    paramsForMethod['tenantId'] = tenantId
+                }
+
+                const dbResponse: INodeOptionsValue[] = await nodeInstance.loadMethods![methodName]!.call(
+                    nodeInstance,
+                    nodeData,
+                    paramsForMethod
+                )
 
                 return dbResponse
             } catch (error) {

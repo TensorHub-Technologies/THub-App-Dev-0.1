@@ -13,7 +13,7 @@ class CustomFunction_Utilities implements INode {
     type: string
     icon: string
     category: string
-    tags: string[]
+    // tags: string[]
     baseClasses: string[]
     inputs: INodeParams[]
     outputs: INodeOutputsValue[]
@@ -27,7 +27,7 @@ class CustomFunction_Utilities implements INode {
         this.category = 'Utilities'
         this.description = `Execute custom javascript function`
         this.baseClasses = [this.type, 'Utilities']
-        this.tags = ['Utilities']
+        // this.tags = ['Utilities']
         this.inputs = [
             {
                 label: 'Input Variables',

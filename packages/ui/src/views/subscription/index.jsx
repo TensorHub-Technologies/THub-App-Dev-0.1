@@ -41,7 +41,6 @@ const Subscription = () => {
         isActive: true
     })
 
-    console.log(user, 'user')
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)
@@ -91,7 +90,6 @@ const Subscription = () => {
     }
 
     const handleDetails = () => {
-        console.log('handle details')
         setModalOpen(true)
     }
 
@@ -102,6 +100,8 @@ const Subscription = () => {
         return new Date(dateString).toLocaleDateString('en-US', options)
     }
 
+    console.log(user, 'user')
+
     useEffect(() => {
         setSubscriptionDetails({
             subscriptionType: user.subscription_type || '',
@@ -111,6 +111,8 @@ const Subscription = () => {
             isActive: user.subscription_status === 'active'
         })
     }, [user])
+
+    console.log(subscriptionDetails, 'subscriptionDetails')
 
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
@@ -134,6 +136,7 @@ const Subscription = () => {
                 txnid: 'TXN' + new Date().getTime(),
                 amount: plan.prices.INR.replace(/[^0-9.]/g, ''),
                 firstname: user.name,
+                user_id: user.uid,
                 email: user.email,
                 phone: user.phone || '',
                 productinfo: plan.title,
@@ -167,7 +170,6 @@ const Subscription = () => {
         // Call handleSubscribe with the appropriate plan details
         const selectedPlanDetails = pricingData[selectedPlan].find((plan) => plan.planId === planId)
         if (selectedPlanDetails) {
-            console.log(selectedPlanDetails, 'selectedPlanDetails')
             await handleSubscribe(selectedPlanDetails)
         }
     }
@@ -286,7 +288,7 @@ const Subscription = () => {
                                         )}
                                     </div>
                                 ) : plan.title === 'Pro' &&
-                                  user.subscription_type === 'pro' &&
+                                  user.subscription_type === 'Pro' &&
                                   user.subscription_duration === selectedPlan ? (
                                     <div className={customization.isDarkMode ? subStyle.activeBadge_dark : subStyle.activeBadge_light}>
                                         <div style={{ fontSize: '16px' }}>Active</div>
@@ -358,24 +360,24 @@ const Subscription = () => {
                                             className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
                                             disabled={
                                                 (user.subscription_type === 'free' && plan.title === 'Free') ||
-                                                (user.subscription_type === 'pro' &&
+                                                (user.subscription_type === 'Pro' &&
                                                     user.subscription_duration === 'yearly' &&
                                                     plan.title === 'Pro' &&
                                                     selectedPlan === 'monthly') || // Disable Pro-Monthly if user is on Pro-Yearly
-                                                (user.subscription_type === 'pro' &&
+                                                (user.subscription_type === 'Pro' &&
                                                     user.subscription_duration === 'yearly' &&
                                                     plan.title === 'Free') || // Disable Free button if user is on Pro-Yearly
-                                                (user.subscription_type === 'pro' &&
+                                                (user.subscription_type === 'Pro' &&
                                                     user.subscription_duration === 'monthly' &&
                                                     plan.title === 'Free') ||
-                                                (user.subscription_type === 'pro' &&
+                                                (user.subscription_type === 'Pro' &&
                                                     ((user.subscription_duration === 'monthly' &&
                                                         plan.title === 'Pro' &&
                                                         selectedPlan === 'monthly') || // Disable Pro-Monthly if already on Pro-Monthly
                                                         (user.subscription_duration === 'yearly' &&
                                                             plan.title === 'Pro' &&
                                                             selectedPlan === 'yearly'))) || // Disable Pro-Yearly if already on Pro-Yearly
-                                                (user.subscription_type === 'pro' &&
+                                                (user.subscription_type === 'Pro' &&
                                                     plan.title === 'Pro' &&
                                                     user.subscription_duration === selectedPlan) // Disable Pro if Pro is already selected
                                             }
