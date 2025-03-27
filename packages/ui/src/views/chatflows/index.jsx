@@ -236,8 +236,9 @@ const Chatflows = () => {
 
                     images[chatflows[i].id] = []
 
-                    for (let j = 0; j < nodes.length; j += 1) {
-                        const imageSrc = `${baseURL}/api/v1/node-icon/${nodes[j].data.name}`
+                    const filteredNodes = nodes.filter((node) => node.type !== 'stickyNote')
+                    for (let j = 0; j < filteredNodes.length; j += 1) {
+                        const imageSrc = `${baseURL}/api/v1/node-icon/${filteredNodes[j].data.name}`
 
                         if (!images[chatflows[i].id].includes(imageSrc)) {
                             images[chatflows[i].id].push(imageSrc)
@@ -245,37 +246,6 @@ const Chatflows = () => {
                     }
                 }
 
-                setImages(images)
-            } catch (e) {
-                console.error(e)
-            }
-        }
-    }, [chatFlowsApi.data])
-
-    useEffect(() => {
-        if (chatFlowsApi.data) {
-            try {
-                const chatflows = chatFlowsApi.data
-
-                const images = {}
-
-                for (let i = 0; i < chatflows.length; i += 1) {
-                    const flowDataStr = chatflows[i].flowData
-
-                    const flowData = JSON.parse(flowDataStr)
-
-                    const nodes = flowData.nodes || []
-
-                    images[chatflows[i].id] = []
-
-                    for (let j = 0; j < nodes.length; j += 1) {
-                        const imageSrc = `${baseURL}/api/v1/node-icon/${nodes[j].data.name}`
-
-                        if (!images[chatflows[i].id].includes(imageSrc)) {
-                            images[chatflows[i].id].push(imageSrc)
-                        }
-                    }
-                }
                 setImages(images)
             } catch (e) {
                 console.error(e)

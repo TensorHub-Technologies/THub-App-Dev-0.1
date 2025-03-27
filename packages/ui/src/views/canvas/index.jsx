@@ -192,11 +192,19 @@ const Canvas = () => {
 
         dagre.layout(dagreGraph)
 
+        const minX = Math.min(...nodes.map((node) => dagreGraph.node(node.id).x))
+        const minY = Math.min(...nodes.map((node) => dagreGraph.node(node.id).y))
+
+        const upwardShift = 500
+        const leftwardShift = 700
         return nodes.map((node) => {
             const dagreNode = dagreGraph.node(node.id)
             return {
                 ...node,
-                position: { x: dagreNode.x, y: dagreNode.y }
+                position: {
+                    x: dagreNode.x - minX - leftwardShift, // Normalize to center
+                    y: dagreNode.y - minY - upwardShift // Normalize to center
+                }
             }
         })
     }
