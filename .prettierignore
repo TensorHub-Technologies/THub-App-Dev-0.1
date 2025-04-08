@@ -1,7 +1,0 @@
-**/node_modules
-**/dist
-**/build
-package-lock.json
-pnpm-lock.yaml
-.github/workflows/deploy.yml
-.github/workflows/deployment.yml
