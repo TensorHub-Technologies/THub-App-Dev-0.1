@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
-import { IAssistant } from '../../Interface'
+import { AssistantType, IAssistant } from '../../Interface'
 
 @Entity()
 export class Assistant implements IAssistant {
@@ -18,6 +18,9 @@ export class Assistant implements IAssistant {
 
     @Column({ nullable: true })
     iconSrc?: string
+
+    @Column({ nullable: true, type: 'text' })
+    type?: AssistantType
 
     @Column({ type: 'timestamp' })
     @CreateDateColumn()

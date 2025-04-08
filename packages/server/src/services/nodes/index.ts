@@ -95,11 +95,10 @@ const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any, ten
                 const nodeInstance = appServer.nodesPool.componentNodes[nodeName]
                 const methodName = nodeData.loadMethod || ''
 
-                const paramsForMethod: ICommonObject = {
+                const paramsForMethod: INodeOptionsValue[] = await nodeInstance.loadMethods![methodName]!.call(nodeInstance, nodeData, {
                     appDataSource: appServer.AppDataSource,
                     databaseEntities: databaseEntities
-                }
-
+                })
                 if (tenantId) {
                     paramsForMethod['tenantId'] = tenantId
                 }
@@ -133,6 +132,13 @@ const executeCustomFunction = async (requestBody: any) => {
         const functionInputVariables = Object.fromEntries(
             [...(body?.javascriptFunction ?? '').matchAll(/\$([a-zA-Z0-9_]+)/g)].map((g) => [g[1], undefined])
         )
+        if (functionInputVariables && Object.keys(functionInputVariables).length) {
+            for (const key in functionInputVariables) {
+                if (key.includes('vars')) {
+                    delete functionInputVariables[key]
+                }
+            }
+        }
         const nodeData = { inputs: { functionInputVariables, ...body } }
         if (Object.prototype.hasOwnProperty.call(appServer.nodesPool.componentNodes, 'customFunction')) {
             try {

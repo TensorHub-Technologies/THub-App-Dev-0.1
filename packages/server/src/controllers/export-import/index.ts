@@ -22,7 +22,7 @@ const importData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const importData = req.body
         await exportImportService.importData(importData)
-        return res.json({ message: 'Success' })
+        return res.json({ message: 'success' })
     } catch (error) {
         next(error)
     }
