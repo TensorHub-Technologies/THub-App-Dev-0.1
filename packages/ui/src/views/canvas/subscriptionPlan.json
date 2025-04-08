@@ -211,7 +211,8 @@
                 "Redis-Backed Chat Memory",
                 "Upstash Redis-Backed Chat Memory",
                 "Zep Memory - Open Source",
-                "Zep Memory - Cloud"
+                "Zep Memory - Cloud",
+                "Mem0"
             ],
             "Vector Stores;NEW": [
                 "Astra",
@@ -480,7 +481,8 @@
                 "Redis-Backed Chat Memory",
                 "Upstash Redis-Backed Chat Memory",
                 "Zep Memory - Open Source",
-                "Zep Memory - Cloud"
+                "Zep Memory - Cloud",
+                "Mem0"
             ],
             "Vector Stores;NEW": [
                 "Astra",

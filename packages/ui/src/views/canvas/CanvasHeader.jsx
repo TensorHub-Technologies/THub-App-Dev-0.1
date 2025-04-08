@@ -28,7 +28,6 @@ import { SET_DARKMODE } from '@/store/actions'
 
 //Logo
 // import logo from '@/assets/images/THub_logo_dark.png'
-import logo from '@/assets/images/THub_Logo_resize.png'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 
 // project imports
@@ -410,7 +409,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
         <>
             <img src={ColorfulLogo} alt='THub_Logo' width={35} />
 
-            {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''}
+            {/* {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''} */}
 
             <Box>
                 <ButtonBase title='Back' sx={{ borderRadius: '20%', marginLeft: customization.menu_open ? '198px' : '37px' }}>

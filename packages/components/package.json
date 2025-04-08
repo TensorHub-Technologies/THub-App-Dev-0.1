@@ -1,6 +1,6 @@
 {
     "name": "thub-components",
-    "version": "2.2.7",
+    "version": "2.2.7-patch.1",
     "description": "THub Components",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -52,6 +52,7 @@
         "@langchain/qdrant": "^0.0.5",
         "@langchain/weaviate": "^0.0.1",
         "@langchain/xai": "^0.0.1",
+        "@mem0/community": "^0.0.1",
         "@mendable/firecrawl-js": "^0.0.28",
         "@mistralai/mistralai": "0.1.3",
         "@modelcontextprotocol/sdk": "^1.6.1",
