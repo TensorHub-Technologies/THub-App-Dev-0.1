@@ -127,6 +127,7 @@ const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                     <LoadingButton
                         sx={{
                             mt: 2,
+                            backgroundColor: customization?.isDarkMode ? '#e22a90' : '#3c5ba4',
                             '&:hover': {
                                 backgroundColor: theme.palette.secondary.main,
                                 backgroundImage: `linear-gradient(rgb(0 0 0/10%) 0 0)`

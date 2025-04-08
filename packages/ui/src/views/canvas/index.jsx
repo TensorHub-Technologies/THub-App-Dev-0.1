@@ -3,6 +3,7 @@ import ReactFlow, { addEdge, Controls, Background, useNodesState, useEdgesState,
 import 'reactflow/dist/style.css'
 import * as htmlToImage from 'html-to-image'
 import DownloadIcon from '@mui/icons-material/Download'
+import dagre from 'dagre'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -69,6 +70,8 @@ import { IconArrowForwardUp } from '@tabler/icons-react'
 
 import { IconFilePencil } from '@tabler/icons-react'
 import { IconMapPin2 } from '@tabler/icons-react'
+import { IconArrowsVertical } from '@tabler/icons-react'
+import { IconArrowsHorizontal } from '@tabler/icons-react'
 
 import ElevenLabsWidget from '../chatmessage/ElevenLabsWidget'
 
@@ -172,6 +175,48 @@ const Canvas = () => {
             setMenuPosition(null)
         }
     }
+    const getLayoutedElements = (nodes, edges, direction = 'TB') => {
+        const dagreGraph = new dagre.graphlib.Graph()
+        dagreGraph.setDefaultEdgeLabel(() => ({}))
+
+        dagreGraph.setGraph({
+            rankdir: direction,
+            ranksep: 400, // Further increased vertical spacing
+            nodesep: 300, // Further increased horizontal spacing
+            marginx: 50, // Increased margin for extra spacing
+            marginy: 50
+        })
+
+        nodes.forEach((node) => dagreGraph.setNode(node.id, { width: 150, height: 50 }))
+        edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target))
+
+        dagre.layout(dagreGraph)
+
+        const minX = Math.min(...nodes.map((node) => dagreGraph.node(node.id).x))
+        const minY = Math.min(...nodes.map((node) => dagreGraph.node(node.id).y))
+
+        const upwardShift = 500
+        const leftwardShift = 700
+        return nodes.map((node) => {
+            const dagreNode = dagreGraph.node(node.id)
+            return {
+                ...node,
+                position: {
+                    x: dagreNode.x - minX - leftwardShift, // Normalize to center
+                    y: dagreNode.y - minY - upwardShift // Normalize to center
+                }
+            }
+        })
+    }
+
+    // Function to apply layout dynamically
+    const handleLayout = useCallback(
+        (direction) => {
+            const layoutedNodes = getLayoutedElements(nodes, edges, direction)
+            setNodes([...layoutedNodes]) // Update node positions dynamically
+        },
+        [nodes, edges, setNodes]
+    )
 
     // =================// undo // =====================
     const [redoStack, setRedoStack] = useState([])
@@ -885,6 +930,49 @@ const Canvas = () => {
                                                 >
                                                     <IconArrowForwardUp id='RedoIcon' size={19} color='#000000' />
                                                 </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        borderRight: '3px solid #eee',
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Sticky Notes'
+                                                    onClick={addStickyNote}
+                                                >
+                                                    <IconFilePencil id='NotesIcon' size={19} color='#000000' />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Minimap'
+                                                    onClick={handleToggleMinimap}
+                                                >
+                                                    <IconMapPin2 id='MapIcon' size={19} color='#000000' />
+                                                </MenuItem>
                                             </Box>
 
                                             {/* Second Rectangle: Expand and Collapse */}
@@ -1035,10 +1123,10 @@ const Canvas = () => {
                                                             backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
                                                         }
                                                     }}
-                                                    title='Sticky Notes'
-                                                    onClick={addStickyNote}
+                                                    title='Vertical Layout'
+                                                    onClick={() => handleLayout('TB')}
                                                 >
-                                                    <IconFilePencil id='NotesIcon' size={19} color='#000000' />
+                                                    <IconArrowsVertical id='VerticalIcon' size={19} color='#000000' />
                                                 </MenuItem>
 
                                                 <MenuItem
@@ -1056,10 +1144,10 @@ const Canvas = () => {
                                                             backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
                                                         }
                                                     }}
-                                                    title='Minimap'
-                                                    onClick={handleToggleMinimap}
+                                                    title='Horizontal Layout'
+                                                    onClick={() => handleLayout('LR')}
                                                 >
-                                                    <IconMapPin2 id='MapIcon' size={19} color='#000000' />
+                                                    <IconArrowsHorizontal id='HorizontalIcon' size={19} color='#000000' />
                                                 </MenuItem>
                                             </Box>
                                         </Box>

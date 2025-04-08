@@ -691,6 +691,11 @@ const NodeInputHandler = ({
                                     {inputParam.codeExample && (
                                         <Button
                                             variant='outlined'
+                                            style={{
+                                                marginBottom: 10,
+                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
+                                            }}
                                             onClick={() => {
                                                 data.inputs[inputParam.name] = inputParam.codeExample
                                             }}
