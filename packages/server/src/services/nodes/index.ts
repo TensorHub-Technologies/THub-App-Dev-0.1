@@ -95,10 +95,11 @@ const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any, ten
                 const nodeInstance = appServer.nodesPool.componentNodes[nodeName]
                 const methodName = nodeData.loadMethod || ''
 
-                const paramsForMethod: INodeOptionsValue[] = await nodeInstance.loadMethods![methodName]!.call(nodeInstance, nodeData, {
+                const paramsForMethod: ICommonObject = {
                     appDataSource: appServer.AppDataSource,
                     databaseEntities: databaseEntities
-                })
+                }
+
                 if (tenantId) {
                     paramsForMethod['tenantId'] = tenantId
                 }
