@@ -168,9 +168,9 @@ class Json_DocumentLoaders implements INode {
             } else {
                 files = [jsonFileBase64]
             }
+
             for (const file of files) {
                 if (!file) continue
-
                 const splitDataURI = file.split(',')
                 splitDataURI.pop()
                 const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
@@ -302,50 +302,16 @@ class TextLoader extends BaseDocumentLoader {
     }
 }
 
-class JSONLoader extends BaseDocumentLoader {
+class JSONLoader extends TextLoader {
     public pointers: string[]
     private metadataMapping: Record<string, string>
 
-    constructor(public filePathOrBlob: string | Blob, pointers: string | string[] = [], metadataMapping: Record<string, string> = {}) {
-        super()
+    constructor(filePathOrBlob: string | Blob, pointers: string | string[] = [], metadataMapping: Record<string, string> = {}) {
+        super(filePathOrBlob)
         this.pointers = Array.isArray(pointers) ? pointers : [pointers]
         if (metadataMapping) {
             this.metadataMapping = typeof metadataMapping === 'object' ? metadataMapping : JSON.parse(metadataMapping)
         }
-    }
-
-    public async load(): Promise<Document[]> {
-        let text: string
-        let metadata: Record<string, string>
-        if (typeof this.filePathOrBlob === 'string') {
-            const { readFile } = await TextLoader.imports()
-            text = await readFile(this.filePathOrBlob, 'utf8')
-            metadata = { source: this.filePathOrBlob }
-        } else {
-            text = await this.filePathOrBlob.text()
-            metadata = { source: 'blob', blobType: this.filePathOrBlob.type }
-        }
-        const parsed = await this.parse(text)
-        parsed.forEach((parsedData, i) => {
-            const { pageContent } = parsedData
-            if (typeof pageContent !== 'string') {
-                throw new Error(`Expected string, at position ${i} got ${typeof pageContent}`)
-            }
-        })
-        return parsed.map((parsedData, i) => {
-            const { pageContent, metadata: additionalMetadata } = parsedData
-            return new Document({
-                pageContent,
-                metadata:
-                    parsed.length === 1
-                        ? { ...metadata, ...additionalMetadata }
-                        : {
-                              ...metadata,
-                              line: i + 1,
-                              ...additionalMetadata
-                          }
-            })
-        })
     }
 
     protected async parse(raw: string): Promise<Document[]> {
@@ -356,7 +322,7 @@ class JSONLoader extends BaseDocumentLoader {
         const jsonArray = Array.isArray(json) ? json : [json]
 
         for (const item of jsonArray) {
-            const content = [JSON.stringify(item)] // this.extractContent(item)
+            const content = this.extractContent(item)
             const metadata = this.extractMetadata(item)
 
             for (const pageContent of content) {
