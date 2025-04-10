@@ -151,13 +151,7 @@ const CanvasNode = ({ data }) => {
                     sx={{
                         padding: 0,
                         borderColor: data.selected ? NodeHeader : NodeBorder,
-                        transition: 'all 0.2s ease-in-out',
-                        '&:hover': {
-                            transform: 'scale(1.12) translateZ(10px)', // Bigger pop-out effect
-                            boxShadow: '0px 10px 35px rgba(0, 0, 0, 0.4)', // Stronger glow and shadow
-                            // filter: 'brightness(1.2) contrast(1.15)', // More emphasis
-                            borderColor: data.selected ? NodeBorder : NodeHeader
-                        }
+                        transition: 'all 0.2s ease-in-out'
                     }}
                     border={false}
                 >

@@ -562,7 +562,7 @@ importers:
                 specifier: ^2.1.3
                 version: 2.1.3
             bullmq:
-                specifier: ^5.13.2
+                specifier: ^5.42.0
                 version: 5.44.0
             content-disposition:
                 specifier: 0.5.4
@@ -585,6 +585,9 @@ importers:
             express-rate-limit:
                 specifier: ^6.9.0
                 version: 6.11.2(express@4.21.2)
+            flowise-nim-container-manager:
+                specifier: ^1.0.11
+                version: 1.0.11
             global-agent:
                 specifier: ^3.0.0
                 version: 3.0.0
@@ -615,9 +618,6 @@ importers:
             mysql2:
                 specifier: ^3.11.3
                 version: 3.12.0
-            nim-container-manager:
-                specifier: ^1.0.4
-                version: 1.0.5
             openai:
                 specifier: 4.82.0
                 version: 4.82.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.24.1)
@@ -652,7 +652,7 @@ importers:
                 specifier: workspace:^
                 version: link:../ui
             typeorm:
-                specifier: ^0.3.20
+                specifier: ^0.3.6
                 version: 0.3.20(ioredis@5.5.0)(mongodb@6.3.0(@aws-sdk/credential-providers@3.744.0)(gcp-metadata@5.3.0(encoding@0.1.13))(socks@2.8.4))(mysql2@3.12.0)(pg@8.13.1)(redis@4.7.0)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.10.15(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
             uuid:
                 specifier: ^9.0.1
@@ -9732,6 +9732,9 @@ packages:
     flowise-embed@2.1.1:
         resolution: { integrity: sha512-CelUG75nYsVmw22SIGgxDcFSW2STTCqX18868KME0zLUqcF6zjuUgWrTcls0JZs/5TufLNA5iYIpLJfeKef5Zg== }
 
+    flowise-nim-container-manager@1.0.11:
+        resolution: { integrity: sha512-Er/leiIzJZ691kWqXkjCWv29g0G5qWA4juBOcGZ1P5kBLnkKFxbWc5x8JsSPcHuJQIiGNX/dYEzp2ZrOV3YYMg== }
+
     flush-write-stream@1.1.1:
         resolution: { integrity: sha512-3Z4XhFZ3992uIq0XOqb9AreonueSYphE6oYbpt5+3u06JWklbsPkNv3ZKkP9Bz/r+1MWCaMoSQ28P85+1Yc77w== }
 
@@ -12591,9 +12594,6 @@ packages:
 
     next-tick@1.1.0:
         resolution: { integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ== }
-
-    nim-container-manager@1.0.5:
-        resolution: { integrity: sha512-QFTpSNQVxzOLi2NtDaYDDo1/mF4g3wg/dOLaStBgQF8ZKUnuWzxGhZ/PDjjFKWoaHj2V6YvXE6cAAVAWQsQHkA== }
 
     no-case@3.0.4:
         resolution: { integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg== }
@@ -28986,6 +28986,13 @@ snapshots:
             - debug
             - supports-color
 
+    flowise-nim-container-manager@1.0.11:
+        dependencies:
+            dockerode: 4.0.4
+            express: 4.21.2
+        transitivePeerDependencies:
+            - supports-color
+
     flush-write-stream@1.1.1:
         dependencies:
             inherits: 2.0.4
@@ -32806,13 +32813,6 @@ snapshots:
     netmask@2.0.2: {}
 
     next-tick@1.1.0: {}
-
-    nim-container-manager@1.0.5:
-        dependencies:
-            dockerode: 4.0.4
-            express: 4.21.2
-        transitivePeerDependencies:
-            - supports-color
 
     no-case@3.0.4:
         dependencies:

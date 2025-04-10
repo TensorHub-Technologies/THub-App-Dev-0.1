@@ -383,7 +383,11 @@ class ExtendedLunaryHandler extends LunaryHandler {
                 ? {
                       name: entity?.name ?? undefined,
                       email: entity?.email ?? undefined,
-                      phone: entity?.phone ?? undefined
+                      phone: entity?.phone ?? undefined,
+                      loanType: entity?.loanType ?? undefined,
+                      loanAmount: entity?.loanAmount ?? undefined,
+                      employmentStatus: entity?.employmentStatus ?? undefined,
+                      creditScore: entity?.creditScore ?? undefined
                   }
                 : undefined
         })
