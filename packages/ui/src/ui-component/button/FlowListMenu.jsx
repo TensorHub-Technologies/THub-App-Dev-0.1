@@ -37,11 +37,11 @@ import useNotifier from '@/utils/useNotifier'
 import ChatFeedbackDialog from '../dialog/ChatFeedbackDialog'
 import AllowedDomainsDialog from '../dialog/AllowedDomainsDialog'
 import SpeechToTextDialog from '../dialog/SpeechToTextDialog'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import IconButton from '@mui/material/IconButton'
-import { MoreHoriz } from '@mui/icons-material'
 import RateLimitDailog from '../dialog/RateLimitDailog'
 import AnalyseWorkflowDailog from '../dialog/AnalyseWorkflowDialog'
+// Tabler icons imports
+import { IconDots } from '@tabler/icons-react'
+import { IconDotsVertical } from '@tabler/icons-react'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
@@ -89,6 +89,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
+    const customization = useSelector((state) => state.customization)
 
     useNotifier()
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
@@ -318,35 +319,29 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             console.error(e)
         }
     }
-    const customization = useSelector((state) => state.customization)
     return (
         <div>
             {localStorage.getItem('flowDisplayStyle') === 'list' ? (
-                <IconButton
-                    id='demo-customized-button'
-                    aria-controls={open ? 'demo-customized-menu' : undefined}
-                    aria-haspopup='true'
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick}
-                >
-                    <MoreHoriz sx={{ p: 0, background: 'transparent' }} />
-                </IconButton>
+                <button style={{ background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer' }} onClick={handleClick}>
+                    <IconDots color={customization.isDarkMode ? 'white' : 'black'} />
+                </button>
             ) : (
-                <IconButton
-                    sx={{
+                <button
+                    style={{
                         position: 'absolute',
-                        top: 0,
+                        top: 1,
                         right: 5,
-                        zIndex: 1
+                        zIndex: 1,
+                        background: 'transparent',
+                        outline: 'none',
+                        border: 'none',
+                        cursor: 'pointer'
                     }}
                     id='demo-customized-button'
-                    aria-controls={open ? 'demo-customized-menu' : undefined}
-                    aria-haspopup='true'
-                    aria-expanded={open ? 'true' : undefined}
                     onClick={handleClick}
                 >
-                    <MoreVertIcon sx={{ p: 0, background: 'transparent' }} />
-                </IconButton>
+                    <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
+                </button>
             )}
 
             <StyledMenu

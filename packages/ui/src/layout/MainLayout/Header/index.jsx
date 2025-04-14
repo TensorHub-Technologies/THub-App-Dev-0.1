@@ -12,10 +12,8 @@ import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
 import toggle_1 from '@/assets/images/toggle_mode-1.svg'
 import toggle_2 from '@/assets/images/toggle_mode-2.svg'
-import PersonAdd from '@mui/icons-material/PersonAdd'
-import Settings from '@mui/icons-material/Settings'
-import Logout from '@mui/icons-material/Logout'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+// tabler icons imports
+import { IconUserPlus, IconSettings, IconLogout, IconChevronDown } from '@tabler/icons-react'
 
 // Custom Material-UI Switch
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -259,7 +257,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         </IconButton>
                     </Tooltip>
                 </Box>
-                <KeyboardArrowDownIcon onClick={handleClick} style={{ background: 'transparent', cursor: 'pointer', fontSize: '28px' }} />
+                <IconChevronDown onClick={handleClick} style={{ background: 'transparent', cursor: 'pointer', fontSize: '28px' }} />
                 <Menu
                     anchorEl={anchorEl}
                     id='account-menu'
@@ -297,19 +295,19 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 >
                     <MenuItem onClick={handleSettingClick}>
                         <ListItemIcon>
-                            <Settings fontSize='small' />
+                            <IconSettings />
                         </ListItemIcon>
                         Settings
                     </MenuItem>
                     <MenuItem onClick={handleSubscriptionClick}>
                         <ListItemIcon>
-                            <PersonAdd fontSize='small' />
+                            <IconUserPlus />
                         </ListItemIcon>
                         Subscription
                     </MenuItem>
                     <MenuItem onClick={handleLogout}>
                         <ListItemIcon>
-                            <Logout fontSize='small' style={{ marginLeft: '3.5px' }} />
+                            <IconLogout style={{ marginLeft: '3.5px' }} />
                         </ListItemIcon>
                         Logout
                     </MenuItem>
