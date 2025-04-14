@@ -19,7 +19,7 @@ import { IconMathIntegral } from '@tabler/icons-react'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 
 // icons
-import { IconChevronLeft, IconDeviceFloppy, IconCheck, IconX } from '@tabler/icons'
+import { IconChevronLeft, IconDeviceFloppy, IconCheck, IconX } from '@tabler/icons-react'
 import MenuIcon from '@mui/icons-material/Menu'
 import ListIcon from '@mui/icons-material/List'
 import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'

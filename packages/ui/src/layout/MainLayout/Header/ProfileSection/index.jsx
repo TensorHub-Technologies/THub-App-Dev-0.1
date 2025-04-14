@@ -26,7 +26,7 @@ import MainCard from '@/ui-component/cards/MainCard'
 import Transitions from '@/ui-component/extended/Transitions'
 import AboutDialog from '@/ui-component/dialog/AboutDialog'
 // assets
-import { IconLogout, IconInfoCircle, IconMenu2 } from '@tabler/icons'
+import { IconLogout, IconInfoCircle, IconMenu2 } from '@tabler/icons-react'
 
 import './index.css'
 

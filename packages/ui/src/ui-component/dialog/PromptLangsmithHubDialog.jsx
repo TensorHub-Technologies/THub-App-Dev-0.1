@@ -36,9 +36,9 @@ import {
 import MuiAccordion from '@mui/material/Accordion'
 import MuiAccordionSummary from '@mui/material/AccordionSummary'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
-import ClearIcon from '@mui/icons-material/Clear'
+import { IconChevronDown } from '@tabler/icons-react'
+import { IconChevronRightPipe } from '@tabler/icons-react'
+import { IconX } from '@tabler/icons-react'
 import { styled } from '@mui/material/styles'
 
 //Project Import
@@ -68,7 +68,7 @@ const Accordion = styled((props) => <MuiAccordion disableGutters elevation={0} s
 }))
 
 const AccordionSummary = styled((props) => (
-    <MuiAccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />} {...props} />
+    <MuiAccordionSummary expandIcon={<IconChevronRightPipe sx={{ fontSize: '0.9rem' }} />} {...props} />
 ))(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, .05)' : 'rgba(0, 0, 0, .03)',
     flexDirection: 'row-reverse',
@@ -281,7 +281,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                             endAdornment={
                                 modelName.length ? (
                                     <IconButton sx={{ mr: 2 }} onClick={() => setModelName([])}>
-                                        <ClearIcon style={{ width: 20, height: 20 }} />
+                                        <IconX style={{ width: 20, height: 20 }} />
                                     </IconButton>
                                 ) : (
                                     false
@@ -319,7 +319,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                             endAdornment={
                                 usecase.length ? (
                                     <IconButton sx={{ mr: 2 }} onClick={() => setUsecase([])}>
-                                        <ClearIcon style={{ width: 20, height: 20 }} />
+                                        <IconX style={{ width: 20, height: 20 }} />
                                     </IconButton>
                                 ) : (
                                     false
@@ -356,7 +356,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                             endAdornment={
                                 language.length ? (
                                     <IconButton sx={{ mr: 2 }} onClick={() => setLanguage([])}>
-                                        <ClearIcon style={{ width: 20, height: 20 }} />
+                                        <IconX style={{ width: 20, height: 20 }} />
                                     </IconButton>
                                 ) : (
                                     false
@@ -456,7 +456,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                 >
                                                     <AccordionSummary
                                                         aria-controls='panel2d-content'
-                                                        expandIcon={<ExpandMoreIcon />}
+                                                        expandIcon={<IconChevronDown />}
                                                         id='panel2d-header'
                                                     >
                                                         <Typography>Prompt</Typography>
@@ -492,7 +492,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                 >
                                                     <AccordionSummary
                                                         aria-controls='panel1d-content'
-                                                        expandIcon={<ExpandMoreIcon />}
+                                                        expandIcon={<IconChevronDown />}
                                                         id='panel1d-header'
                                                     >
                                                         <Typography>Description</Typography>
@@ -511,7 +511,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                     onChange={handleAccordionChange('readme')}
                                                 >
                                                     <AccordionSummary
-                                                        expandIcon={<ExpandMoreIcon />}
+                                                        expandIcon={<IconChevronDown />}
                                                         aria-controls='panel3d-content'
                                                         id='panel3d-header'
                                                     >

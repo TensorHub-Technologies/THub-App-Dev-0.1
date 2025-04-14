@@ -7,7 +7,7 @@ import { Box, Button, Stack, TextField, Typography, IconButton } from '@mui/mate
 import { useSelector, useDispatch } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import { useNavigate } from 'react-router'
-import { IconX } from '@tabler/icons'
+import { IconX } from '@tabler/icons-react'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 

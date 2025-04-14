@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 
 import { ClickAwayListener, Paper, Popper, Button } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { IconMessage, IconX, IconEraser, IconArrowsMaximize } from '@tabler/icons'
+import { IconMessage, IconX, IconEraser, IconArrowsMaximize } from '@tabler/icons-react'
 
 // project import
 import { StyledFab } from '@/ui-component/button/StyledFab'
