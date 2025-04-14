@@ -42,7 +42,7 @@ import useConfirm from '@/hooks/useConfirm'
 import useNotifier from '@/utils/useNotifier'
 
 // Icons
-import { IconTrash, IconEdit, IconX, IconPlus, IconVariable } from '@tabler/icons'
+import { IconTrash, IconEdit, IconX, IconPlus, IconVariable } from '@tabler/icons-react'
 
 // const
 import AddEditVariableDialog from './AddEditVariableDialog'

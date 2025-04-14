@@ -25,7 +25,7 @@ import {
     ListItemText
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { IconLayoutGrid, IconList } from '@tabler/icons'
+import { IconLayoutGrid, IconList } from '@tabler/icons-react'
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'

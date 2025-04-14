@@ -7,9 +7,7 @@ import { styled } from '@mui/material/styles'
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
 import SkeletonChatflowCard from '@/ui-component/cards/Skeleton/ChatflowCard'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import FlowListMenu from '@/ui-component/button/FlowListMenu'
-import IconButton from '@mui/material/IconButton'
 import { Typography, Tooltip } from '@mui/material'
 import Dark from '@/assets/images/Pink.png'
 import Light from '@/assets/images/Light.png'
@@ -303,25 +301,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                             </div>
                         </div>
                     </CardWrapper>
-                    <IconButton
-                        sx={{
-                            position: 'absolute',
-                            top: -5,
-                            left: 30,
-                            zIndex: 1
-                        }}
-                        onClick={onClick}
-                    >
-                        <ArrowForwardIcon
-                            sx={{
-                                p: 0.5,
-                                color: `${customization.isDarkMode ? '#222' : '#fff'}`,
-                                background: 'transparent',
-                                transition: 'transform 0.3s'
-                            }}
-                        />
-                    </IconButton>
-                    {/* Options Menu Button */}
+
                     {!data.templateName && <FlowListMenu chatflow={chatflow || data} updateFlowsApi={updateFlowsApi} />}
                 </div>
             )}

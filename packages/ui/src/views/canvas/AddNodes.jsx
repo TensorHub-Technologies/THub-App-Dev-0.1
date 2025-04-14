@@ -63,7 +63,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import MainCard from '@/ui-component/cards/MainCard'
 
 // icons
-import { IconX } from '@tabler/icons'
+import { IconX } from '@tabler/icons-react'
 
 // const
 import { baseURL } from '@/store/constant'

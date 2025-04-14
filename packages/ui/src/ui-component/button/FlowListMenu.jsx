@@ -17,9 +17,9 @@ import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
 import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
 import Button from '@mui/material/Button'
-import { IconX } from '@tabler/icons'
-import { IconDeviceAnalytics } from '@tabler/icons'
-import { IconAdjustmentsAlt } from '@tabler/icons'
+import { IconX } from '@tabler/icons-react'
+import { IconDeviceAnalytics } from '@tabler/icons-react'
+import { IconAdjustmentsAlt } from '@tabler/icons-react'
 
 import chatflowsApi from '@/api/chatflows'
 

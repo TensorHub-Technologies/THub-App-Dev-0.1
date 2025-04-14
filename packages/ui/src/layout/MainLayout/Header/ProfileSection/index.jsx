@@ -27,7 +27,7 @@ import Transitions from '@/ui-component/extended/Transitions'
 import AboutDialog from '@/ui-component/dialog/AboutDialog'
 import MenuIcon from '@mui/icons-material/Menu'
 // assets
-import { IconLogout, IconInfoCircle } from '@tabler/icons'
+import { IconLogout, IconInfoCircle } from '@tabler/icons-react'
 
 import './index.css'
 

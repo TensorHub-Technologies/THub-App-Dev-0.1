@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { ChatMessage } from './ChatMessage'
-import { IconX, IconEraser } from '@tabler/icons'
+import { IconX, IconEraser } from '@tabler/icons-react'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 
 const ChatExpandDialog = ({

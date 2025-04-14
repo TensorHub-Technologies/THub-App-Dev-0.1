@@ -5,7 +5,7 @@ import { Box, OutlinedInput, Toolbar, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // icons
-import { IconSearch } from '@tabler/icons'
+import { IconSearch } from '@tabler/icons-react'
 
 const ViewHeader = ({ children, filters = null, onSearchChange, search, searchPlaceholder = 'Search', title }) => {
     const theme = useTheme()
