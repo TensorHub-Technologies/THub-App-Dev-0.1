@@ -161,7 +161,6 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                 {sortedData.filter(filterFunction).map((row, index) => (
                                     <StyledTableRow key={index}>
                                         <StyledTableCell key='0'>
-                                            {console.log(row, 'flowlist description')}
                                             {/* <Tooltip title={row.templateName || row.name}> */}
                                             <Typography
                                                 sx={{
@@ -188,7 +187,6 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                             {/* </Tooltip> */}
                                         </StyledTableCell>
                                         <StyledTableCell key='1'>
-                                            {console.log(row, 'flowlist description')}
                                             <Tooltip title={row?.description}>
                                                 <Typography
                                                     sx={{

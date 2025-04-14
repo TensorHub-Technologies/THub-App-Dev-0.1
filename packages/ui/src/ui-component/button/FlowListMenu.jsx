@@ -17,9 +17,9 @@ import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
 import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
 import Button from '@mui/material/Button'
-import { IconX } from '@tabler/icons'
-import { IconDeviceAnalytics } from '@tabler/icons'
-import { IconAdjustmentsAlt } from '@tabler/icons'
+import { IconX } from '@tabler/icons-react'
+import { IconDeviceAnalytics } from '@tabler/icons-react'
+import { IconAdjustmentsAlt } from '@tabler/icons-react'
 
 import chatflowsApi from '@/api/chatflows'
 
@@ -37,11 +37,11 @@ import useNotifier from '@/utils/useNotifier'
 import ChatFeedbackDialog from '../dialog/ChatFeedbackDialog'
 import AllowedDomainsDialog from '../dialog/AllowedDomainsDialog'
 import SpeechToTextDialog from '../dialog/SpeechToTextDialog'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import IconButton from '@mui/material/IconButton'
-import { MoreHoriz } from '@mui/icons-material'
 import RateLimitDailog from '../dialog/RateLimitDailog'
 import AnalyseWorkflowDailog from '../dialog/AnalyseWorkflowDialog'
+// Tabler icons imports
+import { IconDots } from '@tabler/icons-react'
+import { IconDotsVertical } from '@tabler/icons-react'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
@@ -89,6 +89,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
+    const customization = useSelector((state) => state.customization)
 
     useNotifier()
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
@@ -107,7 +108,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const [allowedDomainsDialogProps, setAllowedDomainsDialogProps] = useState({})
     const [speechToTextDialogOpen, setSpeechToTextDialogOpen] = useState(false)
     const [rateLimitDialogOpen, setRateLimitDialogOpen] = useState(false)
-    const [rateLimitDialogProps, setRateLimitDialogProps] = useState(false)
+    const [rateLimitDialogProps, setRateLimitDialogProps] = useState({})
 
     const [AnalyseWorkFlowDialogOpen, setWorkFlowDialogOpen] = useState(false)
     const [AnalyseWorkFlowDialogProps, setWorkFlowDialogProps] = useState(false)
@@ -166,6 +167,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const handleRateLimit = () => {
         setAnchorEl(null)
         setRateLimitDialogProps({
+            open: true,
             title: 'Rate Limiting - ' + chatflow.name,
             chatflow: chatflow
         })
@@ -317,37 +319,29 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             console.error(e)
         }
     }
-    const customization = useSelector((state) => state.customization)
     return (
         <div>
             {localStorage.getItem('flowDisplayStyle') === 'list' ? (
-                <IconButton
-                    id='demo-customized-button'
-                    aria-controls={open ? 'demo-customized-menu' : undefined}
-                    aria-haspopup='true'
-                    aria-expanded={open ? 'true' : undefined}
-                    disableElevation
-                    onClick={handleClick}
-                >
-                    <MoreHoriz sx={{ p: 0, background: 'transparent' }} />
-                </IconButton>
+                <button style={{ background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer' }} onClick={handleClick}>
+                    <IconDots color={customization.isDarkMode ? 'white' : 'black'} />
+                </button>
             ) : (
-                <IconButton
-                    sx={{
+                <button
+                    style={{
                         position: 'absolute',
-                        top: 0,
+                        top: 1,
                         right: 5,
-                        zIndex: 1
+                        zIndex: 1,
+                        background: 'transparent',
+                        outline: 'none',
+                        border: 'none',
+                        cursor: 'pointer'
                     }}
                     id='demo-customized-button'
-                    aria-controls={open ? 'demo-customized-menu' : undefined}
-                    aria-haspopup='true'
-                    aria-expanded={open ? 'true' : undefined}
-                    disableElevation
                     onClick={handleClick}
                 >
-                    <MoreVertIcon sx={{ p: 0, background: 'transparent' }} />
-                </IconButton>
+                    <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
+                </button>
             )}
 
             <StyledMenu
@@ -451,7 +445,11 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 dialogProps={speechToTextDialogProps}
                 onCancel={() => setSpeechToTextDialogOpen(false)}
             />
-            <RateLimitDailog show={rateLimitDialogOpen} dialogProps={rateLimitDialogProps} onCancel={() => setRateLimitDialogOpen(false)} />
+            <RateLimitDailog
+                show={rateLimitDialogOpen}
+                dialogProps={rateLimitDialogProps || {}}
+                onCancel={() => setRateLimitDialogOpen(false)}
+            />
             <AnalyseWorkflowDailog
                 show={AnalyseWorkFlowDialogOpen}
                 dialogProps={AnalyseWorkFlowDialogProps}

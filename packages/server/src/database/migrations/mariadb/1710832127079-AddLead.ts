@@ -10,9 +10,13 @@ export class AddLead1710832127079 implements MigrationInterface {
                 \`name\` text,
                 \`email\` text,
                 \`phone\` text,
+                \`loanType\` varchar(255),
+                \`loanAmount\` decimal(10,2),
+                \`employmentStatus\` varchar(255),
+                \`creditScore\` varchar(255),
                 \`createdDate\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
                 PRIMARY KEY (\`id\`)
-              ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;`
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;`
         )
     }
 

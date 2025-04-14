@@ -6,7 +6,19 @@ import { useSelector } from 'react-redux'
 
 // material-ui
 
-import { Box, Stack, Toolbar, ToggleButton, Skeleton, ButtonGroup, InputAdornment, TextField, MenuItem, Select } from '@mui/material'
+import {
+    Box,
+    Stack,
+    Toolbar,
+    ToggleButton,
+    Skeleton,
+    ButtonGroup,
+    InputAdornment,
+    TextField,
+    MenuItem,
+    Select,
+    FormControl
+} from '@mui/material'
 
 import { useTheme } from '@mui/material/styles'
 
@@ -293,35 +305,26 @@ const Chatflows = () => {
                                 AI Apps Workspace
                             </h1>
 
+                            {/* First TextField (this one is fine) */}
                             <TextField
                                 size='small'
                                 sx={{
                                     display: { xs: 'none', sm: 'block' },
-
                                     ml: 3,
                                     minWidth: 200,
-
                                     maxWidth: 'none',
                                     flexGrow: 1,
-
                                     transition: 'all .2s ease-in-out',
-
                                     '& input': {
                                         color: customization.isDarkMode ? '#fff' : '#000',
-
                                         '::placeholder': {
                                             color: customization.isDarkMode ? '#fff' : '#000',
-
                                             opacity: 1
                                         }
                                     },
-
                                     '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-
                                     '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-
                                     '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-
                                     '&:hover': {
                                         '& .MuiInput-underline:before': {
                                             borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
@@ -337,15 +340,9 @@ const Chatflows = () => {
                                             <SearchOutlinedIcon
                                                 sx={{
                                                     cursor: 'default',
-
                                                     color: customization?.isDarkMode ? '#fff' : '#000',
-
                                                     background: 'transparent !important',
-
                                                     borderRadius: '20%',
-
-                                                    // padding: '2px',
-
                                                     mb: 1
                                                 }}
                                             />
@@ -354,84 +351,37 @@ const Chatflows = () => {
                                 }}
                             />
 
-                            <TextField
-                                style={{ marginLeft: '40px' }}
-                                size='small'
-                                sx={{
-                                    display: { xs: 'none', sm: 'block' },
-
-                                    ml: 3,
-
-                                    transition: 'all .2s ease-in-out',
-
-                                    '& input': { color: customization.isDarkMode ? '#fff' : '#000', width: '50%' },
-
-                                    '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4', width: '50%' },
-
-                                    '& .MuiInput-underline:after': {
-                                        borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-
-                                        width: '50%'
-                                    },
-
-                                    '& .MuiInput-underline:before': {
-                                        borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-
-                                        width: '50%'
-                                    },
-
-                                    '&:hover': {
-                                        '& .MuiInput-underline:before': {
-                                            borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important',
-
-                                            width: '50%'
-                                        }
-                                    }
-                                }}
+                            {/* Replace the second TextField + Select with a standalone Select */}
+                            <FormControl
                                 variant='standard'
-                                // placeholder='Search name or category'
-
-                                onChange={onSearchChange}
-                                inputProps={{
-                                    readOnly: true
+                                sx={{
+                                    ml: 5,
+                                    width: '130px'
                                 }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <Select
-                                            size='small'
-                                            value={sortBy}
-                                            onChange={(e) => setSortBy(e.target.value)}
-                                            sx={{
-                                                ml: 2,
-
-                                                marginLeft: '10px',
-
-                                                width: '130px',
-
-                                                '&::before': {
-                                                    borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
-                                                },
-
-                                                '&::after': {
-                                                    borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
-                                                },
-
-                                                '& .MuiSelect-icon': {
-                                                    background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
-
-                                                    color: '#ffff'
-                                                }
-                                            }}
-                                        >
-                                            <MenuItem value='name'>Sort by Name</MenuItem>
-
-                                            <MenuItem value='created'>Sort by Created Date</MenuItem>
-
-                                            <MenuItem value='updated'>Sort by Updated Date</MenuItem>
-                                        </Select>
-                                    )
-                                }}
-                            />
+                            >
+                                <Select
+                                    size='small'
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    sx={{
+                                        width: '130px',
+                                        '&::before': {
+                                            borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
+                                        },
+                                        '&::after': {
+                                            borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
+                                        },
+                                        '& .MuiSelect-icon': {
+                                            background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                            color: '#ffff'
+                                        }
+                                    }}
+                                >
+                                    <MenuItem value='name'>Sort by Name</MenuItem>
+                                    <MenuItem value='created'>Sort by Created Date</MenuItem>
+                                    <MenuItem value='updated'>Sort by Updated Date</MenuItem>
+                                </Select>
+                            </FormControl>
 
                             <Box sx={{ flexGrow: 1 }} />
 

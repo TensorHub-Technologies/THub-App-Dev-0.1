@@ -15,7 +15,7 @@ import {
     ListItemAvatar,
     ListItemText
 } from '@mui/material'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { IconChevronCompactDown } from '@tabler/icons-react'
 import { IconX } from '@tabler/icons-react'
 
 // Project import
@@ -284,7 +284,7 @@ const AnalyseFlow = ({ dialogProps }) => {
                     disableGutters
                     key={index}
                 >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={provider.name} id={provider.name}>
+                    <AccordionSummary expandIcon={<IconChevronCompactDown />} aria-controls={provider.name} id={provider.name}>
                         <ListItem style={{ padding: 0, margin: 0 }} alignItems='center'>
                             <ListItemAvatar>
                                 <div

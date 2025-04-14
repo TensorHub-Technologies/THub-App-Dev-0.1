@@ -199,6 +199,7 @@ const Subscription = () => {
                                             name='subscription'
                                             className={subStyle.radio}
                                             checked={selectedPlan === 'monthly'}
+                                            onChange={() => {}}
                                         />
                                         <label
                                             htmlFor='monthly'
@@ -222,6 +223,7 @@ const Subscription = () => {
                                             name='subscription'
                                             className={subStyle.radio}
                                             checked={selectedPlan === 'yearly'}
+                                            onChange={() => {}}
                                         />
                                         <label
                                             htmlFor='yearly'

@@ -20,7 +20,7 @@ import NodeInfoDialog from '@/ui-component/dialog/NodeInfoDialog'
 
 // const
 import { baseURL } from '@/store/constant'
-import { IconTrash, IconCopy, IconInfoCircle, IconAlertTriangle } from '@tabler/icons'
+import { IconTrash, IconCopy, IconInfoCircle, IconAlertTriangle } from '@tabler/icons-react'
 import { flowContext } from '@/store/context/ReactFlowContext'
 import { setNodesMinMax } from '@/store/actions'
 
@@ -151,13 +151,7 @@ const CanvasNode = ({ data }) => {
                     sx={{
                         padding: 0,
                         borderColor: data.selected ? NodeHeader : NodeBorder,
-                        transition: 'all 0.2s ease-in-out',
-                        '&:hover': {
-                            transform: 'scale(1.12) translateZ(10px)', // Bigger pop-out effect
-                            boxShadow: '0px 10px 35px rgba(0, 0, 0, 0.4)', // Stronger glow and shadow
-                            // filter: 'brightness(1.2) contrast(1.15)', // More emphasis
-                            borderColor: data.selected ? NodeBorder : NodeHeader
-                        }
+                        transition: 'all 0.2s ease-in-out'
                     }}
                     border={false}
                 >
@@ -186,28 +180,27 @@ const CanvasNode = ({ data }) => {
                                 }}
                                 ref={menuRef}
                             >
-                                <IconButton title='minmax' id='minmax-parent'>
+                                <IconButton
+                                    title='minmax'
+                                    id='minmax-parent'
+                                    onClick={handleMin}
+                                    onMouseEnter={(e) =>
+                                        (e.currentTarget.firstChild.style.color = customization?.isDarkMode ? '#e22a90' : '#3c5ba4')
+                                    }
+                                    onMouseLeave={(e) =>
+                                        (e.currentTarget.firstChild.style.color = customization?.isDarkMode ? '#fff' : '#000')
+                                    }
+                                >
                                     {nodeMinMax ? (
                                         <HorizontalRuleIcon
-                                            onClick={handleMin}
                                             id='MinimizeIcon'
                                             style={{ color: customization?.isDarkMode ? '#fff' : '#000' }}
-                                            onMouseEnter={(e) => (e.target.style.color = customization?.isDarkMode ? '#e22a90' : '#3c5ba4')}
-                                            onMouseLeave={(e) => (e.target.style.color = customization?.isDarkMode ? '#fff' : '#000')}
                                         />
                                     ) : (
-                                        <button className='minmax-btn' onClick={handleMin}>
-                                            <CallMadeIcon
-                                                id='ExpandIcon'
-                                                style={{ color: customization?.isDarkMode ? '#fff' : '#000' }}
-                                                onMouseEnter={(e) =>
-                                                    (e.target.style.color = customization?.isDarkMode ? '#e22a90' : '#3c5ba4')
-                                                }
-                                                onMouseLeave={(e) => (e.target.style.color = customization?.isDarkMode ? '#fff' : '#000')}
-                                            />
-                                        </button>
+                                        <CallMadeIcon id='ExpandIcon' style={{ color: customization?.isDarkMode ? '#fff' : '#000' }} />
                                     )}
                                 </IconButton>
+
                                 <IconButton
                                     title='Duplicate'
                                     onClick={() => {

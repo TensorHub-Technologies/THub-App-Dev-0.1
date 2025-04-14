@@ -21,7 +21,7 @@ import toolsApi from '@/api/tools'
 import useApi from '@/hooks/useApi'
 
 // icons
-import { IconPlus, IconFileImport } from '@tabler/icons'
+import { IconPlus, IconFileImport } from '@tabler/icons-react'
 
 // ==============================|| CHATFLOWS ||============================== //
 

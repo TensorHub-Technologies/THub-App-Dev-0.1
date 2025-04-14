@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 
 // navigation
-import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
@@ -20,7 +19,7 @@ import { IconMathIntegral } from '@tabler/icons-react'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 
 // icons
-import { IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX } from '@tabler/icons'
+import { IconChevronLeft, IconDeviceFloppy, IconCheck, IconX } from '@tabler/icons-react'
 import MenuIcon from '@mui/icons-material/Menu'
 import ListIcon from '@mui/icons-material/List'
 import { VectorStorePopUp } from '@/views/vectorstore/VectorStorePopUp'
@@ -28,7 +27,6 @@ import { SET_DARKMODE } from '@/store/actions'
 
 //Logo
 // import logo from '@/assets/images/THub_logo_dark.png'
-import logo from '@/assets/images/THub_Logo_resize.png'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 
 // project imports
@@ -56,6 +54,7 @@ import UpsertHistoryDialog from '../vectorstore/UpsertHistoryDialog'
 import ViewLeadsDialog from '@/ui-component/dialog/ViewLeadsDialog'
 import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction, SET_CHATFLOW } from '@/store/actions'
 import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
+import Edit from '@/assets/icons/EditPencil'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -410,7 +409,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
         <>
             <img src={ColorfulLogo} alt='THub_Logo' width={35} />
 
-            {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''}
+            {/* {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''} */}
 
             <Box>
                 <ButtonBase title='Back' sx={{ borderRadius: '20%', marginLeft: customization.menu_open ? '198px' : '37px' }}>
@@ -471,7 +470,8 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
                                     }}
                                     onClick={() => setEditingFlowName(true)}
                                 >
-                                    <IconPencil stroke={1.5} size='1.3rem' />
+                                    <Edit />
+                                    {/* <EditPencil stroke={1.5} size='1.3rem' /> */}
                                 </Avatar>
                             </ButtonBase>
                         )}
@@ -544,15 +544,13 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
                 )}
             </Box>
             {/* NAVIGATION */}
-            {isDark ? (
-                <IconButton checked={isDark} onClick={changeDarkMode}>
-                    <img src={toggle_1} style={{ width: '30px', marginRight: '5px' }} alt='dark' />
-                </IconButton>
-            ) : (
-                <IconButton checked={isDark} onClick={changeDarkMode}>
-                    <img src={toggle_2} style={{ width: '27px', marginRight: '5px' }} alt='lite' />
-                </IconButton>
-            )}
+            <IconButton onClick={changeDarkMode}>
+                <img
+                    src={isDark ? toggle_1 : toggle_2}
+                    alt={isDark ? 'dark' : 'light'}
+                    style={{ width: isDark ? '30px' : '27px', marginRight: '5px' }}
+                />
+            </IconButton>
 
             <Box>
                 <ButtonBase>
@@ -585,7 +583,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
 
                 <ButtonBase>
                     <div title='Navbar'>
-                        <Button
+                        <IconButton
                             style={{ marginLeft: '-15px' }}
                             id='demo-positioned-button'
                             aria-controls={open ? 'demo-positioned-menu' : undefined}
@@ -609,7 +607,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
                             >
                                 <ListIcon stroke={1.5} size='1.3rem' style={{ background: 'transparent' }} />
                             </Avatar>
-                        </Button>
+                        </IconButton>
 
                         <Menu
                             style={{ marginTop: '60px', marginLeft: '15px', height: '260px' }}

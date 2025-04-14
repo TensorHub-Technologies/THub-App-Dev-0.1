@@ -48,7 +48,7 @@ const AnalyseWorkflowDailog = ({ show, dialogProps, onCancel }) => {
 
 AnalyseWorkflowDailog.propTypes = {
     show: PropTypes.bool,
-    dialogProps: PropTypes.object,
+    dialogProps: PropTypes.bool,
     onCancel: PropTypes.func,
     onConfirm: PropTypes.func
 }
