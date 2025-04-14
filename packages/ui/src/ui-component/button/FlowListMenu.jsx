@@ -107,7 +107,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const [allowedDomainsDialogProps, setAllowedDomainsDialogProps] = useState({})
     const [speechToTextDialogOpen, setSpeechToTextDialogOpen] = useState(false)
     const [rateLimitDialogOpen, setRateLimitDialogOpen] = useState(false)
-    const [rateLimitDialogProps, setRateLimitDialogProps] = useState(false)
+    const [rateLimitDialogProps, setRateLimitDialogProps] = useState({})
 
     const [AnalyseWorkFlowDialogOpen, setWorkFlowDialogOpen] = useState(false)
     const [AnalyseWorkFlowDialogProps, setWorkFlowDialogProps] = useState(false)
@@ -166,6 +166,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const handleRateLimit = () => {
         setAnchorEl(null)
         setRateLimitDialogProps({
+            open: true,
             title: 'Rate Limiting - ' + chatflow.name,
             chatflow: chatflow
         })
@@ -326,7 +327,6 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                     aria-controls={open ? 'demo-customized-menu' : undefined}
                     aria-haspopup='true'
                     aria-expanded={open ? 'true' : undefined}
-                    disableElevation
                     onClick={handleClick}
                 >
                     <MoreHoriz sx={{ p: 0, background: 'transparent' }} />
@@ -343,7 +343,6 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                     aria-controls={open ? 'demo-customized-menu' : undefined}
                     aria-haspopup='true'
                     aria-expanded={open ? 'true' : undefined}
-                    disableElevation
                     onClick={handleClick}
                 >
                     <MoreVertIcon sx={{ p: 0, background: 'transparent' }} />
@@ -451,7 +450,11 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 dialogProps={speechToTextDialogProps}
                 onCancel={() => setSpeechToTextDialogOpen(false)}
             />
-            <RateLimitDailog show={rateLimitDialogOpen} dialogProps={rateLimitDialogProps} onCancel={() => setRateLimitDialogOpen(false)} />
+            <RateLimitDailog
+                show={rateLimitDialogOpen}
+                dialogProps={rateLimitDialogProps || {}}
+                onCancel={() => setRateLimitDialogOpen(false)}
+            />
             <AnalyseWorkflowDailog
                 show={AnalyseWorkFlowDialogOpen}
                 dialogProps={AnalyseWorkFlowDialogProps}

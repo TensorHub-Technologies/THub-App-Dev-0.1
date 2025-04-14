@@ -3,7 +3,7 @@ import axios from 'axios'
 import PropTypes from 'prop-types'
 import userImage_light from '../../assets/images/userForm/userForm.svg'
 import userImage_dark from '../../assets/images/userForm/userForm_dark.svg'
-import { Box, Button, FormControl, Stack, TextField, Typography, IconButton } from '@mui/material'
+import { Box, Button, Stack, TextField, Typography, IconButton } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import { useNavigate } from 'react-router'
@@ -155,65 +155,63 @@ const UserInfo = ({ setShowModal, showModal }) => {
                         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                             {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                                 <form onSubmit={handleSubmit}>
-                                    <FormControl fullWidth>
-                                        <Stack spacing={2}>
-                                            <TextField
-                                                label='Company Name'
-                                                name='company'
-                                                variant='outlined'
-                                                value={values.company}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.company && !!errors.company}
-                                                helperText={touched.company && errors.company}
-                                                required
-                                            />
-                                            <TextField
-                                                label='Department'
-                                                name='department'
-                                                variant='outlined'
-                                                value={values.department}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.department && !!errors.department}
-                                                helperText={touched.department && errors.department}
-                                                required
-                                            />
-                                            <TextField
-                                                label='Role'
-                                                name='role'
-                                                variant='outlined'
-                                                value={values.role}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.role && !!errors.role}
-                                                helperText={touched.role && errors.role}
-                                                required
-                                            />
-                                            <TextField
-                                                label='Designation'
-                                                name='designation'
-                                                variant='outlined'
-                                                value={values.designation}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.designation && !!errors.designation}
-                                                helperText={touched.designation && errors.designation}
-                                                required
-                                            />
-                                            <TextField
-                                                label='Workspace Name'
-                                                name='workspace'
-                                                variant='outlined'
-                                                value={values.workspace}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.workspace && !!errors.workspace}
-                                                helperText={touched.workspace && errors.workspace}
-                                                required
-                                            />
-                                        </Stack>
-                                    </FormControl>
+                                    <Stack spacing={2}>
+                                        <TextField
+                                            label='Company Name'
+                                            name='company'
+                                            variant='outlined'
+                                            value={values.company}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.company && !!errors.company}
+                                            helperText={touched.company && errors.company}
+                                            required
+                                        />
+                                        <TextField
+                                            label='Department'
+                                            name='department'
+                                            variant='outlined'
+                                            value={values.department}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.department && !!errors.department}
+                                            helperText={touched.department && errors.department}
+                                            required
+                                        />
+                                        <TextField
+                                            label='Role'
+                                            name='role'
+                                            variant='outlined'
+                                            value={values.role}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.role && !!errors.role}
+                                            helperText={touched.role && errors.role}
+                                            required
+                                        />
+                                        <TextField
+                                            label='Designation'
+                                            name='designation'
+                                            variant='outlined'
+                                            value={values.designation}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.designation && !!errors.designation}
+                                            helperText={touched.designation && errors.designation}
+                                            required
+                                        />
+                                        <TextField
+                                            label='Workspace Name'
+                                            name='workspace'
+                                            variant='outlined'
+                                            value={values.workspace}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.workspace && !!errors.workspace}
+                                            helperText={touched.workspace && errors.workspace}
+                                            required
+                                        />
+                                    </Stack>
 
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                         <Button

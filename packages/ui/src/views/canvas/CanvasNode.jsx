@@ -180,28 +180,27 @@ const CanvasNode = ({ data }) => {
                                 }}
                                 ref={menuRef}
                             >
-                                <IconButton title='minmax' id='minmax-parent'>
+                                <IconButton
+                                    title='minmax'
+                                    id='minmax-parent'
+                                    onClick={handleMin}
+                                    onMouseEnter={(e) =>
+                                        (e.currentTarget.firstChild.style.color = customization?.isDarkMode ? '#e22a90' : '#3c5ba4')
+                                    }
+                                    onMouseLeave={(e) =>
+                                        (e.currentTarget.firstChild.style.color = customization?.isDarkMode ? '#fff' : '#000')
+                                    }
+                                >
                                     {nodeMinMax ? (
                                         <HorizontalRuleIcon
-                                            onClick={handleMin}
                                             id='MinimizeIcon'
                                             style={{ color: customization?.isDarkMode ? '#fff' : '#000' }}
-                                            onMouseEnter={(e) => (e.target.style.color = customization?.isDarkMode ? '#e22a90' : '#3c5ba4')}
-                                            onMouseLeave={(e) => (e.target.style.color = customization?.isDarkMode ? '#fff' : '#000')}
                                         />
                                     ) : (
-                                        <button className='minmax-btn' onClick={handleMin}>
-                                            <CallMadeIcon
-                                                id='ExpandIcon'
-                                                style={{ color: customization?.isDarkMode ? '#fff' : '#000' }}
-                                                onMouseEnter={(e) =>
-                                                    (e.target.style.color = customization?.isDarkMode ? '#e22a90' : '#3c5ba4')
-                                                }
-                                                onMouseLeave={(e) => (e.target.style.color = customization?.isDarkMode ? '#fff' : '#000')}
-                                            />
-                                        </button>
+                                        <CallMadeIcon id='ExpandIcon' style={{ color: customization?.isDarkMode ? '#fff' : '#000' }} />
                                     )}
                                 </IconButton>
+
                                 <IconButton
                                     title='Duplicate'
                                     onClick={() => {
