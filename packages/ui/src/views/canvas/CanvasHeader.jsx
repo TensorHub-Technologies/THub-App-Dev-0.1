@@ -10,10 +10,10 @@ import MenuItem from '@mui/material/MenuItem'
 // material-ui
 import { useTheme } from '@mui/material/styles'
 import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/material'
-import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined'
-import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
-import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
+import AppsOutlinedIcon from '@/assets/custom-svg/AppsOutlinedIcon'
+import DynamicFeedOutlinedIcon from '@/assets/custom-svg/DynamicFeedOutlinedIcon'
+import ConstructionOutlinedIcon from '@/assets/custom-svg/ConstructionOutlinedIcon'
+import SmartToyOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
 import { IconMathIntegral } from '@tabler/icons-react'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
@@ -649,25 +649,11 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
                                 { icon: <IconMathIntegral />, text: 'Variables', href: '/variables' },
                                 { icon: <VpnKeyOutlinedIcon />, text: 'API Keys', href: '/apikey' }
                             ].map((item, index) => (
-                                <MenuItem
-                                    key={index}
-                                    onClick={handleClose}
-                                    sx={{
-                                        color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        lineHeight: '3em',
-                                        '&:hover': {
-                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
-                                            '& .MuiSvgIcon-root': {
-                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                            }
-                                        }
-                                    }}
-                                >
+                                <MenuItem key={index} onClick={handleClose}>
                                     {item.icon}
                                     <a
                                         href={item.href}
                                         style={{
-                                            color: customization.isDarkMode ? '#FFF' : '#616161',
                                             textDecoration: 'none',
                                             marginLeft: '13px',
                                             lineHeight: '3em'

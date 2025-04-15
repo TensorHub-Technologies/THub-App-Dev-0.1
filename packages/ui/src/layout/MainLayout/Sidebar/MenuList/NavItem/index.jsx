@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import { forwardRef, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { useState } from 'react'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
@@ -12,35 +13,37 @@ import { MENU_OPEN, SET_MENU } from '@/store/actions'
 import config from '@/config'
 
 // assets
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import { IconCircleFilled } from '@tabler/icons-react'
 
 const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
     const theme = useTheme()
     const dispatch = useDispatch()
     const customization = useSelector((state) => state.customization)
     const matchesSM = useMediaQuery(theme.breakpoints.down('lg'))
-
+    const [hovered, setHovered] = useState(false)
+    const baseColor = customization?.isDarkMode ? '#fff' : '#000'
+    const hoverColor = customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
     const Icon = item.icon
     const itemIcon = item?.icon ? (
         <Icon
             className='icon-hover'
             stroke={1.5}
             size='1.3rem'
-            sx={{
+            color={hovered ? hoverColor : baseColor}
+            style={{
                 width: '30px',
                 height: '36px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginBottom: '8px',
-                background: 'transparent !important',
-                color: customization?.isDarkMode ? '#fff' : '#000',
+                background: 'transparent',
                 borderRadius: '20%',
                 padding: '1px'
             }}
         />
     ) : (
-        <FiberManualRecordIcon
+        <IconCircleFilled
             sx={{
                 width: customization.isOpen.findIndex((id) => id === item?.id) > -1 ? 8 : 6,
                 height: customization.isOpen.findIndex((id) => id === item?.id) > -1 ? 8 : 6
@@ -164,6 +167,8 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                 }}
                 selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
                 onClick={() => itemHandler(item.id)}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
             >
                 {item.id === 'loadChatflow' && <input type='file' hidden accept='.json' onChange={(e) => handleFileUpload(e)} />}
 
@@ -188,7 +193,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                                         textAlign: 'left'
                                     }}
                                     variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'}
-                                    color='inherit'
+                                    color={hovered ? hoverColor : baseColor}
                                 >
                                     {item.title}
                                 </Typography>
@@ -200,11 +205,11 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                                     </Typography>
                                 )
                             }
-                            sx={{
-                                '&:hover': {
-                                    color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                }
-                            }}
+                            // sx={{
+                            //     '&:hover': {
+                            //         color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
+                            //     }
+                            // }}
                         />
                     )}
                 </Box>

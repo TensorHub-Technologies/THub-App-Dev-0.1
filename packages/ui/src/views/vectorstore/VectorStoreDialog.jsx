@@ -24,7 +24,7 @@ import { BackdropLoader } from '@/ui-component/loading/BackdropLoader'
 import { TableViewOnly } from '@/ui-component/table/Table'
 
 import { IconX, IconBulb } from '@tabler/icons-react'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { IconChevronDown } from '@tabler/icons-react'
 import pythonSVG from '@/assets/images/python.svg'
 import javascriptSVG from '@/assets/images/javascript.svg'
 import cURLSVG from '@/assets/images/cURL.svg'
@@ -434,7 +434,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                     disableGutters
                                                 >
                                                     <AccordionSummary
-                                                        expandIcon={<ExpandMoreIcon />}
+                                                        expandIcon={<IconChevronDown />}
                                                         aria-controls={`nodes-accordian-${node.data.name}`}
                                                         id={`nodes-accordian-header-${node.data.name}`}
                                                     >

@@ -5,24 +5,11 @@ import PropTypes from 'prop-types'
 import { styled, alpha } from '@mui/material/styles'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import EditIcon from '@mui/icons-material/Edit'
 import Divider from '@mui/material/Divider'
-import FileCopyIcon from '@mui/icons-material/FileCopy'
-import FileDownloadIcon from '@mui/icons-material/Downloading'
-import FileDeleteIcon from '@mui/icons-material/Delete'
-import FileCategoryIcon from '@mui/icons-material/Category'
-import PictureInPictureAltIcon from '@mui/icons-material/PictureInPictureAlt'
-import ThumbsUpDownOutlinedIcon from '@mui/icons-material/ThumbsUpDownOutlined'
-import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
-import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
-import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
 import Button from '@mui/material/Button'
 import { IconX } from '@tabler/icons-react'
 import { IconDeviceAnalytics } from '@tabler/icons-react'
-import { IconAdjustmentsAlt } from '@tabler/icons-react'
-
 import chatflowsApi from '@/api/chatflows'
-
 import useApi from '@/hooks/useApi'
 import useConfirm from '@/hooks/useConfirm'
 import { uiBaseURL } from '@/store/constant'
@@ -42,6 +29,19 @@ import AnalyseWorkflowDailog from '../dialog/AnalyseWorkflowDialog'
 // Tabler icons imports
 import { IconDots } from '@tabler/icons-react'
 import { IconDotsVertical } from '@tabler/icons-react'
+import ThumbsUpDownOutlinedIcon from '@/assets/custom-svg/thumbsUpDownIcon'
+import {
+    IconEdit,
+    IconCopy,
+    IconDownload,
+    IconAdjustments,
+    IconPrompt,
+    IconWorld,
+    IconMicrophone,
+    IconBookmarks,
+    IconTriangleSquareCircleFilled,
+    IconTrashFilled
+} from '@tabler/icons-react'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
@@ -354,43 +354,47 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 onClose={handleClose}
             >
                 <MenuItem onClick={handleFlowRename} disableRipple>
-                    <EditIcon />
+                    <IconEdit style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Rename
                 </MenuItem>
                 <MenuItem onClick={handleDuplicate} disableRipple>
-                    <FileCopyIcon />
+                    <IconCopy style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Duplicate
                 </MenuItem>
                 <MenuItem onClick={handleExport} disableRipple>
-                    <FileDownloadIcon />
+                    <IconDownload style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Export
                 </MenuItem>
                 <MenuItem onClick={handleExportTemplate} disableRipple>
-                    <ExportTemplateOutlinedIcon />
+                    <IconBookmarks
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
                     Save As Template
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleRateLimit} disableRipple>
-                    <IconAdjustmentsAlt
+                    <IconAdjustments
                         style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
                     />
                     Rate Limiting
                 </MenuItem>
 
                 <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
-                    <PictureInPictureAltIcon />
+                    <IconPrompt style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Starter Prompts
                 </MenuItem>
                 <MenuItem onClick={handleFlowChatFeedback} disableRipple>
-                    <ThumbsUpDownOutlinedIcon />
-                    Chat Feedback
+                    <ThumbsUpDownOutlinedIcon color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
+                    &nbsp;&nbsp;Chat Feedback
                 </MenuItem>
                 <MenuItem onClick={handleAllowedDomains} disableRipple>
-                    <VpnLockOutlinedIcon />
+                    <IconWorld style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Allowed Domains
                 </MenuItem>
                 <MenuItem onClick={handleSpeechToText} disableRipple>
-                    <MicNoneOutlinedIcon />
+                    <IconMicrophone
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
                     Speech To Text
                 </MenuItem>
                 <MenuItem onClick={handleAnalyse} disableRipple>
@@ -400,13 +404,17 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                     Analyse WorkFlow
                 </MenuItem>
                 <MenuItem onClick={handleFlowCategory} disableRipple>
-                    <FileCategoryIcon />
+                    <IconTriangleSquareCircleFilled
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
                     Update Category
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleDelete} disableRipple>
-                    <FileDeleteIcon />
-                    Delete
+                    <IconTrashFilled
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
+                    &nbsp;&nbsp; Delete
                 </MenuItem>
             </StyledMenu>
             <SaveChatflowDialog

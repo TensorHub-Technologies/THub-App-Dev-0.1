@@ -6,7 +6,7 @@ import axios from 'axios'
 import 'react-toastify/dist/ReactToastify.css'
 import { useSelector } from 'react-redux'
 import { TextField, Button, Typography, Box, Container, Paper, Grid, IconButton } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import { IconX } from '@tabler/icons-react'
 
 import './EnterpriceForm.css'
 
@@ -77,7 +77,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                         onClick={() => setShowForm(false)}
                         className={customization.isDarkMode ? 'close-button-dark' : 'close-button-light'}
                     >
-                        <CloseIcon />
+                        <IconX />
                     </IconButton>
                     <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                         {({ handleChange, handleBlur, values }) => (
