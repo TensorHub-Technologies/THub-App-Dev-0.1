@@ -17,7 +17,7 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { IconInfoCircle } from '@tabler/icons-react'
 import EnterpriceForm from './Enterprice_Form'
 
 // toastify
@@ -272,9 +272,9 @@ const Subscription = () => {
                                         {user.subscription_type && (
                                             <Tooltip title='subscription details' arrow>
                                                 <div>
-                                                    <InfoOutlinedIcon
-                                                        sx={{
-                                                            fontSize: 22,
+                                                    <IconInfoCircle
+                                                        style={{
+                                                            fontSize: '22px',
                                                             paddingTop: '4px',
                                                             cursor: 'pointer',
                                                             backgroundColor: 'transparent'
@@ -292,7 +292,7 @@ const Subscription = () => {
                                         <div style={{ fontSize: '16px' }}>Active</div>
                                         <Tooltip title='subscription details' arrow>
                                             <div>
-                                                <InfoOutlinedIcon
+                                                <IconInfoCircle
                                                     sx={{
                                                         fontSize: 22,
                                                         paddingTop: '4px',

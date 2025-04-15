@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { Table, TableBody, TableCell, TableContainer, TableRow, Paper, Tooltip, Button } from '@mui/material'
-import CreateIcon from '@mui/icons-material/Create'
+import { IconEdit } from '@tabler/icons-react'
 import './UserDetailsTable.css'
 import { useState } from 'react'
 import axios from 'axios'
@@ -114,10 +114,10 @@ const UserDetailsTable = () => {
                                                     className={customization.isDarkMode ? 'button-upgrade-dark' : 'button-upgrade-light'}
                                                     onClick={handleSave}
                                                 >
-                                                    Save
+                                                    Save11
                                                 </Button>
                                             ) : (
-                                                <CreateIcon
+                                                <IconEdit
                                                     onClick={() => handleEditClick(field.label)}
                                                     className={customization.isDarkMode ? 'edit-dark' : 'edit-light'}
                                                 />

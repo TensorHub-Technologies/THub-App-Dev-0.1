@@ -42,7 +42,7 @@ import useApi from '@/hooks/useApi'
 import { baseURL } from '@/store/constant'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { MarketplaceTable } from '@/ui-component/table/MarketplaceTable'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
+import { IconSearch } from '@tabler/icons-react'
 import emptyImage from '../../assets/images/glass.svg'
 import emptyImagelite from '../../assets/images/glass-lite.svg'
 import { IconX } from '@tabler/icons-react'
@@ -307,8 +307,8 @@ const Marketplace = () => {
                                 startAdornment: (
                                     <InputAdornment position='start'>
                                         {/*<IconSearch/>*/}
-                                        <SearchOutlinedIcon
-                                            sx={{
+                                        <IconSearch
+                                            style={{
                                                 cursor: 'default',
                                                 color: customization?.isDarkMode ? '#fff' : '#fff',
                                                 background: isInputFocused
@@ -318,7 +318,7 @@ const Marketplace = () => {
                                                     : '#3C5BA4',
                                                 borderRadius: '20%',
                                                 padding: '2px',
-                                                mb: 1
+                                                marginBottom: '4px' // equivalent to `mb: 1` in MUI (1 * 8px)
                                             }}
                                         />
                                     </InputAdornment>

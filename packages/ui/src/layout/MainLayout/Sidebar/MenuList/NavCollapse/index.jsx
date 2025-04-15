@@ -10,7 +10,8 @@ import { Collapse, List, ListItemButton, ListItemIcon, ListItemText, Typography 
 import NavItem from '../NavItem'
 
 // assets
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import { IconCircleFilled } from '@tabler/icons-react'
+
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react'
 
 // ==============================|| SIDEBAR MENU LIST COLLAPSE ITEMS ||============================== //
@@ -47,7 +48,7 @@ const NavCollapse = ({ menu, level }) => {
     const menuIcon = menu.icon ? (
         <Icon strokeWidth={1.5} size='1.3rem' style={{ marginTop: 'auto', marginBottom: 'auto' }} />
     ) : (
-        <FiberManualRecordIcon
+        <IconCircleFilled
             sx={{
                 width: selected === menu.id ? 8 : 6,
                 height: selected === menu.id ? 8 : 6

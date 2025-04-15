@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-
-// import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
+import { IconChevronDown, IconChevronUp } from '@tabler/icons-react'
 
 import INRFlag from '../../assets/images/flags/india.png'
 import USDFlag from '../../assets/images/flags/usd.png'
@@ -64,9 +61,9 @@ const PriceDropdown = ({ onCurrencyChange }) => {
             >
                 {selectedOption}
                 {isOpen ? (
-                    <ArrowDropUpIcon style={{ background: 'transparent', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <IconChevronUp style={{ background: 'transparent', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                 ) : (
-                    <ArrowDropDownIcon style={{ background: 'transparent', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <IconChevronDown style={{ background: 'transparent', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                 )}
             </button>
 
