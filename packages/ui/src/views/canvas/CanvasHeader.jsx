@@ -13,10 +13,8 @@ import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/mate
 import AppsOutlinedIcon from '@/assets/custom-svg/AppsOutlinedIcon'
 import DynamicFeedOutlinedIcon from '@/assets/custom-svg/DynamicFeedOutlinedIcon'
 import ConstructionOutlinedIcon from '@/assets/custom-svg/ConstructionOutlinedIcon'
-import SmartToyOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
-import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
-import { IconMathIntegral } from '@tabler/icons-react'
-import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
+import HttpsOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 
 // icons
 import { IconChevronLeft, IconDeviceFloppy, IconCheck, IconX } from '@tabler/icons-react'
@@ -55,6 +53,8 @@ import ViewLeadsDialog from '@/ui-component/dialog/ViewLeadsDialog'
 import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction, SET_CHATFLOW } from '@/store/actions'
 import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
 import Edit from '@/assets/icons/EditPencil'
+import VpnKeyOutlinedIcon from '@/assets/custom-svg/VpnKeyOutlinedIcon'
+import IconMathIntegral from '@/assets/custom-svg/IconMathIntegral'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -641,13 +641,41 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
                             }}
                         >
                             {[
-                                { icon: <AppsOutlinedIcon />, text: 'AI Workspace', href: '/workflows' },
-                                { icon: <DynamicFeedOutlinedIcon />, text: 'Templates', href: '/templates' },
-                                { icon: <ConstructionOutlinedIcon />, text: 'Tools', href: '/tools' },
-                                { icon: <SmartToyOutlinedIcon />, text: 'Assistants', href: '/assistants' },
-                                { icon: <HttpsOutlinedIcon />, text: 'Credentials', href: '/credentials' },
-                                { icon: <IconMathIntegral />, text: 'Variables', href: '/variables' },
-                                { icon: <VpnKeyOutlinedIcon />, text: 'API Keys', href: '/apikey' }
+                                {
+                                    icon: <AppsOutlinedIcon color={customization?.isDarkMode ? '#fff' : '#616161'} />,
+                                    text: 'AI Workspace',
+                                    href: '/workflows'
+                                },
+                                {
+                                    icon: <DynamicFeedOutlinedIcon color={customization?.isDarkMode ? '#fff' : '#616161'} />,
+                                    text: 'Templates',
+                                    href: '/templates'
+                                },
+                                {
+                                    icon: <ConstructionOutlinedIcon color={customization?.isDarkMode ? '#fff' : '#616161'} />,
+                                    text: 'Tools',
+                                    href: '/tools'
+                                },
+                                {
+                                    icon: <SmartToyOutlinedIcon color={customization?.isDarkMode ? '#fff' : '#616161'} />,
+                                    text: 'Assistants',
+                                    href: '/assistants'
+                                },
+                                {
+                                    icon: <HttpsOutlinedIcon color={customization?.isDarkMode ? '#fff' : '#616161'} />,
+                                    text: 'Credentials',
+                                    href: '/credentials'
+                                },
+                                {
+                                    icon: <IconMathIntegral color={customization?.isDarkMode ? '#fff' : '#616161'} />,
+                                    text: 'Variables',
+                                    href: '/variables'
+                                },
+                                {
+                                    icon: <VpnKeyOutlinedIcon color={customization?.isDarkMode ? '#fff' : '#616161'} />,
+                                    text: 'API Keys',
+                                    href: '/apikey'
+                                }
                             ].map((item, index) => (
                                 <MenuItem key={index} onClick={handleClose}>
                                     {item.icon}
@@ -655,8 +683,9 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
                                         href={item.href}
                                         style={{
                                             textDecoration: 'none',
-                                            marginLeft: '13px',
-                                            lineHeight: '3em'
+                                            marginLeft: '14px',
+                                            lineHeight: '3em',
+                                            color: customization?.isDarkMode ? '#fff' : '#616161'
                                         }}
                                         onMouseEnter={(e) => (e.target.style.color = customization.isDarkMode ? '#e22a90' : '#3c5ba4')}
                                         onMouseLeave={(e) => (e.target.style.color = customization.isDarkMode ? '#fff' : '#000')}

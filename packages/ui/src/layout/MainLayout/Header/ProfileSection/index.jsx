@@ -26,7 +26,7 @@ import MainCard from '@/ui-component/cards/MainCard'
 import Transitions from '@/ui-component/extended/Transitions'
 import AboutDialog from '@/ui-component/dialog/AboutDialog'
 // assets
-import { IconLogout, IconInfoCircle, IconMenu2 } from '@tabler/icons-react'
+import { IconMenu2 } from '@tabler/icons-react'
 
 import './index.css'
 
@@ -151,9 +151,7 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                         setAboutDialogOpen(true)
                                                     }}
                                                 >
-                                                    <ListItemIcon>
-                                                        <IconInfoCircle stroke={1.5} size='1.3rem' />
-                                                    </ListItemIcon>
+                                                    <ListItemIcon>i</ListItemIcon>
                                                     <ListItemText primary={<Typography variant='body2'>About THub</Typography>} />
                                                 </ListItemButton>
                                                 {localStorage.getItem('username') && localStorage.getItem('password') && (
@@ -161,9 +159,7 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                         sx={{ borderRadius: `${customization.borderRadius}px` }}
                                                         onClick={handleLogout}
                                                     >
-                                                        <ListItemIcon>
-                                                            <IconLogout stroke={1.5} size='1.3rem' />
-                                                        </ListItemIcon>
+                                                        <ListItemIcon>{/* <IconLogout stroke={1.5} size='1.3rem' /> */}i</ListItemIcon>
                                                         <ListItemText primary={<Typography variant='body2'>Logout</Typography>} />
                                                     </ListItemButton>
                                                 )}
