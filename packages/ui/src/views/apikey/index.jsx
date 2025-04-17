@@ -329,9 +329,6 @@ const APIKey = () => {
             setAPIKeys(getAllAPIKeysApi.data)
         }
     }, [getAllAPIKeysApi.data])
-
-    console.log(apiKeys, 'apiKeys')
-
     return (
         <>
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
