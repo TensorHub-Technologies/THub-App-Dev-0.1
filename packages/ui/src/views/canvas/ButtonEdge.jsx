@@ -1,16 +1,16 @@
 import { getSmoothStepPath, EdgeText } from 'reactflow'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useContext, useEffect, useState, useRef } from 'react'
 import { SET_DIRTY } from '@/store/actions'
 import { flowContext } from '@/store/context/ReactFlowContext'
-import { useSelector } from 'react-redux'
 
 import './index.css'
 
 const foreignObjectSize = 40
+const animationDuration = 2000 // Duration for the animated indicator
 
-const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style = {}, data, markerEnd }) => {
+const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, markerEnd }) => {
     const [edgePath] = getSmoothStepPath({
         sourceX,
         sourceY,
@@ -51,7 +51,7 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
         requestAnimationFrame(animate)
     }, [edgePath])
 
-    // Calculate center position of the edge
+    // Center position of the delete button
     const centerButtonPosition = {
         x: (sourceX + targetX) / 2 - foreignObjectSize / 2,
         y: (sourceY + targetY) / 2 - foreignObjectSize / 2
@@ -66,14 +66,15 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
                     stroke: customization?.isDarkMode ? '#e22a90' : '#3c5ba4',
                     strokeWidth: '2px'
                 }}
-                className='react-flow__edge-path' // This class applies the dotted line animation
+                className='react-flow__edge-path'
                 d={edgePath}
                 markerEnd={markerEnd}
             />
-            {data && data.label && (
+
+            {data?.label && (
                 <EdgeText
-                    x={sourceX + 10}
-                    y={sourceY + 10}
+                    x={(sourceX + targetX) / 2}
+                    y={(sourceY + targetY) / 2 - 20}
                     label={data.label}
                     labelStyle={{ fill: 'black' }}
                     labelBgStyle={{ fill: 'transparent' }}
@@ -81,6 +82,7 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
                     labelBgBorderRadius={2}
                 />
             )}
+
             <foreignObject
                 width={foreignObjectSize}
                 height={foreignObjectSize}
@@ -102,6 +104,7 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
                     </button>
                 </div>
             </foreignObject>
+
             <foreignObject
                 width={foreignObjectSize}
                 height={foreignObjectSize}
@@ -109,7 +112,9 @@ const ButtonEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, ta
                 y={buttonPosition.y - foreignObjectSize / 2}
                 className='edgebutton-foreignobject'
                 requiredExtensions='http://www.w3.org/1999/xhtml'
-            ></foreignObject>
+            >
+                <div className='animated-indicator' />
+            </foreignObject>
         </>
     )
 }
@@ -122,7 +127,6 @@ ButtonEdge.propTypes = {
     targetY: PropTypes.number,
     sourcePosition: PropTypes.any,
     targetPosition: PropTypes.any,
-    style: PropTypes.object,
     data: PropTypes.object,
     markerEnd: PropTypes.any
 }

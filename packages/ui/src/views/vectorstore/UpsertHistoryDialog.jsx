@@ -31,8 +31,8 @@ import {
     Checkbox
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { IconChevronsUp, IconChevronsDown, IconTrash, IconX } from '@tabler/icons'
+import { IconChevronDown } from '@tabler/icons-react'
+import { IconChevronsUp, IconChevronsDown, IconTrash, IconX } from '@tabler/icons-react'
 
 // Project imports
 import { TableViewOnly } from '@/ui-component/table/Table'
@@ -112,7 +112,7 @@ function UpsertHistoryRow(props) {
                                             disableGutters
                                         >
                                             <AccordionSummary
-                                                expandIcon={<ExpandMoreIcon />}
+                                                expandIcon={<IconChevronDown />}
                                                 aria-controls={`nodes-accordian-${node.name}`}
                                                 id={`nodes-accordian-header-${node.name}`}
                                             >

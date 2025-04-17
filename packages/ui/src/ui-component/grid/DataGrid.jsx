@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import { useState, useCallback } from 'react'
 import { DataGrid as MUIDataGrid, GridActionsCellItem } from '@mui/x-data-grid'
-import { IconPlus } from '@tabler/icons'
+import { IconPlus } from '@tabler/icons-react'
 import { Button } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
+import { IconTrashFilled } from '@tabler/icons-react'
 import { cloneDeep } from 'lodash'
 import { formatDataGridRows } from '@/utils/genericHelper'
 import { useSelector } from 'react-redux'
@@ -35,7 +35,7 @@ export const DataGrid = ({ columns, rows, style, disabled = false, hideFooter = 
                 type: 'actions',
                 width: 80,
                 getActions: (params) => [
-                    <GridActionsCellItem key={'Delete'} icon={<DeleteIcon />} label='Delete' onClick={deleteItem(params.id)} />
+                    <GridActionsCellItem key={'Delete'} icon={<IconTrashFilled />} label='Delete' onClick={deleteItem(params.id)} />
                 ]
             }
         ]

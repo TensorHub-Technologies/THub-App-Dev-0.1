@@ -20,7 +20,7 @@ export const SwitchInput = ({ label, value, onChange, disabled = false }) => {
                 {label && <Typography>{label}</Typography>}
                 <Switch
                     disabled={disabled}
-                    checked={myValue}
+                    checked={myValue === 'true' || myValue === true}
                     onChange={(event) => {
                         setMyValue(event.target.checked)
                         onChange(event.target.checked)

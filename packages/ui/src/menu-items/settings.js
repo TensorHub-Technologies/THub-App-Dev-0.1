@@ -10,7 +10,7 @@ import {
     IconAdjustmentsHorizontal,
     IconTemplate,
     IconCode
-} from '@tabler/icons'
+} from '@tabler/icons-react'
 
 // constant
 const icons = {

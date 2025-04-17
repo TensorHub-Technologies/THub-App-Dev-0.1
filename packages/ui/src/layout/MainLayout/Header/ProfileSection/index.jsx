@@ -25,9 +25,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import MainCard from '@/ui-component/cards/MainCard'
 import Transitions from '@/ui-component/extended/Transitions'
 import AboutDialog from '@/ui-component/dialog/AboutDialog'
-import MenuIcon from '@mui/icons-material/Menu'
 // assets
-import { IconLogout, IconInfoCircle } from '@tabler/icons'
+import { IconMenu2 } from '@tabler/icons-react'
 
 import './index.css'
 
@@ -53,9 +52,6 @@ const ProfileSection = ({ username, handleLogout }) => {
         setOpen((prevOpen) => !prevOpen)
     }
 
-    const profileToggle = () => {
-        setOpen((prevOpen) => !prevOpen)
-    }
     const prevOpen = useRef(open)
     useEffect(() => {
         if (prevOpen.current === true && open === false) {
@@ -84,33 +80,9 @@ const ProfileSection = ({ username, handleLogout }) => {
                     onClick={settingToggle}
                     color='inherit'
                 >
-                    <MenuIcon stroke={1.5} size='1.3rem' style={{ background: 'transparent' }} />
+                    <IconMenu2 stroke={2} size={24} style={{ background: 'transparent' }} />
                 </Avatar>
             </ButtonBase>
-            {/* <ButtonBase ref={anchorRef} sx={{ borderRadius: '12px', overflow: 'hidden' }}>
-                
-                <Avatar
-                    variant='rounded'
-                    sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        transition: 'all .2s ease-in-out',
-                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                        color: '#fff',
-                        '&:hover': {
-                            background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                            color: '#fff'
-                        },
-                    }}
-                    // onClick={profileToggle}
-                    color='inherit'
-                >
-                    <PersonIcon stroke={1.5} size='1.3rem'
-                    style={{background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'}} 
-                    /> 
-                </Avatar>
-
-            </ButtonBase> */}
             <Popper
                 placement='bottom-end'
                 open={open}
@@ -179,9 +151,7 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                         setAboutDialogOpen(true)
                                                     }}
                                                 >
-                                                    <ListItemIcon>
-                                                        <IconInfoCircle stroke={1.5} size='1.3rem' />
-                                                    </ListItemIcon>
+                                                    <ListItemIcon>i</ListItemIcon>
                                                     <ListItemText primary={<Typography variant='body2'>About THub</Typography>} />
                                                 </ListItemButton>
                                                 {localStorage.getItem('username') && localStorage.getItem('password') && (
@@ -189,9 +159,7 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                         sx={{ borderRadius: `${customization.borderRadius}px` }}
                                                         onClick={handleLogout}
                                                     >
-                                                        <ListItemIcon>
-                                                            <IconLogout stroke={1.5} size='1.3rem' />
-                                                        </ListItemIcon>
+                                                        <ListItemIcon>{/* <IconLogout stroke={1.5} size='1.3rem' /> */}i</ListItemIcon>
                                                         <ListItemText primary={<Typography variant='body2'>Logout</Typography>} />
                                                     </ListItemButton>
                                                 )}

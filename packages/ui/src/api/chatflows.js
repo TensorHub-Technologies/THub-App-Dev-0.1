@@ -10,8 +10,6 @@ const getSpecificChatflowFromPublicEndpoint = (id) => client.get(`/public-chatfl
 
 const createNewChatflow = (body) => client.post(`/chatflows`, body)
 
-const getAllAgentflows = () => client.get('/chatflows?type=MULTIAGENT')
-
 const importChatflows = (body) => client.post(`/chatflows/importchatflows`, body)
 
 const updateChatflow = (id, body) => client.put(`/chatflows/${id}`, body)
@@ -25,7 +23,6 @@ const getAllowChatflowUploads = (id) => client.get(`/chatflows-uploads/${id}`)
 export default {
     getAllChatflows,
     getAllChatflowsWp,
-    getAllAgentflows,
     getSpecificChatflow,
     getSpecificChatflowFromPublicEndpoint,
     createNewChatflow,

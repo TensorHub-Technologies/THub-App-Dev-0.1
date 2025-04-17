@@ -8,7 +8,7 @@ class GetVariable_Utilities implements INode {
     type: string
     icon: string
     category: string
-    // tags: string[]
+    tags: string[]
     baseClasses: string[]
     inputs: INodeParams[]
     outputs: INodeOutputsValue[]
@@ -22,7 +22,7 @@ class GetVariable_Utilities implements INode {
         this.category = 'Utilities'
         this.description = `Get variable that was saved using Set Variable node`
         this.baseClasses = [this.type, 'Utilities']
-        // this.tags = ['Utilities']
+        this.tags = ['Utilities']
         this.inputs = [
             {
                 label: 'Variable Name',

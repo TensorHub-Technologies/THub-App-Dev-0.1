@@ -42,12 +42,12 @@ import useConfirm from '@/hooks/useConfirm'
 import useNotifier from '@/utils/useNotifier'
 
 // Icons
-import { IconTrash, IconEdit, IconX, IconPlus, IconVariable } from '@tabler/icons'
+import { IconTrash, IconEdit, IconX, IconPlus, IconVariable } from '@tabler/icons-react'
 
 // const
 import AddEditVariableDialog from './AddEditVariableDialog'
 import HowToUseVariablesDialog from './HowToUseVariablesDialog'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
+import { IconSearch } from '@tabler/icons-react'
 
 // ==============================|| Credentials ||============================== //
 
@@ -235,8 +235,8 @@ const Variables = () => {
                                     startAdornment: (
                                         <InputAdornment position='start'>
                                             {/*<IconSearch/>*/}
-                                            <SearchOutlinedIcon
-                                                sx={{
+                                            <IconSearch
+                                                style={{
                                                     cursor: 'default',
                                                     color: customization?.isDarkMode ? '#fff' : '#fff',
                                                     background: isInputFocused
@@ -246,7 +246,7 @@ const Variables = () => {
                                                         : '#3C5BA4',
                                                     borderRadius: '20%',
                                                     padding: '2px',
-                                                    mb: 1
+                                                    marginBottom: '8px' // equivalent to `mb: 1` in MUI (usually 8px)
                                                 }}
                                             />
                                         </InputAdornment>

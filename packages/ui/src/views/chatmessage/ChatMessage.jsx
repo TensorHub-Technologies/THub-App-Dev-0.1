@@ -221,6 +221,11 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const [leadName, setLeadName] = useState('')
     const [leadEmail, setLeadEmail] = useState('')
     const [leadPhone, setLeadPhone] = useState('')
+    const [loanType, setLoanType] = useState('')
+    const [loanAmount, setLoanAmount] = useState('')
+    const [employmentStatus, setEmploymentStatus] = useState('')
+    const [creditScore, setCreditScore] = useState('')
+
     const [isLeadSaving, setIsLeadSaving] = useState(false)
     const [isLeadSaved, setIsLeadSaved] = useState(false)
 
@@ -1341,14 +1346,28 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             chatId,
             name: leadName,
             email: leadEmail,
-            phone: leadPhone
+            phone: leadPhone,
+            loanType,
+            loanAmount,
+            employmentStatus,
+            creditScore
         }
 
         const result = await leadsApi.addLead(body)
         if (result.data) {
             const data = result.data
             setChatId(data.chatId)
-            setLocalStorageChatflow(chatflowid, data.chatId, { lead: { name: leadName, email: leadEmail, phone: leadPhone } })
+            setLocalStorageChatflow(chatflowid, data.chatId, {
+                lead: {
+                    name: leadName,
+                    email: leadEmail,
+                    phone: leadPhone,
+                    loanType,
+                    loanAmount,
+                    employmentStatus,
+                    creditScore
+                }
+            })
             setIsLeadSaved(true)
             setLeadEmail(leadEmail)
             setMessages((prevMessages) => {
@@ -2141,12 +2160,52 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                                     onChange={(e) => setLeadPhone(e.target.value)}
                                                                 />
                                                             )}
-                                                            <Box
-                                                                sx={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'center'
-                                                                }}
-                                                            >
+                                                            {leadsConfig.loanType && (
+                                                                <OutlinedInput
+                                                                    id='loanType'
+                                                                    type='text'
+                                                                    fullWidth
+                                                                    placeholder='Loan Type'
+                                                                    name='loanType'
+                                                                    value={loanType}
+                                                                    onChange={(e) => setLoanType(e.target.value)}
+                                                                />
+                                                            )}
+                                                            {leadsConfig.loanAmount && (
+                                                                <OutlinedInput
+                                                                    id='loanAmount'
+                                                                    type='number'
+                                                                    fullWidth
+                                                                    placeholder='Loan Amount'
+                                                                    name='loanAmount'
+                                                                    value={loanAmount}
+                                                                    onChange={(e) => setLoanAmount(e.target.value)}
+                                                                />
+                                                            )}
+                                                            {leadsConfig.employmentStatus && (
+                                                                <OutlinedInput
+                                                                    id='employmentStatus'
+                                                                    type='text'
+                                                                    fullWidth
+                                                                    placeholder='Employment Status'
+                                                                    name='employmentStatus'
+                                                                    value={employmentStatus}
+                                                                    onChange={(e) => setEmploymentStatus(e.target.value)}
+                                                                />
+                                                            )}
+                                                            {leadsConfig.creditScore && (
+                                                                <OutlinedInput
+                                                                    id='creditScore'
+                                                                    type='number'
+                                                                    fullWidth
+                                                                    placeholder='Credit Score'
+                                                                    name='creditScore'
+                                                                    value={creditScore}
+                                                                    onChange={(e) => setCreditScore(e.target.value)}
+                                                                />
+                                                            )}
+
+                                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                                 <Button
                                                                     variant='outlined'
                                                                     fullWidth

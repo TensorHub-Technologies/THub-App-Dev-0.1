@@ -18,13 +18,14 @@ import {
     FormControl,
     Checkbox,
     Button,
-    FormControlLabel,
     InputLabel,
     Select,
-    Skeleton
+    Skeleton,
+    MenuItem,
+    ListItemText
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { IconLayoutGrid, IconList } from '@tabler/icons'
+import { IconLayoutGrid, IconList } from '@tabler/icons-react'
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
@@ -41,7 +42,7 @@ import useApi from '@/hooks/useApi'
 import { baseURL } from '@/store/constant'
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
 import { MarketplaceTable } from '@/ui-component/table/MarketplaceTable'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
+import { IconSearch } from '@tabler/icons-react'
 import emptyImage from '../../assets/images/glass.svg'
 import emptyImagelite from '../../assets/images/glass-lite.svg'
 import { IconX } from '@tabler/icons-react'
@@ -306,8 +307,8 @@ const Marketplace = () => {
                                 startAdornment: (
                                     <InputAdornment position='start'>
                                         {/*<IconSearch/>*/}
-                                        <SearchOutlinedIcon
-                                            sx={{
+                                        <IconSearch
+                                            style={{
                                                 cursor: 'default',
                                                 color: customization?.isDarkMode ? '#fff' : '#fff',
                                                 background: isInputFocused
@@ -317,7 +318,7 @@ const Marketplace = () => {
                                                     : '#3C5BA4',
                                                 borderRadius: '20%',
                                                 padding: '2px',
-                                                mb: 1
+                                                marginBottom: '4px' // equivalent to `mb: 1` in MUI (1 * 8px)
                                             }}
                                         />
                                     </InputAdornment>
@@ -370,18 +371,10 @@ const Marketplace = () => {
                                             }}
                                         >
                                             {types.map((name) => (
-                                                <FormControlLabel
-                                                    key={name}
-                                                    sx={{ display: 'flex', ml: 1, gap: 1 }}
-                                                    control={
-                                                        <Checkbox
-                                                            checked={typeFilter.indexOf(name) > -1}
-                                                            onChange={handleTypeFilterChange}
-                                                            value={name}
-                                                        />
-                                                    }
-                                                    label={name}
-                                                />
+                                                <MenuItem key={name} value={name}>
+                                                    <Checkbox checked={typeFilter.indexOf(name) > -1} />
+                                                    <ListItemText primary={name} />
+                                                </MenuItem>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -419,19 +412,10 @@ const Marketplace = () => {
                                             }}
                                         >
                                             {framework.map((name) => (
-                                                <FormControlLabel
-                                                    key={name}
-                                                    sx={{ display: 'flex', ml: 2, gap: 2, p: 1 }}
-                                                    control={
-                                                        <Checkbox
-                                                            checked={frameworkFilter.indexOf(name) > -1}
-                                                            sx={{ p: 0 }}
-                                                            onChange={handleFrameworkFilterChange}
-                                                            value={name}
-                                                        />
-                                                    }
-                                                    label={name}
-                                                />
+                                                <MenuItem key={name} value={name}>
+                                                    <Checkbox checked={frameworkFilter.indexOf(name) > -1} />
+                                                    <ListItemText primary={name} />
+                                                </MenuItem>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -452,7 +436,12 @@ const Marketplace = () => {
                                             id='usecases'
                                             multiple
                                             value={selectedUsecases}
-                                            onChange={handleFrameworkFilterChange}
+                                            onChange={(event) => {
+                                                const {
+                                                    target: { value }
+                                                } = event
+                                                setSelectedUsecases(typeof value === 'string' ? value.split(',') : value)
+                                            }}
                                             renderValue={(selected) => selected.join(', ')}
                                             sx={{
                                                 '&::before': {
@@ -477,24 +466,10 @@ const Marketplace = () => {
                                             }}
                                         >
                                             {usecases.map((usecase, index) => (
-                                                <FormControlLabel
-                                                    sx={{ display: 'flex', ml: 2, gap: 2, p: 1 }}
-                                                    key={index}
-                                                    size='small'
-                                                    control={
-                                                        <Checkbox
-                                                            checked={selectedUsecases.includes(usecase)}
-                                                            onChange={(event) => {
-                                                                setSelectedUsecases(
-                                                                    event.target.checked
-                                                                        ? [...selectedUsecases, usecase]
-                                                                        : selectedUsecases.filter((item) => item !== usecase)
-                                                                )
-                                                            }}
-                                                        />
-                                                    }
-                                                    label={usecase}
-                                                />
+                                                <MenuItem key={index} value={usecase}>
+                                                    <Checkbox checked={selectedUsecases.includes(usecase)} />
+                                                    <ListItemText primary={usecase} />
+                                                </MenuItem>
                                             ))}
                                         </Select>
                                     </FormControl>

@@ -11,7 +11,7 @@ class IfElseFunction_Utilities implements INode {
     type: string
     icon: string
     category: string
-    // tags: string[]
+    tags: string[]
     baseClasses: string[]
     inputs: INodeParams[]
     outputs: INodeOutputsValue[]
@@ -25,7 +25,7 @@ class IfElseFunction_Utilities implements INode {
         this.category = 'Utilities'
         this.description = `Split flows based on If Else javascript functions`
         this.baseClasses = [this.type, 'Utilities']
-        // this.tags = ['Utilities']
+        this.tags = ['Utilities']
         this.inputs = [
             {
                 label: 'Input Variables',

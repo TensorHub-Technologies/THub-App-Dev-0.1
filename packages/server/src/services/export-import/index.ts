@@ -49,18 +49,18 @@ const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{
     try {
         // step 1 - get all Tool
         let allTool: Tool[] = []
-        if (exportInput.tool) allTool = await toolsService.getAllTools(tenantId)
+        if (exportInput.tool === true) allTool = await toolsService.getAllTools(tenantId)
 
         // step 2 - get all ChatFlow
         let allChatflow: ChatFlow[] = []
-        if (exportInput.chatflow) allChatflow = await chatflowService.getAllChatflows('CHATFLOW', tenantId)
+        if (exportInput.chatflow === true) allChatflow = await chatflowService.getAllChatflows('CHATFLOW')
 
         // step 3 - get all MultiAgent
         let allMultiAgent: ChatFlow[] = []
-        if (exportInput.agentflow) allMultiAgent = await chatflowService.getAllChatflows('MULTIAGENT', tenantId)
+        if (exportInput.agentflow === true) allMultiAgent = await chatflowService.getAllChatflows('MULTIAGENT')
 
         let allVars: Variable[] = []
-        if (exportInput.variable) allVars = await variableService.getAllVariables(tenantId)
+        if (exportInput.variable === true) allVars = await variableService.getAllVariables(tenantId)
 
         let allAssistants: Assistant[] = []
         if (exportInput.assistant === true) allAssistants = await assistantService.getAllAssistants()
@@ -87,22 +87,22 @@ const importData = async (importData: ExportData) => {
         const queryRunner = appServer.AppDataSource.createQueryRunner()
 
         try {
-            queryRunner.startTransaction()
+            await queryRunner.startTransaction()
 
-            // step 1 - importTools
-            if (importData.Tool.length > 0) await toolsService.importTools(importData.Tool)
-            // step 2 - importChatflows
-            if (importData.ChatFlow.length > 0) await chatflowService.importChatflows(importData.ChatFlow)
-            // step 3 - importAgentlows
-            if (importData.AgentFlow.length > 0) await chatflowService.importChatflows(importData.AgentFlow)
-            if (importData.Variable.length > 0) await variableService.importVariables(importData.Variable)
-            if (importData.Assistant.length > 0) await assistantService.importAssistants(importData.Assistant)
-            queryRunner.commitTransaction()
+            if (importData.Tool.length > 0) await toolsService.importTools(importData.Tool, queryRunner)
+            if (importData.ChatFlow.length > 0) await chatflowService.importChatflows(importData.ChatFlow, queryRunner)
+            if (importData.AgentFlow.length > 0) await chatflowService.importChatflows(importData.AgentFlow, queryRunner)
+            if (importData.Variable.length > 0) await variableService.importVariables(importData.Variable, queryRunner)
+            if (importData.Assistant.length > 0) await assistantService.importAssistants(importData.Assistant, queryRunner)
+
+            await queryRunner.commitTransaction()
         } catch (error) {
-            queryRunner.rollbackTransaction()
+            await queryRunner.rollbackTransaction()
             throw error
         } finally {
-            queryRunner.release()
+            if (!queryRunner.isReleased) {
+                await queryRunner.release()
+            }
         }
     } catch (error) {
         throw new InternalFlowiseError(

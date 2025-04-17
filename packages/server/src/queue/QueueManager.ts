@@ -1,12 +1,14 @@
 import { BaseQueue } from './BaseQueue'
 import { PredictionQueue } from './PredictionQueue'
-// import { UpsertQueue } from './UpsertQueue'
+import { UpsertQueue } from './UpsertQueue'
 import { IComponentNodes } from '../Interface'
 import { Telemetry } from '../utils/telemetry'
 import { CachePool } from '../CachePool'
 import { DataSource } from 'typeorm'
 import { AbortControllerPool } from '../AbortControllerPool'
 import { QueueEventsProducer, RedisOptions } from 'bullmq'
+import { createBullBoard } from 'bull-board'
+import { BullMQAdapter } from 'bull-board/bullMQAdapter'
 import { Express } from 'express'
 
 const QUEUE_NAME = process.env.QUEUE_NAME || 'flowise-queue'
@@ -111,15 +113,15 @@ export class QueueManager {
         })
 
         const upsertionQueueName = `${QUEUE_NAME}-upsertion`
-        // const upsertionQueue = new UpsertQueue(upsertionQueueName, this.connection, {
-        //     componentNodes,
-        //     telemetry,
-        //     cachePool,
-        //     appDataSource
-        // })
-        // this.registerQueue('upsert', upsertionQueue)
+        const upsertionQueue = new UpsertQueue(upsertionQueueName, this.connection, {
+            componentNodes,
+            telemetry,
+            cachePool,
+            appDataSource
+        })
+        this.registerQueue('upsert', upsertionQueue)
 
-        // const bullboard = createBullBoard([new BullMQAdapter(predictionQueue.getQueue()), new BullMQAdapter(upsertionQueue.getQueue())])
-        // this.bullBoardRouter = bullboard.router
+        const bullboard = createBullBoard([new BullMQAdapter(predictionQueue.getQueue()), new BullMQAdapter(upsertionQueue.getQueue())])
+        this.bullBoardRouter = bullboard.router
     }
 }

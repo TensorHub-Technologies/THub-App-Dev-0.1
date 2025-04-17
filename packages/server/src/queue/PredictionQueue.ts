@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm'
-// import { executeFlow } from '../utils/buildChatflow'
-import { IComponentNodes } from '../Interface'
+import { executeFlow } from '../utils/buildChatflow'
+import { IComponentNodes, IExecuteFlowParams } from '../Interface'
 import { Telemetry } from '../utils/telemetry'
 import { CachePool } from '../CachePool'
 import { RedisEventPublisher } from './RedisEventPublisher'
@@ -45,7 +45,7 @@ export class PredictionQueue extends BaseQueue {
         return this.queue
     }
 
-    async processJob(data: any) {
+    async processJob(data: IExecuteFlowParams) {
         if (this.appDataSource) data.appDataSource = this.appDataSource
         if (this.telemetry) data.telemetry = this.telemetry
         if (this.cachePool) data.cachePool = this.cachePool
@@ -59,6 +59,6 @@ export class PredictionQueue extends BaseQueue {
             data.signal = signal
         }
 
-        // return await executeFlow(data)
+        return await executeFlow(data)
     }
 }
