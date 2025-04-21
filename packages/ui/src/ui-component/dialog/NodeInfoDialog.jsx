@@ -169,24 +169,6 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                         {/* <span style={{ color: '#606c38', fontSize: '0.825rem' }}>version {dialogProps.data.version}</span> */}
                                     </div>
                                 )}
-                                {/* <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', right: '0px' }}>
-
-                                    <div style={{ display: "flex", alignItems: "center", gap: "25px" }}>
-                                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>
-                                            Input
-                                        </b>
-                                        {dialogProps?.data?.inputAnchors.map((anchor, index) => (
-                                            <span key={index}>{anchor.label}</span>
-                                        ))}
-                                    </div>
-
-
-                                    <div> 
-                                        {console.log(outputNodes)}
-                                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output</b>
-                                        <span style={{ marginLeft: '18px' }}>{getOutputNode(outputNodes)}</span>
-                                    </div>
-                                </div> */}
 
                                 <div
                                     style={{
