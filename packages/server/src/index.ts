@@ -73,7 +73,6 @@ export class App {
 
             // Run Migrations Scripts
             await this.AppDataSource.runMigrations({ transaction: 'each' })
-
             // Initialize nodes pool
             this.nodesPool = new NodesPool()
             await this.nodesPool.initialize()
@@ -83,14 +82,21 @@ export class App {
 
             // Initialize API keys
             await getAPIKeys()
-
             // Initialize encryption key
             await getEncryptionKey()
-
             // Initialize Rate Limit
             this.rateLimiterManager = RateLimiterManager.getInstance()
-            await this.rateLimiterManager.initializeRateLimiters(await getDataSource().getRepository(ChatFlow).find())
 
+            const chatflowData = await getDataSource()
+                .getRepository(ChatFlow)
+                .find({
+                    select: {
+                        id: true,
+                        apiConfig: true
+                    }
+                })
+
+            await this.rateLimiterManager.initializeRateLimiters(chatflowData)
             // Initialize cache pool
             this.cachePool = new CachePool()
 
