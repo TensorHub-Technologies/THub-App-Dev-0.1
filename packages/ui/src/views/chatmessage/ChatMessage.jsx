@@ -184,9 +184,11 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
     const [userInput, setUserInput] = useState('')
     const [loading, setLoading] = useState(false)
+    const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
+    const welcomeMessage = `Hi, I'm ${cleanName} agent. How can I help you today?`
     const [messages, setMessages] = useState([
         {
-            message: 'Hi there! How can I help?',
+            message: welcomeMessage,
             type: 'apiMessage'
         }
     ])
@@ -1227,9 +1229,11 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             setUserInput('')
             setUploadedFiles([])
             setLoading(false)
+            const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
+            const welcomeMessage = `Hi, I'm ${cleanName} agent. How can I help you today?`
             setMessages([
                 {
-                    message: 'Hi there! How can I help?',
+                    message: welcomeMessage,
                     type: 'apiMessage'
                 }
             ])
@@ -1581,6 +1585,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const [isListening, setIsListening] = useState(false)
     const [isSpeaking, setIsSpeaking] = useState(false)
     const [language, setLanguage] = useState('en-IN')
+    const [voice, setVoice] = useState('en-IN-NeerjaNeural')
     const speechConfig = useRef(null)
     const audioConfigForRecognization = useRef(null)
     const audioConfigForSynthesizer = useRef(null)
@@ -1600,6 +1605,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     useEffect(() => {
         speechConfig.current = sdk.SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION)
         speechConfig.current.speechRecognitionLanguage = language
+        speechConfig.current.speechSynthesisVoiceName = voice
 
         audioConfigForRecognization.current = sdk.AudioConfig.fromDefaultMicrophoneInput()
         recognizer.current = new sdk.SpeechRecognizer(speechConfig.current, audioConfigForRecognization.current)
@@ -1633,7 +1639,11 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
                 const aiResponseText = setAiResponseInChatMessages(response.data, params)
 
-                const sanitizedText = aiResponseText.replace(/[^\w\s₹–.]/g, '').replace(/\b(e\.g\.|eg)\b/gi, 'example')
+                const sanitizedText = aiResponseText
+                    .replace(/\(?(e\.g\.|eg)[,:]?\s*/gi, 'example ')
+                    .replace(/\+/g, ' plus')
+                    .replace(/[^\w\s₹–.,]/g, '')
+
                 stopSpeaking()
 
                 setConversations((prev) => [...prev, { sender: 'AI', text: aiResponseText }])
@@ -2306,13 +2316,6 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                             message === messages[messages.length - 1] && (
                                                                 <TextToSpeech messages={message} />
                                                             )}
-                                                        {/* 
-                                                        {!loading &&
-                                                            rec &&
-                                                            messages?.length > 1 &&
-                                                            message === messages[messages.length - 1] && (
-                                                                <DynamicERDiagram schemaData={schemaInput} />
-                                                            )} */}
                                                     </>
                                                 )}
                                             </div>
