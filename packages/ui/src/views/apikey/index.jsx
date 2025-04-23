@@ -46,7 +46,7 @@ import useNotifier from '@/utils/useNotifier'
 import { IconTrash, IconEdit, IconCopy, IconChevronsUp, IconChevronsDown, IconX, IconPlus, IconEye, IconEyeOff } from '@tabler/icons-react'
 import * as PropTypes from 'prop-types'
 import moment from 'moment/moment'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
+import { IconSearch } from '@tabler/icons-react'
 import emptyImage from '../../assets/images/glass.svg'
 import emptyImagelite from '../../assets/images/glass-lite.svg'
 
@@ -329,9 +329,6 @@ const APIKey = () => {
             setAPIKeys(getAllAPIKeysApi.data)
         }
     }, [getAllAPIKeysApi.data])
-
-    console.log(apiKeys, 'apiKeys')
-
     return (
         <>
             <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
@@ -348,21 +345,6 @@ const APIKey = () => {
                                 width: '100%'
                             }}
                         >
-                            {/*<h1>API Keys&nbsp;</h1>*/}
-                            {/*<TextField*/}
-                            {/*    size='small'*/}
-                            {/*    sx={{ display: { xs: 'none', sm: 'block' }, ml: 3 }}*/}
-                            {/*    variant='outlined'*/}
-                            {/*    placeholder='Search key name'*/}
-                            {/*    onChange={onSearchChange}*/}
-                            {/*    InputProps={{*/}
-                            {/*        startAdornment: (*/}
-                            {/*            <InputAdornment position='start'>*/}
-                            {/*                <IconSearch />*/}
-                            {/*            </InputAdornment>*/}
-                            {/*        )*/}
-                            {/*    }}*/}
-                            {/*/>*/}
                             <h1
                                 style={{
                                     background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
@@ -399,8 +381,8 @@ const APIKey = () => {
                                     startAdornment: (
                                         <InputAdornment position='start'>
                                             {/*<IconSearch/>*/}
-                                            <SearchOutlinedIcon
-                                                sx={{
+                                            <IconSearch
+                                                style={{
                                                     cursor: 'default',
                                                     color: customization?.isDarkMode ? '#fff' : '#fff',
                                                     background: isInputFocused
@@ -410,7 +392,7 @@ const APIKey = () => {
                                                         : '#3C5BA4',
                                                     borderRadius: '20%',
                                                     padding: '2px',
-                                                    mb: 1
+                                                    marginBottom: '4px' // `mb: 1` in MUI is usually 8px, but can be 4px if you're using theme.spacing(1)/2
                                                 }}
                                             />
                                         </InputAdornment>

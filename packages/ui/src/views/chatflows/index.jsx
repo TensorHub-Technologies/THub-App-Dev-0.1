@@ -70,6 +70,7 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 
 import UserInfo from '@/ui-component/userform/UserInfo'
 import AgentCounter from './AgentCounter'
+import useInfiniteScroll from '@/hooks/useInfiniteScroll'
 
 // ==============================|| CHATFLOWS ||============================== //
 
@@ -99,6 +100,10 @@ const Chatflows = () => {
     const [sortBy, setSortBy] = useState('name')
 
     const userData = useSelector((state) => state?.user.userData)
+
+    const [visibleCount, setVisibleCount] = useState(8)
+
+    const itemsPerScroll = 8
 
     const tenantId = userData?.uid
 
@@ -264,6 +269,16 @@ const Chatflows = () => {
             }
         }
     }, [chatFlowsApi.data])
+
+    const sortedFilteredData = sortData(chatFlowsApi.data || []).filter(filterFlows)
+    const visibleData = sortedFilteredData.slice(0, visibleCount)
+    const hasMore = visibleCount < sortedFilteredData.length
+
+    const loadMore = () => {
+        setVisibleCount((prev) => prev + itemsPerScroll)
+    }
+
+    const { sentinelRef } = useInfiniteScroll(loadMore, hasMore, false)
 
     return (
         <>
@@ -516,30 +531,25 @@ const Chatflows = () => {
                             sx={{
                                 gridTemplateColumns: {
                                     xs: 'repeat(1, 1fr)',
-
                                     sm: 'repeat(2, 1fr)',
-
                                     md: 'repeat(3, 1fr)',
-
                                     lg: 'repeat(4, 1fr)'
                                 },
-
                                 gap: gridSpacing
                             }}
                         >
-                            {sortData(chatFlowsApi.data)
-                                .filter(filterFlows)
+                            {visibleData.map((data, index) => (
+                                <Box key={index}>
+                                    <ItemCard
+                                        onClick={() => goToCanvas(data)}
+                                        updateFlowsApi={chatFlowsApi}
+                                        data={data}
+                                        images={images[data.id]}
+                                    />
+                                </Box>
+                            ))}
 
-                                .map((data, index) => (
-                                    <Box key={index}>
-                                        <ItemCard
-                                            onClick={() => goToCanvas(data)}
-                                            updateFlowsApi={chatFlowsApi}
-                                            data={data}
-                                            images={images[data.id]}
-                                        />
-                                    </Box>
-                                ))}
+                            {hasMore && <Box ref={sentinelRef} sx={{ height: '1px' }} />}
                         </Box>
                     )}
 

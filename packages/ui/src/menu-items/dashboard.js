@@ -1,22 +1,18 @@
 // assets
-import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined'
-import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
-import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
-import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
-import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
-import { IconMathIntegral } from '@tabler/icons-react'
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined'
+import AppsOutlinedIcon from '@/assets/custom-svg/AppsOutlinedIcon'
+import DynamicFeedOutlinedIcon from '@/assets/custom-svg/DynamicFeedOutlinedIcon'
+import ConstructionOutlinedIcon from '@/assets/custom-svg/ConstructionOutlinedIcon'
+import HttpsOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
+import VpnKeyOutlinedIcon from '@/assets/custom-svg/VpnKeyOutlinedIcon'
+import IconMathIntegral from '@/assets/custom-svg/IconMathIntegral'
 
 const icons = {
     AppsOutlinedIcon,
     DynamicFeedOutlinedIcon,
     ConstructionOutlinedIcon,
-    SmartToyOutlinedIcon,
     IconMathIntegral,
     HttpsOutlinedIcon,
-    VpnKeyOutlinedIcon,
-    InsertDriveFileOutlinedIcon
+    VpnKeyOutlinedIcon
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -34,15 +30,6 @@ const dashboard = {
             icon: icons.AppsOutlinedIcon,
             breadcrumbs: true
         },
-        // {
-        //     id: 'agentflows',
-        //     title: 'Agentflows',
-        //     type: 'item',
-        //     url: '/agentflows',
-        //     icon: icons.IconUsersGroup,
-        //     breadcrumbs: true,
-        //     isBeta: true
-        // },
         {
             id: 'marketplaces',
             title: 'Templates',
@@ -59,14 +46,6 @@ const dashboard = {
             icon: icons.ConstructionOutlinedIcon,
             breadcrumbs: true
         },
-        // {
-        //     id: 'assistants',
-        //     title: 'Assistants',
-        //     type: 'item',
-        //     url: '/assistants',
-        //     icon: icons.SmartToyOutlinedIcon,
-        //     breadcrumbs: true
-        // },
         {
             id: 'credentials',
             title: 'Credentials',
@@ -91,15 +70,6 @@ const dashboard = {
             icon: icons.VpnKeyOutlinedIcon,
             breadcrumbs: true
         }
-
-        // {
-        //     id: 'document-stores',
-        //     title: 'Document Stores',
-        //     type: 'item',
-        //     url: '/document-stores',
-        //     icon: icons.InsertDriveFileOutlinedIcon,
-        //     breadcrumbs: true
-        // }
     ]
 }
 

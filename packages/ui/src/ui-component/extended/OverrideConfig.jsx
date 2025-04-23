@@ -27,7 +27,7 @@ import useNotifier from '@/utils/useNotifier'
 import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction, SET_CHATFLOW } from '@/store/actions'
 
 // Icons
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { IconChevronDown } from '@tabler/icons-react'
 import { IconX, IconBox, IconVariable } from '@tabler/icons-react'
 
 // API
@@ -355,7 +355,7 @@ const OverrideConfig = ({ dialogProps }) => {
                                                 disableGutters
                                             >
                                                 <AccordionSummary
-                                                    expandIcon={<ExpandMoreIcon />}
+                                                    expandIcon={<IconChevronDown />}
                                                     aria-controls={`nodes-accordian-${nodeLabel}`}
                                                     id={`nodes-accordian-header-${nodeLabel}`}
                                                 >

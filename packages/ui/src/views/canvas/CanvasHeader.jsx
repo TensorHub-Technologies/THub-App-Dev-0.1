@@ -10,13 +10,11 @@ import MenuItem from '@mui/material/MenuItem'
 // material-ui
 import { useTheme } from '@mui/material/styles'
 import { Avatar, Box, ButtonBase, Typography, Stack, TextField } from '@mui/material'
-import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined'
-import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
-import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
-import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
-import { IconMathIntegral } from '@tabler/icons-react'
-import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
+import AppsOutlinedIcon from '@/assets/custom-svg/AppsOutlinedIcon'
+import DynamicFeedOutlinedIcon from '@/assets/custom-svg/DynamicFeedOutlinedIcon'
+import ConstructionOutlinedIcon from '@/assets/custom-svg/ConstructionOutlinedIcon'
+import HttpsOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
+import SmartToyOutlinedIcon from '@/assets/custom-svg/SmartToyOutlinedIcon'
 
 // icons
 import { IconChevronLeft, IconDeviceFloppy, IconCheck, IconX } from '@tabler/icons-react'
@@ -55,6 +53,8 @@ import ViewLeadsDialog from '@/ui-component/dialog/ViewLeadsDialog'
 import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction, SET_CHATFLOW } from '@/store/actions'
 import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
 import Edit from '@/assets/icons/EditPencil'
+import VpnKeyOutlinedIcon from '@/assets/custom-svg/VpnKeyOutlinedIcon'
+import IconMathIntegral from '@/assets/custom-svg/IconMathIntegral'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -107,6 +107,11 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
         const storedTheme = localStorage.getItem('isDarkMode')
         return storedTheme !== null ? JSON.parse(storedTheme) : customization.isDarkMode
     })
+
+    const [hovered, setHovered] = useState(false)
+    const [hoveredIndex, setHoveredIndex] = useState(null)
+    const baseColor = customization?.isDarkMode ? '#fff' : '#000'
+    const hoverColor = customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
 
     const onSettingsItemClick = (setting) => {
         setSettingsOpen(false)
@@ -359,11 +364,6 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     }))
 
     useEffect(() => {
-        // let url = new URL(window.location.href)
-        // let params = new URLSearchParams(url.search)
-        // const uid = params.get('uid') || ''
-        // setUserId(uid)
-        // localStorage.setItem('userId', uid)
         const userId = localStorage.getItem('userId')
         setUserId(userId)
 
@@ -408,9 +408,6 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     return (
         <>
             <img src={ColorfulLogo} alt='THub_Logo' width={35} />
-
-            {/* {customization.menu_open ? <img src={logo} alt='THub_Logo' width={90} height={30} style={{}} /> : ''} */}
-
             <Box>
                 <ButtonBase title='Back' sx={{ borderRadius: '20%', marginLeft: customization.menu_open ? '198px' : '37px' }}>
                     <Avatar
@@ -641,44 +638,67 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
                             }}
                         >
                             {[
-                                { icon: <AppsOutlinedIcon />, text: 'AI Workspace', href: '/workflows' },
-                                { icon: <DynamicFeedOutlinedIcon />, text: 'Templates', href: '/templates' },
-                                { icon: <ConstructionOutlinedIcon />, text: 'Tools', href: '/tools' },
-                                { icon: <SmartToyOutlinedIcon />, text: 'Assistants', href: '/assistants' },
-                                { icon: <HttpsOutlinedIcon />, text: 'Credentials', href: '/credentials' },
-                                { icon: <IconMathIntegral />, text: 'Variables', href: '/variables' },
-                                { icon: <VpnKeyOutlinedIcon />, text: 'API Keys', href: '/apikey' }
-                            ].map((item, index) => (
-                                <MenuItem
-                                    key={index}
-                                    onClick={handleClose}
-                                    sx={{
-                                        color: customization.isDarkMode ? '#FFF' : '#616161',
-                                        lineHeight: '3em',
-                                        '&:hover': {
-                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
-                                            '& .MuiSvgIcon-root': {
-                                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                            }
-                                        }
-                                    }}
-                                >
-                                    {item.icon}
-                                    <a
-                                        href={item.href}
-                                        style={{
-                                            color: customization.isDarkMode ? '#FFF' : '#616161',
-                                            textDecoration: 'none',
-                                            marginLeft: '13px',
-                                            lineHeight: '3em'
-                                        }}
-                                        onMouseEnter={(e) => (e.target.style.color = customization.isDarkMode ? '#e22a90' : '#3c5ba4')}
-                                        onMouseLeave={(e) => (e.target.style.color = customization.isDarkMode ? '#fff' : '#000')}
+                                {
+                                    icon: (color) => <AppsOutlinedIcon color={color} />,
+                                    text: 'AI Workspace',
+                                    href: '/workflows'
+                                },
+                                {
+                                    icon: (color) => <DynamicFeedOutlinedIcon color={color} />,
+                                    text: 'Templates',
+                                    href: '/templates'
+                                },
+                                {
+                                    icon: (color) => <ConstructionOutlinedIcon color={color} />,
+                                    text: 'Tools',
+                                    href: '/tools'
+                                },
+                                {
+                                    icon: (color) => <SmartToyOutlinedIcon color={color} />,
+                                    text: 'Assistants',
+                                    href: '/assistants'
+                                },
+                                {
+                                    icon: (color) => <HttpsOutlinedIcon color={color} />,
+                                    text: 'Credentials',
+                                    href: '/credentials'
+                                },
+                                {
+                                    icon: (color) => <IconMathIntegral color={color} />,
+                                    text: 'Variables',
+                                    href: '/variables'
+                                },
+                                {
+                                    icon: (color) => <VpnKeyOutlinedIcon color={color} />,
+                                    text: 'API Keys',
+                                    href: '/apikey'
+                                }
+                            ].map((item, index) => {
+                                const isHovered = hoveredIndex === index
+                                const iconColor = isHovered ? hoverColor : baseColor
+                                const textColor = isHovered ? hoverColor : customization?.isDarkMode ? '#fff' : '#616161'
+                                return (
+                                    <MenuItem
+                                        key={index}
+                                        onClick={handleClose}
+                                        onMouseEnter={() => setHoveredIndex(index)}
+                                        onMouseLeave={() => setHoveredIndex(null)}
                                     >
-                                        {item.text}
-                                    </a>
-                                </MenuItem>
-                            ))}
+                                        {item.icon(iconColor)}
+                                        <a
+                                            href={item.href}
+                                            style={{
+                                                textDecoration: 'none',
+                                                marginLeft: '14px',
+                                                lineHeight: '3em',
+                                                color: textColor
+                                            }}
+                                        >
+                                            {item.text}
+                                        </a>
+                                    </MenuItem>
+                                )
+                            })}
                         </Menu>
                     </div>
                 </ButtonBase>

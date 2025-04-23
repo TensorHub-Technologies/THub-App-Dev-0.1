@@ -5,24 +5,11 @@ import PropTypes from 'prop-types'
 import { styled, alpha } from '@mui/material/styles'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import EditIcon from '@mui/icons-material/Edit'
 import Divider from '@mui/material/Divider'
-import FileCopyIcon from '@mui/icons-material/FileCopy'
-import FileDownloadIcon from '@mui/icons-material/Downloading'
-import FileDeleteIcon from '@mui/icons-material/Delete'
-import FileCategoryIcon from '@mui/icons-material/Category'
-import PictureInPictureAltIcon from '@mui/icons-material/PictureInPictureAlt'
-import ThumbsUpDownOutlinedIcon from '@mui/icons-material/ThumbsUpDownOutlined'
-import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
-import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
-import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
 import Button from '@mui/material/Button'
 import { IconX } from '@tabler/icons-react'
 import { IconDeviceAnalytics } from '@tabler/icons-react'
-import { IconAdjustmentsAlt } from '@tabler/icons-react'
-
 import chatflowsApi from '@/api/chatflows'
-
 import useApi from '@/hooks/useApi'
 import useConfirm from '@/hooks/useConfirm'
 import { uiBaseURL } from '@/store/constant'
@@ -37,11 +24,24 @@ import useNotifier from '@/utils/useNotifier'
 import ChatFeedbackDialog from '../dialog/ChatFeedbackDialog'
 import AllowedDomainsDialog from '../dialog/AllowedDomainsDialog'
 import SpeechToTextDialog from '../dialog/SpeechToTextDialog'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import IconButton from '@mui/material/IconButton'
-import { MoreHoriz } from '@mui/icons-material'
 import RateLimitDailog from '../dialog/RateLimitDailog'
 import AnalyseWorkflowDailog from '../dialog/AnalyseWorkflowDialog'
+// Tabler icons imports
+import { IconDots } from '@tabler/icons-react'
+import { IconDotsVertical } from '@tabler/icons-react'
+import ThumbsUpDownOutlinedIcon from '@/assets/custom-svg/thumbsUpDownIcon'
+import {
+    IconEdit,
+    IconCopy,
+    IconDownload,
+    IconAdjustments,
+    IconPrompt,
+    IconWorld,
+    IconMicrophone,
+    IconBookmarks,
+    IconTriangleSquareCircleFilled,
+    IconTrashFilled
+} from '@tabler/icons-react'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
@@ -89,6 +89,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
+    const customization = useSelector((state) => state.customization)
 
     useNotifier()
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
@@ -318,35 +319,29 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             console.error(e)
         }
     }
-    const customization = useSelector((state) => state.customization)
     return (
         <div>
             {localStorage.getItem('flowDisplayStyle') === 'list' ? (
-                <IconButton
-                    id='demo-customized-button'
-                    aria-controls={open ? 'demo-customized-menu' : undefined}
-                    aria-haspopup='true'
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick}
-                >
-                    <MoreHoriz sx={{ p: 0, background: 'transparent' }} />
-                </IconButton>
+                <button style={{ background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer' }} onClick={handleClick}>
+                    <IconDots color={customization.isDarkMode ? 'white' : 'black'} />
+                </button>
             ) : (
-                <IconButton
-                    sx={{
+                <button
+                    style={{
                         position: 'absolute',
-                        top: 0,
+                        top: 1,
                         right: 5,
-                        zIndex: 1
+                        zIndex: 1,
+                        background: 'transparent',
+                        outline: 'none',
+                        border: 'none',
+                        cursor: 'pointer'
                     }}
                     id='demo-customized-button'
-                    aria-controls={open ? 'demo-customized-menu' : undefined}
-                    aria-haspopup='true'
-                    aria-expanded={open ? 'true' : undefined}
                     onClick={handleClick}
                 >
-                    <MoreVertIcon sx={{ p: 0, background: 'transparent' }} />
-                </IconButton>
+                    <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
+                </button>
             )}
 
             <StyledMenu
@@ -359,43 +354,47 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 onClose={handleClose}
             >
                 <MenuItem onClick={handleFlowRename} disableRipple>
-                    <EditIcon />
+                    <IconEdit style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Rename
                 </MenuItem>
                 <MenuItem onClick={handleDuplicate} disableRipple>
-                    <FileCopyIcon />
+                    <IconCopy style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Duplicate
                 </MenuItem>
                 <MenuItem onClick={handleExport} disableRipple>
-                    <FileDownloadIcon />
+                    <IconDownload style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Export
                 </MenuItem>
                 <MenuItem onClick={handleExportTemplate} disableRipple>
-                    <ExportTemplateOutlinedIcon />
+                    <IconBookmarks
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
                     Save As Template
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleRateLimit} disableRipple>
-                    <IconAdjustmentsAlt
+                    <IconAdjustments
                         style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
                     />
                     Rate Limiting
                 </MenuItem>
 
                 <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
-                    <PictureInPictureAltIcon />
+                    <IconPrompt style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Starter Prompts
                 </MenuItem>
                 <MenuItem onClick={handleFlowChatFeedback} disableRipple>
-                    <ThumbsUpDownOutlinedIcon />
-                    Chat Feedback
+                    <ThumbsUpDownOutlinedIcon color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
+                    &nbsp;&nbsp;Chat Feedback
                 </MenuItem>
                 <MenuItem onClick={handleAllowedDomains} disableRipple>
-                    <VpnLockOutlinedIcon />
+                    <IconWorld style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
                     Allowed Domains
                 </MenuItem>
                 <MenuItem onClick={handleSpeechToText} disableRipple>
-                    <MicNoneOutlinedIcon />
+                    <IconMicrophone
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
                     Speech To Text
                 </MenuItem>
                 <MenuItem onClick={handleAnalyse} disableRipple>
@@ -405,13 +404,17 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                     Analyse WorkFlow
                 </MenuItem>
                 <MenuItem onClick={handleFlowCategory} disableRipple>
-                    <FileCategoryIcon />
+                    <IconTriangleSquareCircleFilled
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
                     Update Category
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleDelete} disableRipple>
-                    <FileDeleteIcon />
-                    Delete
+                    <IconTrashFilled
+                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
+                    />
+                    &nbsp;&nbsp; Delete
                 </MenuItem>
             </StyledMenu>
             <SaveChatflowDialog

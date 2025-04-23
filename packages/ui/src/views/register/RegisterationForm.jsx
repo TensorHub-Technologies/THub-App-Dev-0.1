@@ -6,7 +6,6 @@ import axios from 'axios'
 import { showLoginModal, hideRegisterModal, showRegisterModal } from '@/store/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { TextField, Button, Typography, Box, Container, Paper, Grid, IconButton } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
 import '../register/RegisterationForm.css'
 
 const RegistrationForm = () => {
@@ -117,7 +116,7 @@ const RegistrationForm = () => {
                         onClick={() => handleCloseModal()}
                         className={customization.isDarkMode ? 'close-button-dark' : 'close-button-light'}
                     >
-                        <CloseIcon />
+                        X
                     </IconButton>
                     <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                         {({ handleChange, handleBlur, values }) => (

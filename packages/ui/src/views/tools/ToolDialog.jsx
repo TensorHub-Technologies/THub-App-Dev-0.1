@@ -10,7 +10,7 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 import { Grid } from '@/ui-component/grid/Grid'
 import { TooltipWithParser } from '@/ui-component/tooltip/TooltipWithParser'
 import { GridActionsCellItem } from '@mui/x-data-grid'
-import DeleteIcon from '@mui/icons-material/Delete'
+import { IconTrashFilled } from '@tabler/icons-react'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { CodeEditor } from '@/ui-component/editor/CodeEditor'
 import HowToUseFunctionDialog from './HowToUseFunctionDialog'
@@ -157,7 +157,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                 type: 'actions',
                 width: 80,
                 getActions: (params) => [
-                    <GridActionsCellItem key={'Delete'} icon={<DeleteIcon />} label='Delete' onClick={deleteItem(params.id)} />
+                    <GridActionsCellItem key={'Delete'} icon={<IconTrashFilled />} label='Delete' onClick={deleteItem(params.id)} />
                 ]
             }
         ],

@@ -1771,7 +1771,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
                                                 : ''
                                     }}
                                     key={index}
-                                    style={{ display: 'flex' }}
+                                    style={{ display: 'flex', overflow: 'auto' }}
                                     className={
                                         message.type === 'userMessage' && loading && index === messages.length - 1
                                             ? customization.isDarkMode

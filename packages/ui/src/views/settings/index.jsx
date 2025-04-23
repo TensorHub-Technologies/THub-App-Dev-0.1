@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 // material-ui
 import { useTheme } from '@mui/material/styles'
 import { ListItemButton, ListItemIcon, ListItemText, Typography, Box, List, Paper, Popper, ClickAwayListener } from '@mui/material'
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import { IconPlayerRecordFilled } from '@tabler/icons-react'
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -60,12 +60,12 @@ const Settings = ({ chatflow, isSettingsOpen, anchorEl, onSettingsItemClick, onU
         const itemIcon = menu?.icon ? (
             <Icon stroke={1.5} size='1.3rem' />
         ) : (
-            <FiberManualRecordIcon
-                sx={{
+            <IconPlayerRecordFilled
+                style={{
                     width: customization.isOpen.findIndex((id) => id === menu?.id) > -1 ? 8 : 6,
                     height: customization.isOpen.findIndex((id) => id === menu?.id) > -1 ? 8 : 6
                 }}
-                fontSize={'inherit'}
+                fontSize='inherit'
             />
         )
 
