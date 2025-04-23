@@ -20,7 +20,7 @@ jobs:
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: ${{ github.workspace }}/src
+          appSourcePath: ${{ github.workspace }}
           acrName: ca7a4dd637e6acr
           containerAppName: thub-app
           resourceGroup: gs_rg_0361
