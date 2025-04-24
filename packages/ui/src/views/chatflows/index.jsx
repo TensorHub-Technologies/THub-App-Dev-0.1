@@ -106,12 +106,12 @@ const Chatflows = () => {
     const itemsPerScroll = 8
 
     const tenantId = userData?.uid
-
     const workspaceUid = userData?.workspaceUid
 
-    // const chatFlowsApi = workspaceUid ? useApi(chatflowsApi.getAllChatflowsWp) : useApi(chatflowsApi.getAllChatflows) || []
-    const apiToUse = workspaceUid ? chatflowsApi.getAllChatflowsWp : chatflowsApi.getAllChatflows
+    // Pick the correct function
+    const apiToUse = workspaceUid ? () => chatflowsApi.getAllChatflowsWp(workspaceUid) : () => chatflowsApi.getAllChatflows(tenantId)
 
+    // Use the wrapped function
     const chatFlowsApi = useApi(apiToUse) || []
 
     const [view, setView] = React.useState(localStorage.getItem('flowDisplayStyle') || 'card')
