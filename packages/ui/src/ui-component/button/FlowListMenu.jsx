@@ -182,9 +182,10 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         setWorkFlowDialogOpen(true)
     }
 
-    const saveFlowRename = async (chatflowName) => {
+    const saveFlowRename = async (chatflowName, chatflowDescription) => {
         const updateBody = {
             name: chatflowName,
+            description: chatflowDescription,
             chatflow: chatflow
         }
         try {
