@@ -104,27 +104,38 @@ const Marketplace = () => {
     }
 
     const [isInputFocused, setInputFocused] = useState(false)
-
     const handleTypeFilterChange = (event) => {
         const {
-            target: { value, checked }
+            target: { value }
         } = event
-
-        const updatedTypeFilter = checked ? [...typeFilter, value] : typeFilter.filter((item) => item !== value)
-
-        setTypeFilter(updatedTypeFilter)
-        getEligibleUsecases({ typeFilter: typeof value === 'string' ? value.split(',') : value, badgeFilter, frameworkFilter, search })
+        setTypeFilter(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value
+        )
+        const data = getAllTemplatesMarketplacesApi.data
+        getEligibleUsecases(data, {
+            typeFilter: typeof value === 'string' ? value.split(',') : value,
+            badgeFilter,
+            frameworkFilter,
+            search
+        })
     }
 
     const handleFrameworkFilterChange = (event) => {
         const {
-            target: { value, checked }
+            target: { value }
         } = event
-
-        const updatedFilter = checked ? [...frameworkFilter, value] : frameworkFilter.filter((item) => item !== value)
-
-        setFrameworkFilter(updatedFilter)
-        getEligibleUsecases({ typeFilter, badgeFilter, frameworkFilter: typeof value === 'string' ? value.split(',') : value, search })
+        setFrameworkFilter(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value
+        )
+        const data = getAllTemplatesMarketplacesApi.data
+        getEligibleUsecases(data, {
+            typeFilter,
+            badgeFilter,
+            frameworkFilter: typeof value === 'string' ? value.split(',') : value,
+            search
+        })
     }
 
     const handleViewChange = (event, nextView) => {
