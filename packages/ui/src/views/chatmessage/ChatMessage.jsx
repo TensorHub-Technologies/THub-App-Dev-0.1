@@ -185,7 +185,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
     const [userInput, setUserInput] = useState('')
     const [loading, setLoading] = useState(false)
     const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
-    const welcomeMessage = `Hi, I'm ${cleanName} agent. How can I help you today?`
+    const welcomeMessage = `Hi, I'm ${cleanName}. How can I help you today?`
     const [messages, setMessages] = useState([
         {
             message: welcomeMessage,
@@ -1230,7 +1230,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             setUploadedFiles([])
             setLoading(false)
             const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
-            const welcomeMessage = `Hi, I'm ${cleanName} agent. How can I help you today?`
+            const welcomeMessage = `Hi, I'm ${cleanName}. How can I help you today?`
             setMessages([
                 {
                     message: welcomeMessage,
@@ -1696,7 +1696,7 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
             if (!greetingSpokenOnResume.current) {
                 greetingSpokenOnResume.current = true
                 const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
-                const welcomeMessage = `Hi, I'm ${cleanName} agent. How can I help you today?`
+                const welcomeMessage = `Hi, I'm ${cleanName}. How can I help you today?`
                 player.current = new sdk.SpeakerAudioDestination()
                 audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
                 synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
