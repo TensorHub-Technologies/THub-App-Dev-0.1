@@ -66,6 +66,35 @@ const getAllChatflowsWp = async (req: Request, res: Response, next: NextFunction
     }
 }
 
+const getAllChatflowsPaginated = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const page = parseInt(req.query.page as string) || 1
+        const limit = parseInt(req.query.limit as string) || 12
+        let apiResponse = await chatflowsService.getAllChatflowsPaginated(req.query?.type as ChatflowType, req.params.tenantId, page, limit)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getAllChatflowsWpPaginated = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('getAllChatflowsWpPaginated', req.query.page, req.query.limit)
+
+    try {
+        const page = parseInt(req.query.page as string) || 1
+        const limit = parseInt(req.query.limit as string) || 12
+        let apiResponse = await chatflowsService.getAllChatflowsWpPaginated(
+            req.query?.type as ChatflowType,
+            req.params.workspaceUid,
+            page,
+            limit
+        )
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
 // Get specific chatflow via api key
 const getChatflowByApiKey = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -190,5 +219,7 @@ export default {
     importChatflows,
     updateChatflow,
     getSinglePublicChatflow,
-    getSinglePublicChatbotConfig
+    getSinglePublicChatbotConfig,
+    getAllChatflowsWpPaginated,
+    getAllChatflowsPaginated
 }
