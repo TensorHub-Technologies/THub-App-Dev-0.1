@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react'
-
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 import { useSelector } from 'react-redux'
 
 // material-ui
-
 import {
     Box,
     Stack,
@@ -19,113 +16,118 @@ import {
     Select,
     FormControl
 } from '@mui/material'
-
 import { useTheme } from '@mui/material/styles'
 
 // project imports
-
 import MainCard from '@/ui-component/cards/MainCard'
-
 import ItemCard from '@/ui-component/cards/ItemCard'
-
 import { gridSpacing } from '@/store/constant'
-
 import LoginDialog from '@/ui-component/dialog/LoginDialog'
-
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
-
 import emptyImage from '../../assets/images/glass.svg'
-
 import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 // API
-
 import chatflowsApi from '@/api/chatflows'
 
 // Hooks
-
 import useApi from '@/hooks/useApi'
 
 // const
-
 import { baseURL } from '@/store/constant'
 
 // icons
-
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
-
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined'
-
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-
 import AddLinkOutlinedIcon from '@mui/icons-material/AddLinkOutlined'
-
 import * as React from 'react'
-
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-
 import { FlowListTable } from '@/ui-component/table/FlowListTable'
-
 import { StyledButton } from '@/ui-component/button/StyledButton'
-
 import UserInfo from '@/ui-component/userform/UserInfo'
 import AgentCounter from './AgentCounter'
-import useInfiniteScroll from '@/hooks/useInfiniteScroll'
 
 // ==============================|| CHATFLOWS ||============================== //
 
 const Chatflows = () => {
     const navigate = useNavigate()
-
     const theme = useTheme()
-
     const customization = useSelector((state) => state.customization)
-
     const [isLoading, setLoading] = useState(true)
-
+    const [isLoadingMore, setIsLoadingMore] = useState(false)
     const [images, setImages] = useState({})
-
     const [search, setSearch] = useState('')
-
     const [loginDialogOpen, setLoginDialogOpen] = useState(false)
-
     const [loginDialogProps, setLoginDialogProps] = useState({})
-
     const [showModal, setShowModal] = useState(false)
-
     const [open, setOpen] = useState(false)
-
     const [showAgentsPopup, setShowshowAgentsPopup] = useState(false)
-
     const [sortBy, setSortBy] = useState('name')
-
     const userData = useSelector((state) => state?.user.userData)
-
-    const [visibleCount, setVisibleCount] = useState(8)
-
-    const itemsPerScroll = 8
-
     const tenantId = userData?.uid
     const workspaceUid = userData?.workspaceUid
 
-    // Pick the correct function
-    const apiToUse = workspaceUid ? () => chatflowsApi.getAllChatflowsWp(workspaceUid) : () => chatflowsApi.getAllChatflows(tenantId)
+    // Infinite scroll state
+    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(12)
+    const [totalItems, setTotalItems] = useState(0)
+    const [hasMore, setHasMore] = useState(true)
+    const [allChatflows, setAllChatflows] = useState([])
+    const observer = useRef()
+    const lastElementRef = useRef(null)
 
-    // Use the wrapped function
+    // Determine which API to use based on workspaceUid
+    const apiToUse = workspaceUid ? chatflowsApi.getAllChatflowsWpPaginated : chatflowsApi.getAllChatflowsPaginated
+
     const chatFlowsApi = useApi(apiToUse) || []
 
     const [view, setView] = React.useState(localStorage.getItem('flowDisplayStyle') || 'card')
 
     const handleChange = (event, nextView) => {
         if (nextView === null) return
-
         localStorage.setItem('flowDisplayStyle', nextView)
-
         setView(nextView)
     }
 
     const onSearchChange = (event) => {
         setSearch(event.target.value)
+        // Reset data and start fresh when search changes
+        setPage(1)
+        setAllChatflows([])
+        setHasMore(true)
+    }
+
+    // Last element callback for infinite scrolling
+    const lastItemRef = useCallback(
+        (node) => {
+            if (isLoadingMore) return
+            if (observer.current) observer.current.disconnect()
+
+            observer.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && hasMore) {
+                    loadMoreData()
+                }
+            })
+
+            if (node) observer.current.observe(node)
+        },
+        [isLoadingMore, hasMore]
+    )
+
+    // Load more data function
+    const loadMoreData = () => {
+        if (!hasMore || isLoadingMore) return
+
+        setIsLoadingMore(true)
+        const nextPage = page + 1
+        setPage(nextPage)
+
+        if (workspaceUid) {
+            chatFlowsApi.request(workspaceUid, nextPage, limit)
+        } else if (tenantId) {
+            chatFlowsApi.request(tenantId, nextPage, limit)
+        }
     }
 
     function filterFlows(data) {
@@ -136,16 +138,14 @@ const Chatflows = () => {
     }
 
     const sortData = (data) => {
+        // Client-side sorting for displayed data
         switch (sortBy) {
             case 'name':
-                return data.sort((a, b) => a.name.localeCompare(b.name))
-
+                return [...data].sort((a, b) => a.name.localeCompare(b.name))
             case 'created':
-                return data.sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate))
-
+                return [...data].sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate))
             case 'updated':
-                return data.sort((a, b) => new Date(b.updatedDate) - new Date(a.updatedDate))
-
+                return [...data].sort((a, b) => new Date(b.updatedDate) - new Date(a.updatedDate))
             default:
                 return data
         }
@@ -153,9 +153,7 @@ const Chatflows = () => {
 
     const onLoginClick = (username, password) => {
         localStorage.setItem('username', username)
-
         localStorage.setItem('password', password)
-
         navigate(0)
     }
 
@@ -168,7 +166,7 @@ const Chatflows = () => {
     }
 
     const addNew = async () => {
-        const chatflows = chatFlowsApi.data || []
+        const chatflows = allChatflows
         let subscriptionType = userData?.subscription_type
         if (!subscriptionType) {
             subscriptionType = 'free'
@@ -183,10 +181,10 @@ const Chatflows = () => {
         } else if (userData?.subscription_type === 'pro') {
             let chatflowCount
             //getusers with email and check number of users and number of workspace
-            chatflowCount = chatflows.length
+            chatflowCount = totalItems // Use the total count from the API
             console.log(chatflowCount, 'chatflowCount')
             const userDomain = userData?.workspace || userData?.email.split('@')[1].split('.')[0]
-            if (chatflows.length > 25) {
+            if (totalItems > 25) {
                 handleOpen()
                 // TODO: Add banner to show pro tier limit reached
                 console.log('maximum workspace apps reached! upgrade plan to continue')
@@ -204,21 +202,26 @@ const Chatflows = () => {
 
     useEffect(() => {
         const modalShown = sessionStorage.getItem('modalShown')
-
         if ((userData?.company === '' || userData?.company === null) && !modalShown) {
             setShowModal(true)
         }
     }, [tenantId])
 
+    // Initial data load
     useEffect(() => {
+        setLoading(true)
+        setAllChatflows([])
+        setPage(1)
+
         if (workspaceUid) {
-            chatFlowsApi.request(workspaceUid)
+            chatFlowsApi.request(workspaceUid, 1, limit)
         } else if (tenantId) {
-            chatFlowsApi.request(tenantId)
+            chatFlowsApi.request(tenantId, 1, limit)
         } else {
             console.log('tenantId not found')
+            setLoading(false)
         }
-    }, [tenantId, workspaceUid])
+    }, [tenantId, workspaceUid, search, sortBy, limit])
 
     useEffect(() => {
         if (chatFlowsApi.error) {
@@ -227,58 +230,61 @@ const Chatflows = () => {
                     title: 'Login',
                     confirmButtonName: 'Login'
                 })
-
                 setLoginDialogOpen(true)
             }
+            setIsLoadingMore(false)
         }
     }, [chatFlowsApi.error])
 
     useEffect(() => {
-        setLoading(chatFlowsApi.loading)
+        if (page === 1) {
+            setLoading(chatFlowsApi.loading)
+        } else {
+            setIsLoadingMore(chatFlowsApi.loading)
+        }
     }, [chatFlowsApi.loading])
 
     useEffect(() => {
         if (chatFlowsApi.data) {
             try {
-                const chatflows = chatFlowsApi.data
+                const newChatflows = chatFlowsApi.data.items || []
 
-                const images = {}
+                // Update pagination info
+                setTotalItems(chatFlowsApi.data.total || 0)
+                setHasMore(page * limit < (chatFlowsApi.data.total || 0))
 
-                for (let i = 0; i < chatflows.length; i += 1) {
-                    const flowDataStr = chatflows[i].flowData
+                // Update chatflows list
+                if (page === 1) {
+                    setAllChatflows(newChatflows)
+                } else {
+                    setAllChatflows((prev) => [...prev, ...newChatflows])
+                }
 
+                // Process images
+                const newImages = { ...images }
+                for (let i = 0; i < newChatflows.length; i += 1) {
+                    const flowDataStr = newChatflows[i].flowData
                     const flowData = JSON.parse(flowDataStr)
-
                     const nodes = flowData.nodes || []
-
-                    images[chatflows[i].id] = []
-
-                    const filteredNodes = nodes.filter((node) => node.type !== 'stickyNote')
-                    for (let j = 0; j < filteredNodes.length; j += 1) {
-                        const imageSrc = `${baseURL}/api/v1/node-icon/${filteredNodes[j].data.name}`
-
-                        if (!images[chatflows[i].id].includes(imageSrc)) {
-                            images[chatflows[i].id].push(imageSrc)
+                    newImages[newChatflows[i].id] = []
+                    for (let j = 0; j < nodes.length; j += 1) {
+                        const imageSrc = `${baseURL}/api/v1/node-icon/${nodes[j].data.name}`
+                        if (!newImages[newChatflows[i].id].includes(imageSrc)) {
+                            newImages[newChatflows[i].id].push(imageSrc)
                         }
                     }
                 }
-
-                setImages(images)
+                setImages(newImages)
+                setIsLoadingMore(false)
             } catch (e) {
                 console.error(e)
+                setIsLoadingMore(false)
             }
         }
     }, [chatFlowsApi.data])
 
-    const sortedFilteredData = sortData(chatFlowsApi.data || []).filter(filterFlows)
-    const visibleData = sortedFilteredData.slice(0, visibleCount)
-    const hasMore = visibleCount < sortedFilteredData.length
-
-    const loadMore = () => {
-        setVisibleCount((prev) => prev + itemsPerScroll)
-    }
-
-    const { sentinelRef } = useInfiniteScroll(loadMore, hasMore, false)
+    // Filter and sort the displayed chatflows
+    const displayedChatflows = sortData(allChatflows.filter(filterFlows))
 
     return (
         <>
@@ -291,28 +297,19 @@ const Chatflows = () => {
                             disableGutters={true}
                             style={{
                                 margin: 1,
-
                                 padding: 1,
-
                                 paddingBottom: 10,
-
                                 display: 'flex',
-
                                 justifyContent: 'space-between',
-
                                 width: '100%'
                             }}
                         >
                             <h1
                                 style={{
                                     background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-
                                     WebkitBackgroundClip: 'text',
-
                                     color: 'transparent',
-
                                     fontSize: '24px',
-
                                     lineHeight: '1.3',
                                     whiteSpace: 'nowrap'
                                 }}
@@ -320,7 +317,6 @@ const Chatflows = () => {
                                 AI Apps Workspace
                             </h1>
 
-                            {/* First TextField (this one is fine) */}
                             <TextField
                                 size='small'
                                 sx={{
@@ -366,7 +362,6 @@ const Chatflows = () => {
                                 }}
                             />
 
-                            {/* Replace the second TextField + Select with a standalone Select */}
                             <FormControl
                                 variant='standard'
                                 sx={{
@@ -410,9 +405,7 @@ const Chatflows = () => {
                                     <ToggleButtonGroup
                                         sx={{
                                             marginLeft: '200px',
-
                                             maxHeight: 40,
-
                                             borderRadius: 20 // Set rounded corners
                                         }}
                                         value={view}
@@ -422,9 +415,7 @@ const Chatflows = () => {
                                         <ToggleButton
                                             sx={{
                                                 color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-
                                                 borderRadius: '20px 0 0 20px',
-
                                                 '&.Mui-selected': {
                                                     color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                                 }
@@ -436,7 +427,6 @@ const Chatflows = () => {
                                             <GridViewOutlinedIcon
                                                 sx={{
                                                     color: 'inherit',
-
                                                     background: 'transparent !important'
                                                 }}
                                             />
@@ -445,9 +435,7 @@ const Chatflows = () => {
                                         <ToggleButton
                                             sx={{
                                                 color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-
                                                 borderRadius: '0 20px 20px 0',
-
                                                 '&.Mui-selected': {
                                                     color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                                 }
@@ -459,7 +447,6 @@ const Chatflows = () => {
                                             <MenuRoundedIcon
                                                 sx={{
                                                     color: 'inherit',
-
                                                     background: 'transparent !important'
                                                 }}
                                             />
@@ -508,14 +495,10 @@ const Chatflows = () => {
                             sx={{
                                 gridTemplateColumns: {
                                     xs: 'repeat(1, 1fr)',
-
                                     sm: 'repeat(2, 1fr)',
-
                                     md: 'repeat(3, 1fr)',
-
                                     lg: 'repeat(4, 1fr)'
                                 },
-
                                 gap: gridSpacing
                             }}
                         >
@@ -525,7 +508,7 @@ const Chatflows = () => {
                         </Box>
                     )}
 
-                    {!isLoading && (!view || view === 'card') && chatFlowsApi.data && (
+                    {!isLoading && (!view || view === 'card') && displayedChatflows && (
                         <Box
                             display='grid'
                             sx={{
@@ -538,48 +521,61 @@ const Chatflows = () => {
                                 gap: gridSpacing
                             }}
                         >
-                            {visibleData.map((data, index) => (
-                                <Box key={index}>
-                                    <ItemCard
-                                        onClick={() => goToCanvas(data)}
-                                        updateFlowsApi={chatFlowsApi}
-                                        data={data}
-                                        images={images[data.id]}
-                                    />
-                                </Box>
-                            ))}
+                            {displayedChatflows.map((data, index) => {
+                                // Check if this is the last item
+                                const isLastItem = index === displayedChatflows.length - 1
 
-                            {hasMore && <Box ref={sentinelRef} sx={{ height: '1px' }} />}
+                                return (
+                                    <Box key={index} ref={isLastItem && hasMore ? lastItemRef : null}>
+                                        <ItemCard
+                                            onClick={() => goToCanvas(data)}
+                                            updateFlowsApi={chatFlowsApi}
+                                            data={data}
+                                            images={images[data.id]}
+                                        />
+                                    </Box>
+                                )
+                            })}
                         </Box>
                     )}
 
-                    {!isLoading && view === 'list' && chatFlowsApi.data && (
-                        <FlowListTable
-                            sx={{ mt: 20 }}
-                            data={sortData(chatFlowsApi.data)}
-                            images={images}
-                            filterFunction={filterFlows}
-                            updateFlowsApi={chatFlowsApi}
-                        />
-                    )}
-                </Stack>
-
-                {!isLoading && (!chatFlowsApi.data || chatFlowsApi.data.length === 0) && (
-                    <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        <Box sx={{ p: 2, height: 'auto' }}>
-                            <img
-                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
-                                src={customization.isDarkMode ? emptyImage : emptyImagelite}
-                                alt='WorkflowEmptySVG'
+                    {!isLoading && view === 'list' && displayedChatflows && (
+                        <div>
+                            <FlowListTable
+                                sx={{ mt: 20 }}
+                                data={displayedChatflows}
+                                images={images}
+                                filterFunction={() => true} // No need to filter here, already filtered above
+                                updateFlowsApi={chatFlowsApi}
+                                lastItemRef={lastItemRef}
                             />
+                        </div>
+                    )}
+
+                    {/* Loading indicator for infinite scroll */}
+                    {isLoadingMore && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                            <Skeleton variant='rounded' width='100%' height={60} />
                         </Box>
+                    )}
 
-                        <div>No AI Apps workspaces have been created yet.</div>
-                    </Stack>
-                )}
+                    {!isLoading && (!displayedChatflows || displayedChatflows.length === 0) && (
+                        <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
+                            <Box sx={{ p: 2, height: 'auto' }}>
+                                <img
+                                    style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                    src={customization.isDarkMode ? emptyImage : emptyImagelite}
+                                    alt='WorkflowEmptySVG'
+                                />
+                            </Box>
 
-                <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} />
-                <ConfirmDialog />
+                            <div>No AI Apps workspaces have been created yet.</div>
+                        </Stack>
+                    )}
+
+                    <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} />
+                    <ConfirmDialog />
+                </Stack>
             </MainCard>
         </>
     )
