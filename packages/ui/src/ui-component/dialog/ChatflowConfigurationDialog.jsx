@@ -12,6 +12,7 @@ import StarterPrompts from '@/ui-component/extended/StarterPrompts'
 import Leads from '@/ui-component/extended/Leads'
 import FollowUpPrompts from '@/ui-component/extended/FollowUpPrompts'
 import FileUpload from '@/ui-component/extended/FileUpload'
+import ScheduleSettings from '../extended/ScheduleSettings'
 
 const CHATFLOW_CONFIGURATION_TABS = [
     {
@@ -29,6 +30,10 @@ const CHATFLOW_CONFIGURATION_TABS = [
     {
         label: 'Speech to Text',
         id: 'speechToText'
+    },
+    {
+        label: 'Schedule Settings',
+        id: 'scheduleEmail'
     },
     {
         label: 'Chat Feedback',
@@ -128,6 +133,7 @@ const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
                         {item.id === 'conversationStarters' ? <StarterPrompts dialogProps={dialogProps} /> : null}
                         {item.id === 'followUpPrompts' ? <FollowUpPrompts dialogProps={dialogProps} /> : null}
                         {item.id === 'speechToText' ? <SpeechToText dialogProps={dialogProps} /> : null}
+                        {item.id === 'scheduleEmail' ? <ScheduleSettings dialogProps={dialogProps} /> : null}
                         {item.id === 'chatFeedback' ? <ChatFeedback dialogProps={dialogProps} /> : null}
                         {item.id === 'allowedDomains' ? <AllowedDomains dialogProps={dialogProps} /> : null}
                         {item.id === 'analyseChatflow' ? <AnalyseFlow dialogProps={dialogProps} /> : null}
