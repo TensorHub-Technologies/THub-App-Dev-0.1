@@ -49,26 +49,6 @@ const ChatExpandDialog = ({
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {dialogProps.title}
                     <div style={{ flex: 1 }}></div>
-                    {/* <StyledFab
-                        sx={{
-                            position: 'absolute',
-                            right: 100,
-                            top: 0,
-                            background: 'transparent',
-                            boxShadow: '0',
-                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                        }}
-                        variant='outlined'
-                        title='Minimise'
-                        onClick={() => {
-                            {
-                                setShowExpandDialog(false)
-                                setOpen(true)
-                            }
-                        }}
-                    >
-                        <IconMinus />
-                    </StyledFab> */}
                     <StyledFab
                         sx={{
                             position: 'absolute',
