@@ -4,6 +4,12 @@ const getAllChatflows = (tenantId) => client.get(`/chatflows/${tenantId}`)
 
 const getAllChatflowsWp = (workspaceUid) => client.get(`/chatflows/workspaces/${workspaceUid}`)
 
+const getAllChatflowsPaginated = (tenantId, page = 1, limit = 12) =>
+    client.get(`/chatflows/paginated/${tenantId}?page=${page}&limit=${limit}`)
+
+const getAllChatflowsWpPaginated = (workspaceUid, page = 1, limit = 12) =>
+    client.get(`/chatflows/wp/paginated/${workspaceUid}?page=${page}&limit=${limit}`)
+
 const getSpecificChatflow = (chatflowId) => client.get(`/chatflows/getChatflowById/${chatflowId}`)
 
 const getSpecificChatflowFromPublicEndpoint = (id) => client.get(`/public-chatflows/${id}`)
@@ -30,5 +36,7 @@ export default {
     updateChatflow,
     deleteChatflow,
     getIsChatflowStreaming,
-    getAllowChatflowUploads
+    getAllowChatflowUploads,
+    getAllChatflowsPaginated,
+    getAllChatflowsWpPaginated
 }

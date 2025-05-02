@@ -372,6 +372,74 @@ const _checkAndUpdateDocumentStoreUsage = async (chatflow: ChatFlow) => {
     }
 }
 
+const getAllChatflowsPaginated = async (
+    type?: ChatflowType,
+    tenantId?: any,
+    page: number = 1,
+    limit: number = 12
+): Promise<{ items: ChatFlow[]; total: number }> => {
+    try {
+        const appServer = getRunningExpressApp()
+        const chatflowRepository = appServer.AppDataSource.getRepository(ChatFlow)
+
+        const skip = (page - 1) * limit
+
+        let query = chatflowRepository.createQueryBuilder('chatflow').where('chatflow.tenantId = :tenantId', { tenantId })
+
+        if (type === 'MULTIAGENT') {
+            query = query.andWhere('chatflow.type = :type', { type: 'MULTIAGENT' })
+        } else if (type === 'CHATFLOW') {
+            query = query.andWhere('(chatflow.type = :type OR chatflow.type IS NULL)', { type: 'CHATFLOW' })
+        }
+
+        const total = await query.getCount()
+
+        const items = await query.skip(skip).take(limit).orderBy('chatflow.updatedDate', 'DESC').getMany()
+
+        return { items, total }
+    } catch (error) {
+        throw new InternalFlowiseError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            `Error: chatflowsService.getAllChatflowsPaginated - ${getErrorMessage(error)}`
+        )
+    }
+}
+
+const getAllChatflowsWpPaginated = async (
+    type?: ChatflowType,
+    workspaceUid?: any,
+    page: number = 1,
+    limit: number = 12
+): Promise<{ items: ChatFlow[]; total: number }> => {
+    try {
+        const appServer = getRunningExpressApp()
+        const chatflowRepository = appServer.AppDataSource.getRepository(ChatFlow)
+
+        let query = chatflowRepository.createQueryBuilder('chatflow').where('chatflow.workspaceUid = :workspaceUid', { workspaceUid })
+
+        if (type === 'MULTIAGENT') {
+            query = query.andWhere('chatflow.type = :type', { type: 'MULTIAGENT' })
+        } else if (type === 'CHATFLOW') {
+            query = query.andWhere('(chatflow.type = :type OR chatflow.type IS NULL)', { type: 'CHATFLOW' })
+        }
+
+        const total = await query.getCount()
+
+        const items = await query
+            .skip((page - 1) * limit)
+            .take(limit)
+            .orderBy('chatflow.updatedDate', 'DESC')
+            .getMany()
+
+        return { items, total }
+    } catch (error) {
+        throw new InternalFlowiseError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            `Error: chatflowsService.getAllChatflowsWpPaginated - ${getErrorMessage(error)}`
+        )
+    }
+}
+
 export default {
     checkIfChatflowIsValidForStreaming,
     checkIfChatflowIsValidForUploads,
@@ -384,5 +452,7 @@ export default {
     importChatflows,
     updateChatflow,
     getSinglePublicChatflow,
-    getSinglePublicChatbotConfig
+    getSinglePublicChatbotConfig,
+    getAllChatflowsPaginated,
+    getAllChatflowsWpPaginated
 }

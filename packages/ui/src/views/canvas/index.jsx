@@ -73,8 +73,6 @@ import { IconMapPin2 } from '@tabler/icons-react'
 import { IconArrowsVertical } from '@tabler/icons-react'
 import { IconArrowsHorizontal } from '@tabler/icons-react'
 
-import ElevenLabsWidget from '../chatmessage/ElevenLabsWidget'
-
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
 
 const edgeTypes = { buttonedge: ButtonEdge }
@@ -1157,7 +1155,6 @@ const Canvas = () => {
 
                                     {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
                                     <ChatPopUp chatflowid={chatflowId} />
-                                    {chatflowId === '13181ca0-5aa9-46b4-a8e5-39c48d129d2b' && <ElevenLabsWidget />}
                                     <Menu
                                         open={menuPosition !== null}
                                         onClose={handleClose}
