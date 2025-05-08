@@ -1,46 +1,46 @@
 import PropTypes from 'prop-types'
-import { Handle, Position, useUpdateNodeInternals } from 'reactflow'
-import { useEffect, useRef, useState, useContext } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Handle, Position, useUpdateNodeInternals } from 'reactflow'
 
 // material-ui
-import { useTheme, styled } from '@mui/material/styles'
-import { Popper, Box, Typography, Tooltip, IconButton, Button, TextField } from '@mui/material'
-import { useGridApiContext } from '@mui/x-data-grid'
-import IconAutoFixHigh from '@mui/icons-material/AutoFixHigh'
-import { tooltipClasses } from '@mui/material/Tooltip'
-import { IconArrowsMaximize, IconEdit, IconAlertTriangle, IconBulb } from '@tabler/icons-react'
 import { Tabs } from '@mui/base/Tabs'
+import IconAutoFixHigh from '@mui/icons-material/AutoFixHigh'
+import { Box, Button, IconButton, Popper, TextField, Tooltip, Typography } from '@mui/material'
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete'
+import { styled, useTheme } from '@mui/material/styles'
+import { tooltipClasses } from '@mui/material/Tooltip'
+import { useGridApiContext } from '@mui/x-data-grid'
+import { IconAlertTriangle, IconArrowsMaximize, IconBulb, IconEdit, IconRefresh } from '@tabler/icons-react'
 
 // project import
+import { flowContext } from '@/store/context/ReactFlowContext'
+import ConditionDialog from '@/ui-component/dialog/ConditionDialog'
+import ExpandTextDialog from '@/ui-component/dialog/ExpandTextDialog'
+import FormatPromptValuesDialog from '@/ui-component/dialog/FormatPromptValuesDialog'
+import InputHintDialog from '@/ui-component/dialog/InputHintDialog'
+import ManageScrapedLinksDialog from '@/ui-component/dialog/ManageScrapedLinksDialog'
+import NvidiaNIMDialog from '@/ui-component/dialog/NvidiaNIMDialog'
+import PromptLangsmithHubDialog from '@/ui-component/dialog/PromptLangsmithHubDialog'
+import { AsyncDropdown } from '@/ui-component/dropdown/AsyncDropdown'
 import { Dropdown } from '@/ui-component/dropdown/Dropdown'
 import { MultiDropdown } from '@/ui-component/dropdown/MultiDropdown'
-import { AsyncDropdown } from '@/ui-component/dropdown/AsyncDropdown'
-import { Input } from '@/ui-component/input/Input'
-import { DataGrid } from '@/ui-component/grid/DataGrid'
-import { File } from '@/ui-component/file/File'
-import { SwitchInput } from '@/ui-component/switch/Switch'
-import { flowContext } from '@/store/context/ReactFlowContext'
-import { JsonEditorInput } from '@/ui-component/json/JsonEditor'
-import { TooltipWithParser } from '@/ui-component/tooltip/TooltipWithParser'
 import { CodeEditor } from '@/ui-component/editor/CodeEditor'
+import { File } from '@/ui-component/file/File'
+import { DataGrid } from '@/ui-component/grid/DataGrid'
+import { Input } from '@/ui-component/input/Input'
+import { JsonEditorInput } from '@/ui-component/json/JsonEditor'
+import { SwitchInput } from '@/ui-component/switch/Switch'
+import { Tab } from '@/ui-component/tabs/Tab'
 import { TabPanel } from '@/ui-component/tabs/TabPanel'
 import { TabsList } from '@/ui-component/tabs/TabsList'
-import { Tab } from '@/ui-component/tabs/Tab'
+import { TooltipWithParser } from '@/ui-component/tooltip/TooltipWithParser'
+import AssistantDialog from '@/views/assistants/openai/AssistantDialog'
 import ToolDialog from '@/views/tools/ToolDialog'
-import AssistantDialog from '@/views/assistants/AssistantDialog'
-import FormatPromptValuesDialog from '@/ui-component/dialog/FormatPromptValuesDialog'
-import ExpandTextDialog from '@/ui-component/dialog/ExpandTextDialog'
-import ConditionDialog from '@/ui-component/dialog/ConditionDialog'
-import PromptLangsmithHubDialog from '@/ui-component/dialog/PromptLangsmithHubDialog'
-import ManageScrapedLinksDialog from '@/ui-component/dialog/ManageScrapedLinksDialog'
 import CredentialInputHandler from './CredentialInputHandler'
-import InputHintDialog from '@/ui-component/dialog/InputHintDialog'
-import NvidiaNIMDialog from '@/ui-component/dialog/NvidiaNIMDialog'
 
 // utils
-import { getInputVariables, getCustomConditionOutputs, isValidConnection, getAvailableNodesForVariable } from '@/utils/genericHelper'
+import { getAvailableNodesForVariable, getCustomConditionOutputs, getInputVariables, isValidConnection } from '@/utils/genericHelper'
 
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
@@ -321,6 +321,26 @@ const NodeInputHandler = ({
         return colDef
     }
 
+    const getDropdownOptions = (inputParam) => {
+        const preLoadOptions = []
+        if (inputParam.loadPreviousNodes) {
+            const nodes = getAvailableNodesForVariable(
+                reactFlowInstance?.getNodes() || [],
+                reactFlowInstance?.getEdges() || [],
+                data.id,
+                inputParam.id
+            )
+            for (const node of nodes) {
+                preLoadOptions.push({
+                    name: `{{ ${node.data.id} }}`,
+                    label: `{{ ${node.data.id} }}`,
+                    description: `Output from ${node.data.id}`
+                })
+            }
+        }
+        return [...preLoadOptions, ...inputParam.options]
+    }
+
     const getTabValue = (inputParam) => {
         return inputParam.tabs.findIndex((item) => item.name === data.inputs[`${inputParam.tabIdentifier}_${data.id}`]) >= 0
             ? inputParam.tabs.findIndex((item) => item.name === data.inputs[`${inputParam.tabIdentifier}_${data.id}`])
@@ -425,6 +445,13 @@ const NodeInputHandler = ({
         setAsyncOptionEditDialog('')
     }
 
+    const handleNvidiaNIMDialogComplete = (containerData) => {
+        if (containerData) {
+            data.inputs['basePath'] = containerData.baseUrl
+            data.inputs['modelName'] = containerData.image
+        }
+    }
+
     useEffect(() => {
         if (ref.current && ref.current.offsetTop && ref.current.clientHeight) {
             setPosition(ref.current.offsetTop + ref.current.clientHeight / 2)
@@ -435,13 +462,6 @@ const NodeInputHandler = ({
     useEffect(() => {
         updateNodeInternals(data.id)
     }, [data.id, position, updateNodeInternals])
-
-    const handleNvidiaNIMDialogComplete = (containerData) => {
-        if (containerData) {
-            data.inputs['basePath'] = containerData.baseUrl
-            data.inputs['modelName'] = containerData.image
-        }
-    }
 
     return (
         <div ref={ref}>
@@ -455,16 +475,15 @@ const NodeInputHandler = ({
                             id={inputAnchor.id}
                             isValidConnection={(connection) => isValidConnection(connection, reactFlowInstance)}
                             style={{
-                                height: 25,
-                                width: 15,
-                                backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                top: position,
-                                borderRadius: 5
+                                height: 10,
+                                width: 10,
+                                backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
+                                top: position
                             }}
                         />
                     </CustomWidthTooltip>
                     <Box sx={{ p: 2 }}>
-                        <Typography style={{ color: customization.isDarkMode ? '#fff' : '#000' }}>
+                        <Typography>
                             {inputAnchor.label}
                             {!inputAnchor.optional && <span style={{ color: 'red' }}>&nbsp;*</span>}
                             {inputAnchor.description && <TooltipWithParser style={{ marginLeft: 10 }} title={inputAnchor.description} />}
@@ -484,11 +503,10 @@ const NodeInputHandler = ({
                                 id={inputParam.id}
                                 isValidConnection={(connection) => isValidConnection(connection, reactFlowInstance)}
                                 style={{
-                                    height: 25,
-                                    width: 15,
-                                    backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    top: position,
-                                    borderRadius: 5
+                                    height: 10,
+                                    width: 10,
+                                    backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
+                                    top: position
                                 }}
                             />
                         </CustomWidthTooltip>
@@ -504,17 +522,7 @@ const NodeInputHandler = ({
                                             width: '100%'
                                         }}
                                         disabled={disabled}
-                                        sx={{
-                                            borderRadius: 25,
-                                            width: '100%',
-                                            mb: 2,
-                                            mt: 0,
-                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                            borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                            '&:hover': {
-                                                borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                            }
-                                        }}
+                                        sx={{ borderRadius: 25, width: '100%', mb: 2, mt: 0 }}
                                         variant='outlined'
                                         onClick={() => onShowPromptHubButtonClicked()}
                                         endIcon={<IconAutoFixHigh />}
@@ -529,8 +537,7 @@ const NodeInputHandler = ({
                                     ></PromptLangsmithHubDialog>
                                 </>
                             )}
-
-                        {data.name === 'chatNvidiaNIM' && inputParam.name === 'modelName' && (
+                        {data.name === 'Chat NVIDIA NIM' && inputParam.name === 'modelName' && (
                             <>
                                 <Button
                                     style={{
@@ -546,14 +553,27 @@ const NodeInputHandler = ({
                                 </Button>
                             </>
                         )}
-
                         <div style={{ display: 'flex', flexDirection: 'row' }}>
-                            <Typography style={{ color: customization.isDarkMode ? '#fff' : '#000' }}>
+                            <Typography>
                                 {inputParam.label}
                                 {!inputParam.optional && <span style={{ color: 'red' }}>&nbsp;*</span>}
                                 {inputParam.description && <TooltipWithParser style={{ marginLeft: 10 }} title={inputParam.description} />}
                             </Typography>
                             <div style={{ flexGrow: 1 }}></div>
+                            {inputParam.hint && !isAdditionalParams && (
+                                <IconButton
+                                    size='small'
+                                    sx={{
+                                        height: 25,
+                                        width: 25
+                                    }}
+                                    title={inputParam.hint.label}
+                                    color='secondary'
+                                    onClick={() => onInputHintDialogClicked(inputParam.hint)}
+                                >
+                                    <IconBulb />
+                                </IconButton>
+                            )}
                             {inputParam.hint && isAdditionalParams && (
                                 <Button
                                     sx={{ p: 0, px: 2 }}
@@ -562,24 +582,15 @@ const NodeInputHandler = ({
                                     onClick={() => {
                                         onInputHintDialogClicked(inputParam.hint)
                                     }}
-                                    startIcon={<IconBulb size={17} style={{ color: customization?.isDarkMode ? '#fff' : '#000' }} />}
+                                    startIcon={<IconBulb size={17} />}
                                 >
-                                    <span
-                                        style={{
-                                            color: customization?.isDarkMode ? '#fff' : '#000'
-                                        }}
-                                    >
-                                        {inputParam.hint.label}
-                                    </span>
-                                    {/* {inputParam.hint.label} */}
+                                    {inputParam.hint.label}
                                 </Button>
                             )}
                             {((inputParam.type === 'string' && inputParam.rows) || inputParam.type === 'code') && (
                                 <IconButton
                                     size='small'
                                     sx={{
-                                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-
                                         height: 25,
                                         width: 25
                                     }}
@@ -618,15 +629,6 @@ const NodeInputHandler = ({
                                 onSelect={(newValue) => {
                                     data.credential = newValue
                                     data.inputs[FLOWISE_CREDENTIAL_ID] = newValue // in case data.credential is not updated
-                                }}
-                                InputProps={{
-                                    disableUnderline: true,
-                                    sx: {
-                                        borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
-                                        '&:hover': {
-                                            borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
-                                        }
-                                    }
                                 }}
                             />
                         )}
@@ -691,11 +693,6 @@ const NodeInputHandler = ({
                                     {inputParam.codeExample && (
                                         <Button
                                             variant='outlined'
-                                            style={{
-                                                marginBottom: 10,
-                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                                border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
-                                            }}
                                             onClick={() => {
                                                 data.inputs[inputParam.name] = inputParam.codeExample
                                             }}
@@ -742,8 +739,6 @@ const NodeInputHandler = ({
                             <>
                                 {!inputParam?.acceptVariable && (
                                     <JsonEditorInput
-                                        id='standard-basic'
-                                        variant='standard'
                                         disabled={disabled}
                                         onChange={(newValue) => (data.inputs[inputParam.name] = newValue)}
                                         value={
@@ -754,15 +749,6 @@ const NodeInputHandler = ({
                                         }
                                         isSequentialAgent={data.category === 'Sequential Agents'}
                                         isDarkMode={customization.isDarkMode}
-                                        InputProps={{
-                                            disableUnderline: true,
-                                            sx: {
-                                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
-                                                '&:hover': {
-                                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
-                                                }
-                                            }
-                                        }}
                                     />
                                 )}
                                 {inputParam?.acceptVariable && (
@@ -772,12 +758,7 @@ const NodeInputHandler = ({
                                                 borderRadius: 25,
                                                 width: '100%',
                                                 mb: 0,
-                                                mt: 2,
-                                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                                borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                                '&:hover': {
-                                                    borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                                }
+                                                mt: 2
                                             }}
                                             variant='outlined'
                                             disabled={disabled}
@@ -799,7 +780,8 @@ const NodeInputHandler = ({
                             <Dropdown
                                 disabled={disabled}
                                 name={inputParam.name}
-                                options={inputParam.options}
+                                options={getDropdownOptions(inputParam)}
+                                freeSolo={inputParam.freeSolo}
                                 onSelect={(newValue) => (data.inputs[inputParam.name] = newValue)}
                                 value={data.inputs[inputParam.name] ?? inputParam.default ?? 'choose an option'}
                             />
@@ -808,20 +790,22 @@ const NodeInputHandler = ({
                             <MultiDropdown
                                 disabled={disabled}
                                 name={inputParam.name}
-                                options={inputParam.options}
+                                options={getDropdownOptions(inputParam)}
                                 onSelect={(newValue) => (data.inputs[inputParam.name] = newValue)}
                                 value={data.inputs[inputParam.name] ?? inputParam.default ?? 'choose an option'}
                             />
                         )}
-                        {inputParam.type === 'asyncOptions' && (
+                        {(inputParam.type === 'asyncOptions' || inputParam.type === 'asyncMultiOptions') && (
                             <>
                                 {data.inputParams.length === 1 && <div style={{ marginTop: 10 }} />}
-                                <div key={reloadTimestamp} style={{ display: 'flex', flexDirection: 'row' }}>
+                                <div key={reloadTimestamp} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
                                     <AsyncDropdown
                                         disabled={disabled}
                                         name={inputParam.name}
                                         nodeData={data}
                                         value={data.inputs[inputParam.name] ?? inputParam.default ?? 'choose an option'}
+                                        freeSolo={inputParam.freeSolo}
+                                        multiple={inputParam.type === 'asyncMultiOptions'}
                                         isCreateNewOption={EDITABLE_OPTIONS.includes(inputParam.name)}
                                         onSelect={(newValue) => (data.inputs[inputParam.name] = newValue)}
                                         onCreateNew={() => addAsyncOption(inputParam.name)}
@@ -834,6 +818,16 @@ const NodeInputHandler = ({
                                             onClick={() => editAsyncOption(inputParam.name, data.inputs[inputParam.name])}
                                         >
                                             <IconEdit />
+                                        </IconButton>
+                                    )}
+                                    {inputParam.refresh && (
+                                        <IconButton
+                                            title='Refresh'
+                                            color='primary'
+                                            size='small'
+                                            onClick={() => setReloadTimestamp(Date.now().toString())}
+                                        >
+                                            <IconRefresh />
                                         </IconButton>
                                     )}
                                 </div>
@@ -868,16 +862,7 @@ const NodeInputHandler = ({
                                             width: '100%'
                                         }}
                                         disabled={disabled}
-                                        sx={{
-                                            borderRadius: '12px',
-                                            width: '100%',
-                                            mt: 1,
-                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                            borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                            '&:hover': {
-                                                borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                            }
-                                        }}
+                                        sx={{ borderRadius: '12px', width: '100%', mt: 1 }}
                                         variant='outlined'
                                         onClick={() =>
                                             onManageLinksDialogClicked(

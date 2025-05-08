@@ -48,15 +48,6 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
         return null
     }
 
-    // const getOutputNode = (outputNodes) => {
-    //     if(outputNodes){
-    //         console.log(outputNodes,"#####")
-    // var labelStore=outputNodes.map((ele)=>{
-    //         console.log(ele.label)
-    //         return ele.label;
-    //     })
-    //     }
-    //     return labelStore;
     const getOutputNode = (outputNodes) => {
         if (!outputNodes) return null
 
@@ -67,7 +58,6 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
             </span>
         ))
     }
-    // console.log('sourceNodeId',sourceNodeId)
 
     useEffect(() => {
         if (show) dispatch({ type: SHOW_CANVAS_DIALOG })
@@ -84,8 +74,7 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
             const sourceNode = dialogProps.data
 
             if (sourceNode) {
-                const allNodeDetails = getNodesApi.data //.map(x => ({ type: x.type, label: x.label }))//.filter((x, index, arr) => arr.indexOf(x) === index);
-                //console.log('allNodes', allNodeDetails);
+                const allNodeDetails = getNodesApi.data
 
                 const outputTypes = sourceNode.baseClasses
 
