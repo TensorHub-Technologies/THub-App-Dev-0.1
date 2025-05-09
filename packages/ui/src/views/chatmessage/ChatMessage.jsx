@@ -873,8 +873,10 @@ export const ChatMessage = ({ open, show, chatflowid, isAgentCanvas, isDialog, p
 
             if (isChatFlowAvailableToStream) {
                 await fetchResponseFromEventStream(chatflowid, params)
+                console.log(params, 'params from fetchResponseFromEventStream')
             } else {
                 const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
+                console.log(response, 'response from sendMessageAndGetPrediction')
                 setAiResponseInChatMessages(response.data, params)
             }
         } catch (error) {
