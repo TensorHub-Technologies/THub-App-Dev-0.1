@@ -5,12 +5,18 @@ import { useState } from 'react'
 import axios from 'axios'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import toast, { Toaster } from 'react-hot-toast'
+import { useSelector } from 'react-redux'
+import IconInfo from '@/assets/custom-svg/IconInfo'
+import ActiveSchedulesPopup from './ActiveSchedulesPopup'
 
 const ScheduleSettings = () => {
     // Separate state for schedule and provider
     const [selectedSchedule, setSelectedSchedule] = useState('At Regular Intervals')
     const [followUpPromptsConfig, setFollowUpPromptsConfig] = useState({})
     const [userPrompt, setUserPrompt] = useState('')
+    const [popupOpen, setPopupOpen] = useState(false)
+    const [activeSchedules, setActiveSchedules] = useState([])
+    const customization = useSelector((state) => state.customization)
 
     const flowId = window.location.pathname.split('/').pop()
 
@@ -60,13 +66,64 @@ const ScheduleSettings = () => {
         }
     }
 
+    const handleSchedule = async () => {
+        if (!flowId) return console.log('Flow ID missing')
+
+        let apiUrl
+        if (window.location.hostname === 'demo.thub.tech') {
+            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        } else if (window.location.hostname === 'localhost') {
+            apiUrl = 'http://localhost:2000'
+        } else {
+            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        }
+
+        try {
+            const res = await toast.promise(axios.get(`${apiUrl}/api/schedules/${flowId}`), {
+                loading: 'Fetching active schedules',
+                success: 'Active schedules fetched',
+                error: 'Failed to fetch schedule'
+            })
+            console.log(res, 'response from fetch schedules')
+            if (Array.isArray(res.data)) {
+                setActiveSchedules(res.data)
+                setPopupOpen(true)
+            }
+        } catch (err) {
+            console.error('Failed to fetch schedule:', err)
+        }
+    }
+
+    const handleCancelSchedule = async (id) => {
+        let apiUrl
+        if (window.location.hostname === 'demo.thub.tech') {
+            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        } else if (window.location.hostname === 'localhost') {
+            apiUrl = 'http://localhost:2000'
+        } else {
+            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        }
+        try {
+            await toast.promise(axios.post(`${apiUrl}/api/schedules/cancel`, { id }), {
+                loading: 'Cancelling...',
+                success: 'Schedule cancelled',
+                error: 'Failed to cancel'
+            })
+            handleSchedule()
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     const schedulesEmail = [
+
         { id: 1, name: 'At Regular Intervals' },
         { id: 2, name: 'Once' },
         { id: 3, name: 'Every day' },
         { id: 4, name: 'Days of the week' },
         { id: 5, name: 'Days of the month' },
         { id: 6, name: 'Specified dates' }
+
     ]
 
     const daysOfWeekOptions = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -92,10 +149,24 @@ const ScheduleSettings = () => {
         <>
             <Toaster position='top-right' reverseOrder={false} />
             <Box>
-                <Typography variant='h5' sx={{ mb: 5 }} gutterBottom>
-                    Run Scenario
-                </Typography>
+                <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant='h4'>Run Scenario</Typography>
+                        <button
+                            style={{ background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer' }}
+                            onClick={handleSchedule}
+                        >
+                            <IconInfo color={customization.isDarkMode ? 'white' : 'black'} />
+                        </button>
+                    </Box>
 
+                    <ActiveSchedulesPopup
+                        open={popupOpen}
+                        onClose={() => setPopupOpen(false)}
+                        schedules={activeSchedules}
+                        onCancel={handleCancelSchedule}
+                    />
+                </Box>
                 {/* Schedule selection */}
                 <FormControl fullWidth size='medium' sx={{ mb: 2 }}>
                     <Select value={selectedSchedule} onChange={handleScheduleChange} displayEmpty>
