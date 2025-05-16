@@ -99,6 +99,18 @@ const NodeInputHandler = ({
     const [isNvidiaNIMDialogOpen, setIsNvidiaNIMDialogOpen] = useState(false)
     const [tabValue, setTabValue] = useState(0)
 
+    const handleDataChange = ({ inputParam, newValue }) => {
+        data.inputs[inputParam.name] = newValue
+        const allowedShowHideInputTypes = ['boolean', 'asyncOptions', 'asyncMultiOptions', 'options', 'multiOptions']
+        if (allowedShowHideInputTypes.includes(inputParam.type)) {
+            if (onCustomDataChange) {
+                onCustomDataChange({ nodeId: data.id, inputParam, newValue })
+            } else {
+                onNodeDataChange({ nodeId: data.id, inputParam, newValue })
+            }
+        }
+    }
+
     const onInputHintDialogClicked = (hint) => {
         const dialogProps = {
             ...hint
@@ -437,8 +449,11 @@ const NodeInputHandler = ({
     const onConfirmAsyncOption = (selectedOptionId = '') => {
         if (!selectedOptionId) {
             data.inputs[showAsyncOptionDialog] = ''
+            handleDataChange({ inputParam: { name: showAsyncOptionDialog }, newValue: '' })
         } else {
             data.inputs[showAsyncOptionDialog] = selectedOptionId
+            handleDataChange({ inputParam: { name: showAsyncOptionDialog }, newValue: selectedOptionId })
+
             setReloadTimestamp(Date.now().toString())
         }
         setAsyncOptionEditDialogProps({})
@@ -674,7 +689,7 @@ const NodeInputHandler = ({
                         {inputParam.type === 'boolean' && (
                             <SwitchInput
                                 disabled={disabled}
-                                onChange={(newValue) => (data.inputs[inputParam.name] = newValue)}
+                                onChange={(newValue) => handleDataChange({ inputParam, newValue })}
                                 value={data.inputs[inputParam.name] ?? inputParam.default ?? false}
                             />
                         )}
@@ -782,7 +797,7 @@ const NodeInputHandler = ({
                                 name={inputParam.name}
                                 options={getDropdownOptions(inputParam)}
                                 freeSolo={inputParam.freeSolo}
-                                onSelect={(newValue) => (data.inputs[inputParam.name] = newValue)}
+                                onSelect={(newValue) => handleDataChange({ inputParam, newValue })}
                                 value={data.inputs[inputParam.name] ?? inputParam.default ?? 'choose an option'}
                             />
                         )}
@@ -791,7 +806,7 @@ const NodeInputHandler = ({
                                 disabled={disabled}
                                 name={inputParam.name}
                                 options={getDropdownOptions(inputParam)}
-                                onSelect={(newValue) => (data.inputs[inputParam.name] = newValue)}
+                                onSelect={(newValue) => handleDataChange({ inputParam, newValue })}
                                 value={data.inputs[inputParam.name] ?? inputParam.default ?? 'choose an option'}
                             />
                         )}
@@ -807,7 +822,10 @@ const NodeInputHandler = ({
                                         freeSolo={inputParam.freeSolo}
                                         multiple={inputParam.type === 'asyncMultiOptions'}
                                         isCreateNewOption={EDITABLE_OPTIONS.includes(inputParam.name)}
-                                        onSelect={(newValue) => (data.inputs[inputParam.name] = newValue)}
+                                        onSelect={(newValue) => {
+                                            if (inputParam.loadConfig) setReloadTimestamp(Date.now().toString())
+                                            handleDataChange({ inputParam, newValue })
+                                        }}
                                         onCreateNew={() => addAsyncOption(inputParam.name)}
                                     />
                                     {EDITABLE_OPTIONS.includes(inputParam.name) && data.inputs[inputParam.name] && (
