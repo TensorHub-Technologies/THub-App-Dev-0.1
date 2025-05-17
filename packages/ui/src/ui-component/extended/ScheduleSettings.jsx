@@ -116,14 +116,12 @@ const ScheduleSettings = () => {
     }
 
     const schedulesEmail = [
-
         { id: 1, name: 'At Regular Intervals' },
         { id: 2, name: 'Once' },
         { id: 3, name: 'Every day' },
         { id: 4, name: 'Days of the week' },
         { id: 5, name: 'Days of the month' },
         { id: 6, name: 'Specified dates' }
-
     ]
 
     const daysOfWeekOptions = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -186,7 +184,7 @@ const ScheduleSettings = () => {
                 </FormControl>
 
                 {/* Conditionally render based on schedule choice */}
-                {selectedSchedule === 'At Regular Intervals' && (
+                {/* {selectedSchedule === 'At Regular Intervals' && (
                     <>
                         <TextField
                             label='Enter minutes'
@@ -200,7 +198,7 @@ const ScheduleSettings = () => {
                             The time interval in which the scenario should be repeated (in minutes).
                         </Typography>
                     </>
-                )}
+                )} */}
 
                 {selectedSchedule === 'Once' && (
                     <>
