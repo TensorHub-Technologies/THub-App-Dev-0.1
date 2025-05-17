@@ -182,7 +182,7 @@ const ScheduleSettings = () => {
                 </FormControl>
 
                 {/* Conditionally render based on schedule choice */}
-                {selectedSchedule === 'At Regular Intervals' && (
+                {/* {selectedSchedule === 'At Regular Intervals' && (
                     <>
                         <TextField
                             label='Enter minutes'
@@ -196,7 +196,7 @@ const ScheduleSettings = () => {
                             The time interval in which the scenario should be repeated (in minutes).
                         </Typography>
                     </>
-                )}
+                )} */}
 
                 {selectedSchedule === 'Once' && (
                     <>
