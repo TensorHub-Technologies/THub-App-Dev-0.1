@@ -1,5 +1,6 @@
 import { Box, FormControl, MenuItem, Select, TextField, Typography, Checkbox, ListItemText, OutlinedInput } from '@mui/material'
 import PropTypes from 'prop-types'
+
 import { useState } from 'react'
 import axios from 'axios'
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -10,7 +11,7 @@ import ActiveSchedulesPopup from './ActiveSchedulesPopup'
 
 const ScheduleSettings = () => {
     // Separate state for schedule and provider
-    const [selectedSchedule, setSelectedSchedule] = useState('Once')
+    const [selectedSchedule, setSelectedSchedule] = useState('At Regular Intervals')
     const [followUpPromptsConfig, setFollowUpPromptsConfig] = useState({})
     const [userPrompt, setUserPrompt] = useState('')
     const [popupOpen, setPopupOpen] = useState(false)
@@ -115,11 +116,12 @@ const ScheduleSettings = () => {
     }
 
     const schedulesEmail = [
-        { id: 1, name: 'Once' },
-        { id: 2, name: 'Every day' },
-        { id: 3, name: 'Days of the week' },
-        { id: 4, name: 'Days of the month' },
-        { id: 5, name: 'Specified dates' }
+        { id: 1, name: 'At Regular Intervals' },
+        { id: 2, name: 'Once' },
+        { id: 3, name: 'Every day' },
+        { id: 4, name: 'Days of the week' },
+        { id: 5, name: 'Days of the month' },
+        { id: 6, name: 'Specified dates' }
     ]
 
     const daysOfWeekOptions = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -342,6 +344,7 @@ const ScheduleSettings = () => {
                 <Box component='form' noValidate autoComplete='off' sx={{ '& > :not(style)': { m: 1, width: '100%' } }}>
                     <TextField label='User prompt' variant='standard' fullWidth value={userPrompt} onChange={handlePrompt} />
                 </Box>
+
                 <StyledButton variant='contained' onClick={onSave} sx={{ mt: 2, display: 'block' }}>
                     Save
                 </StyledButton>
