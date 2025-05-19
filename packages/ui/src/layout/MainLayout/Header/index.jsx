@@ -15,18 +15,21 @@ import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 import IconSettings from '@/assets/custom-svg/IconSettings'
 import IconUserPlus from '@/assets/custom-svg/IconUserPlus'
 import IconLogout from '@/assets/custom-svg/IconLogout'
-import { SignOutButton } from './MicrosoftLogout'
+import { useMsal } from '@azure/msal-react'
 
 const Header = () => {
     const [userName, setUserName] = useState('')
     const [userImg, setUserImg] = useState('')
     const [userFName, setUserFullName] = useState('')
+    const [loginType, setLoginType] = useState('')
     const [anchorEl, setAnchorEl] = useState(null)
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const open = Boolean(anchorEl)
+
+    const { instance } = useMsal()
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -45,13 +48,17 @@ const Header = () => {
     }
 
     const handleLogout = () => {
+        if (loginType === 'azure_ad') {
+            instance.logoutPopup({
+                postLogoutRedirectUri: '/'
+            })
+        }
         localStorage.removeItem('userId')
         sessionStorage.removeItem('modalShown')
         dispatch(setUserData(''))
         setUserName('')
         setUserImg('')
         navigate('/')
-
         setAnchorEl(null)
     }
 
@@ -77,6 +84,7 @@ const Header = () => {
                         setUserName(name)
                         const proPicture = userData?.picture
                         setUserImg(proPicture)
+                        setLoginType(userData?.login_type)
 
                         const dateObj = new Date(userData?.subscription_date)
 
@@ -250,7 +258,6 @@ const Header = () => {
                         </ListItemIcon>
                         Logout
                     </MenuItem>
-                    <SignOutButton />
                 </Menu>
             </React.Fragment>
         </>
