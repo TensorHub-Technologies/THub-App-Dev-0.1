@@ -5,18 +5,23 @@ import {
     Typography,
     CircularProgress,
     CssBaseline,
-    Stack,
     FormControl,
-    FormLabel,
     OutlinedInput,
-    FormHelperText
+    FormHelperText,
+    InputAdornment,
+    IconButton,
+    Divider
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { IconEye, IconEyeOff } from '@tabler/icons-react'
+import { Top } from './Top'
 
 const SignUp = () => {
     const [loading, setLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -25,6 +30,7 @@ const SignUp = () => {
             lastName: '',
             phone: '',
             password: '',
+            confirmPassword: '',
             login_type: ''
         },
         validationSchema: Yup.object({
@@ -35,6 +41,9 @@ const SignUp = () => {
                 .matches(/^[0-9]{10,15}$/, 'Enter a valid phone number')
                 .required('Required'),
             password: Yup.string().min(6, 'Must be at least 6 characters').required('Required'),
+            confirmPassword: Yup.string()
+                .oneOf([Yup.ref('password'), null], 'Passwords must match')
+                .required('Required'),
             login_type: Yup.string().oneOf(['user', 'admin'], 'Select a valid login type').required('Required')
         }),
         onSubmit: (values) => {
@@ -56,39 +65,47 @@ const SignUp = () => {
                     minHeight: '100vh'
                 }}
             >
-                {/* Left Side - SignUp Form */}
+                <Box
+                    sx={{
+                        width: { xs: '100%', md: '50%' },
+                        display: { xs: 'none', md: 'block' },
+                        // backgroundImage: `url(${image})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
+                />
+
                 <Box
                     sx={{
                         width: { xs: '100%', md: '50%' },
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        p: 3
+                        p: 3,
+                        bgcolor: '#12121C'
                     }}
                 >
                     <Box
                         sx={{
                             width: '100%',
-                            maxWidth: 550,
+                            maxWidth: 380,
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 3,
-                            pt: 2,
+                            p: 2,
                             borderRadius: 2,
                             boxShadow: 3
                         }}
                     >
-                        <Stack>
-                            <Typography variant='h1' sx={{ fontFamily: 'Cambria Math', fontSize: '2rem' }} color='white'>
-                                Sign Up
+                        <Top />
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', my: 4 }}>
+                            <Divider sx={{ flexGrow: 1 }} />
+                            <Typography sx={{ mx: 2, whiteSpace: 'nowrap' }} variant='h5' color='white'>
+                                Or Register with Email
                             </Typography>
-                            <Typography variant='body2' color='white'>
-                                Already have an account?
-                                <Link to='/' style={{ color: '#1976d2', marginLeft: '4px', textDecoration: 'underline' }}>
-                                    Login
-                                </Link>
-                            </Typography>
-                        </Stack>
+                            <Divider sx={{ flexGrow: 1 }} />
+                        </Box>
 
                         <Box
                             component='form'
@@ -100,13 +117,9 @@ const SignUp = () => {
                                 { name: 'email', label: 'Email', type: 'email', placeholder: 'user@company.com' },
                                 { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'John' },
                                 { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Doe' },
-                                { name: 'phone', label: 'Phone Number', type: 'tel', placeholder: '1234567890' },
-                                { name: 'password', label: 'Password', type: 'password', placeholder: '********' }
-                            ].map(({ name, label, type, placeholder }) => (
+                                { name: 'phone', label: 'Phone Number', type: 'tel', placeholder: '1234567890' }
+                            ].map(({ name, type, placeholder }) => (
                                 <FormControl key={name} fullWidth error={formik.touched[name] && Boolean(formik.errors[name])}>
-                                    <FormLabel sx={{ mb: 1, color: 'white' }} htmlFor={name}>
-                                        {label}
-                                    </FormLabel>
                                     <OutlinedInput
                                         id={name}
                                         name={name}
@@ -117,13 +130,14 @@ const SignUp = () => {
                                         onBlur={formik.handleBlur}
                                         sx={{
                                             bgcolor: '#2e2e2e',
+                                            mt: -2,
                                             color: 'white',
                                             '& input': {
                                                 color: 'white',
                                                 backgroundColor: '#32353b',
                                                 '::placeholder': {
                                                     fontWeight: 'bold',
-                                                    color: '#bbbbbb'
+                                                    color: '#bdbfd4'
                                                 }
                                             }
                                         }}
@@ -134,30 +148,120 @@ const SignUp = () => {
                                 </FormControl>
                             ))}
 
+                            {/* Password */}
+                            <FormControl fullWidth error={formik.touched.password && Boolean(formik.errors.password)}>
+                                <OutlinedInput
+                                    id='password'
+                                    name='password'
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder='********'
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    endAdornment={
+                                        <InputAdornment position='end' sx={{ bgcolor: 'transparent' }}>
+                                            <IconButton
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                edge='end'
+                                                sx={{ bgcolor: 'transparent' }}
+                                            >
+                                                {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    sx={{
+                                        bgcolor: '#32353b',
+                                        mt: -2,
+                                        color: 'white',
+                                        '& input': {
+                                            color: 'white',
+                                            backgroundColor: '#32353b',
+                                            '::placeholder': {
+                                                fontWeight: 'bold',
+                                                color: '#bdbfd4'
+                                            }
+                                        },
+                                        '& .MuiInputAdornment-root': {
+                                            bgcolor: 'transparent'
+                                        }
+                                    }}
+                                />
+                                <FormHelperText>
+                                    {formik.touched.password && formik.errors.password ? formik.errors.password : '\u00A0'}
+                                </FormHelperText>
+                            </FormControl>
+
+                            {/* Confirm Password */}
+                            <FormControl fullWidth error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}>
+                                <OutlinedInput
+                                    id='confirmPassword'
+                                    name='confirmPassword'
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    placeholder='********'
+                                    value={formik.values.confirmPassword}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    endAdornment={
+                                        <InputAdornment position='end' sx={{ bgcolor: 'transparent' }}>
+                                            <IconButton
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                edge='end'
+                                                sx={{ bgcolor: 'transparent' }}
+                                            >
+                                                {showConfirmPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    sx={{
+                                        bgcolor: '#32353b',
+                                        color: 'white',
+                                        mt: -2,
+                                        '& input': {
+                                            color: 'white',
+                                            backgroundColor: '#32353b',
+                                            '::placeholder': {
+                                                fontWeight: 'bold',
+                                                color: '#bdbfd4'
+                                            }
+                                        },
+                                        '& .MuiInputAdornment-root': {
+                                            bgcolor: 'transparent'
+                                        }
+                                    }}
+                                />
+                                <FormHelperText>
+                                    {formik.touched.confirmPassword && formik.errors.confirmPassword
+                                        ? formik.errors.confirmPassword
+                                        : '\u00A0'}
+                                </FormHelperText>
+                            </FormControl>
+
                             <Button
                                 type='submit'
                                 variant='contained'
-                                color='primary'
                                 fullWidth
-                                disabled={loading}
-                                sx={{ py: 1.5, bgcolor: '#1976d2', '&:hover': { bgcolor: '#1565c0' } }}
+                                // disabled={loading}
+                                sx={{
+                                    py: 1.5,
+                                    bgcolor: '#de1e88',
+                                    '&:hover': { bgcolor: '#E32A90' },
+                                    color: 'black',
+                                    fontFamily: 'cambira math',
+                                    fontSize: '1rem'
+                                }}
                             >
-                                {loading ? <CircularProgress size={24} color='inherit' /> : 'Sign Up'}
+                                {loading ? <CircularProgress size={28} color='inherit' /> : 'Sign Up'}
                             </Button>
+
+                            <Typography variant='body2' color='white' textAlign={'center'}>
+                                Already have an account?
+                                <Link to='/' style={{ color: '#E32A90', textDecoration: 'underline', marginLeft: '16px' }}>
+                                    Login
+                                </Link>
+                            </Typography>
                         </Box>
                     </Box>
                 </Box>
-
-                {/* Right Side - Image */}
-                <Box
-                    sx={{
-                        width: { xs: '100%', md: '50%' },
-                        display: { xs: 'none', md: 'block' },
-                        backgroundImage: 'url(https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831?auto=format&w=1000&dpr=2)',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }}
-                />
             </Box>
         </Box>
     )

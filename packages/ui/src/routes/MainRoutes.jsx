@@ -47,19 +47,10 @@ const MainRoutes = {
     path: '/',
     element: (
         <PrivateRoute>
-            {' '}
             <MainLayout />
         </PrivateRoute>
     ),
     children: [
-        {
-            path: '/',
-            element: (
-                <PrivateRoute>
-                    <Chatflows />
-                </PrivateRoute>
-            )
-        },
         {
             path: '/workflows',
             element: (
