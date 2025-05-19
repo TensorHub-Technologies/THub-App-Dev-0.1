@@ -15,10 +15,11 @@ import {
 import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import image from '@/assets/images/image.png'
 import { Top } from './Top'
 import { IconMail, IconLock } from '@tabler/icons-react'
 import axios from 'axios'
+import leftImage from '../../assets/images/auth/screen-5.png'
+import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
@@ -67,18 +68,44 @@ const Login = () => {
                 sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
-                    minHeight: '100vh'
+                    minHeight: '100vh',
+                    backgroundColor: '#11121C'
                 }}
             >
                 <Box
                     sx={{
                         width: { xs: '100%', md: '50%' },
-                        display: { xs: 'none', md: 'block' },
-                        backgroundImage: `url(${image})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                     }}
-                />
+                >
+                    <Box
+                        sx={{
+                            width: '80%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 2,
+                            border: '1px solid white',
+                            padding: '80px 40px 80px 40px',
+                            borderRadius: '10px'
+                        }}
+                    >
+                        <Typography
+                            variant='h2'
+                            style={{ fontFamily: 'cambria math', fontWeight: 'bolder', color: 'white', fontSize: '32px' }}
+                            align='center'
+                        >
+                            Unlock the Power of
+                            <br />
+                            <span style={{ color: '#E22A90' }}>THub</span> GenAI Builder Tool.
+                        </Typography>
+                        <Box component='img' src={leftImage} alt='login image' sx={{ width: '100%', height: 'auto' }} />
+                    </Box>
+                </Box>
+
                 <Box
                     sx={{
                         width: { xs: '100%', md: '50%' },
@@ -89,13 +116,14 @@ const Login = () => {
                         flexDirection: 'column'
                     }}
                 >
+                    <Box component='img' src={thubLogo} alt='Thub image' sx={{ width: '180px', height: 'auto', paddingTop: '10px' }} />
                     <Top />
-                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', my: 4 }}>
-                        <Divider sx={{ flexGrow: 1 }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>
+                        <Divider sx={{ flexGrow: 0.2 }} />
                         <Typography sx={{ mx: 2, whiteSpace: 'nowrap' }} variant='h5' color='white'>
                             Or Login with Email
                         </Typography>
-                        <Divider sx={{ flexGrow: 1 }} />
+                        <Divider sx={{ flexGrow: 0.2 }} />
                     </Box>
 
                     <Box

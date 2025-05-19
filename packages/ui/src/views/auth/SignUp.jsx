@@ -18,6 +18,10 @@ import * as Yup from 'yup'
 import { IconEye, IconEyeOff } from '@tabler/icons-react'
 import { Top } from './Top'
 
+// images
+import leftImage from '../../assets/images/auth/screen-5.png'
+import thubLogo from '../../assets/images/THub_Logo_Icon.png'
+
 const SignUp = () => {
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
@@ -62,18 +66,45 @@ const SignUp = () => {
                 sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
-                    minHeight: '100vh'
+                    minHeight: '100vh',
+                    border: '2px solid red',
+                    backgroundColor: '#11121C'
                 }}
             >
                 <Box
                     sx={{
-                        width: { xs: '100%', md: '50%' },
-                        display: { xs: 'none', md: 'block' },
-                        // backgroundImage: `url(${image})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        display: 'flex',
+                        marginTop: '50px',
+                        // alignItems: "center",
+                        justifyContent: 'center',
+                        width: '50%'
                     }}
-                />
+                >
+                    <Box
+                        sx={{
+                            width: '90%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 2,
+                            border: '1px solid white',
+                            padding: '0px 30px 80px 30px',
+                            borderRadius: '10px'
+                        }}
+                    >
+                        <Typography
+                            variant='h2'
+                            style={{ fontFamily: 'cambria math', fontWeight: 'bolder', color: 'white', fontSize: '32px' }}
+                            align='center'
+                        >
+                            Unlock the Power of
+                            <br />
+                            <span style={{ color: '#E22A90' }}>THub</span> GenAI Builder Tool.
+                        </Typography>
+                        <Box component='img' src={leftImage} alt='login image' sx={{ width: '100%', height: 'auto' }} />
+                    </Box>
+                </Box>
 
                 <Box
                     sx={{
@@ -91,14 +122,16 @@ const SignUp = () => {
                             maxWidth: 380,
                             display: 'flex',
                             flexDirection: 'column',
+                            alignItems: 'center',
                             gap: 3,
                             p: 2,
                             borderRadius: 2,
                             boxShadow: 3
                         }}
                     >
-                        <Top />
+                        <Box component='img' src={thubLogo} alt='Thub image' sx={{ width: '180px', height: 'auto', paddingTop: '10px' }} />
 
+                        <Top />
                         <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', my: 4 }}>
                             <Divider sx={{ flexGrow: 1 }} />
                             <Typography sx={{ mx: 2, whiteSpace: 'nowrap' }} variant='h5' color='white'>
@@ -111,7 +144,7 @@ const SignUp = () => {
                             component='form'
                             noValidate
                             onSubmit={formik.handleSubmit}
-                            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '350px' }}
                         >
                             {[
                                 { name: 'email', label: 'Email', type: 'email', placeholder: 'user@company.com' },
