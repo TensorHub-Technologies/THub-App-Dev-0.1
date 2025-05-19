@@ -1,20 +1,35 @@
 import { Box, Typography, Modal, Button } from '@mui/material'
 import PropTypes from 'prop-types'
 
-const ActiveSchedulesPopup = ({ open, onClose, schedules, onCancel }) => {
-    const scheduleKeyMap = {
-        Once: 'OnceAt',
-        'Every day': 'EveryDayAt',
-        'Days of the week': 'DaysOfWeekAt',
-        'Days of the month': 'DaysOfMonthAt',
-        'Specified dates': 'SpecificDatesAt'
-    }
-    const getScheduleDateTime = (schedules) => {
-        const key = scheduleKeyMap[schedules.schedule_type]
-        const datetime = key && schedules.config[key]
-        return datetime ? new Date(datetime).toLocaleString() : 'N/A'
+/** Map each schedule_type to its config key */
+const scheduleKeyMap = {
+    Once: 'OnceAt',
+    'Every day': 'dailyTime',
+    'Days of the week': 'DaysOfWeekAt',
+    'Days of the month': 'DaysOfMonthAt',
+    'Specified dates': 'SpecificDatesAt'
+}
+
+/** Turn a single schedule object into a formatted date/time string */
+const getScheduleDateTimeForSingle = (schedule) => {
+    const key = scheduleKeyMap[schedule.schedule_type]
+    const time = key && schedule.config?.[key]
+    if (!time) return 'N/A'
+
+    // If it's just "HH:mm", attach to today’s date
+    if (/^\d{2}:\d{2}$/.test(time)) {
+        const [hours, minutes] = time.split(':').map(Number)
+        const d = new Date()
+        d.setHours(hours, minutes, 0, 0)
+        return d.toLocaleString()
     }
 
+    // Otherwise assume it's an ISO datetime
+    const parsed = new Date(time)
+    return isNaN(parsed) ? 'Invalid Date' : parsed.toLocaleString()
+}
+
+const ActiveSchedulesPopup = ({ open, onClose, schedules, onCancel }) => {
     return (
         <Modal open={open} onClose={onClose}>
             <Box
@@ -36,14 +51,14 @@ const ActiveSchedulesPopup = ({ open, onClose, schedules, onCancel }) => {
                     Active Schedules
                 </Typography>
 
-                {schedules.length === 0 ? (
+                {!Array.isArray(schedules) || schedules.length === 0 ? (
                     <Typography>No active schedules</Typography>
                 ) : (
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr>
                                 <th style={thStyle}>Type</th>
-                                <th style={thStyle}>Created At</th>
+                                <th style={thStyle}>Scheduled At</th>
                                 <th style={thStyle}>Prompt</th>
                                 <th style={thStyle}>Action</th>
                             </tr>
@@ -52,8 +67,7 @@ const ActiveSchedulesPopup = ({ open, onClose, schedules, onCancel }) => {
                             {schedules.map((schedule) => (
                                 <tr key={schedule.id}>
                                     <td style={tdStyle}>{schedule.schedule_type}</td>
-                                    <td style={tdStyle}>{getScheduleDateTime(schedule)}</td>
-
+                                    <td style={tdStyle}>{getScheduleDateTimeForSingle(schedule)}</td>
                                     <td style={tdStyle}>{schedule.prompt}</td>
                                     <td style={tdStyle}>
                                         <Button onClick={() => onCancel(schedule.id)} color='error' variant='contained' size='small'>
@@ -76,7 +90,6 @@ const thStyle = {
     backgroundColor: '#f5f5f5',
     textAlign: 'left'
 }
-
 const tdStyle = {
     border: '1px solid #ccc',
     padding: '8px',
@@ -87,12 +100,14 @@ ActiveSchedulesPopup.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
-    schedules: PropTypes.shape({
-        schedule_type: PropTypes.string,
-        config: PropTypes.object,
-        length: PropTypes.number,
-        map: PropTypes.func
-    }).isRequired
+    schedules: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+            schedule_type: PropTypes.string.isRequired,
+            config: PropTypes.object.isRequired,
+            prompt: PropTypes.string
+        })
+    ).isRequired
 }
 
 export default ActiveSchedulesPopup

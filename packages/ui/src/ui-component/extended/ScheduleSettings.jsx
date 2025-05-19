@@ -11,7 +11,7 @@ import ActiveSchedulesPopup from './ActiveSchedulesPopup'
 
 const ScheduleSettings = () => {
     // Separate state for schedule and provider
-    const [selectedSchedule, setSelectedSchedule] = useState('At Regular Intervals')
+    const [selectedSchedule, setSelectedSchedule] = useState('Once')
     const [followUpPromptsConfig, setFollowUpPromptsConfig] = useState({})
     const [userPrompt, setUserPrompt] = useState('')
     const [popupOpen, setPopupOpen] = useState(false)
@@ -116,12 +116,12 @@ const ScheduleSettings = () => {
     }
 
     const schedulesEmail = [
-        { id: 1, name: 'At Regular Intervals' },
-        { id: 2, name: 'Once' },
-        { id: 3, name: 'Every day' },
-        { id: 4, name: 'Days of the week' },
-        { id: 5, name: 'Days of the month' },
-        { id: 6, name: 'Specified dates' }
+        // { id: 1, name: 'At Regular Intervals' },
+        { id: 1, name: 'Once' },
+        { id: 2, name: 'Every day' },
+        { id: 3, name: 'Days of the week' },
+        { id: 4, name: 'Days of the month' },
+        { id: 5, name: 'Specified dates' }
     ]
 
     const daysOfWeekOptions = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
