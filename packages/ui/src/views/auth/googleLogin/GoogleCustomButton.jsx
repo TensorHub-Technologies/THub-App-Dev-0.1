@@ -1,7 +1,6 @@
 import { GoogleIcon } from '../CustomIcons'
 import { useGoogleLogin } from '@react-oauth/google'
 import axios from 'axios'
-import './GoogleCustomButton.css'
 import { Button } from '@mui/material'
 import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'

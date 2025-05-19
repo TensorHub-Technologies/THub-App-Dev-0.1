@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 
 // material-ui
@@ -159,11 +158,6 @@ const ProfileSection = () => {
             <AboutDialog show={aboutDialogOpen} onCancel={() => setAboutDialogOpen(false)} />
         </>
     )
-}
-
-ProfileSection.propTypes = {
-    username: PropTypes.string,
-    handleLogout: PropTypes.func.isRequired
 }
 
 export default ProfileSection

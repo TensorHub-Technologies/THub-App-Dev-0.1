@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { Navigate, useLocation } from 'react-router-dom'
 
 const PrivateRoute = ({ children }) => {
-    const isAuthenticated = !!localStorage.getItem('email')
+    const isAuthenticated = localStorage.getItem('userId')
+    console.log('isAuthenticated', isAuthenticated)
     const location = useLocation()
 
     return isAuthenticated ? children : <Navigate to='/' replace state={{ from: location }} />
