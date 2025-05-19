@@ -55,6 +55,7 @@ const Header = () => {
         }
         localStorage.removeItem('userId')
         sessionStorage.removeItem('modalShown')
+        localStorage.removeItem('access_token')
         dispatch(setUserData(''))
         setUserName('')
         setUserImg('')
