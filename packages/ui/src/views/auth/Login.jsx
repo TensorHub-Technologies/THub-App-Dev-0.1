@@ -53,7 +53,6 @@ const Login = () => {
                 navigate('/workflows')
             } catch (error) {
                 console.error('Login Error:', error.response?.data || error.message)
-                // Optionally show an error message to the user
                 alert(error.response?.data?.message || 'Login failed. Please try again.')
             } finally {
                 setLoading(false)
@@ -116,7 +115,12 @@ const Login = () => {
                         flexDirection: 'column'
                     }}
                 >
-                    <Box component='img' src={thubLogo} alt='Thub image' sx={{ width: '180px', height: 'auto', paddingTop: '10px' }} />
+                    <Box
+                        component='img'
+                        src={thubLogo}
+                        alt='Thub image'
+                        sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px' }}
+                    />
                     <Top />
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>
                         <Divider sx={{ flexGrow: 0.2 }} />
