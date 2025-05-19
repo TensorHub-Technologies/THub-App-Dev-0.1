@@ -67,7 +67,6 @@ const SignUp = () => {
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     minHeight: '100vh',
-                    border: '2px solid red',
                     backgroundColor: '#11121C'
                 }}
             >
