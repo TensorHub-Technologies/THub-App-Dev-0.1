@@ -1,5 +1,8 @@
 import { Button, Stack } from '@mui/material'
-import { GitHubIcon, GoogleIcon } from './CustomIcons'
+import { GitHubIcon } from './CustomIcons'
+import { loginRequest } from './microsoftLogin/config/msalConfig'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import GoogleCustomButton from './googleLogin/GoogleCustomButton'
 import { useEffect, useState } from 'react'
 import { SET_USER_DATA } from '@/store/actions'
 import { useDispatch } from 'react-redux'
@@ -81,6 +84,16 @@ export const Top = () => {
         window.location.assign(gitRedirectUrl)
     }
 
+    const handleGithubLogin = () => {
+        console.log('Continue With Github')
+    }
+
+    const handleMicrosoftLogin = () => {
+        console.log('Continue With Microsoft')
+        instance.loginPopup(loginRequest).catch((e) => {
+            console.log(e)
+        })
+    }
     const handleGoogleLogin = () => {
         console.log('Continue With Google')
     }
@@ -88,22 +101,9 @@ export const Top = () => {
     return (
         <div>
             <Stack gap={2} sx={{ mt: 2 }} style={{ width: '350px' }}>
-                <Button
-                    variant='outlined'
-                    fullWidth
-                    onClick={handleGoogleLogin}
-                    sx={{
-                        py: 1.5,
-                        color: 'white',
-                        borderColor: '#555',
-                        bgcolor: '#2e2e2e',
-                        '&:hover': { bgcolor: '#3e3e3e', borderColor: '#777' }
-                    }}
-                    startIcon={<GoogleIcon />}
-                >
-                    Continue With Google
-                </Button>
-
+                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                    <GoogleCustomButton />
+                </GoogleOAuthProvider>
                 <Button
                     variant='outlined'
                     fullWidth
