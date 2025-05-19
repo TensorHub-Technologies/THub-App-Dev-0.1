@@ -4,6 +4,7 @@
     "license": "SEE LICENSE IN LICENSE.md",
     "homepage": "https://thub.tech",
     "dependencies": {
+        "@azure/msal-react": "^3.0.12",
         "@codemirror/lang-javascript": "^6.2.1",
         "@codemirror/lang-json": "^6.0.1",
         "@codemirror/view": "^6.22.3",

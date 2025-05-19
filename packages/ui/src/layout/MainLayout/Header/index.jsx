@@ -15,6 +15,7 @@ import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 import IconSettings from '@/assets/custom-svg/IconSettings'
 import IconUserPlus from '@/assets/custom-svg/IconUserPlus'
 import IconLogout from '@/assets/custom-svg/IconLogout'
+import { SignOutButton } from './MicrosoftLogout'
 
 const Header = () => {
     const [userName, setUserName] = useState('')
@@ -160,7 +161,7 @@ const Header = () => {
                 />
             </IconButton>
             <Box sx={{ ml: 2 }}></Box>
-            <ProfileSection username={localStorage.getItem('username') ?? ''} handleLogout={handleLogout} />
+            <ProfileSection />
             <React.Fragment>
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                     <Tooltip title={userFName}>
@@ -249,6 +250,7 @@ const Header = () => {
                         </ListItemIcon>
                         Logout
                     </MenuItem>
+                    <SignOutButton />
                 </Menu>
             </React.Fragment>
         </>

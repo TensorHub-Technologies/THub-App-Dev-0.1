@@ -32,7 +32,7 @@ import './index.css'
 
 // ==============================|| PROFILE MENU ||============================== //
 
-const ProfileSection = ({ username, handleLogout }) => {
+const ProfileSection = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
@@ -106,13 +106,6 @@ const ProfileSection = ({ username, handleLogout }) => {
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
-                                    <Box sx={{}}>
-                                        {username && (
-                                            <Typography component='span' variant='h4'>
-                                                {username}
-                                            </Typography>
-                                        )}
-                                    </Box>
                                     <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
                                         <Box sx={{}}>
                                             {/* <Divider /> */}
@@ -154,15 +147,6 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                     <ListItemIcon>i</ListItemIcon>
                                                     <ListItemText primary={<Typography variant='body2'>About THub</Typography>} />
                                                 </ListItemButton>
-                                                {localStorage.getItem('username') && localStorage.getItem('password') && (
-                                                    <ListItemButton
-                                                        sx={{ borderRadius: `${customization.borderRadius}px` }}
-                                                        onClick={handleLogout}
-                                                    >
-                                                        <ListItemIcon>{/* <IconLogout stroke={1.5} size='1.3rem' /> */}i</ListItemIcon>
-                                                        <ListItemText primary={<Typography variant='body2'>Logout</Typography>} />
-                                                    </ListItemButton>
-                                                )}
                                             </List>
                                         </Box>
                                     </PerfectScrollbar>

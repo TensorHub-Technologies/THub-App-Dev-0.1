@@ -1,13 +1,25 @@
 import { Button, Stack } from '@mui/material'
-import { GitHubIcon, GoogleIcon, MicrosoftIcon } from './CustomIcons'
+import { GitHubIcon, GoogleIcon } from './CustomIcons'
+import { useMsal } from '@azure/msal-react'
+import { loginRequest } from './microsoftLogin/config/msalConfig'
+import { SignInButton } from './microsoftLogin/SignInButton'
 
 export const Top = () => {
+    const { instance } = useMsal()
+
     const handleGoogleLogin = () => {
         console.log('Continue With Google')
     }
 
+    const handleGithubLogin = () => {
+        console.log('Continue With Github')
+    }
+
     const handleMicrosoftLogin = () => {
         console.log('Continue With Microsoft')
+        instance.loginPopup(loginRequest).catch((e) => {
+            console.log(e)
+        })
     }
     return (
         <div>
@@ -31,7 +43,7 @@ export const Top = () => {
                 <Button
                     variant='outlined'
                     fullWidth
-                    onClick={handleGoogleLogin}
+                    onClick={handleGithubLogin}
                     sx={{
                         py: 1.5,
                         color: 'white',
@@ -43,23 +55,7 @@ export const Top = () => {
                 >
                     Continue With Github
                 </Button>
-
-                <Button
-                    variant='outlined'
-                    fullWidth
-                    onClick={handleMicrosoftLogin}
-                    sx={{
-                        py: 1.5,
-                        pr: 2,
-                        color: 'white',
-                        borderColor: '#555',
-                        bgcolor: '#2e2e2e',
-                        '&:hover': { bgcolor: '#3e3e3e', borderColor: '#777' }
-                    }}
-                    startIcon={<MicrosoftIcon />}
-                >
-                    Continue With Microsoft
-                </Button>
+                <SignInButton />
             </Stack>
         </div>
     )
