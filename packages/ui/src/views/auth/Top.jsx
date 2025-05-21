@@ -70,7 +70,7 @@ export const Top = () => {
                     payload: data
                 })
                 localStorage.setItem('userId', data.uid)
-                navigate('/workflows')
+                navigate('/chatflows')
             }
         } catch (error) {
             console.error('Error fetching user data:', error)
