@@ -3,12 +3,12 @@ import { GitHubIcon } from './CustomIcons'
 import { loginRequest } from './microsoftLogin/config/msalConfig'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import GoogleCustomButton from './googleLogin/GoogleCustomButton'
-import { SignInButton } from './microsoftLogin/SignInButton'
 import { useEffect, useState } from 'react'
 import { SET_USER_DATA } from '@/store/actions'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
+import { MicrosoftLogin } from './microsoftLogin/MicrosoftLogin'
 
 export const Top = () => {
     const [loading, setLoading] = useState(false)
@@ -16,23 +16,6 @@ export const Top = () => {
     const navigate = useNavigate()
 
     const dispatch = useDispatch()
-
-    const clientIds = {
-        localhost: 'Ov23liqiYh1YKRrTHr0s',
-        demo: 'Ov23lif7mrkCVPKebB0G',
-        production: 'Ov23li9nfbJfQ0N5XiFZ'
-    }
-
-    const getClientId = () => {
-        switch (window.location.hostname) {
-            case 'localhost':
-                return clientIds.localhost
-            case 'thub-web-2-0-0-378678297066.us-central1.run.app':
-                return clientIds.demo
-            default:
-                return clientIds.production
-        }
-    }
 
     useEffect(() => {
         handleGithubAuth()
@@ -87,7 +70,7 @@ export const Top = () => {
                     payload: data
                 })
                 localStorage.setItem('userId', data.uid)
-                navigate('/workflows')
+                navigate('/chatflows')
             }
         } catch (error) {
             console.error('Error fetching user data:', error)
@@ -96,7 +79,7 @@ export const Top = () => {
     }
 
     const loginWithGithub = () => {
-        const clientId = getClientId()
+        const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
     }
@@ -136,7 +119,7 @@ export const Top = () => {
                 >
                     Continue With Github
                 </Button>
-                <SignInButton />
+                <MicrosoftLogin />
             </Stack>
         </div>
     )

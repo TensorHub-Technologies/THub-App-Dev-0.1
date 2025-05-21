@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
 
-export const SignInButton = () => {
+export const MicrosoftLogin = () => {
     const { instance, accounts } = useMsal()
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()

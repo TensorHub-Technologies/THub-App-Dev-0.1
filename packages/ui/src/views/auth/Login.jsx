@@ -5,7 +5,6 @@ import {
     Typography,
     CircularProgress,
     CssBaseline,
-    Link as MuiLink,
     FormControl,
     OutlinedInput,
     FormHelperText,
@@ -19,10 +18,12 @@ import { Top } from './Top'
 import axios from 'axios'
 import leftImage from '../../assets/images/auth/screen-5.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
+import { setUserData } from '@/store/actions'
+import { useDispatch } from 'react-redux'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
-
+    const dispatch = useDispatch()
     const navigate = useNavigate()
 
     const formik = useFormik({
@@ -39,20 +40,29 @@ const Login = () => {
         onSubmit: async (values) => {
             try {
                 setLoading(true)
-
-                const response = await axios.post('http://localhost:2000/loginUser', {
+                const loginResponse = await axios.post(`${import.meta.env.VITE_API_URL}/loginUser`, {
                     email: values.email,
                     password: values.password
                 })
 
-                console.log('Login Success:', response.data)
+                console.log('Login Success:', loginResponse.data)
 
-                localStorage.setItem('email', values.email)
+                const userId = loginResponse.data?.userId
+                if (!userId) {
+                    throw new Error('User ID not found in login response')
+                }
+                localStorage.setItem('userId', userId)
 
+                // Second API call: Get full user data
+                const userDataResponse = await axios.post(`${import.meta.env.VITE_API_URL}/userdata`, { userId })
+
+                const userData = userDataResponse.data[0]
+                console.log('User Data:', userData)
+
+                dispatch(setUserData(userData))
                 navigate('/workflows')
             } catch (error) {
                 console.error('Login Error:', error.response?.data || error.message)
-                // Optionally show an error message to the user
                 alert(error.response?.data?.message || 'Login failed. Please try again.')
             } finally {
                 setLoading(false)
@@ -115,7 +125,12 @@ const Login = () => {
                         flexDirection: 'column'
                     }}
                 >
-                    <Box component='img' src={thubLogo} alt='Thub image' sx={{ width: '180px', height: 'auto', paddingTop: '10px' }} />
+                    <Box
+                        component='img'
+                        src={thubLogo}
+                        alt='Thub image'
+                        sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px' }}
+                    />
                     <Top />
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>
                         <Divider sx={{ flexGrow: 0.2 }} />
@@ -205,12 +220,18 @@ const Login = () => {
                             </FormHelperText>
                         </FormControl>
 
-                        <MuiLink
-                            href='/forgot-password'
-                            sx={{ color: '#E32A90', textDecoration: 'underline', alignSelf: 'flex-end', fontSize: '0.875rem', mt: -4 }}
+                        <Link
+                            to='/forgot-password'
+                            style={{
+                                color: '#E32A90',
+                                textDecoration: 'underline',
+                                alignSelf: 'flex-end',
+                                fontSize: '0.875rem',
+                                marginTop: '-26px'
+                            }}
                         >
                             Forgot password?
-                        </MuiLink>
+                        </Link>
 
                         <Button
                             type='submit'
@@ -229,7 +250,7 @@ const Login = () => {
                         >
                             {loading ? <CircularProgress size={28} color='inherit' /> : 'Sign In With THub'}
                         </Button>
-                        <Typography variant='body2' color='white' textAlign={'center'}>
+                        <Typography variant='body2' color='white' textAlign={'center'} sx={{ mb: 4 }}>
                             Don&apos;t have an account?
                             <Link to='/signup' style={{ color: '#E32A90', textDecoration: 'underline', marginLeft: '6px' }}>
                                 Sign up for free
