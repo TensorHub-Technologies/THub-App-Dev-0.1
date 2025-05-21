@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 import {
     Box,
     Button,
@@ -12,20 +13,173 @@ import {
     IconButton,
     Divider
 } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import { IconEye, IconEyeOff } from '@tabler/icons-react'
 import { Top } from './Top'
+import { signUpValidationSchema } from './signUpValidationSchema'
+import { ToastContainer, toast } from 'react-toastify'
+import { useSelector, useDispatch } from 'react-redux'
+import OTP_Modal from './OTP_Modal'
+import { SET_USER_DATA } from '@/store/actions'
 
 // images
+import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
+import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
 import leftImage from '../../assets/images/auth/screen-5.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 
 const SignUp = () => {
+    const theme = useTheme()
+    const isDarkMode = theme.palette.mode === 'dark'
+    const customization = useSelector((state) => state.customization)
+    const dispatch = useDispatch()
+
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [otpSent, setOtpSent] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+    const [email, setEmail] = useState('')
+    const [tempUserData, setTempUserData] = useState(null)
+
+    const apiUrl =
+        window.location.hostname === 'localhost' ? 'http://localhost:2000' : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+
+    const checkEmail = async (email) => {
+        try {
+            const { data } = await axios.post(`${apiUrl}/check-email`, { email })
+            return data.exists
+        } catch (err) {
+            console.error('Error checking email:', err)
+            return false
+        }
+    }
+
+    // Verify the OTP
+    const verifyOtp = async (otp) => {
+        console.log('OTP Sent to email:', email)
+        console.log('OTP provided:', otp)
+        try {
+            const response = await axios.post(`${apiUrl}/verify-otp`, { email, otp })
+            if (response.status === 200) {
+                toast.success('OTP Verification Successful', {
+                    theme: 'colored',
+                    style: {
+                        background: 'black',
+                        color: 'white'
+                    }
+                })
+                setShowModal(true)
+                return true
+            } else {
+                toast.error(`Invalid OTP`, {
+                    theme: 'colored',
+                    style: {
+                        background: 'red',
+                        color: 'white'
+                    }
+                })
+                return false
+            }
+        } catch (error) {
+            console.error('Error verifying OTP:', error)
+            return false
+        }
+    }
+
+    const resendOtp = () => {
+        setOtpSent(false)
+        sendOtp(email)
+    }
+
+    const sendOtp = async (email) => {
+        setLoading(true)
+        try {
+            const response = await axios.post(`${apiUrl}/send-otp`, { email })
+            if (response.status === 200) {
+                toast.success('OTP sent successfully', {
+                    theme: 'colored',
+                    style: {
+                        background: customization?.isDarkMode ? '#e22a90' : '#3c5ba4',
+                        color: 'white'
+                    }
+                })
+                setOtpSent(true)
+                setShowModal(true)
+                setEmail(email)
+            } else {
+                toast.error('Failed to send OTP', {
+                    theme: 'colored',
+                    style: { background: 'red', color: 'white' }
+                })
+            }
+        } catch (err) {
+            console.error('Error sending OTP:', err)
+            toast.error('Error sending OTP', {
+                theme: 'colored',
+                style: { background: 'red', color: 'white' }
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // OTP Modal submit handler
+    const onOtpSubmit = async (otp) => {
+        setLoading(true)
+        try {
+            const otpVerified = await verifyOtp(otp)
+            if (!otpVerified) {
+                toast.error('OTP verification failed. Please try again.', {
+                    theme: 'colored',
+                    style: { background: 'red', color: 'white' }
+                })
+                return
+            }
+            // OTP verified, register user
+            const payload = {
+                email: tempUserData.email,
+                firstName: tempUserData.firstName,
+                lastName: tempUserData.lastName,
+                phone: tempUserData.phone,
+                password: tempUserData.password,
+                subscription_type: 'free',
+                login_type: 'email',
+                subscription_duration: null,
+                subscription_date: new Date().toISOString().split('T')[0]
+            }
+            const response = await axios.post(`${apiUrl}/user/register`, payload)
+            if (response.status === 200) {
+                const data = response.data
+                console.log('Registration response:', data)
+                dispatch({
+                    type: SET_USER_DATA,
+                    payload: data.user
+                })
+                localStorage.setItem('userId', data.userId)
+                setShowModal(false)
+                toast.success('Registration successful!', {
+                    theme: 'colored',
+                    style: { background: customization?.isDarkMode ? '#e22a90' : '#3c5ba4', color: 'white' }
+                })
+                window.location.href = '/workflows'
+            } else {
+                toast.error('Registration failed', {
+                    theme: 'colored',
+                    style: { background: 'red', color: 'white' }
+                })
+            }
+        } catch (error) {
+            console.error('Error registering user:', error)
+            toast.error('Registration failed', {
+                theme: 'colored',
+                style: { background: 'red', color: 'white' }
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -37,31 +191,40 @@ const SignUp = () => {
             confirmPassword: '',
             login_type: ''
         },
-        validationSchema: Yup.object({
-            email: Yup.string().email('Invalid email address').required('Required'),
-            firstName: Yup.string().required('Required'),
-            lastName: Yup.string().required('Required'),
-            phone: Yup.string()
-                .matches(/^[0-9]{10,15}$/, 'Enter a valid phone number')
-                .required('Required'),
-            password: Yup.string().min(6, 'Must be at least 6 characters').required('Required'),
-            confirmPassword: Yup.string()
-                .oneOf([Yup.ref('password'), null], 'Passwords must match')
-                .required('Required'),
-            login_type: Yup.string().oneOf(['user', 'admin'], 'Select a valid login type').required('Required')
-        }),
-        onSubmit: (values) => {
+        validationSchema: signUpValidationSchema,
+        onSubmit: async (values) => {
+            console.log('Form values:', values)
             setLoading(true)
-            setTimeout(() => {
+            try {
+                const exists = await checkEmail(values.email)
+                if (exists) {
+                    toast.error('Email already exists', {
+                        theme: 'colored',
+                        style: { background: 'red', color: 'white' }
+                    })
+                    setLoading(false)
+                    return
+                }
+                setTempUserData(values)
+                await sendOtp(values.email)
+            } catch (err) {
+                toast.error('Something went wrong', {
+                    theme: 'colored',
+                    style: { background: 'red', color: 'white' }
+                })
+            } finally {
                 setLoading(false)
-                console.log('SignUp attempted with:', values)
-            }, 1000)
+            }
         }
     })
 
     return (
         <Box sx={{ bgcolor: '#121212' }}>
             <CssBaseline />
+            <ToastContainer />
+            {showModal && (
+                <OTP_Modal length={6} onOtpSubmit={onOtpSubmit} setShowModal={setShowModal} resendOtp={resendOtp} loading={loading} />
+            )}
             <Box
                 sx={{
                     display: 'flex',
@@ -70,118 +233,105 @@ const SignUp = () => {
                     backgroundColor: '#11121C'
                 }}
             >
+                {/* Left graphic */}
                 <Box
                     sx={{
+                        flex: 1,
                         display: 'flex',
-                        marginTop: '50px',
-                        // alignItems: "center",
-                        justifyContent: 'center',
-                        width: '50%'
+                        mt: 6,
+                        justifyContent: 'center'
                     }}
                 >
                     <Box
                         sx={{
                             width: '90%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 2,
                             border: '1px solid white',
-                            padding: '0px 30px 80px 30px',
-                            borderRadius: '10px'
+                            p: 4,
+                            borderRadius: 2,
+                            textAlign: 'center'
                         }}
                     >
                         <Typography
                             variant='h2'
-                            style={{ fontFamily: 'cambria math', fontWeight: 'bolder', color: 'white', fontSize: '32px' }}
                             align='center'
+                            sx={{ fontFamily: 'Cambria Math', fontWeight: 'bolder', color: 'white', fontSize: 32 }}
                         >
                             Unlock the Power of
                             <br />
                             <span style={{ color: '#E22A90' }}>THub</span> GenAI Builder Tool.
                         </Typography>
-                        <Box component='img' src={leftImage} alt='login image' sx={{ width: '100%', height: 'auto' }} />
+                        <Box component='img' src={leftImage} alt='illustration' sx={{ width: '100%', mt: 2 }} />
                     </Box>
                 </Box>
 
+                {/* Right form */}
                 <Box
                     sx={{
-                        width: { xs: '100%', md: '50%' },
+                        flex: 1,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        p: 3,
-                        bgcolor: '#12121C'
+                        p: 3
                     }}
                 >
                     <Box
                         sx={{
-                            width: '100%',
-                            maxWidth: 380,
+                            width: 500,
+                            bgcolor: 'transparent',
+                            p: 3,
+                            borderRadius: 2,
+                            boxShadow: 3,
                             display: 'flex',
                             flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: 3,
-                            p: 2,
-                            borderRadius: 2,
-                            boxShadow: 3
+                            alignItems: 'center'
                         }}
                     >
-                        <Box component='img' src={thubLogo} alt='Thub image' sx={{ width: '180px', height: 'auto', paddingTop: '10px' }} />
-
+                        <Box component='img' src={thubLogo} alt='logo' sx={{ width: 160, mb: 2 }} />
                         <Top />
-                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', my: 4 }}>
-                            <Divider sx={{ flexGrow: 1 }} />
-                            <Typography sx={{ mx: 2, whiteSpace: 'nowrap' }} variant='h5' color='white'>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', my: 3 }}>
+                            <Divider sx={{ flex: 1 }} />
+                            <Typography variant='h6' color='white' sx={{ mx: 2 }}>
                                 Or Register with Email
                             </Typography>
-                            <Divider sx={{ flexGrow: 1 }} />
+                            <Divider sx={{ flex: 1 }} />
                         </Box>
 
-                        <Box
-                            component='form'
-                            noValidate
-                            onSubmit={formik.handleSubmit}
-                            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '350px' }}
-                        >
+                        <form onSubmit={formik.handleSubmit} noValidate>
                             {[
-                                { name: 'email', label: 'Email', type: 'email', placeholder: 'user@company.com' },
-                                { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'John' },
-                                { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Doe' },
-                                { name: 'phone', label: 'Phone Number', type: 'tel', placeholder: '1234567890' }
-                            ].map(({ name, type, placeholder }) => (
-                                <FormControl key={name} fullWidth error={formik.touched[name] && Boolean(formik.errors[name])}>
+                                { name: 'email', placeholder: 'user@company.com' },
+                                { name: 'firstName', placeholder: 'John' },
+                                { name: 'lastName', placeholder: 'Doe' },
+                                { name: 'phone', placeholder: '1234567890' }
+                            ].map(({ name, placeholder }) => (
+                                <FormControl
+                                    key={name}
+                                    fullWidth
+                                    error={formik.touched[name] && Boolean(formik.errors[name])}
+                                    sx={{ mb: 2 }}
+                                >
                                     <OutlinedInput
                                         id={name}
                                         name={name}
-                                        type={type}
+                                        type={name === 'phone' ? 'tel' : 'text'}
                                         placeholder={placeholder}
                                         value={formik.values[name]}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         sx={{
                                             bgcolor: '#2e2e2e',
-                                            mt: -2,
                                             color: 'white',
-                                            '& input': {
-                                                color: 'white',
-                                                backgroundColor: '#32353b',
-                                                '::placeholder': {
-                                                    fontWeight: 'bold',
-                                                    color: '#bdbfd4'
-                                                }
-                                            }
+                                            '& input::placeholder': { color: '#bdbfd4', fontWeight: 'bold' }
                                         }}
                                     />
                                     <FormHelperText>
-                                        {formik.touched[name] && formik.errors[name] ? formik.errors[name] : '\u00A0'}
+                                        {formik.touched[name] && formik.errors[name] ? formik.errors[name] : ' '}
                                     </FormHelperText>
                                 </FormControl>
                             ))}
 
                             {/* Password */}
-                            <FormControl fullWidth error={formik.touched.password && Boolean(formik.errors.password)}>
+                            <FormControl fullWidth error={formik.touched.password && Boolean(formik.errors.password)} sx={{ mb: 2 }}>
                                 <OutlinedInput
                                     id='password'
                                     name='password'
@@ -191,40 +341,33 @@ const SignUp = () => {
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     endAdornment={
-                                        <InputAdornment position='end' sx={{ bgcolor: 'transparent' }}>
-                                            <IconButton
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                edge='end'
-                                                sx={{ bgcolor: 'transparent' }}
-                                            >
-                                                {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+                                        <InputAdornment position='end'>
+                                            <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                                {showPassword ? (
+                                                    <EyeCloseIcon color={customization.isDarkMode ? 'white' : 'black'} />
+                                                ) : (
+                                                    <EyeOpenIcon size={20} />
+                                                )}
                                             </IconButton>
                                         </InputAdornment>
                                     }
                                     sx={{
                                         bgcolor: '#32353b',
-                                        mt: -2,
                                         color: 'white',
-                                        '& input': {
-                                            color: 'white',
-                                            backgroundColor: '#32353b',
-                                            '::placeholder': {
-                                                fontWeight: 'bold',
-                                                color: '#bdbfd4'
-                                            }
-                                        },
-                                        '& .MuiInputAdornment-root': {
-                                            bgcolor: 'transparent'
-                                        }
+                                        '& input::placeholder': { color: '#bdbfd4', fontWeight: 'bold' }
                                     }}
                                 />
                                 <FormHelperText>
-                                    {formik.touched.password && formik.errors.password ? formik.errors.password : '\u00A0'}
+                                    {formik.touched.password && formik.errors.password ? formik.errors.password : ' '}
                                 </FormHelperText>
                             </FormControl>
 
                             {/* Confirm Password */}
-                            <FormControl fullWidth error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}>
+                            <FormControl
+                                fullWidth
+                                error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+                                sx={{ mb: 2 }}
+                            >
                                 <OutlinedInput
                                     id='confirmPassword'
                                     name='confirmPassword'
@@ -234,64 +377,47 @@ const SignUp = () => {
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     endAdornment={
-                                        <InputAdornment position='end' sx={{ bgcolor: 'transparent' }}>
-                                            <IconButton
-                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                edge='end'
-                                                sx={{ bgcolor: 'transparent' }}
-                                            >
-                                                {showConfirmPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+                                        <InputAdornment position='end'>
+                                            <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                                {showConfirmPassword ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
                                             </IconButton>
                                         </InputAdornment>
                                     }
                                     sx={{
                                         bgcolor: '#32353b',
                                         color: 'white',
-                                        mt: -2,
-                                        '& input': {
-                                            color: 'white',
-                                            backgroundColor: '#32353b',
-                                            '::placeholder': {
-                                                fontWeight: 'bold',
-                                                color: '#bdbfd4'
-                                            }
-                                        },
-                                        '& .MuiInputAdornment-root': {
-                                            bgcolor: 'transparent'
-                                        }
+                                        '& input::placeholder': { color: '#bdbfd4', fontWeight: 'bold' }
                                     }}
                                 />
                                 <FormHelperText>
-                                    {formik.touched.confirmPassword && formik.errors.confirmPassword
-                                        ? formik.errors.confirmPassword
-                                        : '\u00A0'}
+                                    {formik.touched.confirmPassword && formik.errors.confirmPassword ? formik.errors.confirmPassword : ' '}
                                 </FormHelperText>
                             </FormControl>
 
                             <Button
                                 type='submit'
-                                variant='contained'
                                 fullWidth
-                                // disabled={loading}
+                                variant='contained'
+                                disabled={loading}
                                 sx={{
                                     py: 1.5,
                                     bgcolor: '#de1e88',
-                                    '&:hover': { bgcolor: '#E32A90' },
-                                    color: 'black',
-                                    fontFamily: 'cambira math',
-                                    fontSize: '1rem'
+                                    color: 'white',
+                                    fontFamily: 'Cambria Math',
+                                    fontSize: '1rem',
+                                    '&:hover': { bgcolor: '#E32A90' }
                                 }}
                             >
-                                {loading ? <CircularProgress size={28} color='inherit' /> : 'Sign Up'}
+                                {loading ? <CircularProgress size={28} color='inherit' /> : otpSent ? 'Verify OTP' : 'Submit'}
                             </Button>
+                        </form>
 
-                            <Typography variant='body2' color='white' textAlign={'center'}>
-                                Already have an account?
-                                <Link to='/' style={{ color: '#E32A90', textDecoration: 'underline', marginLeft: '16px' }}>
-                                    Login
-                                </Link>
-                            </Typography>
-                        </Box>
+                        <Typography variant='body2' color='white' align='center' sx={{ mt: 2 }}>
+                            Already have an account?{' '}
+                            <Link to='/' style={{ color: '#E32A90', textDecoration: 'underline' }}>
+                                Login
+                            </Link>
+                        </Typography>
                     </Box>
                 </Box>
             </Box>

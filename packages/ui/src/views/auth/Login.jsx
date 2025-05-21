@@ -16,7 +16,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Top } from './Top'
-import { IconMail, IconLock } from '@tabler/icons-react'
 import axios from 'axios'
 import leftImage from '../../assets/images/auth/screen-5.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
@@ -130,7 +129,7 @@ const Login = () => {
                         component='form'
                         noValidate
                         onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '350px' }}
+                        sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '450px' }}
                     >
                         <FormControl fullWidth error={formik.touched.email && Boolean(formik.errors.email)}>
                             <OutlinedInput
@@ -142,9 +141,7 @@ const Login = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 startAdornment={
-                                    <InputAdornment position='start'>
-                                        <IconMail className='mail-icon' />
-                                    </InputAdornment>
+                                    <InputAdornment position='start'>{/* <IconMail className='mail-icon' /> */}</InputAdornment>
                                 }
                                 sx={{
                                     bgcolor: '#11121c',
@@ -180,9 +177,7 @@ const Login = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 startAdornment={
-                                    <InputAdornment position='start'>
-                                        <IconLock className='lock-icon' />
-                                    </InputAdornment>
+                                    <InputAdornment position='start'>{/* <IconLock className='lock-icon' /> */}</InputAdornment>
                                 }
                                 sx={{
                                     bgcolor: '#11121c',

@@ -117,7 +117,7 @@ export const Top = () => {
 
     return (
         <div>
-            <Stack gap={2} sx={{ mt: 2 }} style={{ width: '350px' }}>
+            <Stack gap={2} sx={{ mt: 2 }} style={{ width: '450px' }}>
                 <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
                     <GoogleCustomButton />
                 </GoogleOAuthProvider>

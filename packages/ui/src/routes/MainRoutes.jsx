@@ -1,7 +1,6 @@
 import { lazy } from 'react'
 
 // project imports
-import MainLayout from '@/layout/MainLayout'
 import Loadable from '@/ui-component/loading/Loadable'
 import PrivateRoute from '@/routes/PrivateRoute' // Import the PrivateRoute component
 
@@ -10,6 +9,9 @@ const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
 
 // agents routing
 // const Agentflows = Loadable(lazy(() => import('@/views/agentflows')))
+
+// MainLayout routing
+const MainLayout = Loadable(lazy(() => import('@/layout/MainLayout')))
 
 // marketplaces routing
 const Marketplaces = Loadable(lazy(() => import('@/views/marketplaces')))
