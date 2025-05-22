@@ -1,23 +1,11 @@
-import {
-    Box,
-    Button,
-    CssBaseline,
-    FormControl,
-    FormHelperText,
-    InputAdornment,
-    OutlinedInput,
-    Typography,
-    CircularProgress
-} from '@mui/material'
+import { Box, Button, CssBaseline, FormControl, FormHelperText, OutlinedInput, Typography, CircularProgress } from '@mui/material'
 import { useState } from 'react'
 import leftImage from '../../assets/images/auth/screen-5.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 import { useNavigate } from 'react-router'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
-import { IconMail } from '@tabler/icons-react'
-import axios from 'axios' // ✅ Import axios
-import { IconX } from '@tabler/icons-react'
+import axios from 'axios'
 
 export const ForgotPassword = () => {
     const [emailSent, setEmailSent] = useState(false)
@@ -98,7 +86,6 @@ export const ForgotPassword = () => {
                             align='center'
                         >
                             Unlock the Power of
-                            <br />
                             <span style={{ color: '#E22A90' }}>THub</span> GenAI Builder Tool.
                         </Typography>
                         <Box component='img' src={leftImage} alt='login image' sx={{ width: '100%', height: 'auto' }} />
@@ -133,7 +120,7 @@ export const ForgotPassword = () => {
                             }
                         }}
                     >
-                        <IconX size={24} />
+                        ✖️
                     </Button>
 
                     {emailSent ? (
@@ -156,11 +143,6 @@ export const ForgotPassword = () => {
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
-                                    startAdornment={
-                                        <InputAdornment position='start'>
-                                            <IconMail className='mail-icon' />
-                                        </InputAdornment>
-                                    }
                                     sx={{
                                         bgcolor: '#11121c',
                                         color: 'white',

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Box, Typography, TextField, Button, Modal, IconButton, Stack } from '@mui/material'
-import { MdOutlineClose } from 'react-icons/md'
 
 function OTP_Modal({ length = 6, onOtpSubmit = () => {}, setShowModal, resendOtp = () => {} }) {
     const [otp, setOtp] = useState(new Array(length).fill(''))
@@ -64,7 +63,7 @@ function OTP_Modal({ length = 6, onOtpSubmit = () => {}, setShowModal, resendOtp
                 }}
             >
                 <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 8, right: 8 }}>
-                    <MdOutlineClose size={22} />
+                    X
                 </IconButton>
 
                 <Typography variant='h6' textAlign='center' mb={3}>

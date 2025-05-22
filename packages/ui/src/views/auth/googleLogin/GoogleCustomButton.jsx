@@ -22,17 +22,14 @@ const GoogleCustomButton = () => {
                 const { data } = await axios.post(`${apiUrl}/api/auth/google`, {
                     code: response.code
                 })
+                console.log('Response Data:', data)
 
-                const { id_token, workspace, userId } = data
-                console.log('ID Token:', id_token)
-                console.log('Workspace:', workspace)
-                console.log('User ID:', userId)
                 dispatch({
                     type: SET_USER_DATA,
                     payload: data.user
                 })
-                localStorage.setItem('id_token', id_token)
-                localStorage.setItem('userId', userId)
+                localStorage.setItem('id_token', data.id_token)
+                localStorage.setItem('userId', data.userId)
                 navigate('/workflows')
             } catch (error) {
                 console.error('Failed to exchange code:', error)
