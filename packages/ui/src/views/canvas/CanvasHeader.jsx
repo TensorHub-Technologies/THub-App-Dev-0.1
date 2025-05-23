@@ -298,6 +298,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
 
     useEffect(() => {
         let url = new URL(window.location.href)
+        console.log('URL:', url)
         let params = new URLSearchParams(url.search)
         const urlTheme = params.get('theme') === 'dark'
 
@@ -361,7 +362,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     const userId = localStorage.getItem('userId')
 
     const handleUrlChange = () => {
-        window.history.state?.idx > 0 ? navigate(-1) : navigate('/', { replace: true })
+        window.history.state?.idx > 0 ? navigate(-1) : navigate('/workflows', { replace: true })
     }
 
     return (

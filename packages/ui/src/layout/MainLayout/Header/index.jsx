@@ -180,18 +180,20 @@ const Header = () => {
                         >
                             {userImg ? (
                                 <Avatar
-                                    sx={{ width: 38, height: 38 }}
-                                    style={{
+                                    sx={{
+                                        width: 38,
+                                        height: 38,
                                         color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
-                                    alt='GS'
+                                    alt={userName?.charAt(0).toUpperCase()}
                                     src={userImg}
                                 />
                             ) : (
                                 <Avatar
-                                    sx={{ width: 38, height: 38 }}
-                                    style={{
+                                    sx={{
+                                        width: 38,
+                                        height: 38,
                                         color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}

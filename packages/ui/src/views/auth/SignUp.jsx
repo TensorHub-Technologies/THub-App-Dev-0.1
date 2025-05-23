@@ -156,7 +156,7 @@ const SignUp = () => {
                     theme: 'colored',
                     style: { background: customization?.isDarkMode ? '#e22a90' : '#3c5ba4', color: 'white' }
                 })
-                window.location.href = '/workflows'
+                navigate('/workflows')
             } else {
                 toast.error('Registration failed', {
                     theme: 'colored',

@@ -23,16 +23,11 @@ export const ForgotPassword = () => {
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values) => {
-            const apiUrl =
-                window.location.hostname === 'localhost'
-                    ? 'http://localhost:2000'
-                    : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-
             setLoading(true)
             setError('')
 
             try {
-                const response = await axios.post(`${apiUrl}/forgot-password`, {
+                const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/forgot-password`, {
                     email: values.email
                 })
                 if (response.status === 200) {
