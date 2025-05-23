@@ -63,13 +63,8 @@ const RegistrationForm = () => {
     }
 
     const checkEmail = async (email) => {
-        const apiUrl =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-
         try {
-            const response = await axios.post(`${apiUrl}/check-email`, { email })
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/check-email`, { email })
             return response.data.exists
         } catch (error) {
             console.error('Error checking email:', error)
@@ -78,11 +73,6 @@ const RegistrationForm = () => {
     }
 
     const handleSubmit = async (values) => {
-        const apiUrl =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-
         try {
             const emailExists = await checkEmail(values.email)
             if (emailExists) {
@@ -95,7 +85,7 @@ const RegistrationForm = () => {
                 workspace
             }
 
-            const response = await axios.post(`${apiUrl}/user/invite/register`, finalValues)
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user/invite/register`, finalValues)
             console.log(response, 'from register backend')
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)

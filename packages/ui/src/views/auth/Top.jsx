@@ -29,7 +29,7 @@ export const Top = () => {
 
         if (code && !accessToken) {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL
+                const apiUrl = import.meta.env.VITE_SERVER_URL
                 const response = await axios.get(`${apiUrl}/getAccessToken`, {
                     params: { code }
                 })
@@ -52,7 +52,7 @@ export const Top = () => {
 
     const getUserData = async () => {
         try {
-            const apiUrl = import.meta.env.VITE_API_URL
+            const apiUrl = import.meta.env.VITE_SERVER_URL
 
             const response = await axios.get(`${apiUrl}/getuserData`, {
                 headers: {

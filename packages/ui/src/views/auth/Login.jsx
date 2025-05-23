@@ -9,6 +9,7 @@ import {
     OutlinedInput,
     FormHelperText,
     Divider,
+    IconButton,
     InputAdornment
 } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
@@ -16,15 +17,21 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Top } from './Top'
 import axios from 'axios'
+import { setUserData } from '@/store/actions'
+import { useDispatch, useSelector } from 'react-redux'
+
+// images
 import leftImage from '../../assets/images/auth/screen-5.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
-import { setUserData } from '@/store/actions'
-import { useDispatch } from 'react-redux'
+import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
+import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const customization = useSelector((state) => state.customization)
 
     const formik = useFormik({
         initialValues: {
@@ -40,7 +47,7 @@ const Login = () => {
         onSubmit: async (values) => {
             try {
                 setLoading(true)
-                const loginResponse = await axios.post(`${import.meta.env.VITE_API_URL}/loginUser`, {
+                const loginResponse = await axios.post(`${import.meta.env.VITE_SERVER_URL}/loginUser`, {
                     email: values.email,
                     password: values.password
                 })
@@ -52,9 +59,9 @@ const Login = () => {
                     throw new Error('User ID not found in login response')
                 }
                 localStorage.setItem('userId', userId)
-
+                console.log('User ID:', userId)
                 // Second API call: Get full user data
-                const userDataResponse = await axios.post(`${import.meta.env.VITE_API_URL}/userdata`, { userId })
+                const userDataResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/userdata`, { params: { userId } })
 
                 const userData = userDataResponse.data[0]
                 console.log('User Data:', userData)
@@ -133,11 +140,11 @@ const Login = () => {
                     />
                     <Top />
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>
-                        <Divider sx={{ flexGrow: 0.2 }} />
+                        <Divider sx={{ flexGrow: 0.25 }} />
                         <Typography sx={{ mx: 2, whiteSpace: 'nowrap' }} variant='h5' color='white'>
-                            Or Login with Email
+                            Login with Email
                         </Typography>
-                        <Divider sx={{ flexGrow: 0.2 }} />
+                        <Divider sx={{ flexGrow: 0.25 }} />
                     </Box>
 
                     <Box
@@ -155,9 +162,6 @@ const Login = () => {
                                 value={formik.values.email}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                startAdornment={
-                                    <InputAdornment position='start'>{/* <IconMail className='mail-icon' /> */}</InputAdornment>
-                                }
                                 sx={{
                                     bgcolor: '#11121c',
                                     color: 'white',
@@ -186,13 +190,21 @@ const Login = () => {
                             <OutlinedInput
                                 id='password'
                                 name='password'
-                                type='password'
+                                type={showPassword ? 'text' : 'password'}
                                 placeholder='Password'
                                 value={formik.values.password}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                startAdornment={
-                                    <InputAdornment position='start'>{/* <IconLock className='lock-icon' /> */}</InputAdornment>
+                                endAdornment={
+                                    <InputAdornment position='end'>
+                                        <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                            {showPassword ? (
+                                                <EyeCloseIcon color={customization.isDarkMode ? 'white' : 'black'} />
+                                            ) : (
+                                                <EyeOpenIcon size={20} />
+                                            )}
+                                        </IconButton>
+                                    </InputAdornment>
                                 }
                                 sx={{
                                     bgcolor: '#11121c',
@@ -250,9 +262,14 @@ const Login = () => {
                         >
                             {loading ? <CircularProgress size={28} color='inherit' /> : 'Sign In With THub'}
                         </Button>
-                        <Typography variant='body2' color='white' textAlign={'center'} sx={{ mb: 4 }}>
+                        <Typography
+                            variant='body2'
+                            color='white'
+                            textAlign={'center'}
+                            sx={{ mb: 4, fontSize: '16px', fontFamily: 'cambria math' }}
+                        >
                             Don&apos;t have an account?
-                            <Link to='/signup' style={{ color: '#E32A90', textDecoration: 'underline', marginLeft: '6px' }}>
+                            <Link to='/signup' style={{ color: '#E32A90', marginLeft: '6px' }}>
                                 Sign up for free
                             </Link>
                         </Typography>

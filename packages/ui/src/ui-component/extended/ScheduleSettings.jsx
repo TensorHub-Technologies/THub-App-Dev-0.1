@@ -41,22 +41,45 @@ const ScheduleSettings = () => {
                 prompt: userPrompt
             }
 
-            let apiUrl
-            if (window.location.hostname === 'demo.thub.tech') {
-                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-            } else if (window.location.hostname === 'localhost') {
-                apiUrl = 'http://localhost:2000'
-            } else {
-                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-            }
-
-            await toast.promise(axios.post(`${apiUrl}/api/schedules`, payload), {
+            await toast.promise(axios.post(`${import.meta.env.VITE_SERVER_URL}/api/schedules`, payload), {
                 loading: 'Saving schedule...',
                 success: 'Schedule saved successfully!',
                 error: 'Failed to save schedule.'
             })
         } catch (err) {
             console.error('Error saving schedule:', err)
+        }
+    }
+
+    const handleSchedule = async () => {
+        if (!flowId) return console.log('Flow ID missing')
+
+        try {
+            const res = await toast.promise(axios.get(`${import.meta.env.VITE_SERVER_URL}/api/schedules/${flowId}`), {
+                loading: 'Fetching active schedules',
+                success: 'Active schedules fetched',
+                error: 'Failed to fetch schedule'
+            })
+            console.log(res, 'response from fetch schedules')
+            if (Array.isArray(res.data)) {
+                setActiveSchedules(res.data)
+                setPopupOpen(true)
+            }
+        } catch (err) {
+            console.error('Failed to fetch schedule:', err)
+        }
+    }
+
+    const handleCancelSchedule = async (id) => {
+        try {
+            await toast.promise(axios.post(`${import.meta.env.VITE_SERVER_URL}/api/schedules/cancel`, { id }), {
+                loading: 'Cancelling...',
+                success: 'Schedule cancelled',
+                error: 'Failed to cancel'
+            })
+            handleSchedule()
+        } catch (err) {
+            console.error(err)
         }
     }
 

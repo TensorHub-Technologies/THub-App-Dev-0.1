@@ -13,12 +13,11 @@ import {
     IconButton,
     Divider
 } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
 import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import { Top } from './Top'
 import { signUpValidationSchema } from './signUpValidationSchema'
-import { ToastContainer, toast } from 'react-toastify'
+import toast, { Toaster } from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import OTP_Modal from './OTP_Modal'
 import { SET_USER_DATA } from '@/store/actions'
@@ -30,8 +29,6 @@ import leftImage from '../../assets/images/auth/screen-5.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 
 const SignUp = () => {
-    const theme = useTheme()
-    const isDarkMode = theme.palette.mode === 'dark'
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
@@ -43,12 +40,9 @@ const SignUp = () => {
     const [email, setEmail] = useState('')
     const [tempUserData, setTempUserData] = useState(null)
 
-    const apiUrl =
-        window.location.hostname === 'localhost' ? 'http://localhost:2000' : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-
     const checkEmail = async (email) => {
         try {
-            const { data } = await axios.post(`${apiUrl}/check-email`, { email })
+            const { data } = await axios.post(`${import.meta.env.VITE_SERVER_URL}/check-email`, { email })
             return data.exists
         } catch (err) {
             console.error('Error checking email:', err)
@@ -59,9 +53,8 @@ const SignUp = () => {
     // Verify the OTP
     const verifyOtp = async (otp) => {
         console.log('OTP Sent to email:', email)
-        console.log('OTP provided:', otp)
         try {
-            const response = await axios.post(`${apiUrl}/verify-otp`, { email, otp })
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/verify-otp`, { email, otp })
             if (response.status === 200) {
                 toast.success('OTP Verification Successful', {
                     theme: 'colored',
@@ -96,7 +89,7 @@ const SignUp = () => {
     const sendOtp = async (email) => {
         setLoading(true)
         try {
-            const response = await axios.post(`${apiUrl}/send-otp`, { email })
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/send-otp`, { email })
             if (response.status === 200) {
                 toast.success('OTP sent successfully', {
                     theme: 'colored',
@@ -149,7 +142,7 @@ const SignUp = () => {
                 subscription_duration: null,
                 subscription_date: new Date().toISOString().split('T')[0]
             }
-            const response = await axios.post(`${apiUrl}/user/register`, payload)
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user/register`, payload)
             if (response.status === 200) {
                 const data = response.data
                 console.log('Registration response:', data)
@@ -163,7 +156,7 @@ const SignUp = () => {
                     theme: 'colored',
                     style: { background: customization?.isDarkMode ? '#e22a90' : '#3c5ba4', color: 'white' }
                 })
-                window.location.href = '/workflows'
+                navigate('/workflows')
             } else {
                 toast.error('Registration failed', {
                     theme: 'colored',
@@ -221,7 +214,7 @@ const SignUp = () => {
     return (
         <Box sx={{ bgcolor: '#121212' }}>
             <CssBaseline />
-            <ToastContainer />
+            <Toaster />
             {showModal && (
                 <OTP_Modal length={6} onOtpSubmit={onOtpSubmit} setShowModal={setShowModal} resendOtp={resendOtp} loading={loading} />
             )}
@@ -280,7 +273,8 @@ const SignUp = () => {
                             bgcolor: 'transparent',
                             p: 3,
                             borderRadius: 2,
-                            boxShadow: 3,
+                            border: 'none',
+                            outline: 'none',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center'
@@ -291,10 +285,10 @@ const SignUp = () => {
 
                         <Box sx={{ display: 'flex', alignItems: 'center', my: 3 }}>
                             <Divider sx={{ flex: 1 }} />
-                            <Typography variant='h6' color='white' sx={{ mx: 2 }}>
-                                Or Register with Email
+                            <Typography variant='h5' color='white' sx={{ mx: 2, fontFamily: 'Cambria Math' }}>
+                                Register with Email
                             </Typography>
-                            <Divider sx={{ flex: 1 }} />
+                            <Divider sx={{ flex: 1, color: 'white', width: '300px' }} />
                         </Box>
 
                         <form onSubmit={formik.handleSubmit} noValidate>
@@ -319,9 +313,24 @@ const SignUp = () => {
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         sx={{
-                                            bgcolor: '#2e2e2e',
+                                            bgcolor: '#11121c',
                                             color: 'white',
-                                            '& input::placeholder': { color: '#bdbfd4', fontWeight: 'bold' }
+                                            '& input': {
+                                                color: 'white',
+                                                backgroundColor: '#11121c'
+                                            },
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: '#bdbfd4'
+                                            },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: '#bdbfd4'
+                                            },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: '#bdbfd4'
+                                            },
+                                            '& .MuiInputAdornment-root .mail-icon': {
+                                                color: '#bdbfd4'
+                                            }
                                         }}
                                     />
                                     <FormHelperText>
@@ -352,9 +361,24 @@ const SignUp = () => {
                                         </InputAdornment>
                                     }
                                     sx={{
-                                        bgcolor: '#32353b',
+                                        bgcolor: '#11121c',
                                         color: 'white',
-                                        '& input::placeholder': { color: '#bdbfd4', fontWeight: 'bold' }
+                                        '& input': {
+                                            color: 'white',
+                                            backgroundColor: '#11121c'
+                                        },
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '& .MuiInputAdornment-root .mail-icon': {
+                                            color: '#bdbfd4'
+                                        }
                                     }}
                                 />
                                 <FormHelperText>
@@ -384,9 +408,24 @@ const SignUp = () => {
                                         </InputAdornment>
                                     }
                                     sx={{
-                                        bgcolor: '#32353b',
+                                        bgcolor: '#11121c',
                                         color: 'white',
-                                        '& input::placeholder': { color: '#bdbfd4', fontWeight: 'bold' }
+                                        '& input': {
+                                            color: 'white',
+                                            backgroundColor: '#11121c'
+                                        },
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '& .MuiInputAdornment-root .mail-icon': {
+                                            color: '#bdbfd4'
+                                        }
                                     }}
                                 />
                                 <FormHelperText>
@@ -401,18 +440,28 @@ const SignUp = () => {
                                 disabled={loading}
                                 sx={{
                                     py: 1.5,
-                                    bgcolor: '#de1e88',
+                                    bgcolor: loading ? '#E22A90' : '#de1e88',
                                     color: 'white',
                                     fontFamily: 'Cambria Math',
                                     fontSize: '1rem',
-                                    '&:hover': { bgcolor: '#E32A90' }
+                                    '&:hover': { bgcolor: '#E32A90' },
+                                    '&.Mui-disabled': {
+                                        bgcolor: '#E22A90',
+                                        color: 'white',
+                                        opacity: 0.7
+                                    }
                                 }}
                             >
                                 {loading ? <CircularProgress size={28} color='inherit' /> : otpSent ? 'Verify OTP' : 'Submit'}
                             </Button>
                         </form>
 
-                        <Typography variant='body2' color='white' align='center' sx={{ mt: 2 }}>
+                        <Typography
+                            variant='body2'
+                            color='white'
+                            align='center'
+                            sx={{ mt: 2, fontFamily: 'Cambria Math', fontSize: '16px' }}
+                        >
                             Already have an account?{' '}
                             <Link to='/' style={{ color: '#E32A90', textDecoration: 'underline' }}>
                                 Login

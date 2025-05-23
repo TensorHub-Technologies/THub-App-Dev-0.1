@@ -118,14 +118,7 @@ const Subscription = () => {
         }
         let plan_Id = planId
         const uid = user.uid
-        let apiUrl
-        if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app/'
-        } else if (window.location.hostname === 'localhost') {
-            apiUrl = 'http://localhost:2000/'
-        } else {
-            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app/'
-        }
+        let apiUrl = import.meta.env.VITE_SERVER_URL
 
         const handleSubscribe = async (plan) => {
             const requestData = {
@@ -141,7 +134,7 @@ const Subscription = () => {
             }
 
             try {
-                const response = await axios.post(`${apiUrl}api/payments/create-subscription`, requestData)
+                const response = await axios.post(`${apiUrl}/api/payments/create-subscription`, requestData)
                 console.log(response, 'response from create-subscription')
                 const paymentData = response.data
                 // Create a form dynamically to post the paymentData to PayU's payment gateway

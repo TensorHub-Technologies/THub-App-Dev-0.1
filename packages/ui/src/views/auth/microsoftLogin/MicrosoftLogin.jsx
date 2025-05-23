@@ -47,7 +47,7 @@ export const MicrosoftLogin = () => {
                                 workspace: ''
                             }
 
-                            const apiUrl = import.meta.env.VITE_API_URL
+                            const apiUrl = import.meta.env.VITE_SERVER_URL
                             axios
                                 .post(`${apiUrl}/microuser`, payload)
                                 .then((response) => {

@@ -9,30 +9,23 @@ import { SET_USER_DATA } from '@/store/actions'
 const GoogleCustomButton = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    console.log(import.meta.env.VITE_SERVER_URL, 'server url')
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             console.log('Authorization Code:', response)
 
-            const apiUrl =
-                window.location.hostname === 'localhost'
-                    ? 'http://localhost:2000'
-                    : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-
             try {
-                const { data } = await axios.post(`${apiUrl}/api/auth/google`, {
+                const { data } = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/google`, {
                     code: response.code
                 })
+                console.log('Response Data:', data)
 
-                const { id_token, workspace, userId } = data
-                console.log('ID Token:', id_token)
-                console.log('Workspace:', workspace)
-                console.log('User ID:', userId)
                 dispatch({
                     type: SET_USER_DATA,
                     payload: data.user
                 })
-                localStorage.setItem('id_token', id_token)
-                localStorage.setItem('userId', userId)
+                localStorage.setItem('id_token', data.id_token)
+                localStorage.setItem('userId', data.userId)
                 navigate('/workflows')
             } catch (error) {
                 console.error('Failed to exchange code:', error)

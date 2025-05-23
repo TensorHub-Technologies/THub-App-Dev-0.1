@@ -47,6 +47,8 @@ const Header = () => {
         setAnchorEl(null)
     }
 
+    const userId = localStorage.getItem('userId')
+    console.log(userImg, 'user Image use state')
     const handleLogout = () => {
         if (loginType === 'azure_ad') {
             instance.logoutPopup({
@@ -64,17 +66,11 @@ const Header = () => {
     }
 
     useEffect(() => {
-        const storeUserData = async () => {
-            const urlParams = new URLSearchParams(window.location.search)
-            const userId = localStorage.getItem('userId') || urlParams.get('uid')
+        const getUserData = async () => {
             if (userId) {
-                const apiUrl =
-                    window.location.hostname === 'localhost'
-                        ? 'http://localhost:2000/userdata'
-                        : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
-
                 try {
-                    const response = await axios.post(apiUrl, { userId })
+                    const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/userdata`, { params: { userId } })
+                    console.log('User Data:', response)
                     if (response.status === 200) {
                         const userData = response?.data[0]
 
@@ -134,15 +130,15 @@ const Header = () => {
             }
         }
 
-        storeUserData()
-    }, [dispatch])
+        getUserData()
+    }, [dispatch, userId])
 
     const changeDarkMode = () => {
         const newTheme = !customization.isDarkMode
         dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
         localStorage.setItem('isDarkMode', newTheme)
         const url = new URL(window.location.href)
-        url.searchParams.set('theme', newTheme ? 'dark' : 'lite')
+        url.searchParams.set('theme', newTheme ? 'dark' : 'dark')
         window.history.replaceState({}, '', url)
     }
 
@@ -184,18 +180,20 @@ const Header = () => {
                         >
                             {userImg ? (
                                 <Avatar
-                                    sx={{ width: 38, height: 38 }}
-                                    style={{
+                                    sx={{
+                                        width: 38,
+                                        height: 38,
                                         color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
-                                    alt='GS'
+                                    alt={userName?.charAt(0).toUpperCase()}
                                     src={userImg}
                                 />
                             ) : (
                                 <Avatar
-                                    sx={{ width: 38, height: 38 }}
-                                    style={{
+                                    sx={{
+                                        width: 38,
+                                        height: 38,
                                         color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
