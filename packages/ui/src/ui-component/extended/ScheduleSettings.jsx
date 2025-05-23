@@ -5,18 +5,12 @@ import { useState } from 'react'
 import axios from 'axios'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import toast, { Toaster } from 'react-hot-toast'
-import { useSelector } from 'react-redux'
-import IconInfo from '@/assets/custom-svg/IconInfo'
-import ActiveSchedulesPopup from './ActiveSchedulesPopup'
 
 const ScheduleSettings = () => {
     // Separate state for schedule and provider
-    const [selectedSchedule, setSelectedSchedule] = useState('Once')
+    const [selectedSchedule, setSelectedSchedule] = useState('At Regular Intervals')
     const [followUpPromptsConfig, setFollowUpPromptsConfig] = useState({})
     const [userPrompt, setUserPrompt] = useState('')
-    const [popupOpen, setPopupOpen] = useState(false)
-    const [activeSchedules, setActiveSchedules] = useState([])
-    const customization = useSelector((state) => state.customization)
 
     const flowId = window.location.pathname.split('/').pop()
 
@@ -90,12 +84,12 @@ const ScheduleSettings = () => {
     }
 
     const schedulesEmail = [
-        // { id: 1, name: 'At Regular Intervals' },
-        { id: 1, name: 'Once' },
-        { id: 2, name: 'Every day' },
-        { id: 3, name: 'Days of the week' },
-        { id: 4, name: 'Days of the month' },
-        { id: 5, name: 'Specified dates' }
+        { id: 1, name: 'At Regular Intervals' },
+        { id: 2, name: 'Once' },
+        { id: 3, name: 'Every day' },
+        { id: 4, name: 'Days of the week' },
+        { id: 5, name: 'Days of the month' },
+        { id: 6, name: 'Specified dates' }
     ]
 
     const daysOfWeekOptions = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -121,24 +115,10 @@ const ScheduleSettings = () => {
         <>
             <Toaster position='top-right' reverseOrder={false} />
             <Box>
-                <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography variant='h4'>Run Scenario</Typography>
-                        <button
-                            style={{ background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer' }}
-                            onClick={handleSchedule}
-                        >
-                            <IconInfo color={customization.isDarkMode ? 'white' : 'black'} />
-                        </button>
-                    </Box>
+                <Typography variant='h5' sx={{ mb: 5 }} gutterBottom>
+                    Run Scenario
+                </Typography>
 
-                    <ActiveSchedulesPopup
-                        open={popupOpen}
-                        onClose={() => setPopupOpen(false)}
-                        schedules={activeSchedules}
-                        onCancel={handleCancelSchedule}
-                    />
-                </Box>
                 {/* Schedule selection */}
                 <FormControl fullWidth size='medium' sx={{ mb: 2 }}>
                     <Select value={selectedSchedule} onChange={handleScheduleChange} displayEmpty>
@@ -158,7 +138,7 @@ const ScheduleSettings = () => {
                 </FormControl>
 
                 {/* Conditionally render based on schedule choice */}
-                {/* {selectedSchedule === 'At Regular Intervals' && (
+                {selectedSchedule === 'At Regular Intervals' && (
                     <>
                         <TextField
                             label='Enter minutes'
@@ -172,7 +152,7 @@ const ScheduleSettings = () => {
                             The time interval in which the scenario should be repeated (in minutes).
                         </Typography>
                     </>
-                )} */}
+                )}
 
                 {selectedSchedule === 'Once' && (
                     <>
