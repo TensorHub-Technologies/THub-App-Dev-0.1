@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
@@ -16,17 +15,21 @@ import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 import IconSettings from '@/assets/custom-svg/IconSettings'
 import IconUserPlus from '@/assets/custom-svg/IconUserPlus'
 import IconLogout from '@/assets/custom-svg/IconLogout'
+import { useMsal } from '@azure/msal-react'
 
-const Header = ({ handleLeftDrawerToggle }) => {
+const Header = () => {
     const [userName, setUserName] = useState('')
     const [userImg, setUserImg] = useState('')
     const [userFName, setUserFullName] = useState('')
+    const [loginType, setLoginType] = useState('')
     const [anchorEl, setAnchorEl] = useState(null)
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const open = Boolean(anchorEl)
+
+    const { instance } = useMsal()
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -44,43 +47,30 @@ const Header = ({ handleLeftDrawerToggle }) => {
         setAnchorEl(null)
     }
 
+    const userId = localStorage.getItem('userId')
+    console.log(userImg, 'user Image use state')
     const handleLogout = () => {
+        if (loginType === 'azure_ad') {
+            instance.logoutPopup({
+                postLogoutRedirectUri: '/'
+            })
+        }
         localStorage.removeItem('userId')
         sessionStorage.removeItem('modalShown')
+        localStorage.removeItem('access_token')
         dispatch(setUserData(''))
         setUserName('')
         setUserImg('')
-        const isLocalhost = window.location.hostname === 'localhost'
-        let redirectUrl
-
-        if (window.location.hostname === 'demo.thub.tech') {
-            redirectUrl = 'https://thub-web-2-0-0-378678297066.us-central1.run.app/'
-        } else {
-            redirectUrl = customization.isDarkMode
-                ? isLocalhost
-                    ? 'http://localhost:5173'
-                    : 'https://thub.tech'
-                : isLocalhost
-                ? 'http://localhost:5173'
-                : 'https://thub.tech'
-        }
-
-        window.location.href = redirectUrl
+        navigate('/')
         setAnchorEl(null)
     }
 
     useEffect(() => {
-        const storeUserData = async () => {
-            const urlParams = new URLSearchParams(window.location.search)
-            const userId = localStorage.getItem('userId') || urlParams.get('uid')
+        const getUserData = async () => {
             if (userId) {
-                const apiUrl =
-                    window.location.hostname === 'localhost'
-                        ? 'http://localhost:2000/userdata'
-                        : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/userdata'
-
                 try {
-                    const response = await axios.post(apiUrl, { userId })
+                    const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/userdata`, { params: { userId } })
+                    console.log('User Data:', response)
                     if (response.status === 200) {
                         const userData = response?.data[0]
 
@@ -91,6 +81,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         setUserName(name)
                         const proPicture = userData?.picture
                         setUserImg(proPicture)
+                        setLoginType(userData?.login_type)
 
                         const dateObj = new Date(userData?.subscription_date)
 
@@ -139,15 +130,15 @@ const Header = ({ handleLeftDrawerToggle }) => {
             }
         }
 
-        storeUserData()
-    }, [dispatch])
+        getUserData()
+    }, [dispatch, userId])
 
     const changeDarkMode = () => {
         const newTheme = !customization.isDarkMode
         dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
         localStorage.setItem('isDarkMode', newTheme)
         const url = new URL(window.location.href)
-        url.searchParams.set('theme', newTheme ? 'dark' : 'lite')
+        url.searchParams.set('theme', newTheme ? 'dark' : 'dark')
         window.history.replaceState({}, '', url)
     }
 
@@ -175,7 +166,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 />
             </IconButton>
             <Box sx={{ ml: 2 }}></Box>
-            <ProfileSection username={localStorage.getItem('username') ?? ''} handleLogout={handleLogout} />
+            <ProfileSection />
             <React.Fragment>
                 <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                     <Tooltip title={userFName}>
@@ -189,18 +180,20 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         >
                             {userImg ? (
                                 <Avatar
-                                    sx={{ width: 38, height: 38 }}
-                                    style={{
+                                    sx={{
+                                        width: 38,
+                                        height: 38,
                                         color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
-                                    alt='GS'
+                                    alt={userName?.charAt(0).toUpperCase()}
                                     src={userImg}
                                 />
                             ) : (
                                 <Avatar
-                                    sx={{ width: 38, height: 38 }}
-                                    style={{
+                                    sx={{
+                                        width: 38,
+                                        height: 38,
                                         color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
@@ -268,10 +261,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
             </React.Fragment>
         </>
     )
-}
-
-Header.propTypes = {
-    handleLeftDrawerToggle: PropTypes.func
 }
 
 export default Header

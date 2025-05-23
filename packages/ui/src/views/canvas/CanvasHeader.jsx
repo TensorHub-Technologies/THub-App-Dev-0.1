@@ -90,11 +90,6 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
     const [anchorEl, setAnchorEl] = useState(null)
     const open = Boolean(anchorEl)
 
-    // user
-    const [user, setUser] = useState('')
-    const [userImg, setuserImg] = useState('')
-    const [userId, setUserId] = useState('')
-
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const canvas = useSelector((state) => state.canvas)
     const [canvasDataStore, setCanvasDataStore] = useState(canvas)
@@ -303,6 +298,7 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
 
     useEffect(() => {
         let url = new URL(window.location.href)
+        console.log('URL:', url)
         let params = new URLSearchParams(url.search)
         const urlTheme = params.get('theme') === 'dark'
 
@@ -363,46 +359,10 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
         }
     }))
 
-    useEffect(() => {
-        const userId = localStorage.getItem('userId')
-        setUserId(userId)
-
-        const apiUrl =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/userdata'
-                : 'https://thub-web-ser-2-0ls-dot-thub-dev-420204.uc.r.appspot.com/userdata'
-
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userId: userId
-            })
-        })
-            .then((response) => {
-                if (response.ok) {
-                    response.json().then((user) => {
-                        const name = user[0].name[0]
-                        const img = user[0].picture
-                        const showName = name.toUpperCase()
-                        setUser(showName)
-                        setuserImg(img)
-                    })
-                } else {
-                    console.error('Error:', response.statusText)
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error)
-            })
-    }, [])
+    const userId = localStorage.getItem('userId')
 
     const handleUrlChange = () => {
-        window.history.state && window.history.state.idx > 0
-            ? navigate(`/?theme=${customization.isDarkMode ? 'dark' : 'lite'}&uid=${userId}`)
-            : navigate('/', { replace: true })
+        window.history.state?.idx > 0 ? navigate(-1) : navigate('/workflows', { replace: true })
     }
 
     return (

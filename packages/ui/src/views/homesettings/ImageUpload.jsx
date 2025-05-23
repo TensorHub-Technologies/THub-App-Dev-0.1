@@ -28,17 +28,13 @@ function ImageUpload() {
     }
     const handleImageChange = async (event) => {
         const file = event.target.files[0]
-        const apiUrl =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
 
         if (file) {
             const formData = new FormData()
             formData.append('file', file)
             formData.append('userId', user.uid)
 
-            const uploadPromise = axios.post(`${apiUrl}/api/image-upload`, formData, {
+            const uploadPromise = axios.post(`${import.meta.env.VITE_SERVER_URL}/api/image-upload`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
 

@@ -29,18 +29,13 @@ const UserDetailsTable = () => {
     }
 
     const handleSave = async () => {
-        const url =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-
         const payload = {
             field: editField.toLowerCase(),
             value: editValue,
             userId: user.uid
         }
 
-        const updateRequest = axios.post(`${url}/api/users/update`, payload)
+        const updateRequest = axios.post(`${import.meta.env.VITE_SERVER_URL}/api/users/update`, payload)
 
         toast.promise(
             updateRequest

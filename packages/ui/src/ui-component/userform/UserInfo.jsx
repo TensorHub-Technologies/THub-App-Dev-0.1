@@ -46,13 +46,8 @@ const UserInfo = ({ setShowModal, showModal }) => {
     })
 
     const handleSubmit = async (values, { resetForm }) => {
-        const Url =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/updateUser'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/updateUser'
-
         try {
-            const response = await axios.post(Url, { ...values, uid })
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/updateUser`, { ...values, uid })
             if (response.status === 200) {
                 enqueueSnackbar({
                     message: 'User data updated successfully',

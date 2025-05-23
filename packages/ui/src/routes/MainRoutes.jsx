@@ -1,15 +1,17 @@
 import { lazy } from 'react'
 
 // project imports
-import MainLayout from '@/layout/MainLayout'
 import Loadable from '@/ui-component/loading/Loadable'
-import RequireUID from './RequireUID'
+import PrivateRoute from '@/routes/PrivateRoute' // Import the PrivateRoute component
 
 // chatflows routing
 const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
 
 // agents routing
 // const Agentflows = Loadable(lazy(() => import('@/views/agentflows')))
+
+// MainLayout routing
+const MainLayout = Loadable(lazy(() => import('@/layout/MainLayout')))
 
 // marketplaces routing
 const Marketplaces = Loadable(lazy(() => import('@/views/marketplaces')))
@@ -46,78 +48,130 @@ const Settings = Loadable(lazy(() => import('@/views/homesettings')))
 const MainRoutes = {
     path: '/',
     element: (
-        <RequireUID>
+        <PrivateRoute>
             <MainLayout />
-        </RequireUID>
+        </PrivateRoute>
     ),
     children: [
         {
-            path: '/',
-            element: <Chatflows />
-        },
-        {
             path: '/workflows',
-            element: <Chatflows />
+            element: (
+                <PrivateRoute>
+                    <Chatflows />
+                </PrivateRoute>
+            )
         },
-        // {
-        //     path: '/agentflows',
-        //     element: <Agentflows />
-        // },
         {
             path: '/templates',
-            element: <Marketplaces />
+            element: (
+                <PrivateRoute>
+                    <Marketplaces />
+                </PrivateRoute>
+            )
         },
         {
             path: '/apikey',
-            element: <APIKey />
+            element: (
+                <PrivateRoute>
+                    <APIKey />
+                </PrivateRoute>
+            )
         },
         {
             path: '/tools',
-            element: <Tools />
+            element: (
+                <PrivateRoute>
+                    <Tools />
+                </PrivateRoute>
+            )
         },
         {
             path: '/assistants',
-            element: <Assistants />
+            element: (
+                <PrivateRoute>
+                    <Assistants />
+                </PrivateRoute>
+            )
         },
         {
             path: '/credentials',
-            element: <Credentials />
+            element: (
+                <PrivateRoute>
+                    <Credentials />
+                </PrivateRoute>
+            )
         },
         {
             path: '/variables',
-            element: <Variables />
+            element: (
+                <PrivateRoute>
+                    <Variables />
+                </PrivateRoute>
+            )
         },
         {
             path: '/document-stores',
-            element: <Documents />
+            element: (
+                <PrivateRoute>
+                    <Documents />
+                </PrivateRoute>
+            )
         },
         {
             path: '/document-stores/:id',
-            element: <DocumentStoreDetail />
+            element: (
+                <PrivateRoute>
+                    <DocumentStoreDetail />
+                </PrivateRoute>
+            )
         },
         {
             path: '/document-stores/chunks/:id/:id',
-            element: <ShowStoredChunks />
+            element: (
+                <PrivateRoute>
+                    <ShowStoredChunks />
+                </PrivateRoute>
+            )
         },
         {
             path: '/document-stores/:id/:name',
-            element: <LoaderConfigPreviewChunks />
+            element: (
+                <PrivateRoute>
+                    <LoaderConfigPreviewChunks />
+                </PrivateRoute>
+            )
         },
         {
             path: '/subscription',
-            element: <Subscription />
+            element: (
+                <PrivateRoute>
+                    <Subscription />
+                </PrivateRoute>
+            )
         },
         {
             path: '/subscription/api/payments/payment-success',
-            element: <Subscription />
+            element: (
+                <PrivateRoute>
+                    <Subscription />
+                </PrivateRoute>
+            )
         },
         {
             path: '/subscription/api/payments/payment-failure',
-            element: <Subscription />
+            element: (
+                <PrivateRoute>
+                    <Subscription />
+                </PrivateRoute>
+            )
         },
         {
             path: '/setting',
-            element: <Settings />
+            element: (
+                <PrivateRoute>
+                    <Settings />
+                </PrivateRoute>
+            )
         }
     ]
 }

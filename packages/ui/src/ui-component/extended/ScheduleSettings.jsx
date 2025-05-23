@@ -47,16 +47,7 @@ const ScheduleSettings = () => {
                 prompt: userPrompt
             }
 
-            let apiUrl
-            if (window.location.hostname === 'demo.thub.tech') {
-                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-            } else if (window.location.hostname === 'localhost') {
-                apiUrl = 'http://localhost:2000'
-            } else {
-                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-            }
-
-            await toast.promise(axios.post(`${apiUrl}/api/schedules`, payload), {
+            await toast.promise(axios.post(`${import.meta.env.VITE_SERVER_URL}/api/schedules`, payload), {
                 loading: 'Saving schedule...',
                 success: 'Schedule saved successfully!',
                 error: 'Failed to save schedule.'
@@ -69,17 +60,8 @@ const ScheduleSettings = () => {
     const handleSchedule = async () => {
         if (!flowId) return console.log('Flow ID missing')
 
-        let apiUrl
-        if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-        } else if (window.location.hostname === 'localhost') {
-            apiUrl = 'http://localhost:2000'
-        } else {
-            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-        }
-
         try {
-            const res = await toast.promise(axios.get(`${apiUrl}/api/schedules/${flowId}`), {
+            const res = await toast.promise(axios.get(`${import.meta.env.VITE_SERVER_URL}/api/schedules/${flowId}`), {
                 loading: 'Fetching active schedules',
                 success: 'Active schedules fetched',
                 error: 'Failed to fetch schedule'
@@ -95,16 +77,8 @@ const ScheduleSettings = () => {
     }
 
     const handleCancelSchedule = async (id) => {
-        let apiUrl
-        if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-        } else if (window.location.hostname === 'localhost') {
-            apiUrl = 'http://localhost:2000'
-        } else {
-            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-        }
         try {
-            await toast.promise(axios.post(`${apiUrl}/api/schedules/cancel`, { id }), {
+            await toast.promise(axios.post(`${import.meta.env.VITE_SERVER_URL}/api/schedules/cancel`, { id }), {
                 loading: 'Cancelling...',
                 success: 'Schedule cancelled',
                 error: 'Failed to cancel'
