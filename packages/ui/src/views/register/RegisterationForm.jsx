@@ -16,6 +16,15 @@ const RegistrationForm = () => {
     const [workspace, setWorkspace] = useState('')
     const url = window.location.href || ''
 
+    let apiUrl
+    if (window.location.hostname === 'demo.thub.tech') {
+        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    } else if (window.location.hostname === 'localhost') {
+        apiUrl = 'http://localhost:2000'
+    } else {
+        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    }
+
     useEffect(() => {
         const workspaceHost = new URL(url).hostname
         const workspace = workspaceHost.split('.')[0]
@@ -62,26 +71,8 @@ const RegistrationForm = () => {
         dispatch(hideRegisterModal())
     }
 
-    let apiUrl
-    if (window.location.hostname === 'demo.thub.tech') {
-        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-    } else if (window.location.hostname === 'localhost') {
-        apiUrl = 'http://localhost:2000'
-    } else {
-        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-    }
-
     const checkEmail = async (email) => {
         try {
-            let apiUrl
-            if (window.location.hostname === 'demo.thub.tech') {
-                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-            } else if (window.location.hostname === 'localhost') {
-                apiUrl = 'http://localhost:2000'
-            } else {
-                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-            }
-
             const response = await axios.post(`${apiUrl}/check-email`, { email })
             return response.data.exists
         } catch (error) {

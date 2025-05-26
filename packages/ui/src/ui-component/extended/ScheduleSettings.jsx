@@ -19,6 +19,15 @@ const ScheduleSettings = () => {
 
     const flowId = window.location.pathname.split('/').pop()
 
+    let apiUrl
+    if (window.location.hostname === 'demo.thub.tech') {
+        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    } else if (window.location.hostname === 'localhost') {
+        apiUrl = 'http://localhost:2000'
+    } else {
+        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    }
+
     const handleScheduleChange = (e) => {
         setSelectedSchedule(e.target.value)
         setFollowUpPromptsConfig({})
@@ -44,14 +53,6 @@ const ScheduleSettings = () => {
                 scheduleType: selectedSchedule,
                 config: followUpPromptsConfig,
                 prompt: userPrompt
-            }
-            let apiUrl
-            if (window.location.hostname === 'demo.thub.tech') {
-                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-            } else if (window.location.hostname === 'localhost') {
-                apiUrl = 'http://localhost:2000'
-            } else {
-                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
             }
 
             await toast.promise(axios.post(`${apiUrl}/api/schedules`, payload), {

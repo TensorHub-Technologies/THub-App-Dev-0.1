@@ -41,6 +41,15 @@ const Subscription = () => {
         isActive: true
     })
 
+    let apiUrl
+    if (window.location.hostname === 'demo.thub.tech') {
+        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    } else if (window.location.hostname === 'localhost') {
+        apiUrl = 'http://localhost:2000'
+    } else {
+        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    }
+
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)
@@ -118,14 +127,6 @@ const Subscription = () => {
         }
         let plan_Id = planId
         const uid = user.uid
-        let apiUrl
-        if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-        } else if (window.location.hostname === 'localhost') {
-            apiUrl = 'http://localhost:2000'
-        } else {
-            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-        }
 
         const handleSubscribe = async (plan) => {
             const requestData = {
