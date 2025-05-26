@@ -47,7 +47,15 @@ const Login = () => {
         onSubmit: async (values) => {
             try {
                 setLoading(true)
-                const loginResponse = await axios.post(`${import.meta.env.VITE_SERVER_URL}/loginUser`, {
+                let apiUrl
+                if (window.location.hostname === 'demo.thub.tech') {
+                    apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                } else if (window.location.hostname === 'localhost') {
+                    apiUrl = 'http://localhost:2000'
+                } else {
+                    apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+                }
+                const loginResponse = await axios.post(`${apiUrl}/loginUser`, {
                     email: values.email,
                     password: values.password
                 })
@@ -61,7 +69,7 @@ const Login = () => {
                 localStorage.setItem('userId', userId)
                 console.log('User ID:', userId)
                 // Second API call: Get full user data
-                const userDataResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/userdata`, { params: { userId } })
+                const userDataResponse = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
 
                 const userData = userDataResponse.data[0]
                 console.log('User Data:', userData)

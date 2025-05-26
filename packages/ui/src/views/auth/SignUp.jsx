@@ -21,6 +21,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import OTP_Modal from './OTP_Modal'
 import { SET_USER_DATA } from '@/store/actions'
+import { useNavigate } from 'react-router-dom'
 
 // images
 import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
@@ -31,6 +32,7 @@ import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 const SignUp = () => {
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
@@ -40,9 +42,18 @@ const SignUp = () => {
     const [email, setEmail] = useState('')
     const [tempUserData, setTempUserData] = useState(null)
 
+    let apiUrl
+    if (window.location.hostname === 'demo.thub.tech') {
+        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    } else if (window.location.hostname === 'localhost') {
+        apiUrl = 'http://localhost:2000'
+    } else {
+        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    }
+
     const checkEmail = async (email) => {
         try {
-            const { data } = await axios.post(`${import.meta.env.VITE_SERVER_URL}/check-email`, { email })
+            const { data } = await axios.post(`${apiUrl}/check-email`, { email })
             return data.exists
         } catch (err) {
             console.error('Error checking email:', err)
@@ -54,7 +65,7 @@ const SignUp = () => {
     const verifyOtp = async (otp) => {
         console.log('OTP Sent to email:', email)
         try {
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/verify-otp`, { email, otp })
+            const response = await axios.post(`${apiUrl}/verify-otp`, { email, otp })
             if (response.status === 200) {
                 toast.success('OTP Verification Successful', {
                     theme: 'colored',
@@ -89,7 +100,7 @@ const SignUp = () => {
     const sendOtp = async (email) => {
         setLoading(true)
         try {
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/send-otp`, { email })
+            const response = await axios.post(`${apiUrl}/send-otp`, { email })
             if (response.status === 200) {
                 toast.success('OTP sent successfully', {
                     theme: 'colored',
@@ -142,7 +153,7 @@ const SignUp = () => {
                 subscription_duration: null,
                 subscription_date: new Date().toISOString().split('T')[0]
             }
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user/register`, payload)
+            const response = await axios.post(`${apiUrl}/user/register`, payload)
             if (response.status === 200) {
                 const data = response.data
                 console.log('Registration response:', data)

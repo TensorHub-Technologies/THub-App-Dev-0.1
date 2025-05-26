@@ -27,7 +27,16 @@ export const ForgotPassword = () => {
             setError('')
 
             try {
-                const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/forgot-password`, {
+                let apiUrl
+                if (window.location.hostname === 'demo.thub.tech') {
+                    apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                } else if (window.location.hostname === 'localhost') {
+                    apiUrl = 'http://localhost:2000'
+                } else {
+                    apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+                }
+
+                const response = await axios.post(`${apiUrl}/forgot-password`, {
                     email: values.email
                 })
                 if (response.status === 200) {
