@@ -45,11 +45,20 @@ const LoginForm = () => {
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
+            let apiUrl
+            if (window.location.hostname === 'demo.thub.tech') {
+                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+            } else if (window.location.hostname === 'localhost') {
+                apiUrl = 'http://localhost:2000'
+            } else {
+                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            }
+
             const finalValues = {
                 ...values,
                 workspace
             }
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/loginUser`, finalValues)
+            const response = await axios.post(`${apiUrl}/loginUser`, finalValues)
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
                 window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`

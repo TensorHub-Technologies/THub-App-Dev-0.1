@@ -26,10 +26,17 @@ export const Top = () => {
         const urlParams = new URLSearchParams(query)
         const code = urlParams.get('code')
         const accessToken = localStorage.getItem('access_token')
+        let apiUrl
+        if (window.location.hostname === 'demo.thub.tech') {
+            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        } else if (window.location.hostname === 'localhost') {
+            apiUrl = 'http://localhost:2000'
+        } else {
+            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        }
 
         if (code && !accessToken) {
             try {
-                const apiUrl = import.meta.env.VITE_SERVER_URL
                 const response = await axios.get(`${apiUrl}/getAccessToken`, {
                     params: { code }
                 })
@@ -52,8 +59,6 @@ export const Top = () => {
 
     const getUserData = async () => {
         try {
-            const apiUrl = import.meta.env.VITE_SERVER_URL
-
             const response = await axios.get(`${apiUrl}/getuserData`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('access_token')}`
@@ -101,7 +106,7 @@ export const Top = () => {
     return (
         <div>
             <Stack gap={2} sx={{ mt: 2 }} style={{ width: '450px' }}>
-                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                <GoogleOAuthProvider clientId='378678297066-q6qeqtpfh0ih4e99lv887o1rgduehs9u.apps.googleusercontent.com'>
                     <GoogleCustomButton />
                 </GoogleOAuthProvider>
                 <Button

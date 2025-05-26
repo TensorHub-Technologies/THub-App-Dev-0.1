@@ -62,9 +62,27 @@ const RegistrationForm = () => {
         dispatch(hideRegisterModal())
     }
 
+    let apiUrl
+    if (window.location.hostname === 'demo.thub.tech') {
+        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    } else if (window.location.hostname === 'localhost') {
+        apiUrl = 'http://localhost:2000'
+    } else {
+        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    }
+
     const checkEmail = async (email) => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/check-email`, { email })
+            let apiUrl
+            if (window.location.hostname === 'demo.thub.tech') {
+                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+            } else if (window.location.hostname === 'localhost') {
+                apiUrl = 'http://localhost:2000'
+            } else {
+                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            }
+
+            const response = await axios.post(`${apiUrl}/check-email`, { email })
             return response.data.exists
         } catch (error) {
             console.error('Error checking email:', error)
@@ -85,7 +103,7 @@ const RegistrationForm = () => {
                 workspace
             }
 
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/user/invite/register`, finalValues)
+            const response = await axios.post(`${apiUrl}/user/invite/register`, finalValues)
             console.log(response, 'from register backend')
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)

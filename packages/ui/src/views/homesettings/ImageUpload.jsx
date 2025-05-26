@@ -27,6 +27,15 @@ function ImageUpload() {
         inputRef.current.click()
     }
     const handleImageChange = async (event) => {
+        let apiUrl
+        if (window.location.hostname === 'demo.thub.tech') {
+            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        } else if (window.location.hostname === 'localhost') {
+            apiUrl = 'http://localhost:2000'
+        } else {
+            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        }
+
         const file = event.target.files[0]
 
         if (file) {
@@ -34,7 +43,7 @@ function ImageUpload() {
             formData.append('file', file)
             formData.append('userId', user.uid)
 
-            const uploadPromise = axios.post(`${import.meta.env.VITE_SERVER_URL}/api/image-upload`, formData, {
+            const uploadPromise = axios.post(`${apiUrl}/api/image-upload`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
 
