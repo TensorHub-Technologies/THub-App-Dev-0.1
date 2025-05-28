@@ -17,6 +17,7 @@ const GoogleCustomButton = () => {
     } else {
         apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
     }
+    console.log('Google Client ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID)
 
     console.log('API URL:', apiUrl)
     const login = useGoogleLogin({
