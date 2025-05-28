@@ -94,7 +94,7 @@ function OTP_Modal({ length = 6, onOtpSubmit = () => {}, setShowModal, resendOtp
                 </Stack>
 
                 <Stack direction='row' spacing={2} justifyContent='center'>
-                    <Button variant='outlined' sx={{ color: 'white', border: '1px solid #E22A90' }} onClick={handleResendOtp}>
+                    <Button variant='outlined' sx={{ color: 'black', border: '1px solid #E22A90' }} onClick={handleResendOtp}>
                         Resend
                     </Button>
                     <Button
