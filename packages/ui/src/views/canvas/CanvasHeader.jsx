@@ -298,7 +298,6 @@ const CanvasHeader = ({ chatflow, isAgentCanvas, handleSaveFlow, handleDeleteFlo
 
     useEffect(() => {
         let url = new URL(window.location.href)
-        console.log('URL:', url)
         let params = new URLSearchParams(url.search)
         const urlTheme = params.get('theme') === 'dark'
 

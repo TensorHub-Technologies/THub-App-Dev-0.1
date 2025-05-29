@@ -18,6 +18,8 @@ const ScheduleSettings = () => {
     const customization = useSelector((state) => state.customization)
 
     const flowId = window.location.pathname.split('/').pop()
+    const hostName = window.location.hostname
+    console.log('Flow ID:', flowId, 'Host Name:', hostName)
 
     let apiUrl
     if (window.location.hostname === 'demo.thub.tech') {
@@ -50,6 +52,7 @@ const ScheduleSettings = () => {
         try {
             const payload = {
                 flowId,
+                hostName,
                 scheduleType: selectedSchedule,
                 config: followUpPromptsConfig,
                 prompt: userPrompt

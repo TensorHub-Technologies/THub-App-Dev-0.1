@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
+
 import { Box, Typography, TextField, Button, Modal, IconButton, Stack } from '@mui/material'
+import { useSelector } from 'react-redux'
 
 function OTP_Modal({ length = 6, onOtpSubmit = () => {}, setShowModal, resendOtp = () => {} }) {
     const [otp, setOtp] = useState(new Array(length).fill(''))
     const inputRefs = useRef([])
+    const customization = useSelector((state) => state.customization)
 
     useEffect(() => {
         if (inputRefs.current[0]) {
@@ -94,7 +97,11 @@ function OTP_Modal({ length = 6, onOtpSubmit = () => {}, setShowModal, resendOtp
                 </Stack>
 
                 <Stack direction='row' spacing={2} justifyContent='center'>
-                    <Button variant='outlined' sx={{ color: 'black', border: '1px solid #E22A90' }} onClick={handleResendOtp}>
+                    <Button
+                        variant='outlined'
+                        sx={{ color: customization?.isDarkMode ? 'white' : 'black', border: '1px solid #E22A90' }}
+                        onClick={handleResendOtp}
+                    >
                         Resend
                     </Button>
                     <Button
