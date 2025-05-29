@@ -27,11 +27,16 @@ function ImageUpload() {
         inputRef.current.click()
     }
     const handleImageChange = async (event) => {
+        let apiUrl
+        if (window.location.hostname === 'demo.thub.tech') {
+            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        } else if (window.location.hostname === 'localhost') {
+            apiUrl = 'http://localhost:2000'
+        } else {
+            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        }
+
         const file = event.target.files[0]
-        const apiUrl =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
 
         if (file) {
             const formData = new FormData()

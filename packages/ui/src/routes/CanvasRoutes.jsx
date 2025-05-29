@@ -3,7 +3,7 @@ import { lazy } from 'react'
 // project imports
 import Loadable from '@/ui-component/loading/Loadable'
 import MinimalLayout from '@/layout/MinimalLayout'
-import RequireUID from './RequireUID'
+import PrivateRoute from '@/routes/PrivateRoute'
 
 // canvas routing
 const Canvas = Loadable(lazy(() => import('@/views/canvas')))
@@ -14,30 +14,38 @@ const MarketplaceCanvas = Loadable(lazy(() => import('@/views/marketplaces/Marke
 const CanvasRoutes = {
     path: '/',
     element: (
-        <RequireUID>
+        <PrivateRoute>
             <MinimalLayout />
-        </RequireUID>
+        </PrivateRoute>
     ),
     children: [
         {
             path: '/canvas',
-            element: <Canvas />
+            element: (
+                <PrivateRoute>
+                    {' '}
+                    <Canvas />
+                </PrivateRoute>
+            )
         },
         {
             path: '/canvas/:id',
-            element: <Canvas />
+            element: (
+                <PrivateRoute>
+                    {' '}
+                    <Canvas />
+                </PrivateRoute>
+            )
         },
-        // {
-        //     path: '/agentcanvas',
-        //     element: <Canvas />
-        // },
-        // {
-        //     path: '/agentcanvas/:id',
-        //     element: <Canvas />
-        // },
+
         {
             path: '/templates/:id',
-            element: <MarketplaceCanvas />
+            element: (
+                <PrivateRoute>
+                    {' '}
+                    <MarketplaceCanvas />
+                </PrivateRoute>
+            )
         }
     ]
 }

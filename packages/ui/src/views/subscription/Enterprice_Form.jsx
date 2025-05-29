@@ -51,12 +51,15 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
 
     const handleSubmit = async (values) => {
         console.log(values, 'submit clicked')
-        const apiUrl =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-
         try {
+            let apiUrl
+            if (window.location.hostname === 'demo.thub.tech') {
+                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+            } else if (window.location.hostname === 'localhost') {
+                apiUrl = 'http://localhost:2000'
+            } else {
+                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            }
             handleLoading('Form Submitted Successfully')
             const response = await axios.post(`${apiUrl}/enterprice-mail`, values)
             if (response.status === 200 || response.status === 'ok') {

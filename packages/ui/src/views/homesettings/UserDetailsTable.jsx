@@ -15,6 +15,15 @@ const UserDetailsTable = () => {
     const [editValue, setEditValue] = useState('')
     const dispatch = useDispatch()
 
+    let apiUrl
+    if (window.location.hostname === 'demo.thub.tech') {
+        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    } else if (window.location.hostname === 'localhost') {
+        apiUrl = 'http://localhost:2000'
+    } else {
+        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    }
+
     const userFields = [
         { label: 'Name', value: user.name },
         { label: 'Email', value: user.email },
@@ -29,18 +38,13 @@ const UserDetailsTable = () => {
     }
 
     const handleSave = async () => {
-        const url =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-
         const payload = {
             field: editField.toLowerCase(),
             value: editValue,
             userId: user.uid
         }
 
-        const updateRequest = axios.post(`${url}/api/users/update`, payload)
+        const updateRequest = axios.post(`${apiUrl}/api/users/update`, payload)
 
         toast.promise(
             updateRequest

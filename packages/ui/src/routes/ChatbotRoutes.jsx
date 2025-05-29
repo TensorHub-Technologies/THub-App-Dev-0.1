@@ -3,11 +3,10 @@ import { lazy } from 'react'
 // project imports
 import Loadable from '@/ui-component/loading/Loadable'
 import MinimalLayout from '@/layout/MinimalLayout'
+import ProtectedRoute from './PrivateRoute' // ✅ import
 
-// canvas routing
+// chatbot routing
 const ChatbotFull = Loadable(lazy(() => import('@/views/chatbot')))
-
-// ==============================|| CANVAS ROUTING ||============================== //
 
 const ChatbotRoutes = {
     path: '/',
@@ -15,7 +14,11 @@ const ChatbotRoutes = {
     children: [
         {
             path: '/chatbot/:id',
-            element: <ChatbotFull />
+            element: (
+                <ProtectedRoute>
+                    <ChatbotFull />
+                </ProtectedRoute>
+            )
         }
     ]
 }

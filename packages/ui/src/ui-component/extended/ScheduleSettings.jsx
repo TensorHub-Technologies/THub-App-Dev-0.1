@@ -1,6 +1,5 @@
 import { Box, FormControl, MenuItem, Select, TextField, Typography, Checkbox, ListItemText, OutlinedInput } from '@mui/material'
 import PropTypes from 'prop-types'
-
 import { useState } from 'react'
 import axios from 'axios'
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -19,6 +18,17 @@ const ScheduleSettings = () => {
     const customization = useSelector((state) => state.customization)
 
     const flowId = window.location.pathname.split('/').pop()
+    const hostName = window.location.hostname
+    console.log('Flow ID:', flowId, 'Host Name:', hostName)
+
+    let apiUrl
+    if (window.location.hostname === 'demo.thub.tech') {
+        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    } else if (window.location.hostname === 'localhost') {
+        apiUrl = 'http://localhost:2000'
+    } else {
+        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    }
 
     const handleScheduleChange = (e) => {
         setSelectedSchedule(e.target.value)
@@ -42,18 +52,10 @@ const ScheduleSettings = () => {
         try {
             const payload = {
                 flowId,
+                hostName,
                 scheduleType: selectedSchedule,
                 config: followUpPromptsConfig,
                 prompt: userPrompt
-            }
-
-            let apiUrl
-            if (window.location.hostname === 'demo.thub.tech') {
-                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-            } else if (window.location.hostname === 'localhost') {
-                apiUrl = 'http://localhost:2000'
-            } else {
-                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
             }
 
             await toast.promise(axios.post(`${apiUrl}/api/schedules`, payload), {
@@ -68,15 +70,6 @@ const ScheduleSettings = () => {
 
     const handleSchedule = async () => {
         if (!flowId) return console.log('Flow ID missing')
-
-        let apiUrl
-        if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-        } else if (window.location.hostname === 'localhost') {
-            apiUrl = 'http://localhost:2000'
-        } else {
-            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-        }
 
         try {
             const res = await toast.promise(axios.get(`${apiUrl}/api/schedules/${flowId}`), {
@@ -95,14 +88,6 @@ const ScheduleSettings = () => {
     }
 
     const handleCancelSchedule = async (id) => {
-        let apiUrl
-        if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-        } else if (window.location.hostname === 'localhost') {
-            apiUrl = 'http://localhost:2000'
-        } else {
-            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-        }
         try {
             await toast.promise(axios.post(`${apiUrl}/api/schedules/cancel`, { id }), {
                 loading: 'Cancelling...',

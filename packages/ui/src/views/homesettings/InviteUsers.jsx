@@ -27,12 +27,17 @@ function InviteUsers() {
             setError('Please enter a valid email address.')
             return
         }
-        const apiUrl =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
 
         try {
+            let apiUrl
+            if (window.location.hostname === 'demo.thub.tech') {
+                apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+            } else if (window.location.hostname === 'localhost') {
+                apiUrl = 'http://localhost:2000'
+            } else {
+                apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            }
+
             const response = await axios.post(`${apiUrl}/api/invite`, { email, workspace, uid })
 
             if (response.status === 200) {
