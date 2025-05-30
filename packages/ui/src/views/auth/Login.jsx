@@ -33,8 +33,8 @@ const Login = () => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
 
-    console.log("THUB_WEB_SERVER_URL: ",THUB_WEB_SERVER_URL);
-    console.log("THUB_WEB_SERVER_DEMO_URL: ",THUB_WEB_SERVER_DEMO_URL);
+    console.log('THUB_WEB_SERVER_URL:', import.meta.env.THUB_WEB_SERVER_URL)
+    console.log('THUB_WEB_SERVER_DEMO_URL:', import.meta.env.THUB_WEB_SERVER_DEMO_URL)
     
 
     const formik = useFormik({
