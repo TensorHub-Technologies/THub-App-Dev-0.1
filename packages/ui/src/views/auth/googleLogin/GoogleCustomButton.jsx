@@ -9,13 +9,16 @@ import { SET_USER_DATA } from '@/store/actions'
 const GoogleCustomButton = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
+
+    console.log('THub local for google:', import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL)
+
     let apiUrl
     if (window.location.hostname === 'demo.thub.tech') {
-        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL
     } else if (window.location.hostname === 'localhost') {
-        apiUrl = 'http://localhost:2000'
+        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:8080'
     } else {
-        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL
     }
     console.log('Google Client ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID)
 

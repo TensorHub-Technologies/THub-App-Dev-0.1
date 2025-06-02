@@ -28,11 +28,11 @@ export const Top = () => {
         const accessToken = localStorage.getItem('access_token')
         let apiUrl
         if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+            apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL
         } else if (window.location.hostname === 'localhost') {
-            apiUrl = 'http://localhost:2000'
+            apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL
         } else {
-            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL
         }
 
         if (code && !accessToken) {
