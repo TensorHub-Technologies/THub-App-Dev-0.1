@@ -26,7 +26,7 @@ class Worker_MultiAgents implements INode {
     badge?: string
 
     constructor() {
-        this.label = 'Worker'
+        this.label = 'Specialist Agent'
         this.name = 'worker'
         this.version = 2.0
         this.type = 'Worker'
@@ -36,14 +36,14 @@ class Worker_MultiAgents implements INode {
         this.hideOutput = true
         this.inputs = [
             {
-                label: 'Worker Name',
-                name: 'workerName',
+                label: 'Specialist Name',
+                name: 'wspecialistName',
                 type: 'string',
-                placeholder: 'Worker'
+                placeholder: 'Specialist'
             },
             {
-                label: 'Worker Prompt',
-                name: 'workerPrompt',
+                label: 'Specialist Prompt',
+                name: 'specialistPrompt',
                 type: 'string',
                 rows: 4,
                 default: examplePrompt
