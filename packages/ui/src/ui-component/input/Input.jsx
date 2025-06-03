@@ -73,7 +73,8 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                             style: {
                                 border: 'none',
                                 background: 'none',
-                                color: '#212121'
+                                color: '#FFFF',
+                                fo
                             }
                         }}
                         sx={{
