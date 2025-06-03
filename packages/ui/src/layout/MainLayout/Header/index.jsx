@@ -29,6 +29,8 @@ const Header = () => {
     const dispatch = useDispatch()
     const open = Boolean(anchorEl)
 
+    console.log('THub demo for google:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
+
     const { instance } = useMsal()
 
     const handleClick = (event) => {
