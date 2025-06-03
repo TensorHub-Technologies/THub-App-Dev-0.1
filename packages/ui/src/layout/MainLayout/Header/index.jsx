@@ -79,7 +79,7 @@ const Header = () => {
                     } else {
                         apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL
                     }
-                    const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
+                    const response = await axios.get(`${apiUrl}userdata`, { params: { userId } })
                     console.log('User Data:', response)
                     if (response.status === 200) {
                         const userData = response?.data[0]
