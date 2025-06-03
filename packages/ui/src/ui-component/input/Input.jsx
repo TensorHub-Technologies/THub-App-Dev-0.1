@@ -74,7 +74,9 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                                 border: 'none',
                                 background: 'none',
                                 color: '#FFFF',
-                                fo
+                                fontWeight: 'bolder',
+                                fontSize: '24px',
+                                fontFamily: 'cambria Math'
                             }
                         }}
                         sx={{
