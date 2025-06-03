@@ -37,7 +37,7 @@ class Worker_MultiAgents implements INode {
         this.inputs = [
             {
                 label: 'Specialist Name',
-                name: 'wspecialistName',
+                name: 'specialistName',
                 type: 'string',
                 placeholder: 'Specialist'
             },
@@ -56,7 +56,7 @@ class Worker_MultiAgents implements INode {
                 optional: true
             },
             {
-                label: 'Supervisor',
+                label: 'Specialist Agent',
                 name: 'supervisor',
                 type: 'Supervisor'
             },
