@@ -37,8 +37,9 @@ const StickyNote = ({ data }) => {
                 content={false}
                 sx={{
                     padding: 0,
+                    color: 'white',
                     borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                    backgroundColor: data.selected ? '#FFDC00' : '#FFE770'
+                    backgroundColor: '#3C5BA4'
                 }}
                 border={false}
             >
