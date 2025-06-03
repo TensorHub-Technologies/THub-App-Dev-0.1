@@ -73,7 +73,7 @@ const Login = () => {
                 localStorage.setItem('userId', userId)
                 console.log('User ID:', userId)
                 // Second API call: Get full user data
-                const userDataResponse = await axios.get(`${apiUrl}userdata`, { params: { userId } })
+                const userDataResponse = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
 
                 const userData = userDataResponse.data[0]
                 console.log('User Data:', userData)
