@@ -15,13 +15,18 @@ const UserDetailsTable = () => {
     const [editValue, setEditValue] = useState('')
     const dispatch = useDispatch()
 
+    const thubWebServerDevUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    const thubWebServerProdUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
     let apiUrl
     if (window.location.hostname === 'demo.thub.tech') {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL
+        apiUrl = thubWebServerDevUrl
     } else if (window.location.hostname === 'localhost') {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL
+        apiUrl = thubWebServerLocalUrl
     } else {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL
+        apiUrl = thubWebServerProdUrl
     }
 
     const userFields = [
@@ -118,7 +123,7 @@ const UserDetailsTable = () => {
                                                     className={customization.isDarkMode ? 'button-upgrade-dark' : 'button-upgrade-light'}
                                                     onClick={handleSave}
                                                 >
-                                                    Save11
+                                                    Save
                                                 </Button>
                                             ) : (
                                                 <IconEdit

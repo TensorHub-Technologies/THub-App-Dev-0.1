@@ -21,19 +21,26 @@ export const Top = () => {
         handleGithubAuth()
     }, [])
 
+    const thubWebServerDevUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    const thubWebServerProdUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+
+    let apiUrl
+    if (window.location.hostname === 'demo.thub.tech') {
+        apiUrl = thubWebServerDevUrl
+    } else if (window.location.hostname === 'localhost') {
+        apiUrl = thubWebServerLocalUrl
+    } else {
+        apiUrl = thubWebServerProdUrl
+    }
+
     const handleGithubAuth = async () => {
         const query = window.location.search
         const urlParams = new URLSearchParams(query)
         const code = urlParams.get('code')
         const accessToken = localStorage.getItem('access_token')
-        let apiUrl
-        if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL
-        } else if (window.location.hostname === 'localhost') {
-            apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL
-        } else {
-            apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL
-        }
 
         if (code && !accessToken) {
             try {

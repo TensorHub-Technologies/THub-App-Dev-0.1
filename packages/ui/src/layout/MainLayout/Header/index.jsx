@@ -28,8 +28,15 @@ const Header = () => {
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const open = Boolean(anchorEl)
+    console.log('THub Prod:', import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL)
+    console.log('THub Demo:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
+    console.log('THub local:', import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL)
 
-    console.log('THub demo for google:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
+    const thubWebServerDevUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    const thubWebServerProdUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     const { instance } = useMsal()
 
@@ -73,12 +80,13 @@ const Header = () => {
                 try {
                     let apiUrl
                     if (window.location.hostname === 'demo.thub.tech') {
-                        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                        apiUrl = thubWebServerDevUrl
                     } else if (window.location.hostname === 'localhost') {
-                        apiUrl = 'http://localhost:2000'
+                        apiUrl = thubWebServerLocalUrl
                     } else {
-                        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+                        apiUrl = thubWebServerProdUrl
                     }
+                    console.log('API URL Canvas:', apiUrl)
                     const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
                     console.log('User Data:', response)
                     if (response.status === 200) {
