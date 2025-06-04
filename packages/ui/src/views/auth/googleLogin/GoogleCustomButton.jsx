@@ -10,19 +10,22 @@ const GoogleCustomButton = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    console.log('THub local for google:', import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL)
+    const thubWebServerDevUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    const thubWebServerProdUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     let apiUrl
     if (window.location.hostname === 'demo.thub.tech') {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL
+        apiUrl = thubWebServerDevUrl
     } else if (window.location.hostname === 'localhost') {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:8080'
+        apiUrl = thubWebServerLocalUrl
     } else {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL
+        apiUrl = thubWebServerProdUrl
     }
-    console.log('Google Client ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID)
 
-    console.log('API URL:', apiUrl)
+    console.log('API URL Google:', apiUrl)
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             console.log('Authorization Code:', response)
