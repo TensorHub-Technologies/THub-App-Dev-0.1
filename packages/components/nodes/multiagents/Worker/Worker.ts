@@ -36,13 +36,13 @@ class Worker_MultiAgents implements INode {
         this.hideOutput = true
         this.inputs = [
             {
-                label: 'Specialist Name',
+                label: 'Worker Name',
                 name: 'specialistName',
                 type: 'string',
-                placeholder: 'Specialist'
+                placeholder: 'Worker'
             },
             {
-                label: 'Specialist Prompt',
+                label: 'Worker Prompt',
                 name: 'specialistPrompt',
                 type: 'string',
                 rows: 4,
@@ -56,7 +56,7 @@ class Worker_MultiAgents implements INode {
                 optional: true
             },
             {
-                label: 'Specialist Agent',
+                label: 'Worker Agent',
                 name: 'supervisor',
                 type: 'Supervisor'
             },
