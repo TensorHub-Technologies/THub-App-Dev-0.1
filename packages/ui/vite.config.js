@@ -40,6 +40,7 @@ export default defineConfig(async ({ mode }) => {
             'import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL':  JSON.stringify(env.VITE_THUB_WEB_SERVER_PROD_URL),
             'import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL':  JSON.stringify(env.VITE_THUB_WEB_SERVER_DEMO_URL),
             'import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL':  JSON.stringify(env.VITE_THUB_WEB_SERVER_LOCAL_URL),
+            'import.meta.env.VITE_TEST_ENV':  JSON.stringify(env.VITE_TEST_ENV),
         },
         server: {
             open: true,
