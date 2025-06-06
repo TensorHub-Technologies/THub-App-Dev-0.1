@@ -122,9 +122,7 @@ class ChatflowTool_Tools implements INode {
                 return returnData
             }
 
-            let tenantId = options.tenantId
-
-            const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).findBy({ tenantId })
+            const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).find()
 
             for (let i = 0; i < chatflows.length; i += 1) {
                 const data = {
@@ -315,6 +313,7 @@ class ChatflowTool extends StructuredTool {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'flowise-tool': 'true',
                 ...this.headers
             },
             body: JSON.stringify(body)
