@@ -4,6 +4,7 @@ import { Variable } from '../../database/entities/Variable'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 import { QueryRunner } from 'typeorm'
+import { validate } from 'uuid'
 
 const createVariable = async (newVariable: Variable) => {
     try {
@@ -32,12 +33,10 @@ const deleteVariable = async (variableId: string): Promise<any> => {
     }
 }
 
-const getAllVariables = async (tenantId: string): Promise<any> => {
+const getAllVariables = async (tenantId: any) => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Variable).findBy({
-            tenantId: tenantId
-        })
+        const dbResponse = await appServer.AppDataSource.getRepository(Variable).findBy({ tenantId })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -78,6 +77,12 @@ const updateVariable = async (variable: Variable, updatedVariable: Variable) => 
 
 const importVariables = async (newVariables: Partial<Variable>[], queryRunner?: QueryRunner): Promise<any> => {
     try {
+        for (const data of newVariables) {
+            if (data.id && !validate(data.id)) {
+                throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: importVariables - invalid id!`)
+            }
+        }
+
         const appServer = getRunningExpressApp()
         const repository = queryRunner ? queryRunner.manager.getRepository(Variable) : appServer.AppDataSource.getRepository(Variable)
 

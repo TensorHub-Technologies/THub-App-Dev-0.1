@@ -73,6 +73,7 @@ export class App {
 
             // Run Migrations Scripts
             await this.AppDataSource.runMigrations({ transaction: 'each' })
+
             // Initialize nodes pool
             this.nodesPool = new NodesPool()
             await this.nodesPool.initialize()
@@ -82,21 +83,14 @@ export class App {
 
             // Initialize API keys
             await getAPIKeys()
+
             // Initialize encryption key
             await getEncryptionKey()
+
             // Initialize Rate Limit
             this.rateLimiterManager = RateLimiterManager.getInstance()
+            await this.rateLimiterManager.initializeRateLimiters(await getDataSource().getRepository(ChatFlow).find())
 
-            const chatflowData = await getDataSource()
-                .getRepository(ChatFlow)
-                .find({
-                    select: {
-                        id: true,
-                        apiConfig: true
-                    }
-                })
-
-            await this.rateLimiterManager.initializeRateLimiters(chatflowData)
             // Initialize cache pool
             this.cachePool = new CachePool()
 
@@ -257,7 +251,7 @@ export class App {
             })
         })
 
-        if (process.env.MODE === MODE.QUEUE) {
+        if (process.env.MODE === MODE.QUEUE && process.env.ENABLE_BULLMQ_DASHBOARD === 'true') {
             this.app.use('/admin/queues', this.queueManager.getBullBoardRouter())
         }
 

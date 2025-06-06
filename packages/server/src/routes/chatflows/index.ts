@@ -7,16 +7,8 @@ router.post('/', chatflowsController.saveChatflow)
 router.post('/importchatflows', chatflowsController.importChatflows)
 
 // READ
-router.get('/:tenantId', chatflowsController.getAllChatflows)
-
-router.get('/workspaces/:workspaceUid', chatflowsController.getAllChatflowsWp)
-
-router.get('/paginated/:tenantId', chatflowsController.getAllChatflowsPaginated)
-
-router.get('/wp/paginated/:workspaceUid', chatflowsController.getAllChatflowsWpPaginated)
-
-router.get(['/', '/getChatflowById/:chatflowId'], chatflowsController.getChatflowById)
-
+router.get('/', chatflowsController.getAllChatflows)
+router.get(['/', '/:id'], chatflowsController.getChatflowById)
 router.get(['/apikey/', '/apikey/:apikey'], chatflowsController.getChatflowByApiKey)
 
 // UPDATE
