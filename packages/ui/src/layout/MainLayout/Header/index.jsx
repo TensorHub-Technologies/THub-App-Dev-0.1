@@ -69,14 +69,22 @@ const Header = () => {
         const getUserData = async () => {
             if (userId) {
                 try {
+                    const thubWebServerDevUrl =
+                        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                    const thubWebServerProdUrl =
+                        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+                    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+
                     let apiUrl
+
                     if (window.location.hostname === 'demo.thub.tech') {
-                        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                        apiUrl = thubWebServerDevUrl
                     } else if (window.location.hostname === 'localhost') {
-                        apiUrl = 'http://localhost:2000'
+                        apiUrl = thubWebServerLocalUrl
                     } else {
-                        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+                        apiUrl = thubWebServerProdUrl
                     }
+
                     const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
                     console.log('User Data:', response)
                     if (response.status === 200) {
