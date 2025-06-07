@@ -45,6 +45,8 @@ export interface IChatFlow {
     flowData: string
     updatedDate: Date
     createdDate: Date
+    workspaceUid: string
+    description: string
     deployed?: boolean
     isPublic?: boolean
     apikeyid?: string
