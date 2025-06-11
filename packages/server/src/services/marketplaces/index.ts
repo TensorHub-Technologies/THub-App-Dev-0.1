@@ -43,7 +43,7 @@ const getAllTemplates = async () => {
                 framework: fileDataObj?.framework,
                 usecases: fileDataObj?.usecases,
                 categories: getCategories(fileDataObj),
-                type: 'Workflow',
+                type: 'chatflows',
                 description: fileDataObj?.description || ''
             }
             templates.push(template)

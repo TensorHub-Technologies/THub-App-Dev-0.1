@@ -1,17 +1,18 @@
 .edgebutton {
     width: 20px;
     height: 20px;
-    /* background: #e22a90; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background: #eee;
     border: 1px solid #fff;
     cursor: pointer;
     border-radius: 50%;
-    font-size: 12px;
-    line-height: 1;
 }
 
 .edgebutton:hover {
-    /*background: #5e35b1;*/
-    background: linear-gradient(to right, #3c5ba4, #e22a90) !important;
+    background: #5e35b1;
     color: #eee;
     box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.08);
 }
@@ -30,102 +31,19 @@
     display: flex;
     flex-grow: 1;
     height: 100%;
-    /* background: linear-gradient(to left, #e22a90, #3c5ba4); */
 }
 
 .reactflow-parent-wrapper .reactflow-wrapper {
     flex-grow: 1;
     height: 100%;
-    /* background: linear-gradient(to left, #e22a90, #3c5ba4); */
-}
-#minmax-parent {
-    padding: 2px;
-    margin-right: 0.5px;
-}
-.minmax-btn {
-    color: transparent;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
 }
 
-#MinimizeIcon {
-    background-color: transparent;
-    font-size: 22px;
+.chatflow-canvas .react-flow__handle-connecting {
+    cursor: not-allowed;
+    background: #db4e4e !important;
 }
 
-.minmax-btn #ExpandIcon {
-    width: 20px;
-    color: white;
-    cursor: pointer;
-    background-color: transparent;
-}
-
-.minmax-btn #ExpandIcon:hover {
-    color: #e22a90;
-}
-@keyframes dashAnimation {
-    to {
-        stroke-dashoffset: -40;
-    }
-}
-
-.react-flow__edge-path {
-    stroke-dasharray: 4 4;
-    animation: dashAnimation 1s linear infinite;
-}
-
-/* zoom out */
-
-.react-flow__controls-button {
-    margin-top: 5px;
-    border: 2px solid #eee;
-}
-
-.react-flow__controls-button:nth-of-type(1) {
-    background-color: #ffffff;
-    color: #fff;
-    padding: 12px;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-    display: 'flex';
-}
-
-.react-flow__controls-button:nth-of-type(2) {
-    background-color: #ffffff;
-    color: #fff;
-    padding: 12px;
-}
-
-.react-flow__controls-button:nth-of-type(3) {
-    background-color: #ffffff;
-    color: #fff;
-    padding: 12px;
-}
-
-.react-flow__controls-button:nth-of-type(4) {
-    background-color: #ffffff;
-    color: #fff;
-    padding: 12px;
-    border-top-right-radius: 13px;
-    border-bottom-right-radius: 13px;
-}
-
-/* Dark mode hover styles */
-body.dark-mode .react-flow__controls-button:nth-of-type(1):hover,
-body.dark-mode .react-flow__controls-button:nth-of-type(2):hover,
-body.dark-mode .react-flow__controls-button:nth-of-type(3):hover,
-body.dark-mode .react-flow__controls-button:nth-of-type(4):hover {
-    background-color: #e22a90;
-    color: #fff;
-}
-
-/* Light mode hover styles */
-body.light-mode .react-flow__controls-button:nth-of-type(1):hover,
-body.light-mode .react-flow__controls-button:nth-of-type(2):hover,
-body.light-mode .react-flow__controls-button:nth-of-type(3):hover,
-body.light-mode .react-flow__controls-button:nth-of-type(4):hover {
-    background-color: #3c5ba4;
-    color: #fff;
+.chatflow-canvas .react-flow__handle-valid {
+    cursor: crosshair;
+    background: #5dba62 !important;
 }

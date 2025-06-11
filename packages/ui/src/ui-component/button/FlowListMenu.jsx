@@ -5,11 +5,22 @@ import PropTypes from 'prop-types'
 import { styled, alpha } from '@mui/material/styles'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import EditIcon from '@mui/icons-material/Edit'
 import Divider from '@mui/material/Divider'
+import FileCopyIcon from '@mui/icons-material/FileCopy'
+import FileDownloadIcon from '@mui/icons-material/Downloading'
+import FileDeleteIcon from '@mui/icons-material/Delete'
+import FileCategoryIcon from '@mui/icons-material/Category'
+import PictureInPictureAltIcon from '@mui/icons-material/PictureInPictureAlt'
+import ThumbsUpDownOutlinedIcon from '@mui/icons-material/ThumbsUpDownOutlined'
+import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
+import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
+import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
 import Button from '@mui/material/Button'
 import { IconX } from '@tabler/icons-react'
-import { IconDeviceAnalytics } from '@tabler/icons-react'
+
 import chatflowsApi from '@/api/chatflows'
+
 import useApi from '@/hooks/useApi'
 import useConfirm from '@/hooks/useConfirm'
 import { uiBaseURL } from '@/store/constant'
@@ -24,28 +35,8 @@ import useNotifier from '@/utils/useNotifier'
 import ChatFeedbackDialog from '../dialog/ChatFeedbackDialog'
 import AllowedDomainsDialog from '../dialog/AllowedDomainsDialog'
 import SpeechToTextDialog from '../dialog/SpeechToTextDialog'
-import RateLimitDailog from '../dialog/RateLimitDailog'
-import AnalyseWorkflowDailog from '../dialog/AnalyseWorkflowDialog'
-// Tabler icons imports
-import { IconDots } from '@tabler/icons-react'
+import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
 import { IconDotsVertical } from '@tabler/icons-react'
-import ThumbsUpDownOutlinedIcon from '@/assets/custom-svg/thumbsUpDownIcon'
-import {
-    IconEdit,
-    IconCopy,
-    IconDownload,
-    IconAdjustments,
-    IconPrompt,
-    IconWorld,
-    IconMicrophone,
-    IconBookmarks,
-    IconTriangleSquareCircleFilled,
-    IconTrashFilled
-} from '@tabler/icons-react'
-
-const useCustomization = () => {
-    return useSelector((state) => state.customization)
-}
 
 const StyledMenu = styled((props) => (
     <Menu
@@ -73,10 +64,8 @@ const StyledMenu = styled((props) => (
         '& .MuiMenuItem-root': {
             '& .MuiSvgIcon-root': {
                 fontSize: 18,
-                // color: theme.palette.text.secondary,
-                marginRight: theme.spacing(1.5),
-                color: useCustomization().isDarkMode ? '#E22A90' : '#3C5BA4',
-                background: 'transparent'
+                color: theme.palette.text.secondary,
+                marginRight: theme.spacing(1.5)
             },
             '&:active': {
                 backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
@@ -85,7 +74,7 @@ const StyledMenu = styled((props) => (
     }
 }))
 
-export default function FlowListMenu({ chatflow, updateFlowsApi }) {
+export default function FlowListMenu({ chatflow, isAgentCanvas, setError, updateFlowsApi }) {
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
@@ -107,13 +96,12 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
     const [allowedDomainsDialogOpen, setAllowedDomainsDialogOpen] = useState(false)
     const [allowedDomainsDialogProps, setAllowedDomainsDialogProps] = useState({})
     const [speechToTextDialogOpen, setSpeechToTextDialogOpen] = useState(false)
-    const [rateLimitDialogOpen, setRateLimitDialogOpen] = useState(false)
-    const [rateLimitDialogProps, setRateLimitDialogProps] = useState({})
-
-    const [AnalyseWorkFlowDialogOpen, setWorkFlowDialogOpen] = useState(false)
-    const [AnalyseWorkFlowDialogProps, setWorkFlowDialogProps] = useState(false)
-
     const [speechToTextDialogProps, setSpeechToTextDialogProps] = useState({})
+
+    const [exportTemplateDialogOpen, setExportTemplateDialogOpen] = useState(false)
+    const [exportTemplateDialogProps, setExportTemplateDialogProps] = useState({})
+
+    const title = isAgentCanvas ? 'Agents' : 'Chatflow'
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -135,6 +123,14 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             chatflow: chatflow
         })
         setConversationStartersDialogOpen(true)
+    }
+
+    const handleExportTemplate = () => {
+        setAnchorEl(null)
+        setExportTemplateDialogProps({
+            chatflow: chatflow
+        })
+        setExportTemplateDialogOpen(true)
     }
 
     const handleFlowChatFeedback = () => {
@@ -164,38 +160,22 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         setSpeechToTextDialogOpen(true)
     }
 
-    const handleRateLimit = () => {
-        setAnchorEl(null)
-        setRateLimitDialogProps({
-            open: true,
-            title: 'Rate Limiting - ' + chatflow.name,
-            chatflow: chatflow
-        })
-        setRateLimitDialogOpen(true)
-    }
-    const handleAnalyse = () => {
-        setAnchorEl(null)
-        setWorkFlowDialogProps({
-            title: 'Analyse Workflow - ' + chatflow.name,
-            chatflow: chatflow
-        })
-        setWorkFlowDialogOpen(true)
-    }
-
-    const saveFlowRename = async (chatflowName, chatflowDescription) => {
+    const saveFlowRename = async (chatflowName) => {
         const updateBody = {
             name: chatflowName,
-            description: chatflowDescription,
-            chatflow: chatflow
+            chatflow
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
-            await updateFlowsApi.request()
+            if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
+                await updateFlowsApi.request('AGENTFLOW')
+            } else {
+                await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
+            }
         } catch (error) {
             if (setError) setError(error)
-            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
             enqueueSnackbar({
-                message: errorData,
+                message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -220,30 +200,21 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         setCategoryDialogOpen(true)
     }
 
-    const handleExportTemplate = () => {
-        setAnchorEl(null)
-        setExportTemplateDialogProps({
-            chatflow: chatflow
-        })
-        setExportTemplateDialogOpen(true)
-    }
-
     const saveFlowCategory = async (categories) => {
         setCategoryDialogOpen(false)
         // save categories as string
         const categoryTags = categories.join(';')
         const updateBody = {
             category: categoryTags,
-            chatflow: chatflow
+            chatflow
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
-            await updateFlowsApi.request()
+            await updateFlowsApi.request(isAgentCanvas ? 'AGENTFLOW' : undefined)
         } catch (error) {
             if (setError) setError(error)
-            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
             enqueueSnackbar({
-                message: errorData,
+                message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -262,7 +233,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         setAnchorEl(null)
         const confirmPayload = {
             title: `Delete`,
-            description: `Delete Workspace ${chatflow.name}?`,
+            description: `Delete ${title} ${chatflow.name}?`,
             confirmButtonName: 'Delete',
             cancelButtonName: 'Cancel'
         }
@@ -271,13 +242,15 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         if (isConfirmed) {
             try {
                 await chatflowsApi.deleteChatflow(chatflow.id)
-                await updateFlowsApi.request()
-                window.location.reload()
+                if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
+                    await updateFlowsApi.request('AGENTFLOW')
+                } else {
+                    await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
+                }
             } catch (error) {
                 if (setError) setError(error)
-                const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
                 enqueueSnackbar({
-                    message: errorData,
+                    message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -297,7 +270,7 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         setAnchorEl(null)
         try {
             localStorage.setItem('duplicatedFlowData', chatflow.flowData)
-            window.open(`${uiBaseURL}/canvas`, '_self')
+            window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_blank')
         } catch (e) {
             console.error(e)
         }
@@ -308,9 +281,11 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
         try {
             const flowData = JSON.parse(chatflow.flowData)
             let dataStr = JSON.stringify(generateExportFlowData(flowData), null, 2)
-            let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+            //let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+            const blob = new Blob([dataStr], { type: 'application/json' })
+            const dataUri = URL.createObjectURL(blob)
 
-            let exportFileDefaultName = `${chatflow.name} Workflow.json`
+            let exportFileDefaultName = `${chatflow.name} ${title}.json`
 
             let linkElement = document.createElement('a')
             linkElement.setAttribute('href', dataUri)
@@ -320,31 +295,25 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
             console.error(e)
         }
     }
+
     return (
         <div>
-            {localStorage.getItem('flowDisplayStyle') === 'list' ? (
-                <button style={{ background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer' }} onClick={handleClick}>
-                    <IconDots color={customization.isDarkMode ? 'white' : 'black'} />
-                </button>
-            ) : (
-                <button
-                    style={{
-                        position: 'absolute',
-                        top: 1,
-                        right: 5,
-                        zIndex: 1,
-                        background: 'transparent',
-                        outline: 'none',
-                        border: 'none',
-                        cursor: 'pointer'
-                    }}
-                    id='demo-customized-button'
-                    onClick={handleClick}
-                >
-                    <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
-                </button>
-            )}
-
+            <button
+                style={{
+                    position: 'absolute',
+                    top: 1,
+                    right: 5,
+                    zIndex: 1,
+                    background: 'transparent',
+                    outline: 'none',
+                    border: 'none',
+                    cursor: 'pointer'
+                }}
+                id='demo-customized-button'
+                onClick={handleClick}
+            >
+                <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
+            </button>
             <StyledMenu
                 id='demo-customized-menu'
                 MenuListProps={{
@@ -355,73 +324,52 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 onClose={handleClose}
             >
                 <MenuItem onClick={handleFlowRename} disableRipple>
-                    <IconEdit style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <EditIcon />
                     Rename
                 </MenuItem>
                 <MenuItem onClick={handleDuplicate} disableRipple>
-                    <IconCopy style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <FileCopyIcon />
                     Duplicate
                 </MenuItem>
                 <MenuItem onClick={handleExport} disableRipple>
-                    <IconDownload style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <FileDownloadIcon />
                     Export
                 </MenuItem>
                 <MenuItem onClick={handleExportTemplate} disableRipple>
-                    <IconBookmarks
-                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
-                    />
+                    <ExportTemplateOutlinedIcon />
                     Save As Template
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
-                <MenuItem onClick={handleRateLimit} disableRipple>
-                    <IconAdjustments
-                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
-                    />
-                    Rate Limiting
-                </MenuItem>
-
                 <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
-                    <IconPrompt style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <PictureInPictureAltIcon />
                     Starter Prompts
                 </MenuItem>
                 <MenuItem onClick={handleFlowChatFeedback} disableRipple>
-                    <ThumbsUpDownOutlinedIcon color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
-                    &nbsp;&nbsp;Chat Feedback
+                    <ThumbsUpDownOutlinedIcon />
+                    Chat Feedback
                 </MenuItem>
                 <MenuItem onClick={handleAllowedDomains} disableRipple>
-                    <IconWorld style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} />
+                    <VpnLockOutlinedIcon />
                     Allowed Domains
                 </MenuItem>
                 <MenuItem onClick={handleSpeechToText} disableRipple>
-                    <IconMicrophone
-                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
-                    />
+                    <MicNoneOutlinedIcon />
                     Speech To Text
                 </MenuItem>
-                <MenuItem onClick={handleAnalyse} disableRipple>
-                    <IconDeviceAnalytics
-                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
-                    />
-                    Analyse WorkFlow
-                </MenuItem>
                 <MenuItem onClick={handleFlowCategory} disableRipple>
-                    <IconTriangleSquareCircleFilled
-                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
-                    />
+                    <FileCategoryIcon />
                     Update Category
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleDelete} disableRipple>
-                    <IconTrashFilled
-                        style={{ width: '20px', marginRight: '10px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
-                    />
-                    &nbsp;&nbsp; Delete
+                    <FileDeleteIcon />
+                    Delete
                 </MenuItem>
             </StyledMenu>
             <SaveChatflowDialog
                 show={flowDialogOpen}
                 dialogProps={{
-                    title: `Rename Workflow`,
+                    title: `Rename ${title}`,
                     confirmButtonName: 'Rename',
                     cancelButtonName: 'Cancel'
                 }}
@@ -454,22 +402,20 @@ export default function FlowListMenu({ chatflow, updateFlowsApi }) {
                 dialogProps={speechToTextDialogProps}
                 onCancel={() => setSpeechToTextDialogOpen(false)}
             />
-            <RateLimitDailog
-                show={rateLimitDialogOpen}
-                dialogProps={rateLimitDialogProps || {}}
-                onCancel={() => setRateLimitDialogOpen(false)}
-            />
-            <AnalyseWorkflowDailog
-                show={AnalyseWorkFlowDialogOpen}
-                dialogProps={AnalyseWorkFlowDialogProps}
-                onCancel={() => setWorkFlowDialogOpen(false)}
-            />
+            {exportTemplateDialogOpen && (
+                <ExportAsTemplateDialog
+                    show={exportTemplateDialogOpen}
+                    dialogProps={exportTemplateDialogProps}
+                    onCancel={() => setExportTemplateDialogOpen(false)}
+                />
+            )}
         </div>
     )
 }
 
 FlowListMenu.propTypes = {
     chatflow: PropTypes.object,
-    updateFlowsApi: PropTypes.object,
-    setError: PropTypes.func
+    isAgentCanvas: PropTypes.bool,
+    setError: PropTypes.func,
+    updateFlowsApi: PropTypes.object
 }

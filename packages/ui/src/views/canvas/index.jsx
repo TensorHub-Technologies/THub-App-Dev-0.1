@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useContext } from 'react'
-import ReactFlow, { addEdge, Controls, Background, useNodesState, useEdgesState, MiniMap } from 'reactflow'
+import ReactFlow, { addEdge, Controls, Background, useNodesState, useEdgesState } from 'reactflow'
 import 'reactflow/dist/style.css'
-import * as htmlToImage from 'html-to-image'
-import DownloadIcon from '@mui/icons-material/Download'
-import dagre from 'dagre'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -12,31 +9,22 @@ import {
     SET_DIRTY,
     SET_CHATFLOW,
     enqueueSnackbar as enqueueSnackbarAction,
-    closeSnackbar as closeSnackbarAction,
-    setMinMax,
-    setNodesMinMax
+    closeSnackbar as closeSnackbarAction
 } from '@/store/actions'
 import { omit, cloneDeep } from 'lodash'
-import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
-import CallMadeIcon from '@mui/icons-material/CallMade'
-import GridViewIcon from '@mui/icons-material/GridView'
 
 // material-ui
-import { Toolbar, Box, AppBar, Button, Switch, Link } from '@mui/material'
+import { Toolbar, Box, AppBar, Button, Fab } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
 
 // project imports
-import { styled } from '@mui/material/styles'
 import CanvasNode from './CanvasNode'
 import ButtonEdge from './ButtonEdge'
-// import StickyNote from './StickyNote'
-import StickyNote from '../canvas/StickyNote'
+import StickyNote from './StickyNote'
 import CanvasHeader from './CanvasHeader'
 import AddNodes from './AddNodes'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
-import { ChatPopUp } from '@/views/chatmessage/ChatPopUp'
+import ChatPopUp from '@/views/chatmessage/ChatPopUp'
 import { flowContext } from '@/store/context/ReactFlowContext'
 
 // API
@@ -48,7 +36,7 @@ import useApi from '@/hooks/useApi'
 import useConfirm from '@/hooks/useConfirm'
 
 // icons
-import { IconX } from '@tabler/icons-react'
+import { IconX, IconRefreshAlert } from '@tabler/icons-react'
 
 // utils
 import {
@@ -64,19 +52,9 @@ import { usePrompt } from '@/utils/usePrompt'
 
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
-import { IconArrowBackUp } from '@tabler/icons-react'
-
-import { IconArrowForwardUp } from '@tabler/icons-react'
-
-import { IconFilePencil } from '@tabler/icons-react'
-import { IconMapPin2 } from '@tabler/icons-react'
-import { IconArrowsVertical } from '@tabler/icons-react'
-import { IconArrowsHorizontal } from '@tabler/icons-react'
 
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
-
 const edgeTypes = { buttonedge: ButtonEdge }
-const nodeClassName = (node) => node.type
 
 // ==============================|| CANVAS ||============================== //
 
@@ -91,18 +69,12 @@ const Canvas = () => {
     const chatflowId =
         URLpath[URLpath.length - 1] === 'canvas' || URLpath[URLpath.length - 1] === 'agentcanvas' ? '' : URLpath[URLpath.length - 1]
     const isAgentCanvas = URLpath.includes('agentcanvas') ? true : false
-    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Workflow'
+    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Chatflow'
 
     const { confirm } = useConfirm()
 
     const dispatch = useDispatch()
     const canvas = useSelector((state) => state.canvas)
-    const customization = useSelector((state) => state.customization)
-    const userData = useSelector((state) => state.user.userData)
-    // const tenantId = userData['uid']
-    const tenantId = userData?.uid || localStorage.getItem('userId')
-    const workspaceId = userData?.workspaceUid || localStorage.getItem('userId')
-
     const [canvasDataStore, setCanvasDataStore] = useState(canvas)
     const [chatflow, setChatflow] = useState(null)
     const { reactFlowInstance, setReactFlowInstance } = useContext(flowContext)
@@ -115,21 +87,17 @@ const Canvas = () => {
 
     // ==============================|| ReactFlow ||============================== //
 
-    const [showMinimap, setShowMinimap] = useState(false)
-
-    const handleToggleMinimap = () => {
-        setShowMinimap((prev) => !prev)
-    }
-
     const [nodes, setNodes, onNodesChange] = useNodesState()
     const [edges, setEdges, onEdgesChange] = useEdgesState()
 
     const [selectedNode, setSelectedNode] = useState(null)
     const [isUpsertButtonEnabled, setIsUpsertButtonEnabled] = useState(false)
     const [isSyncNodesButtonEnabled, setIsSyncNodesButtonEnabled] = useState(false)
-    const [deletedNode, setDeletedNodes] = useState([])
 
     const reactFlowWrapper = useRef(null)
+
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     // ==============================|| Chatflow API ||============================== //
 
@@ -137,136 +105,6 @@ const Canvas = () => {
     const createNewChatflowApi = useApi(chatflowsApi.createNewChatflow)
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const getSpecificChatflowApi = useApi(chatflowsApi.getSpecificChatflow)
-
-    //=======// Expand and Collapse All Node//===========//
-    const [menuPosition, setMenuPosition] = useState(null)
-    const { minMax, uniqueId } = useSelector((state) => state.minMax)
-
-    const nodeMinMax = useSelector((state) => state.nodeMinMax.nodeMinMax)
-
-    useEffect(() => {
-        dispatch(setNodesMinMax(minMax))
-    }, [minMax, uniqueId])
-
-    useEffect(() => {
-        handleMax()
-    }, [])
-
-    const handleMin = () => {
-        dispatch(setMinMax(true))
-    }
-    const handleMax = () => {
-        dispatch(setMinMax(false))
-    }
-
-    const handleContextMenu = (event) => {
-        event.preventDefault()
-        setMenuPosition({ mouseX: event.clientX - 2, mouseY: event.clientY - 4 })
-    }
-
-    const handleClose = () => {
-        setMenuPosition(null)
-    }
-
-    const handleClick = () => {
-        if (menuPosition) {
-            setMenuPosition(null)
-        }
-    }
-    const getLayoutedElements = (nodes, edges, direction = 'TB') => {
-        const dagreGraph = new dagre.graphlib.Graph()
-        dagreGraph.setDefaultEdgeLabel(() => ({}))
-
-        dagreGraph.setGraph({
-            rankdir: direction,
-            ranksep: 400, // Further increased vertical spacing
-            nodesep: 300, // Further increased horizontal spacing
-            marginx: 50, // Increased margin for extra spacing
-            marginy: 50
-        })
-
-        nodes.forEach((node) => dagreGraph.setNode(node.id, { width: 150, height: 50 }))
-        edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target))
-
-        dagre.layout(dagreGraph)
-
-        const minX = Math.min(...nodes.map((node) => dagreGraph.node(node.id).x))
-        const minY = Math.min(...nodes.map((node) => dagreGraph.node(node.id).y))
-
-        const upwardShift = 500
-        const leftwardShift = 700
-        return nodes.map((node) => {
-            const dagreNode = dagreGraph.node(node.id)
-            return {
-                ...node,
-                position: {
-                    x: dagreNode.x - minX - leftwardShift, // Normalize to center
-                    y: dagreNode.y - minY - upwardShift // Normalize to center
-                }
-            }
-        })
-    }
-
-    // Function to apply layout dynamically
-    const handleLayout = useCallback(
-        (direction) => {
-            const layoutedNodes = getLayoutedElements(nodes, edges, direction)
-            setNodes([...layoutedNodes]) // Update node positions dynamically
-        },
-        [nodes, edges, setNodes]
-    )
-
-    // =================// undo // =====================
-    const [redoStack, setRedoStack] = useState([])
-
-    const handleUndo = () => {
-        if (deletedNode.length > 0) {
-            const lastDeletedNode = deletedNode[deletedNode.length - 1]
-            setRedoStack((prevRedoStack) => [...prevRedoStack, lastDeletedNode])
-            setDeletedNodes(deletedNode.slice(0, -1))
-            setNodes((nds) =>
-                nds.concat(lastDeletedNode).map((node) => {
-                    if (node.id === lastDeletedNode.id) {
-                        node.data = {
-                            ...node.data,
-                            selected: true
-                        }
-                    } else {
-                        node.data = {
-                            ...node.data,
-                            selected: false
-                        }
-                    }
-                    return node
-                })
-            )
-        }
-    }
-
-    // =================// Redo // =====================
-    const handleRedo = () => {
-        if (redoStack.length > 0) {
-            const lastRedoNode = redoStack[redoStack.length - 1]
-            setRedoStack(redoStack.slice(0, -1))
-            setDeletedNodes((prevDeletedNodes) => [...prevDeletedNodes, lastRedoNode])
-            setNodes((nds) =>
-                nds.concat(lastRedoNode).map((node) => {
-                    if (node.id === lastRedoNode.id) {
-                        node.data = {
-                            ...node.data,
-                            selected: true
-                        }
-                    } else {
-                        node.data = {
-                            ...node.data,
-                            selected: false
-                        }
-                    }
-                    return node
-                })
-            )
-        }
-    }
 
     // ==============================|| Events & Actions ||============================== //
 
@@ -343,7 +181,7 @@ const Canvas = () => {
             try {
                 await chatflowsApi.deleteChatflow(chatflow.id)
                 localStorage.removeItem(`${chatflow.id}_INTERNAL`)
-                navigate('/')
+                navigate(isAgentCanvas ? '/agentflows' : '/')
             } catch (error) {
                 enqueueSnackbar({
                     message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
@@ -362,7 +200,7 @@ const Canvas = () => {
         }
     }
 
-    const handleSaveFlow = (chatflowName, chatflowDescription) => {
+    const handleSaveFlow = (chatflowName) => {
         if (reactFlowInstance) {
             const nodes = reactFlowInstance.getNodes().map((node) => {
                 const nodeData = cloneDeep(node.data)
@@ -384,18 +222,16 @@ const Canvas = () => {
             if (!chatflow.id) {
                 const newChatflowBody = {
                     name: chatflowName,
-                    description: chatflowDescription,
+                    tenantId: tenantId,
                     deployed: false,
                     isPublic: false,
-                    tenantId: tenantId,
-                    workspaceUid: workspaceId,
-                    flowData
+                    flowData,
+                    type: isAgentCanvas ? 'MULTIAGENT' : 'CHATFLOW'
                 }
                 createNewChatflowApi.request(newChatflowBody)
             } else {
                 const updateBody = {
                     name: chatflowName,
-                    description: chatflowDescription,
                     flowData
                 }
                 updateChatflowApi.request(chatflow.id, updateBody)
@@ -405,7 +241,6 @@ const Canvas = () => {
 
     // eslint-disable-next-line
     const onNodeClick = useCallback((event, clickedNode) => {
-        setDeletedNodes((prevDeletedNodes) => [...prevDeletedNodes, clickedNode])
         setSelectedNode(clickedNode)
         setNodes((nds) =>
             nds.map((node) => {
@@ -437,6 +272,7 @@ const Canvas = () => {
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
             let nodeData = event.dataTransfer.getData('application/reactflow')
 
+            // check if the dropped element is valid
             if (typeof nodeData === 'undefined' || !nodeData) {
                 return
             }
@@ -537,63 +373,6 @@ const Canvas = () => {
         })
     }
 
-    const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-        width: 62,
-        height: 34,
-        padding: 7,
-        '& .MuiSwitch-switchBase': {
-            margin: 1,
-            padding: 0,
-            transform: 'translateX(6px)',
-            '&.Mui-checked': {
-                color: '#fff',
-                transform: 'translateX(22px)',
-                '& .MuiSwitch-thumb:before': {
-                    backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-                        '#fff'
-                    )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`
-                },
-                '& + .MuiSwitch-track': {
-                    opacity: 1,
-                    backgroundColor: theme.palette.mode === 'dark' ? '#3C5BA4' : '#E22A90'
-                }
-            }
-        },
-        '& .MuiSwitch-thumb': {
-            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
-            width: 32,
-            height: 32,
-            '&:before': {
-                content: "''",
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                left: 0,
-                top: 0,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-                    '#fff'
-                )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`
-            }
-        },
-        '& .MuiSwitch-track': {
-            opacity: 1,
-            backgroundColor: theme.palette.mode === 'dark' ? '#E22A90' : '#3C5BA4',
-            borderRadius: 20 / 2
-        }
-    }))
-    const StyledLink = styled(Link)(({ theme }) => ({
-        color: theme.palette.text.primary,
-        fontSize: '1.25rem', // Adjust font size as needed
-        fontWeight: 'bold',
-        fontFamily: 'Arial, sans-serif',
-        textDecoration: 'none',
-        '&:hover': {
-            //   color: theme.palette.red, // Adjust hover color as needed
-        }
-    }))
-
     const setDirty = () => {
         dispatch({ type: SET_DIRTY })
     }
@@ -642,7 +421,7 @@ const Canvas = () => {
             const chatflow = createNewChatflowApi.data
             dispatch({ type: SET_CHATFLOW, chatflow })
             saveChatflowSuccess()
-            window.history.replaceState(null, null, `/canvas/${chatflow.id}`)
+            window.history.replaceState(state, null, `/${isAgentCanvas ? 'agentcanvas' : 'canvas'}/${chatflow.id}`)
         } else if (createNewChatflowApi.error) {
             errorFailed(`Failed to save ${canvasTitle}: ${createNewChatflowApi.error.response.data.message}`)
         }
@@ -736,92 +515,22 @@ const Canvas = () => {
     }, [templateFlowData])
 
     usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
-    const [notesVisible, setNotesVisible] = useState(false)
-    const [noteContent, setNoteContent] = useState('')
-    const handleNotesToggle = () => setNotesVisible(!notesVisible)
 
-    useEffect(() => {
-        document.body.classList.toggle('dark-mode', customization.isDarkMode)
-        document.body.classList.toggle('light-mode', !customization.isDarkMode)
-    }, [customization.isDarkMode])
-
-    const handleOrganizeNodes = () => {
-        // Create a copy of nodes to modify their positions
-        const updatedNodes = nodes.map((node, index) => {
-            // Arrange nodes in a grid layout
-            const row = Math.floor(index / 5) // 5 nodes per row
-            const col = index % 5 // Column index
-            const x = col * 350 // Horizontal spacing
-            const y = row * 150 // Vertical spacing
-
-            return {
-                ...node,
-                position: { x, y }, // Update position
-                data: { ...node.data }
-            }
-        })
-
-        setNodes(updatedNodes) // Update nodes state
-    }
-
-    const downloadImage = () => {
-        if (reactFlowWrapper.current) {
-            htmlToImage
-                .toPng(reactFlowWrapper.current)
-                .then((dataUrl) => {
-                    const link = document.createElement('a')
-                    link.href = dataUrl
-                    link.download = 'reactflow-diagram.png'
-                    link.click()
-                })
-                .catch((error) => {
-                    console.error('Error generating the image:', error)
-                })
-        }
-    }
-    const addStickyNote = () => {
-        const newNodeId = `node-${nodes.length + 1}`
-        const newNode = {
-            id: newNodeId,
-            type: 'stickyNote',
-            position: { x: Math.random() * 400, y: Math.random() * 400 },
-            data: {
-                id: newNodeId,
-                selected: false,
-                inputParams: [
-                    {
-                        label: '',
-                        name: 'note',
-                        type: 'string',
-                        rows: 1,
-                        placeholder: 'Type something here',
-                        optional: true
-                    }
-                ],
-                inputs: {}
-            }
-        }
-        setNodes((nds) => [...nds, newNode])
-    }
     return (
         <>
-            <div>
-                <button className='react-flow__controls-button'>Control</button>
-            </div>
             <Box>
                 <AppBar
                     enableColorOnDark
                     position='fixed'
-                    background='red'
                     color='inherit'
                     elevation={1}
                     sx={{
-                        bgcolor: theme.palette.background.default,
-                        height: '80px'
+                        bgcolor: theme.palette.background.default
                     }}
                 >
                     <Toolbar>
                         <CanvasHeader
+                            isUpsertButtonEnabled={isUpsertButtonEnabled}
                             chatflow={chatflow}
                             handleSaveFlow={handleSaveFlow}
                             handleDeleteFlow={handleDeleteFlow}
@@ -830,408 +539,62 @@ const Canvas = () => {
                         />
                     </Toolbar>
                 </AppBar>
-
-                <Box sx={{ display: 'flex', mt: '70px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
-                    <Box sx={{ width: customization.menu_open ? '350px' : '100px' }}>
-                        <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
-                    </Box>
-
-                    <Box sx={{ width: '100%' }} onClick={handleClick}>
-                        <div className='reactflow-parent-wrapper'>
-                            <div
-                                className='reactflow-wrapper'
-                                style={{ background: customization.isDarkMode ? '#000' : '#fff' }}
-                                ref={reactFlowWrapper}
+                <Box sx={{ pt: '70px', height: '100vh', width: '100%' }}>
+                    <div className='reactflow-parent-wrapper'>
+                        <div className='reactflow-wrapper' ref={reactFlowWrapper}>
+                            <ReactFlow
+                                nodes={nodes}
+                                edges={edges}
+                                onNodesChange={onNodesChange}
+                                onNodeClick={onNodeClick}
+                                onEdgesChange={onEdgesChange}
+                                onDrop={onDrop}
+                                onDragOver={onDragOver}
+                                onNodeDragStop={setDirty}
+                                nodeTypes={nodeTypes}
+                                edgeTypes={edgeTypes}
+                                onConnect={onConnect}
+                                onInit={setReactFlowInstance}
+                                fitView
+                                deleteKeyCode={canvas.canvasDialogShow ? null : ['Delete']}
+                                minZoom={0.1}
+                                className='chatflow-canvas'
                             >
-                                <ReactFlow
-                                    nodes={nodes}
-                                    edges={edges}
-                                    onNodesChange={onNodesChange}
-                                    onNodeClick={onNodeClick}
-                                    onEdgesChange={onEdgesChange}
-                                    onDrop={onDrop}
-                                    onDragOver={onDragOver}
-                                    onNodeDragStop={setDirty}
-                                    nodeTypes={nodeTypes}
-                                    edgeTypes={edgeTypes}
-                                    onConnect={onConnect}
-                                    onInit={setReactFlowInstance}
-                                    fitView
-                                    deleteKeyCode={canvas.canvasDialogShow ? null : ['Delete']}
-                                    minZoom={0.1}
-                                >
-                                    <Controls
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            padding: '5px 10px',
-                                            position: 'absolute',
-                                            marginLeft: '20px',
-                                            boxShadow: 'none'
-                                        }}
-                                    >
-                                        <Box sx={{ display: 'flex', gap: '20px', padding: '5px' }}>
-                                            {/* First Rectangle: Undo and Redo */}
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    backgroundColor: '#fefefe',
-                                                    border: '1px solid #eee',
-                                                    padding: '5px',
-                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                                    borderRadius: '14px',
-                                                    marginLeft: '17px'
-                                                }}
-                                            >
-                                                <MenuItem
-                                                    sx={{
-                                                        borderRight: '3px solid #eee',
-                                                        backgroundColor: '#fefefe',
-                                                        // borderBottom: '1px solid #eee',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
-                                                        }
-                                                    }}
-                                                    title='Undo'
-                                                    onClick={handleUndo}
-                                                >
-                                                    <IconArrowBackUp id='UndoIcon' size={19} color='#000000' />
-                                                </MenuItem>
-
-                                                <MenuItem
-                                                    sx={{
-                                                        backgroundColor: '#fefefe',
-                                                        // borderBottom: '1px solid #eee',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
-                                                        }
-                                                    }}
-                                                    title='Redo'
-                                                    onClick={handleRedo}
-                                                >
-                                                    <IconArrowForwardUp id='RedoIcon' size={19} color='#000000' />
-                                                </MenuItem>
-
-                                                <MenuItem
-                                                    sx={{
-                                                        borderRight: '3px solid #eee',
-                                                        backgroundColor: '#fefefe',
-                                                        // borderBottom: '1px solid #eee',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
-                                                        }
-                                                    }}
-                                                    title='Sticky Notes'
-                                                    onClick={addStickyNote}
-                                                >
-                                                    <IconFilePencil id='NotesIcon' size={19} color='#000000' />
-                                                </MenuItem>
-
-                                                <MenuItem
-                                                    sx={{
-                                                        backgroundColor: '#fefefe',
-                                                        // borderBottom: '1px solid #eee',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
-                                                        }
-                                                    }}
-                                                    title='Minimap'
-                                                    onClick={handleToggleMinimap}
-                                                >
-                                                    <IconMapPin2 id='MapIcon' size={19} color='#000000' />
-                                                </MenuItem>
-                                            </Box>
-
-                                            {/* Second Rectangle: Expand and Collapse */}
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    backgroundColor: '#fefefe',
-                                                    border: '1px solid #eee',
-                                                    padding: '5px',
-                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                                    borderRadius: '14px'
-                                                }}
-                                            >
-                                                <MenuItem
-                                                    sx={{
-                                                        backgroundColor: '#fefefe',
-                                                        // borderBottom: '1px solid #eee',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
-                                                        }
-                                                    }}
-                                                    title='Expand All Nodes'
-                                                    onClick={handleMin}
-                                                >
-                                                    <CallMadeIcon
-                                                        id='ExpandIcon'
-                                                        sx={{
-                                                            fontSize: '16px',
-                                                            backgroundColor: 'transparent',
-                                                            color: theme.palette.mode === 'dark' ? '#fff' : '#000'
-                                                        }}
-                                                    />
-                                                </MenuItem>
-
-                                                <MenuItem
-                                                    sx={{
-                                                        backgroundColor: '#fefefe',
-                                                        // borderBottom: '1px solid #eee',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
-                                                        }
-                                                    }}
-                                                    title='Collapse All Nodes'
-                                                    onClick={handleMax}
-                                                >
-                                                    <HorizontalRuleIcon
-                                                        id='CollapseIcon'
-                                                        size={19}
-                                                        sx={{
-                                                            backgroundColor: 'transparent',
-                                                            color: theme.palette.mode === 'dark' ? '#fff' : '#000'
-                                                        }}
-                                                    />
-                                                </MenuItem>
-
-                                                <MenuItem
-                                                    sx={{
-                                                        backgroundColor: '#fefefe',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                                        }
-                                                    }}
-                                                    title='Organize Nodes'
-                                                    onClick={handleOrganizeNodes}
-                                                >
-                                                    <GridViewIcon
-                                                        style={{
-                                                            fontSize: 19,
-                                                            color: customization.isDarkMode ? '#000000' : '#000000',
-                                                            background: 'transparent'
-                                                        }}
-                                                    />
-                                                </MenuItem>
-                                                <button
-                                                    title='Download as Image'
-                                                    onClick={downloadImage}
-                                                    style={{
-                                                        background: 'transparent',
-                                                        border: '0px',
-                                                        '&:hover': {
-                                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                                        }
-                                                    }}
-                                                    onMouseEnter={(e) =>
-                                                        (e.currentTarget.style.backgroundColor = customization.isDarkMode
-                                                            ? '#e22a90'
-                                                            : '#3c5ba4')
-                                                    }
-                                                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fefefe')}
-                                                >
-                                                    <DownloadIcon
-                                                        style={{
-                                                            background: 'transparent',
-                                                            color: customization.isDarkMode ? '#000' : '#000', // Change color based on mode
-                                                            fontSize: '21px',
-                                                            marginTop: '5px'
-                                                        }}
-                                                    />
-                                                </button>
-                                            </Box>
-
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    backgroundColor: '#fefefe',
-                                                    border: '1px solid #eee',
-                                                    padding: '5px',
-                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                                    borderRadius: '14px',
-                                                    marginLeft: '0px'
-                                                }}
-                                            >
-                                                <MenuItem
-                                                    sx={{
-                                                        borderRight: '3px solid #eee',
-                                                        backgroundColor: '#fefefe',
-                                                        // borderBottom: '1px solid #eee',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
-                                                        }
-                                                    }}
-                                                    title='Vertical Layout'
-                                                    onClick={() => handleLayout('TB')}
-                                                >
-                                                    <IconArrowsVertical id='VerticalIcon' size={19} color='#000000' />
-                                                </MenuItem>
-
-                                                <MenuItem
-                                                    sx={{
-                                                        backgroundColor: '#fefefe',
-                                                        // borderBottom: '1px solid #eee',
-                                                        boxSizing: 'content-box',
-                                                        height: '20px',
-                                                        padding: '5px 10px',
-                                                        cursor: 'pointer',
-
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        '&:hover': {
-                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
-                                                        }
-                                                    }}
-                                                    title='Horizontal Layout'
-                                                    onClick={() => handleLayout('LR')}
-                                                >
-                                                    <IconArrowsHorizontal id='HorizontalIcon' size={19} color='#000000' />
-                                                </MenuItem>
-                                            </Box>
-                                        </Box>
-                                    </Controls>
-                                    {showMinimap && <MiniMap zoomable pannable nodeClassName={nodeClassName} />}
-                                    <Background color='#aaa' gap={16} />
-
-                                    {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
-                                    <ChatPopUp chatflowid={chatflowId} />
-                                    <Menu
-                                        open={menuPosition !== null}
-                                        onClose={handleClose}
-                                        anchorReference='anchorPosition'
-                                        anchorPosition={
-                                            menuPosition !== null ? { top: menuPosition.mouseY, left: menuPosition.mouseX } : undefined
-                                        }
+                                <Controls
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)'
+                                    }}
+                                />
+                                <Background color='#aaa' gap={16} />
+                                <AddNodes isAgentCanvas={isAgentCanvas} nodesData={getNodesApi.data} node={selectedNode} />
+                                {isSyncNodesButtonEnabled && (
+                                    <Fab
                                         sx={{
-                                            '& .MuiPaper-root': {
-                                                position: 'relative',
-                                                top: '65px',
-                                                width: '200px',
-                                                fontSize: '0.875rem',
-                                                padding: '12px',
-                                                overflow: 'hidden',
-                                                height: 'auto',
-                                                fontFamily: 'roboto sans-serif',
-                                                maxHeight: 'calc(-235px + 100vh)'
+                                            left: 90,
+                                            top: 10,
+                                            color: 'white',
+                                            background: 'orange',
+                                            '&:hover': {
+                                                background: 'orange',
+                                                backgroundImage: `linear-gradient(rgb(0 0 0/10%) 0 0)`
                                             }
                                         }}
+                                        size='small'
+                                        aria-label='sync'
+                                        title='Sync Nodes'
+                                        onClick={() => syncNodes()}
                                     >
-                                        <MenuItem
-                                            sx={{
-                                                color: customization.isDarkMode ? '#FFF' : '#616161',
-                                                lineHeight: '3em',
-                                                '&:hover': {
-                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
-                                                    '& .MuiSvgIcon-root': {
-                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                                    }
-                                                }
-                                            }}
-                                            onClick={handleMin}
-                                            disabled={minMax && nodeMinMax}
-                                        >
-                                            <CallMadeIcon id='ExpandIcon' sx={{ mr: '12px' }} />
-                                            Expand All Node
-                                        </MenuItem>
-                                        <MenuItem
-                                            sx={{
-                                                color: customization.isDarkMode ? '#FFF' : '#616161',
-                                                lineHeight: '3em',
-                                                '&:hover': {
-                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
-                                                    '& .MuiSvgIcon-root': {
-                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                                    }
-                                                }
-                                            }}
-                                            onClick={handleMax}
-                                            disabled={!minMax && !nodeMinMax}
-                                        >
-                                            <HorizontalRuleIcon id='MinimizeIcon' sx={{ mr: '12px' }} />
-                                            Collapse All Node
-                                        </MenuItem>
-
-                                        <MenuItem
-                                            sx={{
-                                                color: customization.isDarkMode ? '#FFF' : '#616161',
-                                                lineHeight: '3em',
-                                                '&:hover': {
-                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
-                                                    '& .MuiSvgIcon-root': {
-                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                                    }
-                                                }
-                                            }}
-                                            onClick={handleUndo}
-                                        >
-                                            <IconArrowBackUp id='MinimizeIcon' sx={{ mr: '12px' }} />
-                                            Undo
-                                        </MenuItem>
-                                    </Menu>
-                                </ReactFlow>
-                            </div>
+                                        <IconRefreshAlert />
+                                    </Fab>
+                                )}
+                                {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
+                                <ChatPopUp isAgentCanvas={isAgentCanvas} chatflowid={chatflowId} />
+                            </ReactFlow>
                         </div>
-                    </Box>
+                    </div>
                 </Box>
                 <ConfirmDialog />
             </Box>

@@ -1,13 +1,12 @@
 import { styled } from '@mui/system'
 import { buttonClasses } from '@mui/base/Button'
 import { Tab as BaseTab, tabClasses } from '@mui/base/Tab'
-import { useSelector } from 'react-redux'
+import { blue } from './tabColors'
 
-export const Tab = styled(BaseTab)(({ ...props }) => {
-    const customization = useSelector((state) => state.customization)
-    return `
+export const Tab = styled(BaseTab)(
+    ({ ...props }) => `
   font-family: 'IBM Plex Sans', sans-serif;
-  color: ${customization?.isDarkMode ? '#fff' : '000'};
+  color: white;
   cursor: pointer;
   font-size: 0.75rem;
   font-weight: bold;
@@ -21,11 +20,18 @@ export const Tab = styled(BaseTab)(({ ...props }) => {
   display: flex;
   justify-content: center;
 
-  
+  &:hover {
+    background-color: ${props.sx?.backgroundColor || blue[400]};
+  }
+
+  &:focus {
+    color: #fff;
+    outline: 3px solid ${props.sx?.backgroundColor || blue[200]};
+  }
 
   &.${tabClasses.selected} {
-    background-color:${customization?.isDarkMode ? '#23262c' : '#fff'};
-    color: ${customization?.isDarkMode ? '#fff' : '000'};
+    background-color: #fff;
+    color: ${blue[600]};
   }
 
   &.${buttonClasses.disabled} {
@@ -33,4 +39,4 @@ export const Tab = styled(BaseTab)(({ ...props }) => {
     cursor: not-allowed;
   }
  `
-})
+)

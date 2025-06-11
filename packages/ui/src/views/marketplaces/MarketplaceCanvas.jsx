@@ -13,13 +13,10 @@ import { useTheme } from '@mui/material/styles'
 import MarketplaceCanvasNode from './MarketplaceCanvasNode'
 import MarketplaceCanvasHeader from './MarketplaceCanvasHeader'
 import StickyNote from '../canvas/StickyNote'
-import ButtonEdge from '../canvas/ButtonEdge'
-import { useSelector } from 'react-redux'
 
 const nodeTypes = { customNode: MarketplaceCanvasNode, stickyNote: StickyNote }
-// const edgeTypes = { buttonedge: '' }
+const edgeTypes = { buttonedge: '' }
 
-const edgeTypes = { buttonedge: ButtonEdge }
 // ==============================|| CANVAS ||============================== //
 
 const MarketplaceCanvas = () => {
@@ -37,7 +34,7 @@ const MarketplaceCanvas = () => {
     const reactFlowWrapper = useRef(null)
 
     // ==============================|| useEffect ||============================== //
-    const customization = useSelector((state) => state.customization)
+
     useEffect(() => {
         if (flowData) {
             const initialFlow = JSON.parse(flowData)
@@ -49,8 +46,11 @@ const MarketplaceCanvas = () => {
     }, [flowData])
 
     const onChatflowCopy = (flowData) => {
+        const isAgentCanvas = (flowData?.nodes || []).some(
+            (node) => node.data.category === 'Multi Agents' || node.data.category === 'Sequential Agents'
+        )
         const templateFlowData = JSON.stringify(flowData)
-        navigate(`/canvas`, { state: { templateFlowData } })
+        navigate(`/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, { state: { templateFlowData } })
     }
 
     return (
@@ -74,7 +74,7 @@ const MarketplaceCanvas = () => {
                     </Toolbar>
                 </AppBar>
                 <Box sx={{ pt: '70px', height: '100vh', width: '100%' }}>
-                    <div className='reactflow-parent-wrapper' style={{ background: customization.isDarkMode ? '#000' : '#fff' }}>
+                    <div className='reactflow-parent-wrapper'>
                         <div className='reactflow-wrapper' ref={reactFlowWrapper}>
                             <ReactFlow
                                 nodes={nodes}

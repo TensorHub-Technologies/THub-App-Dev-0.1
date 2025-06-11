@@ -50,50 +50,16 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
 }
 
 const getAllChatflows = async (req: Request, res: Response, next: NextFunction) => {
+    const tenantId: string | undefined = typeof req.query.tenantId === 'string' ? req.query.tenantId : undefined
+    console.log(`tenantId: ${tenantId}`)
+
     try {
-        let apiResponse = await chatflowsService.getAllChatflows(req.query?.type as ChatflowType, req.params.tenantId)
+        const apiResponse = await chatflowsService.getAllChatflows(req.query?.type as ChatflowType, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
     }
 }
-// const getAllChatflowsWp = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         let apiResponse = await chatflowsService.getAllChatflowsWp(req.query?.type as ChatflowType, req.params.workspaceUid)
-//         return res.json(apiResponse)
-//     } catch (error) {
-//         next(error)
-//     }
-// }
-
-// const getAllChatflowsPaginated = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const page = parseInt(req.query.page as string) || 1
-//         const limit = parseInt(req.query.limit as string) || 12
-//         let apiResponse = await chatflowsService.getAllChatflowsPaginated(req.query?.type as ChatflowType, req.params.tenantId, page, limit)
-//         return res.json(apiResponse)
-//     } catch (error) {
-//         next(error)
-//     }
-// }
-
-// const getAllChatflowsWpPaginated = async (req: Request, res: Response, next: NextFunction) => {
-//     console.log('getAllChatflowsWpPaginated', req.query.page, req.query.limit)
-
-//     try {
-//         const page = parseInt(req.query.page as string) || 1
-//         const limit = parseInt(req.query.limit as string) || 12
-//         let apiResponse = await chatflowsService.getAllChatflowsWpPaginated(
-//             req.query?.type as ChatflowType,
-//             req.params.workspaceUid,
-//             page,
-//             limit
-//         )
-//         return res.json(apiResponse)
-//     } catch (error) {
-//         next(error)
-//     }
-// }
 
 // Get specific chatflow via api key
 const getChatflowByApiKey = async (req: Request, res: Response, next: NextFunction) => {
@@ -117,10 +83,10 @@ const getChatflowByApiKey = async (req: Request, res: Response, next: NextFuncti
 
 const getChatflowById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (typeof req.params === 'undefined' || !req.params.chatflowId) {
+        if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsRouter.getChatflowById - id not provided!`)
         }
-        const apiResponse = await chatflowsService.getChatflowById(req.params.chatflowId)
+        const apiResponse = await chatflowsService.getChatflowById(req.params.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -212,7 +178,6 @@ export default {
     checkIfChatflowIsValidForUploads,
     deleteChatflow,
     getAllChatflows,
-    // getAllChatflowsWp,
     getChatflowByApiKey,
     getChatflowById,
     saveChatflow,
@@ -220,6 +185,4 @@ export default {
     updateChatflow,
     getSinglePublicChatflow,
     getSinglePublicChatbotConfig
-    // getAllChatflowsWpPaginated,
-    // getAllChatflowsPaginated
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect, useContext, Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import axios from 'axios'
@@ -6,13 +6,15 @@ import axios from 'axios'
 // Material
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete'
 import { Popper, CircularProgress, TextField, Box, Typography } from '@mui/material'
-import { styled } from '@mui/material/styles'
+import { useTheme, styled } from '@mui/material/styles'
 
 // API
 import credentialsApi from '@/api/credentials'
 
 // const
 import { baseURL } from '@/store/constant'
+import { flowContext } from '@/store/context/ReactFlowContext'
+import { getAvailableNodesForVariable } from '@/utils/genericHelper'
 
 const StyledPopper = styled(Popper)({
     boxShadow: '0px 8px 10px -5px rgb(0 0 0 / 20%), 0px 16px 24px 2px rgb(0 0 0 / 14%), 0px 6px 30px 5px rgb(0 0 0 / 12%)',
@@ -26,15 +28,16 @@ const StyledPopper = styled(Popper)({
     }
 })
 
-const fetchList = async ({ tenantId, name, nodeData }) => {
-    const loadMethod = nodeData.inputParams.find((param) => param.name === name)?.loadMethod
+const fetchList = async ({ tenantId, name, nodeData, previousNodes, currentNode }) => {
+    const selectedParam = nodeData.inputParams.find((param) => param.name === name)
+    const loadMethod = selectedParam?.loadMethod
     const username = localStorage.getItem('username')
     const password = localStorage.getItem('password')
 
     let lists = await axios
         .post(
-            `${baseURL}/api/v1/node-load-method/${nodeData.name}/${tenantId}`,
-            { ...nodeData, loadMethod },
+            `${baseURL}/api/v1/node-load-method/${nodeData.name}`,
+            { ...nodeData, loadMethod, previousNodes, currentNode },
             {
                 auth: username && password ? { username, password } : undefined,
                 headers: { 'Content-type': 'application/json', 'x-request-from': 'internal' }
@@ -63,9 +66,10 @@ export const AsyncDropdown = ({
     multiple = false
 }) => {
     const customization = useSelector((state) => state.customization)
+
     const userData = useSelector((state) => state.user.userData)
-    // const tenantId = userData['uid']
     const tenantId = userData?.uid || localStorage.getItem('userId')
+    const theme = useTheme()
 
     const [open, setOpen] = useState(false)
     const [options, setOptions] = useState([])
@@ -85,6 +89,7 @@ export const AsyncDropdown = ({
     const getDefaultOptionValue = () => (multiple ? [] : '')
     const addNewOption = [{ label: '- Create New -', name: '-create-' }]
     let [internalValue, setInternalValue] = useState(value ?? 'choose an option')
+    const { reactFlowInstance } = useContext(flowContext)
 
     const fetchCredentialList = async () => {
         try {
@@ -115,7 +120,46 @@ export const AsyncDropdown = ({
         setLoading(true)
         ;(async () => {
             const fetchData = async () => {
-                let response = credentialNames.length ? await fetchCredentialList() : await fetchList({ tenantId, name, nodeData })
+                let response = []
+                if (credentialNames.length) {
+                    response = await fetchCredentialList()
+                } else {
+                    const body = {
+                        name,
+                        tenantId,
+                        nodeData
+                    }
+                    if (reactFlowInstance) {
+                        const previousNodes = getAvailableNodesForVariable(
+                            reactFlowInstance.getNodes(),
+                            reactFlowInstance.getEdges(),
+                            nodeData.id,
+                            `${nodeData.id}-input-${name}-${nodeData.inputParams.find((param) => param.name === name)?.type || ''}`,
+                            true
+                        ).map((node) => ({ id: node.id, name: node.data.name, label: node.data.label, inputs: node.data.inputs }))
+
+                        let currentNode = reactFlowInstance.getNodes().find((node) => node.id === nodeData.id)
+                        if (currentNode) {
+                            currentNode = {
+                                id: currentNode.id,
+                                name: currentNode.data.name,
+                                label: currentNode.data.label,
+                                inputs: currentNode.data.inputs
+                            }
+                            body.currentNode = currentNode
+                        }
+
+                        body.previousNodes = previousNodes
+                    }
+
+                    response = await fetchList(body)
+                }
+                for (let j = 0; j < response.length; j += 1) {
+                    if (response[j].imageSrc) {
+                        const imageSrc = `${baseURL}/api/v1/node-icon/${response[j].name}`
+                        response[j].imageSrc = imageSrc
+                    }
+                }
                 if (isCreateNewOption) setOptions([...response, ...addNewOption])
                 else setOptions([...response])
                 setLoading(false)
@@ -167,36 +211,74 @@ export const AsyncDropdown = ({
                 }}
                 PopperComponent={StyledPopper}
                 loading={loading}
-                renderInput={(params) => (
-                    <TextField
-                        id='standard-basic'
-                        variant='standard'
-                        {...params}
-                        value={internalValue}
-                        InputProps={{
-                            ...params.InputProps,
-                            disableUnderline: true,
-                            endAdornment: (
-                                <Fragment>
-                                    {loading ? <CircularProgress color='inherit' size={20} /> : null}
-                                    {params.InputProps.endAdornment}
-                                </Fragment>
-                            ),
-                            sx: {
-                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
-                                '&:hover': {
-                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                renderInput={(params) => {
+                    const matchingOptions = multiple
+                        ? findMatchingOptions(options, internalValue)
+                        : [findMatchingOptions(options, internalValue)].filter(Boolean)
+                    return (
+                        <TextField
+                            {...params}
+                            value={internalValue}
+                            sx={{
+                                height: '100%',
+                                '& .MuiInputBase-root': {
+                                    height: '100%',
+                                    '& fieldset': {
+                                        borderColor: theme.palette.grey[900] + 25
+                                    }
                                 }
-                            }
-                        }}
-                    />
-                )}
+                            }}
+                            InputProps={{
+                                ...params.InputProps,
+                                startAdornment: (
+                                    <>
+                                        {matchingOptions.map((option) =>
+                                            option?.imageSrc ? (
+                                                <Box
+                                                    key={option.name}
+                                                    component='img'
+                                                    src={option.imageSrc}
+                                                    alt={option.label || 'Selected Option'}
+                                                    sx={{
+                                                        width: 32,
+                                                        height: 32,
+                                                        borderRadius: '50%',
+                                                        marginRight: 0.5
+                                                    }}
+                                                />
+                                            ) : null
+                                        )}
+                                        {params.InputProps.startAdornment}
+                                    </>
+                                ),
+                                endAdornment: (
+                                    <Fragment>
+                                        {loading ? <CircularProgress color='inherit' size={20} /> : null}
+                                        {params.InputProps.endAdornment}
+                                    </Fragment>
+                                )
+                            }}
+                        />
+                    )
+                }}
                 renderOption={(props, option) => (
-                    <Box component='li' {...props}>
+                    <Box component='li' {...props} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {option.imageSrc && (
+                            <img
+                                src={option.imageSrc}
+                                alt={option.description}
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    padding: 1,
+                                    borderRadius: '50%'
+                                }}
+                            />
+                        )}
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography variant='h5'>{option.label}</Typography>
                             {option.description && (
-                                <Typography sx={{ color: customization.isDarkMode ? '#9e9e9e' : '' }}>{option.description}</Typography>
+                                <Typography sx={{ color: customization.isDarkMode ? '#212121' : '' }}>{option.description}</Typography>
                             )}
                         </div>
                     </Box>

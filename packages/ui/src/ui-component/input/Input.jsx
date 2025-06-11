@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { FormControl, Popover, TextField } from '@mui/material'
+import { FormControl, OutlinedInput, InputBase, Popover } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import SelectVariable from '@/ui-component/json/SelectVariable'
 import { getAvailableNodesForVariable } from '@/utils/genericHelper'
-import { useSelector } from 'react-redux'
 
 export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disabled = false }) => {
+    const theme = useTheme()
     const [myValue, setMyValue] = useState(value ?? '')
     const [anchorEl, setAnchorEl] = useState(null)
     const [availableNodesForVariable, setAvailableNodesForVariable] = useState([])
     const ref = useRef(null)
-    const customization = useSelector((state) => state.customization)
 
     const openPopOver = Boolean(anchorEl)
 
@@ -54,10 +54,10 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
         <>
             {inputParam.name === 'note' ? (
                 <FormControl sx={{ width: '100%', height: 'auto' }} size='small'>
-                    <TextField
-                        id='standard-basic'
+                    <InputBase
+                        id={nodeId}
                         size='small'
-                        variant='standard'
+                        disabled={disabled}
                         type={getInputType(inputParam.type)}
                         placeholder={inputParam.placeholder}
                         multiline={!!inputParam.rows}
@@ -73,10 +73,7 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                             style: {
                                 border: 'none',
                                 background: 'none',
-                                color: '#FFFF',
-                                fontWeight: 'bolder',
-                                fontSize: '24px',
-                                fontFamily: 'cambria Math'
+                                color: 'inherit'
                             }
                         }}
                         sx={{
@@ -85,53 +82,7 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                             padding: '10px 14px',
                             textarea: {
                                 '&::placeholder': {
-                                    color: '#616161'
-                                }
-                            }
-                        }}
-                        InputProps={{
-                            disableUnderline: true,
-                            sx: {
-                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
-                                '&:hover': {
-                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
-                                }
-                            }
-                        }}
-                    />
-                </FormControl>
-            ) : inputParam.name === 'temperature' ? (
-                <FormControl sx={{ mt: 1, width: '100%' }} size='small'>
-                    <TextField
-                        id='standard-basic'
-                        size='small'
-                        variant='standard'
-                        disabled={disabled}
-                        type={getInputType(inputParam.type)}
-                        placeholder={inputParam.placeholder}
-                        multiline={!!inputParam.rows}
-                        rows={inputParam.rows ?? 1}
-                        value={myValue}
-                        name={inputParam.name}
-                        onChange={(e) => {
-                            const inputValue = e.target.value
-                            if (/^(0(\.[0-9]+)?|1(\.[0-9]+)?|2(\.0)?)$/.test(inputValue) && parseFloat(inputValue) <= 2) {
-                                setMyValue(inputValue)
-                                onChange(inputValue)
-                            }
-                        }}
-                        inputProps={{
-                            step: inputParam.step ?? 0.1,
-                            style: {
-                                height: inputParam.rows ? '90px' : 'inherit'
-                            }
-                        }}
-                        InputProps={{
-                            disableUnderline: true,
-                            sx: {
-                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
-                                '&:hover': {
-                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                    color: '#212121'
                                 }
                             }
                         }}
@@ -139,10 +90,10 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                 </FormControl>
             ) : (
                 <FormControl sx={{ mt: 1, width: '100%' }} size='small'>
-                    <TextField
-                        id='standard-basic'
+                    <OutlinedInput
+                        id={inputParam.name}
                         size='small'
-                        variant='standard'
+                        disabled={disabled}
                         type={getInputType(inputParam.type)}
                         placeholder={inputParam.placeholder}
                         multiline={!!inputParam.rows}
@@ -154,18 +105,14 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                             onChange(e.target.value)
                         }}
                         inputProps={{
-                            step: inputParam.step ?? 0.1,
+                            step: inputParam.step ?? 1,
                             style: {
                                 height: inputParam.rows ? '90px' : 'inherit'
                             }
                         }}
-                        InputProps={{
-                            disableUnderline: true,
-                            sx: {
-                                borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
-                                '&:hover': {
-                                    borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
-                                }
+                        sx={{
+                            '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: theme.palette.grey[900] + 25
                             }
                         }}
                     />

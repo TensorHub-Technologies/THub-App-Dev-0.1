@@ -6,12 +6,11 @@ import TextField from '@mui/material/TextField'
 import Chip from '@mui/material/Chip'
 import PropTypes from 'prop-types'
 import { DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
-import { useSelector } from 'react-redux'
 
 const TagDialog = ({ isOpen, dialogProps, onClose, onSubmit }) => {
     const [inputValue, setInputValue] = useState('')
     const [categoryValues, setCategoryValues] = useState([])
-    const customization = useSelector((state) => state.customization)
+
     const handleInputChange = (event) => {
         setInputValue(event.target.value)
     }
@@ -59,7 +58,7 @@ const TagDialog = ({ isOpen, dialogProps, onClose, onSubmit }) => {
             aria-describedby='category-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                Set Workflow Category Tags
+                Set Chatflow Category Tags
             </DialogTitle>
             <DialogContent>
                 <Box>
@@ -77,40 +76,13 @@ const TagDialog = ({ isOpen, dialogProps, onClose, onSubmit }) => {
                             </div>
                         )}
                         <TextField
-                            id='standard-basic'
-                            variant='standard'
-                            sx={{
-                                mt: 2,
-                                '& .TextField-root': {
-                                    '& fieldset': {
-                                        borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                    },
-                                    '&:hover fieldset': { borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                    '&.Mui-focused fieldset': { borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }
-                                },
-                                transition: 'all .2s ease-in-out',
-                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
-                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                '& .MuiInputLabel-root': { color: customization.isDarkMode ? '#fff' : '#000' }, // Default label color
-                                '&:hover .MuiInputLabel-root': { color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' },
-                                '& .MuiInput-underline:after': {
-                                    borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                },
-                                '& .MuiInput-underline:before': {
-                                    borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                },
-                                '&:hover': {
-                                    '& .MuiInput-underline:before': {
-                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
-                                    }
-                                }
-                            }}
+                            sx={{ mt: 2 }}
                             fullWidth
                             value={inputValue}
                             onChange={handleInputChange}
                             onKeyDown={handleInputKeyDown}
                             label='Add a tag'
-                            // variant='outlined'
+                            variant='outlined'
                         />
                         <Typography variant='body2' sx={{ fontStyle: 'italic', mt: 1 }} color='text.secondary'>
                             Enter a tag and press enter to add it to the list. You can add as many tags as you want.
@@ -119,10 +91,8 @@ const TagDialog = ({ isOpen, dialogProps, onClose, onSubmit }) => {
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button style={{ color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} onClick={onClose}>
-                    Cancel
-                </Button>
-                <Button variant='contained' style={{ background: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }} onClick={handleSubmit}>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button variant='contained' onClick={handleSubmit}>
                     Submit
                 </Button>
             </DialogActions>

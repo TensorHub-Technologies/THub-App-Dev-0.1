@@ -18,11 +18,11 @@ const RegistrationForm = () => {
 
     let apiUrl
     if (window.location.hostname === 'demo.thub.tech') {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL
+        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
     } else if (window.location.hostname === 'localhost') {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL
+        apiUrl = 'http://localhost:2000'
     } else {
-        apiUrl = import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL
+        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
     }
 
     useEffect(() => {

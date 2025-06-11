@@ -358,7 +358,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                             cursor: 'pointer',
                             width: '30px',
                             height: '30px',
-                            border: '1px solid #616161',
+                            border: '1px solid #212121',
                             marginRight: '10px',
                             backgroundColor: color ?? '#ffffff',
                             borderRadius: '5px'
@@ -464,8 +464,14 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                 <Stack sx={{ mt: 1, mb: 2, alignItems: 'center' }} direction='row' spacing={2}>
                     <Typography variant='h4'>Title Settings</Typography>
                 </Stack>
-                {textField(title, 'title', 'Title', 'string', 'THub Assistant')}
-                {textField(titleAvatarSrc, 'titleAvatarSrc', 'Title Avatar Link', 'string', `https://thub.tech/assets/THub-CPsX7H9O.svg`)}
+                {textField(title, 'title', 'Title', 'string', 'Flowise Assistant')}
+                {textField(
+                    titleAvatarSrc,
+                    'titleAvatarSrc',
+                    'Title Avatar Link',
+                    'string',
+                    `https://raw.githubusercontent.com/FlowiseAI/Flowise/main/assets/FloWiseAI_dark.png`
+                )}
                 {colorField(titleBackgroundColor, 'titleBackgroundColor', 'Title Background Color')}
                 {colorField(titleTextColor, 'titleTextColor', 'Title TextColor')}
             </Card>

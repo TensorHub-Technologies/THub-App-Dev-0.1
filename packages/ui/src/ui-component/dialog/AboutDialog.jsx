@@ -22,6 +22,10 @@ const AboutDialog = ({ show, onCancel }) => {
                     username,
                     password
                 }
+                config.headers = {
+                    'Content-type': 'application/json',
+                    'x-request-from': 'internal'
+                }
             }
             const latestReleaseReq = axios.get('https://api.github.com/repos/FlowiseAI/Flowise/releases/latest')
             const currentVersionReq = axios.get(`${baseURL}/api/v1/version`, { ...config })
@@ -52,7 +56,7 @@ const AboutDialog = ({ show, onCancel }) => {
             aria-describedby='alert-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                THub Version
+                Flowise Version
             </DialogTitle>
             <DialogContent>
                 {data && (
@@ -68,12 +72,12 @@ const AboutDialog = ({ show, onCancel }) => {
                             <TableBody>
                                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                     <TableCell component='th' scope='row'>
-                                        1.8.3
+                                        {data.currentVersion}
                                     </TableCell>
                                     <TableCell component='th' scope='row'>
-                                        {/* <a target='_blank' rel='noreferrer' href={data.html_url}> */}
-                                        THub@1.8.3
-                                        {/* </a> */}
+                                        <a target='_blank' rel='noreferrer' href={data.html_url}>
+                                            {data.name}
+                                        </a>
                                     </TableCell>
                                     <TableCell>{moment(data.published_at).fromNow()}</TableCell>
                                 </TableRow>

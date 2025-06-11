@@ -1,12 +1,12 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import parser from 'html-react-parser'
 
 // Material
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, Typography, TextField } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, OutlinedInput, Typography } from '@mui/material'
 
 // Project imports
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -24,19 +24,15 @@ import useApi from '@/hooks/useApi'
 
 // utils
 import useNotifier from '@/utils/useNotifier'
+import { initializeDefaultNodeData } from '@/utils/genericHelper'
 
 // const
 import { baseURL, REDACTED_CREDENTIAL_VALUE } from '@/store/constant'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
+import keySVG from '@/assets/images/key.svg'
 
-import { useSelector } from 'react-redux'
-
-const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setError = () => {} }) => {
+const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     const portalElement = document.getElementById('portal')
-
-    const userData = useSelector((state) => state.user.userData)
-    // const tenantId = userData['uid']
-    const tenantId = userData?.uid
 
     const dispatch = useDispatch()
 
@@ -46,7 +42,6 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
 
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
-    const customization = useSelector((state) => state.customization)
 
     const getSpecificCredentialApi = useApi(credentialsApi.getSpecificCredential)
     const getSpecificComponentCredentialApi = useApi(credentialsApi.getSpecificComponentCredential)
@@ -55,6 +50,9 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     const [name, setName] = useState('')
     const [credentialData, setCredentialData] = useState({})
     const [componentCredential, setComponentCredential] = useState({})
+
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     useEffect(() => {
         if (getSpecificCredentialApi.data) {
@@ -65,13 +63,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             if (getSpecificCredentialApi.data.plainDataObj) {
                 setCredentialData(getSpecificCredentialApi.data.plainDataObj)
             }
-            let credentialName
-            if (typeof getSpecificCredentialApi.data == 'object') {
-                credentialName = getSpecificCredentialApi.data.credentialName
-            } else {
-                credentialName = getSpecificCredentialApi.data[0].credentialName
-            }
-            getSpecificComponentCredentialApi.request(credentialName)
+            getSpecificComponentCredentialApi.request(getSpecificCredentialApi.data.credentialName)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -99,6 +91,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
 
     useEffect(() => {
         if (dialogProps.type === 'EDIT' && dialogProps.data) {
+            // When credential dialog is opened from Credentials dashboard
             getSpecificCredentialApi.request(dialogProps.data.id)
         } else if (dialogProps.type === 'EDIT' && dialogProps.credentialId) {
             // When credential dialog is opened from node in canvas
@@ -107,7 +100,8 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             // When credential dialog is to add a new credential
             setName('')
             setCredential({})
-            setCredentialData({})
+            const defaultCredentialData = initializeDefaultNodeData(dialogProps.credentialComponent.inputs)
+            setCredentialData(defaultCredentialData)
             setComponentCredential(dialogProps.credentialComponent)
         }
 
@@ -124,9 +118,9 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
         try {
             const obj = {
                 name,
-                tenantId: tenantId,
                 credentialName: componentCredential.name,
-                plainDataObj: credentialData
+                plainDataObj: credentialData,
+                tenantId: tenantId
             }
             const createResp = await credentialsApi.createCredential(obj)
             if (createResp.data) {
@@ -169,8 +163,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
         try {
             const saveObj = {
                 name,
-                credentialName: componentCredential.name,
-                tenantId
+                credentialName: componentCredential.name
             }
 
             let plainDataObj = {}
@@ -249,6 +242,11 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                                 }}
                                 alt={componentCredential.name}
                                 src={`${baseURL}/api/v1/components-credentials-icon/${componentCredential.name}`}
+                                onError={(e) => {
+                                    e.target.onerror = null
+                                    e.target.style.padding = '5px'
+                                    e.target.src = keySVG
+                                }}
                             />
                         </div>
                         {componentCredential.label}
@@ -281,23 +279,8 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                                 <span style={{ color: 'red' }}>&nbsp;*</span>
                             </Typography>
                         </Stack>
-                        <TextField
-                            id='standard-basic'
-                            variant='standard'
-                            // id='credName'
-
-                            sx={{
-                                transition: 'all .2s ease-in-out',
-                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
-                                '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#fff' : '#000' },
-                                '&:hover': {
-                                    '& .MuiInput-underline:before': {
-                                        borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
-                                    }
-                                }
-                            }}
+                        <OutlinedInput
+                            id='credName'
                             type='string'
                             fullWidth
                             placeholder={componentCredential.label}
