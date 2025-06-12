@@ -36,11 +36,11 @@ export default defineConfig(async ({ mode }) => {
             outDir: './build'
         },
         define: {
-            'import.meta.env.VITE_GOOGLE_CLIENT_ID':  JSON.stringify(env.VITE_GOOGLE_CLIENT_ID),
-            'import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL':  JSON.stringify(env.VITE_THUB_WEB_SERVER_PROD_URL),
-            'import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL':  JSON.stringify(env.VITE_THUB_WEB_SERVER_DEMO_URL),
-            'import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL':  JSON.stringify(env.VITE_THUB_WEB_SERVER_LOCAL_URL),
-            'import.meta.env.VITE_TEST_ENV':  JSON.stringify(env.VITE_TEST_ENV),
+            'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(env.VITE_GOOGLE_CLIENT_ID),
+            'import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL': JSON.stringify(env.VITE_THUB_WEB_SERVER_PROD_URL),
+            'import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL': JSON.stringify(env.VITE_THUB_WEB_SERVER_DEMO_URL),
+            'import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL': JSON.stringify(env.VITE_THUB_WEB_SERVER_LOCAL_URL),
+            'import.meta.env.VITE_TEST_ENV': JSON.stringify(env.VITE_TEST_ENV)
         },
         server: {
             open: true,

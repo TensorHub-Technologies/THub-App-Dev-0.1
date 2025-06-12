@@ -58,6 +58,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                 import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
             const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
             let apiUrl
+
             if (window.location.hostname === 'demo.thub.tech') {
                 apiUrl = thubWebServerDevUrl
             } else if (window.location.hostname === 'localhost') {
@@ -65,6 +66,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
             } else {
                 apiUrl = thubWebServerProdUrl
             }
+
             handleLoading('Form Submitted Successfully')
             const response = await axios.post(`${apiUrl}/enterprice-mail`, values)
             if (response.status === 200 || response.status === 'ok') {

@@ -53,6 +53,7 @@ const SignUp = () => {
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     let apiUrl
+
     if (window.location.hostname === 'demo.thub.tech') {
         apiUrl = thubWebServerDevUrl
     } else if (window.location.hostname === 'localhost') {

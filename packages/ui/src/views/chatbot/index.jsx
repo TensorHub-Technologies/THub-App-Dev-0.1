@@ -3,7 +3,7 @@ import { FullPageChat } from 'thub-embed-react'
 import { useNavigate } from 'react-router-dom'
 
 // Project import
-import LoginDialog from '@/ui-component/dialog/LoginDialog'
+// import LoginDialog from '@/ui-component/dialog/LoginDialog'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -39,25 +39,14 @@ const ChatbotFull = () => {
 
     useEffect(() => {
         getSpecificChatflowFromPublicApi.request(chatflowId)
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         if (getSpecificChatflowFromPublicApi.error) {
             if (getSpecificChatflowFromPublicApi.error?.response?.status === 401) {
-                if (localStorage.getItem('username') && localStorage.getItem('password')) {
-                    getSpecificChatflowApi.request(chatflowId)
-                } else {
-                    setLoginDialogProps({
-                        title: 'Login',
-                        confirmButtonName: 'Login'
-                    })
-                    setLoginDialogOpen(true)
-                }
+                getSpecificChatflowApi.request(chatflowId)
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getSpecificChatflowFromPublicApi.error])
 
     useEffect(() => {
@@ -100,6 +89,9 @@ const ChatbotFull = () => {
         setLoading(getSpecificChatflowFromPublicApi.loading || getSpecificChatflowApi.loading)
     }, [getSpecificChatflowFromPublicApi.loading, getSpecificChatflowApi.loading])
 
+    console.log('Chatflow', chatflow)
+    console.log('Chatflow apikey id', chatflow?.apikeyid)
+
     return (
         <>
             {!isLoading ? (
@@ -114,7 +106,7 @@ const ChatbotFull = () => {
                             theme={{ chatWindow: chatbotTheme }}
                         />
                     )}
-                    <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} />
+                    {/* <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} /> */}
                 </>
             ) : null}
         </>
