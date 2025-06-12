@@ -57,7 +57,6 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
             const thubWebServerProdUrl =
                 import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
             const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-
             let apiUrl
 
             if (window.location.hostname === 'demo.thub.tech') {

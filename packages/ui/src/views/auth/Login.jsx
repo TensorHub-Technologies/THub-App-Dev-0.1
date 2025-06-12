@@ -33,6 +33,17 @@ const Login = () => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
 
+    console.log('THub Prod:', import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL)
+    console.log('THub Demo:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
+    console.log('THub local:', import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL)
+    console.log('THub VITE_TEST_ENV:', import.meta.env.VITE_TEST_ENV)
+
+    const thubWebServerDevUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    const thubWebServerProdUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -62,7 +73,7 @@ const Login = () => {
                 } else {
                     apiUrl = thubWebServerProdUrl
                 }
-
+                console.log('API URL Google Login:', apiUrl)
                 const loginResponse = await axios.post(`${apiUrl}/loginUser`, {
                     email: values.email,
                     password: values.password
@@ -80,8 +91,6 @@ const Login = () => {
                 const userDataResponse = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
 
                 const userData = userDataResponse.data[0]
-                console.log('User Data:', userData)
-
                 dispatch(setUserData(userData))
                 navigate('/workflows')
             } catch (error) {

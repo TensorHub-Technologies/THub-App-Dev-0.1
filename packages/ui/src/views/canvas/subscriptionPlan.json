@@ -56,6 +56,7 @@
                 "Airtable",
                 "API Loader",
                 "Confluence",
+                "Cheerio Web Scraper",
                 "Csv File",
                 "Custom Document Loader",
                 "Document Store",
@@ -159,7 +160,7 @@
             ],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
             "Moderation": ["OpenAI Moderation", "Simple Prompt Moderation"],
-            "Multi Agents": ["Supervisor", "Worker"],
+            "Multi Agents": ["Principal Agent", "Specialist Agent"],
             "Text Splitters": [
                 "Character Text Splitter",
                 "Code Text Splitter",
@@ -428,7 +429,7 @@
             "Tools (MCP)": ["Brave Search MCP", "Custom MCP", "Github MCP", "PostgreSQL MCP", "Sequential Thinking MCP", "Slack MCP"],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
             "Moderation": ["OpenAI Moderation", "Simple Prompt Moderation"],
-            "Multi Agents": ["Supervisor", "Worker"],
+            "Multi Agents": ["Principal Agent", "Specialist Agent"],
             "Text Splitters": [
                 "Character Text Splitter",
                 "Code Text Splitter",

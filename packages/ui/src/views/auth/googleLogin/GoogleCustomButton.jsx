@@ -26,9 +26,7 @@ const GoogleCustomButton = () => {
         apiUrl = thubWebServerProdUrl
     }
 
-    console.log('Google Client ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID)
-
-    console.log('API URL:', apiUrl)
+    console.log('API URL Google:', apiUrl)
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             console.log('Authorization Code:', response)
