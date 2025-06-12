@@ -10,7 +10,7 @@ import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
 import AgentsEmptySVG from '@/assets/images/agents_empty.svg'
-import LoginDialog from '@/ui-component/dialog/LoginDialog'
+// import LoginDialog from '@/ui-component/dialog/LoginDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { FlowListTable } from '@/ui-component/table/FlowListTable'
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -88,7 +88,7 @@ const Agentflows = () => {
                     title: 'Login',
                     confirmButtonName: 'Login'
                 })
-                setLoginDialogOpen(true)
+                setLoginDialogOpen(false)
             } else {
                 setError(getAllAgentflows.error)
             }
@@ -208,7 +208,7 @@ const Agentflows = () => {
                 </Stack>
             )}
 
-            <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} />
+            {/* <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} /> */}
             <ConfirmDialog />
         </MainCard>
     )
