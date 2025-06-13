@@ -7,8 +7,7 @@
         "packages/*",
         "thub",
         "ui",
-        "components",
-        "api-documentation"
+        "components"
     ],
     "scripts": {
         "build": "turbo run build",

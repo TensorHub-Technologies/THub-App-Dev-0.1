@@ -6,7 +6,7 @@ import { Dialog, DialogActions, DialogContent, Typography, DialogTitle } from '@
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { Input } from '@/ui-component/input/Input'
 
-const LoginDialog = ({ show, dialogProps, onConfirm }) => {
+const LoginDialog = ({ show = false, dialogProps, onConfirm }) => {
     const portalElement = document.getElementById('portal')
     const usernameInput = {
         label: 'Username',

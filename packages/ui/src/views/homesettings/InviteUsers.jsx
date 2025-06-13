@@ -30,6 +30,7 @@ function InviteUsers() {
 
         try {
             let apiUrl
+
             if (window.location.hostname === 'demo.thub.tech') {
                 apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
             } else if (window.location.hostname === 'localhost') {
