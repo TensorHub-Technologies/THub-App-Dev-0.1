@@ -979,11 +979,11 @@ importers:
                 specifier: ^11.2.4
                 version: 11.2.8
             thub-embed:
-                specifier: ^9.3.5
-                version: 9.3.5(bufferutil@4.0.9)
+                specifier: ^9.3.7
+                version: 9.3.7(bufferutil@4.0.9)
             thub-embed-react:
-                specifier: 1.0.9
-                version: 1.0.9(@types/node@22.13.1)(thub-embed@3.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(typescript@5.7.3)
+                specifier: 2.0.2
+                version: 2.0.2(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.3.7(bufferutil@4.0.9))(typescript@5.7.3)
             thub-react-json-view:
                 specifier: 1.21.11
                 version: 1.21.11(@types/react@19.0.8)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -9738,9 +9738,6 @@ packages:
     flatted@3.3.2:
         resolution: { integrity: sha512-AiwGJM8YcNOaobumgtng+6NHuOqC3A7MixFeDafM3X9cIUM+xUXoS5Vfgf+OihAYe20fxqNM9yPBXJzRtZ/4eA== }
 
-    thub-embed@3.0.3:
-        resolution: { integrity: sha512-sLSZU72gzMV9Try82LR2RW7d5TTwcJxRysvJFN2N2E21B/SyyOEq8EXpALF59IwL7uL7+eXd3G7RjoxukqmCpQ== }
-
     flowise-nim-container-manager@1.0.11:
         resolution: { integrity: sha512-Er/leiIzJZ691kWqXkjCWv29g0G5qWA4juBOcGZ1P5kBLnkKFxbWc5x8JsSPcHuJQIiGNX/dYEzp2ZrOV3YYMg== }
 
@@ -15910,14 +15907,14 @@ packages:
     through@2.3.8:
         resolution: { integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg== }
 
-    thub-embed-react@1.0.9:
-        resolution: { integrity: sha512-R3dUixMStPyexXfvQ9cYcRqj3lci17aewnOFQzveU/WcMWz/iRiuiAu85gT5dLFPs/bFLkKzF/VhS+ztWJQykA== }
+    thub-embed-react@2.0.2:
+        resolution: { integrity: sha512-9tJAo0hZiMfw7V/Ko37ERq+exfy9fTy7DmSuRPyZF9JyxwUF9RIkxqkq7Im16ZlMERNE8GiBCEzn7vaZ4d5ikg== }
         peerDependencies:
-            thub-embed: '*'
             react: 18.x
+            thub-embed: '*'
 
-    thub-embed@9.3.5:
-        resolution: { integrity: sha512-PdLh9EyzOhzFQX/A3FQg0WdIQ2RGI+4DQ19JxX7yAZZXv8d/zvR6fX3YzAiwXIG9TRqA4qai4oSIefwBaoZD5g== }
+    thub-embed@9.3.7:
+        resolution: { integrity: sha512-zk6/C2N24HYpH+wk5YTRnR9+6pnrDaCIuyxE3FRkcVw546F0M2jdEtMUf999zDkRnLOEkUTr3F0dZlcfmXvtUw== }
 
     thub-react-json-view@1.21.11:
         resolution: { integrity: sha512-w8x68KAaIESPxb3kbLKeFXJGSO+QmSzVMh+FlBxgD/Yc/z5vjKBe0NdfiXu4XhT0mFJigdFGvzvqmxTH20r2Qw== }
@@ -29244,29 +29241,6 @@ snapshots:
 
     flatted@3.3.2: {}
 
-    thub-embed@3.0.3:
-        dependencies:
-            '@babel/core': 7.26.8
-            '@microsoft/fetch-event-source': 2.0.1
-            '@ts-stack/markdown': 1.5.0
-            axios: 1.7.9(debug@4.4.0)
-            cors: 2.8.5
-            cross-env: 7.0.3
-            device-detector-js: 3.0.3
-            dotenv: 16.4.7
-            express: 4.21.2
-            form-data: 4.0.1
-            lodash: 4.17.21
-            multer: 1.4.5-lts.1
-            node-fetch: 3.3.2
-            prettier: 3.5.0
-            solid-element: 1.7.0(solid-js@1.7.1)
-            solid-js: 1.7.1
-            zod: 3.22.4
-        transitivePeerDependencies:
-            - debug
-            - supports-color
-
     flowise-nim-container-manager@1.0.11:
         dependencies:
             dockerode: 4.0.4
@@ -37142,11 +37116,11 @@ snapshots:
 
     through@2.3.8: {}
 
-    thub-embed-react@1.0.9(@types/node@22.13.1)(thub-embed@3.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(typescript@5.7.3):
+    thub-embed-react@2.0.2(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.3.7(bufferutil@4.0.9))(typescript@5.7.3):
         dependencies:
             '@ladle/react': 2.5.1(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(typescript@5.7.3)
-            thub-embed: 3.0.3
             react: 18.3.1
+            thub-embed: 9.3.7(bufferutil@4.0.9)
         transitivePeerDependencies:
             - '@types/node'
             - less
@@ -37159,7 +37133,7 @@ snapshots:
             - terser
             - typescript
 
-    thub-embed@9.3.5(bufferutil@4.0.9):
+    thub-embed@9.3.7(bufferutil@4.0.9):
         dependencies:
             '@babel/core': 7.26.8
             '@microsoft/fetch-event-source': 2.0.1

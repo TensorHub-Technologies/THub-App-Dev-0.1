@@ -40,6 +40,7 @@ import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import LangChainPNG from '@/assets/images/langchain.png'
 import utilNodesPNG from '@/assets/images/utilNodes.png'
 import { getCategoryIcon } from './CategoryIcon'
+import subscriptionPlan from './subscriptionPlan'
 
 // const
 import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
@@ -76,6 +77,10 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
+    const userData = useSelector((state) => state.user.userData)
+    const subscription = userData?.subscription_type
+    console.log(subscription, 'subscription')
+
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
     const [isExpanded, setIsExpanded] = useState(false)
@@ -87,6 +92,34 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const [dialogProps, setDialogProps] = useState({})
 
     const isAgentCanvasV2 = window.location.pathname.includes('/v2/agentcanvas')
+
+    const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
+    userData.subscription_type === null || undefined ? (userData.subscription_type = 'free') : userData.subscription_type
+    if (!userData.subscription_type) {
+        userData.subscription_type = localStorage.getItem('subscription_type')
+    }
+    const allowedMenu = allowedPlan[userData?.subscription_type]
+    // const allowedMenu="Premium"
+    const allowedMenuItemKeys = Object.keys(allowedMenu)
+    const [tab, setTab] = useState(['LangChain'])
+
+    useEffect(() => {
+        if (userData.subscription_type !== 'free') {
+            setTab(['LangChain', 'LlamaIndex', 'Utilities'])
+        }
+    }, [])
+
+    for (let nodeKey in nodes) {
+        if (Object.prototype.hasOwnProperty.call(nodes, nodeKey) && !allowedMenuItemKeys.includes(nodeKey)) {
+            delete nodes[nodeKey]
+        } else {
+            const allowedSubMenuItems = allowedMenu[nodeKey]
+            const subMenuItemToCheck = nodes[nodeKey]
+
+            const updatedSubMenuItems = subMenuItemToCheck.filter((val) => allowedSubMenuItems.includes(val.label))
+            nodes[nodeKey] = updatedSubMenuItems
+        }
+    }
 
     const ps = useRef()
 
@@ -507,7 +540,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 {isExpanded && !isAgentCanvas && (
                     <Box sx={{ px: 2, pb: 1 }}>
                         <Tabs variant='fullWidth' value={tabValue} onChange={handleTabChange} aria-label='tabs' sx={{ minHeight: 40 }}>
-                            {['LangChain', 'LlamaIndex', 'Utilities'].map((item, index) => (
+                            {tab.map((item, index) => (
                                 <Tab
                                     key={index}
                                     icon={

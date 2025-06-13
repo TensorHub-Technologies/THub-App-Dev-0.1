@@ -87,6 +87,7 @@ import FollowUpPromptsCard from '@/ui-component/cards/FollowUpPromptsCard'
 
 // History
 import { ChatInputHistory } from './ChatInputHistory'
+import TextToSpeech from './TextToSpeech'
 
 const messageImageStyle = {
     width: '128px',
@@ -235,6 +236,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const [isRecording, setIsRecording] = useState(false)
     const [recordingNotSupported, setRecordingNotSupported] = useState(false)
     const [isLoadingRecording, setIsLoadingRecording] = useState(false)
+    const [rec, setRec] = useState(false)
 
     const [openFeedbackDialog, setOpenFeedbackDialog] = useState(false)
     const [feedback, setFeedback] = useState('')
@@ -515,7 +517,10 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         setRecordingNotSupported(false)
     }
 
+    console.log('rec', rec)
+
     const onRecordingStopped = async () => {
+        setRec(true)
         setIsLoadingRecording(true)
         stopAudioRecording(addRecordingToPreviews)
     }
@@ -1842,7 +1847,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                 >
                                     {/* Display the correct icon depending on the message type */}
                                     {message.type === 'apiMessage' || message.type === 'leadCaptureMessage' ? (
-                                        <img src={robotPNG} alt='AI' width='30' height='30' className='boticon' />
+                                        <img src={robotPNG} alt='AI' width='26' height='26' className='boticon' />
                                     ) : (
                                         <PersonIcon width='30' height='30' className='usericon' style={{ color: '#A93A96' }} />
                                     )}
@@ -2029,6 +2034,10 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                     <MemoizedReactMarkdown chatflowid={chatflowid} isFullWidth={isDialog}>
                                                         {message.message}
                                                     </MemoizedReactMarkdown>
+                                                    {!loading &&
+                                                        rec &&
+                                                        messages?.length > 1 &&
+                                                        message === messages[messages.length - 1] && <TextToSpeech messages={message} />}
                                                 </>
                                             )}
                                         </div>
@@ -2294,7 +2303,18 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                             inputRef={inputRef}
                             // eslint-disable-next-line
                             autoFocus
-                            sx={{ width: '100%' }}
+                            sx={{
+                                width: '100%',
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: customization.isDarkMode ? '#A93B97' : undefined
+                                },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: customization.isDarkMode ? '#A93B97' : undefined
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: customization.isDarkMode ? '#A93B97' : undefined
+                                }
+                            }}
                             disabled={getInputDisabled()}
                             onKeyDown={handleEnter}
                             id='userInput'

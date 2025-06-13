@@ -43,7 +43,7 @@
                 "Multi Retrieval QA Chain",
                 "Retrieval QA Chain"
             ],
-            "Vector Stores;NEW": [
+            "Vector Stores": [
                 "Astra",
                 "Chroma",
                 "Document Store (Vector)",
@@ -214,7 +214,7 @@
                 "Zep Memory - Cloud",
                 "Mem0"
             ],
-            "Vector Stores;NEW": [
+            "Vector Stores": [
                 "Astra",
                 "Chroma",
                 "Couchbase",
@@ -501,7 +501,7 @@
                 "Zep Memory - Cloud",
                 "Mem0"
             ],
-            "Vector Stores;NEW": [
+            "Vector Stores": [
                 "Astra",
                 "Chroma",
                 "Couchbase",

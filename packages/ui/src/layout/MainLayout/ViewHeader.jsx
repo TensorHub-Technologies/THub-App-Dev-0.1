@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { useRef } from 'react'
+import { useSelector } from 'react-redux'
 
 // material-ui
 import { IconButton, Box, TextField, Toolbar, Typography } from '@mui/material'
@@ -33,6 +34,8 @@ const ViewHeader = ({
     const theme = useTheme()
     const searchInputRef = useRef()
     useSearchShortcut(searchInputRef)
+
+    const customization = useSelector((state) => state.customization)
 
     return (
         <Box sx={{ flexGrow: 1, py: 1.25, width: '100%' }}>
@@ -106,10 +109,17 @@ const ViewHeader = ({
                                 width: '300px',
                                 height: '100%',
                                 display: { xs: 'none', sm: 'flex' },
-                                borderRadius: 2
+                                borderRadius: 2,
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                '& .MuiInput-underline:after': {
+                                    borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                mt: 3
                             }}
                             id='standard-basic'
-                            label='Standard'
+                            // label="Search"
                             variant='standard'
                             placeholder={`${searchPlaceholder} ${isDesktop ? keyboardShortcut : ''}`}
                             onChange={onSearchChange}

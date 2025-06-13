@@ -172,7 +172,22 @@ const Chatflows = () => {
                         // description='Build single-agent systems, chatbots and simple LLM flows'
                     >
                         {/* Sort Dropdown */}
-                        <FormControl variant='standard' sx={{ minWidth: 180, height: 40, marginRight: 4, marginLeft: 8, marginTop: '2px' }}>
+                        <FormControl
+                            variant='standard'
+                            sx={{
+                                minWidth: 180,
+                                height: 40,
+                                marginRight: 4,
+                                marginLeft: 8,
+                                marginTop: '2px',
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                '& .MuiInput-underline:after': {
+                                    borderBottomColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                }
+                            }}
+                        >
                             <Select
                                 labelId='standard'
                                 value={sortBy}
@@ -182,9 +197,6 @@ const Chatflows = () => {
                                     height: 40,
                                     borderRadius: 2,
                                     color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                    },
                                     '& .MuiSvgIcon-root': {
                                         color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }

@@ -1,17 +1,15 @@
-import { memo, useState, useRef, useEffect, useContext } from 'react'
+import { memo, useState, useRef, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { ClickAwayListener, Paper, Popper, Button } from '@mui/material'
+import { Button, Drawer } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { IconMessage, IconX, IconEraser, IconArrowsMaximize } from '@tabler/icons-react'
+import { IconMessage, IconX, IconEraser } from '@tabler/icons-react'
 
 // project import
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import MainCard from '@/ui-component/cards/MainCard'
-import Transitions from '@/ui-component/extended/Transitions'
 import ChatMessage from './ChatMessage'
-import ChatExpandDialog from './ChatExpandDialog'
 
 // api
 import chatmessageApi from '@/api/chatmessage'
@@ -26,6 +24,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 
 // Utils
 import { getLocalStorageChatflow, removeLocalStorageChatHistory } from '@/utils/genericHelper'
+import robotPNG from '@/assets/images/THub_icon_colorful_logo.png'
 
 const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
     const theme = useTheme()
@@ -40,17 +39,11 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
     const [open, setOpen] = useState(false)
-    const [showExpandDialog, setShowExpandDialog] = useState(false)
-    const [expandDialogProps, setExpandDialogProps] = useState({})
     const [previews, setPreviews] = useState([])
 
     const anchorRef = useRef(null)
-    const prevOpen = useRef(open)
 
-    const handleClose = (event) => {
-        if (anchorRef.current && anchorRef.current.contains(event.target)) {
-            return
-        }
+    const handleClose = () => {
         setOpen(false)
         if (onOpenChange) onOpenChange(false)
     }
@@ -61,29 +54,13 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
         if (onOpenChange) onOpenChange(newOpenState)
     }
 
-    const expandChat = () => {
-        const props = {
-            open: true,
-            chatflowid: chatflowid
-        }
-        setExpandDialogProps(props)
-        setShowExpandDialog(true)
-    }
-
-    const resetChatDialog = () => {
-        const props = {
-            ...expandDialogProps,
-            open: false
-        }
-        setExpandDialogProps(props)
+    const resetChat = () => {
         clearAgentflowNodeStatus()
+        // Force re-render of ChatMessage component
+        setOpen(false)
         setTimeout(() => {
-            const resetProps = {
-                ...expandDialogProps,
-                open: true
-            }
-            setExpandDialogProps(resetProps)
-        }, 500)
+            setOpen(true)
+        }, 100)
     }
 
     const clearChat = async () => {
@@ -101,9 +78,9 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 if (!objChatDetails.chatId) return
                 await chatmessageApi.deleteChatmessage(chatflowid, { chatId: objChatDetails.chatId, chatType: 'INTERNAL' })
                 removeLocalStorageChatHistory(chatflowid)
-                resetChatDialog()
+                resetChat()
                 enqueueSnackbar({
-                    message: 'Succesfully cleared all chat history',
+                    message: 'Successfully cleared all chat history',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -132,16 +109,6 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
         }
     }
 
-    useEffect(() => {
-        if (prevOpen.current === true && open === false) {
-            anchorRef.current.focus()
-            if (onOpenChange) onOpenChange(false)
-        }
-        prevOpen.current = open
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open, chatflowid])
-
     return (
         <>
             <StyledFab
@@ -157,7 +124,6 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 }}
                 ref={anchorRef}
                 size='small'
-                // color='secondary'
                 aria-label='chat'
                 title='Chat'
                 onClick={handleToggle}
@@ -165,83 +131,124 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 {open ? <IconX /> : <IconMessage />}
             </StyledFab>
 
-            {open && (
-                <StyledFab
-                    sx={{ position: 'absolute', right: 80, top: 20 }}
-                    onClick={clearChat}
-                    size='small'
-                    color='error'
-                    aria-label='clear'
-                    title='Clear Chat History'
-                >
-                    <IconEraser />
-                </StyledFab>
-            )}
-            {open && (
-                <StyledFab
-                    sx={{ position: 'absolute', right: 140, top: 20 }}
-                    onClick={expandChat}
-                    size='small'
-                    color='primary'
-                    aria-label='expand'
-                    title='Expand Chat'
-                >
-                    <IconArrowsMaximize />
-                </StyledFab>
-            )}
-            <Popper
-                placement='bottom-end'
+            <Drawer
+                anchor='right'
                 open={open}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                transition
-                disablePortal
-                popperOptions={{
-                    modifiers: [
-                        {
-                            name: 'offset',
-                            options: {
-                                offset: [40, 14]
-                            }
-                        }
-                    ]
+                onClose={handleClose}
+                variant='temporary'
+                sx={{
+                    zIndex: 1300,
+                    '& .MuiDrawer-paper': {
+                        width: '600px',
+                        height: '100vh',
+                        top: 0,
+                        right: 0,
+                        position: 'fixed',
+                        bgcolor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                    }
                 }}
-                sx={{ zIndex: 1000 }}
+                ModalProps={{
+                    keepMounted: true,
+                    disablePortal: false,
+                    BackdropProps: {
+                        invisible: true
+                    }
+                }}
             >
-                {({ TransitionProps }) => (
-                    <Transitions in={open} {...TransitionProps}>
-                        <Paper>
-                            <ClickAwayListener onClickAway={handleClose}>
-                                <MainCard
-                                    border={false}
-                                    className='cloud-wrapper'
-                                    elevation={16}
-                                    content={false}
-                                    boxShadow
-                                    shadow={theme.shadows[16]}
-                                >
-                                    <ChatMessage
-                                        isAgentCanvas={isAgentCanvas}
-                                        chatflowid={chatflowid}
-                                        open={open}
-                                        previews={previews}
-                                        setPreviews={setPreviews}
-                                    />
-                                </MainCard>
-                            </ClickAwayListener>
-                        </Paper>
-                    </Transitions>
-                )}
-            </Popper>
-            <ChatExpandDialog
-                show={showExpandDialog}
-                dialogProps={expandDialogProps}
-                isAgentCanvas={isAgentCanvas}
-                onClear={clearChat}
-                onCancel={() => setShowExpandDialog(false)}
-                previews={previews}
-                setPreviews={setPreviews}
-            ></ChatExpandDialog>
+                <div
+                    style={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        position: 'relative'
+                    }}
+                >
+                    {/* Fixed Header */}
+                    <div
+                        style={{
+                            padding: '16px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            backgroundColor: customization?.isDarkMode ? '#23262D' : '#ffff',
+                            minHeight: '64px'
+                        }}
+                    >
+                        <img src={robotPNG} alt='AI' width='26' height='26' style={{ marginLeft: '8px' }} />
+
+                        <StyledFab
+                            sx={{
+                                position: 'absolute',
+                                right: 60,
+                                top: 0,
+                                background: 'transparent',
+                                boxShadow: '0',
+                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                            }}
+                            variant='outlined'
+                            title='Erase'
+                            onClick={() => {
+                                clearChat()
+                            }}
+                        >
+                            <IconEraser />
+                        </StyledFab>
+                        <StyledFab
+                            sx={{
+                                position: 'absolute',
+                                right: 20,
+                                top: 0,
+                                background: 'transparent',
+                                boxShadow: '0',
+                                color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                            }}
+                            variant='outlined'
+                            title='Close'
+                            onClick={() => handleClose()}
+                        >
+                            <IconX />
+                        </StyledFab>
+                    </div>
+
+                    {/* Chat content */}
+                    <div
+                        style={{
+                            flex: 1,
+                            overflow: 'hidden',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}
+                    >
+                        <MainCard
+                            border={false}
+                            className='cloud-wrapper'
+                            elevation={0}
+                            content={false}
+                            sx={{
+                                width: '100%',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                '& .MuiCardContent-root': {
+                                    width: '100%',
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column'
+                                }
+                            }}
+                        >
+                            <ChatMessage
+                                isAgentCanvas={isAgentCanvas}
+                                chatflowid={chatflowid}
+                                open={open}
+                                previews={previews}
+                                setPreviews={setPreviews}
+                                isDialog={true}
+                            />
+                        </MainCard>
+                    </div>
+                </div>
+            </Drawer>
         </>
     )
 }

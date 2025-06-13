@@ -76,8 +76,8 @@
         "tippy.js": "^6.3.7",
         "socket.io-client": "^4.6.1",
         "swiper": "^11.2.4",
-        "thub-embed": "^9.3.5",
-        "thub-embed-react": "1.0.9",
+        "thub-embed": "^9.3.7",
+        "thub-embed-react": "2.0.2",
         "thub-react-json-view": "1.21.11",
         "uuid": "^9.0.1",
         "yup": "^0.32.9"
