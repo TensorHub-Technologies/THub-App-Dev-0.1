@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import { Avatar, Box, ButtonBase, Typography, Stack, TextField, Button } from '@mui/material'
+import { Avatar, Box, ButtonBase, Typography, Stack, TextField, Button, IconButton } from '@mui/material'
 
 // icons
 import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons-react'
@@ -29,8 +29,10 @@ import useApi from '@/hooks/useApi'
 // utils
 import { generateExportFlowData } from '@/utils/genericHelper'
 import { uiBaseURL } from '@/store/constant'
-import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction, SET_CHATFLOW } from '@/store/actions'
+import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction, SET_CHATFLOW, SET_DARKMODE } from '@/store/actions'
 import VectorStorePopUp from '../vectorstore/VectorStorePopUp'
+import toggle_1 from '@/assets/images/toggle_mode-1.svg'
+import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -75,6 +77,15 @@ const CanvasHeader = ({
 
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const canvas = useSelector((state) => state.canvas)
+
+    const changeDarkMode = () => {
+        const newTheme = !customization.isDarkMode
+        dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
+        localStorage.setItem('isDarkMode', newTheme)
+        const url = new URL(window.location.href)
+        url.searchParams.set('theme', newTheme ? 'dark' : 'dark')
+        window.history.replaceState({}, '', url)
+    }
 
     const onSettingsItemClick = (setting) => {
         setSettingsOpen(false)
@@ -257,7 +268,7 @@ const CanvasHeader = ({
             <Stack flexDirection='row' justifyContent='space-between' sx={{ width: '100%' }}>
                 <Stack flexDirection='row' sx={{ width: '100%', maxWidth: '50%' }}>
                     <Box>
-                        <ButtonBase title='Back' sx={{ borderRadius: '50%' }}>
+                        <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: 0.5 }}>
                             <Avatar
                                 variant='rounded'
                                 sx={{
@@ -284,7 +295,7 @@ const CanvasHeader = ({
                             </Avatar>
                         </ButtonBase>
                     </Box>
-                    <Box sx={{ width: '100%' }}>
+                    <Box sx={{ width: '100%', mt: 0.5 }}>
                         {!isEditingFlowName ? (
                             <Stack flexDirection='row'>
                                 <Typography
@@ -300,7 +311,7 @@ const CanvasHeader = ({
                                     {canvas.isDirty && <strong style={{ color: theme.palette.orange.main }}>*</strong>} {flowName}
                                 </Typography>
                                 {chatflow?.id && (
-                                    <ButtonBase title='Edit Name' sx={{ borderRadius: '50%' }}>
+                                    <ButtonBase title='Edit Name' sx={{ borderRadius: '50%', ml: 1 }}>
                                         <Avatar
                                             variant='rounded'
                                             sx={{
@@ -390,10 +401,19 @@ const CanvasHeader = ({
                     </Box>
                 </Stack>
                 <Box>
-                    {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflow?.id} />}
+                    <IconButton onClick={changeDarkMode}>
+                        <img
+                            src={customization.isDarkMode ? toggle_1 : toggle_2}
+                            style={{ width: '30px', marginRight: '8px' }}
+                            alt={customization.isDarkMode ? 'dark' : 'lite'}
+                        />
+                    </IconButton>
+                    <ButtonBase>
+                        <VectorStorePopUp chatflowid={chatflow?.id} isUpsertButtonEnabled={isUpsertButtonEnabled} />
+                    </ButtonBase>
 
                     {chatflow?.id && (
-                        <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2 }}>
+                        <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2, ml: isUpsertButtonEnabled ? 0 : 1 }}>
                             <Avatar
                                 variant='rounded'
                                 sx={{

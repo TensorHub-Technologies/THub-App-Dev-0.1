@@ -79,7 +79,7 @@ class Agent_Agentflow implements INode {
         this.name = 'agentAgentflow'
         this.version = 1.0
         this.type = 'Agent'
-        this.category = 'Agent Flows'
+        this.category = 'Agent Pipeline'
         this.description = 'Dynamically choose and utilize tools during runtime, enabling multi-step reasoning'
         this.color = '#4DD0E1'
         this.baseClasses = [this.type]

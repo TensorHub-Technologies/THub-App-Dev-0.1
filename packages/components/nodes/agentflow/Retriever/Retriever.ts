@@ -37,7 +37,7 @@ class Retriever_Agentflow implements INode {
         this.name = 'retrieverAgentflow'
         this.version = 1.0
         this.type = 'Retriever'
-        this.category = 'Agent Flows'
+        this.category = 'Agent Pipeline'
         this.description = 'Retrieve information from vector database'
         this.baseClasses = [this.type]
         this.color = '#b8bedd'

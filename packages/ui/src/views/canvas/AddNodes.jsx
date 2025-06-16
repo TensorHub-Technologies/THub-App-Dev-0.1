@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 // material-ui
@@ -23,7 +24,9 @@ import {
     Tab,
     Tabs,
     IconButton,
-    Collapse
+    Collapse,
+    Stack,
+    Tooltip
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
@@ -76,6 +79,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const location = useLocation()
 
     const userData = useSelector((state) => state.user.userData)
     const subscription = userData?.subscription_type
@@ -83,9 +88,9 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
-    const [isExpanded, setIsExpanded] = useState(false)
+    const [isExpanded, setIsExpanded] = useState(true)
     const [categoryExpanded, setCategoryExpanded] = useState({})
-    const [tabValue, setTabValue] = useState(0)
+
     const [hoveredNode, setHoveredNode] = useState(null)
 
     const [openDialog, setOpenDialog] = useState(false)
@@ -99,13 +104,15 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         userData.subscription_type = localStorage.getItem('subscription_type')
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
-    // const allowedMenu="Premium"
     const allowedMenuItemKeys = Object.keys(allowedMenu)
     const [tab, setTab] = useState(['LangChain'])
+    const [tabValue, setTabValue] = useState(0)
+
+    console.log('tab', tab, 'tabValue', tabValue)
 
     useEffect(() => {
         if (userData.subscription_type !== 'free') {
-            setTab(['LangChain', 'LlamaIndex', 'Utilities'])
+            setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
         }
     }, [])
 
@@ -130,9 +137,25 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         }
     }
 
+    useEffect(() => {
+        if (location.pathname === '/v2/agentcanvas') {
+            setTabValue(2)
+        } else if (location.pathname === '/canvas') {
+            if (tabValue === 2) {
+                setTabValue(0)
+            }
+        }
+    }, [location.pathname])
+
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue)
         filterSearch(searchValue, newValue)
+        const selectedTab = tab[newValue]
+        if (selectedTab === 'Agent Pipeline') {
+            navigate('/v2/agentcanvas')
+        } else if ((selectedTab === 'LangChain' || selectedTab === 'LlamaIndex') && location.pathname === '/v2/agentcanvas') {
+            navigate('/canvas')
+        }
     }
 
     const addException = (category) => {
@@ -194,13 +217,13 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const groupByTags = (nodes, newTabValue = 0) => {
         const langchainNodes = nodes.filter((nd) => !nd.tags)
         const llmaindexNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('LlamaIndex'))
-        const utilitiesNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('Utilities'))
+        // const utilitiesNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('Utilities'))
         if (newTabValue === 0) {
             return langchainNodes
         } else if (newTabValue === 1) {
             return llmaindexNodes
         } else {
-            return utilitiesNodes
+            // return utilitiesNodes
         }
     }
 
@@ -217,11 +240,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             const filteredResult = {}
             for (const category in result) {
                 if (isAgentCanvasV2) {
-                    if (category !== 'Agent Flows') {
+                    if (category !== 'Agent Pipeline') {
                         continue
                     }
                 } else {
-                    if (category === 'Agent Flows') {
+                    if (category === 'Agent Pipeline') {
                         continue
                     }
                 }
@@ -243,7 +266,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             accordianCategories['Multi Agents'] = true
             accordianCategories['Sequential Agents'] = true
             accordianCategories['Memory'] = true
-            accordianCategories['Agent Flows'] = true
+            accordianCategories['Agent Pipeline'] = true
             setCategoryExpanded(accordianCategories)
         } else {
             const taggedNodes = groupByTags(nodes, newTabValue)
@@ -257,7 +280,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
             const filteredResult = {}
             for (const category in result) {
-                if (category === 'Agent Flows' || category === 'Multi Agents' || category === 'Sequential Agents') {
+                if (category === 'Agent Pipeline' || category === 'Multi Agents' || category === 'Sequential Agents') {
                     continue
                 }
                 if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
@@ -306,7 +329,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             key={`${node.name}-${index}`}
             sx={{
                 position: 'relative',
-                mb: 0.5,
                 cursor: 'move'
             }}
             onDragStart={(event) => onDragStart(event, node)}
@@ -314,85 +336,57 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             onMouseEnter={() => setHoveredNode(`${node.name}-${index}`)}
             onMouseLeave={() => setHoveredNode(null)}
         >
-            <ListItemButton
+            <ListItemAvatar
                 sx={{
+                    mt: 0,
+                    borderRadius: `${customization.borderRadius}px`,
+                    py: 0.3,
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
-                    px: 0.5,
-                    py: 0.5,
-                    borderRadius: 1,
-                    minHeight: 'auto',
-                    position: 'relative',
-                    overflow: 'visible'
+                    background: `linear-gradient(to right, #3C5BA4, #E22A90)`,
+                    minWidth: 30
                 }}
             >
-                {/* Node Icon */}
-                <Box
-                    sx={{
-                        width: 24,
-                        height: 24,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
-                        zIndex: 2
-                    }}
-                >
-                    {node.color && !node.icon ? (
-                        renderIcon(node)
-                    ) : (
-                        <Box
-                            sx={{
-                                width: 24,
-                                height: 24,
-                                borderRadius: '50%',
-                                backgroundColor: 'white',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
+                {node.color && !node.icon ? (
+                    <Box
+                        sx={{
+                            width: 30,
+                            height: 30,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '20%',
+                            backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#f0f0f0'
+                        }}
+                    >
+                        {renderIcon(node)}
+                    </Box>
+                ) : (
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 30,
+                            height: 30,
+                            borderRadius: '20%',
+                            backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#f0f0f0'
+                        }}
+                    >
+                        <img
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                padding: 5,
+                                objectFit: 'contain'
                             }}
-                        >
-                            <img
-                                style={{
-                                    width: '16px',
-                                    height: '16px',
-                                    objectFit: 'contain'
-                                }}
-                                alt={node.name}
-                                src={`${baseURL}/api/v1/node-icon/${node.name}`}
-                            />
-                        </Box>
-                    )}
-                </Box>
-
-                {/* Hover Label */}
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        left: '100%',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        backgroundColor: theme.palette.background.paper,
-                        border: `1px solid ${theme.palette.divider}`,
-                        borderRadius: 1,
-                        px: 1,
-                        py: 0.5,
-                        ml: 0.5,
-                        whiteSpace: 'nowrap',
-                        boxShadow: theme.shadows[2],
-                        opacity: hoveredNode === `${node.name}-${index}` ? 1 : 0,
-                        visibility: hoveredNode === `${node.name}-${index}` ? 'visible' : 'hidden',
-                        transition: theme.transitions.create(['opacity', 'visibility'], {
-                            duration: theme.transitions.duration.short
-                        }),
-                        zIndex: 1000,
-                        pointerEvents: 'none'
-                    }}
-                >
-                    <Typography variant='caption' sx={{ fontSize: '0.7rem' }}>
-                        {node.label}
-                    </Typography>
-                </Box>
-            </ListItemButton>
+                            alt={node.name}
+                            src={`${baseURL}/api/v1/node-icon/${node.name}`}
+                        />
+                    </div>
+                )}
+            </ListItemAvatar>
         </Box>
     )
 
@@ -537,9 +531,20 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 )}
 
                 {/* Tabs - Only show when expanded and not agent canvas */}
-                {isExpanded && !isAgentCanvas && (
-                    <Box sx={{ px: 2, pb: 1 }}>
-                        <Tabs variant='fullWidth' value={tabValue} onChange={handleTabChange} aria-label='tabs' sx={{ minHeight: 40 }}>
+                {isExpanded && (
+                    <Box sx={{ pb: 1 }}>
+                        <Tabs
+                            variant='fullWidth'
+                            value={tabValue}
+                            onChange={handleTabChange}
+                            aria-label='tabs'
+                            TabIndicatorProps={{
+                                style: {
+                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                }
+                            }}
+                            sx={{ minHeight: 40 }}
+                        >
                             {tab.map((item, index) => (
                                 <Tab
                                     key={index}
@@ -558,8 +563,15 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                     iconPosition='start'
                                     label={item}
                                     sx={{
-                                        minHeight: 40,
-                                        fontSize: '0.75rem'
+                                        minHeight: '50px',
+                                        height: '50px',
+                                        color: customization.isDarkMode ? '#fff' : '#000',
+                                        '&.Mui-selected': {
+                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                        },
+                                        '&:hover': {
+                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                        }
                                     }}
                                     {...a11yProps(index)}
                                 />
@@ -574,16 +586,37 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                     containerRef={(el) => {
                         ps.current = el
                     }}
-                    style={{
-                        height: '100%',
-                        flex: 1,
-                        overflowX: 'hidden'
-                    }}
+                    style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}
                 >
-                    <Box sx={{ px: isExpanded ? 2 : 0.5 }}>
+                    <Box
+                        sx={{
+                            p: 2,
+                            pt: 0,
+                            height: '100%'
+                        }}
+                    >
                         {isExpanded ? (
                             // Full drawer view
-                            <List sx={{ py: 0 }}>
+                            <List
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: 350,
+                                    py: 0,
+                                    borderRadius: '10px',
+                                    [theme.breakpoints.down('md')]: {
+                                        maxWidth: 350
+                                    },
+                                    '& .MuiListItemSecondaryAction-root': {
+                                        top: 22
+                                    },
+                                    '& .MuiDivider-root': {
+                                        my: 0
+                                    },
+                                    '& .list-container': {
+                                        pl: 7
+                                    }
+                                }}
+                            >
                                 {Object.keys(nodes)
                                     .sort()
                                     .map((category) => (
@@ -598,21 +631,43 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                             }}
                                         >
                                             <AccordionSummary
-                                                expandIcon={<ExpandMoreIcon />}
+                                                expandIcon={
+                                                    <ExpandMoreIcon
+                                                        className={customization?.isDarkMode ? 'ExpandMoreIcon1' : 'ExpandMoreIcon2'}
+                                                        sx={{
+                                                            background: 'transparent !important'
+                                                        }}
+                                                    />
+                                                }
                                                 sx={{
                                                     minHeight: 48,
                                                     '& .MuiAccordionSummary-content': {
                                                         margin: '8px 0'
                                                     }
                                                 }}
+                                                aria-controls={`nodes-accordian-${category}`}
+                                                id={`nodes-accordian-header-${category}`}
                                             >
-                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Typography sx={{ mr: 1, fontSize: '1.2rem' }}>
-                                                        {getCategoryIcon(category, customization)}
+                                                <Stack
+                                                    id='stack-icons'
+                                                    gap={1}
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    <Typography sx={{ fontSize: '1.2rem' }}>
+                                                        {getCategoryIcon(category.replace(';NEW', ''), customization)}
                                                     </Typography>
                                                     {category.split(';').length > 1 ? (
                                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                            <Typography variant='subtitle2'>{category.split(';')[0]}</Typography>
+                                                            <Typography
+                                                                className={customization?.isDarkMode ? 'stack-text1' : 'stack-text2'}
+                                                                variant='subtitle2'
+                                                            >
+                                                                {category.split(';')[0]}
+                                                            </Typography>
                                                             <Chip
                                                                 sx={{
                                                                     ml: 1,
@@ -629,91 +684,150 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                             />
                                                         </Box>
                                                     ) : (
-                                                        <Typography variant='subtitle2'>{category}</Typography>
-                                                    )}
-                                                </Box>
-                                            </AccordionSummary>
-                                            <AccordionDetails sx={{ pt: 0 }}>
-                                                {nodes[category].map((node, index) => (
-                                                    <div key={node.name} onDragStart={(event) => onDragStart(event, node)} draggable>
-                                                        <ListItemButton
-                                                            sx={{
-                                                                p: 1,
-                                                                borderRadius: 1,
-                                                                cursor: 'move',
-                                                                mb: index === nodes[category].length - 1 ? 0 : 0.5
-                                                            }}
+                                                        <Typography
+                                                            className={customization?.isDarkMode ? 'stack-text1' : 'stack-text2'}
+                                                            variant='h5'
                                                         >
-                                                            <ListItem sx={{ p: 0 }}>
-                                                                <ListItemAvatar sx={{ minWidth: 40 }}>
-                                                                    {node.color && !node.icon ? (
-                                                                        <Box
+                                                            {category.replace(';NEW', '')}
+                                                        </Typography>
+                                                    )}
+                                                </Stack>
+                                            </AccordionSummary>
+
+                                            <AccordionDetails sx={{ pt: 0 }}>
+                                                <List>
+                                                    {nodes[category].map((node, index) => (
+                                                        <Box key={node.name} onDragStart={(event) => onDragStart(event, node)} draggable>
+                                                            <Tooltip title={node.description} followCursor>
+                                                                <Box
+                                                                    sx={{
+                                                                        borderRadius: `${customization.borderRadius}px`,
+                                                                        p: 0.2,
+                                                                        mb: index === nodes[category].length - 1 ? 0 : 1,
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        backgroundColor: 'transparent',
+                                                                        '&:hover': {
+                                                                            background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
+                                                                            '& > .MuiListItem-root': {
+                                                                                backgroundColor: theme.palette.background.default,
+                                                                                borderRadius: `${customization.borderRadius}px`
+                                                                            },
+                                                                            '& > .MuiListItem-root .MuiListItemAvatar-root': {
+                                                                                background:
+                                                                                    'linear-gradient(to left, #3C5BA4, #E22A90) !important'
+                                                                            }
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <ListItem
+                                                                        alignItems='flex-start'
+                                                                        sx={{
+                                                                            borderRadius: `${customization.borderRadius}px`,
+                                                                            cursor: 'move',
+                                                                            display: 'flex',
+                                                                            justifyContent: 'flex-start',
+                                                                            alignItems: 'center',
+                                                                            p: 1
+                                                                        }}
+                                                                    >
+                                                                        <ListItemAvatar
                                                                             sx={{
-                                                                                width: 32,
-                                                                                height: 32,
+                                                                                mt: 0,
+                                                                                borderRadius: `${customization.borderRadius}px`,
+                                                                                py: 0.3,
                                                                                 display: 'flex',
                                                                                 alignItems: 'center',
-                                                                                justifyContent: 'center'
+                                                                                justifyContent: 'center',
+                                                                                background: `linear-gradient(to right, #3C5BA4, #E22A90)`,
+                                                                                minWidth: 60
                                                                             }}
                                                                         >
-                                                                            {renderIcon(node)}
-                                                                        </Box>
-                                                                    ) : (
-                                                                        <Box
-                                                                            sx={{
-                                                                                width: 32,
-                                                                                height: 32,
-                                                                                borderRadius: '50%',
-                                                                                backgroundColor: 'white',
-                                                                                display: 'flex',
-                                                                                alignItems: 'center',
-                                                                                justifyContent: 'center'
-                                                                            }}
-                                                                        >
-                                                                            <img
-                                                                                style={{
-                                                                                    width: '20px',
-                                                                                    height: '20px',
-                                                                                    objectFit: 'contain'
-                                                                                }}
-                                                                                alt={node.name}
-                                                                                src={`${baseURL}/api/v1/node-icon/${node.name}`}
-                                                                            />
-                                                                        </Box>
-                                                                    )}
-                                                                </ListItemAvatar>
-                                                                <ListItemText
-                                                                    primary={
-                                                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                                            <Typography variant='body2'>{node.label}</Typography>
-                                                                            {node.badge && (
-                                                                                <Chip
+                                                                            {node.color && !node.icon ? (
+                                                                                <Box
                                                                                     sx={{
-                                                                                        ml: 1,
-                                                                                        height: 18,
-                                                                                        fontSize: '0.6rem',
-                                                                                        background:
-                                                                                            node.badge === 'DEPRECATING'
-                                                                                                ? theme.palette.warning.main
-                                                                                                : theme.palette.info.main,
-                                                                                        color: 'white'
+                                                                                        width: 50,
+                                                                                        height: 50,
+                                                                                        display: 'flex',
+                                                                                        alignItems: 'center',
+                                                                                        justifyContent: 'center',
+                                                                                        borderRadius: '20%',
+                                                                                        backgroundColor: customization.isDarkMode
+                                                                                            ? '#f0f0f0'
+                                                                                            : '#f0f0f0'
                                                                                     }}
-                                                                                    size='small'
-                                                                                    label={node.badge}
-                                                                                />
+                                                                                >
+                                                                                    {renderIcon(node)}
+                                                                                </Box>
+                                                                            ) : (
+                                                                                <div
+                                                                                    style={{
+                                                                                        display: 'flex',
+                                                                                        justifyContent: 'center',
+                                                                                        alignItems: 'center',
+                                                                                        width: 50,
+                                                                                        height: 50,
+                                                                                        borderRadius: '20%',
+                                                                                        backgroundColor: customization.isDarkMode
+                                                                                            ? '#f0f0f0'
+                                                                                            : '#f0f0f0'
+                                                                                    }}
+                                                                                >
+                                                                                    <img
+                                                                                        style={{
+                                                                                            width: '100%',
+                                                                                            height: '100%',
+                                                                                            padding: 5,
+                                                                                            objectFit: 'contain'
+                                                                                        }}
+                                                                                        alt={node.name}
+                                                                                        src={`${baseURL}/api/v1/node-icon/${node.name}`}
+                                                                                    />
+                                                                                </div>
                                                                             )}
-                                                                        </Box>
-                                                                    }
-                                                                    secondary={
-                                                                        <Typography variant='caption' color='textSecondary'>
-                                                                            {node.description}
-                                                                        </Typography>
-                                                                    }
-                                                                />
-                                                            </ListItem>
-                                                        </ListItemButton>
-                                                    </div>
-                                                ))}
+                                                                        </ListItemAvatar>
+
+                                                                        <ListItemText
+                                                                            sx={{
+                                                                                ml: 1,
+                                                                                display: 'flex',
+                                                                                flexDirection: 'column'
+                                                                            }}
+                                                                            primary={
+                                                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                                    <Typography variant='body2'>{node.label}</Typography>
+                                                                                    {node.badge && (
+                                                                                        <Chip
+                                                                                            sx={{
+                                                                                                ml: 1,
+                                                                                                height: 18,
+                                                                                                fontSize: '0.6rem',
+                                                                                                background:
+                                                                                                    node.badge === 'DEPRECATING'
+                                                                                                        ? theme.palette.warning.main
+                                                                                                        : theme.palette.info.main,
+                                                                                                color: 'white'
+                                                                                            }}
+                                                                                            size='small'
+                                                                                            label={node.badge}
+                                                                                        />
+                                                                                    )}
+                                                                                </Box>
+                                                                            }
+                                                                            secondary={
+                                                                                <Typography variant='caption' color='textSecondary'>
+                                                                                    {node.description}
+                                                                                </Typography>
+                                                                            }
+                                                                        />
+                                                                    </ListItem>
+                                                                </Box>
+                                                            </Tooltip>
+                                                            {index === nodes[category].length - 1 ? null : <Divider />}
+                                                        </Box>
+                                                    ))}
+                                                </List>
                                             </AccordionDetails>
                                         </Accordion>
                                     ))}

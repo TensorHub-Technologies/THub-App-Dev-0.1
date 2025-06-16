@@ -32,7 +32,7 @@ class ExecuteFlow_Agentflow implements INode {
         this.name = 'executeFlowAgentflow'
         this.version = 1.0
         this.type = 'ExecuteFlow'
-        this.category = 'Agent Flows'
+        this.category = 'Agent Pipeline'
         this.description = 'Execute another flow'
         this.baseClasses = [this.type]
         this.color = '#a3b18a'

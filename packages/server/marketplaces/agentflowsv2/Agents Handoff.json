@@ -18,7 +18,7 @@
                 "color": "#7EE787",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Flows",
+                "category": "Agent Pipeline",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -200,7 +200,7 @@
                 "type": "ConditionAgent",
                 "color": "#ff8fab",
                 "baseClasses": ["ConditionAgent"],
-                "category": "Agent Flows",
+                "category": "Agent Pipeline",
                 "description": "Utilize an agent to split flows based on dynamic conditions",
                 "inputParams": [
                     {
@@ -344,7 +344,7 @@
                 "type": "Agent",
                 "color": "#4DD0E1",
                 "baseClasses": ["Agent"],
-                "category": "Agent Flows",
+                "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -688,7 +688,7 @@
                 "type": "Agent",
                 "color": "#4DD0E1",
                 "baseClasses": ["Agent"],
-                "category": "Agent Flows",
+                "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -1038,7 +1038,7 @@
                 "type": "Agent",
                 "color": "#4DD0E1",
                 "baseClasses": ["Agent"],
-                "category": "Agent Flows",
+                "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -1375,7 +1375,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Flows",
+                "category": "Agent Pipeline",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {

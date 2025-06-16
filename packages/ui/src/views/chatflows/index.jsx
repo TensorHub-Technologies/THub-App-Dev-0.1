@@ -15,6 +15,7 @@ import { FlowListTable } from '@/ui-component/table/FlowListTable'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
+import WorkflowEmptySVG from '@/assets/images/workflow_empty.svg'
 
 // API
 import chatflowsApi from '@/api/chatflows'

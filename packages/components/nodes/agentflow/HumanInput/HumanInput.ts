@@ -33,7 +33,7 @@ class HumanInput_Agentflow implements INode {
         this.name = 'humanInputAgentflow'
         this.version = 1.0
         this.type = 'HumanInput'
-        this.category = 'Agent Flows'
+        this.category = 'Agent Pipeline'
         this.description = 'Request human input, approval or rejection during execution'
         this.color = '#6E6EFD'
         this.baseClasses = [this.type]

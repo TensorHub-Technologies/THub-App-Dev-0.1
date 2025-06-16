@@ -330,16 +330,34 @@ const AgentExecutions = () => {
                             </Grid>
                             <Grid item xs={12} md={4}>
                                 <Stack direction='row' spacing={1}>
-                                    <Button variant='contained' color='primary' onClick={applyFilters} size='small'>
+                                    <Button
+                                        variant='contained'
+                                        color='primary'
+                                        sx={{ bgcolor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }}
+                                        onClick={applyFilters}
+                                        size='medium'
+                                    >
                                         Apply
                                     </Button>
-                                    <Button variant='outlined' onClick={resetFilters} size='small'>
+                                    <Button
+                                        variant='outlined'
+                                        onClick={resetFilters}
+                                        size='medium'
+                                        sx={{
+                                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            borderColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                            '&:hover': {
+                                                borderColor: customization?.isDarkMode ? '#c21875' : '#2c437f',
+                                                backgroundColor: 'transparent' // optional: prevents gray hover bg
+                                            }
+                                        }}
+                                    >
                                         Reset
                                     </Button>
                                     <Tooltip title='Delete selected executions'>
                                         <span>
                                             <IconButton
-                                                sx={{ height: 30, width: 30 }}
+                                                sx={{ height: 40, width: 40 }}
                                                 size='small'
                                                 color='error'
                                                 onClick={handleDeleteDialogOpen}

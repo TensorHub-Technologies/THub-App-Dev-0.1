@@ -19,7 +19,7 @@ class Iteration_Agentflow implements INode {
         this.name = 'iterationAgentflow'
         this.version = 1.0
         this.type = 'Iteration'
-        this.category = 'Agent Flows'
+        this.category = 'Agent Pipeline'
         this.description = 'Execute the nodes within the iteration block through N iterations'
         this.baseClasses = [this.type]
         this.color = '#9C89B8'

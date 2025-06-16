@@ -1,81 +1,85 @@
 import { useState, useRef, useEffect, memo } from 'react'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
-
 import { IconDatabaseImport, IconX } from '@tabler/icons-react'
 
-// project import
+// project imports
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import VectorStoreDialog from './VectorStoreDialog'
 import UpsertResultDialog from './UpsertResultDialog'
 
-const VectorStorePopUp = ({ chatflowid }) => {
+const VectorStorePopUp = ({ chatflowid, isUpsertButtonEnabled }) => {
     const [open, setOpen] = useState(false)
     const [showExpandDialog, setShowExpandDialog] = useState(false)
     const [expandDialogProps, setExpandDialogProps] = useState({})
     const [showUpsertResultDialog, setShowUpsertResultDialog] = useState(false)
     const [upsertResultDialogProps, setUpsertResultDialogProps] = useState({})
 
-    const customization = useSelector((state) => state.customization)
-
     const anchorRef = useRef(null)
     const prevOpen = useRef(open)
 
     const handleToggle = () => {
-        setOpen((prevopen) => !prevopen)
-        const props = {
+        if (!isUpsertButtonEnabled) return
+
+        setOpen((prevOpen) => !prevOpen)
+        setExpandDialogProps({
             open: true,
             title: 'Upsert Vector Store',
             chatflowid
-        }
-        setExpandDialogProps(props)
+        })
         setShowExpandDialog(true)
     }
 
     useEffect(() => {
-        if (prevOpen.current === true && open === false) {
+        if (prevOpen.current === true && open === false && anchorRef.current) {
             anchorRef.current.focus()
         }
         prevOpen.current = open
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, chatflowid])
+
+    const fabStyles = {
+        height: '34px',
+        width: '34px',
+        minHeight: '0px',
+        marginRight: '16px',
+        borderRadius: '8px',
+        background: isUpsertButtonEnabled ? undefined : 'red',
+        color: '#fff',
+        cursor: isUpsertButtonEnabled ? 'pointer' : 'not-allowed',
+        '&:hover': {
+            background: isUpsertButtonEnabled ? 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)' : 'red',
+            color: '#fff'
+        }
+    }
 
     return (
         <>
             <StyledFab
-                sx={{
-                    position: 'absolute',
-                    right: 180,
-                    top: 13,
-                    bgcolor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                    '&:hover': {
-                        background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                        color: 'white'
-                    }
-                }}
+                sx={fabStyles}
                 ref={anchorRef}
                 size='small'
-                // color='teal'
+                color='teal'
                 aria-label='upsert'
                 title='Upsert Vector Database'
                 onClick={handleToggle}
+                disabled={!isUpsertButtonEnabled}
             >
-                {open ? <IconX /> : <IconDatabaseImport />}
+                {open ? <IconX style={{ width: '21px' }} /> : <IconDatabaseImport style={{ width: '21px' }} />}
             </StyledFab>
+
             <VectorStoreDialog
                 show={showExpandDialog}
                 dialogProps={expandDialogProps}
                 onCancel={() => {
                     setShowExpandDialog(false)
-                    setOpen((prevopen) => !prevopen)
+                    setOpen((prevOpen) => !prevOpen)
                 }}
                 onIndexResult={(indexRes) => {
                     setShowExpandDialog(false)
                     setShowUpsertResultDialog(true)
                     setUpsertResultDialogProps({ ...indexRes })
                 }}
-            ></VectorStoreDialog>
+            />
+
             <UpsertResultDialog
                 show={showUpsertResultDialog}
                 dialogProps={upsertResultDialogProps}
@@ -83,11 +87,15 @@ const VectorStorePopUp = ({ chatflowid }) => {
                     setShowUpsertResultDialog(false)
                     setOpen(false)
                 }}
-            ></UpsertResultDialog>
+            />
         </>
     )
 }
 
+VectorStorePopUp.propTypes = {
+    chatflowid: PropTypes.string.isRequired,
+    isUpsertButtonEnabled: PropTypes.bool.isRequired
+}
 VectorStorePopUp.propTypes = { chatflowid: PropTypes.string }
 
 export default memo(VectorStorePopUp)

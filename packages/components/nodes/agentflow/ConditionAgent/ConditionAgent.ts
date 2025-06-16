@@ -29,7 +29,7 @@ class ConditionAgent_Agentflow implements INode {
         this.name = 'conditionAgentAgentflow'
         this.version = 1.0
         this.type = 'ConditionAgent'
-        this.category = 'Agent Flows'
+        this.category = 'Agent Pipeline'
         this.description = `Utilize an agent to split flows based on dynamic conditions`
         this.baseClasses = [this.type]
         this.color = '#ff8fab'
