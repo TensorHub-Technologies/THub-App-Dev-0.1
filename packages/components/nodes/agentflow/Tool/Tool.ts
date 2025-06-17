@@ -33,7 +33,7 @@ class Tool_Agentflow implements INode {
         this.category = 'Agent Pipeline'
         this.description = 'Tools allow LLM to interact with external systems'
         this.baseClasses = [this.type]
-        this.color = '#d4a373'
+        this.color = '#FFD166'
         this.inputs = [
             {
                 label: 'Tool',

@@ -46,6 +46,8 @@ export const Dropdown = ({ name, value, loading, options, onSelect, disabled = f
                     const matchingOption = findMatchingOptions(options, internalValue)
                     return (
                         <TextField
+                            id='standard-basic'
+                            variant='standard'
                             {...params}
                             value={internalValue}
                             sx={{

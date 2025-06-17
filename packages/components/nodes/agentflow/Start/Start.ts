@@ -23,7 +23,7 @@ class Start_Agentflow implements INode {
         this.category = 'Agent Pipeline'
         this.description = 'Starting point of the agentflow'
         this.baseClasses = [this.type]
-        this.color = '#7EE787'
+        this.color = '#06D6A0'
         this.hideInput = true
         this.inputs = [
             {

@@ -66,7 +66,7 @@ class CustomFunction_Agentflow implements INode {
         this.category = 'Agent Pipeline'
         this.description = 'Execute custom function'
         this.baseClasses = [this.type]
-        this.color = '#E4B7FF'
+        this.color = '#4B3CA7'
         this.inputs = [
             {
                 label: 'Input Variables',

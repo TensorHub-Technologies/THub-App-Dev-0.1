@@ -9,6 +9,7 @@ import { tooltipClasses } from '@mui/material/Tooltip'
 import { flowContext } from '@/store/context/ReactFlowContext'
 import { isValidConnection } from '@/utils/genericHelper'
 import { Dropdown } from '@/ui-component/dropdown/Dropdown'
+import { useSelector } from 'react-redux'
 
 const CustomWidthTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -23,29 +24,13 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     const [position, setPosition] = useState(0)
-    const [clientHeight, setClientHeight] = useState(0)
-    const [offsetTop, setOffsetTop] = useState(0)
     const [dropdownValue, setDropdownValue] = useState(null)
     const { reactFlowInstance } = useContext(flowContext)
-
-    const getAvailableOptions = (options = []) => {
-        return options.filter((option) => !option.hidden && !option.isAnchor)
-    }
-
-    const getAnchorOptions = (options = []) => {
-        return options.filter((option) => !option.hidden && option.isAnchor)
-    }
-
-    const getAnchorPosition = (options, index) => {
-        const spacing = clientHeight / (getAnchorOptions(options).length + 1)
-        return offsetTop + spacing * (index + 1)
-    }
+    const customization = useSelector((state) => state.customization)
 
     useEffect(() => {
         if (ref.current && ref.current?.offsetTop && ref.current?.clientHeight) {
             setTimeout(() => {
-                setClientHeight(ref.current?.clientHeight)
-                setOffsetTop(ref.current?.offsetTop)
                 setPosition(ref.current?.offsetTop + ref.current?.clientHeight / 2)
                 updateNodeInternals(data.id)
             }, 0)
@@ -78,10 +63,11 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                             id={outputAnchor.id}
                             isValidConnection={(connection) => isValidConnection(connection, reactFlowInstance)}
                             style={{
-                                height: 10,
-                                width: 10,
-                                backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                                top: position
+                                height: 25,
+                                width: 15,
+                                backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                top: position,
+                                borderRadius: 5
                             }}
                         />
                     </CustomWidthTooltip>
@@ -90,38 +76,6 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                     </Box>
                 </>
             )}
-            {data.name !== 'ifElseFunction' &&
-                outputAnchor.type === 'options' &&
-                outputAnchor.options &&
-                getAnchorOptions(outputAnchor.options).length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {getAnchorOptions(outputAnchor.options).map((option, index) => {
-                            return (
-                                <div key={option.id} style={{ display: 'flex', flexDirection: 'row' }}>
-                                    <CustomWidthTooltip placement='right' title={option.type}>
-                                        <Handle
-                                            type='source'
-                                            position={Position.Right}
-                                            key={index}
-                                            id={option?.id}
-                                            isValidConnection={(connection) => isValidConnection(connection, reactFlowInstance)}
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                                                top: getAnchorPosition(outputAnchor.options, index)
-                                            }}
-                                        />
-                                    </CustomWidthTooltip>
-                                    <div style={{ flex: 1 }}></div>
-                                    <Box sx={{ p: 2, textAlign: 'end' }}>
-                                        <Typography>{option.label}</Typography>
-                                    </Box>
-                                </div>
-                            )
-                        })}
-                    </div>
-                )}
             {data.name === 'ifElseFunction' && outputAnchor.type === 'options' && outputAnchor.options && (
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -141,7 +95,7 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                                 style={{
                                     height: 10,
                                     width: 10,
-                                    backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
+                                    backgroundColor: 'red',
                                     top: position - 25
                                 }}
                             />
@@ -183,7 +137,7 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
             {data.name !== 'ifElseFunction' &&
                 outputAnchor.type === 'options' &&
                 outputAnchor.options &&
-                getAvailableOptions(outputAnchor.options).length > 0 && (
+                outputAnchor.options.length > 0 && (
                     <>
                         <CustomWidthTooltip
                             placement='right'
@@ -198,10 +152,11 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                                 id={outputAnchor.options.find((opt) => opt.name === data.outputs?.[outputAnchor.name])?.id ?? ''}
                                 isValidConnection={(connection) => isValidConnection(connection, reactFlowInstance)}
                                 style={{
-                                    height: 10,
-                                    width: 10,
-                                    backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                                    top: position
+                                    height: 25,
+                                    width: 15,
+                                    backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                    top: position,
+                                    borderRadius: 5
                                 }}
                             />
                         </CustomWidthTooltip>
@@ -210,7 +165,7 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                                 disabled={disabled}
                                 disableClearable={true}
                                 name={outputAnchor.name}
-                                options={getAvailableOptions(outputAnchor.options)}
+                                options={outputAnchor.options}
                                 onSelect={(newValue) => {
                                     setDropdownValue(newValue)
                                     data.outputs[outputAnchor.name] = newValue

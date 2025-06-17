@@ -212,7 +212,7 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
                                                             ? theme.palette.background.paper
                                                             : theme.palette.background.neutral,
                                                         borderRadius: '8px',
-                                                        border: `1px solid ${alpha('#FFB938', customization.isDarkMode ? 0.3 : 0.5)}`
+                                                        border: `1px solid ${alpha('#FF9F1C', customization.isDarkMode ? 0.3 : 0.5)}`
                                                     }}
                                                 >
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
@@ -230,15 +230,15 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
                                                                 px: 2,
                                                                 pb: issueIndex === item.issues.length - 1 ? 2 : 1,
                                                                 backgroundColor: customization.isDarkMode
-                                                                    ? darken('#FFB938', 0.85)
-                                                                    : lighten('#FFB938', 0.9),
+                                                                    ? darken('#FF9F1C', 0.85)
+                                                                    : lighten('#FF9F1C', 0.9),
                                                                 display: 'flex',
                                                                 alignItems: 'center',
                                                                 gap: 2
                                                             }}
                                                         >
                                                             <IconExclamationCircle
-                                                                color='#FFB938'
+                                                                color='#FF9F1C'
                                                                 size={20}
                                                                 style={{
                                                                     minWidth: '20px',

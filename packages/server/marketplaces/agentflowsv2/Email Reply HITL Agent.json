@@ -15,7 +15,7 @@
                 "version": 1,
                 "name": "startAgentflow",
                 "type": "Start",
-                "color": "#7EE787",
+                "color": "#06D6A0",
                 "hideInput": true,
                 "baseClasses": ["Start"],
                 "category": "Agent Pipeline",
@@ -198,7 +198,7 @@
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#4DD0E1",
+                "color": "#7C29A7",
                 "baseClasses": ["Agent"],
                 "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
@@ -561,7 +561,7 @@
                 "version": 1,
                 "name": "humanInputAgentflow",
                 "type": "HumanInput",
-                "color": "#6E6EFD",
+                "color": "#52289F",
                 "baseClasses": ["HumanInput"],
                 "category": "Agent Pipeline",
                 "description": "Request human input, approval or rejection during execution",
@@ -698,7 +698,7 @@
                 "version": 1,
                 "name": "directReplyAgentflow",
                 "type": "DirectReply",
-                "color": "#4DDBBB",
+                "color": "#06D6A0",
                 "hideOutput": true,
                 "baseClasses": ["DirectReply"],
                 "category": "Agent Pipeline",
@@ -795,8 +795,8 @@
             "target": "agentAgentflow_0",
             "targetHandle": "agentAgentflow_0",
             "data": {
-                "sourceColor": "#7EE787",
-                "targetColor": "#4DD0E1",
+                "sourceColor": "#06D6A0",
+                "targetColor": "#7C29A7",
                 "isHumanInput": false
             },
             "type": "agentFlow",
@@ -808,8 +808,8 @@
             "target": "humanInputAgentflow_0",
             "targetHandle": "humanInputAgentflow_0",
             "data": {
-                "sourceColor": "#4DD0E1",
-                "targetColor": "#6E6EFD",
+                "sourceColor": "#7C29A7",
+                "targetColor": "#52289F",
                 "isHumanInput": false
             },
             "type": "agentFlow",
@@ -821,8 +821,8 @@
             "target": "directReplyAgentflow_0",
             "targetHandle": "directReplyAgentflow_0",
             "data": {
-                "sourceColor": "#6E6EFD",
-                "targetColor": "#4DDBBB",
+                "sourceColor": "#52289F",
+                "targetColor": "#06D6A0",
                 "edgeLabel": "proceed",
                 "isHumanInput": true
             },
@@ -835,7 +835,7 @@
             "target": "loopAgentflow_0",
             "targetHandle": "loopAgentflow_0",
             "data": {
-                "sourceColor": "#6E6EFD",
+                "sourceColor": "#52289F",
                 "targetColor": "#FFA07A",
                 "edgeLabel": "reject",
                 "isHumanInput": true

@@ -35,7 +35,7 @@ class ExecuteFlow_Agentflow implements INode {
         this.category = 'Agent Pipeline'
         this.description = 'Execute another flow'
         this.baseClasses = [this.type]
-        this.color = '#a3b18a'
+        this.color = '#C7376D'
         this.credential = {
             label: 'Connect Credential',
             name: 'credential',

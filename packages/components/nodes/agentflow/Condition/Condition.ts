@@ -22,7 +22,7 @@ class Condition_Agentflow implements INode {
         this.category = 'Agent Pipeline'
         this.description = `Split flows based on If Else conditions`
         this.baseClasses = [this.type]
-        this.color = '#FFB938'
+        this.color = '#FF9F1C'
         this.inputs = [
             {
                 label: 'Conditions',

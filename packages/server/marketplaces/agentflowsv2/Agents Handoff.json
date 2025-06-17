@@ -15,7 +15,7 @@
                 "version": 1,
                 "name": "startAgentflow",
                 "type": "Start",
-                "color": "#7EE787",
+                "color": "#06D6A0",
                 "hideInput": true,
                 "baseClasses": ["Start"],
                 "category": "Agent Pipeline",
@@ -198,7 +198,7 @@
                 "version": 1,
                 "name": "conditionAgentAgentflow",
                 "type": "ConditionAgent",
-                "color": "#ff8fab",
+                "color": "#EF476F",
                 "baseClasses": ["ConditionAgent"],
                 "category": "Agent Pipeline",
                 "description": "Utilize an agent to split flows based on dynamic conditions",
@@ -342,7 +342,7 @@
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#4DD0E1",
+                "color": "#7C29A7",
                 "baseClasses": ["Agent"],
                 "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
@@ -686,7 +686,7 @@
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#4DD0E1",
+                "color": "#7C29A7",
                 "baseClasses": ["Agent"],
                 "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
@@ -1036,7 +1036,7 @@
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#4DD0E1",
+                "color": "#7C29A7",
                 "baseClasses": ["Agent"],
                 "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
@@ -1421,8 +1421,8 @@
             "target": "conditionAgentAgentflow_0",
             "targetHandle": "conditionAgentAgentflow_0",
             "data": {
-                "sourceColor": "#7EE787",
-                "targetColor": "#ff8fab",
+                "sourceColor": "#06D6A0",
+                "targetColor": "#EF476F",
                 "isHumanInput": false
             },
             "type": "agentFlow",
@@ -1434,8 +1434,8 @@
             "target": "agentAgentflow_0",
             "targetHandle": "agentAgentflow_0",
             "data": {
-                "sourceColor": "#ff8fab",
-                "targetColor": "#4DD0E1",
+                "sourceColor": "#EF476F",
+                "targetColor": "#7C29A7",
                 "edgeLabel": "0",
                 "isHumanInput": false
             },
@@ -1448,8 +1448,8 @@
             "target": "agentAgentflow_1",
             "targetHandle": "agentAgentflow_1",
             "data": {
-                "sourceColor": "#ff8fab",
-                "targetColor": "#4DD0E1",
+                "sourceColor": "#EF476F",
+                "targetColor": "#7C29A7",
                 "edgeLabel": "1",
                 "isHumanInput": false
             },
@@ -1462,8 +1462,8 @@
             "target": "agentAgentflow_2",
             "targetHandle": "agentAgentflow_2",
             "data": {
-                "sourceColor": "#ff8fab",
-                "targetColor": "#4DD0E1",
+                "sourceColor": "#EF476F",
+                "targetColor": "#7C29A7",
                 "edgeLabel": "2",
                 "isHumanInput": false
             },

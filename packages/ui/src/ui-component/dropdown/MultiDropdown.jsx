@@ -56,6 +56,8 @@ export const MultiDropdown = ({ name, value, options, onSelect, formControlSx = 
                 PopperComponent={StyledPopper}
                 renderInput={(params) => (
                     <TextField
+                        id='standard-basic'
+                        variant='standard'
                         {...params}
                         value={internalValue}
                         sx={{

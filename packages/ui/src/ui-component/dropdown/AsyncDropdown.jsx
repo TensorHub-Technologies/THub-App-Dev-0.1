@@ -217,6 +217,8 @@ export const AsyncDropdown = ({
                         : [findMatchingOptions(options, internalValue)].filter(Boolean)
                     return (
                         <TextField
+                            id='standard-basic'
+                            variant='standard'
                             {...params}
                             value={internalValue}
                             sx={{

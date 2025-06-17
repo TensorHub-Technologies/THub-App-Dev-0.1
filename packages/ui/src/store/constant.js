@@ -31,27 +31,27 @@ export const AGENTFLOW_ICONS = [
     {
         name: 'conditionAgentflow',
         icon: IconArrowsSplit,
-        color: '#FFB938'
+        color: '#FF9F1C'
     },
     {
         name: 'startAgentflow',
         icon: IconPlayerPlayFilled,
-        color: '#7EE787'
+        color: '#06D6A0'
     },
     {
         name: 'llmAgentflow',
         icon: IconSparkles,
-        color: '#64B5F6'
+        color: '#118AB2'
     },
     {
         name: 'agentAgentflow',
         icon: IconRobot,
-        color: '#4DD0E1'
+        color: '#7C29A7'
     },
     {
         name: 'humanInputAgentflow',
         icon: IconReplaceUser,
-        color: '#6E6EFD'
+        color: '#52289F'
     },
     {
         name: 'loopAgentflow',
@@ -61,27 +61,27 @@ export const AGENTFLOW_ICONS = [
     {
         name: 'directReplyAgentflow',
         icon: IconMessageCircleFilled,
-        color: '#4DDBBB'
+        color: '#06D6A0'
     },
     {
         name: 'customFunctionAgentflow',
         icon: IconFunctionFilled,
-        color: '#E4B7FF'
+        color: '#4B3CA7'
     },
     {
         name: 'toolAgentflow',
         icon: IconTools,
-        color: '#d4a373'
+        color: '#FFD166'
     },
     {
         name: 'retrieverAgentflow',
         icon: IconLibrary,
-        color: '#b8bedd'
+        color: '#B6B6C6'
     },
     {
         name: 'conditionAgentAgentflow',
         icon: IconSubtask,
-        color: '#ff8fab'
+        color: '#EF476F'
     },
     {
         name: 'stickyNoteAgentflow',
@@ -91,7 +91,7 @@ export const AGENTFLOW_ICONS = [
     {
         name: 'httpAgentflow',
         icon: IconWorld,
-        color: '#FF7F7F'
+        color: '#EF476F'
     },
     {
         name: 'iterationAgentflow',
@@ -101,6 +101,6 @@ export const AGENTFLOW_ICONS = [
     {
         name: 'executeFlowAgentflow',
         icon: IconVectorBezier2,
-        color: '#a3b18a'
+        color: '#C7376D'
     }
 ]

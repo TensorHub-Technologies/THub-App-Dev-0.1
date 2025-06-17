@@ -15,7 +15,7 @@
                 "version": 1,
                 "name": "startAgentflow",
                 "type": "Start",
-                "color": "#7EE787",
+                "color": "#06D6A0",
                 "hideInput": true,
                 "baseClasses": ["Start"],
                 "category": "Agent Pipeline",
@@ -255,7 +255,7 @@
                 "version": 1,
                 "name": "llmAgentflow",
                 "type": "LLM",
-                "color": "#64B5F6",
+                "color": "#118AB2",
                 "baseClasses": ["LLM"],
                 "category": "Agent Pipeline",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
@@ -573,7 +573,7 @@
                 "version": 1,
                 "name": "llmAgentflow",
                 "type": "LLM",
-                "color": "#64B5F6",
+                "color": "#118AB2",
                 "baseClasses": ["LLM"],
                 "category": "Agent Pipeline",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
@@ -899,7 +899,7 @@
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#4DD0E1",
+                "color": "#7C29A7",
                 "baseClasses": ["Agent"],
                 "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
@@ -1240,7 +1240,7 @@
             "target": "iterationAgentflow_0",
             "targetHandle": "iterationAgentflow_0",
             "data": {
-                "sourceColor": "#7EE787",
+                "sourceColor": "#06D6A0",
                 "targetColor": "#9C89B8",
                 "isHumanInput": false
             },
@@ -1253,8 +1253,8 @@
             "target": "llmAgentflow_1",
             "targetHandle": "llmAgentflow_1",
             "data": {
-                "sourceColor": "#64B5F6",
-                "targetColor": "#64B5F6",
+                "sourceColor": "#118AB2",
+                "targetColor": "#118AB2",
                 "isHumanInput": false
             },
             "zIndex": 9999,
@@ -1268,7 +1268,7 @@
             "targetHandle": "agentAgentflow_0",
             "data": {
                 "sourceColor": "#9C89B8",
-                "targetColor": "#4DD0E1",
+                "targetColor": "#7C29A7",
                 "isHumanInput": false
             },
             "type": "agentFlow",
