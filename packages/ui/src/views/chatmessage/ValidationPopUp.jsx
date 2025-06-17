@@ -96,24 +96,31 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
         // Extract node name from the item
         const nodeName = item.name
 
-        // Find matching icon from AGENTFLOW_ICONS
-        const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === nodeName)
+        const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === name)
 
         if (foundIcon) {
             return (
                 <Box
                     sx={{
-                        width: '28px',
-                        height: '28px',
-                        borderRadius: '4px',
-                        backgroundColor: foundIcon.color,
+                        mr: 1,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: 'white'
+                        width: 24,
+                        height: 24,
+                        borderRadius: '50%',
+                        padding: 0.5
                     }}
                 >
-                    <foundIcon.icon size={16} />
+                    <img
+                        src={foundIcon.icon}
+                        alt={name}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain'
+                        }}
+                    />
                 </Box>
             )
         }

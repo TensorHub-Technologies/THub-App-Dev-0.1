@@ -60,7 +60,7 @@ const AgentFlowNode = ({ data }) => {
     const [showInfoDialog, setShowInfoDialog] = useState(false)
     const [infoDialogProps, setInfoDialogProps] = useState({})
 
-    const nodeColor = 'linear-gradient(to right, #3c5ba4, #e22a90)'
+    const nodeColor = customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
 
     const getOutputAnchors = () => {
         return data.outputAnchors ?? []

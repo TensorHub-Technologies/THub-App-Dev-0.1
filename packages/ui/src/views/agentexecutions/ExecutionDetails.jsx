@@ -158,7 +158,7 @@ function CustomLabel({ icon: Icon, itemStatus, children, name, ...other }) {
                                 justifyContent: 'center'
                             }}
                         >
-                            <foundIcon.icon size={20} color={foundIcon.color} />
+                            <img src={foundIcon.icon} alt={name} width={20} height={20} style={{ objectFit: 'contain' }} />
                         </Box>
                     )
                 }

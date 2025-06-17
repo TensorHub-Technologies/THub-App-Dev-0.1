@@ -85,7 +85,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                     }}
                 >
                     <CardWrapper
-                        // sx={{ background: customization.isDarkMode ? 'theme.palette.common.black': `url(${image1}) !important`,}}
+                        // sx={{ background: customization.isDarkMode ? 'theme.palette.common.black': url(${image1}) !important,}}
                         border={false}
                         content={false}
                         onClick={() => {
@@ -267,25 +267,48 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                                 >
                                                     {[
                                                         ...(icons || []).map((ic) => ({
-                                                            type: 'icon',
+                                                            type:
+                                                                (ic.icon || ic.icon) && typeof (ic.icon || ic.icon) === 'string'
+                                                                    ? 'image'
+                                                                    : 'icon',
                                                             icon: ic.icon,
+                                                            src: ic.icon || ic.icon,
                                                             color: ic.color,
                                                             label: ic.name
                                                         }))
                                                     ]
                                                         .slice(0, 3)
                                                         .map((item, index) => (
-                                                            <Tooltip key={item.src || index} title={item.label} placement='top'>
+                                                            <Tooltip key={item.icon || index} title={item.label} placement='top'>
                                                                 <div
                                                                     style={{
                                                                         width: 30,
                                                                         height: 30,
                                                                         display: 'flex',
                                                                         alignItems: 'center',
-                                                                        justifyContent: 'center'
+                                                                        justifyContent: 'center',
+                                                                        borderRadius: '20%',
+                                                                        backgroundColor: item.type === 'image' ? '#fff' : 'transparent',
+                                                                        boxShadow:
+                                                                            item.type === 'image'
+                                                                                ? '2px 2px 14px 2px rgb(32 40 45 / 8%)'
+                                                                                : 'none'
                                                                     }}
                                                                 >
-                                                                    <item.icon size={25} color={item.color} />
+                                                                    {item.type === 'image' ? (
+                                                                        <img
+                                                                            src={item.icon}
+                                                                            alt={item.label}
+                                                                            style={{
+                                                                                width: '100%',
+                                                                                height: '100%',
+                                                                                objectFit: 'contain',
+                                                                                padding: 3
+                                                                            }}
+                                                                        />
+                                                                    ) : (
+                                                                        <item.icon size={25} color={item.color} />
+                                                                    )}
                                                                 </div>
                                                             </Tooltip>
                                                         ))}
