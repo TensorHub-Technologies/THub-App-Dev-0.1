@@ -4,7 +4,7 @@ import Agent from '@/assets/images/agentpipeline/Agent.png'
 import Condition from '@/assets/images/agentpipeline/Condition.png'
 import Loop from '@/assets/images/agentpipeline/Loop.png'
 import LLM from '@/assets/images/agentpipeline/LLM.png'
-import StartAgent from '@/assets/images/agentpipeline/startAgent.png'
+import StartAgentflow from '@/assets/images/agentpipeline/StartAgents.png'
 import StickyNote from '@/assets/images/agentpipeline/StickyNotes.png'
 import HumanInput from '@/assets/images/agentpipeline/HumanInput.png'
 import DirectReplay from '@/assets/images/agentpipeline/DirectReply.png'
@@ -34,7 +34,7 @@ export const AGENTFLOW_ICONS = [
     },
     {
         name: 'startAgentflow',
-        icon: StartAgent,
+        icon: StartAgentflow,
         color: '#06D6A0'
     },
     {

@@ -80,7 +80,7 @@ const IterationNode = ({ data }) => {
         }
     }, [reactFlowInstance, data.id])
 
-    const nodeColor = 'linear-gradient(to right, #3c5ba4, #e22a90)'
+    const nodeColor = customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
 
     // Get different shades of the color based on state
     const getStateColor = () => {

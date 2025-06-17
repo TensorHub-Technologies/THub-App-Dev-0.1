@@ -161,10 +161,19 @@ function CustomLabel({ icon: Icon, itemStatus, children, name, label, data, meta
                                     justifyContent: 'center'
                                 }}
                             >
-                                <foundIcon.icon size={20} color={foundIcon.color} />
+                                <img
+                                    src={foundIcon.icon}
+                                    alt={name}
+                                    style={{
+                                        width: 20,
+                                        height: 20,
+                                        objectFit: 'contain'
+                                    }}
+                                />
                             </Box>
                         )
                     }
+
                     return null
                 })()}
 

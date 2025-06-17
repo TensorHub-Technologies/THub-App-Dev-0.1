@@ -248,7 +248,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                                         cursor: 'default'
                                     }}
                                 >
-                                    <foundIcon.icon size={20} color={'white'} />
+                                    <img src={foundIcon.icon} alt={nodeName} style={{ width: 20, height: 20, objectFit: 'contain' }} />
                                 </div>
                             )
                         } else {
@@ -272,6 +272,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                         }
                     })()}
                 </Box>
+
                 <Typography variant='h5' gutterBottom>
                     {label}
                 </Typography>
