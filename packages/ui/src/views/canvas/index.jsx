@@ -817,7 +817,8 @@ const Canvas = () => {
                     elevation={1}
                     sx={{
                         bgcolor: theme.palette.background.default,
-                        height: '80px'
+                        height: '80px',
+                        zIndex: 1300
                     }}
                 >
                     <Toolbar>
@@ -831,8 +832,8 @@ const Canvas = () => {
                     </Toolbar>
                 </AppBar>
 
-                <Box sx={{ display: 'flex', mt: '70px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
-                    <Box sx={{ width: customization.menu_open ? '350px' : '100px' }}>
+                <Box sx={{ display: 'flex', mt: '34px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
+                    <Box sx={{ width: customization.menu_open ? '86px' : '100px' }}>
                         <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
                     </Box>
 
@@ -866,9 +867,8 @@ const Canvas = () => {
                                             flexDirection: 'row',
                                             left: '50%',
                                             transform: 'translate(-50%, -50%)',
-                                            padding: '5px 10px',
                                             position: 'absolute',
-                                            marginLeft: '20px',
+                                            margin: '0',
                                             boxShadow: 'none'
                                         }}
                                     >
@@ -1124,7 +1124,7 @@ const Canvas = () => {
                                                     title='Vertical Layout'
                                                     onClick={() => handleLayout('TB')}
                                                 >
-                                                    <IconArrowsVertical id='VerticalIcon' size={19} color='#000000' />
+                                                    <IconArrowsHorizontal id='HorizontalIcon' size={19} color='#000000' />
                                                 </MenuItem>
 
                                                 <MenuItem
@@ -1145,7 +1145,7 @@ const Canvas = () => {
                                                     title='Horizontal Layout'
                                                     onClick={() => handleLayout('LR')}
                                                 >
-                                                    <IconArrowsHorizontal id='HorizontalIcon' size={19} color='#000000' />
+                                                    <IconArrowsVertical id='VerticalIcon' size={19} color='#000000' />
                                                 </MenuItem>
                                             </Box>
                                         </Box>
