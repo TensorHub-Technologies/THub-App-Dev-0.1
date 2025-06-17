@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { styled } from '@mui/material/styles'
 import { tableCellClasses } from '@mui/material/TableCell'
 import {
-    Box,
     Button,
     Chip,
     Paper,
@@ -42,7 +41,6 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 export const MarketplaceTable = ({
     data,
-    images,
     filterFunction,
     filterByBadge,
     filterByType,
@@ -88,9 +86,7 @@ export const MarketplaceTable = ({
                             <StyledTableCell sx={{ minWidth: '100px' }} key='4'>
                                 Use cases
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }} key='5'>
-                                Nodes
-                            </StyledTableCell>
+                            <StyledTableCell key='5'>Nodes</StyledTableCell>
                             <StyledTableCell component='th' scope='row' key='6'>
                                 &nbsp;
                             </StyledTableCell>
@@ -164,7 +160,9 @@ export const MarketplaceTable = ({
                         ) : (
                             <>
                                 {data
-                                    ?.filter(filterFunction)
+                                    ?.filter(filterByBadge)
+                                    .filter(filterByType)
+                                    .filter(filterFunction)
                                     .filter(filterByFramework)
                                     .filter(filterByUsecases)
                                     .map((row, index) => (
@@ -181,14 +179,7 @@ export const MarketplaceTable = ({
                                                         overflow: 'hidden'
                                                     }}
                                                 >
-                                                    <Button
-                                                        onClick={() => openTemplate(row)}
-                                                        sx={{
-                                                            textAlign: 'left',
-                                                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                                            textDecoration: 'none'
-                                                        }}
-                                                    >
+                                                    <Button onClick={() => openTemplate(row)} sx={{ textAlign: 'left' }}>
                                                         {row.templateName || row.name}
                                                     </Button>
                                                 </Typography>
@@ -232,57 +223,20 @@ export const MarketplaceTable = ({
                                                 </Stack>
                                             </StyledTableCell>
                                             <StyledTableCell key='5'>
-                                                {images[row.id] && (
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'start',
-                                                            gap: 1
-                                                        }}
-                                                    >
-                                                        {images[row.id]
-                                                            .slice(0, images[row.id].length > 5 ? 5 : images[row.id].length)
-                                                            .map((img) => (
-                                                                <Box
-                                                                    key={img}
-                                                                    sx={{
-                                                                        width: 30,
-                                                                        height: 30,
-                                                                        borderRadius: '50%',
-                                                                        backgroundColor: customization.isDarkMode
-                                                                            ? theme.palette.common.white
-                                                                            : theme.palette.grey[300] + 75
-                                                                    }}
-                                                                >
-                                                                    <img
-                                                                        style={{
-                                                                            width: '100%',
-                                                                            height: '100%',
-                                                                            padding: 5,
-                                                                            objectFit: 'contain'
-                                                                        }}
-                                                                        alt=''
-                                                                        src={img}
-                                                                    />
-                                                                </Box>
-                                                            ))}
-                                                        {images[row.id].length > 5 && (
-                                                            <Typography
-                                                                sx={{
-                                                                    alignItems: 'center',
-                                                                    display: 'flex',
-                                                                    fontSize: '.9rem',
-                                                                    fontWeight: 200
-                                                                }}
-                                                            >
-                                                                + {images[row.id].length - 5} More
-                                                            </Typography>
-                                                        )}
-                                                    </Box>
-                                                )}
+                                                <Stack flexDirection='row' sx={{ gap: 1, flexWrap: 'wrap' }}>
+                                                    {row.categories &&
+                                                        row.categories.map((tag, index) => (
+                                                            <Chip
+                                                                variant='outlined'
+                                                                key={index}
+                                                                size='small'
+                                                                label={tag}
+                                                                style={{ marginRight: 3, marginBottom: 3 }}
+                                                            />
+                                                        ))}
+                                                </Stack>
                                             </StyledTableCell>
-                                            {/* <StyledTableCell key='6'>
+                                            <StyledTableCell key='6'>
                                                 <Typography>
                                                     {row.badge &&
                                                         row.badge
@@ -297,7 +251,7 @@ export const MarketplaceTable = ({
                                                                 />
                                                             ))}
                                                 </Typography>
-                                            </StyledTableCell> */}
+                                            </StyledTableCell>
                                             {onDelete && (
                                                 <StyledTableCell key='7'>
                                                     <IconButton title='Delete' color='error' onClick={() => onDelete(row)}>
@@ -318,7 +272,6 @@ export const MarketplaceTable = ({
 
 MarketplaceTable.propTypes = {
     data: PropTypes.array,
-    images: PropTypes.object,
     filterFunction: PropTypes.func,
     filterByBadge: PropTypes.func,
     filterByType: PropTypes.func,

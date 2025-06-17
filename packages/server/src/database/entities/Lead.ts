@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { ILead } from '../../Interface'
 
 @Entity()
@@ -7,13 +7,13 @@ export class Lead implements ILead {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column({ nullable: true })
+    @Column()
     name?: string
 
-    @Column({ nullable: true })
+    @Column()
     email?: string
 
-    @Column({ nullable: true })
+    @Column()
     phone?: string
 
     @Column({ nullable: true })

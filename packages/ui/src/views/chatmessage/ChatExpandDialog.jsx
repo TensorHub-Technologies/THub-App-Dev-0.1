@@ -2,23 +2,12 @@ import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 
-import { Dialog, DialogContent, DialogTitle } from '@mui/material'
-import { ChatMessage } from './ChatMessage'
-import { IconX, IconEraser } from '@tabler/icons-react'
-import { StyledFab } from '@/ui-component/button/StyledFab'
+import { Dialog, DialogContent, DialogTitle, Button } from '@mui/material'
+import ChatMessage from './ChatMessage'
+import { StyledButton } from '@/ui-component/button/StyledButton'
+import { IconEraser } from '@tabler/icons-react'
 
-const ChatExpandDialog = ({
-    show,
-    dialogProps,
-    isAgentCanvas,
-    onClear,
-    onCancel,
-    previews,
-    setPreviews,
-    open,
-    setOpen,
-    setShowExpandDialog
-}) => {
+const ChatExpandDialog = ({ show, dialogProps, isAgentCanvas, onClear, onCancel, previews, setPreviews }) => {
     const portalElement = document.getElementById('portal')
     const customization = useSelector((state) => state.customization)
 
@@ -26,62 +15,32 @@ const ChatExpandDialog = ({
         <Dialog
             open={show}
             fullWidth
-            // maxWidth='3000px'
+            maxWidth='md'
             onClose={onCancel}
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
             sx={{ overflow: 'visible' }}
-            PaperProps={{
-                sx: {
-                    margin: 0,
-                    position: 'absolute',
-                    top: 0,
-                    right: '0',
-                    bottom: 0,
-                    height: '100vh',
-                    maxHeight: '100vh',
-                    width: '110vh',
-                    maxWidth: '110vh'
-                }
-            }}
         >
-            <DialogTitle sx={{ fontSize: '1rem', p: 1.5, padding: '0px' }} id='alert-dialog-title'>
+            <DialogTitle sx={{ fontSize: '1rem', p: 1.5 }} id='alert-dialog-title'>
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {dialogProps.title}
                     <div style={{ flex: 1 }}></div>
-                    <StyledFab
-                        sx={{
-                            position: 'absolute',
-                            right: 60,
-                            top: 0,
-                            background: 'transparent',
-                            boxShadow: '0',
-                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                        }}
-                        variant='outlined'
-                        title='Erase'
-                        onClick={() => {
-                            onClear()
-                            setShowExpandDialog(false)
-                        }}
-                    >
-                        <IconEraser />
-                    </StyledFab>
-                    <StyledFab
-                        sx={{
-                            position: 'absolute',
-                            right: 20,
-                            top: 0,
-                            background: 'transparent',
-                            boxShadow: '0',
-                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                        }}
-                        variant='outlined'
-                        title='Close'
-                        onClick={() => setShowExpandDialog(false)}
-                    >
-                        <IconX />
-                    </StyledFab>
+                    {customization.isDarkMode && (
+                        <StyledButton
+                            variant='outlined'
+                            color='error'
+                            title='Clear Conversation'
+                            onClick={onClear}
+                            startIcon={<IconEraser />}
+                        >
+                            Clear Chat
+                        </StyledButton>
+                    )}
+                    {!customization.isDarkMode && (
+                        <Button variant='outlined' color='error' title='Clear Conversation' onClick={onClear} startIcon={<IconEraser />}>
+                            Clear Chat
+                        </Button>
+                    )}
                 </div>
             </DialogTitle>
             <DialogContent
@@ -90,7 +49,6 @@ const ChatExpandDialog = ({
             >
                 <ChatMessage
                     isDialog={true}
-                    show={show}
                     open={dialogProps.open}
                     isAgentCanvas={isAgentCanvas}
                     chatflowid={dialogProps.chatflowid}

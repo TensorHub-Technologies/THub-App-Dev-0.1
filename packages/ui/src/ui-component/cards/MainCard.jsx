@@ -29,18 +29,20 @@ const MainCard = forwardRef(function MainCard(
     },
     ref
 ) {
+    const otherProps = { ...others, border: others.border === false ? undefined : others.border }
     const theme = useTheme()
-
     return (
         <Card
             ref={ref}
-            {...others}
+            {...otherProps}
             sx={{
                 border: border ? '1px solid' : 'none',
                 borderColor: theme.palette.primary[200] + 75,
                 ':hover': {
                     boxShadow: boxShadow ? shadow || '0 2px 14px 0 rgb(32 40 45 / 8%)' : 'inherit'
                 },
+                maxWidth: '1280px',
+                mx: 'auto',
                 ...sx
             }}
         >

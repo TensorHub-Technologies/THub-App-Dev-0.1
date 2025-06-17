@@ -6,6 +6,7 @@ import { getAppVersion } from '../../utils'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { FLOWISE_METRIC_COUNTERS, FLOWISE_COUNTER_STATUS } from '../../Interface.Metrics'
 import { QueryRunner } from 'typeorm'
+import { validate } from 'uuid'
 
 const createTool = async (requestBody: any): Promise<any> => {
     try {
@@ -38,12 +39,12 @@ const deleteTool = async (toolId: string): Promise<any> => {
     }
 }
 
-const getAllTools = async (tenantId: string): Promise<any> => {
+const getAllTools = async (tenantId: any): Promise<Tool[]> => {
+    console.log(tenantId, 'tenantId1111')
+
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Tool).findBy({
-            tenantId: tenantId
-        })
+        const dbResponse = await appServer.AppDataSource.getRepository(Tool).findBy({ tenantId })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.getAllTools - ${getErrorMessage(error)}`)
@@ -86,6 +87,12 @@ const updateTool = async (toolId: string, toolBody: any): Promise<any> => {
 
 const importTools = async (newTools: Partial<Tool>[], queryRunner?: QueryRunner) => {
     try {
+        for (const data of newTools) {
+            if (data.id && !validate(data.id)) {
+                throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: importTools - invalid id!`)
+            }
+        }
+
         const appServer = getRunningExpressApp()
         const repository = queryRunner ? queryRunner.manager.getRepository(Tool) : appServer.AppDataSource.getRepository(Tool)
 

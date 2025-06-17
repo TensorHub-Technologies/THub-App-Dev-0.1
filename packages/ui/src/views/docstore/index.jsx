@@ -163,7 +163,7 @@ const Documents = () => {
                                 value='card'
                                 title='Card View'
                             >
-                                <IconLayoutGrid />
+                                <IconLayoutGrid style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
                             </ToggleButton>
                             <ToggleButton
                                 sx={{
@@ -175,7 +175,7 @@ const Documents = () => {
                                 value='list'
                                 title='List View'
                             >
-                                <IconList />
+                                <IconList style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
                             </ToggleButton>
                         </ToggleButtonGroup>
                         <StyledButton

@@ -1,16 +1,10 @@
 import client from './client'
 
-const getAllChatflows = (tenantId) => client.get(`/chatflows/${tenantId}`)
+const getAllChatflows = (tenantId) => client.get(`/chatflows?type=CHATFLOW&tenantId=${tenantId}`)
 
-const getAllChatflowsWp = (workspaceUid) => client.get(`/chatflows/workspaces/${workspaceUid}`)
+const getAllAgentflows = (type, tenantId) => client.get(`/chatflows?type=${type}&tenantId=${tenantId}`)
 
-const getAllChatflowsPaginated = (tenantId, page = 1, limit = 12) =>
-    client.get(`/chatflows/paginated/${tenantId}?page=${page}&limit=${limit}`)
-
-const getAllChatflowsWpPaginated = (workspaceUid, page = 1, limit = 12) =>
-    client.get(`/chatflows/wp/paginated/${workspaceUid}?page=${page}&limit=${limit}`)
-
-const getSpecificChatflow = (chatflowId) => client.get(`/chatflows/getChatflowById/${chatflowId}`)
+const getSpecificChatflow = (id) => client.get(`/chatflows/${id}`)
 
 const getSpecificChatflowFromPublicEndpoint = (id) => client.get(`/public-chatflows/${id}`)
 
@@ -26,9 +20,11 @@ const getIsChatflowStreaming = (id) => client.get(`/chatflows-streaming/${id}`)
 
 const getAllowChatflowUploads = (id) => client.get(`/chatflows-uploads/${id}`)
 
+const generateAgentflow = (body) => client.post(`/agentflowv2-generator/generate`, body)
+
 export default {
     getAllChatflows,
-    getAllChatflowsWp,
+    getAllAgentflows,
     getSpecificChatflow,
     getSpecificChatflowFromPublicEndpoint,
     createNewChatflow,
@@ -37,6 +33,5 @@ export default {
     deleteChatflow,
     getIsChatflowStreaming,
     getAllowChatflowUploads,
-    getAllChatflowsPaginated,
-    getAllChatflowsWpPaginated
+    generateAgentflow
 }

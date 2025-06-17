@@ -8,9 +8,10 @@ import { styled } from '@mui/material/styles'
 import MainCard from '@/ui-component/cards/MainCard'
 import SkeletonChatflowCard from '@/ui-component/cards/Skeleton/ChatflowCard'
 import FlowListMenu from '@/ui-component/button/FlowListMenu'
-import { Typography, Tooltip } from '@mui/material'
+import { Typography, Tooltip, Box } from '@mui/material'
 import Dark from '@/assets/images/Pink.png'
 import Light from '@/assets/images/Light.png'
+import MoreItemsTooltip from '../tooltip/MoreItemsTooltip'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
@@ -40,7 +41,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| CARD ||=========================== //
 
-const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }) => {
+const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons }) => {
     const customization = useCustomization()
 
     const [isDragging, setIsDragging] = useState(false)
@@ -203,36 +204,34 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                                 )}
                                 <Typography
                                     sx={{
-                                        fontSize: '1.1rem',
+                                        display: '-webkit-box',
+                                        fontSize: '1.25rem',
                                         fontWeight: 500,
-                                        height: '40px',
-                                        background: 'transparent',
-                                        overflowWrap: 'break-word',
-                                        whiteSpace: 'pre-line'
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: 'vertical',
+                                        textOverflow: 'ellipsis',
+                                        overflow: 'hidden'
                                     }}
                                 >
                                     {data.templateName || data.name}
                                 </Typography>
                             </div>
                             {data.description && (
-                                <Tooltip title={data?.description || ''}>
-                                    <span
-                                        style={{
-                                            display: 'block',
-                                            padding: '0px 20px',
-                                            overflowWrap: 'break-word',
-                                            whiteSpace: 'pre-line', // Allows multi-line text wrapping
-                                            overflow: 'hidden', // Ensures overflow content is hidden
-                                            height: '40px', // Limits to two lines based on line height
-                                            lineHeight: '20px', // Adjust to control the height for two lines
-                                            width: '250px',
-                                            fontFamily: 'Roboto, sans-serif'
-                                        }}
-                                    >
-                                        {data.description}
-                                    </span>
-                                </Tooltip>
+                                <span
+                                    style={{
+                                        display: '-webkit-box',
+                                        marginTop: 10,
+                                        overflowWrap: 'break-word',
+                                        WebkitLineClamp: 3,
+                                        WebkitBoxOrient: 'vertical',
+                                        textOverflow: 'ellipsis',
+                                        overflow: 'hidden'
+                                    }}
+                                >
+                                    {data.description}
+                                </span>
                             )}
+
                             <div
                                 style={{
                                     padding: '10px '
@@ -257,6 +256,53 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                                             >
                                                 Nodes
                                             </div>
+                                            {(images?.length > 0 || icons?.length > 0) && (
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'start',
+                                                        gap: 1
+                                                    }}
+                                                >
+                                                    {[
+                                                        ...(icons || []).map((ic) => ({
+                                                            type: 'icon',
+                                                            icon: ic.icon,
+                                                            color: ic.color,
+                                                            label: ic.name
+                                                        }))
+                                                    ]
+                                                        .slice(0, 3)
+                                                        .map((item, index) => (
+                                                            <Tooltip key={item.src || index} title={item.label} placement='top'>
+                                                                <div
+                                                                    style={{
+                                                                        width: 30,
+                                                                        height: 30,
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center'
+                                                                    }}
+                                                                >
+                                                                    <item.icon size={25} color={item.color} />
+                                                                </div>
+                                                            </Tooltip>
+                                                        ))}
+
+                                                    {(images?.length || 0) + (icons?.length || 0) > 3 && (
+                                                        <MoreItemsTooltip
+                                                            images={[
+                                                                ...(images?.slice(3) || []),
+                                                                ...(icons?.slice(Math.max(0, 3 - (images?.length || 0))) || []).map(
+                                                                    (ic) => ({ label: ic.name })
+                                                                )
+                                                            ]}
+                                                        ></MoreItemsTooltip>
+                                                    )}
+                                                </Box>
+                                            )}
+
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -315,6 +361,7 @@ ItemCard.propTypes = {
     images: PropTypes.array,
     onClick: PropTypes.func,
     chatflow: PropTypes.object,
+    icons: PropTypes.array,
     updateFlowsApi: PropTypes.object
 }
 

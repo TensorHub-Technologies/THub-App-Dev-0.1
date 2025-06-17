@@ -11,10 +11,10 @@ export class Credential implements ICredential {
     name: string
 
     @Column()
-    credentialName: string
+    tenantId: string
 
     @Column()
-    tenantId: string
+    credentialName: string
 
     @Column({ type: 'text' })
     encryptedData: string

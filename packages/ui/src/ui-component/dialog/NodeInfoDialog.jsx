@@ -1,35 +1,47 @@
 import { createPortal } from 'react-dom'
-import { useSelector } from 'react-redux'
-import { useDispatch } from 'react-redux'
-import { useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 // Material
-import { Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { TableViewOnly } from '@/ui-component/table/Table'
+import { IconBook2 } from '@tabler/icons-react'
+import { useTheme } from '@mui/material/styles'
 
 // Store
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
-import { baseURL } from '@/store/constant'
+import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
 
 // API
 import configApi from '@/api/config'
 import useApi from '@/hooks/useApi'
 
-import nodesApi from '@/api/nodes'
-
-import { flowContext } from '@/store/context/ReactFlowContext'
-
 const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
-    const { reactFlowInstance } = useContext(flowContext)
-    const getNodesApi = useApi(nodesApi.getAllNodes)
-    const [outputNodes, setOutputNodes] = useState()
-
     const portalElement = document.getElementById('portal')
-    const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
 
     const getNodeConfigApi = useApi(configApi.getNodeConfig)
+
+    const renderIcon = (node) => {
+        const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
+
+        if (!foundIcon) return null
+
+        return (
+            <img
+                src={foundIcon.icon}
+                alt={node.name}
+                style={{
+                    width: 30,
+                    height: 30,
+                    objectFit: 'contain'
+                }}
+            />
+        )
+    }
 
     useEffect(() => {
         if (dialogProps.data) {
@@ -39,50 +51,11 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dialogProps])
 
-    const getOutputNodeName = () => {
-        const sourceNode = dialogProps.data
-        const outputNode = getOutputNode(sourceNode.id)
-        if (outputNode) {
-            return outputNode.data.label
-        }
-        return null
-    }
-
-    const getOutputNode = (outputNodes) => {
-        if (!outputNodes) return null
-
-        return outputNodes.map((ele, index) => (
-            <span key={index} style={{ padding: '8px' }}>
-                {ele.label}
-                {index !== outputNodes.length - 1 ? ',' : ''}
-            </span>
-        ))
-    }
-
     useEffect(() => {
         if (show) dispatch({ type: SHOW_CANVAS_DIALOG })
         else dispatch({ type: HIDE_CANVAS_DIALOG })
         return () => dispatch({ type: HIDE_CANVAS_DIALOG })
     }, [show, dispatch])
-
-    useEffect(() => {
-        getNodesApi.request()
-    }, [])
-
-    useEffect(() => {
-        if (getNodesApi.data) {
-            const sourceNode = dialogProps.data
-
-            if (sourceNode) {
-                const allNodeDetails = getNodesApi.data
-
-                const outputTypes = sourceNode.baseClasses
-
-                const outputNodes = allNodeDetails.filter((x) => x.inputs?.some((z) => outputTypes.includes(z.type)))
-                setOutputNodes(outputNodes)
-            }
-        }
-    }, [getNodesApi.data, dialogProps.data])
 
     const component = show ? (
         <Dialog
@@ -96,35 +69,52 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
                 {dialogProps.data && dialogProps.data.name && dialogProps.data.label && (
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                        <div
-                            style={{
-                                width: 50,
-                                height: 50,
-                                marginRight: 10,
-                                borderRadius: '50%',
-                                backgroundColor: 'white'
-                            }}
-                        >
-                            <img
+                        {dialogProps.data.color && !dialogProps.data.icon ? (
+                            <div
                                 style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    padding: 7,
-                                    borderRadius: '50%',
-                                    objectFit: 'contain'
+                                    ...theme.typography.commonAvatar,
+                                    ...theme.typography.largeAvatar,
+                                    borderRadius: '15px',
+                                    backgroundColor: customization.isDarkMode ? 'black' : 'white',
+                                    cursor: 'grab',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    background: customization.isDarkMode ? 'black' : 'white',
+                                    marginRight: 10
                                 }}
-                                alt={dialogProps.data.name}
-                                src={`${baseURL}/api/v1/node-icon/${dialogProps.data.name}`}
-                            />
-                        </div>
+                            >
+                                {renderIcon(dialogProps.data)}
+                            </div>
+                        ) : (
+                            <div
+                                style={{
+                                    width: 50,
+                                    height: 50,
+                                    marginRight: 10,
+                                    borderRadius: '50%',
+                                    backgroundColor: 'white'
+                                }}
+                            >
+                                <img
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        padding: 7,
+                                        borderRadius: '50%',
+                                        objectFit: 'contain'
+                                    }}
+                                    alt={dialogProps.data.name}
+                                    src={`${baseURL}/api/v1/node-icon/${dialogProps.data.name}`}
+                                />
+                            </div>
+                        )}
                         <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 10 }}>
                             {dialogProps.data.label}
                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                 <div
                                     style={{
-                                        border: '5px solid red',
-
-                                        display: 'none',
+                                        display: 'flex',
                                         flexDirection: 'row',
                                         width: 'max-content',
                                         borderRadius: 15,
@@ -138,11 +128,10 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                 >
                                     <span style={{ color: 'rgb(116,66,16)', fontSize: '0.825rem' }}>{dialogProps.data.id}</span>
                                 </div>
-
                                 {dialogProps.data.version && (
                                     <div
                                         style={{
-                                            display: 'none',
+                                            display: 'flex',
                                             flexDirection: 'row',
                                             width: 'max-content',
                                             borderRadius: 15,
@@ -155,37 +144,9 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                             marginBottom: 5
                                         }}
                                     >
-                                        {/* <span style={{ color: '#606c38', fontSize: '0.825rem' }}>version {dialogProps.data.version}</span> */}
+                                        <span style={{ color: '#606c38', fontSize: '0.825rem' }}>version {dialogProps.data.version}</span>
                                     </div>
                                 )}
-
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        width: 'max-content',
-                                        borderRadius: 15,
-                                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                        padding: 5,
-                                        paddingLeft: 10,
-                                        paddingRight: 10,
-                                        marginTop: 5,
-                                        // marginLeft: '10px',
-                                        marginBottom: 5,
-                                        position: 'absolute',
-                                        top: '5px',
-                                        right: '21px'
-                                    }}
-                                >
-                                    <a
-                                        href={`https://docs.thub.tech/${dialogProps.data.category.replace(/\s+/g, '-').toLowerCase()}`}
-                                        style={{ textDecoration: 'none' }}
-                                        target='_blank'
-                                        rel='noreferrer'
-                                    >
-                                        <span style={{ color: '#fff', fontSize: '0.825rem' }}>Documentation</span>
-                                    </a>
-                                </div>
                                 {dialogProps.data.badge && (
                                     <div
                                         style={{
@@ -212,55 +173,65 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                         </span>
                                     </div>
                                 )}
+                                {dialogProps.data.tags &&
+                                    dialogProps.data.tags.length &&
+                                    dialogProps.data.tags.map((tag, index) => (
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                width: 'max-content',
+                                                borderRadius: 15,
+                                                background: '#cae9ff',
+                                                padding: 5,
+                                                paddingLeft: 10,
+                                                paddingRight: 10,
+                                                marginTop: 5,
+                                                marginLeft: 10,
+                                                marginBottom: 5
+                                            }}
+                                            key={index}
+                                        >
+                                            <span
+                                                style={{
+                                                    color: '#023e7d',
+                                                    fontSize: '0.825rem'
+                                                }}
+                                            >
+                                                {tag.toLowerCase()}
+                                            </span>
+                                        </div>
+                                    ))}
                             </div>
                         </div>
+                        <div style={{ flex: 1 }}></div>
+                        {dialogProps.data.documentation && (
+                            <Button
+                                variant='outlined'
+                                color='primary'
+                                title='Open Documentation'
+                                onClick={() => {
+                                    window.open(dialogProps.data.documentation, '_blank', 'noopener,noreferrer')
+                                }}
+                                startIcon={<IconBook2 />}
+                            >
+                                Documentation
+                            </Button>
+                        )}
                     </div>
                 )}
             </DialogTitle>
-
             <DialogContent>
                 {dialogProps.data?.description && (
                     <div
                         style={{
                             padding: 10,
-                            marginBottom: 10,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            position: 'relative',
-                            right: '11px'
+                            marginBottom: 10
                         }}
                     >
-                        <span style={{ color: customization.isDarkMode ? '#fff' : '#000', display: 'flex', gap: '10px' }}>
-                            <strong>Description</strong> {dialogProps.data.description}
-                        </span>
+                        <span>{dialogProps.data.description}</span>
                     </div>
                 )}
-                <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', right: '0px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '17px', marginBottom: '5px' }}>
-                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Input Nodes</b>
-                        {dialogProps?.data?.inputAnchors?.length > 0 ? (
-                            dialogProps.data.inputAnchors.map((anchor, index, array) => (
-                                <span key={index}>
-                                    {anchor.label}
-                                    {index !== array.length - 1 ? ', ' : ''}
-                                </span>
-                            ))
-                        ) : (
-                            <span>No Inputs</span>
-                        )}
-                    </div>
-
-                    {/* <div> 
-    {console.log(outputNodes)}
-    <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output</b>
-    <span style={{ marginLeft: '18px' }}>{getOutputNode(outputNodes)}</span>
-</div> */}
-                    <div style={{ alignItems: 'center', gap: '15px' }}>
-                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.9rem' }}>Output Nodes</b>
-                        {getOutputNode(outputNodes)}
-                    </div>
-                </div>
-
                 {getNodeConfigApi.data && getNodeConfigApi.data.length > 0 && (
                     <TableViewOnly
                         rows={getNodeConfigApi.data.map((obj) => {

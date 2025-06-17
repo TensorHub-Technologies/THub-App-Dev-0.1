@@ -1,15 +1,12 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useTheme } from '@mui/material/styles'
-import { FormControl, Button, Divider } from '@mui/material'
+import { FormControl, Button } from '@mui/material'
 import { IconUpload } from '@tabler/icons-react'
 import { getFileName } from '@/utils/genericHelper'
-import { useSelector } from 'react-redux'
 
 export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChange, disabled = false }) => {
     const theme = useTheme()
-
-    const customization = useSelector((state) => state.customization)
 
     const [myValue, setMyValue] = useState(value ?? '')
 
@@ -87,7 +84,7 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                 <span
                     style={{
                         fontStyle: 'italic',
-                        color: customization.isDarkMode ? '#fff' : '#000',
+                        color: theme.palette.grey['800'],
                         marginBottom: '1rem'
                     }}
                 >
@@ -96,18 +93,11 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
             )}
             <Button
                 disabled={disabled}
-                variant='text'
+                variant='outlined'
                 component='label'
                 fullWidth
                 startIcon={<IconUpload />}
-                sx={{
-                    marginRight: '1rem',
-                    color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                    borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                    '&:hover': {
-                        borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                    }
-                }}
+                sx={{ marginRight: '1rem' }}
             >
                 {'Upload File'}
                 <input
@@ -116,16 +106,8 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                     accept={fileType}
                     hidden
                     onChange={(e) => (formDataUpload ? handleFormDataUpload(e) : handleFileUpload(e))}
-                    style={{
-                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                        borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                        '&:hover': {
-                            borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                        }
-                    }}
                 />
             </Button>
-            <Divider sx={{ borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4', borderWidth: 1, borderStyle: 'solid' }} />
         </FormControl>
     )
 }

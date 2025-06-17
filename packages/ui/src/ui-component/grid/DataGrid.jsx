@@ -3,14 +3,38 @@ import { useState, useCallback } from 'react'
 import { DataGrid as MUIDataGrid, GridActionsCellItem } from '@mui/x-data-grid'
 import { IconPlus } from '@tabler/icons-react'
 import { Button } from '@mui/material'
-import { IconTrashFilled } from '@tabler/icons-react'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { cloneDeep } from 'lodash'
 import { formatDataGridRows } from '@/utils/genericHelper'
-import { useSelector } from 'react-redux'
+import { styled } from '@mui/material/styles'
+
+const StyledDataGrid = styled(MUIDataGrid)(({ theme }) => ({
+    border: `1px solid ${theme.palette.mode === 'light' ? '#b4b4b4' : '#303030'}`,
+
+    letterSpacing: 'normal',
+    '& .MuiDataGrid-columnsContainer': {
+        backgroundColor: theme.palette.mode === 'light' ? '#fafafa' : '#1d1d1d'
+    },
+    '& .MuiDataGrid-iconSeparator': {
+        display: 'none'
+    },
+    '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+        borderRight: `1px solid ${theme.palette.mode === 'light' ? '#f0f0f0' : '#303030'}`
+    },
+    '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
+        borderBottom: `1px solid ${theme.palette.mode === 'light' ? '#f0f0f0' : '#303030'}`
+    },
+
+    '& .MuiPaginationItem-root': {
+        borderRadius: 0
+    },
+    '& .MuiDataGrid-columnHeader:last-child, .MuiDataGrid-cell:last-child': {
+        borderRight: 'none'
+    }
+}))
 
 export const DataGrid = ({ columns, rows, style, disabled = false, hideFooter = false, onChange }) => {
     const [rowValues, setRowValues] = useState(formatDataGridRows(rows) ?? [])
-    const customization = useSelector((state) => state.customization)
 
     const deleteItem = useCallback(
         (id) => () => {
@@ -35,7 +59,7 @@ export const DataGrid = ({ columns, rows, style, disabled = false, hideFooter = 
                 type: 'actions',
                 width: 80,
                 getActions: (params) => [
-                    <GridActionsCellItem key={'Delete'} icon={<IconTrashFilled />} label='Delete' onClick={deleteItem(params.id)} />
+                    <GridActionsCellItem key={'Delete'} icon={<DeleteIcon />} label='Delete' onClick={deleteItem(params.id)} />
                 ]
             }
         ]
@@ -82,7 +106,7 @@ export const DataGrid = ({ columns, rows, style, disabled = false, hideFooter = 
         <>
             {rowValues && colValues && (
                 <div style={{ marginTop: 10, height: 210, width: '100%', ...style }}>
-                    <MUIDataGrid
+                    <StyledDataGrid
                         processRowUpdate={handleProcessRowUpdate}
                         isCellEditable={() => {
                             return !disabled
@@ -95,16 +119,7 @@ export const DataGrid = ({ columns, rows, style, disabled = false, hideFooter = 
                 </div>
             )}
             {!disabled && (
-                <Button
-                    sx={{
-                        mt: 1,
-                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                        border: customization.isDarkMode ? '2px solid #E22A90' : '2px solid #3C5BA4'
-                    }}
-                    variant='outlined'
-                    onClick={addNewRow}
-                    startIcon={<IconPlus />}
-                >
+                <Button sx={{ mt: 1 }} variant='outlined' onClick={addNewRow} startIcon={<IconPlus />}>
                     Add Item
                 </Button>
             )}

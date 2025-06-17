@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 
 import { Popper, FormControl, TextField, Box, Typography } from '@mui/material'
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete'
-import { styled } from '@mui/material/styles'
+import { useTheme, styled } from '@mui/material/styles'
 import PropTypes from 'prop-types'
 
 const StyledPopper = styled(Popper)({
@@ -23,6 +23,7 @@ export const Dropdown = ({ name, value, loading, options, onSelect, disabled = f
     const findMatchingOptions = (options = [], value) => options.find((option) => option.name === value)
     const getDefaultOptionValue = () => ''
     let [internalValue, setInternalValue] = useState(value ?? 'choose an option')
+    const theme = useTheme()
 
     return (
         <FormControl sx={{ mt: 1, width: '100%' }} size='small'>
@@ -51,7 +52,12 @@ export const Dropdown = ({ name, value, loading, options, onSelect, disabled = f
                             value={internalValue}
                             sx={{
                                 height: '100%',
-                                '& .MuiInputBase-root': { height: '100%' }
+                                '& .MuiInputBase-root': {
+                                    height: '100%',
+                                    '& fieldset': {
+                                        borderColor: theme.palette.grey[900] + 25
+                                    }
+                                }
                             }}
                             InputProps={{
                                 ...params.InputProps,
@@ -88,7 +94,7 @@ export const Dropdown = ({ name, value, loading, options, onSelect, disabled = f
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography variant='h5'>{option.label}</Typography>
                             {option.description && (
-                                <Typography sx={{ color: customization.isDarkMode ? '#9e9e9e' : '' }}>{option.description}</Typography>
+                                <Typography sx={{ color: customization.isDarkMode ? '#212121' : '' }}>{option.description}</Typography>
                             )}
                         </div>
                     </Box>

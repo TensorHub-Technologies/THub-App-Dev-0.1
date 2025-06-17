@@ -1,84 +1,55 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
+
 // material-ui
-import LlamaindexPNG from '@/assets/images/llamaindex.png'
-import LangChainPNG from '@/assets/images/langchain.png'
-import { Tabs, Tab } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
     Box,
+    Drawer,
     Divider,
     InputAdornment,
     List,
+    ListItemButton,
     ListItem,
     ListItemAvatar,
     ListItemText,
-    Paper,
     Typography,
-    TextField,
+    Chip,
+    Tab,
+    Tabs,
+    IconButton,
+    Collapse,
+    Stack,
     Tooltip,
-    Stack
+    TextField
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import agentsIcondark from '../../assets/icons/agent_lite.svg'
-import agentsIconlite from '../../assets/icons/agent_dark.svg'
-import chainIcondark from '../../assets/icons/chain_lite.svg'
-import chainIconlite from '../../assets/icons/chain_dark.svg'
-import cacheIcondark from '../../assets/icons/cache_lite.svg'
-import cacheIconlite from '../../assets/icons/cache_dark.svg'
-import ThreePIcon from '@mui/icons-material/ThreeP'
-import docsIcondark from '../../assets/icons/document_dark.svg'
-import docsIconlite from '../../assets/icons/document_lite.svg'
-// import FingerprintIcon from '@mui/icons-material/Fingerprint'
-import ViewInArIcon from '@mui/icons-material/ViewInAr'
-// import CallMergeIcon from '@mui/icons-material/CallMerge'
-import MemoryIcon from '@mui/icons-material/Memory'
-import AddModeratorIcon from '@mui/icons-material/AddModerator'
-
-import ExitToAppIcon from '@mui/icons-material/ExitToApp'
-import promptsIcondark from '../../assets/icons/prompt_lite.svg'
-import promptsIconlite from '../../assets/icons/prompt_dark.svg'
-
-import QueryStatsIcon from '@mui/icons-material/QueryStats'
-import ContentCutIcon from '@mui/icons-material/ContentCut'
-import ContactsIcon from '@mui/icons-material/Contacts'
-import toolsIcondark from '../../assets/icons/tools_lite.svg'
-import toolsIconlite from '../../assets/icons/tools_dark.svg'
-// import BuildIcon from '@mui/icons-material/Build'
-import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
-import LayersIcon from '@mui/icons-material/Layers'
-import engineIconlite from '../../assets/icons/engine_dark.svg'
-import engineIcondark from '../../assets/icons/engine_lite.svg'
-import QrCodeIcon from '@mui/icons-material/QrCode'
-import SwitchAccountIcon from '@mui/icons-material/SwitchAccount'
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
 // project imports
-import MainCard from '@/ui-component/cards/MainCard'
+import { StyledFab } from '@/ui-component/button/StyledFab'
+import AgentflowGeneratorDialog from '@/ui-component/dialog/AgentflowGeneratorDialog'
 
 // icons
-import { IconX } from '@tabler/icons-react'
-
-// const
-import { baseURL } from '@/store/constant'
-import { SET_COMPONENT_NODES } from '@/store/actions'
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import { SHOW_MENU } from '@/store/constant'
-import './Node.css'
-import { IconChartScatter3d } from '@tabler/icons-react'
-import { IconUsersGroup } from '@tabler/icons-react'
+import { IconSearch, IconX, IconSparkles, IconChevronRight, IconChevronLeft } from '@tabler/icons-react'
+import LlamaindexPNG from '@/assets/images/llamaindex.png'
+import LangChainPNG from '@/assets/images/langchain.png'
+import utilNodesPNG from '@/assets/images/utilNodes.png'
+import { getCategoryIcon } from './CategoryIcon'
 import subscriptionPlan from './subscriptionPlan'
 
-import { IconGraph } from '@tabler/icons-react'
-import { IconTools } from '@tabler/icons-react'
+// const
+import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
+import { SET_COMPONENT_NODES } from '@/store/actions'
 
-// ==============================|| ADD NODES||============================== //
+// ==============================|| ADD NODES DRAWER ||============================== //
 function a11yProps(index) {
     return {
         id: `attachment-tab-${index}`,
@@ -86,112 +57,46 @@ function a11yProps(index) {
     }
 }
 
-/*
-//TODO: change to better json format
-const temp_subscriptionPlan = [
-    {
-        plan: 'free',
-        menuItems: [
-            {
-                name: 'Document Loadrs',
-                subMenuItems: [
-                    {
-                        name: 'airtable'
-                    }
-                ]
-            }
-        ]
-    }
-]
-*/
+const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager', 'Utilities']
 
-const AddNodes = ({ nodesData, node }) => {
+const agentMemoryNodes = ['agentMemory', 'sqliteAgentMemory', 'postgresAgentMemory', 'mySQLAgentMemory']
+
+// Show blacklisted nodes (exceptions) for agent canvas
+const exceptionsForAgentCanvas = {
+    Memory: agentMemoryNodes,
+    Utilities: ['getVariable', 'setVariable', 'stickyNote']
+}
+
+// Hide some nodes from the chatflow canvas
+const blacklistForChatflowCanvas = {
+    Memory: agentMemoryNodes
+}
+
+const DRAWER_WIDTH = 360
+const MINI_DRAWER_WIDTH = 80
+
+const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerated }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const userData = useSelector((state) => state.user.userData)
+    const subscription = userData?.subscription_type
+    console.log(subscription, 'subscription')
+
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
-    // const [open, setOpen] = useState(false)
+    const [isExpanded, setIsExpanded] = useState(true)
     const [categoryExpanded, setCategoryExpanded] = useState({})
-    const [tabValue, setTabValue] = useState(0)
-    const userData = useSelector((state) => state.user.userData)
 
-    const allIconsObj = {
-        Agents: (
-            <img
-                src={customization?.isDarkMode ? agentsIconlite : agentsIcondark}
-                alt='Agents'
-                style={{ width: '25px', height: '25px', backgroundColor: 'transparent' }}
-            />
-        ),
-        Cache: (
-            <img
-                src={customization?.isDarkMode ? cacheIconlite : cacheIcondark}
-                alt='cache'
-                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
-            />
-        ),
-        Chains: (
-            <img
-                src={customization?.isDarkMode ? chainIcondark : chainIconlite}
-                alt='chain'
-                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
-            />
-        ),
-        'Chat Models': <ThreePIcon />,
-        'Document Loaders': (
-            <img
-                src={customization?.isDarkMode ? docsIcondark : docsIconlite}
-                alt='chain'
-                style={{ width: '23px', height: '23px', backgroundColor: 'transparent' }}
-            />
-        ),
-        Embeddings: <IconChartScatter3d />,
-        Graph: <IconGraph />,
-        Memory: <MemoryIcon />,
-        LLMs: <ViewInArIcon />,
-        'Multi Agents': <IconUsersGroup />,
-        Moderation: <AddModeratorIcon />,
-        'Output Parsers': <ExitToAppIcon />,
-        Prompts: (
-            <img
-                src={customization?.isDarkMode ? promptsIconlite : promptsIcondark}
-                alt='prompts'
-                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
-            />
-        ),
-        'Record Manager': <ContactsIcon />,
-        Retrievers: <QueryStatsIcon />,
-        'Sequential Agents': <SwitchAccountIcon />,
-        'Text Splitters': <ContentCutIcon />,
-        Tools: (
-            <img
-                src={customization?.isDarkMode ? toolsIconlite : toolsIcondark}
-                alt='tools'
-                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
-            />
-        ),
-        'Tools (MCP)': <IconTools />,
-        Utilities: <AutoFixHighIcon />,
-        'Vector Stores': <LayersIcon />,
-        Engine: (
-            <img
-                src={customization?.isDarkMode ? engineIconlite : engineIcondark}
-                alt='tools'
-                style={{ width: '26px', height: '26px', backgroundColor: 'transparent' }}
-            />
-        ),
-        'Response Synthesizer': <QrCodeIcon />
-    }
+    const [hoveredNode, setHoveredNode] = useState(null)
 
-    const getIconWithClass = (iconName, className) => {
-        const Icon = allIconsObj[iconName]
-        if (Icon) {
-            return React.cloneElement(Icon, { className })
-        } else {
-            return null
-        }
-    }
+    const [openDialog, setOpenDialog] = useState(false)
+    const [dialogProps, setDialogProps] = useState({})
+
+    const isAgentCanvasV2 = window.location.pathname.includes('/v2/agentcanvas')
 
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
     userData.subscription_type === null || undefined ? (userData.subscription_type = 'free') : userData.subscription_type
@@ -199,13 +104,15 @@ const AddNodes = ({ nodesData, node }) => {
         userData.subscription_type = localStorage.getItem('subscription_type')
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
-    // const allowedMenu="Premium"
     const allowedMenuItemKeys = Object.keys(allowedMenu)
     const [tab, setTab] = useState(['LangChain'])
+    const [tabValue, setTabValue] = useState(0)
+
+    console.log('tab', tab, 'tabValue', tabValue)
 
     useEffect(() => {
         if (userData.subscription_type !== 'free') {
-            setTab(['LangChain', 'LlamaIndex'])
+            setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
         }
     }, [])
 
@@ -223,25 +130,6 @@ const AddNodes = ({ nodesData, node }) => {
 
     const ps = useRef()
 
-    // Temporary method to handle Deprecating Vector Store and New ones
-    const categorizeVectorStores = (nodes, accordianCategories, isFilter) => {
-        const obj = { ...nodes }
-        const vsNodes = obj['Vector Stores'] ?? []
-        const deprecatingNodes = []
-        const newNodes = []
-        for (const vsNode of vsNodes) {
-            if (vsNode.badge === 'DEPRECATING') deprecatingNodes.push(vsNode)
-            else newNodes.push(vsNode)
-        }
-        delete obj['Vector Stores']
-
-        if (newNodes.length) {
-            obj['Vector Stores;NEW'] = newNodes
-            accordianCategories['Vector Stores;NEW'] = isFilter ? true : false
-        }
-        setNodes(obj)
-    }
-
     const scrollTop = () => {
         const curr = ps.current
         if (curr) {
@@ -249,16 +137,65 @@ const AddNodes = ({ nodesData, node }) => {
         }
     }
 
+    useEffect(() => {
+        if (location.pathname === '/v2/agentcanvas') {
+            setTabValue(2)
+        } else if (location.pathname === '/canvas') {
+            if (tabValue === 2) {
+                setTabValue(0)
+            }
+        }
+    }, [location.pathname])
+
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue)
         filterSearch(searchValue, newValue)
+        const selectedTab = tab[newValue]
+        if (selectedTab === 'Agent Pipeline') {
+            navigate('/v2/agentcanvas')
+        } else if ((selectedTab === 'LangChain' || selectedTab === 'LlamaIndex') && location.pathname === '/v2/agentcanvas') {
+            navigate('/canvas')
+        }
+    }
+
+    const addException = (category) => {
+        let nodes = []
+        if (category) {
+            const nodeNames = exceptionsForAgentCanvas[category] || []
+            nodes = nodesData.filter((nd) => nd.category === category && nodeNames.includes(nd.name))
+        } else {
+            for (const category in exceptionsForAgentCanvas) {
+                const nodeNames = exceptionsForAgentCanvas[category]
+                nodes.push(...nodesData.filter((nd) => nd.category === category && nodeNames.includes(nd.name)))
+            }
+        }
+        return nodes
     }
 
     const getSearchedNodes = (value) => {
-        const passed = nodesData.filter((nd) => {
-            const passesQuery = nd.name.toLowerCase().includes(value.toLowerCase())
+        if (isAgentCanvas) {
+            const nodes = nodesData.filter((nd) => !blacklistCategoriesForAgentCanvas.includes(nd.category))
+            nodes.push(...addException())
+            const passed = nodes.filter((nd) => {
+                const passesName = nd.name.toLowerCase().includes(value.toLowerCase())
+                const passesLabel = nd.label.toLowerCase().includes(value.toLowerCase())
+                const passesCategory = nd.category.toLowerCase().includes(value.toLowerCase())
+                return passesName || passesCategory || passesLabel
+            })
+            return passed
+        }
+        let nodes = nodesData.filter((nd) => nd.category !== 'Multi Agents' && nd.category !== 'Sequential Agents')
+
+        for (const category in blacklistForChatflowCanvas) {
+            const nodeNames = blacklistForChatflowCanvas[category]
+            nodes = nodes.filter((nd) => !nodeNames.includes(nd.name))
+        }
+
+        const passed = nodes.filter((nd) => {
+            const passesName = nd.name.toLowerCase().includes(value.toLowerCase())
+            const passesLabel = nd.label.toLowerCase().includes(value.toLowerCase())
             const passesCategory = nd.category.toLowerCase().includes(value.toLowerCase())
-            return passesQuery || passesCategory
+            return passesName || passesCategory || passesLabel
         })
         return passed
     }
@@ -280,25 +217,82 @@ const AddNodes = ({ nodesData, node }) => {
     const groupByTags = (nodes, newTabValue = 0) => {
         const langchainNodes = nodes.filter((nd) => !nd.tags)
         const llmaindexNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('LlamaIndex'))
+        // const utilitiesNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('Utilities'))
         if (newTabValue === 0) {
             return langchainNodes
-        } else {
+        } else if (newTabValue === 1) {
             return llmaindexNodes
+        } else {
+            // return utilitiesNodes
         }
     }
 
     const groupByCategory = (nodes, newTabValue, isFilter) => {
-        const taggedNodes = groupByTags(nodes, newTabValue)
-        const accordianCategories = {}
-        const result = taggedNodes.reduce(function (r, a) {
-            r[a.category] = r[a.category] || []
-            r[a.category].push(a)
-            accordianCategories[a.category] = isFilter ? true : false
-            return r
-        }, Object.create(null))
-        setNodes(result)
-        categorizeVectorStores(result, accordianCategories, isFilter)
-        setCategoryExpanded(accordianCategories)
+        if (isAgentCanvas) {
+            const accordianCategories = {}
+            const result = nodes.reduce(function (r, a) {
+                r[a.category] = r[a.category] || []
+                r[a.category].push(a)
+                accordianCategories[a.category] = isFilter ? true : false
+                return r
+            }, Object.create(null))
+
+            const filteredResult = {}
+            for (const category in result) {
+                if (isAgentCanvasV2) {
+                    if (category !== 'Agent Pipeline') {
+                        continue
+                    }
+                } else {
+                    if (category === 'Agent Pipeline') {
+                        continue
+                    }
+                }
+                // Filter out blacklisted categories
+                if (!blacklistCategoriesForAgentCanvas.includes(category)) {
+                    // Filter out LlamaIndex nodes
+                    const nodes = result[category].filter((nd) => !nd.tags || !nd.tags.includes('LlamaIndex'))
+                    if (!nodes.length) continue
+
+                    filteredResult[category] = nodes
+                }
+
+                // Allow exceptionsForAgentCanvas
+                if (Object.keys(exceptionsForAgentCanvas).includes(category)) {
+                    filteredResult[category] = addException(category)
+                }
+            }
+            setNodes(filteredResult)
+            accordianCategories['Multi Agents'] = true
+            accordianCategories['Sequential Agents'] = true
+            accordianCategories['Memory'] = true
+            accordianCategories['Agent Pipeline'] = true
+            setCategoryExpanded(accordianCategories)
+        } else {
+            const taggedNodes = groupByTags(nodes, newTabValue)
+            const accordianCategories = {}
+            const result = taggedNodes.reduce(function (r, a) {
+                r[a.category] = r[a.category] || []
+                r[a.category].push(a)
+                accordianCategories[a.category] = isFilter ? true : false
+                return r
+            }, Object.create(null))
+
+            const filteredResult = {}
+            for (const category in result) {
+                if (category === 'Agent Pipeline' || category === 'Multi Agents' || category === 'Sequential Agents') {
+                    continue
+                }
+                if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
+                    const nodes = blacklistForChatflowCanvas[category]
+                    result[category] = result[category].filter((nd) => !nodes.includes(nd.name))
+                }
+                filteredResult[category] = result[category]
+            }
+
+            setNodes(filteredResult)
+            setCategoryExpanded(accordianCategories)
+        }
     }
 
     const handleAccordionChange = (category) => (event, isExpanded) => {
@@ -312,6 +306,125 @@ const AddNodes = ({ nodesData, node }) => {
         event.dataTransfer.effectAllowed = 'move'
     }
 
+    const getImage = (tabValue) => {
+        if (tabValue === 0) {
+            return LangChainPNG
+        } else if (tabValue === 1) {
+            return LlamaindexPNG
+        } else {
+            return utilNodesPNG
+        }
+    }
+
+    const renderIcon = (node) => {
+        const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
+
+        if (!foundIcon) return null
+
+        return (
+            <img
+                src={foundIcon.icon}
+                alt={node.name}
+                style={{
+                    width: 30,
+                    height: 30,
+                    objectFit: 'contain'
+                }}
+            />
+        )
+    }
+
+    const renderMiniNodeItem = (node, index) => (
+        <Box
+            key={`${node.name}-${index}`}
+            sx={{
+                position: 'relative',
+                cursor: 'move'
+            }}
+            onDragStart={(event) => onDragStart(event, node)}
+            draggable
+            onMouseEnter={() => setHoveredNode(`${node.name}-${index}`)}
+            onMouseLeave={() => setHoveredNode(null)}
+        >
+            <ListItemAvatar
+                sx={{
+                    mt: 0,
+                    borderRadius: `${customization.borderRadius}px`,
+                    py: 0.2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: 30
+                }}
+            >
+                {node.color && !node.icon ? (
+                    <div
+                        style={{
+                            padding: '3px',
+                            borderRadius: '10px',
+                            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
+                            display: 'inline-block',
+                            marginBottom: '5px'
+                        }}
+                    >
+                        <div
+                            style={{
+                                borderRadius: '10%',
+                                backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                width: '48px',
+                                height: '48px'
+                            }}
+                        >
+                            {renderIcon(node)}
+                        </div>
+                    </div>
+                ) : (
+                    // Gradient border wrapper
+                    <div
+                        style={{
+                            padding: '4px',
+                            borderRadius: '10px',
+                            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
+                            display: 'inline-block',
+                            marginBottom: '5px'
+                        }}
+                    >
+                        <div
+                            style={{
+                                borderRadius: '10%',
+                                backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '40px',
+                                width: '48px',
+                                height: '48px'
+                            }}
+                        >
+                            <img
+                                style={{
+                                    width: '42px',
+                                    height: '42px',
+                                    objectFit: 'contain',
+                                    borderRadius: '10px'
+                                }}
+                                alt={node.name}
+                                src={`${baseURL}/api/v1/node-icon/${node.name}`}
+                            />
+                        </div>
+                    </div>
+                )}
+            </ListItemAvatar>
+        </Box>
+    )
+
+    useEffect(() => {
+        if (node) setIsExpanded(false)
+    }, [node])
+
     useEffect(() => {
         if (nodesData) {
             groupByCategory(nodesData)
@@ -319,167 +432,188 @@ const AddNodes = ({ nodesData, node }) => {
         }
     }, [nodesData, dispatch])
 
+    // Handle dialog open/close
+    const handleOpenDialog = () => {
+        setOpenDialog(true)
+        setDialogProps({
+            title: 'What would you like to build?',
+            description:
+                'Enter your prompt to generate an agentflow. Performance may vary with different models. Only nodes and edges are generated, you will need to fill in the input fields for each node.'
+        })
+    }
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false)
+    }
+
+    const handleConfirmDialog = () => {
+        setOpenDialog(false)
+        onFlowGenerated()
+    }
+
     return (
         <>
-            <Paper
-                sx={{
-                    transition: 'width .6s, box-shadow .6s',
-                    position: 'relative',
-                    zIndex: 1000,
-                    width: customization.menu_open ? '350px' : '100px',
-                    //  height: 'calc(100vh - 70px)',
-                    borderRight: `2px solid ${theme.palette.divider}`,
-                    borderRadius: 0,
-                    overflow: 'hidden'
-                }}
-                onMouseEnter={() => dispatch({ type: SHOW_MENU })}
-                onMouseLeave={() => dispatch({ type: SHOW_MENU })}
-            >
-                <MainCard
+            {/* Generate Agentflow Fab */}
+            {isAgentflowv2 && (
+                <StyledFab
                     sx={{
-                        bgcolor: theme.palette.background.default,
-                        borderRadius: '0 !important'
+                        position: 'fixed',
+                        left: isExpanded ? DRAWER_WIDTH + 20 : MINI_DRAWER_WIDTH + 20,
+                        top: 80,
+                        background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)',
+                        '&:hover': {
+                            background: 'linear-gradient(45deg, #FF8E53 30%, #FF6B6B 90%)'
+                        },
+                        transition: theme.transitions.create(['left'], {
+                            easing: theme.transitions.easing.sharp,
+                            duration: theme.transitions.duration.leavingScreen
+                        }),
+                        zIndex: theme.zIndex.drawer + 2
                     }}
-                    border={false}
-                    elevation={16}
-                    content={false}
-                    boxShadow
-                    shadow={theme.shadows[16]}
+                    onClick={handleOpenDialog}
+                    size='small'
+                    color='primary'
+                    aria-label='generate'
+                    title='Generate Agentflow'
                 >
-                    <Box sx={{ p: 2 }}>
-                        <Box
+                    <IconSparkles />
+                </StyledFab>
+            )}
+
+            <AgentflowGeneratorDialog
+                show={openDialog}
+                dialogProps={dialogProps}
+                onCancel={handleCloseDialog}
+                onConfirm={handleConfirmDialog}
+            />
+
+            {/* Mini/Full Drawer */}
+            <Drawer
+                variant='permanent'
+                sx={{
+                    width: isExpanded ? DRAWER_WIDTH : MINI_DRAWER_WIDTH,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: isExpanded ? DRAWER_WIDTH : MINI_DRAWER_WIDTH,
+                        boxSizing: 'border-box',
+                        transition: theme.transitions.create('width', {
+                            easing: theme.transitions.easing.sharp,
+                            duration: theme.transitions.duration.enteringScreen
+                        }),
+                        overflowX: 'hidden',
+                        backgroundColor: theme.palette.background.paper,
+                        borderRight: `1px solid ${theme.palette.divider}`
+                    }
+                }}
+                onMouseEnter={() => setIsExpanded(true)}
+                onMouseLeave={() => setIsExpanded(false)}
+            >
+                {/* Header */}
+                <Box
+                    sx={{
+                        p: isExpanded ? 2 : 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        minHeight: 64,
+                        marginTop: 10,
+                        justifyContent: isExpanded ? 'space-between' : 'center'
+                    }}
+                >
+                    {isExpanded ? (
+                        <>
+                            <Typography variant='h6'>Add Nodes</Typography>
+                            <IconButton size='small'>
+                                <IconChevronLeft />
+                            </IconButton>
+                        </>
+                    ) : (
+                        <IconButton size='small'>
+                            <IconChevronRight />
+                        </IconButton>
+                    )}
+                </Box>
+
+                {/* Search Bar - Only show when expanded */}
+                {isExpanded && (
+                    <Box sx={{ px: 2, pb: 2 }}>
+                        <TextField
+                            id='input-search-node'
+                            label='Search Node'
+                            variant='standard'
+                            fullWidth
+                            value={searchValue}
+                            onChange={(e) => filterSearch(e.target.value)}
+                            placeholder='Search nodes'
                             sx={{
-                                marginLeft: '17px',
-                                display: 'flex',
-                                alignItems: 'flex-end'
+                                mb: 2,
+                                transition: 'all .2s ease-in-out',
+                                '& input': {
+                                    color: customization.isDarkMode ? '#fff' : '#000'
+                                },
+                                '& label.Mui-focused': {
+                                    color: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                '& .MuiInput-underline:after': {
+                                    borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                '&:hover .MuiInput-underline:before': {
+                                    borderBottomColor: `${customization.isDarkMode ? '#E22A90' : '#3C5BA4'} !important`
+                                }
                             }}
-                        >
-                            <SearchOutlinedIcon
-                                stroke={1.5}
-                                size='1rem'
-                                sx={{
-                                    cursor: 'default',
-                                    // color: customization?.isDarkMode ? '#fff' : '#fff',
-                                    // background: isInputFocused
-                                    //     ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
-                                    //     : customization?.isDarkMode
-                                    //     ? '#E22A90'
-                                    //     : '#3C5BA4',
-                                    borderRadius: '20%',
-                                    padding: '2px',
-                                    mb: 2,
-                                    mr: 1,
-                                    marginTop: customization.menu_open ? '' : '21px'
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position='start'>
+                                        <IconSearch size='1rem' stroke={1.5} color={customization.isDarkMode ? '#E22A90' : '#3C5BA4'} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: searchValue && (
+                                    <InputAdornment position='end'>
+                                        <IconButton size='small' onClick={() => filterSearch('')} edge='end'>
+                                            <IconX size='1rem' stroke={1.5} color={customization.isDarkMode ? '#E22A90' : '#3C5BA4'} />
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                    </Box>
+                )}
 
-                                    // '&:hover': {
-                                    //     background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`
-                                    // }
-                                }}
-                            />
-                            {customization.menu_open && (
-                                <TextField
-                                    label='Search'
-                                    variant='standard'
-                                    sx={{
-                                        width: '80%',
-                                        mb: 2,
-                                        '& .TextField-root': {
-                                            '& fieldset': {
-                                                borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                            },
-                                            '&:hover fieldset': { borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                            '&.Mui-focused fieldset': { borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }
-                                        },
-                                        transition: 'all .2s ease-in-out',
-                                        '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
-                                        '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
-                                        '& .MuiInput-underline:after': {
-                                            borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                        },
-                                        '& .MuiInput-underline:before': {
-                                            borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                        },
-                                        '&:hover': {
-                                            '& .MuiInput-underline:before': {
-                                                borderBottomColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
-                                            }
-                                        }
-                                    }}
-                                    id='input-search-node'
-                                    value={searchValue}
-                                    onChange={(e) => filterSearch(e.target.value)}
-                                    placeholder='Search'
-                                    InputProps={{
-                                        'aria-label': 'weight',
-                                        endAdornment: (
-                                            <InputAdornment
-                                                position='end'
-                                                sx={{
-                                                    cursor: 'pointer',
-                                                    color: theme.palette.grey[500],
-                                                    '&:hover': {
-                                                        color: theme.palette.grey[900]
-                                                    }
-                                                }}
-                                                title='Clear Search'
-                                            >
-                                                <IconX
-                                                    stroke={1.5}
-                                                    size='1rem'
-                                                    onClick={() => filterSearch('')}
-                                                    style={{
-                                                        cursor: 'pointer'
-                                                    }}
-                                                />
-                                            </InputAdornment>
-                                        )
-                                    }}
-                                />
-                            )}
-                        </Box>
-
+                {/* Tabs - Only show when expanded and not agent canvas */}
+                {isExpanded && (
+                    <Box sx={{ pb: 1 }}>
                         <Tabs
-                            sx={{
-                                position: 'relative',
-                                minHeight: '50px',
-                                height: '50px',
-                                marginLeft: customization.menu_open ? '12px' : '232px'
-                            }}
-                            // variant='fullWidth'
+                            variant='fullWidth'
                             value={tabValue}
                             onChange={handleTabChange}
                             aria-label='tabs'
                             TabIndicatorProps={{
                                 style: {
-                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                    padding: '0px'
                                 }
                             }}
+                            sx={{ minHeight: 40 }}
                         >
                             {tab.map((item, index) => (
                                 <Tab
+                                    key={index}
                                     icon={
-                                        <div
+                                        <img
                                             style={{
-                                                // marginLeft: customization.menu_open ? '-12px' : '232px',
-                                                borderRadius: '50%'
+                                                width: '16px',
+                                                height: '16px',
+                                                borderRadius: '50%',
+                                                objectFit: 'contain'
                                             }}
-                                        >
-                                            <img
-                                                style={{
-                                                    display: customization.menu_open ? 'block' : 'none',
-                                                    marginLeft: customization.menu_open ? '-12px' : '232px',
-                                                    width: '25px',
-                                                    height: '25px',
-                                                    borderRadius: '50%',
-
-                                                    objectFit: 'contain'
-                                                }}
-                                                src={index === 0 ? LangChainPNG : LlamaindexPNG}
-                                                alt={item}
-                                            />
-                                        </div>
+                                            src={getImage(index)}
+                                            alt={item}
+                                        />
                                     }
                                     iconPosition='start'
+                                    label={item}
                                     sx={{
                                         minHeight: '50px',
                                         height: '50px',
@@ -489,33 +623,33 @@ const AddNodes = ({ nodesData, node }) => {
                                         },
                                         '&:hover': {
                                             color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                        }
+                                        },
+                                        padding: '0px'
                                     }}
-                                    key={index}
-                                    label={item}
                                     {...a11yProps(index)}
-                                ></Tab>
+                                />
                             ))}
-                            {customization.menu_open && (
-                                <div>{/* {customization.menu_open && <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>} */}</div>
-                            )}
                         </Tabs>
-                        <Divider />
+                        <Divider sx={{ mt: 1 }} />
                     </Box>
+                )}
 
-                    <PerfectScrollbar
-                        containerRef={(el) => {
-                            ps.current = el
+                {/* Node Categories */}
+                <PerfectScrollbar
+                    containerRef={(el) => {
+                        ps.current = el
+                    }}
+                    style={{ height: '100%', overflowX: 'hidden' }}
+                >
+                    <Box
+                        sx={{
+                            p: 2,
+                            pt: 0,
+                            height: '100%'
                         }}
-                        style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}
                     >
-                        <Box
-                            sx={{
-                                p: 2,
-                                pt: 0,
-                                height: '100%'
-                            }}
-                        >
+                        {isExpanded ? (
+                            // Full drawer view
                             <List
                                 sx={{
                                     width: '100%',
@@ -538,161 +672,282 @@ const AddNodes = ({ nodesData, node }) => {
                             >
                                 {Object.keys(nodes)
                                     .sort()
-                                    .map((category) => (
-                                        <Accordion
-                                            style={{ background: customization.isDarkMode ? '#191b1f' : '#fff' }}
-                                            expanded={categoryExpanded[category] || false}
-                                            onChange={handleAccordionChange(category)}
-                                            key={category}
-                                            disableGutters
-                                        >
-                                            <AccordionSummary
-                                                expandIcon={
-                                                    customization.menu_open && (
-                                                        <ExpandMoreIcon
-                                                            className={customization?.isDarkMode ? 'ExpandMoreIcon1' : 'ExpandMoreIcon2'}
-                                                            sx={{
-                                                                background: 'transparent !important'
-                                                            }}
-                                                        />
-                                                    )
-                                                }
-                                                aria-controls={`nodes-accordian-${category}`}
-                                                id={`nodes-accordian-header-${category}`}
-                                            >
-                                                <Stack
-                                                    id='stack-icons'
-                                                    gap={1}
-                                                    style={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center'
-                                                    }}
-                                                >
-                                                    {getIconWithClass(
-                                                        category.replace(';NEW', ''),
-                                                        customization?.isDarkMode ? 'icon-dark' : 'icon-light'
-                                                    )}
-                                                    {customization.menu_open && (
-                                                        <Typography
-                                                            className={customization?.isDarkMode ? 'stack-text1' : 'stack-text2'}
-                                                            variant='h5'
-                                                        >
-                                                            {category.replace(';NEW', '')}
-                                                        </Typography>
-                                                    )}
-                                                </Stack>
-                                            </AccordionSummary>
+                                    .map((category) => {
+                                        const isAgentPipeline = category.replace(';NEW', '') === 'Agent Pipeline'
 
-                                            <AccordionDetails>
-                                                <List>
-                                                    {nodes[category].map((node, index) => (
-                                                        <Box key={node.name} onDragStart={(event) => onDragStart(event, node)} draggable>
-                                                            <Tooltip title={node.description} followCursor>
-                                                                <Box
-                                                                    sx={{
-                                                                        borderRadius: `${customization.borderRadius}px`,
-                                                                        p: 0.2,
-                                                                        mb: 1,
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'center',
-                                                                        backgroundColor: 'transparent',
-                                                                        '&:hover': {
-                                                                            background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
-                                                                            '& > .MuiListItem-root': {
-                                                                                backgroundColor: theme.palette.background.default,
-                                                                                borderRadius: `${customization.borderRadius}px`
-                                                                            },
-                                                                            '& > .MuiListItem-root .MuiListItemAvatar-root': {
-                                                                                background:
-                                                                                    'linear-gradient(to left, #3C5BA4, #E22A90) !important'
-                                                                            }
+                                        return (
+                                            <Accordion
+                                                key={category}
+                                                expanded={isAgentPipeline ? true : categoryExpanded[category] || false}
+                                                onChange={isAgentPipeline ? undefined : handleAccordionChange(category)}
+                                                disableGutters
+                                                sx={{
+                                                    boxShadow: 'none',
+                                                    '&:before': { display: 'none' }
+                                                }}
+                                            >
+                                                {!isAgentPipeline && (
+                                                    <AccordionSummary
+                                                        expandIcon={
+                                                            <ExpandMoreIcon
+                                                                className={
+                                                                    customization?.isDarkMode ? 'ExpandMoreIcon1' : 'ExpandMoreIcon2'
+                                                                }
+                                                                sx={{
+                                                                    background: 'transparent !important'
+                                                                }}
+                                                            />
+                                                        }
+                                                        sx={{
+                                                            minHeight: 48,
+                                                            '& .MuiAccordionSummary-content': {
+                                                                margin: '8px 0'
+                                                            }
+                                                        }}
+                                                        aria-controls={`nodes-accordian-${category}`}
+                                                        id={`nodes-accordian-header-${category}`}
+                                                    >
+                                                        <Stack
+                                                            id='stack-icons'
+                                                            gap={1}
+                                                            style={{
+                                                                display: 'flex',
+                                                                flexDirection: 'row',
+                                                                alignItems: 'center'
+                                                            }}
+                                                        >
+                                                            <Typography sx={{ fontSize: '1.2rem' }}>
+                                                                {getCategoryIcon(category.replace(';NEW', ''), customization)}
+                                                            </Typography>
+                                                            {category.split(';').length > 1 ? (
+                                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                    <Typography
+                                                                        className={
+                                                                            customization?.isDarkMode ? 'stack-text1' : 'stack-text2'
                                                                         }
-                                                                    }}
+                                                                        variant='subtitle2'
+                                                                    >
+                                                                        {category.split(';')[0]}
+                                                                    </Typography>
+                                                                    <Chip
+                                                                        sx={{
+                                                                            ml: 1,
+                                                                            height: 20,
+                                                                            fontSize: '0.65rem',
+                                                                            background:
+                                                                                category.split(';')[1] === 'DEPRECATING'
+                                                                                    ? theme.palette.warning.main
+                                                                                    : theme.palette.info.main,
+                                                                            color: 'white'
+                                                                        }}
+                                                                        size='small'
+                                                                        label={category.split(';')[1]}
+                                                                    />
+                                                                </Box>
+                                                            ) : (
+                                                                <Typography
+                                                                    className={customization?.isDarkMode ? 'stack-text1' : 'stack-text2'}
+                                                                    variant='h5'
                                                                 >
-                                                                    <ListItem
-                                                                        alignItems='flex-start'
+                                                                    {category.replace(';NEW', '')}
+                                                                </Typography>
+                                                            )}
+                                                        </Stack>
+                                                    </AccordionSummary>
+                                                )}
+
+                                                <AccordionDetails sx={{ pt: 0 }}>
+                                                    <List>
+                                                        {nodes[category].map((node, index) => (
+                                                            <Box
+                                                                key={node.name}
+                                                                onDragStart={(event) => onDragStart(event, node)}
+                                                                draggable
+                                                            >
+                                                                <Tooltip title={node.description} followCursor>
+                                                                    <Box
                                                                         sx={{
                                                                             borderRadius: `${customization.borderRadius}px`,
-                                                                            cursor: 'move',
+                                                                            p: 0.2,
+                                                                            mb: index === nodes[category].length - 1 ? 0 : 1,
                                                                             display: 'flex',
+                                                                            alignItems: 'center',
                                                                             justifyContent: 'center',
-                                                                            alignItems: 'center'
+                                                                            backgroundColor: 'transparent',
+                                                                            '&:hover': {
+                                                                                background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
+                                                                                '& > .MuiListItem-root': {
+                                                                                    backgroundColor: theme.palette.background.default,
+                                                                                    borderRadius: `${customization.borderRadius}px`
+                                                                                },
+                                                                                '& > .MuiListItem-root .MuiListItemAvatar-root': {
+                                                                                    background:
+                                                                                        'linear-gradient(to left, #3C5BA4, #E22A90) !important'
+                                                                                }
+                                                                            }
                                                                         }}
                                                                     >
-                                                                        <ListItemAvatar
+                                                                        <ListItem
+                                                                            alignItems='flex-start'
                                                                             sx={{
-                                                                                mt: 0,
                                                                                 borderRadius: `${customization.borderRadius}px`,
-                                                                                py: 0.3,
+                                                                                cursor: 'move',
                                                                                 display: 'flex',
+                                                                                justifyContent: 'flex-start',
                                                                                 alignItems: 'center',
-                                                                                justifyContent: 'center',
-                                                                                background: `linear-gradient(to right, #3C5BA4, #E22A90)`
+                                                                                p: 1
                                                                             }}
                                                                         >
-                                                                            <div
-                                                                                style={{
+                                                                            <ListItemAvatar
+                                                                                sx={{
+                                                                                    mt: 0,
+                                                                                    borderRadius: `${customization.borderRadius}px`,
+                                                                                    py: 0.3,
                                                                                     display: 'flex',
-                                                                                    justifyContent: 'center',
                                                                                     alignItems: 'center',
-                                                                                    width: 50,
-                                                                                    height: 50,
-                                                                                    borderRadius: '20%',
-                                                                                    backgroundColor: customization.isDarkMode
-                                                                                        ? '#f0f0f0'
-                                                                                        : '#f0f0f0'
+                                                                                    justifyContent: 'center',
+                                                                                    background: `linear-gradient(to right, #3C5BA4, #E22A90)`,
+                                                                                    minWidth: 56
                                                                                 }}
                                                                             >
-                                                                                <img
-                                                                                    style={{
-                                                                                        width: '100%',
-                                                                                        height: '100%',
-                                                                                        padding: 5,
-                                                                                        objectFit: 'contain'
-                                                                                    }}
-                                                                                    alt={node.name}
-                                                                                    src={`${baseURL}/api/v1/node-icon/${node.name}`}
-                                                                                />
-                                                                            </div>
-                                                                        </ListItemAvatar>
+                                                                                {node.color && !node.icon ? (
+                                                                                    <Box
+                                                                                        sx={{
+                                                                                            width: 50,
+                                                                                            height: 50,
+                                                                                            display: 'flex',
+                                                                                            alignItems: 'center',
+                                                                                            justifyContent: 'center',
+                                                                                            borderRadius: '20%',
+                                                                                            backgroundColor: customization.isDarkMode
+                                                                                                ? '#f0f0f0'
+                                                                                                : '#f0f0f0'
+                                                                                        }}
+                                                                                    >
+                                                                                        {renderIcon(node)}
+                                                                                    </Box>
+                                                                                ) : (
+                                                                                    <div
+                                                                                        style={{
+                                                                                            display: 'flex',
+                                                                                            justifyContent: 'center',
+                                                                                            alignItems: 'center',
+                                                                                            width: 50,
+                                                                                            height: 50,
+                                                                                            borderRadius: '20%',
+                                                                                            backgroundColor: customization.isDarkMode
+                                                                                                ? '#f0f0f0'
+                                                                                                : '#f0f0f0'
+                                                                                        }}
+                                                                                    >
+                                                                                        <img
+                                                                                            style={{
+                                                                                                width: '100%',
+                                                                                                height: '100%',
+                                                                                                padding: 5,
+                                                                                                objectFit: 'contain'
+                                                                                            }}
+                                                                                            alt={node.name}
+                                                                                            src={`${baseURL}/api/v1/node-icon/${node.name}`}
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+                                                                            </ListItemAvatar>
 
-                                                                        {customization.menu_open ? (
                                                                             <ListItemText
                                                                                 sx={{
                                                                                     ml: 1,
                                                                                     display: 'flex',
-                                                                                    alignItems: 'center'
+                                                                                    flexDirection: 'column'
                                                                                 }}
-                                                                                primary={node.label}
+                                                                                primary={
+                                                                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                                        <Typography variant='body2'>
+                                                                                            {node.label}
+                                                                                        </Typography>
+                                                                                        {node.badge && (
+                                                                                            <Chip
+                                                                                                sx={{
+                                                                                                    ml: 1,
+                                                                                                    height: 18,
+                                                                                                    fontSize: '0.6rem',
+                                                                                                    background:
+                                                                                                        node.badge === 'DEPRECATING'
+                                                                                                            ? theme.palette.warning.main
+                                                                                                            : theme.palette.info.main,
+                                                                                                    color: 'white'
+                                                                                                }}
+                                                                                                size='small'
+                                                                                                label={node.badge}
+                                                                                            />
+                                                                                        )}
+                                                                                    </Box>
+                                                                                }
+                                                                                secondary={
+                                                                                    <Typography variant='caption' color='textSecondary'>
+                                                                                        {node.description}
+                                                                                    </Typography>
+                                                                                }
                                                                             />
-                                                                        ) : (
-                                                                            ''
-                                                                        )}
-                                                                    </ListItem>
-                                                                </Box>
-                                                            </Tooltip>
-                                                            {index === nodes[category].length - 1 ? null : <Divider />}
-                                                        </Box>
-                                                    ))}
-                                                </List>
-                                            </AccordionDetails>
-                                        </Accordion>
+                                                                        </ListItem>
+                                                                    </Box>
+                                                                </Tooltip>
+                                                                {index === nodes[category].length - 1 ? null : <Divider />}
+                                                            </Box>
+                                                        ))}
+                                                    </List>
+                                                </AccordionDetails>
+                                            </Accordion>
+                                        )
+                                    })}
+                            </List>
+                        ) : (
+                            // Mini drawer view - show category icons and expanded nodes
+                            <List sx={{ py: 1 }}>
+                                {Object.keys(nodes)
+                                    .sort()
+                                    .map((category) => (
+                                        <Box key={category}>
+                                            {/* Category Icon */}
+                                            <ListItemButton
+                                                sx={{
+                                                    justifyContent: 'center',
+                                                    px: 1,
+                                                    py: 1.5,
+                                                    mb: 0.5,
+                                                    borderRadius: 1,
+                                                    minHeight: 'auto'
+                                                }}
+                                                title={category}
+                                            >
+                                                <Typography sx={{ fontSize: '1.5rem' }}>
+                                                    {getCategoryIcon(category, customization)}
+                                                </Typography>
+                                            </ListItemButton>
+
+                                            {/* Expanded Nodes */}
+                                            <Collapse in={categoryExpanded[category]} timeout='auto' unmountOnExit>
+                                                <Box sx={{ pl: 0.5, pr: 0.5 }}>
+                                                    {nodes[category]?.map((node, index) => renderMiniNodeItem(node, index))}
+                                                </Box>
+                                            </Collapse>
+                                        </Box>
                                     ))}
                             </List>
-                            <Box sx={{ mr: 2 }}></Box>
-                        </Box>
-                    </PerfectScrollbar>
-                </MainCard>
-            </Paper>
+                        )}
+                    </Box>
+                </PerfectScrollbar>
+            </Drawer>
         </>
     )
 }
 
 AddNodes.propTypes = {
     nodesData: PropTypes.array,
-    node: PropTypes.object
+    node: PropTypes.object,
+    onFlowGenerated: PropTypes.func,
+    isAgentCanvas: PropTypes.bool,
+    isAgentflowv2: PropTypes.bool
 }
 
-export default AddNodes
+export default memo(AddNodes)

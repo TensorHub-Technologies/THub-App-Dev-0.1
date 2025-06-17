@@ -66,7 +66,7 @@ const Leads = ({ dialogProps }) => {
                 dispatch({ type: SET_CHATFLOW, chatflow: saveResp.data })
             }
         } catch (error) {
-            const errorData = error.response?.data || `${error.response?.status}: ${error.response?.statusText}`
+            const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`
             enqueueSnackbar({
                 message: `Failed to save Leads configuration: ${errorData}`,
                 options: {
@@ -117,13 +117,15 @@ const Leads = ({ dialogProps }) => {
                                 id='form-title'
                                 type='text'
                                 fullWidth
-                                multiline
+                                multiline={true}
                                 minRows={4}
                                 value={leadsConfig.title}
                                 placeholder={formTitle}
                                 name='form-title'
                                 size='small'
-                                onChange={(e) => handleChange('title', e.target.value)}
+                                onChange={(e) => {
+                                    handleChange('title', e.target.value)
+                                }}
                             />
                         </Box>
                         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}>
@@ -132,13 +134,15 @@ const Leads = ({ dialogProps }) => {
                                 id='success-message'
                                 type='text'
                                 fullWidth
-                                multiline
+                                multiline={true}
                                 minRows={4}
                                 value={leadsConfig.successMessage}
                                 placeholder={endTitle}
-                                name='success-message'
+                                name='form-title'
                                 size='small'
-                                onChange={(e) => handleChange('successMessage', e.target.value)}
+                                onChange={(e) => {
+                                    handleChange('successMessage', e.target.value)
+                                }}
                             />
                         </Box>
                         <Typography variant='h4'>Form fields</Typography>
@@ -151,26 +155,6 @@ const Leads = ({ dialogProps }) => {
                                     value={leadsConfig.email}
                                 />
                                 <SwitchInput label='Phone' onChange={(value) => handleChange('phone', value)} value={leadsConfig.phone} />
-                                <SwitchInput
-                                    label='Loan Type'
-                                    onChange={(value) => handleChange('loanType', value)}
-                                    value={leadsConfig.loanType}
-                                />
-                                <SwitchInput
-                                    label='Loan Amount'
-                                    onChange={(value) => handleChange('loanAmount', value)}
-                                    value={leadsConfig.loanAmount}
-                                />
-                                <SwitchInput
-                                    label='Employment Status'
-                                    onChange={(value) => handleChange('employmentStatus', value)}
-                                    value={leadsConfig.employmentStatus}
-                                />
-                                <SwitchInput
-                                    label='Credit Score'
-                                    onChange={(value) => handleChange('creditScore', value)}
-                                    value={leadsConfig.creditScore}
-                                />
                             </Box>
                         </Box>
                     </>

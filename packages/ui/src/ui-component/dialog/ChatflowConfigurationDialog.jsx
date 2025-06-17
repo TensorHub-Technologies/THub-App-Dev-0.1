@@ -4,20 +4,20 @@ import { createPortal } from 'react-dom'
 import { Box, Dialog, DialogContent, DialogTitle, Tabs, Tab } from '@mui/material'
 import { tabsClasses } from '@mui/material/Tabs'
 import SpeechToText from '@/ui-component/extended/SpeechToText'
-import RateLimit from '@/ui-component/extended/RateLimit'
-import AllowedDomains from '@/ui-component/extended/AllowedDomains'
+import Security from '@/ui-component/extended/Security'
 import ChatFeedback from '@/ui-component/extended/ChatFeedback'
 import AnalyseFlow from '@/ui-component/extended/AnalyseFlow'
 import StarterPrompts from '@/ui-component/extended/StarterPrompts'
 import Leads from '@/ui-component/extended/Leads'
 import FollowUpPrompts from '@/ui-component/extended/FollowUpPrompts'
 import FileUpload from '@/ui-component/extended/FileUpload'
+import PostProcessing from '@/ui-component/extended/PostProcessing'
 import ScheduleSettings from '../extended/ScheduleSettings'
 
 const CHATFLOW_CONFIGURATION_TABS = [
     {
-        label: 'Rate Limiting',
-        id: 'rateLimiting'
+        label: 'Security',
+        id: 'security'
     },
     {
         label: 'Starter Prompts',
@@ -40,11 +40,7 @@ const CHATFLOW_CONFIGURATION_TABS = [
         id: 'chatFeedback'
     },
     {
-        label: 'Allowed Domains',
-        id: 'allowedDomains'
-    },
-    {
-        label: 'Analyse Workflow',
+        label: 'Analyse Chatflow',
         id: 'analyseChatflow'
     },
     {
@@ -54,6 +50,11 @@ const CHATFLOW_CONFIGURATION_TABS = [
     {
         label: 'File Upload',
         id: 'fileUpload'
+    },
+    {
+        label: 'Post Processing',
+        id: 'postProcessing',
+        hideInAgentFlow: true
     }
 ]
 
@@ -86,9 +87,11 @@ function a11yProps(index) {
     }
 }
 
-const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
+const ChatflowConfigurationDialog = ({ show, isAgentCanvas, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const [tabValue, setTabValue] = useState(0)
+
+    const filteredTabs = CHATFLOW_CONFIGURATION_TABS.filter((tab) => !isAgentCanvas || !tab.hideInAgentFlow)
 
     const component = show ? (
         <Dialog
@@ -99,8 +102,8 @@ const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
         >
-            <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                <div style={{ display: 'flex', flexDirection: 'row' }}>{dialogProps.title}</div>
+            <DialogTitle sx={{ fontSize: '1.25rem' }} id='alert-dialog-title'>
+                {dialogProps.title}
             </DialogTitle>
             <DialogContent>
                 <Tabs
@@ -118,27 +121,33 @@ const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
                     variant='scrollable'
                     scrollButtons='auto'
                 >
-                    {CHATFLOW_CONFIGURATION_TABS.map((item, index) => (
+                    {filteredTabs.map((item, index) => (
                         <Tab
-                            sx={{ minHeight: '40px', height: '40px', textAlign: 'left', display: 'flex', alignItems: 'start', mb: 1 }}
+                            sx={{
+                                minHeight: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                mb: 1
+                            }}
                             key={index}
                             label={item.label}
                             {...a11yProps(index)}
                         ></Tab>
                     ))}
                 </Tabs>
-                {CHATFLOW_CONFIGURATION_TABS.map((item, index) => (
+                {filteredTabs.map((item, index) => (
                     <TabPanel key={index} value={tabValue} index={index}>
-                        {item.id === 'rateLimiting' && <RateLimit />}
+                        {item.id === 'security' && <Security dialogProps={dialogProps} />}
                         {item.id === 'conversationStarters' ? <StarterPrompts dialogProps={dialogProps} /> : null}
                         {item.id === 'followUpPrompts' ? <FollowUpPrompts dialogProps={dialogProps} /> : null}
                         {item.id === 'speechToText' ? <SpeechToText dialogProps={dialogProps} /> : null}
                         {item.id === 'scheduleEmail' ? <ScheduleSettings dialogProps={dialogProps} /> : null}
                         {item.id === 'chatFeedback' ? <ChatFeedback dialogProps={dialogProps} /> : null}
-                        {item.id === 'allowedDomains' ? <AllowedDomains dialogProps={dialogProps} /> : null}
                         {item.id === 'analyseChatflow' ? <AnalyseFlow dialogProps={dialogProps} /> : null}
                         {item.id === 'leads' ? <Leads dialogProps={dialogProps} /> : null}
                         {item.id === 'fileUpload' ? <FileUpload dialogProps={dialogProps} /> : null}
+                        {item.id === 'postProcessing' ? <PostProcessing dialogProps={dialogProps} /> : null}
                     </TabPanel>
                 ))}
             </DialogContent>
@@ -150,6 +159,7 @@ const ChatflowConfigurationDialog = ({ show, dialogProps, onCancel }) => {
 
 ChatflowConfigurationDialog.propTypes = {
     show: PropTypes.bool,
+    isAgentCanvas: PropTypes.bool,
     dialogProps: PropTypes.object,
     onCancel: PropTypes.func
 }

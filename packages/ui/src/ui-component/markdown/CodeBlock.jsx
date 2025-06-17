@@ -1,4 +1,4 @@
-import { IconClipboard, IconDownload, IconDatabaseImport } from '@tabler/icons-react'
+import { IconClipboard, IconDownload } from '@tabler/icons-react'
 import { memo, useState } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -32,11 +32,10 @@ const programmingLanguages = {
     css: '.css'
 }
 
-export const CodeBlock = memo(({ language, chatflowid, isDialog, value }) => {
+export const CodeBlock = memo(({ language, chatflowid, isFullWidth, value }) => {
     const theme = useTheme()
     const [anchorEl, setAnchorEl] = useState(null)
     const openPopOver = Boolean(anchorEl)
-    const [showERDiagram, setShowERDiagram] = useState(false)
 
     const handleClosePopOver = () => {
         setAnchorEl(null)
@@ -76,12 +75,8 @@ export const CodeBlock = memo(({ language, chatflowid, isDialog, value }) => {
         URL.revokeObjectURL(url)
     }
 
-    const toggleERDiagram = () => {
-        setShowERDiagram(!showERDiagram)
-    }
-
     return (
-        <div style={{ width: isDialog ? '' : 300 }}>
+        <div style={{ width: isFullWidth ? '' : 300 }}>
             <Box sx={{ color: 'white', background: theme.palette?.common.dark, p: 1, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     {language}
@@ -109,25 +104,12 @@ export const CodeBlock = memo(({ language, chatflowid, isDialog, value }) => {
                     <IconButton size='small' title='Download' color='primary' onClick={downloadAsFile}>
                         <IconDownload />
                     </IconButton>
-                    <IconButton
-                        size='small'
-                        title='Toggle ER Diagram'
-                        color={showERDiagram ? 'secondary' : 'primary'}
-                        onClick={toggleERDiagram}
-                    >
-                        <IconDatabaseImport />
-                    </IconButton>
                 </div>
             </Box>
 
-            {showERDiagram ? (
-                // <DynamicERDiagram schemaData={value} />
-                <h2>DynamicERDiagram</h2>
-            ) : (
-                <SyntaxHighlighter language={language} style={oneDark} customStyle={{ margin: 0 }}>
-                    {value}
-                </SyntaxHighlighter>
-            )}
+            <SyntaxHighlighter language={language} style={oneDark} customStyle={{ margin: 0 }}>
+                {value}
+            </SyntaxHighlighter>
         </div>
     )
 })
@@ -136,6 +118,6 @@ CodeBlock.displayName = 'CodeBlock'
 CodeBlock.propTypes = {
     language: PropTypes.string,
     chatflowid: PropTypes.string,
-    isDialog: PropTypes.bool,
+    isFullWidth: PropTypes.bool,
     value: PropTypes.string
 }
