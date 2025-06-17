@@ -198,7 +198,7 @@
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#7C29A7",
+                "color": "#FFD166",
                 "baseClasses": ["Agent"],
                 "category": "Agent Pipeline",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
@@ -796,7 +796,7 @@
             "targetHandle": "agentAgentflow_0",
             "data": {
                 "sourceColor": "#06D6A0",
-                "targetColor": "#7C29A7",
+                "targetColor": "#FFD166",
                 "isHumanInput": false
             },
             "type": "agentFlow",
@@ -808,7 +808,7 @@
             "target": "humanInputAgentflow_0",
             "targetHandle": "humanInputAgentflow_0",
             "data": {
-                "sourceColor": "#7C29A7",
+                "sourceColor": "#FFD166",
                 "targetColor": "#52289F",
                 "isHumanInput": false
             },

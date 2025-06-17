@@ -203,7 +203,7 @@
                 "version": 1,
                 "name": "conditionAgentAgentflow",
                 "type": "ConditionAgent",
-                "color": "#EF476F",
+                "color": "#B6B6C6",
                 "baseClasses": ["ConditionAgent"],
                 "category": "Agent Pipeline",
                 "description": "Utilize an agent to split flows based on dynamic conditions",
@@ -1110,7 +1110,7 @@
                 "version": 1,
                 "name": "conditionAgentAgentflow",
                 "type": "ConditionAgent",
-                "color": "#EF476F",
+                "color": "#B6B6C6",
                 "baseClasses": ["ConditionAgent"],
                 "category": "Agent Pipeline",
                 "description": "Utilize an agent to split flows based on dynamic conditions",
@@ -2053,7 +2053,7 @@
             "target": "llmAgentflow_0",
             "targetHandle": "llmAgentflow_0",
             "data": {
-                "sourceColor": "#EF476F",
+                "sourceColor": "#B6B6C6",
                 "targetColor": "#118AB2",
                 "edgeLabel": "0",
                 "isHumanInput": false
@@ -2067,7 +2067,7 @@
             "target": "llmAgentflow_1",
             "targetHandle": "llmAgentflow_1",
             "data": {
-                "sourceColor": "#EF476F",
+                "sourceColor": "#B6B6C6",
                 "targetColor": "#118AB2",
                 "edgeLabel": "1",
                 "isHumanInput": false
@@ -2082,7 +2082,7 @@
             "targetHandle": "conditionAgentAgentflow_0",
             "data": {
                 "sourceColor": "#06D6A0",
-                "targetColor": "#EF476F",
+                "targetColor": "#B6B6C6",
                 "isHumanInput": false
             },
             "type": "agentFlow",
@@ -2108,7 +2108,7 @@
             "targetHandle": "conditionAgentAgentflow_1",
             "data": {
                 "sourceColor": "#B6B6C6",
-                "targetColor": "#EF476F",
+                "targetColor": "#B6B6C6",
                 "isHumanInput": false
             },
             "type": "agentFlow",
@@ -2133,7 +2133,7 @@
             "target": "llmAgentflow_3",
             "targetHandle": "llmAgentflow_3",
             "data": {
-                "sourceColor": "#EF476F",
+                "sourceColor": "#B6B6C6",
                 "targetColor": "#118AB2",
                 "edgeLabel": "1",
                 "isHumanInput": false
@@ -2147,7 +2147,7 @@
             "target": "llmAgentflow_2",
             "targetHandle": "llmAgentflow_2",
             "data": {
-                "sourceColor": "#EF476F",
+                "sourceColor": "#B6B6C6",
                 "targetColor": "#118AB2",
                 "edgeLabel": "0",
                 "isHumanInput": false

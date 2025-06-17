@@ -1,7 +1,7 @@
 import { EdgeLabelRenderer, getBezierPath } from 'reactflow'
 import { memo, useState, useContext } from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { SET_DIRTY } from '@/store/actions'
 import { flowContext } from '@/store/context/ReactFlowContext'
 import { IconX } from '@tabler/icons-react'
@@ -38,6 +38,8 @@ const foreignObjectSize = 40
 
 const AgentFlowEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, markerEnd, selected }) => {
     const [isHovered, setIsHovered] = useState(false)
+    const customization = useSelector((state) => state.customization)
+
     const { deleteEdge } = useContext(flowContext)
     const dispatch = useDispatch()
 
@@ -65,8 +67,8 @@ const AgentFlowEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition,
         <>
             <defs>
                 <linearGradient id={gradientId}>
-                    <stop offset='0%' stopColor={data?.sourceColor || '#ae53ba'} />
-                    <stop offset='100%' stopColor={data?.targetColor || '#2a8af6'} />
+                    <stop offset='0%' stopColor={customization?.isDarkMode ? '#E22A90' : '#3C5BA4'} />
+                    <stop offset='100%' stopColor={customization?.isDarkMode ? '#E22A90' : '#3C5BA4'} />
                 </linearGradient>
             </defs>
             <path
@@ -102,7 +104,7 @@ const AgentFlowEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition,
                 <EdgeLabelRenderer>
                     <EdgeLabel
                         isHumanInput={data?.isHumanInput}
-                        color={data?.sourceColor || '#ae53ba'}
+                        color={customization?.isDarkMode ? '#E22A90' : '#3C5BA4'}
                         label={data.edgeLabel}
                         transform={`translate(-50%, 0%) translate(${sourceX}px,${sourceY}px)`}
                     />
@@ -135,9 +137,8 @@ const AgentFlowEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition,
                             style={{
                                 width: '12px',
                                 height: '12px',
-                                background: `linear-gradient(to right, ${data?.sourceColor || '#ae53ba'}, ${
-                                    data?.targetColor || '#2a8af6'
-                                })`,
+                                background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                color: customization?.isDarkMode ? '#000' : '#fff',
                                 border: 'none',
                                 borderRadius: '50%',
                                 cursor: 'pointer',
@@ -145,7 +146,6 @@ const AgentFlowEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                color: 'white',
                                 boxShadow: '0 0 4px rgba(0,0,0,0.3)',
                                 transition: 'all 0.2s ease-in-out',
                                 padding: '2px'

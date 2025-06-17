@@ -26,7 +26,7 @@ class HTTP_Agentflow implements INode {
         this.category = 'Agent Pipeline'
         this.description = 'Send a HTTP request'
         this.baseClasses = [this.type]
-        this.color = '#EF476F'
+        this.color = '#B6B6C6'
         this.credential = {
             label: 'HTTP Credential',
             name: 'credential',

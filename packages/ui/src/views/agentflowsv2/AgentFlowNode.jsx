@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { Handle, Position, useUpdateNodeInternals, NodeToolbar } from 'reactflow'
 
 // material-ui
-import { styled, useTheme, alpha, darken, lighten } from '@mui/material/styles'
+import { styled, useTheme } from '@mui/material/styles'
 import { ButtonGroup, Avatar, Box, Typography, IconButton, Tooltip } from '@mui/material'
 
 // project imports
@@ -60,15 +60,7 @@ const AgentFlowNode = ({ data }) => {
     const [showInfoDialog, setShowInfoDialog] = useState(false)
     const [infoDialogProps, setInfoDialogProps] = useState({})
 
-    const defaultColor = '#666666' // fallback color if data.color is not present
-    const nodeColor = data.color || defaultColor
-
-    // Get different shades of the color based on state
-    const getStateColor = () => {
-        if (data.selected) return nodeColor
-        if (isHovered) return alpha(nodeColor, 0.8)
-        return alpha(nodeColor, 0.5)
-    }
+    const nodeColor = 'linear-gradient(to right, #3c5ba4, #e22a90)'
 
     const getOutputAnchors = () => {
         return data.outputAnchors ?? []
@@ -93,13 +85,6 @@ const AgentFlowNode = ({ data }) => {
         return Math.max(60, outputCount * 20 + 40)
     }
 
-    const getBackgroundColor = () => {
-        if (customization.isDarkMode) {
-            return isHovered ? darken(nodeColor, 0.7) : darken(nodeColor, 0.8)
-        }
-        return isHovered ? lighten(nodeColor, 0.8) : lighten(nodeColor, 0.9)
-    }
-
     const getStatusBackgroundColor = (status) => {
         switch (status) {
             case 'ERROR':
@@ -120,7 +105,18 @@ const AgentFlowNode = ({ data }) => {
         const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
 
         if (!foundIcon) return null
-        return <foundIcon.icon size={24} color={'white'} />
+
+        return (
+            <img
+                src={foundIcon.icon}
+                alt={node.name}
+                style={{
+                    width: 30,
+                    height: 30,
+                    objectFit: 'contain'
+                }}
+            />
+        )
     }
 
     useEffect(() => {
@@ -144,9 +140,9 @@ const AgentFlowNode = ({ data }) => {
                                 duplicateNode(data.id)
                             }}
                             sx={{
-                                color: customization.isDarkMode ? 'white' : 'inherit',
+                                color: customization.isDarkMode ? 'white' : 'black',
                                 '&:hover': {
-                                    color: theme.palette.primary.main
+                                    color: customization.isDarkMode ? 'white' : 'black'
                                 }
                             }}
                         >
@@ -160,9 +156,9 @@ const AgentFlowNode = ({ data }) => {
                             deleteNode(data.id)
                         }}
                         sx={{
-                            color: customization.isDarkMode ? 'white' : 'inherit',
+                            color: customization.isDarkMode ? 'white' : 'black',
                             '&:hover': {
-                                color: theme.palette.error.main
+                                color: customization.isDarkMode ? 'white' : 'black'
                             }
                         }}
                     >
@@ -176,9 +172,9 @@ const AgentFlowNode = ({ data }) => {
                             setShowInfoDialog(true)
                         }}
                         sx={{
-                            color: customization.isDarkMode ? 'white' : 'inherit',
+                            color: customization.isDarkMode ? 'white' : 'black',
                             '&:hover': {
-                                color: theme.palette.info.main
+                                color: customization.isDarkMode ? 'white' : 'black'
                             }
                         }}
                     >
@@ -189,16 +185,15 @@ const AgentFlowNode = ({ data }) => {
             <CardWrapper
                 content={false}
                 sx={{
-                    borderColor: getStateColor(),
+                    borderColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                     borderWidth: '1px',
-                    boxShadow: data.selected ? `0 0 0 1px ${getStateColor()} !important` : 'none',
                     minHeight: getMinimumHeight(),
                     height: 'auto',
-                    backgroundColor: getBackgroundColor(),
+                    backgroundColor: customization.isDarkMode ? 'black' : 'white',
                     display: 'flex',
                     alignItems: 'center',
                     '&:hover': {
-                        boxShadow: data.selected ? `0 0 0 1px ${getStateColor()} !important` : 'none'
+                        boxShadow: data.selected ? `0 0 0 1px #E5E7EB !important` : 'none'
                     }
                 }}
                 border={false}
@@ -245,7 +240,7 @@ const AgentFlowNode = ({ data }) => {
                             style={{
                                 width: 5,
                                 height: 20,
-                                backgroundColor: 'transparent',
+                                backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                                 border: 'none',
                                 position: 'absolute',
                                 left: -2
@@ -273,12 +268,12 @@ const AgentFlowNode = ({ data }) => {
                                         ...theme.typography.commonAvatar,
                                         ...theme.typography.largeAvatar,
                                         borderRadius: '15px',
-                                        backgroundColor: data.color,
+                                        backgroundColor: customization.isDarkMode ? 'black' : 'white',
                                         cursor: 'grab',
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                        background: data.color
+                                        background: customization.isDarkMode ? 'black' : 'white'
                                     }}
                                 >
                                     {renderIcon(data)}
@@ -305,7 +300,8 @@ const AgentFlowNode = ({ data }) => {
                             <Typography
                                 sx={{
                                     fontSize: '0.85rem',
-                                    fontWeight: 500
+                                    fontWeight: 500,
+                                    color: customization.isDarkMode ? 'white' : 'black'
                                 }}
                             >
                                 {data.label}

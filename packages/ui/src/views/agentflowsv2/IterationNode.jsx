@@ -80,8 +80,7 @@ const IterationNode = ({ data }) => {
         }
     }, [reactFlowInstance, data.id])
 
-    const defaultColor = '#666666' // fallback color if data.color is not present
-    const nodeColor = data.color || defaultColor
+    const nodeColor = 'linear-gradient(to right, #3c5ba4, #e22a90)'
 
     // Get different shades of the color based on state
     const getStateColor = () => {
@@ -140,7 +139,18 @@ const IterationNode = ({ data }) => {
         const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
 
         if (!foundIcon) return null
-        return <foundIcon.icon size={24} color={'white'} />
+
+        return (
+            <img
+                src={foundIcon.icon}
+                alt={node.name}
+                style={{
+                    width: 30,
+                    height: 30,
+                    objectFit: 'contain'
+                }}
+            />
+        )
     }
 
     useEffect(() => {
@@ -175,12 +185,12 @@ const IterationNode = ({ data }) => {
                                 ...theme.typography.commonAvatar,
                                 ...theme.typography.largeAvatar,
                                 borderRadius: '15px',
-                                backgroundColor: data.color,
+                                backgroundColor: customization.isDarkMode ? 'black' : 'white',
                                 cursor: 'grab',
                                 display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                background: data.color
+                                background: customization.isDarkMode ? 'black' : 'white'
                             }}
                         >
                             {renderIcon(data)}
@@ -381,7 +391,7 @@ const IterationNode = ({ data }) => {
                                     height: 20,
                                     width: 20,
                                     top: getAnchorPosition(index),
-                                    backgroundColor: 'transparent',
+                                    backgroundColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                                     border: 'none',
                                     position: 'absolute',
                                     right: -10,

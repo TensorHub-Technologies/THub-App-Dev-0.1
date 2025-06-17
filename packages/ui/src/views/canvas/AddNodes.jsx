@@ -18,7 +18,6 @@ import {
     ListItem,
     ListItemAvatar,
     ListItemText,
-    OutlinedInput,
     Typography,
     Chip,
     Tab,
@@ -26,7 +25,8 @@ import {
     IconButton,
     Collapse,
     Stack,
-    Tooltip
+    Tooltip,
+    TextField
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
@@ -72,7 +72,7 @@ const blacklistForChatflowCanvas = {
     Memory: agentMemoryNodes
 }
 
-const DRAWER_WIDTH = 350
+const DRAWER_WIDTH = 360
 const MINI_DRAWER_WIDTH = 80
 
 const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerated }) => {
@@ -320,10 +320,20 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
 
         if (!foundIcon) return null
-        return <foundIcon.icon size={30} color={node.color} />
+
+        return (
+            <img
+                src={foundIcon.icon}
+                alt={node.name}
+                style={{
+                    width: 30,
+                    height: 30,
+                    objectFit: 'contain'
+                }}
+            />
+        )
     }
 
-    // Render mini node item
     const renderMiniNodeItem = (node, index) => (
         <Box
             key={`${node.name}-${index}`}
@@ -334,13 +344,13 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             onDragStart={(event) => onDragStart(event, node)}
             draggable
             onMouseEnter={() => setHoveredNode(`${node.name}-${index}`)}
-            // onMouseLeave={() => setHoveredNode(null)}
+            onMouseLeave={() => setHoveredNode(null)}
         >
             <ListItemAvatar
                 sx={{
                     mt: 0,
                     borderRadius: `${customization.borderRadius}px`,
-                    py: 0.3,
+                    py: 0.2,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -348,19 +358,29 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 }}
             >
                 {node.color && !node.icon ? (
-                    <Box
-                        sx={{
-                            width: 30,
-                            height: 30,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '20%',
-                            backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#f0f0f0'
+                    <div
+                        style={{
+                            padding: '3px',
+                            borderRadius: '10px',
+                            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
+                            display: 'inline-block',
+                            marginBottom: '5px'
                         }}
                     >
-                        {renderIcon(node)}
-                    </Box>
+                        <div
+                            style={{
+                                borderRadius: '10%',
+                                backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                width: '48px',
+                                height: '48px'
+                            }}
+                        >
+                            {renderIcon(node)}
+                        </div>
+                    </div>
                 ) : (
                     // Gradient border wrapper
                     <div
@@ -389,7 +409,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                     width: '42px',
                                     height: '42px',
                                     objectFit: 'contain',
-                                    borderRadius: '8px'
+                                    borderRadius: '10px'
                                 }}
                                 alt={node.name}
                                 src={`${baseURL}/api/v1/node-icon/${node.name}`}
@@ -516,27 +536,47 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 {/* Search Bar - Only show when expanded */}
                 {isExpanded && (
                     <Box sx={{ px: 2, pb: 2 }}>
-                        <OutlinedInput
-                            sx={{ width: '100%' }}
+                        <TextField
                             id='input-search-node'
+                            label='Search Node'
+                            variant='standard'
+                            fullWidth
                             value={searchValue}
                             onChange={(e) => filterSearch(e.target.value)}
                             placeholder='Search nodes'
-                            size='small'
-                            startAdornment={
-                                <InputAdornment position='start'>
-                                    <IconSearch stroke={1.5} size='1rem' color={theme.palette.grey[500]} />
-                                </InputAdornment>
-                            }
-                            endAdornment={
-                                searchValue && (
+                            sx={{
+                                mb: 2,
+                                transition: 'all .2s ease-in-out',
+                                '& input': {
+                                    color: customization.isDarkMode ? '#fff' : '#000'
+                                },
+                                '& label.Mui-focused': {
+                                    color: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                '& .MuiInput-underline:after': {
+                                    borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                },
+                                '&:hover .MuiInput-underline:before': {
+                                    borderBottomColor: `${customization.isDarkMode ? '#E22A90' : '#3C5BA4'} !important`
+                                }
+                            }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position='start'>
+                                        <IconSearch size='1rem' stroke={1.5} color={customization.isDarkMode ? '#E22A90' : '#3C5BA4'} />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: searchValue && (
                                     <InputAdornment position='end'>
                                         <IconButton size='small' onClick={() => filterSearch('')} edge='end'>
-                                            <IconX size='1rem' />
+                                            <IconX size='1rem' stroke={1.5} color={customization.isDarkMode ? '#E22A90' : '#3C5BA4'} />
                                         </IconButton>
                                     </InputAdornment>
                                 )
-                            }
+                            }}
                         />
                     </Box>
                 )}
@@ -551,7 +591,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                             aria-label='tabs'
                             TabIndicatorProps={{
                                 style: {
-                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                    padding: '0px'
                                 }
                             }}
                             sx={{ minHeight: 40 }}
@@ -582,7 +623,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                         },
                                         '&:hover': {
                                             color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
-                                        }
+                                        },
+                                        padding: '0px'
                                     }}
                                     {...a11yProps(index)}
                                 />
@@ -765,7 +807,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                     alignItems: 'center',
                                                                                     justifyContent: 'center',
                                                                                     background: `linear-gradient(to right, #3C5BA4, #E22A90)`,
-                                                                                    minWidth: 60
+                                                                                    minWidth: 56
                                                                                 }}
                                                                             >
                                                                                 {node.color && !node.icon ? (

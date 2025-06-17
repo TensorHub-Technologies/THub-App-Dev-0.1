@@ -10,7 +10,8 @@
 }
 
 .edgebutton:hover {
-    background: #5e35b1;
+    /* background: #5e35b1; */
+    background: linear-gradient(to right, #3c5ba4, #e22a90) !important;
     color: #eee;
     box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.08);
 }

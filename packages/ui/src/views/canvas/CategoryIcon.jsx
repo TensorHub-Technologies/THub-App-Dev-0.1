@@ -24,6 +24,7 @@ import engineIconlite from '../../assets/icons/engine_dark.svg'
 import engineIcondark from '../../assets/icons/engine_lite.svg'
 import QrCodeIcon from '@mui/icons-material/QrCode'
 import SwitchAccountIcon from '@mui/icons-material/SwitchAccount'
+import AgentPipeline from '../../assets/images/agentpipeline/AgentPipeline.png'
 import { IconChartScatter3d, IconGraph, IconUsersGroup, IconTools } from '@tabler/icons-react'
 
 const getCategoryIcon = (category, customization) => {
@@ -85,6 +86,9 @@ const getCategoryIcon = (category, customization) => {
         'Tools (MCP)': <IconTools />,
         Utilities: <AutoFixHighIcon />,
         'Vector Stores': <LayersIcon />,
+        'Agent Pipeline': (
+            <img src={AgentPipeline} alt='AgentPipeline' style={{ width: '25px', height: '25px', backgroundColor: 'transparent' }} />
+        ),
         Engine: (
             <img
                 src={customization?.isDarkMode ? engineIconlite : engineIcondark}

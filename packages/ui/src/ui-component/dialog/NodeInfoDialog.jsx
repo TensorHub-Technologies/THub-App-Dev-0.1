@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import PropTypes from 'prop-types'
 
@@ -21,6 +21,7 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const dispatch = useDispatch()
     const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
 
     const getNodeConfigApi = useApi(configApi.getNodeConfig)
 
@@ -28,7 +29,18 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
         const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
 
         if (!foundIcon) return null
-        return <foundIcon.icon size={24} color={'white'} />
+
+        return (
+            <img
+                src={foundIcon.icon}
+                alt={node.name}
+                style={{
+                    width: 30,
+                    height: 30,
+                    objectFit: 'contain'
+                }}
+            />
+        )
     }
 
     useEffect(() => {
@@ -63,12 +75,12 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                     ...theme.typography.commonAvatar,
                                     ...theme.typography.largeAvatar,
                                     borderRadius: '15px',
-                                    backgroundColor: dialogProps.data.color,
+                                    backgroundColor: customization.isDarkMode ? 'black' : 'white',
                                     cursor: 'grab',
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    background: dialogProps.data.color,
+                                    background: customization.isDarkMode ? 'black' : 'white',
                                     marginRight: 10
                                 }}
                             >

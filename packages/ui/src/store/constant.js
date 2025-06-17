@@ -1,21 +1,20 @@
 // constant
-import {
-    IconLibrary,
-    IconTools,
-    IconFunctionFilled,
-    IconMessageCircleFilled,
-    IconRobot,
-    IconArrowsSplit,
-    IconPlayerPlayFilled,
-    IconSparkles,
-    IconReplaceUser,
-    IconRepeat,
-    IconSubtask,
-    IconNote,
-    IconWorld,
-    IconRelationOneToManyFilled,
-    IconVectorBezier2
-} from '@tabler/icons-react'
+
+import Agent from '@/assets/images/agentpipeline/Agent.png'
+import Condition from '@/assets/images/agentpipeline/Condition.png'
+import Loop from '@/assets/images/agentpipeline/Loop.png'
+import LLM from '@/assets/images/agentpipeline/LLM.png'
+import StartAgent from '@/assets/images/agentpipeline/startAgent.png'
+import StickyNote from '@/assets/images/agentpipeline/StickyNotes.png'
+import HumanInput from '@/assets/images/agentpipeline/HumanInput.png'
+import DirectReplay from '@/assets/images/agentpipeline/DirectReply.png'
+import CustomFunction from '@/assets/images/agentpipeline/CustomFunction.png'
+import Tool from '@/assets/images/agentpipeline/Tools.png'
+import Retriever from '@/assets/images/agentpipeline/Reteriever.png'
+import ConditionAgent from '@/assets/images/agentpipeline/ConsitionAgent.png'
+import Http from '@/assets/images/agentpipeline/Http.png'
+import Iteration from '@/assets/images/agentpipeline/Iteration.png'
+import ExecuteFlow from '@/assets/images/agentpipeline/ExecuteFlow.png'
 
 export const gridSpacing = 3
 export const drawerWidth = 260
@@ -30,77 +29,77 @@ export const SHOW_MENU = 'SHOW_MENU'
 export const AGENTFLOW_ICONS = [
     {
         name: 'conditionAgentflow',
-        icon: IconArrowsSplit,
+        icon: Condition,
         color: '#FF9F1C'
     },
     {
         name: 'startAgentflow',
-        icon: IconPlayerPlayFilled,
+        icon: StartAgent,
         color: '#06D6A0'
     },
     {
         name: 'llmAgentflow',
-        icon: IconSparkles,
+        icon: LLM,
         color: '#118AB2'
     },
     {
         name: 'agentAgentflow',
-        icon: IconRobot,
-        color: '#7C29A7'
+        icon: Agent,
+        color: '#FFD166'
     },
     {
         name: 'humanInputAgentflow',
-        icon: IconReplaceUser,
+        icon: HumanInput,
         color: '#52289F'
     },
     {
         name: 'loopAgentflow',
-        icon: IconRepeat,
+        icon: Loop,
         color: '#FFA07A'
     },
     {
         name: 'directReplyAgentflow',
-        icon: IconMessageCircleFilled,
+        icon: DirectReplay,
         color: '#06D6A0'
     },
     {
         name: 'customFunctionAgentflow',
-        icon: IconFunctionFilled,
+        icon: CustomFunction,
         color: '#4B3CA7'
     },
     {
         name: 'toolAgentflow',
-        icon: IconTools,
+        icon: Tool,
         color: '#FFD166'
     },
     {
         name: 'retrieverAgentflow',
-        icon: IconLibrary,
+        icon: Retriever,
         color: '#B6B6C6'
     },
     {
         name: 'conditionAgentAgentflow',
-        icon: IconSubtask,
-        color: '#EF476F'
+        icon: ConditionAgent,
+        color: '#B6B6C6'
     },
     {
         name: 'stickyNoteAgentflow',
-        icon: IconNote,
+        icon: StickyNote,
         color: '#fee440'
     },
     {
         name: 'httpAgentflow',
-        icon: IconWorld,
-        color: '#EF476F'
+        icon: Http,
+        color: '#B6B6C6'
     },
     {
         name: 'iterationAgentflow',
-        icon: IconRelationOneToManyFilled,
+        icon: Iteration,
         color: '#9C89B8'
     },
     {
         name: 'executeFlowAgentflow',
-        icon: IconVectorBezier2,
-        color: '#C7376D'
+        icon: ExecuteFlow,
+        color: '#F0F0F5'
     }
 ]

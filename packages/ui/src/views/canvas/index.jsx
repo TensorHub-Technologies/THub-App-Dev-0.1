@@ -833,7 +833,7 @@ const Canvas = () => {
                 </AppBar>
 
                 <Box sx={{ display: 'flex', mt: '34px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
-                    <Box sx={{ width: customization.menu_open ? '86px' : '100px' }}>
+                    <Box sx={{ width: customization.menu_open ? '86px' : '86px' }}>
                         <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
                     </Box>
 
