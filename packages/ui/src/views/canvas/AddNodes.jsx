@@ -334,7 +334,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             onDragStart={(event) => onDragStart(event, node)}
             draggable
             onMouseEnter={() => setHoveredNode(`${node.name}-${index}`)}
-            onMouseLeave={() => setHoveredNode(null)}
+            // onMouseLeave={() => setHoveredNode(null)}
         >
             <ListItemAvatar
                 sx={{
@@ -344,7 +344,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: `linear-gradient(to right, #3C5BA4, #E22A90)`,
                     minWidth: 30
                 }}
             >
@@ -363,27 +362,39 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                         {renderIcon(node)}
                     </Box>
                 ) : (
+                    // Gradient border wrapper
                     <div
                         style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: 30,
-                            height: 30,
-                            borderRadius: '20%',
-                            backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#f0f0f0'
+                            padding: '4px',
+                            borderRadius: '10px',
+                            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
+                            display: 'inline-block',
+                            marginBottom: '5px'
                         }}
                     >
-                        <img
+                        <div
                             style={{
-                                width: '100%',
-                                height: '100%',
-                                padding: 5,
-                                objectFit: 'contain'
+                                borderRadius: '10%',
+                                backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '40px',
+                                width: '48px',
+                                height: '48px'
                             }}
-                            alt={node.name}
-                            src={`${baseURL}/api/v1/node-icon/${node.name}`}
-                        />
+                        >
+                            <img
+                                style={{
+                                    width: '42px',
+                                    height: '42px',
+                                    objectFit: 'contain',
+                                    borderRadius: '8px'
+                                }}
+                                alt={node.name}
+                                src={`${baseURL}/api/v1/node-icon/${node.name}`}
+                            />
+                        </div>
                     </div>
                 )}
             </ListItemAvatar>
@@ -586,7 +597,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                     containerRef={(el) => {
                         ps.current = el
                     }}
-                    style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}
+                    style={{ height: '100%', overflowX: 'hidden' }}
                 >
                     <Box
                         sx={{
