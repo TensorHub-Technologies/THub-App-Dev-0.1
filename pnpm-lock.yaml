@@ -979,11 +979,11 @@ importers:
                 specifier: ^11.2.4
                 version: 11.2.4
             thub-embed:
-                specifier: ^9.3.9
-                version: 9.3.9(bufferutil@4.0.9)
+                specifier: ^9.4.0
+                version: 9.4.0(bufferutil@4.0.9)
             thub-embed-react:
-                specifier: 2.0.4
-                version: 2.0.4(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.3.9(bufferutil@4.0.9))(typescript@5.7.3)
+                specifier: 2.0.5
+                version: 2.0.5(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.4.0(bufferutil@4.0.9))(typescript@5.7.3)
             thub-react-json-view:
                 specifier: 1.21.11
                 version: 1.21.11(@types/react@19.0.8)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -15907,14 +15907,14 @@ packages:
     through@2.3.8:
         resolution: { integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg== }
 
-    thub-embed-react@2.0.4:
-        resolution: { integrity: sha512-d+lbLZ3tijhM4m6y6gY+sEADLs5XsZWdFofq+A/hJt+o2rCWxVQq0I6uwoV3VwOIJqkP78UNTRJvW3IuJOnYAA== }
+    thub-embed-react@2.0.5:
+        resolution: { integrity: sha512-UoDKXJgQFURSot7izVvXjJCSng0wjw54RAja9rENQPZQv1vwY/Zd201alfErB4l3Aznb86DzZlZisHKGyLlHlg== }
         peerDependencies:
             react: 18.x
             thub-embed: '*'
 
-    thub-embed@9.3.9:
-        resolution: { integrity: sha512-lobRL7tFElzM/DD+F2xPf87QJz9nYCRuE8z3X5lgT+rBODYIahMPGgDySG1hs8pgWqfC0UUg5+fASfD6REFd2A== }
+    thub-embed@9.4.0:
+        resolution: { integrity: sha512-2JiD2hq83MX6Vo25Cbs2TE+NhGDFTpYUMuWDZ2glFgmid0cnz8JUWsEpoUy89/mytB/e3tMW3CK+kQ1LGHAznA== }
 
     thub-react-json-view@1.21.11:
         resolution: { integrity: sha512-w8x68KAaIESPxb3kbLKeFXJGSO+QmSzVMh+FlBxgD/Yc/z5vjKBe0NdfiXu4XhT0mFJigdFGvzvqmxTH20r2Qw== }
@@ -37116,11 +37116,11 @@ snapshots:
 
     through@2.3.8: {}
 
-    thub-embed-react@2.0.4(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.3.9(bufferutil@4.0.9))(typescript@5.7.3):
+    thub-embed-react@2.0.5(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.4.0(bufferutil@4.0.9))(typescript@5.7.3):
         dependencies:
             '@ladle/react': 2.5.1(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(typescript@5.7.3)
             react: 18.3.1
-            thub-embed: 9.3.9(bufferutil@4.0.9)
+            thub-embed: 9.4.0(bufferutil@4.0.9)
         transitivePeerDependencies:
             - '@types/node'
             - less
@@ -37133,7 +37133,7 @@ snapshots:
             - terser
             - typescript
 
-    thub-embed@9.3.9(bufferutil@4.0.9):
+    thub-embed@9.4.0(bufferutil@4.0.9):
         dependencies:
             '@babel/core': 7.26.8
             '@microsoft/fetch-event-source': 2.0.1

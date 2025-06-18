@@ -65,25 +65,23 @@ const AgentFlowEdge = ({ id, sourceX, sourceY, targetX, targetY, sourcePosition,
     const gradientId = `edge-gradient-${id}`
     return (
         <>
-            <defs>
-                <linearGradient id={gradientId}>
-                    <stop offset='0%' stopColor={customization?.isDarkMode ? '#E22A90' : '#3C5BA4'} />
-                    <stop offset='100%' stopColor={customization?.isDarkMode ? '#E22A90' : '#3C5BA4'} />
-                </linearGradient>
-            </defs>
             <path
-                id={`${id}-selector`}
-                className='agent-flow-edge-selector'
+                id={id}
+                className={`agent-flow-edge ${selected ? 'selected' : ''}`}
                 style={{
-                    stroke: 'transparent',
-                    strokeWidth: 15,
-                    fill: 'none',
-                    cursor: 'pointer'
+                    strokeWidth: selected ? 3 : 2,
+                    stroke: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                    filter: selected ? 'drop-shadow(0 0 3px rgba(0,0,0,0.3))' : 'none',
+                    cursor: 'pointer',
+                    opacity: selected ? 1 : 0.75,
+                    fill: 'none'
                 }}
                 d={edgePath}
+                markerEnd={markerEnd}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             />
+
             <path
                 id={id}
                 className='agent-flow-edge'
