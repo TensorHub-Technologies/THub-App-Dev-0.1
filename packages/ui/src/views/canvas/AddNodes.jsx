@@ -72,7 +72,7 @@ const blacklistForChatflowCanvas = {
     Memory: agentMemoryNodes
 }
 
-const DRAWER_WIDTH = 360
+const DRAWER_WIDTH = 390
 const MINI_DRAWER_WIDTH = 80
 
 const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerated }) => {
@@ -108,8 +108,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const [tab, setTab] = useState(['LangChain'])
     const [tabValue, setTabValue] = useState(0)
 
-    console.log('tab', tab, 'tabValue', tabValue)
-
     useEffect(() => {
         if (userData.subscription_type !== 'free') {
             setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
@@ -138,12 +136,34 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
 
     useEffect(() => {
+        const pathname = location.pathname
+
+        const hasCanvasId = pathname.startsWith('/canvas/') && pathname !== '/canvas'
+        const hasAgentCanvasId = pathname.startsWith('/v2/agentcanvas/') && pathname !== '/v2/agentcanvas'
+
+        if (hasCanvasId) {
+            setTab(['LangChain', 'LlamaIndex'])
+        } else if (hasAgentCanvasId) {
+            setTab(['Agent Pipeline'])
+            setTabValue(0)
+        } else if (pathname === '/canvas' || pathname === '/v2/agentcanvas') {
+            if (userData.subscription_type !== 'free') {
+                setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
+            } else {
+                setTab(['LangChain'])
+            }
+        }
+    }, [location.pathname, userData.subscription_type])
+
+    useEffect(() => {
         if (location.pathname === '/v2/agentcanvas') {
             setTabValue(2)
         } else if (location.pathname === '/canvas') {
             if (tabValue === 2) {
                 setTabValue(0)
             }
+        } else if (location.pathname.startsWith('/v2/agentcanvas/')) {
+            setTabValue(0)
         }
     }, [location.pathname])
 
@@ -151,7 +171,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         setTabValue(newValue)
         filterSearch(searchValue, newValue)
         const selectedTab = tab[newValue]
+
         if (selectedTab === 'Agent Pipeline') {
+            if (location.pathname.startsWith('/v2/agentcanvas/')) {
+                return
+            }
             navigate('/v2/agentcanvas')
         } else if ((selectedTab === 'LangChain' || selectedTab === 'LlamaIndex') && location.pathname === '/v2/agentcanvas') {
             navigate('/canvas')

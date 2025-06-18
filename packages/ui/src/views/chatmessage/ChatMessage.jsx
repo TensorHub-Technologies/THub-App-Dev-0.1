@@ -59,6 +59,7 @@ import CopyToClipboardButton from '@/ui-component/button/CopyToClipboardButton'
 import ThumbsUpButton from '@/ui-component/button/ThumbsUpButton'
 import ThumbsDownButton from '@/ui-component/button/ThumbsDownButton'
 import { cancelAudioRecording, startAudioRecording, stopAudioRecording } from './audio-recording'
+import * as sdk from 'microsoft-cognitiveservices-speech-sdk'
 import './audio-recording.css'
 import './ChatMessage.css'
 
@@ -88,6 +89,8 @@ import FollowUpPromptsCard from '@/ui-component/cards/FollowUpPromptsCard'
 // History
 import { ChatInputHistory } from './ChatInputHistory'
 import TextToSpeech from './TextToSpeech'
+import { IconPhoneCall } from '@tabler/icons-react'
+import { IconPhoneOff } from '@tabler/icons-react'
 
 const messageImageStyle = {
     width: '128px',
@@ -165,7 +168,7 @@ CardWithDeleteOverlay.propTypes = {
 const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
-
+    const chatflow = useSelector((state) => state.canvas.chatflow)
     const ps = useRef()
 
     const dispatch = useDispatch()
@@ -177,9 +180,12 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
 
     const [userInput, setUserInput] = useState('')
     const [loading, setLoading] = useState(false)
+    const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
+    const welcomeMessage = `Hi, I'm ${cleanName}. How can I help you today?`
+
     const [messages, setMessages] = useState([
         {
-            message: 'Hi there! How can I help?',
+            message: welcomeMessage,
             type: 'apiMessage'
         }
     ])
@@ -193,6 +199,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const [imageUploadAllowedTypes, setImageUploadAllowedTypes] = useState('')
     const [fileUploadAllowedTypes, setFileUploadAllowedTypes] = useState('')
     const [inputHistory] = useState(new ChatInputHistory(10))
+    const questions = useRef(0)
 
     const inputRef = useRef(null)
     const getChatmessageApi = useApi(chatmessageApi.getInternalChatmessageFromChatflow)
@@ -921,48 +928,46 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 fetchResponseFromEventStream(chatflowid, params)
             } else {
                 const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
-                if (response.data) {
-                    const data = response.data
-
-                    updateMetadata(data, input)
-
-                    let text = ''
-                    if (data.text) text = data.text
-                    else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
-                    else text = JSON.stringify(data, null, 2)
-
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        {
-                            message: text,
-                            id: data?.chatMessageId,
-                            sourceDocuments: data?.sourceDocuments,
-                            usedTools: data?.usedTools,
-                            calledTools: data?.calledTools,
-                            fileAnnotations: data?.fileAnnotations,
-                            agentReasoning: data?.agentReasoning,
-                            agentFlowExecutedData: data?.agentFlowExecutedData,
-                            action: data?.action,
-                            artifacts: data?.artifacts,
-                            type: 'apiMessage',
-                            feedback: null
-                        }
-                    ])
-
-                    setLocalStorageChatflow(chatflowid, data.chatId)
-                    setLoading(false)
-                    setUserInput('')
-                    setUploadedFiles([])
-                    setTimeout(() => {
-                        inputRef.current?.focus()
-                        scrollToBottom()
-                    }, 100)
-                }
+                setAiResponseInChatMessages(response.data, params)
             }
         } catch (error) {
             handleError(error.response.data.message)
             return
         }
+    }
+
+    const setAiResponseInChatMessages = (data, params) => {
+        updateMetadata(data, params.question)
+        let text = ''
+        if (data.text) text = data.text
+        else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
+        else text = JSON.stringify(data, null, 2)
+        setLastres(text)
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+                message: text,
+                id: data?.chatMessageId,
+                sourceDocuments: data?.sourceDocuments,
+                usedTools: data?.usedTools,
+                fileAnnotations: data?.fileAnnotations,
+                agentReasoning: data?.agentReasoning,
+                action: data?.action,
+                artifacts: data?.artifacts,
+                type: 'apiMessage',
+                feedback: null
+            }
+        ])
+
+        setLocalStorageChatflow(chatflowid, data.chatId)
+        setLoading(false)
+        setUserInput('')
+        setUploadedFiles([])
+        setTimeout(() => {
+            inputRef.current?.focus()
+            scrollToBottom()
+        }, 100)
+        return text
     }
 
     const fetchResponseFromEventStream = async (chatflowid, params) => {
@@ -1679,6 +1684,148 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         }
     }
 
+    const [isListening, setIsListening] = useState(false)
+    const [isSpeaking, setIsSpeaking] = useState(false)
+    const [language, setLanguage] = useState('en-IN')
+    const [voice, setVoice] = useState('en-IN-NeerjaNeural')
+    const speechConfig = useRef(null)
+    const audioConfigForRecognization = useRef(null)
+    const audioConfigForSynthesizer = useRef(null)
+    const greetingSpokenOnResume = useRef(false)
+    const player = useRef(null)
+
+    const recognizer = useRef(null)
+    const synthesizer = useRef(null)
+    const [conversations, setConversations] = useState([])
+
+    const SPEECH_KEY = 'BPjTQypxZk7YBxpRcTxIDjg3fu1RjImqTgubDg1u16AyVSe0ErjMJQQJ99BAACYeBjFXJ3w3AAAYACOG1tYn'
+    const SPEECH_REGION = 'eastus'
+
+    const [myTranscript, setMyTranscript] = useState('')
+    const [recognizingTranscript, setRecTranscript] = useState('')
+
+    useEffect(() => {
+        speechConfig.current = sdk.SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION)
+        speechConfig.current.speechRecognitionLanguage = language
+        speechConfig.current.speechSynthesisVoiceName = voice
+
+        audioConfigForRecognization.current = sdk.AudioConfig.fromDefaultMicrophoneInput()
+        recognizer.current = new sdk.SpeechRecognizer(speechConfig.current, audioConfigForRecognization.current)
+
+        const processRecognizedTranscript = async (event) => {
+            if (!speechConfig.current) {
+                return
+            }
+            const result = event.result
+            if (result.reason === sdk.ResultReason.RecognizedSpeech) {
+                const transcript = result.text
+                setMyTranscript(transcript)
+                setConversations((prev) => [...prev, { sender: 'User', text: transcript }])
+                stopSpeaking()
+                setUserInput(transcript)
+
+                setLoading(true)
+                clearPreviews()
+                setMessages((prevMessages) => [...prevMessages, { message: transcript, type: 'userMessage' }])
+
+                const params = {
+                    question: transcript,
+                    chatId: chatflowid
+                }
+                questions.current += 1
+                const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
+                if (questions.current > 1) {
+                    questions.current -= 1
+                    return
+                }
+
+                const aiResponseText = setAiResponseInChatMessages(response.data, params)
+
+                const sanitizedText = aiResponseText
+                    .replace(/\(?(e\.g\.|eg)[,:]?\s*/gi, 'example ')
+                    .replace(/\+/g, ' plus')
+                    .replace(/[^\w\s₹–.,]/g, '')
+
+                stopSpeaking()
+
+                setConversations((prev) => [...prev, { sender: 'AI', text: aiResponseText }])
+                player.current = new sdk.SpeakerAudioDestination()
+                audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
+                synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
+
+                synthesizer.current?.speakTextAsync(sanitizedText, () => {
+                    console.log('Speech synthesis started.')
+                    questions.current -= 1
+                    setIsSpeaking(true)
+                })
+            }
+        }
+
+        const processRecognizingTranscript = (event) => {
+            const result = event.result
+            if (result.reason === sdk.ResultReason.RecognizingSpeech) {
+                const transcript = result.text
+                setRecTranscript(transcript)
+                stopSpeaking()
+            }
+        }
+
+        recognizer.current.recognized = (s, e) => processRecognizedTranscript(e)
+        recognizer.current.recognizing = (s, e) => processRecognizingTranscript(e)
+
+        return () => {
+            if (recognizer.current)
+                recognizer.current?.stopContinuousRecognitionAsync(() => {
+                    setIsListening(false)
+                })
+        }
+    }, [language])
+
+    const pauseListening = () => {
+        setIsListening(false)
+        recognizer.current?.stopContinuousRecognitionAsync()
+        console.log('Paused listening.')
+    }
+
+    const resumeListening = () => {
+        if (!isListening) {
+            setIsListening(true)
+            recognizer.current?.startContinuousRecognitionAsync(() => {
+                console.log('Resumed listening...')
+            })
+
+            // If this is the first resume, speak the greeting
+            if (!greetingSpokenOnResume.current) {
+                greetingSpokenOnResume.current = true
+                const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
+                const welcomeMessage = `Hi, I'm ${cleanName}. How can I help you today?`
+                player.current = new sdk.SpeakerAudioDestination()
+                audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
+                synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
+                synthesizer.current?.speakTextAsync(welcomeMessage, () => {
+                    setIsSpeaking(true)
+                })
+            }
+        }
+    }
+
+    const stopListening = () => {
+        setIsListening(false)
+        stopSpeaking()
+        pauseListening()
+        greetingSpokenOnResume.current = false
+        recognizer.current?.stopContinuousRecognitionAsync(() => {
+            console.log('Speech recognition stopped.')
+        })
+    }
+
+    const stopSpeaking = () => {
+        setIsSpeaking(false)
+        if (player.current) {
+            player.current.pause()
+        }
+    }
+
     if (isConfigLoading) {
         return (
             <Box
@@ -2340,6 +2487,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                             </IconButton>
                                         </InputAdornment>
                                     )}
+
                                     {!isChatFlowAvailableForImageUploads && isChatFlowAvailableForFileUploads && (
                                         <InputAdornment position='start' sx={{ ml: 2 }}>
                                             <IconButton
@@ -2405,6 +2553,43 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                             </IconButton>
                                         </InputAdornment>
                                     )}
+                                    {userInput === '' && (
+                                        <InputAdornment position='end' sx={{ paddingRight: '3px' }}>
+                                            <IconButton
+                                                type='submit'
+                                                disabled={getInputDisabled()}
+                                                edge='end'
+                                                onClick={isListening ? stopListening : resumeListening}
+                                            >
+                                                {isListening ? (
+                                                    <>
+                                                        <IconPhoneOff
+                                                            color={
+                                                                loading || !chatflowid
+                                                                    ? '#9e9e9e'
+                                                                    : customization.isDarkMode
+                                                                    ? '#A93B97'
+                                                                    : '#1e88e5'
+                                                            }
+                                                        />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <IconPhoneCall
+                                                            color={
+                                                                loading || !chatflowid
+                                                                    ? '#9e9e9e'
+                                                                    : customization.isDarkMode
+                                                                    ? '#A93B97'
+                                                                    : '#1e88e5'
+                                                            }
+                                                        />
+                                                    </>
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )}
+
                                     {!isAgentCanvas && (
                                         <InputAdornment position='end' sx={{ paddingRight: '15px' }}>
                                             <IconButton type='submit' disabled={getInputDisabled()} edge='end'>
