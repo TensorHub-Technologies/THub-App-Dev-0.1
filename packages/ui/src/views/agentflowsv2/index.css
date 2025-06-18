@@ -51,6 +51,18 @@
     cursor: pointer;
 }
 
+.agent-flow-edge {
+    stroke-dasharray: 6;
+    stroke-dashoffset: 0;
+    animation: dashFlow 0.5s linear infinite;
+}
+
+@keyframes dashFlow {
+    to {
+        stroke-dashoffset: -12;
+    }
+}
+
 .agent-flow-edge-selector:hover + .agent-flow-edge {
     stroke-width: 3 !important;
     opacity: 1;
