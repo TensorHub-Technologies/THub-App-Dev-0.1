@@ -15,7 +15,8 @@ import { FlowListTable } from '@/ui-component/table/FlowListTable'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
-import WorkflowEmptySVG from '@/assets/images/workflow_empty.svg'
+import emptyImage from '../../assets/images/glass.svg'
+import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -163,7 +164,7 @@ const Chatflows = () => {
             {error ? (
                 <ErrorBoundary error={error} />
             ) : (
-                <Stack flexDirection='column' sx={{ gap: 3 }}>
+                <Stack flexDirection='column' sx={{ gap: 3, flexGrow: 1 }}>
                     <ViewHeader
                         onSearchChange={onSearchChange}
                         search={true}
@@ -275,12 +276,13 @@ const Chatflows = () => {
                         <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                             <Box sx={{ p: 2, height: 'auto' }}>
                                 <img
-                                    style={{ objectFit: 'cover', height: '25vh', width: 'auto' }}
-                                    src={WorkflowEmptySVG}
+                                    style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                    src={customization.isDarkMode ? emptyImage : emptyImagelite}
                                     alt='WorkflowEmptySVG'
                                 />
                             </Box>
-                            <div>No Chatflows Yet</div>
+
+                            <div>No AI Apps workspaces have been created yet.</div>
                         </Stack>
                     )}
 
