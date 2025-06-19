@@ -241,7 +241,7 @@ const Chatflows = () => {
                             </ToggleButton>
                         </ToggleButtonGroup>
                         <StyledButton variant='contained' onClick={addNew} startIcon={<IconPlus />} sx={{ borderRadius: 2, height: 40 }}>
-                            Create GenAI App
+                            Create Workflow
                         </StyledButton>
                     </ViewHeader>
                     {!view || view === 'card' ? (

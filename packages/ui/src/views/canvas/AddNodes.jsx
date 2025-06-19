@@ -38,7 +38,7 @@ import { StyledFab } from '@/ui-component/button/StyledFab'
 import AgentflowGeneratorDialog from '@/ui-component/dialog/AgentflowGeneratorDialog'
 
 // icons
-import { IconSearch, IconX, IconSparkles, IconChevronRight, IconChevronLeft } from '@tabler/icons-react'
+import { IconSearch, IconX, IconSparkles } from '@tabler/icons-react'
 import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import LangChainPNG from '@/assets/images/langchain.png'
 import utilNodesPNG from '@/assets/images/utilNodes.png'
@@ -482,11 +482,12 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 <StyledFab
                     sx={{
                         position: 'fixed',
-                        left: isExpanded ? DRAWER_WIDTH + 20 : MINI_DRAWER_WIDTH + 20,
-                        top: 80,
-                        background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)',
+                        left: 1240,
+                        top: 89,
+                        background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                         '&:hover': {
-                            background: 'linear-gradient(45deg, #FF8E53 30%, #FF6B6B 90%)'
+                            background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
+                            color: 'white'
                         },
                         transition: theme.transitions.create(['left'], {
                             easing: theme.transitions.easing.sharp,
@@ -542,20 +543,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                         marginTop: 10,
                         justifyContent: isExpanded ? 'space-between' : 'center'
                     }}
-                >
-                    {isExpanded ? (
-                        <>
-                            <Typography variant='h6'>Add Nodes</Typography>
-                            <IconButton size='small'>
-                                <IconChevronLeft />
-                            </IconButton>
-                        </>
-                    ) : (
-                        <IconButton size='small'>
-                            <IconChevronRight />
-                        </IconButton>
-                    )}
-                </Box>
+                ></Box>
 
                 {/* Search Bar - Only show when expanded */}
                 {isExpanded && (
