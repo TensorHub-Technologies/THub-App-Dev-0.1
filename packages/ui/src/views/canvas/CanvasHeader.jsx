@@ -33,6 +33,7 @@ import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackba
 import VectorStorePopUp from '../vectorstore/VectorStorePopUp'
 import toggle_1 from '@/assets/images/toggle_mode-1.svg'
 import toggle_2 from '@/assets/images/toggle_mode-2.svg'
+import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -267,8 +268,11 @@ const CanvasHeader = ({
         <>
             <Stack flexDirection='row' justifyContent='space-between' sx={{ width: '100%' }}>
                 <Stack flexDirection='row' sx={{ width: '100%', maxWidth: '50%' }}>
+                    <div style={{ marginLeft: '-6px', marginTop: '4px' }}>
+                        <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+                    </div>
                     <Box>
-                        <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: 0.5 }}>
+                        <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: 0.5, ml: 3 }}>
                             <Avatar
                                 variant='rounded'
                                 sx={{
