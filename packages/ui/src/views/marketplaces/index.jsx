@@ -12,7 +12,6 @@ import {
     InputLabel,
     FormControl,
     Select,
-    OutlinedInput,
     Checkbox,
     ListItemText,
     Skeleton,
@@ -436,114 +435,143 @@ const Marketplace = () => {
                         <ViewHeader
                             filters={
                                 <>
-                                    <FormControl
-                                        sx={{
-                                            borderRadius: 2,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            justifyContent: 'end',
-                                            minWidth: 120
-                                        }}
-                                    >
-                                        <InputLabel size='small' id='filter-badge-label'>
-                                            Tag
-                                        </InputLabel>
-                                        <Select
-                                            labelId='filter-badge-label'
-                                            id='filter-badge-checkbox'
-                                            size='small'
-                                            multiple
-                                            value={badgeFilter}
-                                            onChange={handleBadgeFilterChange}
-                                            input={<OutlinedInput label='Tag' />}
-                                            renderValue={(selected) => selected.join(', ')}
-                                            MenuProps={MenuProps}
-                                            sx={getSelectStyles(theme.palette.grey[900] + 25, theme?.customization?.isDarkMode)}
-                                        >
-                                            {badges.map((name) => (
-                                                <MenuItem
-                                                    key={name}
-                                                    value={name}
-                                                    sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}
-                                                >
-                                                    <Checkbox checked={badgeFilter.indexOf(name) > -1} sx={{ p: 0 }} />
-                                                    <ListItemText primary={name} />
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl
-                                        sx={{
-                                            borderRadius: 2,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            justifyContent: 'end',
-                                            minWidth: 120
-                                        }}
-                                    >
-                                        <InputLabel size='small' id='type-badge-label'>
-                                            Type
-                                        </InputLabel>
-                                        <Select
-                                            size='small'
-                                            labelId='type-badge-label'
-                                            id='type-badge-checkbox'
-                                            multiple
-                                            value={typeFilter}
-                                            onChange={handleTypeFilterChange}
-                                            input={<OutlinedInput label='Type' />}
-                                            renderValue={(selected) => selected.join(', ')}
-                                            MenuProps={MenuProps}
-                                            sx={getSelectStyles(theme.palette.grey[900] + 25, theme?.customization?.isDarkMode)}
-                                        >
-                                            {types.map((name) => (
-                                                <MenuItem
-                                                    key={name}
-                                                    value={name}
-                                                    sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}
-                                                >
-                                                    <Checkbox checked={typeFilter.indexOf(name) > -1} sx={{ p: 0 }} />
-                                                    <ListItemText primary={name} />
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl
-                                        sx={{
-                                            borderRadius: 2,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            justifyContent: 'end',
-                                            minWidth: 120
-                                        }}
-                                    >
-                                        <InputLabel size='small' id='type-fw-label'>
-                                            Framework
-                                        </InputLabel>
-                                        <Select
-                                            size='small'
-                                            labelId='type-fw-label'
-                                            id='type-fw-checkbox'
-                                            multiple
-                                            value={frameworkFilter}
-                                            onChange={handleFrameworkFilterChange}
-                                            input={<OutlinedInput label='Framework' />}
-                                            renderValue={(selected) => selected.join(', ')}
-                                            MenuProps={MenuProps}
-                                            sx={getSelectStyles(theme.palette.grey[900] + 25, theme?.customization?.isDarkMode)}
-                                        >
-                                            {framework.map((name) => (
-                                                <MenuItem
-                                                    key={name}
-                                                    value={name}
-                                                    sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1 }}
-                                                >
-                                                    <Checkbox checked={frameworkFilter.indexOf(name) > -1} sx={{ p: 0 }} />
-                                                    <ListItemText primary={name} />
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
+                                    <Stack flexDirection='row' gap={2}>
+                                        <FormControl variant='standard' style={{ width: '130px', marginTop: '-10px', marginLeft: '10px' }}>
+                                            <InputLabel
+                                                id='demo-simple-select-standard-label'
+                                                sx={{
+                                                    color: customization?.isDarkMode ? '#fff' : '#000',
+                                                    '&.Mui-focused': {
+                                                        color: customization?.isDarkMode ? '#fff' : '#000'
+                                                    }
+                                                }}
+                                            >
+                                                AI Workspace
+                                            </InputLabel>
+                                            <Select
+                                                labelId='ai-workspace-label'
+                                                id='ai-workspace'
+                                                multiple
+                                                value={typeFilter}
+                                                onChange={handleTypeFilterChange}
+                                                renderValue={(selected) => selected.join(', ')}
+                                                sx={{
+                                                    '&::before': {
+                                                        borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
+                                                    },
+                                                    '&::after': {
+                                                        borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
+                                                    },
+                                                    '& .MuiSelect-icon': {
+                                                        background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                        color: '#ffff'
+                                                    }
+                                                }}
+                                            >
+                                                {types.map((name) => (
+                                                    <MenuItem key={name} value={name}>
+                                                        <Checkbox checked={typeFilter.indexOf(name) > -1} />
+                                                        <ListItemText primary={name} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+
+                                        <FormControl variant='standard' style={{ width: '130px', marginTop: '-10px' }}>
+                                            <InputLabel
+                                                id='framework-label'
+                                                sx={{
+                                                    color: customization?.isDarkMode ? '#fff' : '#000',
+                                                    '&.Mui-focused': {
+                                                        color: customization?.isDarkMode ? '#fff' : '#000'
+                                                    }
+                                                }}
+                                            >
+                                                Framework
+                                            </InputLabel>
+                                            <Select
+                                                labelId='framework-label'
+                                                id='framework'
+                                                multiple
+                                                value={frameworkFilter}
+                                                onChange={handleFrameworkFilterChange}
+                                                renderValue={(selected) => selected.join(', ')}
+                                                sx={{
+                                                    '&::before': {
+                                                        borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
+                                                    },
+                                                    '&::after': {
+                                                        borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
+                                                    },
+                                                    '& .MuiSelect-icon': {
+                                                        background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                        color: '#ffff'
+                                                    }
+                                                }}
+                                            >
+                                                {framework.map((name) => (
+                                                    <MenuItem key={name} value={name}>
+                                                        <Checkbox checked={frameworkFilter.indexOf(name) > -1} />
+                                                        <ListItemText primary={name} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl variant='standard' style={{ width: '130px', marginTop: '-10px' }}>
+                                            <InputLabel
+                                                id='Select-label'
+                                                sx={{
+                                                    color: customization?.isDarkMode ? '#fff' : '#000',
+                                                    '&.Mui-focused': {
+                                                        color: customization?.isDarkMode ? '#fff' : '#000'
+                                                    }
+                                                }}
+                                            >
+                                                Select Usecases
+                                            </InputLabel>
+                                            <Select
+                                                labelId='usecases-label'
+                                                id='usecases'
+                                                multiple
+                                                value={selectedUsecases}
+                                                onChange={(event) => {
+                                                    const {
+                                                        target: { value }
+                                                    } = event
+                                                    setSelectedUsecases(typeof value === 'string' ? value.split(',') : value)
+                                                }}
+                                                renderValue={(selected) => selected.join(', ')}
+                                                sx={{
+                                                    '&::before': {
+                                                        borderBottom: customization?.isDarkMode ? '1px solid #e22a90' : '1px solid #3C5BA4'
+                                                    },
+                                                    '&::after': {
+                                                        borderBottom: customization?.isDarkMode ? '2px solid #e22a90' : '2px solid #3C5BA4'
+                                                    },
+                                                    '& .MuiSelect-icon': {
+                                                        background: customization?.isDarkMode ? '#e22a90' : '#3C5BA4',
+                                                        color: '#ffff'
+                                                    }
+                                                }}
+                                                MenuProps={{
+                                                    PaperProps: {
+                                                        sx: {
+                                                            top: '170px !important',
+                                                            height: '320px !important',
+                                                            width: '250px !important'
+                                                        }
+                                                    }
+                                                }}
+                                            >
+                                                {usecases.map((usecase, index) => (
+                                                    <MenuItem key={index} value={usecase}>
+                                                        <Checkbox checked={selectedUsecases.includes(usecase)} />
+                                                        <ListItemText primary={usecase} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Stack>
                                 </>
                             }
                             onSearchChange={onSearchChange}
@@ -585,12 +613,49 @@ const Marketplace = () => {
                                 </ToggleButton>
                             </ToggleButtonGroup>
                         </ViewHeader>
-                        <Tabs value={activeTabValue} onChange={handleTabChange} textColor='primary' aria-label='tabs' centered>
-                            <Tab value={0} label='Community Templates'></Tab>
-                            <Tab value={1} label='My Templates' />
+                        <Tabs
+                            value={activeTabValue}
+                            onChange={handleTabChange}
+                            textColor='primary'
+                            aria-label='tabs'
+                            TabIndicatorProps={{
+                                style: {
+                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                    padding: '0px'
+                                }
+                            }}
+                            centered
+                            sx={{ mb: 2 }}
+                        >
+                            <Tab
+                                value={0}
+                                label='Community Templates'
+                                sx={{
+                                    color: customization.isDarkMode ? '#fff' : '#000',
+                                    '&.Mui-selected': {
+                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    },
+                                    '&:hover': {
+                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    }
+                                }}
+                            />
+                            <Tab
+                                value={1}
+                                label='My Templates'
+                                sx={{
+                                    color: customization.isDarkMode ? '#fff' : '#000',
+                                    '&.Mui-selected': {
+                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    },
+                                    '&:hover': {
+                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                    }
+                                }}
+                            />
                         </Tabs>
                         <TabPanel value={activeTabValue} index={0}>
-                            <Stack direction='row' sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                            {/* <Stack direction='row' sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                 {usecases.map((usecase, index) => (
                                     <FormControlLabel
                                         key={index}
@@ -612,8 +677,8 @@ const Marketplace = () => {
                                         label={usecase}
                                     />
                                 ))}
-                            </Stack>
-                            {selectedUsecases.length > 0 && (
+                            </Stack> */}
+                            {/* {selectedUsecases.length > 0 && (
                                 <Button
                                     sx={{ width: 'max-content', mb: 2, borderRadius: '20px' }}
                                     variant='outlined'
@@ -622,7 +687,7 @@ const Marketplace = () => {
                                 >
                                     Clear All
                                 </Button>
-                            )}
+                            )} */}
 
                             {!view || view === 'card' ? (
                                 <>

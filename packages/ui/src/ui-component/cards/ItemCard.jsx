@@ -217,19 +217,23 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                 </Typography>
                             </div>
                             {data.description && (
-                                <span
-                                    style={{
-                                        display: '-webkit-box',
-                                        marginTop: 10,
-                                        overflowWrap: 'break-word',
-                                        WebkitLineClamp: 3,
-                                        WebkitBoxOrient: 'vertical',
-                                        textOverflow: 'ellipsis',
-                                        overflow: 'hidden'
-                                    }}
-                                >
-                                    {data.description}
-                                </span>
+                                <Tooltip title={data?.description || ''}>
+                                    <span
+                                        style={{
+                                            display: 'block',
+                                            padding: '0px 20px',
+                                            overflowWrap: 'break-word',
+                                            whiteSpace: 'pre-line', // Allows multi-line text wrapping
+                                            overflow: 'hidden', // Ensures overflow content is hidden
+                                            height: '40px', // Limits to two lines based on line height
+                                            lineHeight: '20px', // Adjust to control the height for two lines
+                                            width: '250px',
+                                            fontFamily: 'Roboto, sans-serif'
+                                        }}
+                                    >
+                                        {data.description}
+                                    </span>
+                                </Tooltip>
                             )}
 
                             <div

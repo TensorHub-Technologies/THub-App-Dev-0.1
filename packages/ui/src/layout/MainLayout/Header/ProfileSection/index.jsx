@@ -107,7 +107,6 @@ const ProfileSection = () => {
                                 <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                                     <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
                                         <Box sx={{}}>
-                                            {/* <Divider /> */}
                                             <List
                                                 component='nav'
                                                 sx={{
