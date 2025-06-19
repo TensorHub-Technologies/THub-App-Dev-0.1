@@ -8,6 +8,7 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 
 // icons
 import { IconCopy, IconChevronLeft } from '@tabler/icons-react'
+import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -18,7 +19,8 @@ const MarketplaceCanvasHeader = ({ flowName, flowData, onChatflowCopy }) => {
     return (
         <>
             <Box>
-                <ButtonBase title='Back' sx={{ borderRadius: '50%' }}>
+                <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+                <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: -4, ml: 3 }}>
                     <Avatar
                         variant='rounded'
                         sx={{
