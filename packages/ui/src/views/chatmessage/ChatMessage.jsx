@@ -180,7 +180,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
 
     const [userInput, setUserInput] = useState('')
     const [loading, setLoading] = useState(false)
-    const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
+    const cleanName = chatflow?.name.replace(/[^a-zA-Z\s]/g, '')
     const welcomeMessage = `Hi, I'm ${cleanName}. How can I help you today?`
 
     const [messages, setMessages] = useState([
@@ -1368,7 +1368,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             setLoading(false)
             setMessages([
                 {
-                    message: 'Hi there! How can I help?',
+                    message: welcomeMessage,
                     type: 'apiMessage'
                 }
             ])

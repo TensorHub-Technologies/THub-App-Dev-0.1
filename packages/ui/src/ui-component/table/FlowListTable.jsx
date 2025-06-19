@@ -47,6 +47,14 @@ const getLocalStorageKeyName = (name, isAgentCanvas) => {
     return (isAgentCanvas ? 'agentcanvas' : 'chatflowcanvas') + '_' + name
 }
 
+// Helper function to check if icon is an image path or React component
+const isImagePath = (icon) => {
+    return (
+        typeof icon === 'string' &&
+        (icon.includes('.png') || icon.includes('.jpg') || icon.includes('.jpeg') || icon.includes('.svg') || icon.includes('.gif'))
+    )
+}
+
 export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filterFunction, updateFlowsApi, setError, isAgentCanvas }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
@@ -253,10 +261,23 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                                         height: 30,
                                                                         display: 'flex',
                                                                         alignItems: 'center',
-                                                                        justifyContent: 'center'
+                                                                        justifyContent: 'center',
+                                                                        borderRadius: '50%'
                                                                     }}
                                                                 >
-                                                                    <item.icon size={25} color={item.color} />
+                                                                    {isImagePath(item.icon) ? (
+                                                                        <img
+                                                                            style={{
+                                                                                width: 25,
+                                                                                height: 25,
+                                                                                objectFit: 'contain'
+                                                                            }}
+                                                                            alt=''
+                                                                            src={item.icon}
+                                                                        />
+                                                                    ) : (
+                                                                        <item.icon size={25} color={item.color} />
+                                                                    )}
                                                                 </div>
                                                             )
                                                         )}

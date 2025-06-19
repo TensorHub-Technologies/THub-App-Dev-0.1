@@ -307,7 +307,7 @@ const AgentFlowNode = ({ data }) => {
                                 {data.label}
                             </Typography>
 
-                            {(() => {
+                            {/* {(() => {
                                 // Array of model configs to check and render
                                 const modelConfigs = [
                                     { model: data.inputs?.llmModel, config: data.inputs?.llmModelConfig },
@@ -346,7 +346,7 @@ const AgentFlowNode = ({ data }) => {
                                             </Box>
                                         </Box>
                                     ))
-                            })()}
+                            })()} */}
 
                             {(() => {
                                 // Array of tool configurations to check and render
