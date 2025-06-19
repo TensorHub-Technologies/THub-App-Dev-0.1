@@ -41,7 +41,7 @@ import AgentflowGeneratorDialog from '@/ui-component/dialog/AgentflowGeneratorDi
 import { IconSearch, IconX, IconSparkles } from '@tabler/icons-react'
 import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import LangChainPNG from '@/assets/images/langchain.png'
-import utilNodesPNG from '@/assets/images/utilNodes.png'
+import agentPipelinePNG from '@/assets/images/agentpipeline.png'
 import { getCategoryIcon } from './CategoryIcon'
 import subscriptionPlan from './subscriptionPlan'
 
@@ -72,7 +72,7 @@ const blacklistForChatflowCanvas = {
     Memory: agentMemoryNodes
 }
 
-const DRAWER_WIDTH = 390
+const DRAWER_WIDTH = 360
 const MINI_DRAWER_WIDTH = 80
 
 const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerated }) => {
@@ -330,13 +330,13 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         event.dataTransfer.effectAllowed = 'move'
     }
 
-    const getImage = (tabValue) => {
-        if (tabValue === 0) {
+    const getImage = (tab) => {
+        if (tab === 'LangChain') {
             return LangChainPNG
-        } else if (tabValue === 1) {
+        } else if (tab === 'LlamaIndex') {
             return LlamaindexPNG
-        } else {
-            return utilNodesPNG
+        } else if (tab === 'Agent Pipeline') {
+            return agentPipelinePNG
         }
     }
 
@@ -595,9 +595,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
                 {/* Tabs - Only show when expanded and not agent canvas */}
                 {isExpanded && (
-                    <Box sx={{ pb: 1 }}>
+                    <Box sx={{ pb: 1, ml: 2 }}>
                         <Tabs
-                            variant='fullWidth'
                             value={tabValue}
                             onChange={handleTabChange}
                             aria-label='tabs'
@@ -620,7 +619,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                 borderRadius: '50%',
                                                 objectFit: 'contain'
                                             }}
-                                            src={getImage(index)}
+                                            src={getImage(item)}
                                             alt={item}
                                         />
                                     }
@@ -636,7 +635,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                         '&:hover': {
                                             color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
                                         },
-                                        padding: '0px'
+                                        padding: '0px',
+                                        marginRight: 2
                                     }}
                                     {...a11yProps(index)}
                                 />
