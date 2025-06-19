@@ -823,6 +823,7 @@ const Canvas = () => {
                 >
                     <Toolbar>
                         <CanvasHeader
+                            isUpsertButtonEnabled={isUpsertButtonEnabled}
                             chatflow={chatflow}
                             handleSaveFlow={handleSaveFlow}
                             handleDeleteFlow={handleDeleteFlow}
