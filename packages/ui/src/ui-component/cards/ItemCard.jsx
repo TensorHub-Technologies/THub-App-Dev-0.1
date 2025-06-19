@@ -76,7 +76,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
             ) : (
                 <div
                     style={{
-                        position: 'relative',
+                        position: 'absolute',
                         background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
                         width: '280px',
                         height: '280px',
@@ -85,7 +85,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                     }}
                 >
                     <CardWrapper
-                        // sx={{ background: customization.isDarkMode ? 'theme.palette.common.black': url(${image1}) !important,}}
+                        // sx={{ background: customization.isDarkMode ? 'theme.palette.common.black': `url(${image1}) !important`,}}
                         border={false}
                         content={false}
                         onClick={() => {
@@ -97,7 +97,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                         <div
                             style={{
                                 height: '270px',
-                                overflow: 'auto',
+                                overflow: 'hidden',
                                 borderRadius: '12px',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -204,13 +204,12 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                 )}
                                 <Typography
                                     sx={{
-                                        display: '-webkit-box',
-                                        fontSize: '1.25rem',
+                                        fontSize: '1.1rem',
                                         fontWeight: 500,
-                                        WebkitLineClamp: 2,
-                                        WebkitBoxOrient: 'vertical',
-                                        textOverflow: 'ellipsis',
-                                        overflow: 'hidden'
+                                        height: '40px',
+                                        background: 'transparent',
+                                        overflowWrap: 'break-word',
+                                        whiteSpace: 'pre-line'
                                     }}
                                 >
                                     {data.templateName || data.name}
@@ -235,7 +234,6 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                     </span>
                                 </Tooltip>
                             )}
-
                             <div
                                 style={{
                                     padding: '10px '
@@ -329,7 +327,6 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                                     )}
                                                 </Box>
                                             )}
-
                                             <div
                                                 style={{
                                                     display: 'flex',
