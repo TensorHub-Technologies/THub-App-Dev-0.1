@@ -348,7 +348,7 @@ const AgentFlowNode = ({ data }) => {
                                     ))
                             })()} */}
 
-                            {(() => {
+                            {/* {(() => {
                                 // Array of tool configurations to check and render
                                 const toolConfigs = [
                                     { tools: data.inputs?.llmTools, toolProperty: 'llmSelectedTool' },
@@ -422,7 +422,7 @@ const AgentFlowNode = ({ data }) => {
                                             })}
                                         </Box>
                                     ))
-                            })()}
+                            })()} */}
                         </Box>
                     </div>
                     {getOutputAnchors().map((outputAnchor, index) => {
