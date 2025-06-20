@@ -43,6 +43,6 @@ ENV VITE_TEST_ENV=${VITE_TEST_ENV}
 
 RUN pnpm build
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD [ "pnpm", "start" ]
