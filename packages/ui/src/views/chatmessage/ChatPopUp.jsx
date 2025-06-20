@@ -228,6 +228,9 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                                 height: '100%',
                                 display: 'flex',
                                 flexDirection: 'column',
+                                '& .css-1d57txh-MuiPaper-root-MuiCard-root': {
+                                    margin: '8px 8px 8px -12px'
+                                },
                                 '& .MuiCardContent-root': {
                                     width: '100%',
                                     height: '100%',
