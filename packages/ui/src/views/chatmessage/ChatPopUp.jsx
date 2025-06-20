@@ -139,12 +139,11 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 sx={{
                     zIndex: 1300,
                     '& .MuiDrawer-paper': {
-                        width: '600px',
+                        width: '50vw', // half of the screen width
                         height: '100vh',
                         top: 0,
                         right: 0,
-                        position: 'fixed',
-                        bgcolor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                        position: 'fixed'
                     }
                 }}
                 ModalProps={{
@@ -225,10 +224,14 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                             elevation={0}
                             content={false}
                             sx={{
+                                overflow: 'auto',
                                 width: '100%',
                                 height: '100%',
                                 display: 'flex',
                                 flexDirection: 'column',
+                                '& .css-1d57txh-MuiPaper-root-MuiCard-root': {
+                                    margin: '8px 8px 8px -12px'
+                                },
                                 '& .MuiCardContent-root': {
                                     width: '100%',
                                     height: '100%',

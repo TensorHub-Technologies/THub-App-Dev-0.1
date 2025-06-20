@@ -11,12 +11,13 @@
     margin-top: 1rem;
 }
 
-/* .usermessage {
-    padding: 1rem 1.5rem 1rem 1.5rem;
-} */
+.usermessage {
+    /* padding: 1rem 1.5rem 1rem 1.5rem; */
+    overflow: auto;
+}
 
 .usermessagewaiting-light {
-    /* padding: 1rem 1.5rem 1rem 1.5rem; */
+    padding: 1rem 1.5rem 1rem 1.5rem;
     background: linear-gradient(to left, #ede7f6, #e3f2fd, #ede7f6);
     background-size: 200% 200%;
     background-position: -100% 0;
@@ -26,7 +27,7 @@
 }
 
 .usermessagewaiting-dark {
-    /* padding: 1rem 1.5rem 1rem 1.5rem; */
+    padding: 1rem 1.5rem 1rem 1.5rem;
     color: #ececf1;
     background: linear-gradient(to left, #2e2352, #1d3d60, #2e2352);
     background-size: 200% 200%;
@@ -46,7 +47,7 @@
 }
 
 .apimessage {
-    /* padding: 1rem 1.5rem 1rem 1.5rem; */
+    padding: 1rem 1.5rem 1rem 1.5rem;
     animation: fadein 0.5s;
 }
 
@@ -117,7 +118,7 @@
 }
 
 .cloud-wrapper {
-    width: 600px;
+    width: 800px;
     height: calc(133vh - 180px);
     border-radius: 0%;
 }
@@ -151,6 +152,8 @@
 
 .cloud,
 .cloud-dialog {
+    scrollbar-width: thin;
+
     width: 100%;
     height: auto;
     max-height: calc(100% - 54px);
@@ -159,6 +162,7 @@
     justify-content: center;
     align-items: flex-start;
     flex-grow: 1;
+    overflow-x: hidden;
 }
 
 .cloud-message {
@@ -177,13 +181,14 @@
     z-index: 1000;
     display: flex;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* For momentum scroll on mobile devices */
-    scrollbar-width: none; /* For Firefox */
+    -webkit-overflow-scrolling: touch;
+    /* For momentum scroll on mobile devices */
+    scrollbar-width: none;
+    /* For Firefox */
 }
 
 .file-drop-field {
-    position: relative; /* Needed to position the icon correctly */
-    /* Other styling for the field */
+    position: relative;
 }
 
 .drop-overlay {
@@ -192,16 +197,95 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(137, 134, 134, 0.83); /* Semi-transparent white */
+    background-color: rgba(137, 134, 134, 0.83);
+    /* Semi-transparent white */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 2000; /* Ensure it's above other content */
-    border: 2px dashed #0094ff; /* Example style */
+    z-index: 2000;
+    /* Ensure it's above other content */
+    border: 2px dashed #0094ff;
+    /* Example style */
 }
 
 .center audio {
     height: 100%;
     border-radius: 0;
+}
+
+.minimized {
+    height: 100px;
+    /* Adjust as needed */
+    overflow: hidden;
+}
+
+.logo-part {
+    position: absolute;
+    transition: transform 1s ease-in-out infinite;
+}
+
+.toppart {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    animation: slide-in-top 1s ease-in-out forwards infinite;
+}
+
+.relative {
+    position: relative;
+}
+
+.logo-size {
+    width: 24px;
+    height: 62px;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.gap-2 {
+    gap: 0.5rem /* 8px */;
+}
+
+.leftpart {
+    left: 0;
+    top: 50%;
+    transform: translate(-100%, -50%);
+    animation: slide-in-left 1s ease-in-out forwards infinite;
+}
+
+.rightpart {
+    right: 0;
+    top: 50%;
+    transform: translate(100%, -50%);
+    animation: slide-in-right 1s ease-in-out forwards infinite;
+}
+
+/* Keyframes for animations */
+@keyframes slide-in-top {
+    to {
+        transform: translate(-50%, 0%);
+    }
+}
+
+@keyframes slide-in-left {
+    to {
+        transform: translate(0, -50%);
+    }
+}
+
+@keyframes slide-in-right {
+    to {
+        transform: translate(0, -50%);
+    }
 }

@@ -304,7 +304,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
             const filteredResult = {}
             for (const category in result) {
-                if (category === 'Agent Pipeline' || category === 'Multi Agents' || category === 'Sequential Agents') {
+                if (category === 'Agent Pipeline') {
                     continue
                 }
                 if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
@@ -482,7 +482,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 <StyledFab
                     sx={{
                         position: 'fixed',
-                        left: 1240,
+                        // left: 1240,
+                        right: 140,
                         top: 89,
                         background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                         '&:hover': {

@@ -242,6 +242,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         if (isConfirmed) {
             try {
                 await chatflowsApi.deleteChatflow(chatflow.id)
+                window.location.reload()
                 if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
                     await updateFlowsApi.request('AGENTFLOW')
                 } else {

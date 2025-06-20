@@ -1630,7 +1630,7 @@
             },
             "data": {
                 "id": "llmAgentflow_0",
-                "label": "Supervisor",
+                "label": "Principal Agent",
                 "version": 1,
                 "name": "llmAgentflow",
                 "type": "LLM",

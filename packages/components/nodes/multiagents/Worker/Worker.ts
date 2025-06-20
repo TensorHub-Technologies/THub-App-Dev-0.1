@@ -26,7 +26,7 @@ class Worker_MultiAgents implements INode {
     badge?: string
 
     constructor() {
-        this.label = 'Worker'
+        this.label = 'Specialist Agent'
         this.name = 'worker'
         this.version = 2.0
         this.type = 'Worker'

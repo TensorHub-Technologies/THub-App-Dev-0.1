@@ -389,7 +389,8 @@ const Canvas = () => {
                     isPublic: false,
                     tenantId: tenantId,
                     workspaceUid: workspaceId,
-                    flowData
+                    flowData,
+                    type: isAgentCanvas ? 'MULTIAGENT' : 'CHATFLOW'
                 }
                 createNewChatflowApi.request(newChatflowBody)
             } else {
