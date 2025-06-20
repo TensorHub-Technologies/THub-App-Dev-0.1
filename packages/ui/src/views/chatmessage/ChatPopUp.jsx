@@ -224,6 +224,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                             elevation={0}
                             content={false}
                             sx={{
+                                overflow: 'auto',
                                 width: '100%',
                                 height: '100%',
                                 display: 'flex',
