@@ -12,7 +12,7 @@
             "type": "customNode",
             "data": {
                 "id": "supervisor_0",
-                "label": "Supervisor",
+                "label": "Principal Agent",
                 "version": 1,
                 "name": "supervisor",
                 "type": "Supervisor",
@@ -76,7 +76,7 @@
                     {
                         "id": "supervisor_0-output-supervisor-Supervisor",
                         "name": "supervisor",
-                        "label": "Supervisor",
+                        "label": "Principal Agent",
                         "description": "",
                         "type": "Supervisor"
                     }
@@ -102,7 +102,7 @@
             "type": "customNode",
             "data": {
                 "id": "worker_0",
-                "label": "Worker",
+                "label": "Specialist Agent",
                 "version": 1,
                 "name": "worker",
                 "type": "Worker",
@@ -151,7 +151,7 @@
                         "id": "worker_0-input-tools-Tool"
                     },
                     {
-                        "label": "Supervisor",
+                        "label": "Principal Agent",
                         "name": "supervisor",
                         "type": "Supervisor",
                         "id": "worker_0-input-supervisor-Supervisor"
@@ -178,7 +178,7 @@
                     {
                         "id": "worker_0-output-worker-Worker",
                         "name": "worker",
-                        "label": "Worker",
+                        "label": "Specialist Agent",
                         "description": "",
                         "type": "Worker"
                     }
@@ -204,7 +204,7 @@
             "type": "customNode",
             "data": {
                 "id": "worker_1",
-                "label": "Worker",
+                "label": "Specialist Agent",
                 "version": 1,
                 "name": "worker",
                 "type": "Worker",
@@ -253,7 +253,7 @@
                         "id": "worker_1-input-tools-Tool"
                     },
                     {
-                        "label": "Supervisor",
+                        "label": "Principal Agent",
                         "name": "supervisor",
                         "type": "Supervisor",
                         "id": "worker_1-input-supervisor-Supervisor"
@@ -280,7 +280,7 @@
                     {
                         "id": "worker_1-output-worker-Worker",
                         "name": "worker",
-                        "label": "Worker",
+                        "label": "Specialist Agent",
                         "description": "",
                         "type": "Worker"
                     }

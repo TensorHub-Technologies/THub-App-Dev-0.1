@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // material-ui
-import { Box, Skeleton, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Box, Chip, Skeleton, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
@@ -171,7 +171,7 @@ const Agentflows = () => {
                         title='Agent Pipeline'
                         description='Multi-agent systems, workflow orchestration'
                     >
-                        {/* <ToggleButtonGroup
+                        <ToggleButtonGroup
                             sx={{ borderRadius: 2, maxHeight: 40 }}
                             value={agentflowVersion}
                             color='primary'
@@ -203,7 +203,7 @@ const Agentflows = () => {
                             >
                                 V1
                             </ToggleButton>
-                        </ToggleButtonGroup> */}
+                        </ToggleButtonGroup>
                         <ToggleButtonGroup
                             sx={{ borderRadius: 2, maxHeight: 40 }}
                             value={view}
