@@ -1,13 +1,11 @@
 import { styled } from '@mui/system'
 import { TabsList as BaseTabsList } from '@mui/base/TabsList'
-import { useSelector } from 'react-redux'
+import { blue } from './tabColors'
 
-export const TabsList = styled(BaseTabsList)(({ theme, ...props }) => {
-    const customization = useSelector((state) => state.customization)
-
-    return `
+export const TabsList = styled(BaseTabsList)(
+    ({ theme, ...props }) => `
     min-width: 400px;
-    background-color: ${customization?.isDarkMode ? '#e22a90' : '#3c5ba4'};
+    background-color: ${props.sx?.backgroundColor || blue[500]};
     border-radius: 20px;
     margin-top: 16px;
     margin-bottom: 16px;
@@ -17,4 +15,4 @@ export const TabsList = styled(BaseTabsList)(({ theme, ...props }) => {
     align-content: space-between;
     box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.4)' : 'rgba(0,0,0, 0.2)'};
     `
-})
+)

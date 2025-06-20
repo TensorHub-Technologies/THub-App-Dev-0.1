@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // material-ui
-import { Box, Skeleton, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Box, Chip, Skeleton, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
@@ -10,7 +10,7 @@ import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
 import AgentsEmptySVG from '@/assets/images/agents_empty.svg'
-import LoginDialog from '@/ui-component/dialog/LoginDialog'
+// import LoginDialog from '@/ui-component/dialog/LoginDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { FlowListTable } from '@/ui-component/table/FlowListTable'
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -24,30 +24,48 @@ import chatflowsApi from '@/api/chatflows'
 import useApi from '@/hooks/useApi'
 
 // const
-import { baseURL } from '@/store/constant'
+import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
 
 // icons
 import { IconPlus, IconLayoutGrid, IconList } from '@tabler/icons-react'
+import { useSelector } from 'react-redux'
 
 // ==============================|| AGENTS ||============================== //
 
 const Agentflows = () => {
     const navigate = useNavigate()
     const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
 
     const [isLoading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [images, setImages] = useState({})
+    const [icons, setIcons] = useState({})
     const [search, setSearch] = useState('')
     const [loginDialogOpen, setLoginDialogOpen] = useState(false)
     const [loginDialogProps, setLoginDialogProps] = useState({})
+
+    const userData = useSelector((state) => state.user.userData)
+
+    const tenantId = userData?.uid || localStorage.getItem('userId')
+
+    console.log('User Data:', userData, tenantId)
+
     const getAllAgentflows = useApi(chatflowsApi.getAllAgentflows)
     const [view, setView] = useState(localStorage.getItem('flowDisplayStyle') || 'card')
+    const [agentflowVersion, setAgentflowVersion] = useState(localStorage.getItem('agentFlowVersion') || 'v2')
 
     const handleChange = (event, nextView) => {
         if (nextView === null) return
         localStorage.setItem('flowDisplayStyle', nextView)
         setView(nextView)
+    }
+
+    const handleVersionChange = (event, nextView) => {
+        if (nextView === null) return
+        localStorage.setItem('agentFlowVersion', nextView)
+        setAgentflowVersion(nextView)
+        getAllAgentflows.request(nextView === 'v2' ? 'AGENTFLOW' : 'MULTIAGENT', tenantId)
     }
 
     const onSearchChange = (event) => {
@@ -57,7 +75,8 @@ const Agentflows = () => {
     function filterFlows(data) {
         return (
             data.name.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
-            (data.category && data.category.toLowerCase().indexOf(search.toLowerCase()) > -1)
+            (data.category && data.category.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
+            data.id.toLowerCase().indexOf(search.toLowerCase()) > -1
         )
     }
 
@@ -68,15 +87,23 @@ const Agentflows = () => {
     }
 
     const addNew = () => {
-        navigate('/agentcanvas')
+        if (agentflowVersion === 'v2') {
+            navigate('/v2/agentcanvas')
+        } else {
+            navigate('/agentcanvas')
+        }
     }
 
     const goToCanvas = (selectedAgentflow) => {
-        navigate(`/agentcanvas/${selectedAgentflow.id}`)
+        if (selectedAgentflow.type === 'AGENTFLOW') {
+            navigate(`/v2/agentcanvas/${selectedAgentflow.id}`)
+        } else {
+            navigate(`/agentcanvas/${selectedAgentflow.id}`)
+        }
     }
 
     useEffect(() => {
-        getAllAgentflows.request()
+        getAllAgentflows.request(agentflowVersion === 'v2' ? 'AGENTFLOW' : 'MULTIAGENT', tenantId)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -88,7 +115,7 @@ const Agentflows = () => {
                     title: 'Login',
                     confirmButtonName: 'Login'
                 })
-                setLoginDialogOpen(true)
+                setLoginDialogOpen(false)
             } else {
                 setError(getAllAgentflows.error)
             }
@@ -104,19 +131,27 @@ const Agentflows = () => {
             try {
                 const agentflows = getAllAgentflows.data
                 const images = {}
+                const icons = {}
                 for (let i = 0; i < agentflows.length; i += 1) {
                     const flowDataStr = agentflows[i].flowData
                     const flowData = JSON.parse(flowDataStr)
                     const nodes = flowData.nodes || []
                     images[agentflows[i].id] = []
+                    icons[agentflows[i].id] = []
                     for (let j = 0; j < nodes.length; j += 1) {
-                        const imageSrc = `${baseURL}/api/v1/node-icon/${nodes[j].data.name}`
-                        if (!images[agentflows[i].id].includes(imageSrc)) {
-                            images[agentflows[i].id].push(imageSrc)
+                        const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === nodes[j].data.name)
+                        if (foundIcon) {
+                            icons[agentflows[i].id].push(foundIcon)
+                        } else {
+                            const imageSrc = `${baseURL}/api/v1/node-icon/${nodes[j].data.name}`
+                            if (!images[agentflows[i].id].includes(imageSrc)) {
+                                images[agentflows[i].id].push(imageSrc)
+                            }
                         }
                     }
                 }
                 setImages(images)
+                setIcons(icons)
             } catch (e) {
                 console.error(e)
             }
@@ -129,7 +164,46 @@ const Agentflows = () => {
                 <ErrorBoundary error={error} />
             ) : (
                 <Stack flexDirection='column' sx={{ gap: 3 }}>
-                    <ViewHeader onSearchChange={onSearchChange} search={true} searchPlaceholder='Search Name or Category' title='Agents'>
+                    <ViewHeader
+                        onSearchChange={onSearchChange}
+                        search={true}
+                        searchPlaceholder='Search Name or Category'
+                        title='Agent Pipeline'
+                        description='Multi-agent systems, workflow orchestration'
+                    >
+                        <ToggleButtonGroup
+                            sx={{ borderRadius: 2, maxHeight: 40 }}
+                            value={agentflowVersion}
+                            color='primary'
+                            exclusive
+                            onChange={handleVersionChange}
+                        >
+                            <ToggleButton
+                                sx={{
+                                    borderColor: theme.palette.grey[900] + 25,
+                                    borderRadius: 2,
+                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                }}
+                                variant='contained'
+                                value='v2'
+                                title='V2'
+                            >
+                                <Chip sx={{ mr: 1, color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} label='NEW' size='small' />
+                                V2
+                            </ToggleButton>
+                            <ToggleButton
+                                sx={{
+                                    borderColor: theme.palette.grey[900] + 25,
+                                    borderRadius: 2,
+                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                }}
+                                variant='contained'
+                                value='v1'
+                                title='V1'
+                            >
+                                V1
+                            </ToggleButton>
+                        </ToggleButtonGroup>
                         <ToggleButtonGroup
                             sx={{ borderRadius: 2, maxHeight: 40 }}
                             value={view}
@@ -147,7 +221,7 @@ const Agentflows = () => {
                                 value='card'
                                 title='Card View'
                             >
-                                <IconLayoutGrid />
+                                <IconLayoutGrid style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
                             </ToggleButton>
                             <ToggleButton
                                 sx={{
@@ -159,25 +233,32 @@ const Agentflows = () => {
                                 value='list'
                                 title='List View'
                             >
-                                <IconList />
+                                <IconList style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
                             </ToggleButton>
                         </ToggleButtonGroup>
                         <StyledButton variant='contained' onClick={addNew} startIcon={<IconPlus />} sx={{ borderRadius: 2, height: 40 }}>
-                            Add New
+                            Create
                         </StyledButton>
                     </ViewHeader>
                     {!view || view === 'card' ? (
                         <>
                             {isLoading && !getAllAgentflows.data ? (
-                                <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                    <Skeleton variant='rounded' height={160} />
-                                    <Skeleton variant='rounded' height={160} />
-                                    <Skeleton variant='rounded' height={160} />
+                                <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+                                    <Skeleton variant='rounded' height={280} />
+                                    <Skeleton variant='rounded' height={280} />
+                                    <Skeleton variant='rounded' height={280} />
+                                    <Skeleton variant='rounded' height={280} />
                                 </Box>
                             ) : (
-                                <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
+                                <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
                                     {getAllAgentflows.data?.filter(filterFlows).map((data, index) => (
-                                        <ItemCard key={index} onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
+                                        <ItemCard
+                                            key={index}
+                                            onClick={() => goToCanvas(data)}
+                                            data={data}
+                                            images={images[data.id]}
+                                            icons={icons[data.id]}
+                                        />
                                     ))}
                                 </Box>
                             )}
@@ -187,6 +268,7 @@ const Agentflows = () => {
                             isAgentCanvas={true}
                             data={getAllAgentflows.data}
                             images={images}
+                            icons={icons}
                             isLoading={isLoading}
                             filterFunction={filterFlows}
                             updateFlowsApi={getAllAgentflows}
@@ -208,7 +290,7 @@ const Agentflows = () => {
                 </Stack>
             )}
 
-            <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} />
+            {/* <LoginDialog show={loginDialogOpen} dialogProps={loginDialogProps} onConfirm={onLoginClick} /> */}
             <ConfirmDialog />
         </MainCard>
     )

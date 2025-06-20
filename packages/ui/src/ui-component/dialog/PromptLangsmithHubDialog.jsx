@@ -2,12 +2,6 @@ import { createPortal } from 'react-dom'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-
-import rehypeMathjax from 'rehype-mathjax'
-import rehypeRaw from 'rehype-raw'
-import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
-
 // MUI
 import {
     Box,
@@ -36,15 +30,14 @@ import {
 import MuiAccordion from '@mui/material/Accordion'
 import MuiAccordionSummary from '@mui/material/AccordionSummary'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
-import { IconChevronDown } from '@tabler/icons-react'
-import { IconChevronRightPipe } from '@tabler/icons-react'
-import { IconX } from '@tabler/icons-react'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
+import ClearIcon from '@mui/icons-material/Clear'
 import { styled } from '@mui/material/styles'
 
 //Project Import
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { MemoizedReactMarkdown } from '@/ui-component/markdown/MemoizedReactMarkdown'
-import { CodeBlock } from '@/ui-component/markdown/CodeBlock'
 import promptEmptySVG from '@/assets/images/prompt_empty.svg'
 
 import useApi from '@/hooks/useApi'
@@ -68,7 +61,7 @@ const Accordion = styled((props) => <MuiAccordion disableGutters elevation={0} s
 }))
 
 const AccordionSummary = styled((props) => (
-    <MuiAccordionSummary expandIcon={<IconChevronRightPipe sx={{ fontSize: '0.9rem' }} />} {...props} />
+    <MuiAccordionSummary expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />} {...props} />
 ))(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, .05)' : 'rgba(0, 0, 0, .03)',
     flexDirection: 'row-reverse',
@@ -281,7 +274,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                             endAdornment={
                                 modelName.length ? (
                                     <IconButton sx={{ mr: 2 }} onClick={() => setModelName([])}>
-                                        <IconX style={{ width: 20, height: 20 }} />
+                                        <ClearIcon style={{ width: 20, height: 20 }} />
                                     </IconButton>
                                 ) : (
                                     false
@@ -319,7 +312,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                             endAdornment={
                                 usecase.length ? (
                                     <IconButton sx={{ mr: 2 }} onClick={() => setUsecase([])}>
-                                        <IconX style={{ width: 20, height: 20 }} />
+                                        <ClearIcon style={{ width: 20, height: 20 }} />
                                     </IconButton>
                                 ) : (
                                     false
@@ -356,7 +349,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                             endAdornment={
                                 language.length ? (
                                     <IconButton sx={{ mr: 2 }} onClick={() => setLanguage([])}>
-                                        <IconX style={{ width: 20, height: 20 }} />
+                                        <ClearIcon style={{ width: 20, height: 20 }} />
                                     </IconButton>
                                 ) : (
                                     false
@@ -456,7 +449,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                 >
                                                     <AccordionSummary
                                                         aria-controls='panel2d-content'
-                                                        expandIcon={<IconChevronDown />}
+                                                        expandIcon={<ExpandMoreIcon />}
                                                         id='panel2d-header'
                                                     >
                                                         <Typography>Prompt</Typography>
@@ -492,7 +485,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                 >
                                                     <AccordionSummary
                                                         aria-controls='panel1d-content'
-                                                        expandIcon={<IconChevronDown />}
+                                                        expandIcon={<ExpandMoreIcon />}
                                                         id='panel1d-header'
                                                     >
                                                         <Typography>Description</Typography>
@@ -511,7 +504,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                     onChange={handleAccordionChange('readme')}
                                                 >
                                                     <AccordionSummary
-                                                        expandIcon={<IconChevronDown />}
+                                                        expandIcon={<ExpandMoreIcon />}
                                                         aria-controls='panel3d-content'
                                                         id='panel3d-header'
                                                     >
@@ -536,30 +529,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                                 }
                                                             }}
                                                         >
-                                                            <MemoizedReactMarkdown
-                                                                remarkPlugins={[remarkGfm, remarkMath]}
-                                                                rehypePlugins={[rehypeMathjax, rehypeRaw]}
-                                                                components={{
-                                                                    code({ inline, className, children, ...props }) {
-                                                                        const match = /language-(\w+)/.exec(className || '')
-                                                                        return !inline ? (
-                                                                            <CodeBlock
-                                                                                key={Math.random()}
-                                                                                isDialog={true}
-                                                                                language={(match && match[1]) || ''}
-                                                                                value={String(children).replace(/\n$/, '')}
-                                                                                {...props}
-                                                                            />
-                                                                        ) : (
-                                                                            <code className={className} {...props}>
-                                                                                {children}
-                                                                            </code>
-                                                                        )
-                                                                    }
-                                                                }}
-                                                            >
-                                                                {selectedPrompt?.readme}
-                                                            </MemoizedReactMarkdown>
+                                                            <MemoizedReactMarkdown>{selectedPrompt?.readme}</MemoizedReactMarkdown>
                                                         </div>
                                                     </AccordionDetails>
                                                 </Accordion>

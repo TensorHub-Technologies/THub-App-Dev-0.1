@@ -1,173 +1,134 @@
-import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 // material-ui
-import { Grid, Box, Stack, Button } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+import { Card, CardContent, Stack } from '@mui/material'
+import { useTheme, styled } from '@mui/material/styles'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
-import ItemCard from '@/ui-component/cards/ItemCard'
-import { gridSpacing } from '@/store/constant'
-import { StyledButton } from '@/ui-component/button/StyledButton'
-import AssistantDialog from './AssistantDialog'
-import LoadAssistantDialog from './LoadAssistantDialog'
-import emptyImage from '../../assets/images/glass.svg'
-import emptyImagelite from '../../assets/images/glass-lite.svg'
-
-// API
-import assistantsApi from '@/api/assistants'
-
-// Hooks
-import useApi from '@/hooks/useApi'
+import ViewHeader from '@/layout/MainLayout/ViewHeader'
 
 // icons
-import { IconPlus, IconFileImport } from '@tabler/icons-react'
+import { IconRobotFace, IconBrandOpenai, IconBrandAzure } from '@tabler/icons-react'
 
-// ==============================|| CHATFLOWS ||============================== //
+const cards = [
+    {
+        title: 'Custom Assistant',
+        description: 'Create custom assistant using your choice of LLMs',
+        icon: <IconRobotFace />,
+        iconText: 'Custom',
+        gradient: 'linear-gradient(135deg, #fff8e14e 0%, #ffcc802f 100%)'
+    },
+    {
+        title: 'OpenAI Assistant',
+        description: 'Create assistant using OpenAI Assistant API',
+        icon: <IconBrandOpenai />,
+        iconText: 'OpenAI',
+        gradient: 'linear-gradient(135deg, #c9ffd85f 0%, #a0f0b567 100%)'
+    },
+    {
+        title: 'Azure Assistant (Coming Soon)',
+        description: 'Create assistant using Azure Assistant API',
+        icon: <IconBrandAzure />,
+        iconText: 'Azure',
+        gradient: 'linear-gradient(135deg, #c4e1ff57 0%, #80b7ff5a 100%)'
+    }
+]
 
-const Assistants = () => {
+const StyledCard = styled(Card)(({ gradient }) => ({
+    height: '300px',
+    background: gradient,
+    position: 'relative',
+    overflow: 'hidden',
+    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+    cursor: 'pointer'
+}))
+
+const FeatureIcon = styled('div')(() => ({
+    display: 'inline-flex',
+    padding: '4px 8px',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    borderRadius: '4px',
+    marginBottom: '16px',
+    '& svg': {
+        width: '1.2rem',
+        height: '1.2rem',
+        marginRight: '8px'
+    }
+}))
+
+const FeatureCards = () => {
+    const navigate = useNavigate()
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
-    const getAllAssistantsApi = useApi(assistantsApi.getAllAssistants)
-
-    const userData = useSelector((state) => state.user.userData)
-    // const tenantId = userData['uid']
-    const tenantId = userData?.uid
-
-    const [showDialog, setShowDialog] = useState(false)
-    const [dialogProps, setDialogProps] = useState({})
-    const [showLoadDialog, setShowLoadDialog] = useState(false)
-    const [loadDialogProps, setLoadDialogProps] = useState({})
-
-    const loadExisting = () => {
-        const dialogProp = {
-            title: 'Load Existing Assistant'
-        }
-        setLoadDialogProps(dialogProp)
-        setShowLoadDialog(true)
+    const onCardClick = (index) => {
+        if (index === 0) navigate('/assistants/custom')
+        if (index === 1) navigate('/assistants/openai')
+        if (index === 2) alert('Under Development')
     }
-
-    const onAssistantSelected = (selectedOpenAIAssistantId, credential) => {
-        setShowLoadDialog(false)
-        addNew(selectedOpenAIAssistantId, credential)
-    }
-
-    const addNew = (selectedOpenAIAssistantId, credential) => {
-        const dialogProp = {
-            title: 'Add New Assistant',
-            type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Add',
-            selectedOpenAIAssistantId,
-            credential
-        }
-        setDialogProps(dialogProp)
-        setShowDialog(true)
-    }
-
-    const edit = (selectedAssistant) => {
-        const dialogProp = {
-            title: 'Edit Assistant',
-            type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Save',
-            data: selectedAssistant
-        }
-        setDialogProps(dialogProp)
-        setShowDialog(true)
-    }
-
-    const onConfirm = () => {
-        setShowDialog(false)
-        getAllAssistantsApi.request(tenantId)
-    }
-
-    useEffect(() => {
-        getAllAssistantsApi.request(tenantId)
-    }, [])
 
     return (
+        <Stack
+            spacing={3}
+            direction='row'
+            sx={{
+                width: '100%',
+                justifyContent: 'space-between'
+            }}
+        >
+            {cards.map((card, index) => (
+                <StyledCard
+                    key={index}
+                    gradient={card.gradient}
+                    sx={{
+                        flex: 1,
+                        maxWidth: 'calc((100% - 2 * 16px) / 3)',
+                        height: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        border: 1,
+                        borderColor: theme.palette.grey[900] + 25,
+                        borderRadius: 2,
+                        color: customization.isDarkMode ? theme.palette.common.white : '#333333',
+                        cursor: index === 2 ? 'not-allowed' : 'pointer',
+                        opacity: index === 2 ? 0.6 : 1,
+                        '&:hover': {
+                            boxShadow: index === 2 ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.1)'
+                        }
+                    }}
+                    onClick={() => index !== 2 && onCardClick(index)}
+                >
+                    <CardContent className='h-full relative z-10'>
+                        <FeatureIcon>
+                            {card.icon}
+                            <span className='text-xs uppercase'>{card.iconText}</span>
+                        </FeatureIcon>
+                        <h2 className='text-2xl font-bold mb-2'>{card.title}</h2>
+                        <p className='text-gray-600'>{card.description}</p>
+                    </CardContent>
+                </StyledCard>
+            ))}
+        </Stack>
+    )
+}
+
+// ==============================|| ASSISTANTS ||============================== //
+
+const Assistants = () => {
+    return (
         <>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
-                <Stack flexDirection='row'>
-                    <Grid sx={{ mb: 1.25 }} container direction='row'>
-                        <h1
-                            style={{
-                                background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                                WebkitBackgroundClip: 'text',
-                                color: 'transparent',
-                                fontSize: '24px',
-                                lineHeight: '1.3'
-                            }}
-                        >
-                            OpenAI Assistants
-                        </h1>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <Grid item>
-                            <Button
-                                variant='outlined'
-                                sx={{
-                                    mr: 2,
-                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    borderColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    '&:hover': {
-                                        borderColor: customization.isDarkMode ? '#e22a90 !important' : '#3c5ba4 !important'
-                                    }
-                                }}
-                                onClick={loadExisting}
-                                startIcon={<IconFileImport />}
-                            >
-                                Load
-                            </Button>
-                            <StyledButton variant='contained' sx={{ color: 'white' }} onClick={addNew} startIcon={<IconPlus />}>
-                                Add
-                            </StyledButton>
-                        </Grid>
-                    </Grid>
+            <MainCard>
+                <Stack flexDirection='column' sx={{ gap: 3 }}>
+                    <ViewHeader
+                        title='Assistants'
+                        description='Chat assistants with instructions, tools, and files to respond to user queries'
+                    />
+                    <FeatureCards />
                 </Stack>
-                <Grid container spacing={gridSpacing}>
-                    {!getAllAssistantsApi.loading &&
-                        getAllAssistantsApi.data &&
-                        getAllAssistantsApi.data.map((data, index) => (
-                            <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
-                                <ItemCard
-                                    data={{
-                                        name: JSON.parse(data.details)?.name,
-                                        description: JSON.parse(data.details)?.instructions,
-                                        iconSrc: data.iconSrc
-                                    }}
-                                    onClick={() => edit(data)}
-                                />
-                            </Grid>
-                        ))}
-                </Grid>
-                {!getAllAssistantsApi.loading && (!getAllAssistantsApi.data || getAllAssistantsApi.data.length === 0) && (
-                    <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                        <Box sx={{ p: 2, height: 'auto' }}>
-                            <img
-                                style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
-                                src={customization.isDarkMode ? emptyImage : emptyImagelite}
-                                alt='ToolEmptySVG'
-                            />
-                        </Box>
-                        <div>No Assistants Added Yet</div>
-                    </Stack>
-                )}
             </MainCard>
-            <LoadAssistantDialog
-                show={showLoadDialog}
-                dialogProps={loadDialogProps}
-                onCancel={() => setShowLoadDialog(false)}
-                onAssistantSelected={onAssistantSelected}
-            ></LoadAssistantDialog>
-            <AssistantDialog
-                show={showDialog}
-                dialogProps={dialogProps}
-                onCancel={() => setShowDialog(false)}
-                onConfirm={onConfirm}
-            ></AssistantDialog>
         </>
     )
 }

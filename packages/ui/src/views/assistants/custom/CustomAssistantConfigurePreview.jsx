@@ -118,6 +118,10 @@ const CustomAssistantConfigurePreview = () => {
     const [loadingAssistant, setLoadingAssistant] = useState(true)
     const [error, setError] = useState(null)
 
+    const userData = useSelector((state) => state.user.userData)
+
+    const tenantId = userData?.uid || localStorage.getItem('userId')
+
     const dispatch = useDispatch()
     const { confirm } = useConfirm()
 
@@ -210,6 +214,7 @@ const CustomAssistantConfigurePreview = () => {
             if (!flowData) return
             const saveObj = {
                 id: customAssistantId,
+                tenantId: tenantId,
                 name: selectedCustomAssistant.name,
                 flowData: JSON.stringify(flowData),
                 type: 'ASSISTANT'
@@ -1000,7 +1005,7 @@ const CustomAssistantConfigurePreview = () => {
                                                         sx={{ borderRadius: 20 }}
                                                         size='small'
                                                         variant='text'
-                                                        onClick={() => generateInstruction(customAssistantInstruction)}
+                                                        onClick={() => generateInstruction()}
                                                         startIcon={<IconWand size={20} />}
                                                     >
                                                         Generate

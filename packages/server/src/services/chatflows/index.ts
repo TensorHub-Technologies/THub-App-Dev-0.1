@@ -1,6 +1,8 @@
 import { ICommonObject, removeFolderFromStorage } from 'thub-components'
 import { StatusCodes } from 'http-status-codes'
+import { QueryRunner } from 'typeorm'
 import { ChatflowType, IReactFlowObject } from '../../Interface'
+import { FLOWISE_COUNTER_STATUS, FLOWISE_METRIC_COUNTERS } from '../../Interface.Metrics'
 import { ChatFlow } from '../../database/entities/ChatFlow'
 import { ChatMessage } from '../../database/entities/ChatMessage'
 import { ChatMessageFeedback } from '../../database/entities/ChatMessageFeedback'
@@ -13,8 +15,7 @@ import { containsBase64File, updateFlowDataWithFilePaths } from '../../utils/fil
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { utilGetUploadsConfig } from '../../utils/getUploadsConfig'
 import logger from '../../utils/logger'
-import { FLOWISE_METRIC_COUNTERS, FLOWISE_COUNTER_STATUS } from '../../Interface.Metrics'
-import { QueryRunner } from 'typeorm'
+import { validate } from 'uuid'
 
 // Check if chatflow valid for streaming
 const checkIfChatflowIsValidForStreaming = async (chatflowId: string): Promise<any> => {
@@ -35,6 +36,10 @@ const checkIfChatflowIsValidForStreaming = async (chatflowId: string): Promise<a
             if (chatflowConfig?.postProcessing?.enabled === true) {
                 return { isStreaming: false }
             }
+        }
+
+        if (chatflow.type === 'AGENTFLOW') {
+            return { isStreaming: true }
         }
 
         /*** Get Ending Node with Directed Graph  ***/
@@ -114,12 +119,18 @@ const deleteChatflow = async (chatflowId: string): Promise<any> => {
     }
 }
 
-const getAllChatflows = async (type?: ChatflowType, tenantId?: any): Promise<ChatFlow[]> => {
+const getAllChatflows = async (type?: ChatflowType, tenantId?: string): Promise<ChatFlow[]> => {
+    console.log(tenantId, 'tenantId')
+
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findBy({ tenantId: tenantId })
+        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findBy({ tenantId })
         if (type === 'MULTIAGENT') {
             return dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
+        } else if (type === 'AGENTFLOW') {
+            return dbResponse.filter((chatflow) => chatflow.type === 'AGENTFLOW')
+        } else if (type === 'ASSISTANT') {
+            return dbResponse.filter((chatflow) => chatflow.type === 'ASSISTANT')
         } else if (type === 'CHATFLOW') {
             // fetch all chatflows that are not agentflow
             return dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
@@ -129,25 +140,6 @@ const getAllChatflows = async (type?: ChatflowType, tenantId?: any): Promise<Cha
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: chatflowsService.getAllChatflows - ${getErrorMessage(error)}`
-        )
-    }
-}
-
-const getAllChatflowsWp = async (type?: ChatflowType, workspaceUid?: any): Promise<ChatFlow[]> => {
-    try {
-        const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findBy({ workspaceUid: workspaceUid })
-        if (type === 'MULTIAGENT') {
-            return dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
-        } else if (type === 'CHATFLOW') {
-            // fetch all chatflows that are not agentflow
-            return dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
-        }
-        return dbResponse
-    } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: chatflowsService.getAllChatflowsWp - ${getErrorMessage(error)}`
         )
     }
 }
@@ -237,6 +229,12 @@ const saveChatflow = async (newChatFlow: ChatFlow): Promise<any> => {
 
 const importChatflows = async (newChatflows: Partial<ChatFlow>[], queryRunner?: QueryRunner): Promise<any> => {
     try {
+        for (const data of newChatflows) {
+            if (data.id && !validate(data.id)) {
+                throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: importChatflows - invalid id!`)
+            }
+        }
+
         const appServer = getRunningExpressApp()
         const repository = queryRunner ? queryRunner.manager.getRepository(ChatFlow) : appServer.AppDataSource.getRepository(ChatFlow)
 
@@ -346,7 +344,7 @@ const getSinglePublicChatbotConfig = async (chatflowId: string): Promise<any> =>
         if (dbResponse.chatbotConfig || uploadsConfig) {
             try {
                 const parsedConfig = dbResponse.chatbotConfig ? JSON.parse(dbResponse.chatbotConfig) : {}
-                return { ...parsedConfig, uploads: uploadsConfig }
+                return { ...parsedConfig, uploads: uploadsConfig, flowData: dbResponse.flowData }
             } catch (e) {
                 throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error parsing Chatbot Config for Chatflow ${chatflowId}`)
             }
@@ -372,87 +370,16 @@ const _checkAndUpdateDocumentStoreUsage = async (chatflow: ChatFlow) => {
     }
 }
 
-const getAllChatflowsPaginated = async (
-    type?: ChatflowType,
-    tenantId?: any,
-    page: number = 1,
-    limit: number = 12
-): Promise<{ items: ChatFlow[]; total: number }> => {
-    try {
-        const appServer = getRunningExpressApp()
-        const chatflowRepository = appServer.AppDataSource.getRepository(ChatFlow)
-
-        const skip = (page - 1) * limit
-
-        let query = chatflowRepository.createQueryBuilder('chatflow').where('chatflow.tenantId = :tenantId', { tenantId })
-
-        if (type === 'MULTIAGENT') {
-            query = query.andWhere('chatflow.type = :type', { type: 'MULTIAGENT' })
-        } else if (type === 'CHATFLOW') {
-            query = query.andWhere('(chatflow.type = :type OR chatflow.type IS NULL)', { type: 'CHATFLOW' })
-        }
-
-        const total = await query.getCount()
-
-        const items = await query.skip(skip).take(limit).orderBy('chatflow.updatedDate', 'DESC').getMany()
-
-        return { items, total }
-    } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: chatflowsService.getAllChatflowsPaginated - ${getErrorMessage(error)}`
-        )
-    }
-}
-
-const getAllChatflowsWpPaginated = async (
-    type?: ChatflowType,
-    workspaceUid?: any,
-    page: number = 1,
-    limit: number = 12
-): Promise<{ items: ChatFlow[]; total: number }> => {
-    try {
-        const appServer = getRunningExpressApp()
-        const chatflowRepository = appServer.AppDataSource.getRepository(ChatFlow)
-
-        let query = chatflowRepository.createQueryBuilder('chatflow').where('chatflow.workspaceUid = :workspaceUid', { workspaceUid })
-
-        if (type === 'MULTIAGENT') {
-            query = query.andWhere('chatflow.type = :type', { type: 'MULTIAGENT' })
-        } else if (type === 'CHATFLOW') {
-            query = query.andWhere('(chatflow.type = :type OR chatflow.type IS NULL)', { type: 'CHATFLOW' })
-        }
-
-        const total = await query.getCount()
-
-        const items = await query
-            .skip((page - 1) * limit)
-            .take(limit)
-            .orderBy('chatflow.updatedDate', 'DESC')
-            .getMany()
-
-        return { items, total }
-    } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: chatflowsService.getAllChatflowsWpPaginated - ${getErrorMessage(error)}`
-        )
-    }
-}
-
 export default {
     checkIfChatflowIsValidForStreaming,
     checkIfChatflowIsValidForUploads,
     deleteChatflow,
     getAllChatflows,
-    getAllChatflowsWp,
     getChatflowByApiKey,
     getChatflowById,
     saveChatflow,
     importChatflows,
     updateChatflow,
     getSinglePublicChatflow,
-    getSinglePublicChatbotConfig,
-    getAllChatflowsPaginated,
-    getAllChatflowsWpPaginated
+    getSinglePublicChatbotConfig
 }

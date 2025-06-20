@@ -61,9 +61,7 @@ const getAllCredentials = async (paramCredentialName: any, tenantId: any) => {
                 dbResponse = [...credentials]
             }
         } else {
-            const credentials = await appServer.AppDataSource.getRepository(Credential).findBy({
-                tenantId: tenantId
-            })
+            const credentials = await appServer.AppDataSource.getRepository(Credential).findBy({ tenantId })
             for (const credential of credentials) {
                 dbResponse.push(omit(credential, ['encryptedData']))
             }

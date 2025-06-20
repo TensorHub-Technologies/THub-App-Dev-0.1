@@ -8,9 +8,10 @@ import { styled } from '@mui/material/styles'
 import MainCard from '@/ui-component/cards/MainCard'
 import SkeletonChatflowCard from '@/ui-component/cards/Skeleton/ChatflowCard'
 import FlowListMenu from '@/ui-component/button/FlowListMenu'
-import { Typography, Tooltip } from '@mui/material'
+import { Typography, Tooltip, Box } from '@mui/material'
 import Dark from '@/assets/images/Pink.png'
 import Light from '@/assets/images/Light.png'
+import MoreItemsTooltip from '../tooltip/MoreItemsTooltip'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
@@ -40,7 +41,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| CARD ||=========================== //
 
-const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }) => {
+const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons }) => {
     const customization = useCustomization()
 
     const [isDragging, setIsDragging] = useState(false)
@@ -75,7 +76,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
             ) : (
                 <div
                     style={{
-                        position: 'relative',
+                        position: 'absolute',
                         background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
                         width: '280px',
                         height: '280px',
@@ -96,7 +97,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                         <div
                             style={{
                                 height: '270px',
-                                overflow: 'auto',
+                                overflow: 'hidden',
                                 borderRadius: '12px',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -257,6 +258,75 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi }
                                             >
                                                 Nodes
                                             </div>
+                                            {(images?.length > 0 || icons?.length > 0) && (
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'start',
+                                                        gap: 1
+                                                    }}
+                                                >
+                                                    {[
+                                                        ...(icons || []).map((ic) => ({
+                                                            type:
+                                                                (ic.icon || ic.icon) && typeof (ic.icon || ic.icon) === 'string'
+                                                                    ? 'image'
+                                                                    : 'icon',
+                                                            icon: ic.icon,
+                                                            src: ic.icon || ic.icon,
+                                                            color: ic.color,
+                                                            label: ic.name
+                                                        }))
+                                                    ]
+                                                        .slice(0, 3)
+                                                        .map((item, index) => (
+                                                            <Tooltip key={item.icon || index} title={item.label} placement='top'>
+                                                                <div
+                                                                    style={{
+                                                                        width: 30,
+                                                                        height: 30,
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        borderRadius: '20%',
+                                                                        backgroundColor: item.type === 'image' ? '#fff' : 'transparent',
+                                                                        boxShadow:
+                                                                            item.type === 'image'
+                                                                                ? '2px 2px 14px 2px rgb(32 40 45 / 8%)'
+                                                                                : 'none'
+                                                                    }}
+                                                                >
+                                                                    {item.type === 'image' ? (
+                                                                        <img
+                                                                            src={item.icon}
+                                                                            alt={item.label}
+                                                                            style={{
+                                                                                width: '100%',
+                                                                                height: '100%',
+                                                                                objectFit: 'contain',
+                                                                                padding: 3
+                                                                            }}
+                                                                        />
+                                                                    ) : (
+                                                                        <item.icon size={25} color={item.color} />
+                                                                    )}
+                                                                </div>
+                                                            </Tooltip>
+                                                        ))}
+
+                                                    {(images?.length || 0) + (icons?.length || 0) > 3 && (
+                                                        <MoreItemsTooltip
+                                                            images={[
+                                                                ...(images?.slice(3) || []),
+                                                                ...(icons?.slice(Math.max(0, 3 - (images?.length || 0))) || []).map(
+                                                                    (ic) => ({ label: ic.name })
+                                                                )
+                                                            ]}
+                                                        ></MoreItemsTooltip>
+                                                    )}
+                                                </Box>
+                                            )}
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -315,6 +385,7 @@ ItemCard.propTypes = {
     images: PropTypes.array,
     onClick: PropTypes.func,
     chatflow: PropTypes.object,
+    icons: PropTypes.array,
     updateFlowsApi: PropTypes.object
 }
 

@@ -34,14 +34,6 @@ const settings = {
     type: 'group',
     children: [
         {
-            id: 'apiEndpoint',
-            title: 'API Endpoint',
-            type: 'item',
-            url: '',
-            icon: icons.IconCode
-        },
-
-        {
             id: 'chatflowConfiguration',
             title: 'Configuration',
             type: 'item',

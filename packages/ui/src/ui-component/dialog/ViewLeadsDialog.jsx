@@ -63,15 +63,10 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
     }
 
     function filterLeads(data) {
-        const searchText = search.toLowerCase()
         return (
-            (data.name && data.name.toLowerCase().includes(searchText)) ||
-            (data.email && data.email.toLowerCase().includes(searchText)) ||
-            (data.phone && data.phone.toLowerCase().includes(searchText)) ||
-            (data.loanType && data.loanType.toLowerCase().includes(searchText)) ||
-            (data.loanAmount && data.loanAmount.toString().toLowerCase().includes(searchText)) ||
-            (data.employmentStatus && data.employmentStatus.toLowerCase().includes(searchText)) ||
-            (data.creditScore && data.creditScore.toLowerCase().includes(searchText))
+            data.name.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
+            (data.email && data.email.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
+            (data.phone && data.phone.toLowerCase().indexOf(search.toLowerCase()) > -1)
         )
     }
 
@@ -80,7 +75,9 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
             leads
         }
         const dataStr = JSON.stringify(exportData, null, 2)
-        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+        //const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+        const blob = new Blob([dataStr], { type: 'application/json' })
+        const dataUri = URL.createObjectURL(blob)
 
         const exportFileDefaultName = `${dialogProps.chatflow.id}-leads.json`
 
@@ -181,24 +178,15 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
                                     <TableCell>Name</TableCell>
                                     <TableCell>Email Address</TableCell>
                                     <TableCell>Phone</TableCell>
-                                    <TableCell>Loan Type</TableCell>
-                                    <TableCell>Loan Amount</TableCell>
-                                    <TableCell>Employment Status</TableCell>
-                                    <TableCell>Credit Score</TableCell>
                                     <TableCell>Created Date</TableCell>
                                 </TableRow>
                             </TableHead>
-
                             <TableBody>
                                 {leads.filter(filterLeads).map((lead, index) => (
                                     <TableRow key={index}>
                                         <TableCell>{lead.name}</TableCell>
                                         <TableCell>{lead.email}</TableCell>
                                         <TableCell>{lead.phone}</TableCell>
-                                        <TableCell>{lead.loanType}</TableCell>
-                                        <TableCell>{lead.loanAmount}</TableCell>
-                                        <TableCell>{lead.employmentStatus}</TableCell>
-                                        <TableCell>{lead.creditScore}</TableCell>
                                         <TableCell>{moment(lead.createdDate).format('MMMM Do, YYYY')}</TableCell>
                                     </TableRow>
                                 ))}

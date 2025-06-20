@@ -8,7 +8,9 @@ import PrivateRoute from '@/routes/PrivateRoute' // Import the PrivateRoute comp
 const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
 
 // agents routing
-// const Agentflows = Loadable(lazy(() => import('@/views/agentflows')))
+const Agentflows = Loadable(lazy(() => import('@/views/agentflows')))
+
+const Executions = Loadable(lazy(() => import('@/views/agentexecutions')))
 
 // MainLayout routing
 const MainLayout = Loadable(lazy(() => import('@/layout/MainLayout')))
@@ -66,6 +68,22 @@ const MainRoutes = {
             element: (
                 <PrivateRoute>
                     <Marketplaces />
+                </PrivateRoute>
+            )
+        },
+        {
+            path: 'agentflows',
+            element: (
+                <PrivateRoute>
+                    <Agentflows />
+                </PrivateRoute>
+            )
+        },
+        {
+            path: 'executions',
+            element: (
+                <PrivateRoute>
+                    <Executions />
                 </PrivateRoute>
             )
         },

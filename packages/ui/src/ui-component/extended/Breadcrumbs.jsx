@@ -10,7 +10,13 @@ import MuiBreadcrumbs from '@mui/material/Breadcrumbs'
 // project imports
 import config from '@/config'
 import { gridSpacing } from '@/store/constant'
-import { IconTallymark1, IconHierarchy, IconHome } from '@tabler/icons-react'
+
+// assets
+import { IconTallymark1 } from '@tabler/icons-react'
+import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone'
+import HomeIcon from '@mui/icons-material/Home'
+import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone'
+
 const linkSX = {
     display: 'flex',
     color: 'grey.900',
@@ -74,7 +80,7 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
 
     // collapse item
     if (main && main.type === 'collapse') {
-        CollapseIcon = main.icon ? main.icon : IconHierarchy
+        CollapseIcon = main.icon ? main.icon : AccountTreeTwoToneIcon
         mainContent = (
             <Typography component={Link} to='#' variant='subtitle1' sx={linkSX}>
                 {icons && <CollapseIcon style={iconStyle} />}
@@ -87,7 +93,7 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
     if (item && item.type === 'item') {
         itemTitle = item.title
 
-        ItemIcon = item.icon ? item.icon : IconHierarchy
+        ItemIcon = item.icon ? item.icon : AccountTreeTwoToneIcon
         itemContent = (
             <Typography
                 variant='subtitle1'
@@ -136,8 +142,8 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
                                     separator={separatorIcon}
                                 >
                                     <Typography component={Link} to='/' color='inherit' variant='subtitle1' sx={linkSX}>
-                                        {icons && <IconHome style={iconStyle} />}
-                                        {icon && <IconHome style={{ ...iconStyle, marginRight: 0 }} />}
+                                        {icons && <HomeTwoToneIcon sx={iconStyle} />}
+                                        {icon && <HomeIcon sx={{ ...iconStyle, mr: 0 }} />}
                                         {!icon && 'Dashboard'}
                                     </Typography>
                                     {mainContent}

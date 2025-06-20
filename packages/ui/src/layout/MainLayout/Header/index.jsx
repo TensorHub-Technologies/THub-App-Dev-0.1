@@ -78,13 +78,12 @@ const Header = () => {
                     let apiUrl
 
                     if (window.location.hostname === 'demo.thub.tech') {
-                        apiUrl = thubWebServerDevUrl
+                        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
                     } else if (window.location.hostname === 'localhost') {
-                        apiUrl = thubWebServerLocalUrl
+                        apiUrl = 'http://localhost:2000'
                     } else {
-                        apiUrl = thubWebServerProdUrl
+                        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
                     }
-
                     const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
                     console.log('User Data:', response)
                     if (response.status === 200) {

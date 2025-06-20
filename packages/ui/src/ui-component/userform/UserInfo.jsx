@@ -45,6 +45,12 @@ const UserInfo = ({ setShowModal, showModal }) => {
             .required('Workspace Name is required')
     })
 
+    const thubWebServerDevUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+    const thubWebServerProdUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+
     const handleSubmit = async (values, { resetForm }) => {
         const thubWebServerDevUrl =
             import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'

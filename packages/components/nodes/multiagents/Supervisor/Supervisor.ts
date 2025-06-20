@@ -47,7 +47,7 @@ class Supervisor_MultiAgents implements INode {
     badge?: string
 
     constructor() {
-        this.label = 'Supervisor'
+        this.label = 'Principal Agent'
         this.name = 'supervisor'
         this.version = 3.0
         this.type = 'Supervisor'

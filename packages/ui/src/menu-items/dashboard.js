@@ -5,6 +5,7 @@ import ConstructionOutlinedIcon from '@/assets/custom-svg/ConstructionOutlinedIc
 import HttpsOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
 import VpnKeyOutlinedIcon from '@/assets/custom-svg/VpnKeyOutlinedIcon'
 import IconMathIntegral from '@/assets/custom-svg/IconMathIntegral'
+import { IconUsersGroup, IconListCheck } from '@tabler/icons-react'
 
 const icons = {
     AppsOutlinedIcon,
@@ -12,7 +13,9 @@ const icons = {
     ConstructionOutlinedIcon,
     IconMathIntegral,
     HttpsOutlinedIcon,
-    VpnKeyOutlinedIcon
+    VpnKeyOutlinedIcon,
+    IconUsersGroup,
+    IconListCheck
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -28,6 +31,22 @@ const dashboard = {
             type: 'item',
             url: '/workflows',
             icon: icons.AppsOutlinedIcon,
+            breadcrumbs: true
+        },
+        {
+            id: 'agentflows',
+            title: 'Agent Pipeline',
+            type: 'item',
+            url: '/agentflows',
+            icon: icons.IconUsersGroup,
+            breadcrumbs: true
+        },
+        {
+            id: 'executions',
+            title: 'Executions',
+            type: 'item',
+            url: '/executions',
+            icon: icons.IconListCheck,
             breadcrumbs: true
         },
         {

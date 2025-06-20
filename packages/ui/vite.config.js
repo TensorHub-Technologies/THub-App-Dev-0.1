@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import dotenv from 'dotenv'
@@ -23,7 +23,6 @@ export default defineConfig(async ({ mode }) => {
         }
     }
     dotenv.config()
-    const env = loadEnv(mode, process.cwd(), '')
     return {
         plugins: [react()],
         resolve: {
@@ -36,11 +35,11 @@ export default defineConfig(async ({ mode }) => {
             outDir: './build'
         },
         define: {
-            'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(env.VITE_GOOGLE_CLIENT_ID),
-            'import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL': JSON.stringify(env.VITE_THUB_WEB_SERVER_PROD_URL),
-            'import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL': JSON.stringify(env.VITE_THUB_WEB_SERVER_DEMO_URL),
-            'import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL': JSON.stringify(env.VITE_THUB_WEB_SERVER_LOCAL_URL),
-            'import.meta.env.VITE_TEST_ENV': JSON.stringify(env.VITE_TEST_ENV)
+            'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(process.env.VITE_GOOGLE_CLIENT_ID),
+            'import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL': JSON.stringify(process.env.VITE_THUB_WEB_SERVER_PROD_URL),
+            'import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL': JSON.stringify(process.env.VITE_THUB_WEB_SERVER_DEMO_URL),
+            'import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL': JSON.stringify(process.env.VITE_THUB_WEB_SERVER_LOCAL_URL),
+            'import.meta.env.VITE_TEST_ENV': JSON.stringify(process.env.VITE_TEST_ENV)
         },
         server: {
             open: true,

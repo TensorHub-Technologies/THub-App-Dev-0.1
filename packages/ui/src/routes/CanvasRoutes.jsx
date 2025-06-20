@@ -3,48 +3,80 @@ import { lazy } from 'react'
 // project imports
 import Loadable from '@/ui-component/loading/Loadable'
 import MinimalLayout from '@/layout/MinimalLayout'
-import PrivateRoute from '@/routes/PrivateRoute'
+import ProtectedRoute from './PrivateRoute' // ✅ import it
 
 // canvas routing
 const Canvas = Loadable(lazy(() => import('@/views/canvas')))
 const MarketplaceCanvas = Loadable(lazy(() => import('@/views/marketplaces/MarketplaceCanvas')))
-
-// ==============================|| CANVAS ROUTING ||============================== //
+const CanvasV2 = Loadable(lazy(() => import('@/views/agentflowsv2/Canvas')))
+const MarketplaceCanvasV2 = Loadable(lazy(() => import('@/views/agentflowsv2/MarketplaceCanvas')))
 
 const CanvasRoutes = {
     path: '/',
-    element: (
-        <PrivateRoute>
-            <MinimalLayout />
-        </PrivateRoute>
-    ),
+    element: <MinimalLayout />,
     children: [
         {
             path: '/canvas',
             element: (
-                <PrivateRoute>
-                    {' '}
+                <ProtectedRoute>
                     <Canvas />
-                </PrivateRoute>
+                </ProtectedRoute>
             )
         },
         {
             path: '/canvas/:id',
             element: (
-                <PrivateRoute>
-                    {' '}
+                <ProtectedRoute>
                     <Canvas />
-                </PrivateRoute>
+                </ProtectedRoute>
             )
         },
-
         {
-            path: '/templates/:id',
+            path: '/agentcanvas',
             element: (
-                <PrivateRoute>
-                    {' '}
+                <ProtectedRoute>
+                    <Canvas />
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/agentcanvas/:id',
+            element: (
+                <ProtectedRoute>
+                    <Canvas />
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/v2/agentcanvas',
+            element: (
+                <ProtectedRoute>
+                    <CanvasV2 />
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/v2/agentcanvas/:id',
+            element: (
+                <ProtectedRoute>
+                    <CanvasV2 />
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/marketplace/:id',
+            element: (
+                <ProtectedRoute>
                     <MarketplaceCanvas />
-                </PrivateRoute>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/v2/marketplace/:id',
+            element: (
+                <ProtectedRoute>
+                    <MarketplaceCanvasV2 />
+                </ProtectedRoute>
             )
         }
     ]

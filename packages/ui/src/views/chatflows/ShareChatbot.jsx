@@ -24,10 +24,10 @@ import useNotifier from '@/utils/useNotifier'
 import { baseURL } from '@/store/constant'
 
 const defaultConfig = {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'linear-gradient(90deg, #e22a90 0%, #3c5ba4 100%)',
     fontSize: 16,
     poweredByTextColor: '#303235',
-    titleBackgroundColor: '#3B81F6',
+    titleBackgroundColor: 'linear-gradient(90deg, #e22a90 0%, #3c5ba4 100%)',
     titleTextColor: '#ffffff',
     botMessage: {
         backgroundColor: '#f7f8ff',
@@ -358,9 +358,9 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                             cursor: 'pointer',
                             width: '30px',
                             height: '30px',
-                            border: '1px solid #616161',
+                            border: '1px solid #212121',
                             marginRight: '10px',
-                            backgroundColor: color ?? '#ffffff',
+                            backgroundColor: 'linear-gradient(90deg, #e22a90 0%, #3c5ba4 100%)',
                             borderRadius: '5px'
                         }}
                         onClick={(event) => {
@@ -419,7 +419,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                     sx={{
                         p: 1,
                         borderRadius: 10,
-                        backgroundColor: theme.palette.primary.light,
+                        backgroundColor: 'linear-gradient(90deg, #e22a90 0%, #3c5ba4 100%)',
                         width: 'max-content',
                         height: 'max-content'
                     }}
@@ -465,7 +465,13 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                     <Typography variant='h4'>Title Settings</Typography>
                 </Stack>
                 {textField(title, 'title', 'Title', 'string', 'THub Assistant')}
-                {textField(titleAvatarSrc, 'titleAvatarSrc', 'Title Avatar Link', 'string', `https://thub.tech/assets/THub-CPsX7H9O.svg`)}
+                {textField(
+                    titleAvatarSrc,
+                    'titleAvatarSrc',
+                    'Title Avatar Link',
+                    'string',
+                    `https://raw.githubusercontent.com/FlowiseAI/Flowise/main/assets/FloWiseAI_dark.png`
+                )}
                 {colorField(titleBackgroundColor, 'titleBackgroundColor', 'Title Background Color')}
                 {colorField(titleTextColor, 'titleTextColor', 'Title TextColor')}
             </Card>

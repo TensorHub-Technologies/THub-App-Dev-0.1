@@ -42,6 +42,10 @@ const SignUp = () => {
     const [email, setEmail] = useState('')
     const [tempUserData, setTempUserData] = useState(null)
 
+    console.log('THub Prod:', import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL)
+    console.log('THub Demo:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
+    console.log('THub local:', import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL)
+
     const thubWebServerDevUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
     const thubWebServerProdUrl =
