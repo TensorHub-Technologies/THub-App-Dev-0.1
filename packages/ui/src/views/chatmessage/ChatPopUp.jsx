@@ -139,12 +139,11 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 sx={{
                     zIndex: 1300,
                     '& .MuiDrawer-paper': {
-                        width: '600px',
+                        width: '50vw', // half of the screen width
                         height: '100vh',
                         top: 0,
                         right: 0,
-                        position: 'fixed',
-                        bgcolor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                        position: 'fixed'
                     }
                 }}
                 ModalProps={{
