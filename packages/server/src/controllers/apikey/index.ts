@@ -5,8 +5,10 @@ import apikeyService from '../../services/apikey'
 
 // Get api keys
 const getAllApiKeys = async (req: Request, res: Response, next: NextFunction) => {
+    const tenantId: string | undefined = typeof req.params.tenantId === 'string' ? req.params.tenantId : undefined
+
     try {
-        const apiResponse = await apikeyService.getAllApiKeys()
+        const apiResponse = await apikeyService.getAllApiKeys(tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -18,7 +20,7 @@ const createApiKey = async (req: Request, res: Response, next: NextFunction) => 
         if (typeof req.body === 'undefined' || !req.body.keyName) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: apikeyController.createApiKey - keyName not provided!`)
         }
-        const apiResponse = await apikeyService.createApiKey(req.body.keyName)
+        const apiResponse = await apikeyService.createApiKey(req.body.keyName, req.body.tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

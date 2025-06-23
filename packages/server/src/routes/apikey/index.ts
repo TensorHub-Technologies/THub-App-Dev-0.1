@@ -7,7 +7,7 @@ router.post('/', apikeyController.createApiKey)
 router.post('/import', apikeyController.importKeys)
 
 // READ
-router.get('/', apikeyController.getAllApiKeys)
+router.get('/:tenantId', apikeyController.getAllApiKeys)
 
 // UPDATE
 router.put(['/', '/:id'], apikeyController.updateApiKey)

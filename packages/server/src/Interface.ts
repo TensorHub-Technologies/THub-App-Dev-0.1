@@ -336,6 +336,7 @@ export interface IUploadFileSizeAndTypes {
 
 export interface IApiKey {
     id: string
+    tenantId: string
     keyName: string
     apiKey: string
     apiSecret: string
