@@ -18,9 +18,9 @@ import {
     IconButton,
     Toolbar,
     TextField,
-    InputAdornment,
     ButtonGroup,
-    Chip
+    Chip,
+    InputAdornment
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
@@ -214,8 +214,9 @@ const Variables = () => {
                                 sx={{
                                     display: { xs: 'none', sm: 'block' },
                                     ml: 3,
+
                                     transition: 'all .2s ease-in-out',
-                                    '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                    '& input': { color: customization.isDarkMode ? '#fff' : '#000', width: '180px' },
                                     '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
