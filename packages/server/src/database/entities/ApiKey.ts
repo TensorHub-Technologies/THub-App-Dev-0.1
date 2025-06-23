@@ -9,6 +9,9 @@ export class ApiKey implements IApiKey {
     @Column({ type: 'text' })
     apiKey: string
 
+    @Column()
+    tenantId: string
+
     @Column({ type: 'text' })
     apiSecret: string
 

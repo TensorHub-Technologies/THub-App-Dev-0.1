@@ -661,7 +661,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
 
     useEffect(() => {
         if (show) {
-            getAllAPIKeysApi.request()
+            getAllAPIKeysApi.request(tenantId)
             getIsChatflowStreamingApi.request(dialogProps.chatflowid)
         }
 

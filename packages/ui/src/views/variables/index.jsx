@@ -18,7 +18,6 @@ import {
     IconButton,
     Toolbar,
     TextField,
-    InputAdornment,
     ButtonGroup,
     Chip
 } from '@mui/material'
@@ -215,8 +214,9 @@ const Variables = () => {
                                 sx={{
                                     display: { xs: 'none', sm: 'block' },
                                     ml: 3,
+
                                     transition: 'all .2s ease-in-out',
-                                    '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
+                                    '& input': { color: customization.isDarkMode ? '#fff' : '#000', width: '180px' },
                                     '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '& .MuiInput-underline:after': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
                                     '& .MuiInput-underline:before': { borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
@@ -233,23 +233,17 @@ const Variables = () => {
                                 onBlur={() => setInputFocused(false)}
                                 InputProps={{
                                     startAdornment: (
-                                        <InputAdornment position='start'>
-                                            {/*<IconSearch/>*/}
-                                            <IconSearch
-                                                style={{
-                                                    cursor: 'default',
-                                                    color: customization?.isDarkMode ? '#fff' : '#fff',
-                                                    background: isInputFocused
-                                                        ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
-                                                        : customization?.isDarkMode
-                                                        ? '#E22A90'
-                                                        : '#3C5BA4',
-                                                    borderRadius: '20%',
-                                                    padding: '2px',
-                                                    marginBottom: '8px' // equivalent to `mb: 1` in MUI (usually 8px)
-                                                }}
-                                            />
-                                        </InputAdornment>
+                                        <Box
+                                            sx={{
+                                                color: theme.palette.grey[400],
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                mr: 1
+                                            }}
+                                        >
+                                            <IconSearch style={{ color: 'inherit', width: 16, height: 16 }} />
+                                        </Box>
                                     )
                                 }}
                             />

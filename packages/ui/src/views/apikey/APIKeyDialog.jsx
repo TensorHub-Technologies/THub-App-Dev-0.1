@@ -36,7 +36,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     const customization = useSelector((state) => state.customization)
 
     const userData = useSelector((state) => state.user.userData)
-    const tenantId = userData?.uid
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     const dispatch = useDispatch()
 
@@ -65,7 +65,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
 
     const addNewKey = async () => {
         try {
-            const createResp = await apikeyApi.createNewAPI(tenantId, { keyName })
+            const createResp = await apikeyApi.createNewAPI({ tenantId, keyName })
             if (createResp.data) {
                 enqueueSnackbar({
                     message: 'New API key added',
@@ -104,7 +104,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
 
     const saveKey = async () => {
         try {
-            const saveResp = await apikeyApi.updateAPI(tenantId, dialogProps.key.id, { keyName })
+            const saveResp = await apikeyApi.updateAPI(dialogProps.key.id, { keyName })
             if (saveResp.data) {
                 enqueueSnackbar({
                     message: 'API Key saved',
