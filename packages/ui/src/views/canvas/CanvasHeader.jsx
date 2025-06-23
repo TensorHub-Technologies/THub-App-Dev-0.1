@@ -268,9 +268,20 @@ const CanvasHeader = ({
         <>
             <Stack flexDirection='row' justifyContent='space-between' sx={{ width: '100%' }}>
                 <Stack flexDirection='row' sx={{ width: '100%', maxWidth: '50%' }}>
-                    <div style={{ marginLeft: '-6px', marginTop: '4px' }}>
+                    <button
+                        type='button'
+                        style={{
+                            marginLeft: '-8px',
+                            marginTop: '4px',
+                            background: 'transparent',
+                            border: 'none',
+                            outline: 'none',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => window.location.reload()}
+                    >
                         <img src={ColorfulLogo} alt='THub_Logo' width={35} />
-                    </div>
+                    </button>
                     <Box>
                         <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: 0.5, ml: 3 }}>
                             <Avatar

@@ -85,7 +85,6 @@ const Header = () => {
                         apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
                     }
                     const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
-                    console.log('User Data:', response)
                     if (response.status === 200) {
                         const userData = response?.data[0]
 
@@ -163,10 +162,12 @@ const Header = () => {
                 sx={{
                     width: 228,
                     display: 'flex',
+                    cursor: 'pointer',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
                     }
                 }}
+                onClick={() => window.location.reload()}
             >
                 <img src={ColorfulLogo} alt='THub_Logo' width={35} />
                 {customization.menu_open && <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} />}
