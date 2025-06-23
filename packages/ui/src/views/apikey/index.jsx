@@ -50,6 +50,13 @@ import { IconSearch } from '@tabler/icons-react'
 import emptyImage from '../../assets/images/glass.svg'
 import emptyImagelite from '../../assets/images/glass-lite.svg'
 
+import { getOS } from '@/utils/genericHelper'
+
+const os = getOS()
+const isMac = os === 'macos'
+const isDesktop = isMac || os === 'windows' || os === 'linux'
+const keyboardShortcut = isMac ? '[ ⌘ + F ]' : '[ Ctrl + F ]'
+
 // ==============================|| APIKey ||============================== //
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -373,27 +380,15 @@ const APIKey = () => {
                                     }
                                 }}
                                 variant='standard'
-                                placeholder='Search name or category'
+                                placeholder={`Search name or category ${isDesktop ? keyboardShortcut : ''}`}
                                 onChange={onSearchChange}
                                 onFocus={() => setInputFocused(true)}
                                 onBlur={() => setInputFocused(false)}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position='start'>
-                                            {/*<IconSearch/>*/}
                                             <IconSearch
-                                                style={{
-                                                    cursor: 'default',
-                                                    color: customization?.isDarkMode ? '#fff' : '#fff',
-                                                    background: isInputFocused
-                                                        ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
-                                                        : customization?.isDarkMode
-                                                        ? '#E22A90'
-                                                        : '#3C5BA4',
-                                                    borderRadius: '20%',
-                                                    padding: '2px',
-                                                    marginBottom: '4px' // `mb: 1` in MUI is usually 8px, but can be 4px if you're using theme.spacing(1)/2
-                                                }}
+                                                style={{ color: customization.isDarkMode ? '#fff' : '#000', width: 16, height: 16 }}
                                             />
                                         </InputAdornment>
                                     )

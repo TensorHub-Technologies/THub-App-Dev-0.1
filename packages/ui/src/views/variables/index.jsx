@@ -74,7 +74,6 @@ const Variables = () => {
     const onSearchChange = (event) => {
         setSearch(event.target.value)
     }
-    const [isInputFocused, setInputFocused] = useState(false)
 
     const userData = useSelector((state) => state.user.userData)
     // const tenantId = userData['uid']
@@ -229,25 +228,12 @@ const Variables = () => {
                                 variant='standard'
                                 placeholder='Search name or category'
                                 onChange={onSearchChange}
-                                onFocus={() => setInputFocused(true)}
-                                onBlur={() => setInputFocused(false)}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position='start'>
                                             {/*<IconSearch/>*/}
                                             <IconSearch
-                                                style={{
-                                                    cursor: 'default',
-                                                    color: customization?.isDarkMode ? '#fff' : '#fff',
-                                                    background: isInputFocused
-                                                        ? 'linear-gradient(to right, #3C5BA4, #E22A90)'
-                                                        : customization?.isDarkMode
-                                                        ? '#E22A90'
-                                                        : '#3C5BA4',
-                                                    borderRadius: '20%',
-                                                    padding: '2px',
-                                                    marginBottom: '8px' // equivalent to `mb: 1` in MUI (usually 8px)
-                                                }}
+                                                style={{ color: customization.isDarkMode ? '#fff' : '#000', width: 16, height: 16 }}
                                             />
                                         </InputAdornment>
                                     )

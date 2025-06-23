@@ -161,7 +161,8 @@ const Login = () => {
                         component='img'
                         src={thubLogo}
                         alt='Thub image'
-                        sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px' }}
+                        sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px', cursor: 'pointer' }}
+                        onClick={() => window.location.reload()}
                     />
                     <Top />
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>

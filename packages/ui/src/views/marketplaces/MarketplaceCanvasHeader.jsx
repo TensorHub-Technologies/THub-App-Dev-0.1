@@ -19,7 +19,13 @@ const MarketplaceCanvasHeader = ({ flowName, flowData, onChatflowCopy }) => {
     return (
         <>
             <Box>
-                <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+                <button
+                    type='button'
+                    style={{ background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer' }}
+                    onClick={() => window.location.reload()}
+                >
+                    <img src={ColorfulLogo} alt='THub_Logo' width={35} />
+                </button>
                 <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: -4, ml: 3 }}>
                     <Avatar
                         variant='rounded'
