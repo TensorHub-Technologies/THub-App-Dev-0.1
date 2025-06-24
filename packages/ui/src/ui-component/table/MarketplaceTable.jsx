@@ -236,7 +236,7 @@ export const MarketplaceTable = ({
                                                         ))}
                                                 </Stack>
                                             </StyledTableCell>
-                                            <StyledTableCell key='6'>
+                                            {/* <StyledTableCell key='6'>
                                                 <Typography>
                                                     {row.badge &&
                                                         row.badge
@@ -251,7 +251,7 @@ export const MarketplaceTable = ({
                                                                 />
                                                             ))}
                                                 </Typography>
-                                            </StyledTableCell>
+                                            </StyledTableCell> */}
                                             {onDelete && (
                                                 <StyledTableCell key='7'>
                                                     <IconButton title='Delete' color='error' onClick={() => onDelete(row)}>
