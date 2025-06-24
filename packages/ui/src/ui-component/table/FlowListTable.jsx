@@ -26,13 +26,25 @@ import { Link } from 'react-router-dom'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     borderColor: theme.palette.grey[900] + 25,
-
+    fontFamily: 'cambria math',
     [`&.${tableCellClasses.head}`]: {
-        color: theme.palette.grey[900]
+        color: 'black',
+        fontWeight: 'bold'
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
         height: 64
+    }
+}))
+
+const StyledTableSortLabel = styled(TableSortLabel)(({ theme }) => ({
+    color: 'black !important',
+    '&.Mui-active': {
+        color: 'black !important',
+        fontSize: '0.875rem'
+    },
+    '& .MuiTableSortLabel-icon': {
+        color: 'black !important'
     }
 }))
 
@@ -107,9 +119,13 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                     >
                         <TableRow>
                             <StyledTableCell component='th' scope='row' style={{ width: '20%' }} key='0'>
-                                <TableSortLabel active={orderBy === 'name'} direction={order} onClick={() => handleRequestSort('name')}>
+                                <StyledTableSortLabel
+                                    active={orderBy === 'name'}
+                                    direction={order}
+                                    onClick={() => handleRequestSort('name')}
+                                >
                                     Name
-                                </TableSortLabel>
+                                </StyledTableSortLabel>
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '25%' }} key='1'>
                                 Category
@@ -118,13 +134,13 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                 Nodes
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '15%' }} key='3'>
-                                <TableSortLabel
+                                <StyledTableSortLabel
                                     active={orderBy === 'updatedDate'}
                                     direction={order}
                                     onClick={() => handleRequestSort('updatedDate')}
                                 >
                                     Last Modified Date
-                                </TableSortLabel>
+                                </StyledTableSortLabel>
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '10%' }} key='4'>
                                 Actions
