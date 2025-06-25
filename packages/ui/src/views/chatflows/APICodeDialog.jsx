@@ -761,7 +761,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                     <a
                                                         rel='noreferrer'
                                                         target='_blank'
-                                                        href='https://docs.flowiseai.com/using-flowise/api#override-config'
+                                                        href='https:// docs.thub.tech/using-flowise/api#override-config'
                                                     >
                                                         here
                                                     </a>{' '}
@@ -899,7 +899,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                 {getIsChatflowStreamingApi.data?.isStreaming && (
                                     <p>
                                         Read&nbsp;
-                                        <a rel='noreferrer' target='_blank' href='https://docs.flowiseai.com/using-flowise/streaming'>
+                                        <a rel='noreferrer' target='_blank' href='https:// docs.thub.tech/using-flowise/streaming'>
                                             here
                                         </a>
                                         &nbsp;on how to stream response back to application

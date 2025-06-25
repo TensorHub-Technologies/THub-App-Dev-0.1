@@ -20,7 +20,7 @@ import chatflowsApi from '@/api/chatflows'
 
 const message = `Uploaded files will be parsed as strings and sent to the LLM. If file upload is enabled on the Vector Store as well, this will override and take precedence.
 <br />
-Refer <a href='https://docs.flowiseai.com/using-flowise/uploads#files' target='_blank'>docs</a> for more details.`
+Refer <a href='https:// docs.thub.tech/using-flowise/uploads#files' target='_blank'>docs</a> for more details.`
 
 const availableFileTypes = [
     { name: 'CSS', ext: 'text/css' },
