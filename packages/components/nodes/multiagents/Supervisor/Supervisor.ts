@@ -19,8 +19,8 @@ import { AgentExecutor, JsonOutputToolsParser, ToolCallingAgentOutputParser } fr
 import { ChatMistralAI } from '@langchain/mistralai'
 import { ChatOpenAI } from '../../chatmodels/ChatOpenAI/FlowiseChatOpenAI'
 import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/FlowiseChatAnthropic'
-import { ChatGoogleGenerativeAI } from '../../chatmodels/ChatGoogleGenerativeAI/FlowiseChatGoogleGenerativeAI'
 import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
+import { ChatGoogleGenerativeAI } from '../../chatmodels/ChatGoogleGenerativeAI/FlowiseChatGoogleGenerativeAI'
 
 const sysPrompt = `You are a supervisor tasked with managing a conversation between the following workers: {team_members}.
 Given the following user request, respond with the worker to act next.
@@ -47,7 +47,7 @@ class Supervisor_MultiAgents implements INode {
     badge?: string
 
     constructor() {
-        this.label = 'Principal Agent'
+        this.label = 'Supervisor'
         this.name = 'supervisor'
         this.version = 3.0
         this.type = 'Supervisor'

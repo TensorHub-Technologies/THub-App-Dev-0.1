@@ -25,6 +25,8 @@ import { AgentAction } from '@langchain/core/agents'
 import { LunaryHandler } from '@langchain/community/callbacks/handlers/lunary'
 
 import { getCredentialData, getCredentialParam, getEnvironmentVariable } from './utils'
+import { EvaluationRunTracer } from '../evaluation/EvaluationRunTracer'
+import { EvaluationRunTracerLlama } from '../evaluation/EvaluationRunTracerLlama'
 import { ICommonObject, IDatabaseEntity, INodeData, IServerSideEventStreamer } from './Interface'
 import { LangWatch, LangWatchSpan, LangWatchTrace, autoconvertTypedValues } from 'langwatch'
 import { DataSource } from 'typeorm'
@@ -32,7 +34,7 @@ import { ChatGenerationChunk } from '@langchain/core/outputs'
 import { AIMessageChunk, BaseMessageLike } from '@langchain/core/messages'
 import { Serialized } from '@langchain/core/load/serializable'
 
-interface AgentRun extends Run {
+export interface AgentRun extends Run {
     actions: AgentAction[]
 }
 
@@ -173,7 +175,7 @@ function tryGetJsonSpaces() {
     }
 }
 
-function tryJsonStringify(obj: unknown, fallback: string) {
+export function tryJsonStringify(obj: unknown, fallback: string) {
     try {
         return JSON.stringify(obj, null, tryGetJsonSpaces())
     } catch (err) {
@@ -181,7 +183,7 @@ function tryJsonStringify(obj: unknown, fallback: string) {
     }
 }
 
-function elapsed(run: Run): string {
+export function elapsed(run: Run): string {
     if (!run.end_time) return ''
     const elapsed = run.end_time - run.start_time
     if (elapsed < 1000) {
@@ -396,6 +398,7 @@ export class CustomChainHandler extends BaseCallbackHandler {
     }
 }
 
+/*TODO - Add llamaIndex tracer to non evaluation runs*/
 class ExtendedLunaryHandler extends LunaryHandler {
     chatId: string
     appDataSource: DataSource
@@ -550,6 +553,13 @@ export const additionalCallbacks = async (nodeData: INodeData, options: ICommonO
                     const handler = new ExtendedLunaryHandler(lunaryFields)
 
                     callbacks.push(handler)
+                } else if (provider === 'evaluation') {
+                    if (options.llamaIndex) {
+                        new EvaluationRunTracerLlama(options.evaluationRunId)
+                    } else {
+                        const evaluationHandler = new EvaluationRunTracer(options.evaluationRunId)
+                        callbacks.push(evaluationHandler)
+                    }
                 } else if (provider === 'langWatch') {
                     const langWatchApiKey = getCredentialParam('langWatchApiKey', credentialData, nodeData)
                     const langWatchEndpoint = getCredentialParam('langWatchEndpoint', credentialData, nodeData)
