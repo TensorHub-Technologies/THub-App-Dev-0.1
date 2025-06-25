@@ -758,11 +758,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                         'For security reason, override config is disabled by default. You can change this by going into Chatflow Configuration -> Security tab, and enable the property you want to override.'
                                                     }
                                                     &nbsp;Refer{' '}
-                                                    <a
-                                                        rel='noreferrer'
-                                                        target='_blank'
-                                                        href='https:// docs.thub.tech/using-flowise/api#override-config'
-                                                    >
+                                                    <a rel='noreferrer' target='_blank' href='https://docs.thub.tech'>
                                                         here
                                                     </a>{' '}
                                                     for more details
@@ -899,7 +895,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                 {getIsChatflowStreamingApi.data?.isStreaming && (
                                     <p>
                                         Read&nbsp;
-                                        <a rel='noreferrer' target='_blank' href='https:// docs.thub.tech/using-flowise/streaming'>
+                                        <a rel='noreferrer' target='_blank' href='https://docs.thub.tech'>
                                             here
                                         </a>
                                         &nbsp;on how to stream response back to application

@@ -152,29 +152,29 @@ Flowise 支持不同的環境變量來配置您的實例。您可以在 `package
 
 ## 📖 文檔
 
-[Flowise 文檔](https:// docs.thub.tech/)
+[Flowise 文檔](https://docs.thub.tech/)
 
 ## 🌐 自我托管
 
-在您現有的基礎設施中部署 Flowise 自我托管，我們支持各種 [部署](https:// docs.thub.tech/configuration/deployment)
+在您現有的基礎設施中部署 Flowise 自我托管，我們支持各種 [部署](https://docs.thub.tech/configuration/deployment)
 
--   [AWS](https:// docs.thub.tech/configuration/deployment/aws)
--   [Azure](https:// docs.thub.tech/configuration/deployment/azure)
--   [Digital Ocean](https:// docs.thub.tech/configuration/deployment/digital-ocean)
--   [GCP](https:// docs.thub.tech/configuration/deployment/gcp)
+-   [AWS](https://docs.thub.tech/configuration/deployment/aws)
+-   [Azure](https://docs.thub.tech/configuration/deployment/azure)
+-   [Digital Ocean](https://docs.thub.tech/configuration/deployment/digital-ocean)
+-   [GCP](https://docs.thub.tech/configuration/deployment/gcp)
 -   [阿里雲](https://computenest.console.aliyun.com/service/instance/create/default?type=user&ServiceName=Flowise社区版)
 -   <details>
       <summary>其他</summary>
 
-    -   [Railway](https:// docs.thub.tech/configuration/deployment/railway)
+    -   [Railway](https://docs.thub.tech/configuration/deployment/railway)
 
         [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/pn4G8S?referralCode=WVNPD9)
 
-    -   [Render](https:// docs.thub.tech/configuration/deployment/render)
+    -   [Render](https://docs.thub.tech/configuration/deployment/render)
 
-        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https:// docs.thub.tech/configuration/deployment/render)
+        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.thub.tech/configuration/deployment/render)
 
-    -   [HuggingFace Spaces](https:// docs.thub.tech/deployment/hugging-face)
+    -   [HuggingFace Spaces](https://docs.thub.tech/deployment/hugging-face)
 
         <a href="https://huggingface.co/spaces/FlowiseAI/Flowise"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="HuggingFace Spaces"></a>
 

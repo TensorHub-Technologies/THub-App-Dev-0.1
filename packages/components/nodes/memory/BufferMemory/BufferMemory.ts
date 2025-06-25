@@ -38,8 +38,7 @@ class BufferMemory_Memory implements INode {
                 label: 'Session Id',
                 name: 'sessionId',
                 type: 'string',
-                description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https:// docs.thub.tech/memory#ui-and-embedded-chat">more</a>',
+                description: 'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.thub.tech">more</a>',
                 default: '',
                 additionalParams: true,
                 optional: true

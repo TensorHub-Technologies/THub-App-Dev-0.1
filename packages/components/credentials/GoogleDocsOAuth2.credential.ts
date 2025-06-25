@@ -16,8 +16,7 @@ class GoogleDocsOAuth2 implements INodeCredential {
         this.label = 'Google Docs OAuth2'
         this.name = 'googleDocsOAuth2'
         this.version = 1.0
-        this.description =
-            'You can find the setup instructions <a target="_blank" href="https:// docs.thub.tech/integrations/langchain/tools/google-sheets">here</a>'
+        this.description = 'You can find the setup instructions <a target="_blank" href="https://docs.thub.tech/">here</a>'
         this.inputs = [
             {
                 label: 'Authorization URL',

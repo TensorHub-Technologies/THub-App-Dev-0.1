@@ -141,28 +141,28 @@ Flowise 支持不同的环境变量来配置您的实例。您可以在 `package
 
 ## 📖 文档
 
-[Flowise 文档](https:// docs.thub.tech/)
+[Flowise 文档](https://docs.thub.tech/)
 
 ## 🌐 自托管
 
-在您现有的基础设施中部署自托管的 Flowise，我们支持各种[部署](https:// docs.thub.tech/configuration/deployment)
+在您现有的基础设施中部署自托管的 Flowise，我们支持各种[部署](https://docs.thub.tech/configuration/deployment)
 
--   [AWS](https:// docs.thub.tech/deployment/aws)
--   [Azure](https:// docs.thub.tech/deployment/azure)
--   [Digital Ocean](https:// docs.thub.tech/deployment/digital-ocean)
--   [GCP](https:// docs.thub.tech/deployment/gcp)
+-   [AWS](https://docs.thub.tech/deployment/aws)
+-   [Azure](https://docs.thub.tech/deployment/azure)
+-   [Digital Ocean](https://docs.thub.tech/deployment/digital-ocean)
+-   [GCP](https://docs.thub.tech/deployment/gcp)
 -   <details>
       <summary>其他</summary>
 
-    -   [Railway](https:// docs.thub.tech/deployment/railway)
+    -   [Railway](https://docs.thub.tech/deployment/railway)
 
         [![在 Railway 上部署](https://railway.app/button.svg)](https://railway.app/template/pn4G8S?referralCode=WVNPD9)
 
-    -   [Render](https:// docs.thub.tech/deployment/render)
+    -   [Render](https://docs.thub.tech/deployment/render)
 
-        [![部署到 Render](https://render.com/images/deploy-to-render-button.svg)](https:// docs.thub.tech/deployment/render)
+        [![部署到 Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.thub.tech/deployment/render)
 
-    -   [HuggingFace Spaces](https:// docs.thub.tech/deployment/hugging-face)
+    -   [HuggingFace Spaces](https://docs.thub.tech/deployment/hugging-face)
 
         <a href="https://huggingface.co/spaces/FlowiseAI/Flowise"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="HuggingFace Spaces"></a>
 
