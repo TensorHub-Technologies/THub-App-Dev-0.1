@@ -11,11 +11,21 @@ import { LogLevel } from '@azure/msal-browser'
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
  */
 
+const hostname = window.location.hostname
+
+let redirectUri = 'http://localhost:8080/'
+
+if (hostname === 'app.thub.tech') {
+    redirectUri = 'https://app.thub.tech/'
+} else if (hostname === 'demo.thub.tech') {
+    redirectUri = 'https://demo.thub.tech/'
+}
+
 export const msalConfig = {
     auth: {
         clientId: 'bf29daca-eef6-438f-850f-8a746c246a14',
         authority: 'https://login.microsoftonline.com/common/18be12b6-e243-4a84-85f2-0be345a96956/',
-        redirectUri: 'http://localhost:8080/'
+        redirectUri: redirectUri
     },
     cache: {
         cacheLocation: 'sessionStorage',
