@@ -15,12 +15,14 @@ class MultiRetrievalQAChain_Chains implements INode {
     category: string
     baseClasses: string[]
     description: string
+    badge: string
     inputs: INodeParams[]
 
     constructor() {
         this.label = 'Multi Retrieval QA Chain'
         this.name = 'multiRetrievalQAChain'
         this.version = 2.0
+        this.badge = 'DEPRECATING'
         this.type = 'MultiRetrievalQAChain'
         this.icon = 'qa.svg'
         this.category = 'Chains'
@@ -74,7 +76,7 @@ class MultiRetrievalQAChain_Chains implements INode {
             retrieverNames,
             retrieverDescriptions,
             retrievers,
-            retrievalQAChainOpts: { verbose: process.env.DEBUG === 'true', returnSourceDocuments }
+            retrievalQAChainOpts: { verbose: process.env.DEBUG === 'true' ? true : false, returnSourceDocuments }
         })
         return chain
     }
