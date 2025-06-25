@@ -315,10 +315,10 @@ const SignUp = () => {
 
                         <form onSubmit={formik.handleSubmit} noValidate>
                             {[
-                                { name: 'email', placeholder: 'user@company.com' },
-                                { name: 'firstName', placeholder: 'John' },
-                                { name: 'lastName', placeholder: 'Doe' },
-                                { name: 'phone', placeholder: '1234567890' }
+                                { name: 'email', placeholder: 'Email' },
+                                { name: 'firstName', placeholder: 'FirstName' },
+                                { name: 'lastName', placeholder: 'LastName' },
+                                { name: 'phone', placeholder: 'Phone Number' }
                             ].map(({ name, placeholder }) => (
                                 <FormControl
                                     key={name}
@@ -367,7 +367,7 @@ const SignUp = () => {
                                     id='password'
                                     name='password'
                                     type={showPassword ? 'text' : 'password'}
-                                    placeholder='********'
+                                    placeholder='Password'
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
@@ -418,7 +418,7 @@ const SignUp = () => {
                                     id='confirmPassword'
                                     name='confirmPassword'
                                     type={showConfirmPassword ? 'text' : 'password'}
-                                    placeholder='********'
+                                    placeholder='Confirm Password'
                                     value={formik.values.confirmPassword}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
