@@ -878,7 +878,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                         <Typography variant='body2'>
                                                                                             {node.label}
                                                                                         </Typography>
-                                                                                        {node.badge && (
+                                                                                        {/* {node.badge && (
                                                                                             <Chip
                                                                                                 sx={{
                                                                                                     ml: 1,
@@ -893,7 +893,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                                 size='small'
                                                                                                 label={node.badge}
                                                                                             />
-                                                                                        )}
+                                                                                        )} */}
                                                                                     </Box>
                                                                                 }
                                                                                 secondary={
