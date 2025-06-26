@@ -141,28 +141,28 @@ Flowise は、インスタンスを設定するためのさまざまな環境変
 
 ## 📖 ドキュメント
 
-[Flowise ドキュメント](https://docs.flowiseai.com/)
+[Flowise ドキュメント](https://docs.thub.tech/)
 
 ## 🌐 セルフホスト
 
-お客様の既存インフラに Flowise をセルフホストでデプロイ、様々な[デプロイ](https://docs.flowiseai.com/configuration/deployment)をサポートします
+お客様の既存インフラに Flowise をセルフホストでデプロイ、様々な[デプロイ](https://docs.thub.tech/configuration/deployment)をサポートします
 
--   [AWS](https://docs.flowiseai.com/deployment/aws)
--   [Azure](https://docs.flowiseai.com/deployment/azure)
--   [Digital Ocean](https://docs.flowiseai.com/deployment/digital-ocean)
--   [GCP](https://docs.flowiseai.com/deployment/gcp)
+-   [AWS](https://docs.thub.tech/deployment/aws)
+-   [Azure](https://docs.thub.tech/deployment/azure)
+-   [Digital Ocean](https://docs.thub.tech/deployment/digital-ocean)
+-   [GCP](https://docs.thub.tech/deployment/gcp)
 -   <details>
       <summary>その他</summary>
 
-    -   [Railway](https://docs.flowiseai.com/deployment/railway)
+    -   [Railway](https://docs.thub.tech/deployment/railway)
 
         [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/pn4G8S?referralCode=WVNPD9)
 
-    -   [Render](https://docs.flowiseai.com/deployment/render)
+    -   [Render](https://docs.thub.tech/deployment/render)
 
-        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.flowiseai.com/deployment/render)
+        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.thub.tech/deployment/render)
 
-    -   [Hugging Face Spaces](https://docs.flowiseai.com/deployment/hugging-face)
+    -   [Hugging Face Spaces](https://docs.thub.tech/deployment/hugging-face)
 
         <a href="https://huggingface.co/spaces/FlowiseAI/Flowise"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="Hugging Face Spaces"></a>
 

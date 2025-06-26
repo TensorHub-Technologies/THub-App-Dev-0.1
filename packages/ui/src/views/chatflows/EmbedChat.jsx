@@ -62,7 +62,7 @@ const App = () => {
 }
 
 const embedFullpageHtmlCode = (chatflowid) => {
-    return `<flowise-fullchatbot></flowise-fullchatbot>
+    return `<thub-fullchatbot></thub-fullchatbot>
 <script type="module">
     import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.0/dist/web.js"
     Chatbot.initFull({
@@ -244,7 +244,7 @@ const getFullPageThemeConfig = () => {
 }
 
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
-    return `<flowise-fullchatbot></flowise-fullchatbot>
+    return `<thub-fullchatbot></thub-fullchatbot>
 <script type="module">
     import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.0/dist/web.js"
     Chatbot.initFull({
