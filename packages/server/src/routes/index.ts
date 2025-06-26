@@ -26,6 +26,7 @@ import nodeCustomFunctionRouter from './node-custom-functions'
 import nodeIconRouter from './node-icons'
 import nodeLoadMethodRouter from './node-load-methods'
 import nodesRouter from './nodes'
+import oauth2Router from './oauth2'
 import openaiAssistantsRouter from './openai-assistants'
 import openaiAssistantsFileRouter from './openai-assistants-files'
 import openaiAssistantsVectorStoreRouter from './openai-assistants-vector-store'
@@ -57,6 +58,7 @@ router.use('/attachments', attachmentsRouter)
 router.use('/chatflows', chatflowsRouter)
 router.use('/chatflows-streaming', chatflowsStreamingRouter)
 router.use('/chatmessage', chatMessageRouter)
+router.use('/chatflows-uploads', chatflowsUploadsRouter)
 router.use('/components-credentials', componentsCredentialsRouter)
 router.use('/components-credentials-icon', componentsCredentialsIconRouter)
 router.use('/chatflows-uploads', chatflowsUploadsRouter)
@@ -78,6 +80,7 @@ router.use('/node-custom-function', nodeCustomFunctionRouter)
 router.use('/node-icon', nodeIconRouter)
 router.use('/node-load-method', nodeLoadMethodRouter)
 router.use('/nodes', nodesRouter)
+router.use('/oauth2-credential', oauth2Router)
 router.use('/openai-assistants', openaiAssistantsRouter)
 router.use('/openai-assistants-file', openaiAssistantsFileRouter)
 router.use('/openai-assistants-vector-store', openaiAssistantsVectorStoreRouter)
