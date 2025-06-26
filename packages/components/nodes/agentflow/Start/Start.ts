@@ -18,7 +18,7 @@ class Start_Agentflow implements INode {
     constructor() {
         this.label = 'Start'
         this.name = 'startAgentflow'
-        this.version = 1.1
+        this.version = 1.0
         this.type = 'Start'
         this.category = 'Agent Pipeline'
         this.description = 'Starting point of the agentflow'
@@ -153,13 +153,6 @@ class Start_Agentflow implements INode {
                         optional: true
                     }
                 ]
-            },
-            {
-                label: 'Persist State',
-                name: 'startPersistState',
-                type: 'boolean',
-                description: 'Persist the state in the same session',
-                optional: true
             }
         ]
     }
@@ -168,7 +161,6 @@ class Start_Agentflow implements INode {
         const _flowState = nodeData.inputs?.startState as string
         const startInputType = nodeData.inputs?.startInputType as string
         const startEphemeralMemory = nodeData.inputs?.startEphemeralMemory as boolean
-        const startPersistState = nodeData.inputs?.startPersistState as boolean
 
         let flowStateArray = []
         if (_flowState) {
@@ -182,13 +174,6 @@ class Start_Agentflow implements INode {
         let flowState: Record<string, any> = {}
         for (const state of flowStateArray) {
             flowState[state.key] = state.value
-        }
-
-        const runtimeState = options.agentflowRuntime?.state as ICommonObject
-        if (startPersistState === true && runtimeState && Object.keys(runtimeState).length) {
-            for (const state in runtimeState) {
-                flowState[state] = runtimeState[state]
-            }
         }
 
         const inputData: ICommonObject = {}
@@ -215,10 +200,6 @@ class Start_Agentflow implements INode {
 
         if (startEphemeralMemory) {
             outputData.ephemeralMemory = true
-        }
-
-        if (startPersistState) {
-            outputData.persistState = true
         }
 
         const returnOutput = {

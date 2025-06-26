@@ -127,8 +127,7 @@ class ExecuteFlow_Agentflow implements INode {
                 return returnData
             }
 
-            const searchOptions = options.searchOptions || {}
-            const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).findBy(searchOptions)
+            const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).find()
 
             for (let i = 0; i < chatflows.length; i += 1) {
                 let cfType = 'Chatflow'
