@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
 // Material
@@ -16,14 +16,58 @@ import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
 // API
 import configApi from '@/api/config'
 import useApi from '@/hooks/useApi'
+import nodesApi from '@/api/nodes'
 
 const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const dispatch = useDispatch()
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const getNodesApi = useApi(nodesApi.getAllNodes)
+    const [outputNodes, setOutputNodes] = useState()
 
     const getNodeConfigApi = useApi(configApi.getNodeConfig)
+
+    // get output nodes
+
+    useEffect(() => {
+        getNodesApi.request()
+    }, [])
+
+    const getOutputNode = (outputNodes) => {
+        if (!outputNodes) return null
+
+        return outputNodes.map((ele, index) => (
+            <span
+                key={index}
+                style={{
+                    padding: '5px 10px',
+                    background: customization.isDarkMode ? '#333' : '#f1f1f1',
+                    borderRadius: '20px',
+                    fontSize: '0.85rem',
+                    color: customization.isDarkMode ? '#fff' : '#000',
+                    marginRight: '8px'
+                }}
+            >
+                {ele.label}
+            </span>
+        ))
+    }
+
+    useEffect(() => {
+        if (getNodesApi.data) {
+            const sourceNode = dialogProps.data
+
+            if (sourceNode) {
+                const allNodeDetails = getNodesApi.data
+
+                const outputTypes = sourceNode.baseClasses
+
+                const outputNodes = allNodeDetails.filter((x) => x.inputs?.some((z) => outputTypes.includes(z.type)))
+                setOutputNodes(outputNodes)
+            }
+        }
+    }, [getNodesApi.data, dialogProps.data])
 
     const renderIcon = (node) => {
         const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
@@ -222,23 +266,65 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                 )}
             </DialogTitle>
             <DialogContent>
+                {/* Description Section */}
                 {dialogProps.data?.description && (
                     <div
                         style={{
-                            padding: 10,
-                            marginBottom: 10
+                            padding: '10px 0',
+                            marginBottom: '15px',
+                            color: customization.isDarkMode ? '#fff' : '#000'
                         }}
                     >
+                        <strong style={{ display: 'block', marginBottom: '5px' }}>Description</strong>
                         <span>{dialogProps.data.description}</span>
                     </div>
                 )}
+
+                {/* Input & Output Nodes */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '20px' }}>
+                    {/* Input Nodes */}
+                    <div>
+                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.95rem' }}>Input Nodes</b>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: '8px',
+                                marginTop: '8px'
+                            }}
+                        >
+                            {dialogProps?.data?.inputAnchors?.length > 0 ? (
+                                dialogProps.data.inputAnchors.map((anchor, index) => (
+                                    <span
+                                        key={index}
+                                        style={{
+                                            padding: '5px 10px',
+                                            background: customization.isDarkMode ? '#333' : '#f1f1f1',
+                                            borderRadius: '20px',
+                                            fontSize: '0.85rem',
+                                            color: customization.isDarkMode ? '#fff' : '#000'
+                                        }}
+                                    >
+                                        {anchor.label}
+                                    </span>
+                                ))
+                            ) : (
+                                <span style={{ marginLeft: '10px', fontSize: '0.85rem', color: '#888' }}>No Inputs</span>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Output Nodes */}
+                    <div>
+                        <b style={{ color: customization.isDarkMode ? '#fff' : '#000', fontSize: '0.95rem' }}>Output Nodes</b>
+                        <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>{getOutputNode(outputNodes)}</div>
+                    </div>
+                </div>
+
+                {/* Table Config Section */}
                 {getNodeConfigApi.data && getNodeConfigApi.data.length > 0 && (
                     <TableViewOnly
-                        rows={getNodeConfigApi.data.map((obj) => {
-                            // eslint-disable-next-line
-                            const { node, nodeId, ...rest } = obj
-                            return rest
-                        })}
+                        rows={getNodeConfigApi.data.map(({ node, nodeId, ...rest }) => rest)}
                         columns={Object.keys(getNodeConfigApi.data[0]).slice(-3)}
                     />
                 )}
