@@ -179,7 +179,7 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                             flexDirection: 'row',
                                             width: 'max-content',
                                             borderRadius: 15,
-                                            background: '#e9edc9',
+                                            background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
                                             padding: 5,
                                             paddingLeft: 10,
                                             paddingRight: 10,
@@ -188,9 +188,17 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                             marginBottom: 5
                                         }}
                                     >
-                                        <span style={{ color: '#606c38', fontSize: '0.825rem' }}>version {dialogProps.data.version}</span>
+                                        <a
+                                            href={`https://docs.thub.tech/${dialogProps.data.category.replace(/\s+/g, '-').toLowerCase()}`}
+                                            style={{ textDecoration: 'none' }}
+                                            target='_blank'
+                                            rel='noreferrer'
+                                        >
+                                            <span style={{ color: '#fff', fontSize: '0.825rem' }}>Documentation</span>
+                                        </a>
                                     </div>
                                 )}
+
                                 {dialogProps.data.badge && (
                                     <div
                                         style={{
