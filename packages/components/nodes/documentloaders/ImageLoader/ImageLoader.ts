@@ -133,7 +133,7 @@ class Image_DocumentLoaders implements INode {
             } else {
                 files = [fileName]
             }
-            const chatflowid = options.chatflowid
+            const chatflowId = options.chatflowid
 
             for (const pdfFileName of files) {
                 if (!pdfFileName) continue
@@ -155,7 +155,7 @@ class Image_DocumentLoaders implements INode {
                     console.log('PDF converted successfully.')
                 })
 
-                const fileData = await getFileFromStorage(pdfFileName, chatflowid)
+                const fileData = await getFileFromStorage(pdfFileName, chatflowId)
                 const bf = Buffer.from(fileData)
                 await this.extractDocs(usage, bf, legacyBuild, textSplitter, docs)
             }
