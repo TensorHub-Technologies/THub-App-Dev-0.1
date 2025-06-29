@@ -218,16 +218,19 @@ class Image_DocumentLoaders implements INode {
     }
 
     private async extractDocs(usage: string, bf: Buffer, legacyBuild: boolean, textSplitter: TextSplitter, docs: IDocument[]) {
-        //read file and extract text and send to text splitter
         console.log('extractDocs')
         if (usage === 'perFile') {
-            //OCR call
+            // Simulate OCR extract or placeholder for now
+            const text = 'Sample extracted text'
 
-            if (textSplitter) {
-                /*let splittedDocs = await loader.load()
-                splittedDocs = await textSplitter.splitDocuments(splittedDocs)
-                docs.push(...splittedDocs)*/
+            const document: IDocument = {
+                pageContent: text,
+                metadata: {
+                    filePath: 'mock/path/to/image.png' // critical
+                }
             }
+
+            docs.push(document)
         }
     }
 }
