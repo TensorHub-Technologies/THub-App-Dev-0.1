@@ -36,6 +36,7 @@ export default defineConfig(async ({ mode }) => {
         },
         define: {
             'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(process.env.VITE_GOOGLE_CLIENT_ID),
+            'import.meta.env.VITE_GITHUB_CLIENT_ID': JSON.stringify(process.env.VITE_GITHUB_CLIENT_ID),
             'import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL': JSON.stringify(process.env.VITE_THUB_WEB_SERVER_PROD_URL),
             'import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL': JSON.stringify(process.env.VITE_THUB_WEB_SERVER_DEMO_URL),
             'import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL': JSON.stringify(process.env.VITE_THUB_WEB_SERVER_LOCAL_URL),
