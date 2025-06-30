@@ -12,6 +12,8 @@ RUN apk add --no-cache build-base cairo-dev pango-dev
 # Install Chromium
 RUN apk add --no-cache chromium
 
+RUN apk add --no-cache poppler-utils
+
 #install PNPM globaly
 RUN npm install -g pnpm
 

@@ -231,16 +231,12 @@ const Variables = () => {
                                 onChange={onSearchChange}
                                 InputProps={{
                                     startAdornment: (
-
                                         <InputAdornment position='start'>
                                             {/*<IconSearch/>*/}
                                             <IconSearch
                                                 style={{ color: customization.isDarkMode ? '#fff' : '#000', width: 16, height: 16 }}
                                             />
                                         </InputAdornment>
-
-
-
                                     )
                                 }}
                             />

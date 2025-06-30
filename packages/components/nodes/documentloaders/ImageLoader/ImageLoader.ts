@@ -1,10 +1,13 @@
-import { omit } from 'lodash'
 import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { TextSplitter } from 'langchain/text_splitter'
-import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src'
+import { exec } from 'child_process'
+import path from 'path'
+const { Storage } = require('@google-cloud/storage')
+import sanitize from 'sanitize-filename'
+import { getFileFromGCS } from '../../../src/storageUtils'
 
-class Pdf_DocumentLoaders implements INode {
+class Image_DocumentLoaders implements INode {
     label: string
     name: string
     version: number
@@ -17,18 +20,18 @@ class Pdf_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Pdf File'
-        this.name = 'pdfFile'
+        this.label = 'Image File'
+        this.name = 'ImageFile'
         this.version = 2.0
         this.type = 'Document'
-        this.icon = 'pdf.svg'
+        this.icon = 'ImageLoader.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from PDF files`
+        this.description = `Load data from Image files using OCR or AI`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Pdf File',
-                name: 'pdfFile',
+                label: 'Image File',
+                name: 'imageFile',
                 type: 'file',
                 fileType: '.pdf'
             },
@@ -99,12 +102,21 @@ class Pdf_DocumentLoaders implements INode {
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const textSplitter = nodeData.inputs?.textSplitter as TextSplitter
-        const pdfFileBase64 = nodeData.inputs?.pdfFile as string
+        const pdfFileBase64 = nodeData.inputs?.imageFile as string
         const usage = nodeData.inputs?.usage as string
-        const metadata = nodeData.inputs?.metadata
         const legacyBuild = nodeData.inputs?.legacyBuild as boolean
         const _omitMetadataKeys = nodeData.inputs?.omitMetadataKeys as string
         const output = nodeData.outputs?.output as string
+
+        const storage = new Storage()
+        const bucketName = 'thub-files'
+        const chatflowId = options.chatflowid
+
+        const format = 'png'
+        const dpi = 300
+        const outputFilePrefix = 'page'
+        //       const pdfPath = path.resolve(__dirname, "../sample.pdf");
+        //const imageDir = path.resolve(__dirname, '../images');
 
         let omitMetadataKeys: string[] = []
         if (_omitMetadataKeys) {
@@ -114,73 +126,88 @@ class Pdf_DocumentLoaders implements INode {
         let docs: IDocument[] = []
         let files: string[] = []
 
-        //FILE-STORAGE::["CONTRIBUTING.md","LICENSE.md","README.md"]
+        console.log('works till init', pdfFileBase64)
+
         if (pdfFileBase64.startsWith('FILE-STORAGE::')) {
             const fileName = pdfFileBase64.replace('FILE-STORAGE::', '')
-            console.log('fileName pdfFileBase64:', fileName)
             if (fileName.startsWith('[') && fileName.endsWith(']')) {
-                console.log('fileName fileName.startsWith:', fileName)
                 files = JSON.parse(fileName)
             } else {
                 files = [fileName]
             }
-            const chatflowid = options.chatflowid
 
-            for (const file of files) {
-                if (!file) continue
-                console.log('file for loop:', file)
-                console.log('chatflowid for loop:', chatflowid)
-                const fileData = await getFileFromStorage(file, chatflowid)
+            for (const fileName of files) {
+                if (!fileName) continue
+                console.log('file', fileName)
+
+                const sanitizedFilename = sanitize(fileName)
+                const filePath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
+
+                const fileBuffer = await getFileFromGCS(filePath)
+                console.log('fileBuffer: ', fileBuffer)
+
+                const pdfPath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
+                const imageDir = `.flowise/storage/${chatflowId}/images`
+
+                const command = `pdftoppm -r ${dpi} -${format} "${pdfPath}" "${path.join(imageDir, outputFilePrefix)}"`
+
+                exec(command, (error, stdout, stderr) => {
+                    if (error) {
+                        console.error('Error running pdftoppm:', stderr)
+                    }
+                    console.log('PDF converted successfully.')
+                })
+
+                const fileData = await getFileFromStorage(fileName, chatflowId)
                 const bf = Buffer.from(fileData)
                 await this.extractDocs(usage, bf, legacyBuild, textSplitter, docs)
             }
         } else {
-            if (pdfFileBase64.startsWith('[') && pdfFileBase64.endsWith(']')) {
-                files = JSON.parse(pdfFileBase64)
-            } else {
-                files = [pdfFileBase64]
-            }
-
-            for (const file of files) {
-                if (!file) continue
-                const splitDataURI = file.split(',')
-                splitDataURI.pop()
-                const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
-                await this.extractDocs(usage, bf, legacyBuild, textSplitter, docs)
-            }
+            console.log('dosent start with FILE-STORAGE::')
         }
 
-        if (metadata) {
-            const parsedMetadata = typeof metadata === 'object' ? metadata : JSON.parse(metadata)
-            docs = docs.map((doc) => ({
-                ...doc,
-                metadata:
-                    _omitMetadataKeys === '*'
-                        ? {
-                              ...parsedMetadata
-                          }
-                        : omit(
-                              {
-                                  ...doc.metadata,
-                                  ...parsedMetadata
-                              },
-                              omitMetadataKeys
-                          )
-            }))
-        } else {
-            docs = docs.map((doc) => ({
-                ...doc,
-                metadata:
-                    _omitMetadataKeys === '*'
-                        ? {}
-                        : omit(
-                              {
-                                  ...doc.metadata
-                              },
-                              omitMetadataKeys
-                          )
-            }))
+        /*
+        //path where pdf is uploaded to
+        const pdfPath = path.resolve(__dirname, "../sample.pdf");
+        //path were image will be stored
+        const imageDir = path.resolve(__dirname, '../images');
+
+        //command to convert pdf to image
+        const command = `pdftoppm -r ${dpi} -${format} "${pdfPath}" "${path.join(imageDir, outputFilePrefix)}"`;
+    
+        //execute the command
+        exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error("Error running pdftoppm:", stderr);
         }
+            console.log("PDF converted successfully.");
+        });
+
+        //loop through the folder to get all the images
+        const imageFiles = fs
+        .readdirSync(imageDir)
+        .filter(file => file.endsWith('.png'))
+        .sort((a, b) => {
+            // Sort by page number if names are like page-1.png, page-2.png, etc.
+            const numA = parseInt(a.match(/\d+/)?.[0] || '0');
+            const numB = parseInt(b.match(/\d+/)?.[0] || '0');
+            return numA - numB;
+        });
+
+        //loop through the images and run OCR
+        for (const imageFile of imageFiles) {
+            const imagePath = path.join(imageDir, imageFile);
+            const {data: { text },} = await Tesseract.recognize(imagePath, 'eng');
+            console.log(`${text}\n`);
+        }
+
+        //delete the images after processing
+        for (const imageFile of imageFiles) {
+            const imagePath = path.join(imageDir, imageFile);
+            fs.unlinkSync(imagePath); // or use await fs.promises.unlink(imagePath) if you want async
+            console.log(`🗑 Deleted: ${imageFile}`);
+        }
+        */
 
         if (output === 'document') {
             return docs
@@ -194,35 +221,18 @@ class Pdf_DocumentLoaders implements INode {
     }
 
     private async extractDocs(usage: string, bf: Buffer, legacyBuild: boolean, textSplitter: TextSplitter, docs: IDocument[]) {
+        //read file and extract text and send to text splitter
+        console.log('extractDocs')
         if (usage === 'perFile') {
-            const loader = new PDFLoader(new Blob([bf]), {
-                splitPages: false,
-                pdfjs: () =>
-                    // @ts-ignore
-                    legacyBuild ? import('pdfjs-dist/legacy/build/pdf.js') : import('pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js')
-            })
+            //OCR call
+
             if (textSplitter) {
-                let splittedDocs = await loader.load()
+                /*let splittedDocs = await loader.load()
                 splittedDocs = await textSplitter.splitDocuments(splittedDocs)
-                docs.push(...splittedDocs)
-            } else {
-                docs.push(...(await loader.load()))
-            }
-        } else {
-            const loader = new PDFLoader(new Blob([bf]), {
-                pdfjs: () =>
-                    // @ts-ignore
-                    legacyBuild ? import('pdfjs-dist/legacy/build/pdf.js') : import('pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js')
-            })
-            if (textSplitter) {
-                let splittedDocs = await loader.load()
-                splittedDocs = await textSplitter.splitDocuments(splittedDocs)
-                docs.push(...splittedDocs)
-            } else {
-                docs.push(...(await loader.load()))
+                docs.push(...splittedDocs)*/
             }
         }
     }
 }
 
-module.exports = { nodeClass: Pdf_DocumentLoaders }
+module.exports = { nodeClass: Image_DocumentLoaders }
