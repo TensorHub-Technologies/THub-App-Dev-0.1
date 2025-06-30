@@ -151,7 +151,7 @@ class Image_DocumentLoaders implements INode {
                 const imageDir = path.join(tmpfsBase, 'images')
                 fs.mkdirSync(imageDir, { recursive: true })
 
-                const gcsFilePath = `${chatflowId}/${sanitizedFilename}`
+                const gcsFilePath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
                 console.log(`📥 Downloading from GCS: ${gcsFilePath} → ${pdfPath}`)
 
                 await storage.bucket(bucketName).file(gcsFilePath).download({ destination: pdfPath })
