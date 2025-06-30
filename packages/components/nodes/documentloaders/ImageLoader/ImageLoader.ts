@@ -1,6 +1,6 @@
 import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { TextSplitter } from 'langchain/text_splitter'
-import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src'
+import { getFileFromStorage, INodeOutputsValue } from '../../../src'
 import { exec } from 'child_process'
 import sanitize from 'sanitize-filename'
 import { getFileFromGCS } from '../../../src/storageUtils'
@@ -116,7 +116,7 @@ class Image_DocumentLoaders implements INode {
         const storage = new Storage()
         const bucketName = 'thub-files'
         const chatflowId = options.chatflowid
-
+        let combinedText = ''
         const format = 'png'
         const dpi = 300
         const outputFilePrefix = 'page'
@@ -182,6 +182,7 @@ class Image_DocumentLoaders implements INode {
                     console.log(`${text}\n`)
 
                     console.log('✅ Text extraction complete.')
+                    combinedText += text + '\n'
                 }
                 for (const img of images) {
                     const imgPath = path.join(imageDir, img)
@@ -197,78 +198,12 @@ class Image_DocumentLoaders implements INode {
 
                 const fileData = await getFileFromStorage(fileName, chatflowId)
                 const bf = Buffer.from(fileData)
-                await this.extractDocs(usage, bf, legacyBuild, textSplitter, docs)
             }
         } else {
             console.log('dosent start with FILE-STORAGE::')
         }
 
-        /*
-        //path where pdf is uploaded to
-        const pdfPath = path.resolve(__dirname, "../sample.pdf");
-        //path were image will be stored
-        const imageDir = path.resolve(__dirname, '../images');
-
-        //command to convert pdf to image
-        const command = `pdftoppm -r ${dpi} -${format} "${pdfPath}" "${path.join(imageDir, outputFilePrefix)}"`;
-    
-        //execute the command
-        exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.error("Error running pdftoppm:", stderr);
-        }
-            console.log("PDF converted successfully.");
-        });
-
-        //loop through the folder to get all the images
-        const imageFiles = fs
-        .readdirSync(imageDir)
-        .filter(file => file.endsWith('.png'))
-        .sort((a, b) => {
-            // Sort by page number if names are like page-1.png, page-2.png, etc.
-            const numA = parseInt(a.match(/\d+/)?.[0] || '0');
-            const numB = parseInt(b.match(/\d+/)?.[0] || '0');
-            return numA - numB;
-        });
-
-        //loop through the images and run OCR
-        for (const imageFile of imageFiles) {
-            const imagePath = path.join(imageDir, imageFile);
-            const {data: { text },} = await Tesseract.recognize(imagePath, 'eng');
-            console.log(`${text}\n`);
-        }
-
-        //delete the images after processing
-        for (const imageFile of imageFiles) {
-            const imagePath = path.join(imageDir, imageFile);
-            fs.unlinkSync(imagePath); // or use await fs.promises.unlink(imagePath) if you want async
-            console.log(`🗑 Deleted: ${imageFile}`);
-        }
-        */
-
-        if (output === 'document') {
-            return docs
-        } else {
-            let finaltext = ''
-            for (const doc of docs) {
-                finaltext += `${doc.pageContent}\n`
-            }
-            return handleEscapeCharacters(finaltext, false)
-        }
-    }
-
-    private async extractDocs(usage: string, bf: Buffer, legacyBuild: boolean, textSplitter: TextSplitter, docs: IDocument[]) {
-        //read file and extract text and send to text splitter
-        console.log('extractDocs')
-        if (usage === 'perFile') {
-            //OCR call
-
-            if (textSplitter) {
-                /*let splittedDocs = await loader.load()
-                splittedDocs = await textSplitter.splitDocuments(splittedDocs)
-                docs.push(...splittedDocs)*/
-            }
-        }
+        return docs.push(...(await textSplitter.createDocuments([combinedText])))
     }
 }
 
