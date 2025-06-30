@@ -302,7 +302,13 @@ const SignUp = () => {
                             alignItems: 'center'
                         }}
                     >
-                        <Box component='img' src={thubLogo} alt='logo' sx={{ width: 160, mb: 2 }} />
+                        <Box
+                            component='img'
+                            src={thubLogo}
+                            alt='logo'
+                            sx={{ width: 160, mb: 2, cursor: 'pointer' }}
+                            onClick={() => window.location.reload()}
+                        />
                         <Top />
 
                         <Box sx={{ display: 'flex', alignItems: 'center', my: 3 }}>

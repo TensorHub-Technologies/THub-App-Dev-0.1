@@ -113,8 +113,14 @@ export const ForgotPassword = () => {
                         flexDirection: 'column'
                     }}
                 >
-                    <Box component='img' src={thubLogo} alt='Thub image' sx={{ width: '180px', height: 'auto', marginY: '40px' }} />
-
+                    <a href='https://app.thub.tech/'>
+                        <Box
+                            component='img'
+                            src={thubLogo}
+                            alt='Thub image'
+                            sx={{ width: '180px', height: 'auto', marginY: '40px', cursor: 'pointer' }}
+                        />
+                    </a>
                     <Button
                         onClick={() => navigate('/')}
                         aria-label='Close'

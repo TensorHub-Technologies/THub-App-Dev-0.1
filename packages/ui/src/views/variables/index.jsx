@@ -19,7 +19,8 @@ import {
     Toolbar,
     TextField,
     ButtonGroup,
-    Chip
+    Chip,
+    InputAdornment
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
@@ -73,7 +74,6 @@ const Variables = () => {
     const onSearchChange = (event) => {
         setSearch(event.target.value)
     }
-    const [isInputFocused, setInputFocused] = useState(false)
 
     const userData = useSelector((state) => state.user.userData)
     // const tenantId = userData['uid']
@@ -229,21 +229,14 @@ const Variables = () => {
                                 variant='standard'
                                 placeholder='Search name or category'
                                 onChange={onSearchChange}
-                                onFocus={() => setInputFocused(true)}
-                                onBlur={() => setInputFocused(false)}
                                 InputProps={{
                                     startAdornment: (
-                                        <Box
-                                            sx={{
-                                                color: theme.palette.grey[400],
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                mr: 1
-                                            }}
-                                        >
-                                            <IconSearch style={{ color: 'inherit', width: 16, height: 16 }} />
-                                        </Box>
+                                        <InputAdornment position='start'>
+                                            {/*<IconSearch/>*/}
+                                            <IconSearch
+                                                style={{ color: customization.isDarkMode ? '#fff' : '#000', width: 16, height: 16 }}
+                                            />
+                                        </InputAdornment>
                                     )
                                 }}
                             />
