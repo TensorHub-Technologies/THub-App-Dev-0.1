@@ -118,9 +118,6 @@ class Image_DocumentLoaders implements INode {
         //       const pdfPath = path.resolve(__dirname, "../sample.pdf");
         //const imageDir = path.resolve(__dirname, '../images');
 
-        const pdfPath = path.resolve('C:/Users/Admin/Documents/sample.pdf')
-        const imageDir = path.resolve('C:/Users/Admin/Documents/images')
-
         let omitMetadataKeys: string[] = []
         if (_omitMetadataKeys) {
             omitMetadataKeys = _omitMetadataKeys.split(',').map((key) => key.trim())
@@ -148,6 +145,9 @@ class Image_DocumentLoaders implements INode {
 
                 const fileBuffer = await getFileFromGCS(filePath)
                 console.log('fileBuffer: ', fileBuffer)
+
+                const pdfPath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
+                const imageDir = `.flowise/storage/${chatflowId}/images`
 
                 const command = `pdftoppm -r ${dpi} -${format} "${pdfPath}" "${path.join(imageDir, outputFilePrefix)}"`
 
