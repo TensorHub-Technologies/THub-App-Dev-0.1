@@ -2,10 +2,11 @@ import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../.
 import { TextSplitter } from 'langchain/text_splitter'
 import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src'
 import { exec } from 'child_process'
-import path from 'path'
-const { Storage } = require('@google-cloud/storage')
 import sanitize from 'sanitize-filename'
 import { getFileFromGCS } from '../../../src/storageUtils'
+import path from 'path'
+import fs from 'fs'
+import { Storage } from '@google-cloud/storage'
 
 class Image_DocumentLoaders implements INode {
     label: string
@@ -115,8 +116,8 @@ class Image_DocumentLoaders implements INode {
         const format = 'png'
         const dpi = 300
         const outputFilePrefix = 'page'
-        //       const pdfPath = path.resolve(__dirname, "../sample.pdf");
-        //const imageDir = path.resolve(__dirname, '../images');
+
+        const tmpfsBase = '/tmpfs'
 
         let omitMetadataKeys: string[] = []
         if (_omitMetadataKeys) {
@@ -146,16 +147,41 @@ class Image_DocumentLoaders implements INode {
                 const fileBuffer = await getFileFromGCS(filePath)
                 console.log('fileBuffer: ', fileBuffer)
 
-                const pdfPath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
-                const imageDir = `.flowise/storage/${chatflowId}/images`
+                const pdfPath = path.join(tmpfsBase, sanitizedFilename)
+                const imageDir = path.join(tmpfsBase, 'images')
+                fs.mkdirSync(imageDir, { recursive: true })
+
+                const gcsFilePath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
+                console.log(`📥 Downloading from GCS: ${gcsFilePath} → ${pdfPath}`)
+
+                await storage.bucket(bucketName).file(gcsFilePath).download({ destination: pdfPath })
 
                 const command = `pdftoppm -r ${dpi} -${format} "${pdfPath}" "${path.join(imageDir, outputFilePrefix)}"`
-
                 exec(command, (error, stdout, stderr) => {
                     if (error) {
-                        console.error('Error running pdftoppm:', stderr)
+                        console.error('❌ Error running pdftoppm:', stderr)
+                        return
                     }
-                    console.log('PDF converted successfully.')
+                    console.log('✅ PDF converted successfully.')
+
+                    const images = fs
+                        .readdirSync(imageDir)
+                        .filter((f) => f.endsWith('.png'))
+                        .sort()
+                    console.log('🖼️ Generated images:')
+                    images.forEach((img) => console.log('- ' + img))
+
+                    for (const img of images) {
+                        const imgPath = path.join(imageDir, img)
+                        fs.unlinkSync(imgPath)
+                        console.log(`🗑️ Deleted image: ${img}`)
+                    }
+
+                    fs.unlinkSync(pdfPath)
+                    console.log(`🗑️ Deleted PDF: ${pdfPath}`)
+
+                    fs.rmdirSync(imageDir)
+                    console.log(`🧹 Removed image folder: ${imageDir}`)
                 })
 
                 const fileData = await getFileFromStorage(fileName, chatflowId)
