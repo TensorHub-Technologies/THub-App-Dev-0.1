@@ -7,6 +7,9 @@ import { getFileFromGCS } from '../../../src/storageUtils'
 import path from 'path'
 import fs from 'fs'
 import { Storage } from '@google-cloud/storage'
+import { promisify } from 'util'
+
+const execAsync = promisify(exec)
 
 class Image_DocumentLoaders implements INode {
     label: string
@@ -156,33 +159,27 @@ class Image_DocumentLoaders implements INode {
 
                 await storage.bucket(bucketName).file(gcsFilePath).download({ destination: pdfPath })
 
-                const command = `pdftoppm -r ${dpi} -${format} "${pdfPath}" "${path.join(imageDir, outputFilePrefix)}"`
-                exec(command, (error, stdout, stderr) => {
-                    if (error) {
-                        console.error('❌ Error running pdftoppm:', stderr)
-                        return
-                    }
-                    console.log('✅ PDF converted successfully.')
+                // Convert PDF to images (synchronously wait for it)
+                await execAsync(`pdftoppm -r ${dpi} -${format} "${pdfPath}" "${path.join(imageDir, outputFilePrefix)}"`)
 
-                    const images = fs
-                        .readdirSync(imageDir)
-                        .filter((f) => f.endsWith('.png'))
-                        .sort()
-                    console.log('🖼️ Generated images:')
-                    images.forEach((img) => console.log('- ' + img))
+                const images = fs
+                    .readdirSync(imageDir)
+                    .filter((f) => f.endsWith('.png'))
+                    .sort()
+                console.log('🖼️ Generated images:')
+                images.forEach((img) => console.log('- ' + img))
 
-                    for (const img of images) {
-                        const imgPath = path.join(imageDir, img)
-                        fs.unlinkSync(imgPath)
-                        console.log(`🗑️ Deleted image: ${img}`)
-                    }
+                for (const img of images) {
+                    const imgPath = path.join(imageDir, img)
+                    fs.unlinkSync(imgPath)
+                    console.log(`🗑️ Deleted image: ${img}`)
+                }
 
-                    fs.unlinkSync(pdfPath)
-                    console.log(`🗑️ Deleted PDF: ${pdfPath}`)
+                fs.unlinkSync(pdfPath)
+                console.log(`🗑️ Deleted PDF: ${pdfPath}`)
 
-                    fs.rmdirSync(imageDir)
-                    console.log(`🧹 Removed image folder: ${imageDir}`)
-                })
+                fs.rmdirSync(imageDir)
+                console.log(`🧹 Removed image folder: ${imageDir}`)
 
                 const fileData = await getFileFromStorage(fileName, chatflowId)
                 const bf = Buffer.from(fileData)
