@@ -20,6 +20,7 @@ const storage = new Storage({
 const bucketName = 'thub-files'
 
 export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: string, fileNames: string[]) => {
+    console.log('document uploaded to addBase64FilesToStorage')
     const storageType = getStorageType()
     if (storageType === 's3') {
         const { s3Client, Bucket } = getS3Config()
@@ -144,6 +145,7 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
 }
 
 export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName: string, ...paths: string[]) => {
+    console.log('document uploaded to addSingleFileToStorage')
     const storageType = getStorageType()
     const sanitizedFilename = _sanitizeFilename(fileName)
 
