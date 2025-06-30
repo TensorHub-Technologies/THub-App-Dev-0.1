@@ -371,7 +371,15 @@ const Subscription = () => {
                                             onClick={(e) => paymentHandler(e, plan.title, plan.planId, plan.duration, plan.messagePopup)}
                                             variant='contained'
                                             size='large'
-                                            sx={{ width: '100%' }}
+                                            sx={{
+                                                width: '100%',
+                                                '&.Mui-disabled': {
+                                                    backgroundColor: customization.isDarkMode ? '#373a37' : '#ccc',
+                                                    color: customization.isDarkMode ? '#aaa' : '#666',
+                                                    border: 'none',
+                                                    cursor: 'not-allowed'
+                                                }
+                                            }}
                                             className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
                                             disabled={
                                                 (user.subscription_type === 'premium' && plan.buttonInfo !== 'Get in Touch') ||
