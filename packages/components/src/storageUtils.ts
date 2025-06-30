@@ -205,7 +205,7 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
  * @param filePath - Path to the file in GCS
  */
 
-async function getFileFromGCS(filePaths: string): Promise<Buffer> {
+export async function getFileFromGCS(filePaths: string): Promise<Buffer> {
     console.log('getFileFromGCS: ', filePaths)
     const file = storage.bucket(bucketName).file(filePaths)
     const [fileBuffer] = await file.download()

@@ -4,8 +4,8 @@ import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '.
 import { exec } from 'child_process'
 import path from 'path'
 const { Storage } = require('@google-cloud/storage')
-import os from 'os'
-import fs from 'fs'
+import sanitize from 'sanitize-filename'
+import { getFileFromGCS } from '../../../src/storageUtils'
 
 class Image_DocumentLoaders implements INode {
     label: string
@@ -115,6 +115,11 @@ class Image_DocumentLoaders implements INode {
         const format = 'png'
         const dpi = 300
         const outputFilePrefix = 'page'
+        //       const pdfPath = path.resolve(__dirname, "../sample.pdf");
+        //const imageDir = path.resolve(__dirname, '../images');
+
+        const pdfPath = path.resolve('C:/Users/Admin/Documents/sample.pdf')
+        const imageDir = path.resolve('C:/Users/Admin/Documents/images')
 
         let omitMetadataKeys: string[] = []
         if (_omitMetadataKeys) {
@@ -133,20 +138,18 @@ class Image_DocumentLoaders implements INode {
             } else {
                 files = [fileName]
             }
-            const chatflowId = options.chatflowid
 
-            for (const pdfFileName of files) {
-                if (!pdfFileName) continue
-                console.log('file', pdfFileName)
-                const tempDir = path.join(os.tmpdir(), chatflowId)
-                const localPdfPath = path.join(tempDir, pdfFileName)
-                const imageOutputPath = path.join(tempDir, 'images')
+            for (const fileName of files) {
+                if (!fileName) continue
+                console.log('file', fileName)
 
-                fs.mkdirSync(imageOutputPath, { recursive: true })
+                const sanitizedFilename = sanitize(fileName)
+                const filePath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
 
-                await storage.bucket(bucketName).file(`${chatflowId}/${pdfFileName}`).download({ destination: localPdfPath })
+                const fileBuffer = await getFileFromGCS(filePath)
+                console.log('fileBuffer: ', fileBuffer)
 
-                const command = `pdftoppm -r ${dpi} -${format} "${localPdfPath}" "${path.join(imageOutputPath, outputFilePrefix)}"`
+                const command = `pdftoppm -r ${dpi} -${format} "${pdfPath}" "${path.join(imageDir, outputFilePrefix)}"`
 
                 exec(command, (error, stdout, stderr) => {
                     if (error) {
@@ -155,7 +158,7 @@ class Image_DocumentLoaders implements INode {
                     console.log('PDF converted successfully.')
                 })
 
-                const fileData = await getFileFromStorage(pdfFileName, chatflowId)
+                const fileData = await getFileFromStorage(fileName, chatflowId)
                 const bf = Buffer.from(fileData)
                 await this.extractDocs(usage, bf, legacyBuild, textSplitter, docs)
             }
@@ -218,19 +221,16 @@ class Image_DocumentLoaders implements INode {
     }
 
     private async extractDocs(usage: string, bf: Buffer, legacyBuild: boolean, textSplitter: TextSplitter, docs: IDocument[]) {
+        //read file and extract text and send to text splitter
         console.log('extractDocs')
         if (usage === 'perFile') {
-            // Simulate OCR extract or placeholder for now
-            const text = 'Sample extracted text'
+            //OCR call
 
-            const document: IDocument = {
-                pageContent: text,
-                metadata: {
-                    filePath: 'mock/path/to/image.png' // critical
-                }
+            if (textSplitter) {
+                /*let splittedDocs = await loader.load()
+                splittedDocs = await textSplitter.splitDocuments(splittedDocs)
+                docs.push(...splittedDocs)*/
             }
-
-            docs.push(document)
         }
     }
 }
