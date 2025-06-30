@@ -145,7 +145,6 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
 }
 
 export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName: string, ...paths: string[]) => {
-    console.log('document uploaded to addSingleFileToStorage')
     const storageType = getStorageType()
     const sanitizedFilename = _sanitizeFilename(fileName)
 
@@ -207,6 +206,7 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
  */
 
 async function getFileFromGCS(filePaths: string): Promise<Buffer> {
+    console.log('getFileFromGCS: ', filePaths)
     const file = storage.bucket(bucketName).file(filePaths)
     const [fileBuffer] = await file.download()
     return fileBuffer
@@ -244,6 +244,7 @@ export const getFileFromUpload = async (filePath: string): Promise<Buffer> => {
 }
 
 export const getFileFromStorage = async (file: string, ...paths: string[]): Promise<Buffer> => {
+    console.log('getFileFromStorage: ', paths)
     const storageType = getStorageType()
     const sanitizedFilename = _sanitizeFilename(file)
 
@@ -287,6 +288,10 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
  * Prepare storage path
  */
 export const getStoragePath = (): string => {
+    console.log(
+        'getStoragePath: ',
+        process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.flowise', 'storage')
+    )
     return process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.flowise', 'storage')
 }
 
