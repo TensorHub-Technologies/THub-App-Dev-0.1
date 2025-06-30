@@ -49,8 +49,6 @@ const Agentflows = () => {
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
-    console.log('User Data:', userData, tenantId)
-
     const getAllAgentflows = useApi(chatflowsApi.getAllAgentflows)
     const [view, setView] = useState(localStorage.getItem('flowDisplayStyle') || 'card')
     const [agentflowVersion, setAgentflowVersion] = useState(localStorage.getItem('agentFlowVersion') || 'v2')

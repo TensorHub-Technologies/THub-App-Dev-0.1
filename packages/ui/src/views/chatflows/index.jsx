@@ -52,8 +52,6 @@ const Chatflows = () => {
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
-    console.log('User Data:', userData, tenantId)
-
     const handleChange = (event, nextView) => {
         if (nextView === null) return
         localStorage.setItem('flowDisplayStyle', nextView)

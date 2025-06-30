@@ -78,6 +78,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
+
     const customization = useSelector((state) => state.customization)
 
     useNotifier()
@@ -160,20 +161,25 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         setSpeechToTextDialogOpen(true)
     }
 
-    const saveFlowRename = async (chatflowName) => {
+    const saveFlowRename = async (chatflowName, chatflowDescription) => {
         const updateBody = {
             name: chatflowName,
+            description: chatflowDescription,
             chatflow
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
+            await updateFlowsApi.request()
             if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
                 await updateFlowsApi.request('AGENTFLOW')
+                await updateFlowsApi.request()
             } else {
                 await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
+                await updateFlowsApi.request()
             }
         } catch (error) {
             if (setError) setError(error)
+            console.error('Save flow rename error:', error)
             enqueueSnackbar({
                 message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
                 options: {
