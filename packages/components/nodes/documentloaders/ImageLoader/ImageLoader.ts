@@ -8,6 +8,7 @@ import path from 'path'
 import fs from 'fs'
 import { Storage } from '@google-cloud/storage'
 import { promisify } from 'util'
+import Tesseract from 'tesseract.js'
 
 const execAsync = promisify(exec)
 
@@ -169,6 +170,19 @@ class Image_DocumentLoaders implements INode {
                 console.log('🖼️ Generated images:')
                 images.forEach((img) => console.log('- ' + img))
 
+                console.log('🔍 Extracting text from images...')
+                for (const imageFile of images) {
+                    const imagePath = path.join(imageDir, imageFile)
+                    console.log(`🧠 Running OCR on ${imageFile}...`)
+
+                    const {
+                        data: { text }
+                    } = await Tesseract.recognize(imagePath, 'eng')
+
+                    console.log(`${text}\n`)
+
+                    console.log('✅ Text extraction complete.')
+                }
                 for (const img of images) {
                     const imgPath = path.join(imageDir, img)
                     fs.unlinkSync(imgPath)
