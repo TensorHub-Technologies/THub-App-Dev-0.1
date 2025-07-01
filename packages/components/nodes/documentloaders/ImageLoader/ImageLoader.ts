@@ -1,6 +1,6 @@
 import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { TextSplitter } from 'langchain/text_splitter'
-import { getFileFromStorage, INodeOutputsValue } from '../../../src'
+import { INodeOutputsValue } from '../../../src'
 import { exec } from 'child_process'
 import sanitize from 'sanitize-filename'
 import { getFileFromGCS } from '../../../src/storageUtils'
@@ -46,48 +46,6 @@ class Image_DocumentLoaders implements INode {
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
-            },
-            {
-                label: 'Usage',
-                name: 'usage',
-                type: 'options',
-                options: [
-                    {
-                        label: 'One document per page',
-                        name: 'perPage'
-                    },
-                    {
-                        label: 'One document per file',
-                        name: 'perFile'
-                    }
-                ],
-                default: 'perPage'
-            },
-            {
-                label: 'Use Legacy Build',
-                name: 'legacyBuild',
-                type: 'boolean',
-                optional: true,
-                additionalParams: true
-            },
-            {
-                label: 'Additional Metadata',
-                name: 'metadata',
-                type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
-                optional: true,
-                additionalParams: true
-            },
-            {
-                label: 'Omit Metadata Keys',
-                name: 'omitMetadataKeys',
-                type: 'string',
-                rows: 4,
-                description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
-                placeholder: 'key1, key2, key3.nestedKey1',
-                optional: true,
-                additionalParams: true
             }
         ]
         this.outputs = [
@@ -109,9 +67,6 @@ class Image_DocumentLoaders implements INode {
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const textSplitter = nodeData.inputs?.textSplitter as TextSplitter
         const pdfFileBase64 = nodeData.inputs?.imageFile as string
-        const usage = nodeData.inputs?.usage as string
-        const legacyBuild = nodeData.inputs?.legacyBuild as boolean
-        const _omitMetadataKeys = nodeData.inputs?.omitMetadataKeys as string
         const output = nodeData.outputs?.output as string
 
         const storage = new Storage()
@@ -121,18 +76,10 @@ class Image_DocumentLoaders implements INode {
         const format = 'png'
         const dpi = 300
         const outputFilePrefix = 'page'
-
         const tmpfsBase = '/tmpfs'
-
-        let omitMetadataKeys: string[] = []
-        if (_omitMetadataKeys) {
-            omitMetadataKeys = _omitMetadataKeys.split(',').map((key) => key.trim())
-        }
 
         let docs: IDocument[] = []
         let files: string[] = []
-
-        console.log('works till init', pdfFileBase64)
 
         if (pdfFileBase64.startsWith('FILE-STORAGE::')) {
             const fileName = pdfFileBase64.replace('FILE-STORAGE::', '')
@@ -144,7 +91,6 @@ class Image_DocumentLoaders implements INode {
 
             for (const fileName of files) {
                 if (!fileName) continue
-                console.log('file', fileName)
 
                 const sanitizedFilename = sanitize(fileName)
                 const filePath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
@@ -168,10 +114,9 @@ class Image_DocumentLoaders implements INode {
                     .readdirSync(imageDir)
                     .filter((f) => f.endsWith('.png'))
                     .sort()
-                console.log('🖼️ Generated images:')
                 images.forEach((img) => console.log('- ' + img))
 
-                console.log('🔍 Extracting text from images...')
+                //extract text from images using Tesseract
                 for (const imageFile of images) {
                     const imagePath = path.join(imageDir, imageFile)
                     console.log(`🧠 Running OCR on ${imageFile}...`)
@@ -179,25 +124,23 @@ class Image_DocumentLoaders implements INode {
                     const {
                         data: { text }
                     } = await Tesseract.recognize(imagePath, 'eng')
-
-                    console.log(`${text}\n`)
-
-                    console.log('✅ Text extraction complete.')
                     combinedText += text + '\n'
                 }
+
+                //delete the images after processing
                 for (const img of images) {
                     const imgPath = path.join(imageDir, img)
                     fs.unlinkSync(imgPath)
                     console.log(`🗑️ Deleted image: ${img}`)
                 }
 
+                // delete the PDF file after processing
                 fs.unlinkSync(pdfPath)
                 console.log(`🗑️ Deleted PDF: ${pdfPath}`)
 
+                //delete image directory if empty
                 fs.rmdirSync(imageDir)
                 console.log(`🧹 Removed image folder: ${imageDir}`)
-
-                const fileData = await getFileFromStorage(fileName, chatflowId)
             }
         } else {
             console.log('dosent start with FILE-STORAGE::')
