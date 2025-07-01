@@ -9,6 +9,7 @@ import fs from 'fs'
 import { Storage } from '@google-cloud/storage'
 import { promisify } from 'util'
 import Tesseract from 'tesseract.js'
+import { handleEscapeCharacters } from '../../../src'
 
 const execAsync = promisify(exec)
 
@@ -197,13 +198,24 @@ class Image_DocumentLoaders implements INode {
                 console.log(`🧹 Removed image folder: ${imageDir}`)
 
                 const fileData = await getFileFromStorage(fileName, chatflowId)
-                const bf = Buffer.from(fileData)
             }
         } else {
             console.log('dosent start with FILE-STORAGE::')
         }
 
-        return docs.push(...(await textSplitter.createDocuments([combinedText])))
+        if (textSplitter) {
+            docs.push(...(await textSplitter.createDocuments([combinedText])))
+        }
+
+        if (output === 'document') {
+            return docs
+        } else {
+            let finaltext = ''
+            for (const doc of docs) {
+                finaltext += `${doc.pageContent}\n`
+            }
+            return handleEscapeCharacters(finaltext, false)
+        }
     }
 }
 
