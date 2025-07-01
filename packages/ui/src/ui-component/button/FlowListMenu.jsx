@@ -103,6 +103,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const [exportTemplateDialogProps, setExportTemplateDialogProps] = useState({})
 
     const title = isAgentCanvas ? 'Agents' : 'Chatflow'
+    const userData = useSelector((state) => state.user.userData)
+
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -169,13 +172,12 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
-            await updateFlowsApi.request()
             if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
                 await updateFlowsApi.request('AGENTFLOW')
-                await updateFlowsApi.request()
+                await updateFlowsApi.request(tenantId)
             } else {
                 await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
-                await updateFlowsApi.request()
+                await updateFlowsApi.request(tenantId)
             }
         } catch (error) {
             if (setError) setError(error)
@@ -248,11 +250,12 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         if (isConfirmed) {
             try {
                 await chatflowsApi.deleteChatflow(chatflow.id)
-                window.location.reload()
                 if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
                     await updateFlowsApi.request('AGENTFLOW')
+                    await updateFlowsApi.request(tenantId)
                 } else {
                     await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
+                    await updateFlowsApi.request(tenantId)
                 }
             } catch (error) {
                 if (setError) setError(error)
