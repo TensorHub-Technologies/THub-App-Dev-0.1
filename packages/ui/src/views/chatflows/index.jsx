@@ -255,7 +255,13 @@ const Chatflows = () => {
                             ) : (
                                 <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
                                     {getProcessedData().map((data, index) => (
-                                        <ItemCard key={index} onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
+                                        <ItemCard
+                                            key={index}
+                                            onClick={() => goToCanvas(data)}
+                                            data={data}
+                                            images={images[data.id]}
+                                            updateFlowsApi={getAllChatflowsApi}
+                                        />
                                     ))}
                                 </Box>
                             )}

@@ -167,7 +167,9 @@ const Header = () => {
                         width: 'auto'
                     }
                 }}
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                    navigate('/workflows')
+                }}
             >
                 <img src={ColorfulLogo} alt='THub_Logo' width={35} />
                 {customization.menu_open && <img src={logo} alt='THub_Logo' width={90} height={29} style={{ marginTop: '2px' }} />}

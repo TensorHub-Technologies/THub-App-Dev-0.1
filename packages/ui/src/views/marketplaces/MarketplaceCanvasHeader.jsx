@@ -22,7 +22,9 @@ const MarketplaceCanvasHeader = ({ flowName, flowData, onChatflowCopy }) => {
                 <button
                     type='button'
                     style={{ background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer' }}
-                    onClick={() => window.location.reload()}
+                    onClick={() => {
+                        navigate('/workflows')
+                    }}
                 >
                     <img src={ColorfulLogo} alt='THub_Logo' width={35} />
                 </button>

@@ -249,15 +249,21 @@ const Agentflows = () => {
                                 </Box>
                             ) : (
                                 <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
-                                    {getAllAgentflows.data?.filter(filterFlows).map((data, index) => (
-                                        <ItemCard
-                                            key={index}
-                                            onClick={() => goToCanvas(data)}
-                                            data={data}
-                                            images={images[data.id]}
-                                            icons={icons[data.id]}
-                                        />
-                                    ))}
+                                    {getAllAgentflows &&
+                                        getAllAgentflows.data
+                                            ?.filter(filterFlows)
+                                            .map((data, index) => (
+                                                <ItemCard
+                                                    key={index}
+                                                    onClick={() => goToCanvas(data)}
+                                                    data={data}
+                                                    images={images[data.id]}
+                                                    icons={icons[data.id]}
+                                                    updateFlowsApi={getAllAgentflows}
+                                                    isLoading={isLoading}
+                                                    setError={setError}
+                                                />
+                                            ))}
                                 </Box>
                             )}
                         </>
