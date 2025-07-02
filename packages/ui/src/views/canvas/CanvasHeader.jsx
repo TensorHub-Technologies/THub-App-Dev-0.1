@@ -239,6 +239,7 @@ const CanvasHeader = ({
     const onConfirmSaveName = (flowName, chatflowDescription) => {
         setFlowDialogOpen(false)
         handleSaveFlow(flowName, chatflowDescription)
+        console.log('description', chatflowDescription)
     }
 
     useEffect(() => {
