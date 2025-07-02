@@ -140,13 +140,16 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                     Name
                                 </StyledTableSortLabel>
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '25%' }} key='1'>
+                            <StyledTableCell style={{ width: '25%' }} key='2'>
+                                Description
+                            </StyledTableCell>
+                            <StyledTableCell style={{ width: '25%' }} key='3'>
                                 Category
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '30%' }} key='2'>
+                            <StyledTableCell style={{ width: '30%' }} key='4'>
                                 Nodes
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }} key='3'>
+                            <StyledTableCell style={{ width: '15%' }} key='5'>
                                 <StyledTableSortLabel
                                     active={orderBy === 'updatedDate'}
                                     direction={order}
@@ -155,7 +158,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                     Last Modified Date
                                 </StyledTableSortLabel>
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '10%' }} key='4'>
+                            <StyledTableCell style={{ width: '10%' }} key='6'>
                                 Actions
                             </StyledTableCell>
                         </TableRow>
@@ -222,6 +225,35 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                             </Tooltip>
                                         </StyledTableCell>
                                         <StyledTableCell key='1'>
+                                            <Tooltip title={row.description || ''} placement='top' arrow enterDelay={300}>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        flexWrap: 'wrap',
+                                                        marginTop: 5,
+                                                        maxWidth: '250px', // Adjust as needed
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        cursor: row.description ? 'pointer' : 'default'
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant='body2'
+                                                        noWrap
+                                                        sx={{
+                                                            width: '100%',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}
+                                                    >
+                                                        {row.description || '—'}
+                                                    </Typography>
+                                                </div>
+                                            </Tooltip>
+                                        </StyledTableCell>
+                                        <StyledTableCell key='1'>
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -239,6 +271,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                         ))}
                                             </div>
                                         </StyledTableCell>
+
                                         <StyledTableCell key='2'>
                                             {(images[row.id] || icons[row.id]) && (
                                                 <Box
