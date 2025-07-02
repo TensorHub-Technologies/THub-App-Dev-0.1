@@ -128,6 +128,9 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                 </StyledTableSortLabel>
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '25%' }} key='1'>
+                                Description
+                            </StyledTableCell>
+                            <StyledTableCell style={{ width: '25%' }} key='1'>
                                 Category
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '30%' }} key='2'>
@@ -209,6 +212,35 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                             </Tooltip>
                                         </StyledTableCell>
                                         <StyledTableCell key='1'>
+                                            <Tooltip title={row.description || ''} placement='top' arrow enterDelay={300}>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        flexWrap: 'wrap',
+                                                        marginTop: 5,
+                                                        maxWidth: '250px',
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        cursor: row.description ? 'pointer' : 'default'
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant='body2'
+                                                        noWrap
+                                                        sx={{
+                                                            width: '100%',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}
+                                                    >
+                                                        {row.description || '—'}
+                                                    </Typography>
+                                                </div>
+                                            </Tooltip>
+                                        </StyledTableCell>
+                                        <StyledTableCell key='2'>
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -226,7 +258,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                         ))}
                                             </div>
                                         </StyledTableCell>
-                                        <StyledTableCell key='2'>
+                                        <StyledTableCell key='3'>
                                             {(images[row.id] || icons[row.id]) && (
                                                 <Box
                                                     sx={{
@@ -312,10 +344,10 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='3'>
+                                        <StyledTableCell key='4'>
                                             {moment(row.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
                                         </StyledTableCell>
-                                        <StyledTableCell key='4'>
+                                        <StyledTableCell key='5'>
                                             <Stack
                                                 direction={{ xs: 'column', sm: 'row' }}
                                                 spacing={1}
