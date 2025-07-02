@@ -24,29 +24,18 @@ import { tableCellClasses } from '@mui/material/TableCell'
 import FlowListMenu from '../button/FlowListMenu'
 import { Link } from 'react-router-dom'
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    borderColor: theme.palette.grey[900] + 25,
-    fontFamily: 'cambria math',
-    [`&.${tableCellClasses.head}`]: {
-        color: 'black',
-        fontWeight: 'bold'
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        height: 64
-    }
-}))
-
-const StyledTableSortLabel = styled(TableSortLabel)(({ theme }) => ({
-    color: 'black !important',
-    '&.Mui-active': {
-        color: 'black !important',
-        fontSize: '0.875rem'
-    },
-    '& .MuiTableSortLabel-icon': {
-        color: 'black !important'
-    }
-}))
+// const StyledTableCell = styled(TableCell)(({ theme }) => ({
+//     borderColor: theme.palette.grey[900] + 25,
+//     fontFamily: 'cambria math',
+//     [`&.${tableCellClasses.head}`]: {
+//         color: 'black',
+//         fontWeight: 'bold'
+//     },
+//     [`&.${tableCellClasses.body}`]: {
+//         fontSize: 14,
+//         height: 64
+//     }
+// }))
 
 const StyledTableRow = styled(TableRow)(() => ({
     // hide last border
@@ -76,6 +65,30 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
 
     const [order, setOrder] = useState(localStorage.getItem(localStorageKeyOrder) || 'desc')
     const [orderBy, setOrderBy] = useState(localStorage.getItem(localStorageKeyOrderBy) || 'updatedDate')
+
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+        borderColor: theme.palette.grey[900] + 25,
+        fontFamily: 'cambria math',
+        [`&.${tableCellClasses.head}`]: {
+            color: customization.isDarkMode ? 'white' : 'black',
+            fontWeight: 'bold'
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 14,
+            height: 64
+        }
+    }))
+
+    const StyledTableSortLabel = styled(TableSortLabel)(({ theme }) => ({
+        color: customization.isDarkMode ? 'white !important' : 'black !important',
+        '&.Mui-active': {
+            color: customization.isDarkMode ? 'white !important' : 'black !important',
+            fontSize: '0.875rem'
+        },
+        '& .MuiTableSortLabel-icon': {
+            color: customization.isDarkMode ? 'white !important' : 'black !important'
+        }
+    }))
 
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc'
@@ -126,9 +139,6 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                 >
                                     Name
                                 </StyledTableSortLabel>
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: '25%' }} key='1'>
-                                Description
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '25%' }} key='1'>
                                 Category
@@ -212,35 +222,6 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                             </Tooltip>
                                         </StyledTableCell>
                                         <StyledTableCell key='1'>
-                                            <Tooltip title={row.description || ''} placement='top' arrow enterDelay={300}>
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        flexWrap: 'wrap',
-                                                        marginTop: 5,
-                                                        maxWidth: '250px',
-                                                        whiteSpace: 'nowrap',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        cursor: row.description ? 'pointer' : 'default'
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        variant='body2'
-                                                        noWrap
-                                                        sx={{
-                                                            width: '100%',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis'
-                                                        }}
-                                                    >
-                                                        {row.description || '—'}
-                                                    </Typography>
-                                                </div>
-                                            </Tooltip>
-                                        </StyledTableCell>
-                                        <StyledTableCell key='2'>
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -258,7 +239,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                         ))}
                                             </div>
                                         </StyledTableCell>
-                                        <StyledTableCell key='3'>
+                                        <StyledTableCell key='2'>
                                             {(images[row.id] || icons[row.id]) && (
                                                 <Box
                                                     sx={{
@@ -344,10 +325,10 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='4'>
+                                        <StyledTableCell key='3'>
                                             {moment(row.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
                                         </StyledTableCell>
-                                        <StyledTableCell key='5'>
+                                        <StyledTableCell key='4'>
                                             <Stack
                                                 direction={{ xs: 'column', sm: 'row' }}
                                                 spacing={1}
