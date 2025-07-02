@@ -3,7 +3,6 @@ import { TextSplitter } from 'langchain/text_splitter'
 import { INodeOutputsValue } from '../../../src'
 import { exec } from 'child_process'
 import sanitize from 'sanitize-filename'
-import { getFileFromGCS } from '../../../src/storageUtils'
 import path from 'path'
 import fs from 'fs'
 import { Storage } from '@google-cloud/storage'
@@ -93,13 +92,10 @@ class Image_DocumentLoaders implements INode {
                 if (!fileName) continue
 
                 const sanitizedFilename = sanitize(fileName)
-                const filePath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
+                const workingDir = path.join(tmpfsBase, chatflowId)
+                const pdfPath = path.join(workingDir, sanitizedFilename)
+                const imageDir = path.join(workingDir, 'images')
 
-                const fileBuffer = await getFileFromGCS(filePath)
-                console.log('fileBuffer: ', fileBuffer)
-
-                const pdfPath = path.join(tmpfsBase, sanitizedFilename)
-                const imageDir = path.join(tmpfsBase, 'images')
                 fs.mkdirSync(imageDir, { recursive: true })
 
                 const gcsFilePath = `.flowise/storage/${chatflowId}/${sanitizedFilename}`
@@ -114,7 +110,6 @@ class Image_DocumentLoaders implements INode {
                     .readdirSync(imageDir)
                     .filter((f) => f.endsWith('.png'))
                     .sort()
-                images.forEach((img) => console.log('- ' + img))
 
                 //extract text from images using Tesseract
                 for (const imageFile of images) {
@@ -127,20 +122,9 @@ class Image_DocumentLoaders implements INode {
                     combinedText += text + '\n'
                 }
 
-                //delete the images after processing
-                for (const img of images) {
-                    const imgPath = path.join(imageDir, img)
-                    fs.unlinkSync(imgPath)
-                    console.log(`🗑️ Deleted image: ${img}`)
-                }
-
-                // delete the PDF file after processing
-                fs.unlinkSync(pdfPath)
-                console.log(`🗑️ Deleted PDF: ${pdfPath}`)
-
-                //delete image directory if empty
-                fs.rmdirSync(imageDir)
-                console.log(`🧹 Removed image folder: ${imageDir}`)
+                // 🔥 Delete entire working directory
+                fs.rmSync(workingDir, { recursive: true, force: true })
+                console.log(`🧹 Cleaned up: ${workingDir}`)
             }
         } else {
             console.log('dosent start with FILE-STORAGE::')

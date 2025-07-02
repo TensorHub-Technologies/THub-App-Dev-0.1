@@ -107,8 +107,6 @@ const AgentflowCanvas = () => {
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
-    console.log('User Data:', userData, tenantId)
-
     // ==============================|| Chatflow API ||============================== //
 
     const getNodesApi = useApi(nodesApi.getAllNodes)
@@ -279,6 +277,7 @@ const AgentflowCanvas = () => {
 
                 try {
                     await updateChatflowApi.request(chatflow.id, updateBody)
+                    await updateChatflowApi.request(tenantId)
                     console.log('Successfully updated chatflow')
                 } catch (updateError) {
                     throw new Error(`Failed to update chatflow: ${updateError.message}`)

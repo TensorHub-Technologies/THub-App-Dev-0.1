@@ -224,7 +224,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                             overflowWrap: 'break-word',
                                             whiteSpace: 'pre-line', // Allows multi-line text wrapping
                                             overflow: 'hidden', // Ensures overflow content is hidden
-                                            height: '40px', // Limits to two lines based on line height
+                                            height: '18px', // Limits to two lines based on line height
                                             lineHeight: '20px', // Adjust to control the height for two lines
                                             width: '250px',
                                             fontFamily: 'Roboto, sans-serif'
@@ -304,8 +304,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                                                             style={{
                                                                                 width: '100%',
                                                                                 height: '100%',
-                                                                                objectFit: 'contain',
-                                                                                padding: 3
+                                                                                objectFit: 'contain'
                                                                             }}
                                                                         />
                                                                     ) : (

@@ -108,6 +108,7 @@ export const Top = () => {
 
     const loginWithGithub = () => {
         const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID
+        console.log(clientId, 'clientId')
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
     }
