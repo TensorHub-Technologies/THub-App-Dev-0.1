@@ -140,16 +140,16 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                     Name
                                 </StyledTableSortLabel>
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '25%' }} key='2'>
+                            <StyledTableCell style={{ width: '25%' }} key='1'>
                                 Description
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '25%' }} key='3'>
+                            <StyledTableCell style={{ width: '25%' }} key='2'>
                                 Category
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '30%' }} key='4'>
+                            <StyledTableCell style={{ width: '30%' }} key='3'>
                                 Nodes
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }} key='5'>
+                            <StyledTableCell style={{ width: '15%' }} key='4'>
                                 <StyledTableSortLabel
                                     active={orderBy === 'updatedDate'}
                                     direction={order}
@@ -158,7 +158,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                     Last Modified Date
                                 </StyledTableSortLabel>
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '10%' }} key='6'>
+                            <StyledTableCell style={{ width: '10%' }} key='5'>
                                 Actions
                             </StyledTableCell>
                         </TableRow>
@@ -253,7 +253,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                 </div>
                                             </Tooltip>
                                         </StyledTableCell>
-                                        <StyledTableCell key='1'>
+                                        <StyledTableCell key='2'>
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -272,7 +272,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                             </div>
                                         </StyledTableCell>
 
-                                        <StyledTableCell key='2'>
+                                        <StyledTableCell key='3'>
                                             {(images[row.id] || icons[row.id]) && (
                                                 <Box
                                                     sx={{
@@ -358,10 +358,10 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='3'>
+                                        <StyledTableCell key='4'>
                                             {moment(row.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
                                         </StyledTableCell>
-                                        <StyledTableCell key='4'>
+                                        <StyledTableCell key='5'>
                                             <Stack
                                                 direction={{ xs: 'column', sm: 'row' }}
                                                 spacing={1}
