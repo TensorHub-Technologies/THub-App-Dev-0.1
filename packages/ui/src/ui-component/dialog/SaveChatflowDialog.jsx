@@ -20,6 +20,8 @@ const SaveChatflowDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
 
     const handleConfirm = () => {
         onConfirm(chatflowName, chatflowDescription)
+        console.log('Chatflow Name:', chatflowName)
+        console.log('Chatflow Description:', chatflowDescription)
     }
 
     const component = show ? (

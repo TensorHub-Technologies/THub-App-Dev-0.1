@@ -252,10 +252,10 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
                 await chatflowsApi.deleteChatflow(chatflow.id)
                 if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
                     await updateFlowsApi.request('AGENTFLOW')
-                    await updateFlowsApi.request(tenantId)
+                    window.location.reload()
                 } else {
                     await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
-                    await updateFlowsApi.request(tenantId)
+                    window.location.reload()
                 }
             } catch (error) {
                 if (setError) setError(error)
