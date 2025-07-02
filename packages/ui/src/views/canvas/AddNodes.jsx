@@ -105,7 +105,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
     const allowedMenuItemKeys = Object.keys(allowedMenu)
-    const [tab, setTab] = useState(['LangChain'])
+    const [tab, setTab] = useState(['LangChain', 'LlamaIndex'])
     const [tabValue, setTabValue] = useState(0)
 
     useEffect(() => {
@@ -150,7 +150,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             if (userData.subscription_type !== 'free') {
                 setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
             } else {
-                setTab(['LangChain'])
+                setTab(['LangChain', 'LlamaIndex'])
             }
         }
     }, [location.pathname, userData.subscription_type])
