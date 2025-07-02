@@ -24,29 +24,18 @@ import { tableCellClasses } from '@mui/material/TableCell'
 import FlowListMenu from '../button/FlowListMenu'
 import { Link } from 'react-router-dom'
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    borderColor: theme.palette.grey[900] + 25,
-    fontFamily: 'cambria math',
-    [`&.${tableCellClasses.head}`]: {
-        color: 'black',
-        fontWeight: 'bold'
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        height: 64
-    }
-}))
-
-const StyledTableSortLabel = styled(TableSortLabel)(({ theme }) => ({
-    color: 'black !important',
-    '&.Mui-active': {
-        color: 'black !important',
-        fontSize: '0.875rem'
-    },
-    '& .MuiTableSortLabel-icon': {
-        color: 'black !important'
-    }
-}))
+// const StyledTableCell = styled(TableCell)(({ theme }) => ({
+//     borderColor: theme.palette.grey[900] + 25,
+//     fontFamily: 'cambria math',
+//     [`&.${tableCellClasses.head}`]: {
+//         color: 'black',
+//         fontWeight: 'bold'
+//     },
+//     [`&.${tableCellClasses.body}`]: {
+//         fontSize: 14,
+//         height: 64
+//     }
+// }))
 
 const StyledTableRow = styled(TableRow)(() => ({
     // hide last border
@@ -76,6 +65,30 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
 
     const [order, setOrder] = useState(localStorage.getItem(localStorageKeyOrder) || 'desc')
     const [orderBy, setOrderBy] = useState(localStorage.getItem(localStorageKeyOrderBy) || 'updatedDate')
+
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+        borderColor: theme.palette.grey[900] + 25,
+        fontFamily: 'cambria math',
+        [`&.${tableCellClasses.head}`]: {
+            color: customization.isDarkMode ? 'white' : 'black',
+            fontWeight: 'bold'
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 14,
+            height: 64
+        }
+    }))
+
+    const StyledTableSortLabel = styled(TableSortLabel)(({ theme }) => ({
+        color: customization.isDarkMode ? 'white !important' : 'black !important',
+        '&.Mui-active': {
+            color: customization.isDarkMode ? 'white !important' : 'black !important',
+            fontSize: '0.875rem'
+        },
+        '& .MuiTableSortLabel-icon': {
+            color: customization.isDarkMode ? 'white !important' : 'black !important'
+        }
+    }))
 
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc'
