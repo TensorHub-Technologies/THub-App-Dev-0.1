@@ -79,7 +79,6 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
-
     const customization = useSelector((state) => state.customization)
 
     useNotifier()
@@ -168,6 +167,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
     }
 
     const saveFlowRename = async (chatflowName, chatflowDescription) => {
+        setFlowDialogOpen(false)
         const updateBody = {
             name: chatflowName,
             tenantId: tenantId,
@@ -177,7 +177,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
             if (isAgentCanvas && isAgentflowV2) {
-                await updateFlowsApi.request({ type: 'AGENTFLOW', tenantId })
+                await updateFlowsApi.request('AGENTFLOW', tenantId)
             } else {
                 await updateFlowsApi.request(isAgentCanvas ? { type: 'MULTIAGENT', tenantId } : tenantId)
             }

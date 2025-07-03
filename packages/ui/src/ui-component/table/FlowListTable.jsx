@@ -56,7 +56,17 @@ const isImagePath = (icon) => {
     )
 }
 
-export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filterFunction, updateFlowsApi, setError, isAgentCanvas }) => {
+export const FlowListTable = ({
+    data,
+    images = {},
+    icons = {},
+    isLoading,
+    filterFunction,
+    updateFlowsApi,
+    setError,
+    isAgentCanvas,
+    isAgentflowV2
+}) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
@@ -119,6 +129,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
               return 0
           })
         : []
+    console.log(isAgentCanvas, isAgentflowV2, 'isAgentCanvas in flowlisttable, isAgentflowV2')
 
     return (
         <>
@@ -371,6 +382,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                             >
                                                 <FlowListMenu
                                                     isAgentCanvas={isAgentCanvas}
+                                                    isAgentflowV2={isAgentflowV2}
                                                     chatflow={row}
                                                     setError={setError}
                                                     updateFlowsApi={updateFlowsApi}
@@ -396,5 +408,6 @@ FlowListTable.propTypes = {
     filterFunction: PropTypes.func,
     updateFlowsApi: PropTypes.object,
     setError: PropTypes.func,
-    isAgentCanvas: PropTypes.bool
+    isAgentCanvas: PropTypes.bool,
+    isAgentflowV2: PropTypes.bool
 }
