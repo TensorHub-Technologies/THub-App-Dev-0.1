@@ -41,7 +41,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| CARD ||=========================== //
 
-const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons }) => {
+const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons, isAgentCanvas, isAgentflowV2 }) => {
     const customization = useCustomization()
 
     const [isDragging, setIsDragging] = useState(false)
@@ -371,7 +371,14 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                         </div>
                     </CardWrapper>
 
-                    {!data.templateName && <FlowListMenu chatflow={chatflow || data} updateFlowsApi={updateFlowsApi} />}
+                    {!data.templateName && (
+                        <FlowListMenu
+                            chatflow={chatflow || data}
+                            updateFlowsApi={updateFlowsApi}
+                            isAgentCanvas={isAgentCanvas}
+                            isAgentflowV2={isAgentflowV2}
+                        />
+                    )}
                 </div>
             )}
         </div>
@@ -385,7 +392,9 @@ ItemCard.propTypes = {
     onClick: PropTypes.func,
     chatflow: PropTypes.object,
     icons: PropTypes.array,
-    updateFlowsApi: PropTypes.object
+    updateFlowsApi: PropTypes.object,
+    isAgentCanvas: PropTypes.bool,
+    isAgentflowV2: PropTypes.bool
 }
 
 export default ItemCard

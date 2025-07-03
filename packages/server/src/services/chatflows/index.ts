@@ -120,7 +120,7 @@ const deleteChatflow = async (chatflowId: string): Promise<any> => {
 }
 
 const getAllChatflows = async (type?: ChatflowType, tenantId?: string): Promise<ChatFlow[]> => {
-    console.log(tenantId, 'tenantId')
+    console.log(tenantId, 'tenantId111')
 
     try {
         const appServer = getRunningExpressApp()
