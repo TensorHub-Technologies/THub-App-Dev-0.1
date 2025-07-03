@@ -274,12 +274,13 @@ export const FlowListTable = ({
                                                 }}
                                             >
                                                 &nbsp;
-                                                {row.category &&
-                                                    row.category
-                                                        .split(';')
-                                                        .map((tag, index) => (
-                                                            <Chip key={index} label={tag} style={{ marginRight: 5, marginBottom: 5 }} />
-                                                        ))}
+                                                {row.category
+                                                    ? row.category
+                                                          .split(';')
+                                                          .map((tag, index) => (
+                                                              <Chip key={index} label={tag} style={{ marginRight: 5, marginBottom: 5 }} />
+                                                          ))
+                                                    : '—'}
                                             </div>
                                         </StyledTableCell>
 
