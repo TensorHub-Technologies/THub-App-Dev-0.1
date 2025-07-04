@@ -171,6 +171,15 @@ const FileUpload = ({ dialogProps }) => {
         }
     }
 
+    const radioColorStyle = {
+        color: customization.isDarkMode ? '#ffffff' : '#666666', // Unchecked
+        '&.Mui-checked': {
+            color: customization.isDarkMode ? '#90caf9' : '#1976d2' // Checked
+        },
+        '&.Mui-disabled': {
+            color: customization.isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.26)' // Disabled
+        }
+    }
     return (
         <>
             <Box
@@ -249,8 +258,18 @@ const FileUpload = ({ dialogProps }) => {
                 <Typography sx={{ fontSize: 14, fontWeight: 500, marginBottom: 1 }}>PDF Usage</Typography>
                 <FormControl disabled={!fullFileUpload}>
                     <RadioGroup name='pdf-usage' value={pdfUsage} onChange={handlePdfUsageChange}>
-                        <FormControlLabel value='perPage' control={<Radio />} label='One document per page' sx={disabledLabelStyle} />
-                        <FormControlLabel value='perFile' control={<Radio />} label='One document per file' sx={disabledLabelStyle} />
+                        <FormControlLabel
+                            value='perPage'
+                            control={<Radio sx={radioColorStyle} />}
+                            label='One document per page'
+                            sx={disabledLabelStyle}
+                        />
+                        <FormControlLabel
+                            value='perFile'
+                            control={<Radio sx={radioColorStyle} />}
+                            label='One document per file'
+                            sx={disabledLabelStyle}
+                        />
                     </RadioGroup>
                 </FormControl>
             </Box>
