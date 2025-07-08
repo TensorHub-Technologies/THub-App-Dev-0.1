@@ -257,6 +257,8 @@ const Agentflows = () => {
                                                     key={index}
                                                     onClick={() => goToCanvas(data)}
                                                     data={data}
+                                                    isAgentCanvas={true}
+                                                    isAgentflowV2={agentflowVersion === 'v2'}
                                                     images={images[data.id]}
                                                     icons={icons[data.id]}
                                                     updateFlowsApi={getAllAgentflows}
@@ -270,6 +272,7 @@ const Agentflows = () => {
                     ) : (
                         <FlowListTable
                             isAgentCanvas={true}
+                            isAgentflowV2={agentflowVersion === 'v2'}
                             data={getAllAgentflows.data}
                             images={images}
                             icons={icons}

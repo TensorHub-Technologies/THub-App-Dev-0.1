@@ -4,12 +4,16 @@ import { useState, useEffect, useRef, useContext, memo } from 'react'
 import { useUpdateNodeInternals } from 'reactflow'
 import PropTypes from 'prop-types'
 import { Stack, Box, Typography, TextField, Dialog, DialogContent, ButtonBase, Avatar } from '@mui/material'
-import NodeInputHandler from '@/views/canvas/NodeInputHandler'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 import { IconPencil, IconX, IconCheck, IconInfoCircle } from '@tabler/icons-react'
 import { useTheme } from '@mui/material/styles'
 import { flowContext } from '@/store/context/ReactFlowContext'
 import { showHideInputParams } from '@/utils/genericHelper'
+import AgentNodeInputHandler from '../canvas/AgentNodeInputHandler'
+import Tab from '@mui/material/Tab'
+import TabContext from '@mui/lab/TabContext'
+import TabList from '@mui/lab/TabList'
+import TabPanel from '@mui/lab/TabPanel'
 
 const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
@@ -24,6 +28,12 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
     const [data, setData] = useState({})
     const [isEditingNodeName, setEditingNodeName] = useState(null)
     const [nodeName, setNodeName] = useState('')
+
+    const [value, setValue] = useState('1')
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue)
+    }
 
     const onNodeLabelChange = () => {
         reactFlowInstance.setNodes((nds) =>
@@ -251,18 +261,108 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                         </Typography>
                     </Stack>
                 )}
-                {inputParams
-                    .filter((inputParam) => inputParam.display !== false)
-                    .map((inputParam, index) => (
-                        <NodeInputHandler
-                            disabled={dialogProps.disabled}
-                            key={index}
-                            inputParam={inputParam}
-                            data={data}
-                            isAdditionalParams={true}
-                            onCustomDataChange={onCustomDataChange}
-                        />
-                    ))}
+                <Box sx={{ width: '100%', typography: 'body1' }}>
+                    <TabContext value={value}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList onChange={handleChange} aria-label='lab API tabs example'>
+                                <Tab label='Basic Settings' value='1' />
+                                <Tab label='Model Settings' value='2' />
+                                <Tab label='Additional Options' value='3' />
+                            </TabList>
+                        </Box>
+
+                        <TabPanel value='1'>
+                            {/* Tab 1: Basic Settings - Filter inputs for basic/essential parameters */}
+                            {inputParams
+                                .filter((inputParam) => inputParam.display !== false)
+                                .filter((inputParam) => {
+                                    // Define criteria for Tab 1 - Basic Settings
+                                    const basicInputTypes = ['string', 'number', 'boolean', 'options']
+                                    const basicInputNames = ['name', 'description', 'model', 'temperature', 'maxTokens']
+
+                                    return (
+                                        basicInputTypes.includes(inputParam.type) ||
+                                        basicInputNames.includes(inputParam.name) ||
+                                        inputParam.category === 'basic'
+                                    )
+                                })
+                                .map((inputParam, index) => {
+                                    console.log('Tab 1 inputParam:', inputParam)
+                                    return (
+                                        <AgentNodeInputHandler
+                                            disabled={dialogProps.disabled}
+                                            key={`tab1_${index}`}
+                                            inputParam={inputParam}
+                                            data={data}
+                                            isAdditionalParams={true}
+                                            onCustomDataChange={onCustomDataChange}
+                                        />
+                                    )
+                                })}
+                        </TabPanel>
+
+                        <TabPanel value='2'>
+                            {/* Tab 2: Advanced Settings - Filter inputs for advanced parameters */}
+                            {inputParams
+                                .filter((inputParam) => inputParam.display !== false)
+                                .filter((inputParam) => {
+                                    // Define criteria for Tab 2 - Advanced Settings
+                                    const advancedInputTypes = ['code', 'json', 'asyncOptions', 'multiOptions']
+                                    const advancedInputNames = ['systemPrompt', 'userPrompt', 'functions', 'tools']
+
+                                    return (
+                                        advancedInputTypes.includes(inputParam.type) ||
+                                        advancedInputNames.includes(inputParam.name) ||
+                                        inputParam.category === 'advanced'
+                                    )
+                                })
+                                .map((inputParam, index) => {
+                                    console.log('Tab 2 inputParam:', inputParam)
+                                    return (
+                                        <AgentNodeInputHandler
+                                            disabled={dialogProps.disabled}
+                                            key={`tab2_${index}`}
+                                            inputParam={inputParam}
+                                            data={data}
+                                            isAdditionalParams={true}
+                                            onCustomDataChange={onCustomDataChange}
+                                        />
+                                    )
+                                })}
+                        </TabPanel>
+
+                        <TabPanel value='3'>
+                            {/* Tab 3: Additional Options - Filter inputs for additional/optional parameters */}
+                            {inputParams
+                                .filter((inputParam) => inputParam.display !== false)
+                                .filter((inputParam) => {
+                                    // Define criteria for Tab 3 - Additional Options
+                                    const additionalInputTypes = ['file', 'credential', 'datagrid', 'array']
+                                    const additionalInputNames = ['metadata', 'tags', 'debug', 'verbose']
+
+                                    return (
+                                        additionalInputTypes.includes(inputParam.type) ||
+                                        additionalInputNames.includes(inputParam.name) ||
+                                        inputParam.category === 'additional' ||
+                                        inputParam.optional === true
+                                    )
+                                })
+                                .map((inputParam, index) => {
+                                    console.log('Tab 3 inputParam:', inputParam)
+                                    return (
+                                        <AgentNodeInputHandler
+                                            disabled={dialogProps.disabled}
+                                            key={`tab3_${index}`}
+                                            inputParam={inputParam}
+                                            data={data}
+                                            isAdditionalParams={true}
+                                            onCustomDataChange={onCustomDataChange}
+                                        />
+                                    )
+                                })}
+                        </TabPanel>
+                    </TabContext>
+                </Box>
             </DialogContent>
         </Dialog>
     ) : null
