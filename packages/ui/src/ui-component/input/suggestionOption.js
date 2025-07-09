@@ -32,7 +32,7 @@ let cachedVariables = []
 // Function to fetch variables
 const fetchVariables = async () => {
     try {
-        const response = await variablesApi.getAllVariables(tenantId)
+        const response = await variablesApi.getAllVariables()
         cachedVariables = response.data || []
         return cachedVariables
     } catch (error) {
@@ -57,6 +57,12 @@ export const suggestionOptions = (
                 id: 'chat_history',
                 mentionLabel: 'chat_history',
                 description: 'Past conversation history between user and AI',
+                category: 'Chat Context'
+            },
+            {
+                id: 'current_date_time',
+                mentionLabel: 'current_date_time',
+                description: 'Current date and time',
                 category: 'Chat Context'
             },
             {

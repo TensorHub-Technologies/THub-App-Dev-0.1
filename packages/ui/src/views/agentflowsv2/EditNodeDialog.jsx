@@ -4,12 +4,16 @@ import { useState, useEffect, useRef, useContext, memo } from 'react'
 import { useUpdateNodeInternals } from 'reactflow'
 import PropTypes from 'prop-types'
 import { Stack, Box, Typography, TextField, Dialog, DialogContent, ButtonBase, Avatar } from '@mui/material'
-import NodeInputHandler from '@/views/canvas/NodeInputHandler'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 import { IconPencil, IconX, IconCheck, IconInfoCircle } from '@tabler/icons-react'
 import { useTheme } from '@mui/material/styles'
 import { flowContext } from '@/store/context/ReactFlowContext'
 import { showHideInputParams } from '@/utils/genericHelper'
+import AgentNodeInputHandler from '../canvas/AgentNodeInputHandler'
+import Tab from '@mui/material/Tab'
+import TabContext from '@mui/lab/TabContext'
+import TabList from '@mui/lab/TabList'
+import TabPanel from '@mui/lab/TabPanel'
 
 const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
@@ -24,6 +28,12 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
     const [data, setData] = useState({})
     const [isEditingNodeName, setEditingNodeName] = useState(null)
     const [nodeName, setNodeName] = useState('')
+
+    const [value, setValue] = useState('1')
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue)
+    }
 
     const onNodeLabelChange = () => {
         reactFlowInstance.setNodes((nds) =>
@@ -106,6 +116,14 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
             maxWidth='sm'
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
+            PaperProps={{
+                sx: {
+                    width: '600px',
+                    height: '80vh',
+                    maxHeight: '90vh',
+                    overflowY: 'auto'
+                }
+            }}
         >
             <DialogContent>
                 {data && data.name && (
@@ -251,18 +269,190 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                         </Typography>
                     </Stack>
                 )}
-                {inputParams
-                    .filter((inputParam) => inputParam.display !== false)
-                    .map((inputParam, index) => (
-                        <NodeInputHandler
-                            disabled={dialogProps.disabled}
-                            key={index}
-                            inputParam={inputParam}
-                            data={data}
-                            isAdditionalParams={true}
-                            onCustomDataChange={onCustomDataChange}
-                        />
-                    ))}
+                <Box sx={{ width: '100%', typography: 'body1' }}>
+                    <TabContext value={value}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList onChange={handleChange} aria-label='lab API tabs example'>
+                                <Tab label='Basic Settings' value='1' />
+                                <Tab label='Model Settings' value='2' />
+                                <Tab label='Additional Settings' value='3' />
+                                <Tab label='Tools Settings' value='4' />
+                            </TabList>
+                        </Box>
+
+                        <TabPanel value='1'>
+                            {/* Tab 1: Basic Settings - Filter inputs for basic/essential parameters */}
+                            {inputParams
+                                .filter((inputParam) => inputParam.display !== false)
+                                .filter((inputParam) => {
+                                    // Define criteria for Tab 1 - Basic Settings
+                                    const basicInputTypes = ['string', 'number', 'boolean', 'options']
+                                    const basicInputNames = ['name', 'description', 'model', 'temperature', 'maxTokens']
+
+                                    return (
+                                        basicInputTypes.includes(inputParam.type) ||
+                                        basicInputNames.includes(inputParam.name) ||
+                                        inputParam.category === 'basic'
+                                    )
+                                })
+                                .map((inputParam, index) => {
+                                    console.log('Tab 1 inputParam:', inputParam)
+                                    return (
+                                        <AgentNodeInputHandler
+                                            disabled={dialogProps.disabled}
+                                            key={`tab1_${index}`}
+                                            inputParam={inputParam}
+                                            data={data}
+                                            isAdditionalParams={true}
+                                            onCustomDataChange={onCustomDataChange}
+                                        />
+                                    )
+                                })}
+                        </TabPanel>
+
+                        <TabPanel value='2'>
+                            {/* Tab 2: Model Settings - Filter inputs for model-related parameters */}
+                            {inputParams
+                                .filter((inputParam) => inputParam.display !== false)
+                                .filter((inputParam) => {
+                                    // Define criteria for Tab 2 - Model Settings
+                                    const modelInputTypes = ['code', 'json', 'asyncOptions']
+                                    const modelInputNames = ['systemPrompt', 'userPrompt', 'functions', 'modelConfig']
+                                    const toolInputNames = ['tools', 'selectedTool', 'toolConfig'] // Exclude tool-related inputs
+
+                                    return (
+                                        (modelInputTypes.includes(inputParam.type) ||
+                                            modelInputNames.includes(inputParam.name) ||
+                                            inputParam.category === 'model') &&
+                                        !toolInputNames.includes(inputParam.name) // Exclude tools from this tab
+                                    )
+                                })
+                                .map((inputParam, index) => {
+                                    console.log('Tab 2 inputParam:', inputParam)
+                                    return (
+                                        <AgentNodeInputHandler
+                                            disabled={dialogProps.disabled}
+                                            key={`tab2_${index}`}
+                                            inputParam={inputParam}
+                                            data={data}
+                                            isAdditionalParams={true}
+                                            onCustomDataChange={onCustomDataChange}
+                                        />
+                                    )
+                                })}
+                        </TabPanel>
+
+                        <TabPanel value='3'>
+                            {inputParams
+                                .filter((inputParam) => inputParam.display !== false)
+                                .filter((inputParam) => {
+                                    const additionalInputTypes = ['file', 'credential', 'datagrid', 'array']
+                                    const additionalInputNames = ['metadata', 'tags', 'debug', 'verbose']
+                                    // Expanded tool-related exclusions
+                                    const toolInputNames = [
+                                        'tools',
+                                        'selectedTool',
+                                        'toolConfig',
+                                        'toolSettings',
+                                        'tool', // Generic tool parameter
+                                        'toolOptions',
+                                        'toolSelection',
+                                        'availableTools'
+                                    ]
+                                    // Knowledge-related exclusions
+                                    const knowledgeInputNames = [
+                                        'knowledge',
+                                        'documentStores',
+                                        'vectorEmbeddings',
+                                        'vectorStore',
+                                        'embedding'
+                                    ]
+
+                                    return (
+                                        (additionalInputTypes.includes(inputParam.type) ||
+                                            additionalInputNames.includes(inputParam.name) ||
+                                            inputParam.category === 'additional' ||
+                                            inputParam.optional === true) &&
+                                        !toolInputNames.includes(inputParam.name) &&
+                                        !knowledgeInputNames.includes(inputParam.name) &&
+                                        inputParam.category !== 'tools' &&
+                                        inputParam.category !== 'knowledge' &&
+                                        !inputParam.name.toLowerCase().includes('tool') &&
+                                        !inputParam.name.toLowerCase().includes('knowledge') &&
+                                        !inputParam.name.toLowerCase().includes('document') &&
+                                        !inputParam.name.toLowerCase().includes('vector') &&
+                                        !inputParam.name.toLowerCase().includes('embedding')
+                                    )
+                                })
+                                .map((inputParam, index) => {
+                                    console.log('Tab 3 inputParam:', inputParam)
+                                    return (
+                                        <AgentNodeInputHandler
+                                            disabled={dialogProps.disabled}
+                                            key={`tab3_${index}`}
+                                            inputParam={inputParam}
+                                            data={data}
+                                            isAdditionalParams={true}
+                                            onCustomDataChange={onCustomDataChange}
+                                        />
+                                    )
+                                })}
+                        </TabPanel>
+
+                        <TabPanel value='4'>
+                            {/* Tab 4: Tools & Knowledge - Filter inputs for tool and knowledge-related parameters */}
+                            {inputParams
+                                .filter((inputParam) => inputParam.display !== false)
+                                .filter((inputParam) => {
+                                    // Define criteria for Tab 4 - Tools & Knowledge
+                                    const toolInputNames = [
+                                        'tools',
+                                        'selectedTool',
+                                        'toolConfig',
+                                        'toolSettings',
+                                        'tool',
+                                        'toolOptions',
+                                        'toolSelection',
+                                        'availableTools'
+                                    ]
+                                    const knowledgeInputNames = [
+                                        'knowledge',
+                                        'documentStores',
+                                        'vectorEmbeddings',
+                                        'vectorStore',
+                                        'embedding'
+                                    ]
+                                    const toolInputTypes = ['multiOptions'] // If tools use multiOptions type
+
+                                    return (
+                                        toolInputNames.includes(inputParam.name) ||
+                                        knowledgeInputNames.includes(inputParam.name) ||
+                                        inputParam.category === 'tools' ||
+                                        inputParam.category === 'knowledge' ||
+                                        inputParam.name.toLowerCase().includes('tool') ||
+                                        inputParam.name.toLowerCase().includes('knowledge') ||
+                                        inputParam.name.toLowerCase().includes('document') ||
+                                        inputParam.name.toLowerCase().includes('vector') ||
+                                        inputParam.name.toLowerCase().includes('embedding') ||
+                                        (toolInputTypes.includes(inputParam.type) && inputParam.name.toLowerCase().includes('tool'))
+                                    )
+                                })
+                                .map((inputParam, index) => {
+                                    console.log('Tab 4 inputParam:', inputParam)
+                                    return (
+                                        <AgentNodeInputHandler
+                                            disabled={dialogProps.disabled}
+                                            key={`tab4_${index}`}
+                                            inputParam={inputParam}
+                                            data={data}
+                                            isAdditionalParams={true}
+                                            onCustomDataChange={onCustomDataChange}
+                                        />
+                                    )
+                                })}
+                        </TabPanel>
+                    </TabContext>
+                </Box>
             </DialogContent>
         </Dialog>
     ) : null
