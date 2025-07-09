@@ -276,7 +276,43 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                                 <Tab label='Basic Settings' value='1' />
                                 <Tab label='Model Settings' value='2' />
                                 <Tab label='Additional Settings' value='3' />
-                                <Tab label='Tools Settings' value='4' />
+                                {/* Only show Tab 4 if there's data for it */}
+                                {inputParams
+                                    .filter((inputParam) => inputParam.display !== false)
+                                    .filter((inputParam) => {
+                                        // Define criteria for Tab 4 - Tools & Knowledge
+                                        const toolInputNames = [
+                                            'tools',
+                                            'selectedTool',
+                                            'toolConfig',
+                                            'toolSettings',
+                                            'tool',
+                                            'toolOptions',
+                                            'toolSelection',
+                                            'availableTools'
+                                        ]
+                                        const knowledgeInputNames = [
+                                            'knowledge',
+                                            'documentStores',
+                                            'vectorEmbeddings',
+                                            'vectorStore',
+                                            'embedding'
+                                        ]
+                                        const toolInputTypes = ['multiOptions'] // If tools use multiOptions type
+
+                                        return (
+                                            toolInputNames.includes(inputParam.name) ||
+                                            knowledgeInputNames.includes(inputParam.name) ||
+                                            inputParam.category === 'tools' ||
+                                            inputParam.category === 'knowledge' ||
+                                            inputParam.name.toLowerCase().includes('tool') ||
+                                            inputParam.name.toLowerCase().includes('knowledge') ||
+                                            inputParam.name.toLowerCase().includes('document') ||
+                                            inputParam.name.toLowerCase().includes('vector') ||
+                                            inputParam.name.toLowerCase().includes('embedding') ||
+                                            (toolInputTypes.includes(inputParam.type) && inputParam.name.toLowerCase().includes('tool'))
+                                        )
+                                    }).length > 0 && <Tab label='Tools Settings' value='4' />}
                             </TabList>
                         </Box>
 
