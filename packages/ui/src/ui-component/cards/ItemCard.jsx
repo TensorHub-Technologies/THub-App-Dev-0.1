@@ -41,7 +41,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| CARD ||=========================== //
 
-const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons }) => {
+const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons, isAgentCanvas, isAgentflowV2 }) => {
     const customization = useCustomization()
 
     const [isDragging, setIsDragging] = useState(false)
@@ -224,7 +224,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                             overflowWrap: 'break-word',
                                             whiteSpace: 'pre-line', // Allows multi-line text wrapping
                                             overflow: 'hidden', // Ensures overflow content is hidden
-                                            height: '40px', // Limits to two lines based on line height
+                                            height: '18px', // Limits to two lines based on line height
                                             lineHeight: '20px', // Adjust to control the height for two lines
                                             width: '250px',
                                             fontFamily: 'Roboto, sans-serif'
@@ -304,8 +304,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                                                             style={{
                                                                                 width: '100%',
                                                                                 height: '100%',
-                                                                                objectFit: 'contain',
-                                                                                padding: 3
+                                                                                objectFit: 'contain'
                                                                             }}
                                                                         />
                                                                     ) : (
@@ -372,7 +371,14 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                         </div>
                     </CardWrapper>
 
-                    {!data.templateName && <FlowListMenu chatflow={chatflow || data} updateFlowsApi={updateFlowsApi} />}
+                    {!data.templateName && (
+                        <FlowListMenu
+                            chatflow={chatflow || data}
+                            updateFlowsApi={updateFlowsApi}
+                            isAgentCanvas={isAgentCanvas}
+                            isAgentflowV2={isAgentflowV2}
+                        />
+                    )}
                 </div>
             )}
         </div>
@@ -386,7 +392,9 @@ ItemCard.propTypes = {
     onClick: PropTypes.func,
     chatflow: PropTypes.object,
     icons: PropTypes.array,
-    updateFlowsApi: PropTypes.object
+    updateFlowsApi: PropTypes.object,
+    isAgentCanvas: PropTypes.bool,
+    isAgentflowV2: PropTypes.bool
 }
 
 export default ItemCard

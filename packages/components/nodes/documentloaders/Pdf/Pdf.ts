@@ -117,7 +117,9 @@ class Pdf_DocumentLoaders implements INode {
         //FILE-STORAGE::["CONTRIBUTING.md","LICENSE.md","README.md"]
         if (pdfFileBase64.startsWith('FILE-STORAGE::')) {
             const fileName = pdfFileBase64.replace('FILE-STORAGE::', '')
+            console.log('fileName pdfFileBase64:', fileName)
             if (fileName.startsWith('[') && fileName.endsWith(']')) {
+                console.log('fileName fileName.startsWith:', fileName)
                 files = JSON.parse(fileName)
             } else {
                 files = [fileName]
@@ -126,6 +128,8 @@ class Pdf_DocumentLoaders implements INode {
 
             for (const file of files) {
                 if (!file) continue
+                console.log('file for loop:', file)
+                console.log('chatflowid for loop:', chatflowid)
                 const fileData = await getFileFromStorage(file, chatflowid)
                 const bf = Buffer.from(fileData)
                 await this.extractDocs(usage, bf, legacyBuild, textSplitter, docs)

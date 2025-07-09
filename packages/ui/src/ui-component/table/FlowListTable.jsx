@@ -24,29 +24,18 @@ import { tableCellClasses } from '@mui/material/TableCell'
 import FlowListMenu from '../button/FlowListMenu'
 import { Link } from 'react-router-dom'
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    borderColor: theme.palette.grey[900] + 25,
-    fontFamily: 'cambria math',
-    [`&.${tableCellClasses.head}`]: {
-        color: 'black',
-        fontWeight: 'bold'
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        height: 64
-    }
-}))
-
-const StyledTableSortLabel = styled(TableSortLabel)(({ theme }) => ({
-    color: 'black !important',
-    '&.Mui-active': {
-        color: 'black !important',
-        fontSize: '0.875rem'
-    },
-    '& .MuiTableSortLabel-icon': {
-        color: 'black !important'
-    }
-}))
+// const StyledTableCell = styled(TableCell)(({ theme }) => ({
+//     borderColor: theme.palette.grey[900] + 25,
+//     fontFamily: 'cambria math',
+//     [`&.${tableCellClasses.head}`]: {
+//         color: 'black',
+//         fontWeight: 'bold'
+//     },
+//     [`&.${tableCellClasses.body}`]: {
+//         fontSize: 14,
+//         height: 64
+//     }
+// }))
 
 const StyledTableRow = styled(TableRow)(() => ({
     // hide last border
@@ -67,7 +56,17 @@ const isImagePath = (icon) => {
     )
 }
 
-export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filterFunction, updateFlowsApi, setError, isAgentCanvas }) => {
+export const FlowListTable = ({
+    data,
+    images = {},
+    icons = {},
+    isLoading,
+    filterFunction,
+    updateFlowsApi,
+    setError,
+    isAgentCanvas,
+    isAgentflowV2
+}) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
@@ -76,6 +75,30 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
 
     const [order, setOrder] = useState(localStorage.getItem(localStorageKeyOrder) || 'desc')
     const [orderBy, setOrderBy] = useState(localStorage.getItem(localStorageKeyOrderBy) || 'updatedDate')
+
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+        borderColor: theme.palette.grey[900] + 25,
+        fontFamily: 'cambria math',
+        [`&.${tableCellClasses.head}`]: {
+            color: customization.isDarkMode ? 'white' : 'black',
+            fontWeight: 'bold'
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 14,
+            height: 64
+        }
+    }))
+
+    const StyledTableSortLabel = styled(TableSortLabel)(({ theme }) => ({
+        color: customization.isDarkMode ? 'white !important' : 'black !important',
+        '&.Mui-active': {
+            color: customization.isDarkMode ? 'white !important' : 'black !important',
+            fontSize: '0.875rem'
+        },
+        '& .MuiTableSortLabel-icon': {
+            color: customization.isDarkMode ? 'white !important' : 'black !important'
+        }
+    }))
 
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc'
@@ -106,6 +129,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
               return 0
           })
         : []
+    console.log(isAgentCanvas, isAgentflowV2, 'isAgentCanvas in flowlisttable, isAgentflowV2')
 
     return (
         <>
@@ -128,12 +152,15 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                 </StyledTableSortLabel>
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '25%' }} key='1'>
+                                Description
+                            </StyledTableCell>
+                            <StyledTableCell style={{ width: '25%' }} key='2'>
                                 Category
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '30%' }} key='2'>
+                            <StyledTableCell style={{ width: '30%' }} key='3'>
                                 Nodes
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }} key='3'>
+                            <StyledTableCell style={{ width: '15%' }} key='4'>
                                 <StyledTableSortLabel
                                     active={orderBy === 'updatedDate'}
                                     direction={order}
@@ -142,7 +169,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                     Last Modified Date
                                 </StyledTableSortLabel>
                             </StyledTableCell>
-                            <StyledTableCell style={{ width: '10%' }} key='4'>
+                            <StyledTableCell style={{ width: '10%' }} key='5'>
                                 Actions
                             </StyledTableCell>
                         </TableRow>
@@ -209,6 +236,35 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                             </Tooltip>
                                         </StyledTableCell>
                                         <StyledTableCell key='1'>
+                                            <Tooltip title={row.description || ''} placement='top' arrow enterDelay={300}>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        flexWrap: 'wrap',
+                                                        marginTop: 5,
+                                                        maxWidth: '250px', // Adjust as needed
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        cursor: row.description ? 'pointer' : 'default'
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant='body2'
+                                                        noWrap
+                                                        sx={{
+                                                            width: '100%',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}
+                                                    >
+                                                        {row.description || '—'}
+                                                    </Typography>
+                                                </div>
+                                            </Tooltip>
+                                        </StyledTableCell>
+                                        <StyledTableCell key='2'>
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -218,15 +274,17 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                 }}
                                             >
                                                 &nbsp;
-                                                {row.category &&
-                                                    row.category
-                                                        .split(';')
-                                                        .map((tag, index) => (
-                                                            <Chip key={index} label={tag} style={{ marginRight: 5, marginBottom: 5 }} />
-                                                        ))}
+                                                {row.category
+                                                    ? row.category
+                                                          .split(';')
+                                                          .map((tag, index) => (
+                                                              <Chip key={index} label={tag} style={{ marginRight: 5, marginBottom: 5 }} />
+                                                          ))
+                                                    : '—'}
                                             </div>
                                         </StyledTableCell>
-                                        <StyledTableCell key='2'>
+
+                                        <StyledTableCell key='3'>
                                             {(images[row.id] || icons[row.id]) && (
                                                 <Box
                                                     sx={{
@@ -312,10 +370,10 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='3'>
+                                        <StyledTableCell key='4'>
                                             {moment(row.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
                                         </StyledTableCell>
-                                        <StyledTableCell key='4'>
+                                        <StyledTableCell key='5'>
                                             <Stack
                                                 direction={{ xs: 'column', sm: 'row' }}
                                                 spacing={1}
@@ -324,6 +382,7 @@ export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filter
                                             >
                                                 <FlowListMenu
                                                     isAgentCanvas={isAgentCanvas}
+                                                    isAgentflowV2={isAgentflowV2}
                                                     chatflow={row}
                                                     setError={setError}
                                                     updateFlowsApi={updateFlowsApi}
@@ -349,5 +408,6 @@ FlowListTable.propTypes = {
     filterFunction: PropTypes.func,
     updateFlowsApi: PropTypes.object,
     setError: PropTypes.func,
-    isAgentCanvas: PropTypes.bool
+    isAgentCanvas: PropTypes.bool,
+    isAgentflowV2: PropTypes.bool
 }

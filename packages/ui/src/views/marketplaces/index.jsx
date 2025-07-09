@@ -18,9 +18,7 @@ import {
     FormControlLabel,
     ToggleButtonGroup,
     MenuItem,
-    Button,
-    Tabs,
-    Tab
+    Button
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { IconLayoutGrid, IconList, IconX } from '@tabler/icons-react'
@@ -613,7 +611,7 @@ const Marketplace = () => {
                                 </ToggleButton>
                             </ToggleButtonGroup>
                         </ViewHeader>
-                        <Tabs
+                        {/* <Tabs
                             value={activeTabValue}
                             onChange={handleTabChange}
                             textColor='primary'
@@ -653,7 +651,7 @@ const Marketplace = () => {
                                     }
                                 }}
                             />
-                        </Tabs>
+                        </Tabs> */}
                         <TabPanel value={activeTabValue} index={0}>
                             {/* <Stack direction='row' sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                 {usecases.map((usecase, index) => (

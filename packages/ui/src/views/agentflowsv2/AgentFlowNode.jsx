@@ -187,8 +187,9 @@ const AgentFlowNode = ({ data }) => {
                 sx={{
                     borderColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                     borderWidth: '1px',
-                    minHeight: getMinimumHeight(),
-                    height: 'auto',
+                    // minHeight: getMinimumHeight(),
+                    height: '70px',
+                    width: '100px',
                     backgroundColor: customization.isDarkMode ? 'black' : 'white',
                     display: 'flex',
                     alignItems: 'center',
@@ -299,130 +300,13 @@ const AgentFlowNode = ({ data }) => {
                         <Box>
                             <Typography
                                 sx={{
-                                    fontSize: '0.85rem',
-                                    fontWeight: 500,
+                                    fontSize: '0.45rem',
+                                    fontWeight: 200,
                                     color: customization.isDarkMode ? 'white' : 'black'
                                 }}
                             >
                                 {data.label}
                             </Typography>
-
-                            {/* {(() => {
-                                // Array of model configs to check and render
-                                const modelConfigs = [
-                                    { model: data.inputs?.llmModel, config: data.inputs?.llmModelConfig },
-                                    { model: data.inputs?.agentModel, config: data.inputs?.agentModelConfig },
-                                    { model: data.inputs?.conditionAgentModel, config: data.inputs?.conditionAgentModelConfig }
-                                ]
-
-                                // Filter out undefined models and render each valid one
-                                return modelConfigs
-                                    .filter((item) => item.model && item.config)
-                                    .map((item, index) => (
-                                        <Box key={`model-${index}`} sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                                            <Box
-                                                sx={{
-                                                    backgroundColor: customization.isDarkMode
-                                                        ? 'rgba(255, 255, 255, 0.2)'
-                                                        : 'rgba(255, 255, 255, 0.9)',
-                                                    borderRadius: '16px',
-                                                    width: 'max-content',
-                                                    height: 24,
-                                                    pl: 1,
-                                                    pr: 1,
-                                                    display: 'flex',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center'
-                                                }}
-                                            >
-                                                <img
-                                                    style={{ width: 20, height: 20, objectFit: 'contain' }}
-                                                    src={`${baseURL}/api/v1/node-icon/${item.model}`}
-                                                    alt={item.model}
-                                                />
-                                                <Typography sx={{ fontSize: '0.7rem', ml: 0.5 }}>
-                                                    {item.config.modelName || item.config.model}
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    ))
-                            })()} */}
-
-                            {/* {(() => {
-                                // Array of tool configurations to check and render
-                                const toolConfigs = [
-                                    { tools: data.inputs?.llmTools, toolProperty: 'llmSelectedTool' },
-                                    { tools: data.inputs?.agentTools, toolProperty: 'agentSelectedTool' },
-                                    {
-                                        tools: data.inputs?.selectedTool ? [{ selectedTool: data.inputs?.selectedTool }] : [],
-                                        toolProperty: 'selectedTool'
-                                    },
-                                    { tools: data.inputs?.agentKnowledgeVSEmbeddings, toolProperty: ['vectorStore', 'embeddingModel'] }
-                                ]
-
-                                // Filter out undefined tools and render each valid collection
-                                return toolConfigs
-                                    .filter((config) => config.tools && config.tools.length > 0)
-                                    .map((config, configIndex) => (
-                                        <Box key={`tools-${configIndex}`} sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                                            {config.tools.flatMap((tool, toolIndex) => {
-                                                if (Array.isArray(config.toolProperty)) {
-                                                    return config.toolProperty
-                                                        .filter((prop) => tool[prop])
-                                                        .map((prop, propIndex) => {
-                                                            const toolName = tool[prop]
-                                                            return (
-                                                                <Box
-                                                                    key={`tool-${configIndex}-${toolIndex}-${propIndex}`}
-                                                                    sx={{
-                                                                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                                                                        borderRadius: '50%',
-                                                                        width: 24,
-                                                                        height: 24,
-                                                                        display: 'flex',
-                                                                        justifyContent: 'center',
-                                                                        alignItems: 'center',
-                                                                        padding: '4px'
-                                                                    }}
-                                                                >
-                                                                    <img
-                                                                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                                                        src={`${baseURL}/api/v1/node-icon/${toolName}`}
-                                                                        alt={toolName}
-                                                                    />
-                                                                </Box>
-                                                            )
-                                                        })
-                                                } else {
-                                                    const toolName = tool[config.toolProperty]
-                                                    if (!toolName) return []
-
-                                                    return [
-                                                        <Box
-                                                            key={`tool-${configIndex}-${toolIndex}`}
-                                                            sx={{
-                                                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                                                                borderRadius: '50%',
-                                                                width: 24,
-                                                                height: 24,
-                                                                display: 'flex',
-                                                                justifyContent: 'center',
-                                                                alignItems: 'center',
-                                                                padding: '4px'
-                                                            }}
-                                                        >
-                                                            <img
-                                                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                                                src={`${baseURL}/api/v1/node-icon/${toolName}`}
-                                                                alt={toolName}
-                                                            />
-                                                        </Box>
-                                                    ]
-                                                }
-                                            })}
-                                        </Box>
-                                    ))
-                            })()} */}
                         </Box>
                     </div>
                     {getOutputAnchors().map((outputAnchor, index) => {

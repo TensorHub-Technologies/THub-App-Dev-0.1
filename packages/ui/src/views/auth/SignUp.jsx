@@ -431,7 +431,11 @@ const SignUp = () => {
                                     endAdornment={
                                         <InputAdornment position='end'>
                                             <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                                {showConfirmPassword ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
+                                                {showConfirmPassword ? (
+                                                    <EyeCloseIcon color={customization.isDarkMode ? 'white' : 'black'} size={20} />
+                                                ) : (
+                                                    <EyeOpenIcon size={20} />
+                                                )}
                                             </IconButton>
                                         </InputAdornment>
                                     }

@@ -52,8 +52,6 @@ const Chatflows = () => {
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
-    console.log('User Data:', userData, tenantId)
-
     const handleChange = (event, nextView) => {
         if (nextView === null) return
         localStorage.setItem('flowDisplayStyle', nextView)
@@ -257,7 +255,13 @@ const Chatflows = () => {
                             ) : (
                                 <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
                                     {getProcessedData().map((data, index) => (
-                                        <ItemCard key={index} onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
+                                        <ItemCard
+                                            key={index}
+                                            onClick={() => goToCanvas(data)}
+                                            data={data}
+                                            images={images[data.id]}
+                                            updateFlowsApi={getAllChatflowsApi}
+                                        />
                                     ))}
                                 </Box>
                             )}
