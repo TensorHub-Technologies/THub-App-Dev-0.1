@@ -236,9 +236,10 @@ const CanvasHeader = ({
         else setFlowDialogOpen(true)
     }
 
-    const onConfirmSaveName = (flowName) => {
+    const onConfirmSaveName = (flowName, chatflowDescription) => {
         setFlowDialogOpen(false)
-        handleSaveFlow(flowName)
+        handleSaveFlow(flowName, chatflowDescription)
+        console.log('description', chatflowDescription)
     }
 
     useEffect(() => {
@@ -278,7 +279,9 @@ const CanvasHeader = ({
                             outline: 'none',
                             cursor: 'pointer'
                         }}
-                        onClick={() => window.location.reload()}
+                        onClick={() => {
+                            navigate('/workflows')
+                        }}
                     >
                         <img src={ColorfulLogo} alt='THub_Logo' width={35} />
                     </button>

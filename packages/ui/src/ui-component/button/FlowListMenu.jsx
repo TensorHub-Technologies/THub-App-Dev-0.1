@@ -17,6 +17,7 @@ import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
 import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
 import Button from '@mui/material/Button'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { IconX } from '@tabler/icons-react'
 
 import chatflowsApi from '@/api/chatflows'
@@ -74,7 +75,7 @@ const StyledMenu = styled((props) => (
     }
 }))
 
-export default function FlowListMenu({ chatflow, isAgentCanvas, setError, updateFlowsApi }) {
+export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, setError, updateFlowsApi }) {
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
@@ -98,10 +99,15 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const [speechToTextDialogOpen, setSpeechToTextDialogOpen] = useState(false)
     const [speechToTextDialogProps, setSpeechToTextDialogProps] = useState({})
 
+    const view = localStorage.getItem('flowDisplayStyle') || 'card'
+
     const [exportTemplateDialogOpen, setExportTemplateDialogOpen] = useState(false)
     const [exportTemplateDialogProps, setExportTemplateDialogProps] = useState({})
 
-    const title = isAgentCanvas ? 'Agents' : 'Chatflow'
+    const title = isAgentCanvas ? 'Agents' : 'Workflow'
+    const userData = useSelector((state) => state.user.userData)
+
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -160,17 +166,20 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         setSpeechToTextDialogOpen(true)
     }
 
-    const saveFlowRename = async (chatflowName) => {
+    const saveFlowRename = async (chatflowName, chatflowDescription) => {
+        setFlowDialogOpen(false)
         const updateBody = {
             name: chatflowName,
+            tenantId: tenantId,
+            description: chatflowDescription,
             chatflow
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
-            if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
-                await updateFlowsApi.request('AGENTFLOW')
+            if (isAgentCanvas && isAgentflowV2) {
+                await updateFlowsApi.request('AGENTFLOW', tenantId)
             } else {
-                await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
+                await updateFlowsApi.request(isAgentCanvas ? { type: 'MULTIAGENT', tenantId } : tenantId)
             }
         } catch (error) {
             if (setError) setError(error)
@@ -206,11 +215,12 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         const categoryTags = categories.join(';')
         const updateBody = {
             category: categoryTags,
+            tenantId: tenantId,
             chatflow
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
-            await updateFlowsApi.request(isAgentCanvas ? 'AGENTFLOW' : undefined)
+            await updateFlowsApi.request(isAgentCanvas ? { type: 'AGENTFLOW', tenantId } : tenantId)
         } catch (error) {
             if (setError) setError(error)
             enqueueSnackbar({
@@ -242,11 +252,10 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         if (isConfirmed) {
             try {
                 await chatflowsApi.deleteChatflow(chatflow.id)
-                window.location.reload()
-                if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
-                    await updateFlowsApi.request('AGENTFLOW')
+                if (isAgentCanvas && isAgentflowV2) {
+                    await updateFlowsApi.request({ type: 'AGENTFLOW', tenantId })
                 } else {
-                    await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
+                    await updateFlowsApi.request(isAgentCanvas ? { type: 'MULTIAGENT', tenantId } : tenantId)
                 }
             } catch (error) {
                 if (setError) setError(error)
@@ -271,7 +280,13 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         setAnchorEl(null)
         try {
             localStorage.setItem('duplicatedFlowData', chatflow.flowData)
-            window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_blank')
+            if (isAgentflowV2) {
+                window.open(`${uiBaseURL}/v2/agentcanvas`, '_blank')
+            } else if (isAgentCanvas) {
+                window.open(`${uiBaseURL}/agentcanvas`, '_blank')
+            } else {
+                window.open(`${uiBaseURL}/canvas`, '_blank')
+            }
         } catch (e) {
             console.error(e)
         }
@@ -315,6 +330,18 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
             >
                 <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
             </button>
+            {view !== 'card' && (
+                <Button
+                    id='demo-customized-button'
+                    aria-controls={open ? 'demo-customized-menu' : undefined}
+                    aria-haspopup='true'
+                    aria-expanded={open ? 'true' : undefined}
+                    disableElevation
+                    onClick={handleClick}
+                    endIcon={<MoreHorizIcon />}
+                ></Button>
+            )}
+
             <StyledMenu
                 id='demo-customized-menu'
                 MenuListProps={{
@@ -417,6 +444,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
 FlowListMenu.propTypes = {
     chatflow: PropTypes.object,
     isAgentCanvas: PropTypes.bool,
+    isAgentflowV2: PropTypes.bool,
     setError: PropTypes.func,
     updateFlowsApi: PropTypes.object
 }

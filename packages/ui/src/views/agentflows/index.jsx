@@ -49,8 +49,6 @@ const Agentflows = () => {
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
-    console.log('User Data:', userData, tenantId)
-
     const getAllAgentflows = useApi(chatflowsApi.getAllAgentflows)
     const [view, setView] = useState(localStorage.getItem('flowDisplayStyle') || 'card')
     const [agentflowVersion, setAgentflowVersion] = useState(localStorage.getItem('agentFlowVersion') || 'v2')
@@ -251,21 +249,30 @@ const Agentflows = () => {
                                 </Box>
                             ) : (
                                 <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
-                                    {getAllAgentflows.data?.filter(filterFlows).map((data, index) => (
-                                        <ItemCard
-                                            key={index}
-                                            onClick={() => goToCanvas(data)}
-                                            data={data}
-                                            images={images[data.id]}
-                                            icons={icons[data.id]}
-                                        />
-                                    ))}
+                                    {getAllAgentflows &&
+                                        getAllAgentflows.data
+                                            ?.filter(filterFlows)
+                                            .map((data, index) => (
+                                                <ItemCard
+                                                    key={index}
+                                                    onClick={() => goToCanvas(data)}
+                                                    data={data}
+                                                    isAgentCanvas={true}
+                                                    isAgentflowV2={agentflowVersion === 'v2'}
+                                                    images={images[data.id]}
+                                                    icons={icons[data.id]}
+                                                    updateFlowsApi={getAllAgentflows}
+                                                    isLoading={isLoading}
+                                                    setError={setError}
+                                                />
+                                            ))}
                                 </Box>
                             )}
                         </>
                     ) : (
                         <FlowListTable
                             isAgentCanvas={true}
+                            isAgentflowV2={agentflowVersion === 'v2'}
                             data={getAllAgentflows.data}
                             images={images}
                             icons={icons}

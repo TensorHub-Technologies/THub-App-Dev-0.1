@@ -20,6 +20,7 @@ const storage = new Storage({
 const bucketName = 'thub-files'
 
 export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: string, fileNames: string[]) => {
+    console.log('document uploaded to addBase64FilesToStorage')
     const storageType = getStorageType()
     if (storageType === 's3') {
         const { s3Client, Bucket } = getS3Config()
@@ -204,7 +205,8 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
  * @param filePath - Path to the file in GCS
  */
 
-async function getFileFromGCS(filePaths: string): Promise<Buffer> {
+export async function getFileFromGCS(filePaths: string): Promise<Buffer> {
+    console.log('getFileFromGCS: ', filePaths)
     const file = storage.bucket(bucketName).file(filePaths)
     const [fileBuffer] = await file.download()
     return fileBuffer
@@ -242,6 +244,7 @@ export const getFileFromUpload = async (filePath: string): Promise<Buffer> => {
 }
 
 export const getFileFromStorage = async (file: string, ...paths: string[]): Promise<Buffer> => {
+    console.log('getFileFromStorage: ', paths)
     const storageType = getStorageType()
     const sanitizedFilename = _sanitizeFilename(file)
 
@@ -285,6 +288,10 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
  * Prepare storage path
  */
 export const getStoragePath = (): string => {
+    console.log(
+        'getStoragePath: ',
+        process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.flowise', 'storage')
+    )
     return process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.flowise', 'storage')
 }
 

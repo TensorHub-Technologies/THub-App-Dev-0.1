@@ -122,10 +122,12 @@ const Subscription = () => {
 
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
-        handleLoading(message)
+        console.log(planTitle, 'plan title')
         if (planTitle === 'Enterprise') {
             setShowForm(true)
+            return
         }
+        handleLoading(message)
         let plan_Id = planId
         const uid = user.uid
 
@@ -178,17 +180,30 @@ const Subscription = () => {
                 <ToastContainer />
                 <Stack flexDirection='row'>
                     <Grid sx={{ mb: 1.25 }} container direction='row'>
-                        <h1
-                            style={{
-                                background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                                WebkitBackgroundClip: 'text',
-                                color: 'transparent',
-                                fontSize: '24px',
-                                lineHeight: '1.3'
-                            }}
-                        >
-                            Pricing Plan
-                        </h1>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                            <h1
+                                style={{
+                                    background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    color: 'transparent',
+                                    fontSize: '24px',
+                                    lineHeight: '1.3'
+                                }}
+                            >
+                                Pricing Plan :
+                            </h1>
+                            <button
+                                style={{
+                                    background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                                    color: 'white',
+                                    fontSize: '18px',
+                                    borderRadius: '30px'
+                                }}
+                            >
+                                {subscriptionDetails?.subscriptionType.toUpperCase()}
+                            </button>
+                        </div>
+
                         <Box sx={{ flexGrow: 1 }} />
                         <Grid container>
                             <Box sx={{ flexGrow: 1 }} />
@@ -356,30 +371,39 @@ const Subscription = () => {
                                             onClick={(e) => paymentHandler(e, plan.title, plan.planId, plan.duration, plan.messagePopup)}
                                             variant='contained'
                                             size='large'
-                                            sx={{ width: '100%' }}
+                                            sx={{
+                                                width: '100%',
+                                                '&.Mui-disabled': {
+                                                    backgroundColor: customization.isDarkMode ? '#373a37' : '#ccc',
+                                                    color: customization.isDarkMode ? '#aaa' : '#666',
+                                                    border: 'none',
+                                                    cursor: 'not-allowed'
+                                                }
+                                            }}
                                             className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
                                             disabled={
+                                                (user.subscription_type === 'premium' && plan.buttonInfo !== 'Get in Touch') ||
                                                 (user.subscription_type === 'free' && plan.title === 'Free') ||
                                                 (user.subscription_type === 'pro' &&
                                                     user.subscription_duration === 'yearly' &&
                                                     plan.title === 'Pro' &&
-                                                    selectedPlan === 'monthly') || // Disable Pro-Monthly if user is on Pro-Yearly
+                                                    selectedPlan === 'monthly') ||
                                                 (user.subscription_type === 'pro' &&
                                                     user.subscription_duration === 'yearly' &&
-                                                    plan.title === 'Free') || // Disable Free button if user is on Pro-Yearly
+                                                    plan.title === 'Free') ||
                                                 (user.subscription_type === 'pro' &&
                                                     user.subscription_duration === 'monthly' &&
                                                     plan.title === 'Free') ||
                                                 (user.subscription_type === 'pro' &&
                                                     ((user.subscription_duration === 'monthly' &&
                                                         plan.title === 'Pro' &&
-                                                        selectedPlan === 'monthly') || // Disable Pro-Monthly if already on Pro-Monthly
+                                                        selectedPlan === 'monthly') ||
                                                         (user.subscription_duration === 'yearly' &&
                                                             plan.title === 'Pro' &&
-                                                            selectedPlan === 'yearly'))) || // Disable Pro-Yearly if already on Pro-Yearly
+                                                            selectedPlan === 'yearly'))) ||
                                                 (user.subscription_type === 'pro' &&
                                                     plan.title === 'Pro' &&
-                                                    user.subscription_duration === selectedPlan) // Disable Pro if Pro is already selected
+                                                    user.subscription_duration === selectedPlan)
                                             }
                                         >
                                             {plan.buttonInfo}

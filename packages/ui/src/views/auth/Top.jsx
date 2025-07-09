@@ -1,6 +1,5 @@
 import { Button, Stack } from '@mui/material'
 import { GitHubIcon } from './CustomIcons'
-import { loginRequest } from './microsoftLogin/config/msalConfig'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import GoogleCustomButton from './googleLogin/GoogleCustomButton'
 import { useEffect, useState } from 'react'
@@ -98,7 +97,7 @@ export const Top = () => {
                     payload: data
                 })
                 localStorage.setItem('userId', data.uid)
-                navigate('/chatflows')
+                navigate('/workflows')
             }
         } catch (error) {
             console.error('Error fetching user data:', error)
@@ -108,22 +107,9 @@ export const Top = () => {
 
     const loginWithGithub = () => {
         const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID
+        console.log(clientId, 'clientId')
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
-    }
-
-    const handleGithubLogin = () => {
-        console.log('Continue With Github')
-    }
-
-    const handleMicrosoftLogin = () => {
-        console.log('Continue With Microsoft')
-        instance.loginPopup(loginRequest).catch((e) => {
-            console.log(e)
-        })
-    }
-    const handleGoogleLogin = () => {
-        console.log('Continue With Google')
     }
 
     return (
