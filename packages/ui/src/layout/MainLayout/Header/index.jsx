@@ -152,7 +152,7 @@ const Header = () => {
         dispatch({ type: SET_DARKMODE, isDarkMode: newTheme })
         localStorage.setItem('isDarkMode', newTheme)
         const url = new URL(window.location.href)
-        url.searchParams.set('theme', newTheme ? 'dark' : 'dark')
+        url.searchParams.set('theme', newTheme ? 'dark' : 'light')
         window.history.replaceState({}, '', url)
     }
 

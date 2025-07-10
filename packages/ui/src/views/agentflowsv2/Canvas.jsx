@@ -209,7 +209,7 @@ const AgentflowCanvas = () => {
             console.log('handleSaveFlow', chatflowName, chatflowDescription)
 
             // Validate required parameters
-            if (!chatflowName || !chatflowDescription) {
+            if (!chatflowName) {
                 throw new Error('Chatflow name and description are required')
             }
 

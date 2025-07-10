@@ -52,14 +52,14 @@ export function MicrosoftIcon() {
     )
 }
 
-export function GitHubIcon() {
+export function GitHubIcon({ color }) {
     return (
         <SvgIcon>
             <svg
                 width='16'
                 height='16'
                 viewBox='0 0 24 24'
-                fill='white'
+                fill={color}
                 xmlns='http://www.w3.org/2000/svg'
                 style={{ backgroundColor: 'transparent' }}
             >
@@ -67,4 +67,8 @@ export function GitHubIcon() {
             </svg>
         </SvgIcon>
     )
+}
+
+GitHubIcon.propTypes = {
+    color: PropTypes.string
 }

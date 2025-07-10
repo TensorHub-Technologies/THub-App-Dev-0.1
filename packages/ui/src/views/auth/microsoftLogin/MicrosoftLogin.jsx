@@ -7,14 +7,14 @@ import { Button } from '@mui/material'
 import { toast } from 'react-toastify'
 import { loginRequest } from './config/msalConfig'
 import { useNavigate } from 'react-router'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
 
 export const MicrosoftLogin = () => {
     const { instance, accounts } = useMsal()
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
-
+    const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
     const handleLogin = async () => {
@@ -102,10 +102,10 @@ export const MicrosoftLogin = () => {
             sx={{
                 py: 1.5,
                 pr: 2,
-                color: 'white',
-                borderColor: '#555',
-                bgcolor: '#2e2e2e',
-                '&:hover': { bgcolor: '#3e3e3e', borderColor: '#777' }
+                color: customization.isDarkMode ? 'white' : 'black',
+                borderColor: customization.isDarkMode ? 'gray' : '#bdbfd4',
+                bgcolor: customization.isDarkMode ? '#2e2e2e' : '#ffffff',
+                '&:hover': { bgcolor: customization.isDarkMode ? '#3e3e3e' : '#f0f0f0', borderColor: '#777' }
             }}
             startIcon={<MicrosoftIcon />}
         >
