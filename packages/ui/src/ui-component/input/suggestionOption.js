@@ -32,7 +32,7 @@ let cachedVariables = []
 // Function to fetch variables
 const fetchVariables = async () => {
     try {
-        const response = await variablesApi.getAllVariables()
+        const response = await variablesApi.getAllVariables(tenantId)
         cachedVariables = response.data || []
         return cachedVariables
     } catch (error) {

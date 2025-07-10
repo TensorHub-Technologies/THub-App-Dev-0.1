@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { FormControl, TextField, Popover } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+import { FormControl, Popover, TextField } from '@mui/material'
 import SelectVariable from '@/ui-component/json/SelectVariable'
 import { getAvailableNodesForVariable } from '@/utils/genericHelper'
 import { useSelector } from 'react-redux'
 
 export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disabled = false }) => {
-    const theme = useTheme()
     const [myValue, setMyValue] = useState(value ?? '')
     const [anchorEl, setAnchorEl] = useState(null)
     const [availableNodesForVariable, setAvailableNodesForVariable] = useState([])
@@ -61,7 +59,7 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                     <TextField
                         id='standard-basic'
                         size='small'
-                        disabled={disabled}
+                        variant='standard'
                         type={getInputType(inputParam.type)}
                         placeholder={inputParam.placeholder}
                         multiline={!!inputParam.rows}
