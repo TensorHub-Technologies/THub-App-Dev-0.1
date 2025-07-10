@@ -239,21 +239,35 @@ const AgentExecutions = () => {
                     {/* Filter Section */}
                     <Box sx={{ mb: 2, width: '100%' }}>
                         <Grid container spacing={2} alignItems='center'>
-                            <Grid item xs={12} md={2}>
-                                <FormControl fullWidth size='small'>
+                            <Grid item xs={12} md={2.5}>
+                                <FormControl
+                                    variant='standard'
+                                    sx={{
+                                        minWidth: 180,
+                                        height: 40,
+
+                                        '& .MuiInput-underline:before': {
+                                            borderBottom: '2px solid black',
+                                            borderBottomColor: customization?.isDarkMode ? 'white' : 'black'
+                                        },
+                                        '& .MuiInput-underline:after': {
+                                            borderBottomColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                        }
+                                    }}
+                                >
                                     <InputLabel id='state-select-label'>State</InputLabel>
                                     <Select
-                                        labelId='state-select-label'
+                                        labelId='standard'
                                         value={filters.state}
                                         label='State'
                                         onChange={(e) => handleFilterChange('state', e.target.value)}
                                         size='small'
                                         sx={{
-                                            '& .MuiOutlinedInput-notchedOutline': {
-                                                borderColor: borderColor
-                                            },
+                                            height: 40,
+                                            borderRadius: 2,
+                                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
                                             '& .MuiSvgIcon-root': {
-                                                color: customization.isDarkMode ? '#fff' : 'inherit'
+                                                color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                             }
                                         }}
                                     >
@@ -267,7 +281,7 @@ const AgentExecutions = () => {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={12} md={2}>
+                            <Grid item xs={12} md={2.5}>
                                 <DatePicker
                                     selected={filters.startDate}
                                     onChange={(date) => onDateChange('startDate', date)}
@@ -278,6 +292,8 @@ const AgentExecutions = () => {
                                     maxDate={new Date()}
                                     customInput={
                                         <TextField
+                                            id='standard-basic'
+                                            variant='standard'
                                             size='small'
                                             label='Start date'
                                             fullWidth
@@ -286,11 +302,20 @@ const AgentExecutions = () => {
                                                     borderColor: borderColor
                                                 }
                                             }}
+                                            InputProps={{
+                                                disableUnderline: true,
+                                                sx: {
+                                                    borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                                    '&:hover': {
+                                                        borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                                    }
+                                                }
+                                            }}
                                         />
                                     }
                                 />
                             </Grid>
-                            <Grid sx={{ ml: -1 }} item xs={12} md={2}>
+                            <Grid sx={{ ml: -1 }} item xs={12} md={2.5}>
                                 <DatePicker
                                     selected={filters.endDate}
                                     onChange={(date) => onDateChange('endDate', date)}
@@ -302,6 +327,8 @@ const AgentExecutions = () => {
                                     maxDate={new Date()}
                                     customInput={
                                         <TextField
+                                            id='standard-basic'
+                                            variant='standard'
                                             size='small'
                                             label='End date'
                                             fullWidth
@@ -310,13 +337,24 @@ const AgentExecutions = () => {
                                                     borderColor: borderColor
                                                 }
                                             }}
+                                            InputProps={{
+                                                disableUnderline: true,
+                                                sx: {
+                                                    borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                                    '&:hover': {
+                                                        borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                                    }
+                                                }
+                                            }}
                                         />
                                     }
                                 />
                             </Grid>
-                            <Grid sx={{ ml: -1 }} item xs={12} md={2}>
+                            <Grid sx={{ ml: -1 }} item xs={12} md={2.5}>
                                 <TextField
                                     fullWidth
+                                    id='standard-basic'
+                                    variant='standard'
                                     label='Session ID'
                                     value={filters.sessionId}
                                     onChange={(e) => handleFilterChange('sessionId', e.target.value)}
@@ -326,9 +364,18 @@ const AgentExecutions = () => {
                                             borderColor: borderColor
                                         }
                                     }}
+                                    InputProps={{
+                                        disableUnderline: true,
+                                        sx: {
+                                            borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                            '&:hover': {
+                                                borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                            }
+                                        }
+                                    }}
                                 />
                             </Grid>
-                            <Grid item xs={12} md={4}>
+                            <Grid item xs={12} md={2}>
                                 <Stack direction='row' spacing={1}>
                                     <Button
                                         variant='contained'
