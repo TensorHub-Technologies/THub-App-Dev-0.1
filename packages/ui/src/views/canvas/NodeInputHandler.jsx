@@ -948,7 +948,7 @@ const NodeInputHandler = ({
                                         onExpandDialogClicked(data.inputs[inputParam.name] ?? inputParam.default ?? '', inputParam)
                                     }
                                 >
-                                    <IconArrowsMaximize />
+                                    <IconArrowsMaximize color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
                                 </IconButton>
                             )}
                         </div>

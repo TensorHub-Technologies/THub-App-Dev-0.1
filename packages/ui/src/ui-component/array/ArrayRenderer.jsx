@@ -244,8 +244,17 @@ export const ArrayRenderer = ({ inputParam, data, disabled }) => {
                 fullWidth
                 size='small'
                 variant='outlined'
-                sx={{ borderRadius: '16px', mt: 2 }}
-                startIcon={<IconPlus />}
+                sx={{
+                    borderRadius: '16px',
+                    mt: 2,
+                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4', // text color
+                    borderColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4', // optional: border color
+                    '&:hover': {
+                        borderColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                        backgroundColor: customization.isDarkMode ? 'rgba(226, 42, 144, 0.1)' : 'rgba(60, 91, 164, 0.1)'
+                    }
+                }}
+                startIcon={<IconPlus color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />}
                 onClick={handleAddItem}
             >
                 Add {inputParam.label}
