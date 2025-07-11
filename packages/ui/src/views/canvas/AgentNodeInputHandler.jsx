@@ -831,7 +831,7 @@ const AgentNodeInputHandler = ({
                                         sx={{ borderRadius: 25, width: '100%', mb: 2, mt: 0 }}
                                         variant='outlined'
                                         onClick={() => onShowPromptHubButtonClicked()}
-                                        endIcon={<IconAutoFixHigh />}
+                                        endIcon={<IconAutoFixHigh color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />}
                                     >
                                         Langchain Hub
                                     </Button>
@@ -877,7 +877,7 @@ const AgentNodeInputHandler = ({
                                     color='secondary'
                                     onClick={() => onInputHintDialogClicked(inputParam.hint)}
                                 >
-                                    <IconBulb />
+                                    <IconBulb color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
                                 </IconButton>
                             )}
                             {inputParam.hint && isAdditionalParams && (
@@ -888,14 +888,18 @@ const AgentNodeInputHandler = ({
                                     onClick={() => {
                                         onInputHintDialogClicked(inputParam.hint)
                                     }}
-                                    startIcon={<IconBulb size={17} />}
+                                    startIcon={<IconBulb size={17} color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />}
                                 >
                                     {inputParam.hint.label}
                                 </Button>
                             )}
                             {inputParam.acceptVariable && inputParam.type === 'string' && (
                                 <Tooltip title='Type {{ to select variables'>
-                                    <IconVariable size={20} style={{ color: 'teal' }} />
+                                    <IconVariable
+                                        size={20}
+                                        style={{ color: 'teal' }}
+                                        color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'}
+                                    />
                                 </Tooltip>
                             )}
                             {inputParam.generateDocStoreDescription && (
@@ -909,7 +913,7 @@ const AgentNodeInputHandler = ({
                                     color='secondary'
                                     onClick={() => generateDocStoreToolDesc(data.inputs['documentStore'])}
                                 >
-                                    <IconWand />
+                                    <IconWand color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
                                 </IconButton>
                             )}
                             {inputParam.generateInstruction && (
@@ -924,7 +928,7 @@ const AgentNodeInputHandler = ({
                                     color='secondary'
                                     onClick={() => generateInstruction()}
                                 >
-                                    <IconWand />
+                                    <IconWand color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
                                 </IconButton>
                             )}
                             {((inputParam.type === 'string' && inputParam.rows) || inputParam.type === 'code') && (
@@ -941,7 +945,7 @@ const AgentNodeInputHandler = ({
                                         onExpandDialogClicked(data.inputs[inputParam.name] ?? inputParam.default ?? '', inputParam)
                                     }
                                 >
-                                    <IconArrowsMaximize />
+                                    <IconArrowsMaximize color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
                                 </IconButton>
                             )}
                         </div>
