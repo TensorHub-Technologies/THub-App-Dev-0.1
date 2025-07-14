@@ -65,7 +65,7 @@ class GoogleVertexAI_ChatModels implements INode {
     constructor() {
         this.label = 'ChatGoogleVertexAI'
         this.name = 'chatGoogleVertexAI'
-        this.version = 5.1
+        this.version = 5.2
         this.type = 'ChatGoogleVertexAI'
         this.icon = 'GoogleVertex.svg'
         this.category = 'Chat Models'
@@ -114,7 +114,8 @@ class GoogleVertexAI_ChatModels implements INode {
                 label: 'Allow Image Uploads',
                 name: 'allowImageUploads',
                 type: 'boolean',
-                description: 'Allow image input. Refer to the <a href="https://docs.thub.tech" target="_blank">docs</a> for more details.',
+                description:
+                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
                 default: false,
                 optional: true
             },
@@ -148,6 +149,16 @@ class GoogleVertexAI_ChatModels implements INode {
                 type: 'number',
                 description: `Decode using top-k sampling: consider the set of top_k most probable tokens. Must be positive`,
                 step: 1,
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Thinking Budget',
+                name: 'thinkingBudget',
+                type: 'number',
+                description: 'Number of tokens to use for thinking process (0 to disable)',
+                step: 1,
+                placeholder: '1024',
                 optional: true,
                 additionalParams: true
             }
@@ -191,6 +202,7 @@ class GoogleVertexAI_ChatModels implements INode {
         const cache = nodeData.inputs?.cache as BaseCache
         const topK = nodeData.inputs?.topK as string
         const streaming = nodeData.inputs?.streaming as boolean
+        const thinkingBudget = nodeData.inputs?.thinkingBudget as string
 
         const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
 
@@ -210,6 +222,7 @@ class GoogleVertexAI_ChatModels implements INode {
         if (topP) obj.topP = parseFloat(topP)
         if (cache) obj.cache = cache
         if (topK) obj.topK = parseFloat(topK)
+        if (thinkingBudget) obj.thinkingBudget = parseInt(thinkingBudget, 10)
 
         const model = new ChatVertexAI(nodeData.id, obj)
         model.setMultiModalOption(multiModalOption)
