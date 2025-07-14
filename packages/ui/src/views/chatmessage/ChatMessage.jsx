@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source'
+import { jsPDF } from 'jspdf'
 
 import {
     Box,
@@ -91,6 +92,7 @@ import { ChatInputHistory } from './ChatInputHistory'
 import TextToSpeech from './TextToSpeech'
 import { IconPhoneCall } from '@tabler/icons-react'
 import { IconPhoneOff } from '@tabler/icons-react'
+;<script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'></script>
 
 const messageImageStyle = {
     width: '128px',
@@ -189,6 +191,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             type: 'apiMessage'
         }
     ])
+
     const [isChatFlowAvailableToStream, setIsChatFlowAvailableToStream] = useState(false)
     const [isChatFlowAvailableForSpeech, setIsChatFlowAvailableForSpeech] = useState(false)
     const [sourceDialogOpen, setSourceDialogOpen] = useState(false)
@@ -924,6 +927,8 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             if (action) params.action = action
             if (humanInput) params.humanInput = humanInput
 
+            console.log('isChatFlowAvailableToStream:', isChatFlowAvailableToStream)
+
             if (isChatFlowAvailableToStream) {
                 fetchResponseFromEventStream(chatflowid, params)
             } else {
@@ -937,6 +942,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     }
 
     const setAiResponseInChatMessages = (data, params) => {
+        console.log('setAiResponseInChatMessages called')
         updateMetadata(data, params.question)
         let text = ''
         if (data.text) text = data.text
@@ -960,6 +966,12 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 feedback: null
             }
         ])
+
+        console.log('params.question:', params?.question)
+        const userAskedForDownload = params?.question?.toLowerCase().includes('download')
+        if (userAskedForDownload) {
+            console.log('User asked for download, checking for artifacts...')
+        }
 
         setLocalStorageChatflow(chatflowid, data.chatId)
         setLoading(false)
@@ -1043,6 +1055,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                         break
                     case 'end':
                         setLocalStorageChatflow(chatflowid, chatId)
+                        createFile(params)
                         closeResponse()
                         break
                 }
@@ -1056,6 +1069,79 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 throw err
             }
         })
+    }
+
+    const createFile = (params) => {
+        console.log('called: ')
+        const lastMessage = messages[messages.length - 1]
+        console.log('lastMessage: ', lastMessage)
+
+        // Function to detect file type from question
+        function getFileTypeFromQuestion(question) {
+            const lowerQuestion = question.toLowerCase()
+
+            if (lowerQuestion.includes('pdf')) return 'pdf'
+            if (lowerQuestion.includes('doc') || lowerQuestion.includes('word')) return 'doc'
+            if (lowerQuestion.includes('excel') || lowerQuestion.includes('xlsx')) return 'xlsx'
+
+            // Default to text if download is mentioned but no specific type
+            return 'txt'
+        }
+
+        // Main download logic
+        if (params?.question?.toLowerCase().includes('download')) {
+            const lastMessage = messages[messages.length - 1]
+            const content = lastMessage?.message || 'No response available'
+            const fileType = getFileTypeFromQuestion(params.question)
+            console.log('File type determined:', fileType)
+
+            let blob, filename, mimeType
+
+            if (params?.question?.toLowerCase().includes('pdf')) {
+                // For PDF, you'd typically use a library like jsPDF
+                // This is a simplified example - you'd need to include jsPDF library
+                try {
+                    // Example with jsPDF (requires library)
+                    const doc = new jsPDF()
+                    const lines = doc.splitTextToSize(content, 180) // Wrap text to fit page width
+                    doc.text(lines, 10, 10)
+                    doc.save('response.pdf')
+                } catch (error) {
+                    console.warn('PDF library not available, falling back to text')
+                }
+            } else if (params?.question?.toLowerCase().includes('word')) {
+                // For Word documents, create RTF format (readable by Word)
+                const rtfContent = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}} \\f0\\fs24 ${content.replace(
+                    /\n/g,
+                    '\\par '
+                )}}`
+                mimeType = 'application/rtf'
+                filename = 'response.rtf'
+                blob = new Blob([rtfContent], { type: mimeType })
+            } else if (params?.question?.toLowerCase().includes('excel')) {
+                // For Excel, create CSV format (readable by Excel)
+                const csvContent = content.replace(/\n/g, '\r\n')
+                mimeType = 'text/csv'
+                filename = 'response.csv'
+                blob = new Blob([csvContent], { type: mimeType })
+            } else if (params?.question?.toLowerCase().includes('text')) {
+                mimeType = 'text/plain'
+                filename = 'response.txt'
+                blob = new Blob([content], { type: mimeType })
+            }
+
+            // Create download link
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = filename
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            window.URL.revokeObjectURL(url)
+
+            console.log(`${fileType.toUpperCase()} download triggered: ${filename}`)
+        }
     }
 
     const closeResponse = () => {
