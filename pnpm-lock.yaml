@@ -162,7 +162,7 @@ importers:
                 version: 3.9.25
             '@getzep/zep-cloud':
                 specifier: ~1.0.7
-                version: 1.0.12(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(langchain@0.3.15(12bb34605734f8efe0153c34c501a137))
+                version: 1.0.12(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(langchain@0.3.15(8d58eb8020b7ac2928b5d31679b4efbc))
             '@getzep/zep-js':
                 specifier: ^0.9.0
                 version: 0.9.0
@@ -188,8 +188,8 @@ importers:
                 specifier: 0.3.14
                 version: 0.3.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)
             '@langchain/aws':
-                specifier: 0.1.4
-                version: 0.1.4(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
+                specifier: 0.1.11
+                version: 0.1.11(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
             '@langchain/baidu-qianfan':
                 specifier: ^0.1.0
                 version: 0.1.0(@babel/core@7.26.8)(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))
@@ -198,7 +198,7 @@ importers:
                 version: 0.0.7(encoding@0.1.13)(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
             '@langchain/community':
                 specifier: ^0.3.29
-                version: 0.3.38(c879cae4bd7e0c041b44ca5d08d72698)
+                version: 0.3.38(6dfceb901ea51ae1692cad57d6fbe14e)
             '@langchain/core':
                 specifier: 0.3.37
                 version: 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
@@ -209,8 +209,8 @@ importers:
                 specifier: 0.2.3
                 version: 0.2.3(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(zod@3.22.4)
             '@langchain/google-vertexai':
-                specifier: ^0.2.0
-                version: 0.2.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(zod@3.22.4)
+                specifier: ^0.2.10
+                version: 0.2.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
             '@langchain/groq':
                 specifier: 0.1.2
                 version: 0.1.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))
@@ -243,7 +243,7 @@ importers:
                 version: 0.0.1(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))
             '@mem0/community':
                 specifier: ^0.0.1
-                version: 0.0.1(d501eec7cc5a898daecc2d747545f142)
+                version: 0.0.1(9a6cdef8b74de39d9a5e6ee4955ea817)
             '@mendable/firecrawl-js':
                 specifier: ^1.18.2
                 version: 1.26.0
@@ -378,13 +378,13 @@ importers:
                 version: 3.12.0
             langchain:
                 specifier: ^0.3.5
-                version: 0.3.15(12bb34605734f8efe0153c34c501a137)
+                version: 0.3.15(8d58eb8020b7ac2928b5d31679b4efbc)
             langfuse:
                 specifier: 3.3.4
                 version: 3.3.4
             langfuse-langchain:
                 specifier: ^3.3.4
-                version: 3.35.1(langchain@0.3.15(12bb34605734f8efe0153c34c501a137))
+                version: 3.35.1(langchain@0.3.15(8d58eb8020b7ac2928b5d31679b4efbc))
             langsmith:
                 specifier: 0.1.6
                 version: 0.1.6
@@ -994,11 +994,11 @@ importers:
                 specifier: ^11.2.4
                 version: 11.2.4
             thub-embed:
-                specifier: ^9.4.0
-                version: 9.4.0(bufferutil@4.0.9)
+                specifier: ^9.4.4
+                version: 9.4.5(bufferutil@4.0.9)
             thub-embed-react:
-                specifier: 2.0.5
-                version: 2.0.5(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.4.0(bufferutil@4.0.9))(typescript@5.7.3)
+                specifier: 2.1.0
+                version: 2.1.0(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.4.5(bufferutil@4.0.9))(typescript@5.7.3)
             thub-react-json-view:
                 specifier: 1.21.11
                 version: 1.21.11(@types/react@19.0.8)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3187,8 +3187,8 @@ packages:
         peerDependencies:
             '@langchain/core': 0.3.37
 
-    '@langchain/aws@0.1.4':
-        resolution: { integrity: sha512-1tQiDKEKayY0eGVzs2HAzw13v8sN7Vm3omlYgIhOlE1Mh29p63Z5REj1UN+rfXNY8OFqjzDxBBFNA7A943+rqQ== }
+    '@langchain/aws@0.1.11':
+        resolution: { integrity: sha512-JNnEmJaJB5TzcniPYGZi6dlpmZyzeyVsS+Za0Ye1DhCpcNmEiWRy514gVcTPQUEl5EcpIR51B/YyowI7zUzVvg== }
         engines: { node: '>=18' }
         peerDependencies:
             '@langchain/core': 0.3.37
@@ -3591,14 +3591,14 @@ packages:
         resolution: { integrity: sha512-KXNCYLxKs6rDGw+jcrFqE4CrIooUgzU0ip0k76YFptvMPrqLpNurYyqr5mAys0qn2vFavFfC3eJV/wrZ602EfA== }
         engines: { node: '>=18' }
 
-    '@langchain/google-common@0.2.2':
-        resolution: { integrity: sha512-w0811y4rQ/lSUZegcskVzMdSFA8HctWgTZQGjMSfhirVyJTJwJff81IjmQcbjaOyEgY6RA551lMpTPIGvaSl9w== }
+    '@langchain/google-common@0.2.14':
+        resolution: { integrity: sha512-oz1YwwPUP+FC5UMLus1reJ578LfNSEh81shqBP8xXDioLUfKub6p5Jye61gHm8JTXcSvKHPCLGPeK0Uq7PDx2g== }
         engines: { node: '>=18' }
         peerDependencies:
             '@langchain/core': 0.3.37
 
-    '@langchain/google-gauth@0.2.2':
-        resolution: { integrity: sha512-x4tkogcLwJ9VwgY0JF9FSyGAZyzPkoOlBUO5uGTRILcLjR3iNrcWohW6Uy04zadE64w7MLW9d71F8l5ejdjmdA== }
+    '@langchain/google-gauth@0.2.14':
+        resolution: { integrity: sha512-vS68e13eupTOfQ6P0QpIaOkiAlwZthV23U9Afm7b6rD2lsZ78jwTabzmmkU2o9x/DioNa9hEPpbE7+Z26V0NYg== }
         engines: { node: '>=18' }
         peerDependencies:
             '@langchain/core': 0.3.37
@@ -3609,8 +3609,8 @@ packages:
         peerDependencies:
             '@langchain/core': 0.3.37
 
-    '@langchain/google-vertexai@0.2.2':
-        resolution: { integrity: sha512-DqlKD3VXGTwVS4lWUIYhryqFvTTDfWGulySnv/Gf6t4e3A9pXkapyCpxY4hb6hAGYAKV/55qg7CLMueRXWbpcA== }
+    '@langchain/google-vertexai@0.2.14':
+        resolution: { integrity: sha512-OqfK3xDo8AmVFJHoINSfqFeKCp4d9aH4YnCOPBe6qDaTnME1QTCHs3U9BRWwUhfD46K50ocbQUAsnTYSclhhMg== }
         engines: { node: '>=18' }
         peerDependencies:
             '@langchain/core': 0.3.37
@@ -10004,6 +10004,10 @@ packages:
         resolution: { integrity: sha512-LDODD4TMYx7XXdpwxAVRAIAuB0bzv0s+ywFonY46k126qzQHT9ygyoa9tncmOiQmmDrik65UYsEkv3lbfqQ3yQ== }
         engines: { node: '>=14' }
 
+    gaxios@7.1.1:
+        resolution: { integrity: sha512-Odju3uBUJyVCkW64nLD4wKLhbh93bh6vIg/ZIXkWiLPBrdgtc65+tls/qml+un3pr6JqYVFDZbbmLDQT68rTOQ== }
+        engines: { node: '>=18' }
+
     gcp-metadata@5.3.0:
         resolution: { integrity: sha512-FNTkdNEnBdlqF2oatizolQqNANMrcqJt6AAYt99B3y1aLLC8Hc5IOBb+ZnnzllodEEf6xMBp6wRcBbc16fa65w== }
         engines: { node: '>=12' }
@@ -10011,6 +10015,10 @@ packages:
     gcp-metadata@6.1.1:
         resolution: { integrity: sha512-a4tiq7E0/5fTjxPAaH4jpjkSv/uCaU2p5KC6HVGrvl0cDjA8iBZv4vv1gyzlmK0ZUKqwpOyQMKzZQe3lTit77A== }
         engines: { node: '>=14' }
+
+    gcp-metadata@7.0.1:
+        resolution: { integrity: sha512-UcO3kefx6dCcZkgcTGgVOTFb7b1LlQ02hY1omMjjrrBzkajRMCFgYOjs7J71WqnuG1k2b+9ppGL7FsOfhZMQKQ== }
+        engines: { node: '>=18' }
 
     generate-function@2.3.1:
         resolution: { integrity: sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ== }
@@ -10187,6 +10195,10 @@ packages:
         peerDependencies:
             csstype: ^3.0.10
 
+    google-auth-library@10.1.0:
+        resolution: { integrity: sha512-GspVjZj1RbyRWpQ9FbAXMKjFGzZwDKnUHi66JJ+tcjcu5/xYAP1pdlWotCuIkMwjfVsxxDvsGZXGLzRt72D0sQ== }
+        engines: { node: '>=18' }
+
     google-auth-library@9.15.1:
         resolution: { integrity: sha512-Jb6Z0+nvECVz+2lzSMt9u98UsoakXxA2HGHMCxh+so3n90XgYWkq5dur19JAJV7ONiJY22yBTyJB1TSkvPq9Ng== }
         engines: { node: '>=14' }
@@ -10197,6 +10209,10 @@ packages:
 
     google-logging-utils@0.0.2:
         resolution: { integrity: sha512-NEgUnEcBiP5HrPzufUkBzJOD/Sxsco3rLNo1F1TNf7ieU8ryUzBhqba8r756CjLX7rn3fHl6iLEwPYuqpoKgQQ== }
+        engines: { node: '>=14' }
+
+    google-logging-utils@1.1.1:
+        resolution: { integrity: sha512-rcX58I7nqpu4mbKztFeOAObbomBbHU2oIb/d3tJfF3dizGSApqtSwYJigGCooHdnMyQBIw8BrWyK96w3YXgr6A== }
         engines: { node: '>=14' }
 
     google-protobuf@3.21.2:
@@ -10242,6 +10258,10 @@ packages:
     gtoken@7.1.0:
         resolution: { integrity: sha512-pCcEwRi+TKpMlxAQObHDQ56KawURgyAf6jtIY046fJ5tIv3zDe/LEIubckAO8fj6JnAxLdmWkUfNyulQ2iKdEw== }
         engines: { node: '>=14.0.0' }
+
+    gtoken@8.0.0:
+        resolution: { integrity: sha512-+CqsMbHPiSTdtSO14O51eMNlrp9N79gmeqmXeouJOhfucAedHw9noVe/n5uJk3tbKE6a+6ZCQg3RPhVhHByAIw== }
+        engines: { node: '>=18' }
 
     guid-typescript@1.0.9:
         resolution: { integrity: sha512-Y8T4vYhEfwJOTbouREvG+3XDsjr8E3kIr7uf+JZ0BYloFsttiHU0WfvANVsR7TxNUJa/WpCnw/Ino/p+DeBhBQ== }
@@ -15983,14 +16003,14 @@ packages:
     through@2.3.8:
         resolution: { integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg== }
 
-    thub-embed-react@2.0.5:
-        resolution: { integrity: sha512-UoDKXJgQFURSot7izVvXjJCSng0wjw54RAja9rENQPZQv1vwY/Zd201alfErB4l3Aznb86DzZlZisHKGyLlHlg== }
+    thub-embed-react@2.1.0:
+        resolution: { integrity: sha512-iqVuaWeLxg9r9OSSxTz/Ithu8nzm3VcuFhiRMXQCSaohJqZFA5RsVlQATNEg/vfGziNz4W4fpReqzf2ZP5M5Jg== }
         peerDependencies:
             react: 18.x
             thub-embed: '*'
 
-    thub-embed@9.4.0:
-        resolution: { integrity: sha512-2JiD2hq83MX6Vo25Cbs2TE+NhGDFTpYUMuWDZ2glFgmid0cnz8JUWsEpoUy89/mytB/e3tMW3CK+kQ1LGHAznA== }
+    thub-embed@9.4.5:
+        resolution: { integrity: sha512-PFku4nDYFiDopBN3HGZp9Q4YX5vkRM5nMG3/yBQfkTcK9P0X113DZNh4nV20yoTewpXSQnLzmqRE+til0ovVYw== }
 
     thub-react-json-view@1.21.11:
         resolution: { integrity: sha512-w8x68KAaIESPxb3kbLKeFXJGSO+QmSzVMh+FlBxgD/Yc/z5vjKBe0NdfiXu4XhT0mFJigdFGvzvqmxTH20r2Qw== }
@@ -17906,26 +17926,26 @@ snapshots:
             '@aws-sdk/util-user-agent-browser': 3.734.0
             '@aws-sdk/util-user-agent-node': 3.744.0
             '@smithy/config-resolver': 4.0.1
-            '@smithy/core': 3.1.2
+            '@smithy/core': 3.1.5
             '@smithy/fetch-http-handler': 5.0.1
             '@smithy/hash-node': 4.0.1
             '@smithy/invalid-dependency': 4.0.1
             '@smithy/middleware-content-length': 4.0.1
-            '@smithy/middleware-endpoint': 4.0.3
-            '@smithy/middleware-retry': 4.0.4
+            '@smithy/middleware-endpoint': 4.0.6
+            '@smithy/middleware-retry': 4.0.7
             '@smithy/middleware-serde': 4.0.2
             '@smithy/middleware-stack': 4.0.1
             '@smithy/node-config-provider': 4.0.1
-            '@smithy/node-http-handler': 4.0.2
+            '@smithy/node-http-handler': 4.0.3
             '@smithy/protocol-http': 5.0.1
-            '@smithy/smithy-client': 4.1.3
+            '@smithy/smithy-client': 4.1.6
             '@smithy/types': 4.1.0
             '@smithy/url-parser': 4.0.1
             '@smithy/util-base64': 4.0.0
             '@smithy/util-body-length-browser': 4.0.0
             '@smithy/util-body-length-node': 4.0.0
-            '@smithy/util-defaults-mode-browser': 4.0.4
-            '@smithy/util-defaults-mode-node': 4.0.4
+            '@smithy/util-defaults-mode-browser': 4.0.7
+            '@smithy/util-defaults-mode-node': 4.0.7
             '@smithy/util-endpoints': 3.0.1
             '@smithy/util-middleware': 4.0.1
             '@smithy/util-retry': 4.0.1
@@ -18105,26 +18125,26 @@ snapshots:
             '@aws-sdk/util-user-agent-browser': 3.734.0
             '@aws-sdk/util-user-agent-node': 3.744.0
             '@smithy/config-resolver': 4.0.1
-            '@smithy/core': 3.1.2
+            '@smithy/core': 3.1.5
             '@smithy/fetch-http-handler': 5.0.1
             '@smithy/hash-node': 4.0.1
             '@smithy/invalid-dependency': 4.0.1
             '@smithy/middleware-content-length': 4.0.1
-            '@smithy/middleware-endpoint': 4.0.3
-            '@smithy/middleware-retry': 4.0.4
+            '@smithy/middleware-endpoint': 4.0.6
+            '@smithy/middleware-retry': 4.0.7
             '@smithy/middleware-serde': 4.0.2
             '@smithy/middleware-stack': 4.0.1
             '@smithy/node-config-provider': 4.0.1
-            '@smithy/node-http-handler': 4.0.2
+            '@smithy/node-http-handler': 4.0.3
             '@smithy/protocol-http': 5.0.1
-            '@smithy/smithy-client': 4.1.3
+            '@smithy/smithy-client': 4.1.6
             '@smithy/types': 4.1.0
             '@smithy/url-parser': 4.0.1
             '@smithy/util-base64': 4.0.0
             '@smithy/util-body-length-browser': 4.0.0
             '@smithy/util-body-length-node': 4.0.0
-            '@smithy/util-defaults-mode-browser': 4.0.4
-            '@smithy/util-defaults-mode-node': 4.0.4
+            '@smithy/util-defaults-mode-browser': 4.0.7
+            '@smithy/util-defaults-mode-node': 4.0.7
             '@smithy/util-endpoints': 3.0.1
             '@smithy/util-middleware': 4.0.1
             '@smithy/util-retry': 4.0.1
@@ -18236,26 +18256,26 @@ snapshots:
             '@aws-sdk/util-user-agent-browser': 3.734.0
             '@aws-sdk/util-user-agent-node': 3.744.0
             '@smithy/config-resolver': 4.0.1
-            '@smithy/core': 3.1.2
+            '@smithy/core': 3.1.5
             '@smithy/fetch-http-handler': 5.0.1
             '@smithy/hash-node': 4.0.1
             '@smithy/invalid-dependency': 4.0.1
             '@smithy/middleware-content-length': 4.0.1
-            '@smithy/middleware-endpoint': 4.0.3
-            '@smithy/middleware-retry': 4.0.4
+            '@smithy/middleware-endpoint': 4.0.6
+            '@smithy/middleware-retry': 4.0.7
             '@smithy/middleware-serde': 4.0.2
             '@smithy/middleware-stack': 4.0.1
             '@smithy/node-config-provider': 4.0.1
-            '@smithy/node-http-handler': 4.0.2
+            '@smithy/node-http-handler': 4.0.3
             '@smithy/protocol-http': 5.0.1
-            '@smithy/smithy-client': 4.1.3
+            '@smithy/smithy-client': 4.1.6
             '@smithy/types': 4.1.0
             '@smithy/url-parser': 4.0.1
             '@smithy/util-base64': 4.0.0
             '@smithy/util-body-length-browser': 4.0.0
             '@smithy/util-body-length-node': 4.0.0
-            '@smithy/util-defaults-mode-browser': 4.0.4
-            '@smithy/util-defaults-mode-node': 4.0.4
+            '@smithy/util-defaults-mode-browser': 4.0.7
+            '@smithy/util-defaults-mode-node': 4.0.7
             '@smithy/util-endpoints': 3.0.1
             '@smithy/util-middleware': 4.0.1
             '@smithy/util-retry': 4.0.1
@@ -18416,12 +18436,12 @@ snapshots:
             '@aws-sdk/core': 3.744.0
             '@aws-sdk/types': 3.734.0
             '@smithy/fetch-http-handler': 5.0.1
-            '@smithy/node-http-handler': 4.0.2
+            '@smithy/node-http-handler': 4.0.3
             '@smithy/property-provider': 4.0.1
             '@smithy/protocol-http': 5.0.1
-            '@smithy/smithy-client': 4.1.3
+            '@smithy/smithy-client': 4.1.6
             '@smithy/types': 4.1.0
-            '@smithy/util-stream': 4.0.2
+            '@smithy/util-stream': 4.1.2
             tslib: 2.8.1
 
     '@aws-sdk/credential-provider-http@3.758.0':
@@ -18645,7 +18665,7 @@ snapshots:
             '@aws-sdk/credential-provider-web-identity': 3.744.0
             '@aws-sdk/nested-clients': 3.744.0
             '@aws-sdk/types': 3.734.0
-            '@smithy/core': 3.1.2
+            '@smithy/core': 3.1.5
             '@smithy/credential-provider-imds': 4.0.1
             '@smithy/property-provider': 4.0.1
             '@smithy/types': 4.1.0
@@ -18840,26 +18860,26 @@ snapshots:
             '@aws-sdk/util-user-agent-browser': 3.734.0
             '@aws-sdk/util-user-agent-node': 3.744.0
             '@smithy/config-resolver': 4.0.1
-            '@smithy/core': 3.1.2
+            '@smithy/core': 3.1.5
             '@smithy/fetch-http-handler': 5.0.1
             '@smithy/hash-node': 4.0.1
             '@smithy/invalid-dependency': 4.0.1
             '@smithy/middleware-content-length': 4.0.1
-            '@smithy/middleware-endpoint': 4.0.3
-            '@smithy/middleware-retry': 4.0.4
+            '@smithy/middleware-endpoint': 4.0.6
+            '@smithy/middleware-retry': 4.0.7
             '@smithy/middleware-serde': 4.0.2
             '@smithy/middleware-stack': 4.0.1
             '@smithy/node-config-provider': 4.0.1
-            '@smithy/node-http-handler': 4.0.2
+            '@smithy/node-http-handler': 4.0.3
             '@smithy/protocol-http': 5.0.1
-            '@smithy/smithy-client': 4.1.3
+            '@smithy/smithy-client': 4.1.6
             '@smithy/types': 4.1.0
             '@smithy/url-parser': 4.0.1
             '@smithy/util-base64': 4.0.0
             '@smithy/util-body-length-browser': 4.0.0
             '@smithy/util-body-length-node': 4.0.0
-            '@smithy/util-defaults-mode-browser': 4.0.4
-            '@smithy/util-defaults-mode-node': 4.0.4
+            '@smithy/util-defaults-mode-browser': 4.0.7
+            '@smithy/util-defaults-mode-node': 4.0.7
             '@smithy/util-endpoints': 3.0.1
             '@smithy/util-middleware': 4.0.1
             '@smithy/util-retry': 4.0.1
@@ -20574,7 +20594,7 @@ snapshots:
 
     '@gar/promisify@1.1.3': {}
 
-    '@getzep/zep-cloud@1.0.12(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(langchain@0.3.15(12bb34605734f8efe0153c34c501a137))':
+    '@getzep/zep-cloud@1.0.12(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(langchain@0.3.15(8d58eb8020b7ac2928b5d31679b4efbc))':
         dependencies:
             form-data: 4.0.0
             node-fetch: 2.7.0(encoding@0.1.13)
@@ -20583,7 +20603,7 @@ snapshots:
             zod: 3.24.1
         optionalDependencies:
             '@langchain/core': 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
-            langchain: 0.3.15(12bb34605734f8efe0153c34c501a137)
+            langchain: 0.3.15(8d58eb8020b7ac2928b5d31679b4efbc)
         transitivePeerDependencies:
             - encoding
 
@@ -21099,15 +21119,13 @@ snapshots:
         transitivePeerDependencies:
             - encoding
 
-    '@langchain/aws@0.1.4(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))':
+    '@langchain/aws@0.1.11(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))':
         dependencies:
             '@aws-sdk/client-bedrock-agent-runtime': 3.765.0
             '@aws-sdk/client-bedrock-runtime': 3.758.0
             '@aws-sdk/client-kendra': 3.758.0
             '@aws-sdk/credential-provider-node': 3.758.0
             '@langchain/core': 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
-            zod: 3.24.1
-            zod-to-json-schema: 3.24.1(zod@3.24.1)
         transitivePeerDependencies:
             - aws-crt
 
@@ -21133,7 +21151,7 @@ snapshots:
             - encoding
             - openai
 
-    '@langchain/community@0.3.38(c879cae4bd7e0c041b44ca5d08d72698)':
+    '@langchain/community@0.3.38(6dfceb901ea51ae1692cad57d6fbe14e)':
         dependencies:
             '@browserbasehq/stagehand': 1.12.0(@playwright/test@1.50.1)(bufferutil@4.0.9)(deepmerge@4.3.1)(dotenv@16.4.7)(encoding@0.1.13)(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))(utf-8-validate@6.0.5)(zod@3.22.4)
             '@ibm-cloud/watsonx-ai': 1.4.0(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
@@ -21144,7 +21162,7 @@ snapshots:
             flat: 5.0.2
             ibm-cloud-sdk-core: 5.1.2
             js-yaml: 4.1.0
-            langchain: 0.3.15(12bb34605734f8efe0153c34c501a137)
+            langchain: 0.3.15(8d58eb8020b7ac2928b5d31679b4efbc)
             langsmith: 0.3.7(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
             openai: 4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)
             uuid: 10.0.0
@@ -21161,7 +21179,7 @@ snapshots:
             '@browserbasehq/sdk': 2.2.0(encoding@0.1.13)
             '@datastax/astra-db-ts': 1.5.0
             '@elastic/elasticsearch': 8.17.0
-            '@getzep/zep-cloud': 1.0.12(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(langchain@0.3.15(12bb34605734f8efe0153c34c501a137))
+            '@getzep/zep-cloud': 1.0.12(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(langchain@0.3.15(8d58eb8020b7ac2928b5d31679b4efbc))
             '@getzep/zep-js': 0.9.0
             '@gomomento/sdk': 1.107.0(encoding@0.1.13)
             '@gomomento/sdk-core': 1.107.0
@@ -21259,23 +21277,18 @@ snapshots:
             - encoding
             - openai
 
-    '@langchain/google-common@0.2.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(zod@3.22.4)':
+    '@langchain/google-common@0.2.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))':
         dependencies:
             '@langchain/core': 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
             uuid: 10.0.0
-            zod-to-json-schema: 3.24.1(zod@3.22.4)
-        transitivePeerDependencies:
-            - zod
 
-    '@langchain/google-gauth@0.2.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(zod@3.22.4)':
+    '@langchain/google-gauth@0.2.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))':
         dependencies:
             '@langchain/core': 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
-            '@langchain/google-common': 0.2.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(zod@3.22.4)
-            google-auth-library: 9.15.1(encoding@0.1.13)
+            '@langchain/google-common': 0.2.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
+            google-auth-library: 10.1.0
         transitivePeerDependencies:
-            - encoding
             - supports-color
-            - zod
 
     '@langchain/google-genai@0.2.3(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(zod@3.22.4)':
         dependencies:
@@ -21286,14 +21299,12 @@ snapshots:
         transitivePeerDependencies:
             - zod
 
-    '@langchain/google-vertexai@0.2.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(zod@3.22.4)':
+    '@langchain/google-vertexai@0.2.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))':
         dependencies:
             '@langchain/core': 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
-            '@langchain/google-gauth': 0.2.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(zod@3.22.4)
+            '@langchain/google-gauth': 0.2.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
         transitivePeerDependencies:
-            - encoding
             - supports-color
-            - zod
 
     '@langchain/groq@0.1.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))':
         dependencies:
@@ -21473,9 +21484,9 @@ snapshots:
 
     '@marijn/find-cluster-break@1.0.2': {}
 
-    '@mem0/community@0.0.1(d501eec7cc5a898daecc2d747545f142)':
+    '@mem0/community@0.0.1(9a6cdef8b74de39d9a5e6ee4955ea817)':
         dependencies:
-            '@langchain/community': 0.3.38(c879cae4bd7e0c041b44ca5d08d72698)
+            '@langchain/community': 0.3.38(6dfceb901ea51ae1692cad57d6fbe14e)
             '@langchain/core': 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
             axios: 1.7.9(debug@4.4.0)
             mem0ai: 2.1.14(@anthropic-ai/sdk@0.37.0(encoding@0.1.13))(@qdrant/js-client-rest@1.13.0(typescript@5.7.3))(@supabase/supabase-js@2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(@types/jest@29.5.14)(@types/pg@8.11.11)(@types/sqlite3@3.1.11)(encoding@0.1.13)(groq-sdk@0.5.0(encoding@0.1.13))(neo4j-driver@5.28.0)(ollama@0.5.12)(pg@8.13.1)(redis@4.7.0)(sqlite3@5.1.7)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))
@@ -21665,13 +21676,13 @@ snapshots:
         dependencies:
             content-type: 1.0.5
             raw-body: 3.0.0
-            zod: 3.24.1
+            zod: 3.25.67
 
     '@modelcontextprotocol/sdk@1.0.1':
         dependencies:
             content-type: 1.0.5
             raw-body: 3.0.0
-            zod: 3.24.1
+            zod: 3.25.67
 
     '@modelcontextprotocol/sdk@1.11.0':
         dependencies:
@@ -29664,6 +29675,14 @@ snapshots:
             - encoding
             - supports-color
 
+    gaxios@7.1.1:
+        dependencies:
+            extend: 3.0.2
+            https-proxy-agent: 7.0.6
+            node-fetch: 3.3.2
+        transitivePeerDependencies:
+            - supports-color
+
     gcp-metadata@5.3.0(encoding@0.1.13):
         dependencies:
             gaxios: 5.1.3(encoding@0.1.13)
@@ -29680,6 +29699,14 @@ snapshots:
             json-bigint: 1.0.0
         transitivePeerDependencies:
             - encoding
+            - supports-color
+
+    gcp-metadata@7.0.1:
+        dependencies:
+            gaxios: 7.1.1
+            google-logging-utils: 1.1.1
+            json-bigint: 1.0.0
+        transitivePeerDependencies:
             - supports-color
 
     generate-function@2.3.1:
@@ -29915,6 +29942,18 @@ snapshots:
         dependencies:
             csstype: 3.1.3
 
+    google-auth-library@10.1.0:
+        dependencies:
+            base64-js: 1.5.1
+            ecdsa-sig-formatter: 1.0.11
+            gaxios: 7.1.1
+            gcp-metadata: 7.0.1
+            google-logging-utils: 1.1.1
+            gtoken: 8.0.0
+            jws: 4.0.0
+        transitivePeerDependencies:
+            - supports-color
+
     google-auth-library@9.15.1(encoding@0.1.13):
         dependencies:
             base64-js: 1.5.1
@@ -29946,6 +29985,8 @@ snapshots:
             - supports-color
 
     google-logging-utils@0.0.2: {}
+
+    google-logging-utils@1.1.1: {}
 
     google-protobuf@3.21.2: {}
 
@@ -30013,6 +30054,13 @@ snapshots:
             jws: 4.0.0
         transitivePeerDependencies:
             - encoding
+            - supports-color
+
+    gtoken@8.0.0:
+        dependencies:
+            gaxios: 7.1.1
+            jws: 4.0.0
+        transitivePeerDependencies:
             - supports-color
 
     guid-typescript@1.0.9: {}
@@ -31754,7 +31802,7 @@ snapshots:
 
     kuler@2.0.0: {}
 
-    langchain@0.3.15(12bb34605734f8efe0153c34c501a137):
+    langchain@0.3.15(8d58eb8020b7ac2928b5d31679b4efbc):
         dependencies:
             '@langchain/core': 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
             '@langchain/openai': 0.4.4(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))
@@ -31771,10 +31819,10 @@ snapshots:
             zod-to-json-schema: 3.24.1(zod@3.22.4)
         optionalDependencies:
             '@langchain/anthropic': 0.3.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)
-            '@langchain/aws': 0.1.4(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
+            '@langchain/aws': 0.1.11(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
             '@langchain/cohere': 0.0.7(encoding@0.1.13)(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))
             '@langchain/google-genai': 0.2.3(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(zod@3.22.4)
-            '@langchain/google-vertexai': 0.2.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(zod@3.22.4)
+            '@langchain/google-vertexai': 0.2.14(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
             '@langchain/groq': 0.1.2(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))
             '@langchain/mistralai': 0.2.0(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
             '@langchain/ollama': 0.2.0(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4)))
@@ -31792,9 +31840,9 @@ snapshots:
         dependencies:
             mustache: 4.2.0
 
-    langfuse-langchain@3.35.1(langchain@0.3.15(12bb34605734f8efe0153c34c501a137)):
+    langfuse-langchain@3.35.1(langchain@0.3.15(8d58eb8020b7ac2928b5d31679b4efbc)):
         dependencies:
-            langchain: 0.3.15(12bb34605734f8efe0153c34c501a137)
+            langchain: 0.3.15(8d58eb8020b7ac2928b5d31679b4efbc)
             langfuse: 3.35.1
             langfuse-core: 3.35.1
 
@@ -37317,11 +37365,11 @@ snapshots:
 
     through@2.3.8: {}
 
-    thub-embed-react@2.0.5(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.4.0(bufferutil@4.0.9))(typescript@5.7.3):
+    thub-embed-react@2.1.0(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(thub-embed@9.4.5(bufferutil@4.0.9))(typescript@5.7.3):
         dependencies:
             '@ladle/react': 2.5.1(@types/node@22.13.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.84.0)(terser@5.38.1)(typescript@5.7.3)
             react: 18.3.1
-            thub-embed: 9.4.0(bufferutil@4.0.9)
+            thub-embed: 9.4.5(bufferutil@4.0.9)
         transitivePeerDependencies:
             - '@types/node'
             - less
@@ -37334,7 +37382,7 @@ snapshots:
             - terser
             - typescript
 
-    thub-embed@9.4.0(bufferutil@4.0.9):
+    thub-embed@9.4.5(bufferutil@4.0.9):
         dependencies:
             '@babel/core': 7.26.8
             '@microsoft/fetch-event-source': 2.0.1
