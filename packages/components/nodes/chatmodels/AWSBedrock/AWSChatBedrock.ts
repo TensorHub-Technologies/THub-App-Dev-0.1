@@ -23,7 +23,7 @@ class AWSChatBedrock_ChatModels implements INode {
     constructor() {
         this.label = 'AWS ChatBedrock'
         this.name = 'awsChatBedrock'
-        this.version = 6.0
+        this.version = 6.1
         this.type = 'AWSChatBedrock'
         this.icon = 'aws.svg'
         this.category = 'Chat Models'
@@ -96,9 +96,20 @@ class AWSChatBedrock_ChatModels implements INode {
                 label: 'Allow Image Uploads',
                 name: 'allowImageUploads',
                 type: 'boolean',
-                description: 'Allow image input. Refer to the <a href="https://docs.thub.tech" target="_blank">docs</a> for more details.',
+                description:
+                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
                 default: false,
                 optional: true
+            },
+            {
+                label: 'Latency Optimized',
+                name: 'latencyOptimized',
+                type: 'boolean',
+                description:
+                    'Enable latency optimized configuration for supported models. Refer to the supported <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/latency-optimized-inference.html" target="_blank">latecny optimized models</a> for more details.',
+                default: false,
+                optional: true,
+                additionalParams: true
             }
         ]
     }
@@ -121,6 +132,7 @@ class AWSChatBedrock_ChatModels implements INode {
         const iMax_tokens_to_sample = nodeData.inputs?.max_tokens_to_sample as string
         const cache = nodeData.inputs?.cache as BaseCache
         const streaming = nodeData.inputs?.streaming as boolean
+        const latencyOptimized = nodeData.inputs?.latencyOptimized as boolean
 
         const obj: ChatBedrockConverseInput = {
             region: iRegion,
@@ -128,6 +140,10 @@ class AWSChatBedrock_ChatModels implements INode {
             maxTokens: parseInt(iMax_tokens_to_sample, 10),
             temperature: parseFloat(iTemperature),
             streaming: streaming ?? true
+        }
+
+        if (latencyOptimized) {
+            obj.performanceConfig = { latency: 'optimized' }
         }
 
         /**
