@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useState, useEffect, useRef, useContext, memo } from 'react'
 import { useUpdateNodeInternals } from 'reactflow'
 import PropTypes from 'prop-types'
-import { Stack, Box, Typography, TextField, Dialog, DialogContent, ButtonBase, Avatar } from '@mui/material'
+import { Stack, Box, Typography, TextField, Dialog, DialogContent, ButtonBase } from '@mui/material'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 import { IconPencil, IconX, IconCheck, IconInfoCircle } from '@tabler/icons-react'
 import { useTheme } from '@mui/material/styles'
@@ -191,7 +191,7 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
     const tabColor = customization.isDarkMode ? '#e22a90' : '#3c5ba4'
 
     return (
-        <Box sx={{ width: '100%', typography: 'body1' }}>
+        <Box sx={{ width: '100%', typography: 'body1', marginTop: '10px' }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <TabList
@@ -210,9 +210,9 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                                 label={tab.label}
                                 value={tab.value}
                                 sx={{
-                                    color: 'text.secondary',
+                                    color: customization.isDarkMode ? '#fff' : 'black',
                                     '&.Mui-selected': {
-                                        color: tabColor // selected tab label color
+                                        color: tabColor
                                     }
                                 }}
                             />
@@ -359,56 +359,102 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                 }
             }}
         >
-            <DialogContent>
+            <DialogContent sx={{ padding: '0px' }}>
                 {data && data.name && (
-                    <Box sx={{ width: '100%' }}>
+                    <Box
+                        sx={{
+                            width: '100%',
+                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                            height: '56px',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
+                    >
                         {!isEditingNodeName ? (
-                            <Stack flexDirection='row' sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                            <Stack
+                                flexDirection='row'
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                    padding: '0 16px'
+                                }}
+                            >
                                 <Typography
                                     sx={{
-                                        ml: 2,
+                                        flex: 1,
+                                        color: '#fff',
                                         textOverflow: 'ellipsis',
                                         overflow: 'hidden',
-                                        whiteSpace: 'nowrap'
+                                        whiteSpace: 'nowrap',
+                                        fontSize: '1.1rem',
+                                        fontWeight: 500
                                     }}
-                                    variant='h4'
                                 >
                                     {nodeName}
                                 </Typography>
 
                                 {data?.id && (
-                                    <ButtonBase title='Edit Name' sx={{ borderRadius: '50%' }}>
-                                        <Avatar
-                                            variant='rounded'
-                                            sx={{
-                                                ...theme.typography.commonAvatar,
-                                                ...theme.typography.mediumAvatar,
-                                                transition: 'all .2s ease-in-out',
-                                                ml: 1,
-                                                background: theme.palette.secondary.light,
-                                                color: theme.palette.secondary.dark,
-                                                '&:hover': {
-                                                    background: theme.palette.secondary.dark,
-                                                    color: theme.palette.secondary.light
+                                    <ButtonBase
+                                        title='Edit Name'
+                                        sx={{
+                                            borderRadius: '50%',
+                                            color: 'inherit',
+                                            '&:hover': {
+                                                '& svg': {
+                                                    transform: 'scale(1.2)'
                                                 }
+                                            }
+                                        }}
+                                        onClick={() => setEditingNodeName(true)}
+                                    >
+                                        <IconPencil
+                                            stroke={1.5}
+                                            size='1.5rem'
+                                            style={{
+                                                color: '#fff',
+                                                transition: 'transform 0.2s ease-in-out'
                                             }}
-                                            color='inherit'
-                                            onClick={() => setEditingNodeName(true)}
-                                        >
-                                            <IconPencil stroke={1.5} size='1rem' />
-                                        </Avatar>
+                                        />
                                     </ButtonBase>
                                 )}
                             </Stack>
                         ) : (
-                            <Stack flexDirection='row' sx={{ width: '100%' }}>
+                            <Stack
+                                flexDirection='row'
+                                sx={{
+                                    width: '100%',
+                                    padding: '0 16px',
+                                    alignItems: 'center'
+                                }}
+                            >
                                 <TextField
-                                    //eslint-disable-next-line jsx-a11y/no-autofocus
-                                    autoFocus
+                                    id='standard-basic'
+                                    variant='standard'
                                     size='small'
                                     sx={{
-                                        width: '100%',
-                                        ml: 2
+                                        flex: 1,
+                                        border: 'none',
+                                        background: 'none',
+                                        input: {
+                                            color: '#fff',
+                                            fontSize: '1.1rem',
+                                            padding: '0'
+                                        }
+                                    }}
+                                    InputProps={{
+                                        disableUnderline: false,
+                                        sx: {
+                                            '&:before': {
+                                                borderBottom: '1px solid rgba(255, 255, 255, 0.5)'
+                                            },
+                                            '&:after': {
+                                                borderBottom: '2px solid #fff'
+                                            },
+                                            '&:hover:not(.Mui-disabled):before': {
+                                                borderBottom: '2px solid rgba(255, 255, 255, 0.7)'
+                                            }
+                                        }
                                     }}
                                     inputRef={nodeNameRef}
                                     defaultValue={nodeName}
@@ -423,52 +469,56 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                                         }
                                     }}
                                 />
-                                <ButtonBase title='Save Name' sx={{ borderRadius: '50%' }}>
-                                    <Avatar
-                                        variant='rounded'
-                                        sx={{
-                                            ...theme.typography.commonAvatar,
-                                            ...theme.typography.mediumAvatar,
-                                            transition: 'all .2s ease-in-out',
-                                            background: theme.palette.success.light,
-                                            color: theme.palette.success.dark,
-                                            ml: 1,
-                                            '&:hover': {
-                                                background: theme.palette.success.dark,
-                                                color: theme.palette.success.light
+                                <ButtonBase
+                                    title='Save Name'
+                                    sx={{
+                                        borderRadius: '50%',
+                                        color: 'inherit',
+                                        ml: 1,
+                                        '&:hover': {
+                                            '& svg': {
+                                                transform: 'scale(1.2)'
                                             }
+                                        }
+                                    }}
+                                    onClick={() => {
+                                        data.label = nodeNameRef.current.value
+                                        setNodeName(nodeNameRef.current.value)
+                                        onNodeLabelChange()
+                                        setEditingNodeName(false)
+                                    }}
+                                >
+                                    <IconCheck
+                                        stroke={1.5}
+                                        size='1.5rem'
+                                        style={{
+                                            color: '#fff',
+                                            transition: 'transform 0.2s ease-in-out'
                                         }}
-                                        color='inherit'
-                                        onClick={() => {
-                                            data.label = nodeNameRef.current.value
-                                            setNodeName(nodeNameRef.current.value)
-                                            onNodeLabelChange()
-                                            setEditingNodeName(false)
-                                        }}
-                                    >
-                                        <IconCheck stroke={1.5} size='1rem' />
-                                    </Avatar>
+                                    />
                                 </ButtonBase>
-                                <ButtonBase title='Cancel' sx={{ borderRadius: '50%' }}>
-                                    <Avatar
-                                        variant='rounded'
-                                        sx={{
-                                            ...theme.typography.commonAvatar,
-                                            ...theme.typography.mediumAvatar,
-                                            transition: 'all .2s ease-in-out',
-                                            background: theme.palette.error.light,
-                                            color: theme.palette.error.dark,
-                                            ml: 1,
-                                            '&:hover': {
-                                                background: theme.palette.error.dark,
-                                                color: theme.palette.error.light
+                                <ButtonBase
+                                    title='Cancel'
+                                    sx={{
+                                        borderRadius: '50%',
+                                        color: 'inherit',
+                                        ml: 1,
+                                        '&:hover': {
+                                            '& svg': {
+                                                transform: 'scale(1.2)'
                                             }
+                                        }
+                                    }}
+                                    onClick={() => setEditingNodeName(false)}
+                                >
+                                    <IconX
+                                        stroke={1.5}
+                                        size='1.5rem'
+                                        style={{
+                                            color: '#fff',
+                                            transition: 'transform 0.2s ease-in-out'
                                         }}
-                                        color='inherit'
-                                        onClick={() => setEditingNodeName(false)}
-                                    >
-                                        <IconX stroke={1.5} size='1rem' />
-                                    </Avatar>
+                                    />
                                 </ButtonBase>
                             </Stack>
                         )}
