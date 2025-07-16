@@ -51,9 +51,12 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllChatflows = async (req: Request, res: Response, next: NextFunction) => {
     const tenantId: string | undefined = typeof req.query.tenantId === 'string' ? req.query.tenantId : undefined
+    const page: number = parseInt(req.query.page as string) || 1
+    const limit: number = parseInt(req.query.limit as string) || 12
+    const type: ChatflowType = req.query.type as ChatflowType
 
     try {
-        const apiResponse = await chatflowsService.getAllChatflows(req.query?.type as ChatflowType, tenantId)
+        const apiResponse = await chatflowsService.getAllChatflows(type, tenantId, page, limit)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
