@@ -1,8 +1,10 @@
 import client from './client'
 
-const getAllChatflows = (tenantId) => client.get(`/chatflows?type=CHATFLOW&tenantId=${tenantId}`)
-
-const getAllAgentflows = (type, tenantId) => client.get(`/chatflows?type=${type}&tenantId=${tenantId}`)
+const getAllChatflows = (tenantId, page = 1, limit = 12) => {
+    return client.get(`/chatflows?type=CHATFLOW&tenantId=${tenantId}&page=${page}&limit=${limit}`)
+}
+const getAllAgentflows = (type, tenantId, page = 1, limit = 12) =>
+    client.get(`/chatflows?type=${type}&tenantId=${tenantId}&page=${page}&limit=${limit}`)
 
 const getSpecificChatflow = (id) => client.get(`/chatflows/${id}`)
 

@@ -18,24 +18,12 @@ import {
     TableSortLabel,
     Tooltip,
     Typography,
+    CircularProgress,
     useTheme
 } from '@mui/material'
 import { tableCellClasses } from '@mui/material/TableCell'
 import FlowListMenu from '../button/FlowListMenu'
 import { Link } from 'react-router-dom'
-
-// const StyledTableCell = styled(TableCell)(({ theme }) => ({
-//     borderColor: theme.palette.grey[900] + 25,
-//     fontFamily: 'cambria math',
-//     [`&.${tableCellClasses.head}`]: {
-//         color: 'black',
-//         fontWeight: 'bold'
-//     },
-//     [`&.${tableCellClasses.body}`]: {
-//         fontSize: 14,
-//         height: 64
-//     }
-// }))
 
 const StyledTableRow = styled(TableRow)(() => ({
     // hide last border
@@ -65,7 +53,10 @@ export const FlowListTable = ({
     updateFlowsApi,
     setError,
     isAgentCanvas,
-    isAgentflowV2
+    isAgentflowV2,
+    lastElementRef,
+    isLoadingMore,
+    hasMore
 }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
@@ -117,24 +108,38 @@ export const FlowListTable = ({
         }
     }
 
-    const sortedData = data
-        ? [...data].sort((a, b) => {
-              if (orderBy === 'name') {
-                  return order === 'asc' ? (a.name || '').localeCompare(b.name || '') : (b.name || '').localeCompare(a.name || '')
-              } else if (orderBy === 'updatedDate') {
-                  return order === 'asc'
-                      ? new Date(a.updatedDate) - new Date(b.updatedDate)
-                      : new Date(b.updatedDate) - new Date(a.updatedDate)
-              }
-              return 0
-          })
-        : []
+    const sortedData =
+        data && Array.isArray(data)
+            ? [...data].sort((a, b) => {
+                  if (orderBy === 'name') {
+                      return order === 'asc' ? (a.name || '').localeCompare(b.name || '') : (b.name || '').localeCompare(a.name || '')
+                  } else if (orderBy === 'updatedDate') {
+                      return order === 'asc'
+                          ? new Date(a.updatedDate) - new Date(b.updatedDate)
+                          : new Date(b.updatedDate) - new Date(a.updatedDate)
+                  }
+                  return 0
+              })
+            : []
+
+    const filteredData = sortedData.filter(filterFunction || (() => true))
+
+    // // Render load more indicator
+    const renderLoadMoreIndicator = () => (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2, mb: 2, gap: 1 }}>
+            <CircularProgress size={20} />
+            <Typography variant='body2' color='textSecondary'>
+                Loading more...
+            </Typography>
+        </Box>
+    )
+
     console.log(isAgentCanvas, isAgentflowV2, 'isAgentCanvas in flowlisttable, isAgentflowV2')
 
     return (
         <>
             <TableContainer sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }} component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small' aria-label='a dense table'>
+                <Table sx={{ minWidth: 650, overflowX: 'hidden' }} size='small' aria-label='a dense table'>
                     <TableHead
                         sx={{
                             backgroundColor: customization.isDarkMode ? theme.palette.common.black : theme.palette.grey[100],
@@ -177,45 +182,33 @@ export const FlowListTable = ({
                     <TableBody>
                         {isLoading ? (
                             <>
-                                <StyledTableRow>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                                <StyledTableRow>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                </StyledTableRow>
+                                {[...Array(12)].map((_, index) => (
+                                    <StyledTableRow key={index}>
+                                        <StyledTableCell>
+                                            <Skeleton variant='text' />
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <Skeleton variant='text' />
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <Skeleton variant='text' />
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <Skeleton variant='text' />
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <Skeleton variant='text' />
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            <Skeleton variant='text' />
+                                        </StyledTableCell>
+                                    </StyledTableRow>
+                                ))}
                             </>
                         ) : (
                             <>
-                                {sortedData.filter(filterFunction).map((row, index) => (
-                                    <StyledTableRow key={index}>
+                                {filteredData.map((row, index) => (
+                                    <StyledTableRow key={row.id} ref={index === filteredData.length - 1 ? lastElementRef : null}>
                                         <StyledTableCell key='0'>
                                             <Tooltip title={row.templateName || row.name}>
                                                 <Typography
@@ -396,6 +389,9 @@ export const FlowListTable = ({
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {/* Load more indicator for infinite scroll */}
+            {isLoadingMore && renderLoadMoreIndicator()}
         </>
     )
 }
@@ -409,5 +405,8 @@ FlowListTable.propTypes = {
     updateFlowsApi: PropTypes.object,
     setError: PropTypes.func,
     isAgentCanvas: PropTypes.bool,
-    isAgentflowV2: PropTypes.bool
+    isAgentflowV2: PropTypes.bool,
+    lastElementRef: PropTypes.func,
+    isLoadingMore: PropTypes.bool,
+    hasMore: PropTypes.bool
 }

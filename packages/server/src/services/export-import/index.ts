@@ -87,17 +87,23 @@ const convertExportInput = (body: any): ExportInput => {
 const FileDefaultName = 'ExportData.json'
 const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{ FileDefaultName: string } & ExportData> => {
     try {
-        let AgentFlow: ChatFlow[] = exportInput.agentflow === true ? await chatflowService.getAllChatflows('MULTIAGENT') : []
-        let AgentFlowV2: ChatFlow[] = exportInput.agentflowv2 === true ? await chatflowService.getAllChatflows('AGENTFLOW') : []
+        // Extract .data from paginated responses
+        let AgentFlow: ChatFlow[] =
+            exportInput.agentflow === true ? (await chatflowService.getAllChatflows('MULTIAGENT', tenantId)).data : []
+
+        let AgentFlowV2: ChatFlow[] =
+            exportInput.agentflowv2 === true ? (await chatflowService.getAllChatflows('AGENTFLOW', tenantId)).data : []
 
         let AssistantCustom: Assistant[] = exportInput.assistantCustom === true ? await assistantService.getAllAssistants('CUSTOM') : []
-        let AssistantFlow: ChatFlow[] = exportInput.assistantCustom === true ? await chatflowService.getAllChatflows('ASSISTANT') : []
+
+        let AssistantFlow: ChatFlow[] =
+            exportInput.assistantCustom === true ? (await chatflowService.getAllChatflows('ASSISTANT', tenantId)).data : []
 
         let AssistantOpenAI: Assistant[] = exportInput.assistantOpenAI === true ? await assistantService.getAllAssistants('OPENAI') : []
 
         let AssistantAzure: Assistant[] = exportInput.assistantAzure === true ? await assistantService.getAllAssistants('AZURE') : []
 
-        let ChatFlow: ChatFlow[] = exportInput.chatflow === true ? await chatflowService.getAllChatflows('CHATFLOW') : []
+        let ChatFlow: ChatFlow[] = exportInput.chatflow === true ? (await chatflowService.getAllChatflows('CHATFLOW', tenantId)).data : []
 
         let ChatMessage: ChatMessage[] = exportInput.chat_message === true ? await chatMessagesService.getAllMessages() : []
 
@@ -105,7 +111,10 @@ const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{
             exportInput.chat_feedback === true ? await chatMessagesService.getAllMessagesFeedback() : []
 
         let CustomTemplate: CustomTemplate[] = exportInput.custom_template === true ? await marketplacesService.getAllCustomTemplates() : []
-        CustomTemplate = CustomTemplate.map((customTemplate) => ({ ...customTemplate, usecases: JSON.stringify(customTemplate.usecases) }))
+        CustomTemplate = CustomTemplate.map((customTemplate) => ({
+            ...customTemplate,
+            usecases: JSON.stringify(customTemplate.usecases)
+        }))
 
         let DocumentStore: DocumentStore[] = exportInput.document_store === true ? await documenStoreService.getAllDocumentStores() : []
 

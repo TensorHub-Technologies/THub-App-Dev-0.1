@@ -119,23 +119,74 @@ const deleteChatflow = async (chatflowId: string): Promise<any> => {
     }
 }
 
-const getAllChatflows = async (type?: ChatflowType, tenantId?: string): Promise<ChatFlow[]> => {
+interface PaginatedChatflows {
+    data: ChatFlow[]
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+    hasNextPage: boolean
+    hasPrevPage: boolean
+}
+
+const getAllChatflows = async (
+    type?: ChatflowType,
+    tenantId?: string,
+    page: number = 1,
+    limit: number = 12
+): Promise<PaginatedChatflows> => {
     console.log(tenantId, 'tenantId111')
 
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findBy({ tenantId })
-        if (type === 'MULTIAGENT') {
-            return dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
-        } else if (type === 'AGENTFLOW') {
-            return dbResponse.filter((chatflow) => chatflow.type === 'AGENTFLOW')
-        } else if (type === 'ASSISTANT') {
-            return dbResponse.filter((chatflow) => chatflow.type === 'ASSISTANT')
-        } else if (type === 'CHATFLOW') {
-            // fetch all chatflows that are not agentflow
-            return dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
+        const repository = appServer.AppDataSource.getRepository(ChatFlow)
+
+        // Calculate offset for pagination
+        const offset = (page - 1) * limit
+
+        // Build query conditions
+        const whereConditions: any = {}
+        if (tenantId) {
+            whereConditions.tenantId = tenantId
         }
-        return dbResponse
+
+        // Get total count for pagination info
+        const totalCount = await repository.count({ where: whereConditions })
+
+        // Get paginated data with sorting by updatedDate (newest first)
+        const dbResponse = await repository.find({
+            where: whereConditions,
+            order: { updatedDate: 'DESC' },
+            skip: offset,
+            take: limit
+        })
+
+        // Filter by type if specified
+        let filteredData = dbResponse
+        if (type === 'MULTIAGENT') {
+            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
+        } else if (type === 'AGENTFLOW') {
+            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'AGENTFLOW')
+        } else if (type === 'ASSISTANT') {
+            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'ASSISTANT')
+        } else if (type === 'CHATFLOW') {
+            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
+        }
+
+        // Calculate pagination metadata
+        const totalPages = Math.ceil(totalCount / limit)
+        const hasNextPage = page < totalPages
+        const hasPrevPage = page > 1
+
+        return {
+            data: filteredData,
+            total: totalCount,
+            page,
+            limit,
+            totalPages,
+            hasNextPage,
+            hasPrevPage
+        }
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
