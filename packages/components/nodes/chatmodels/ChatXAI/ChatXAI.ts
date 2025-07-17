@@ -1,7 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatXAI, ChatXAIInput } from '@langchain/xai'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 
 class ChatXAI_ChatModels implements INode {
     label: string
@@ -40,8 +41,9 @@ class ChatXAI_ChatModels implements INode {
             {
                 label: 'Model',
                 name: 'modelName',
-                type: 'string',
-                placeholder: 'grok-beta'
+                type: 'asyncOptions',
+                loadMethod: 'listModels',
+                default: 'grok-3'
             },
             {
                 label: 'Temperature',
@@ -76,6 +78,13 @@ class ChatXAI_ChatModels implements INode {
                 additionalParams: true
             }
         ]
+    }
+
+    loadMethods = {
+        async listModels(): Promise<INodeOptionsValue[]> {
+            const models = await getModels(MODEL_TYPE.CHAT, 'chatXAI')
+            return models
+        }
     }
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {

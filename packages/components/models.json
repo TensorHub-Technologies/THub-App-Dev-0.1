@@ -1,6 +1,32 @@
 {
     "chat": [
         {
+            "name": "chatXAI",
+            "models": [
+                {
+                    "label": "grok-3",
+                    "name": "grok-3",
+                    "description": "Grok v3 - Built on Colossus supercluster with 1M token context",
+                    "input_cost": 0.000025,
+                    "output_cost": 0.00007
+                },
+                {
+                    "label": "grok-4",
+                    "name": "grok-4",
+                    "description": "Grok v4 - Multi-modal model with integrated search, voice, and vision",
+                    "input_cost": 0.00003,
+                    "output_cost": 0.00008
+                },
+                {
+                    "label": "grok-4-heavy",
+                    "name": "grok-4-heavy",
+                    "description": "Grok v4 Heavy - Multi-agent premium model with deeper reasoning",
+                    "input_cost": 0.00006,
+                    "output_cost": 0.00012
+                }
+            ]
+        },
+        {
             "name": "awsChatBedrock",
             "models": [
                 {
