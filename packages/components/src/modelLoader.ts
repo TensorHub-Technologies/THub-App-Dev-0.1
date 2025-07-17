@@ -32,6 +32,12 @@ const isValidUrl = (urlString: string) => {
 }
 
 const getModelConfig = async (category: MODEL_TYPE, name: string) => {
+    const models = await fs.promises.readFile(getModelsJSONPath(), 'utf8')
+    if (models) {
+        const categoryModels = JSON.parse(models)[category]
+        return categoryModels.find((model: INodeOptionsValue) => model.name === name)
+    }
+    /*   
     const modelFile = process.env.MODEL_LIST_CONFIG_JSON || MASTER_MODEL_LIST
 
     if (!modelFile) {
@@ -73,7 +79,7 @@ const getModelConfig = async (category: MODEL_TYPE, name: string) => {
             }
             return {}
         }
-    }
+    }*/
 }
 
 export const getModelConfigByModelName = async (category: MODEL_TYPE, provider: string | undefined, name: string | undefined) => {
