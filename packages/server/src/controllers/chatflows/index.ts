@@ -128,7 +128,7 @@ const updateChatflow = async (req: Request, res: Response, next: NextFunction) =
         }
         const chatflow = await chatflowsService.getChatflowById(req.params.id)
         if (!chatflow) {
-            return res.status(404).send(`Chatflow ${req.params.id} not found`)
+            return res.status(404).send(`Workflow ${req.params.id} not found`)
         }
 
         const body = req.body

@@ -198,7 +198,7 @@ const embedPopupHtmlCodeCustomization = (chatflowid) => {
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
         chatflowConfig: {
-            /* Chatflow Config */
+            /* Workflow Config */
         },
         observersConfig: {
             /* Observers Config */
@@ -217,7 +217,7 @@ const App = () => {
             chatflowid="${chatflowid}"
             apiHost="${baseURL}"
             chatflowConfig={{
-                /* Chatflow Config */
+                /* Workflow Config */
             }}
             observersConfig={{
                 /* Observers Config */
@@ -251,7 +251,7 @@ const embedFullpageHtmlCodeCustomization = (chatflowid) => {
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
         chatflowConfig: {
-            /* Chatflow Config */
+            /* Workflow Config */
         },
         observersConfig: {
             /* Observers Config */
@@ -270,7 +270,7 @@ const App = () => {
             chatflowid="${chatflowid}"
             apiHost="${baseURL}"
             chatflowConfig={{
-                /* Chatflow Config */
+                /* Workflow Config */
             }}
             observersConfig={{
                 /* Observers Config */

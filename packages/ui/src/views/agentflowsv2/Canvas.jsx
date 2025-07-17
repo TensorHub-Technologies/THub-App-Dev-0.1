@@ -75,7 +75,7 @@ const AgentflowCanvas = () => {
     const URLpath = document.location.pathname.toString().split('/')
     const chatflowId =
         URLpath[URLpath.length - 1] === 'canvas' || URLpath[URLpath.length - 1] === 'agentcanvas' ? '' : URLpath[URLpath.length - 1]
-    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Chatflow'
+    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Workflow'
 
     const { confirm } = useConfirm()
 
@@ -107,7 +107,7 @@ const AgentflowCanvas = () => {
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
-    // ==============================|| Chatflow API ||============================== //
+    // ==============================|| Workflow API ||============================== //
 
     const getNodesApi = useApi(nodesApi.getAllNodes)
     const createNewChatflowApi = useApi(chatflowsApi.createNewChatflow)
@@ -210,7 +210,7 @@ const AgentflowCanvas = () => {
 
             // Validate required parameters
             if (!chatflowName) {
-                throw new Error('Chatflow name and description are required')
+                throw new Error('Workflow name and description are required')
             }
 
             // Validate reactFlowInstance

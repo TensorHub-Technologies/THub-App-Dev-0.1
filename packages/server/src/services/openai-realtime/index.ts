@@ -27,7 +27,7 @@ const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessag
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
     }
 
     const chatId = _chatId || uuidv4()

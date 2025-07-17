@@ -131,7 +131,7 @@ const Canvas = () => {
 
     const reactFlowWrapper = useRef(null)
 
-    // ==============================|| Chatflow API ||============================== //
+    // ==============================|| Workflow API ||============================== //
 
     const getNodesApi = useApi(nodesApi.getAllNodes)
     const createNewChatflowApi = useApi(chatflowsApi.createNewChatflow)

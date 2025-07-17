@@ -262,7 +262,7 @@
                     {
                         "label": "Metadata Filter",
                         "name": "filter",
-                        "description": "Filter to apply to Vectara metadata. Refer to the <a target=\"_blank\" href=\"https://docs.thub.tech\">documentation</a> on how to use Vectara filters with Flowise.",
+                        "description": "Filter to apply to Vectara metadata. Refer to the <a target=\"_blank\" href=\"https://docs.thub.tech\">documentation</a> on how to use Vectara filters with THub.",
                         "type": "string",
                         "additionalParams": true,
                         "optional": true,

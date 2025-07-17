@@ -26,7 +26,7 @@ const checkIfChatflowIsValidForStreaming = async (chatflowId: string): Promise<a
             id: chatflowId
         })
         if (!chatflow) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found`)
         }
 
         /* Check for post-processing settings, if available isStreamValid is always false */
@@ -208,7 +208,7 @@ const getChatflowByApiKey = async (apiKeyId: string, keyonly?: unknown): Promise
 
         const dbResponse = await query.orderBy('cf.name', 'ASC').getMany()
         if (dbResponse.length < 1) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow not found in the database!`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow not found in the database!`)
         }
         return dbResponse
     } catch (error) {
@@ -226,7 +226,7 @@ const getChatflowById = async (chatflowId: string): Promise<any> => {
             id: chatflowId
         })
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found in the database!`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found in the database!`)
         }
         return dbResponse
     } catch (error) {
@@ -365,7 +365,7 @@ const getSinglePublicChatflow = async (chatflowId: string): Promise<any> => {
         } else if (dbResponse && !dbResponse.isPublic) {
             throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
         }
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
+        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found`)
     } catch (error) {
         if (error instanceof InternalFlowiseError && error.statusCode === StatusCodes.UNAUTHORIZED) {
             throw error
@@ -387,7 +387,7 @@ const getSinglePublicChatbotConfig = async (chatflowId: string): Promise<any> =>
             id: chatflowId
         })
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found`)
         }
         const uploadsConfig = await utilGetUploadsConfig(chatflowId)
         // even if chatbotConfig is not set but uploads are enabled
@@ -397,7 +397,7 @@ const getSinglePublicChatbotConfig = async (chatflowId: string): Promise<any> =>
                 const parsedConfig = dbResponse.chatbotConfig ? JSON.parse(dbResponse.chatbotConfig) : {}
                 return { ...parsedConfig, uploads: uploadsConfig, flowData: dbResponse.flowData }
             } catch (e) {
-                throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error parsing Chatbot Config for Chatflow ${chatflowId}`)
+                throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error parsing Chatbot Config for Workflow ${chatflowId}`)
             }
         }
         return 'OK'

@@ -71,7 +71,7 @@ class AdvancedStructuredOutputParser implements INode {
                 return baseParse.call(structuredOutputParser, jsonrepair(jsonString))
             }
 
-            // NOTE: When we change Flowise to return a json response, the following has to be changed to: JsonStructuredOutputParser
+            // NOTE: When we change THub to return a json response, the following has to be changed to: JsonStructuredOutputParser
             Object.defineProperty(structuredOutputParser, 'autoFix', {
                 enumerable: true,
                 configurable: true,

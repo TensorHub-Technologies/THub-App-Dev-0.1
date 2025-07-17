@@ -279,7 +279,7 @@ class ToolNode_SeqAgents implements INode {
                                         value: '$flow.chatId'
                                     },
                                     {
-                                        label: 'Chatflow Id (string)',
+                                        label: 'Workflow Id(string)',
                                         value: '$flow.chatflowId'
                                     }
                                 ],

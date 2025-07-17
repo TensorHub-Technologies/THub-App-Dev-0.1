@@ -85,7 +85,7 @@ const initializeMongoDB = async (nodeData: INodeData, options: ICommonObject): P
 
     const credentialData = await getCredentialData(nodeData.credential ?? '', options)
     const mongoDBConnectUrl = getCredentialParam('mongoDBConnectUrl', credentialData, nodeData)
-    const driverInfo = { name: 'Flowise', version: (await getVersion()).version }
+    const driverInfo = { name: 'THub', version: (await getVersion()).version }
 
     return new BufferMemoryExtended({
         memoryKey: memoryKey ?? 'chat_history',

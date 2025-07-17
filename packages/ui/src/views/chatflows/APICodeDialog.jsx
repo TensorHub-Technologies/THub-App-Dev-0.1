@@ -755,7 +755,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                 <IconExclamationCircle size={30} color='rgb(116,66,16)' />
                                                 <span style={{ color: 'rgb(116,66,16)', marginLeft: 10, fontWeight: 500 }}>
                                                     {
-                                                        'For security reason, override config is disabled by default. You can change this by going into Chatflow Configuration -> Security tab, and enable the property you want to override.'
+                                                        'For security reason, override config is disabled by default. You can change this by going into Workflow Configuration -> Security tab, and enable the property you want to override.'
                                                     }
                                                     &nbsp;Refer{' '}
                                                     <a rel='noreferrer' target='_blank' href='https://docs.thub.tech'>

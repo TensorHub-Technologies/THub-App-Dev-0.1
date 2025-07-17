@@ -29,7 +29,7 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
                 - in: query
                   name: chatType
                   schema:
@@ -109,7 +109,7 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
                 - in: query
                   name: chatId
                   schema:
@@ -311,7 +311,7 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
                 - in: path
                   name: chatId
                   required: true
@@ -349,7 +349,7 @@ paths:
                 '400':
                     description: Invalid input provided
                 '404':
-                    description: Chatflow or ChatId not found
+                    description: Workflow or ChatId not found
                 '422':
                     description: Validation error
                 '500':
@@ -368,15 +368,15 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/Chatflow'
+                            $ref: '#/components/schemas/Workflow'
                 required: true
             responses:
                 '200':
-                    description: Chatflow created successfully
+                    description: Workflow created successfully
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Chatflow'
+                                $ref: '#/components/schemas/Workflow'
                 '400':
                     description: Invalid input provided
                 '422':
@@ -397,7 +397,7 @@ paths:
                             schema:
                                 type: array
                                 items:
-                                    $ref: '#/components/schemas/Chatflow'
+                                    $ref: '#/components/schemas/Workflow'
                 '500':
                     description: Internal error
     /chatflows/{id}:
@@ -415,18 +415,18 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
             responses:
                 '200':
                     description: Successful operation
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Chatflow'
+                                $ref: '#/components/schemas/Workflow'
                 '400':
                     description: The specified ID is invalid
                 '404':
-                    description: Chatflow not found
+                    description: Workflow not found
                 '500':
                     description: Internal error
         put:
@@ -443,23 +443,23 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/Chatflow'
+                            $ref: '#/components/schemas/Workflow'
             responses:
                 '200':
-                    description: Chatflow updated successfully
+                    description: Workflow updated successfully
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Chatflow'
+                                $ref: '#/components/schemas/Workflow'
                 '400':
                     description: The specified ID is invalid or body is missing
                 '404':
-                    description: Chatflow not found
+                    description: Workflow not found
                 '500':
                     description: Internal error
         delete:
@@ -476,14 +476,14 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
             responses:
                 '200':
-                    description: Chatflow deleted successfully
+                    description: Workflow deleted successfully
                 '400':
                     description: The specified ID is invalid
                 '404':
-                    description: Chatflow not found
+                    description: Workflow not found
                 '500':
                     description: Internal error
     /chatflows/apikey/{apikey}:
@@ -508,11 +508,11 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Chatflow'
+                                $ref: '#/components/schemas/Workflow'
                 '400':
                     description: The specified API key is invalid
                 '404':
-                    description: Chatflow not found
+                    description: Workflow not found
                 '500':
                     description: Internal error
 
@@ -1060,7 +1060,7 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
                 - in: query
                   name: chatId
                   schema:
@@ -1174,7 +1174,7 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
             responses:
                 '200':
                     description: Successful operation
@@ -1224,7 +1224,7 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
             requestBody:
                 content:
                     application/json:
@@ -1295,7 +1295,7 @@ paths:
                 '400':
                     description: Invalid input provided
                 '404':
-                    description: Chatflow not found
+                    description: Workflow not found
                 '422':
                     description: Validation error
                 '500':
@@ -1451,7 +1451,7 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID to filter records by
+                  description: Workflow ID to filter records by
                 - in: query
                   name: order
                   required: false
@@ -1634,7 +1634,7 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: Chatflow ID
+                  description: Workflow ID
             requestBody:
                 content:
                     application/json:
@@ -1676,7 +1676,7 @@ paths:
                 '400':
                     description: Invalid input provided
                 '404':
-                    description: Chatflow not found
+                    description: Workflow not found
                 '422':
                     description: Validation error
                 '500':
@@ -1779,7 +1779,7 @@ components:
                     nullable: true
                     example: 'user@example.com'
 
-        Chatflow:
+        Workflow:
             type: object
             properties:
                 id:
