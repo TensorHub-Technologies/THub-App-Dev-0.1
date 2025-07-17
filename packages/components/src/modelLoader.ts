@@ -32,7 +32,11 @@ const isValidUrl = (urlString: string) => {
 }
 
 const getModelConfig = async (category: MODEL_TYPE, name: string) => {
-    const modelFile = process.env.MODEL_LIST_CONFIG_JSON || MASTER_MODEL_LIST
+    const models = await fs.promises.readFile(getModelsJSONPath(), 'utf8')
+    if (models) {
+        const categoryModels = JSON.parse(models)[category]
+        return categoryModels.find((model: INodeOptionsValue) => model.name === name)
+        /*            }
 
     if (!modelFile) {
         throw new Error('MODEL_LIST_CONFIG_JSON not set')
@@ -72,7 +76,7 @@ const getModelConfig = async (category: MODEL_TYPE, name: string) => {
                 return categoryModels.find((model: INodeOptionsValue) => model.name === name)
             }
             return {}
-        }
+        }*/
     }
 }
 

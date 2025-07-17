@@ -1,7 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatXAI, ChatXAIInput } from '@langchain/xai'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 
 class ChatXAI_ChatModels implements INode {
     label: string
@@ -40,8 +41,9 @@ class ChatXAI_ChatModels implements INode {
             {
                 label: 'Model',
                 name: 'modelName',
-                type: 'string',
-                placeholder: 'grok-beta'
+                type: 'asyncOptions',
+                loadMethod: 'listModels',
+                default: 'grok-1'
             },
             {
                 label: 'Temperature',
@@ -78,6 +80,15 @@ class ChatXAI_ChatModels implements INode {
         ]
     }
 
+    loadMethods = {
+        async listModels(): Promise<INodeOptionsValue[]> {
+            console.log('xai models getModels: ')
+            const models = await getModels(MODEL_TYPE.CHAT, 'chatXAI')
+            console.log('xai models: ', models)
+            return models
+        }
+    }
+
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const cache = nodeData.inputs?.cache as BaseCache
         const temperature = nodeData.inputs?.temperature as string
@@ -88,6 +99,7 @@ class ChatXAI_ChatModels implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const xaiApiKey = getCredentialParam('xaiApiKey', credentialData, nodeData)
 
+        console.log('xaiApiKey: ', xaiApiKey)
         const obj: ChatXAIInput = {
             apiKey: xaiApiKey,
             streaming: streaming ?? true,
