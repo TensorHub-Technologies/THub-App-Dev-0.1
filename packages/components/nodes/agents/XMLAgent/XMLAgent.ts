@@ -278,7 +278,7 @@ const prepareAgent = async (
         chatId: flowObj?.chatId,
         input: flowObj?.input,
         isXML: true,
-        verbose: process.env.DEBUG === 'true',
+        verbose: process.env.DEBUG === 'true' ? true : false,
         maxIterations: maxIterations ? parseFloat(maxIterations) : undefined
     })
 

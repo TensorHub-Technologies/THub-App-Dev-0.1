@@ -27,18 +27,23 @@ const _apikeysStoredInDb = (): boolean => {
     return appConfig.apiKeys.storageType === 'db'
 }
 
-const getAllApiKeys = async () => {
+const getAllApiKeys = async (tenantId?: string) => {
     try {
         if (_apikeysStoredInJson()) {
             const keys = await getAPIKeys_json()
             return await addChatflowsCount(keys)
         } else if (_apikeysStoredInDb()) {
             const appServer = getRunningExpressApp()
-            let keys = await appServer.AppDataSource.getRepository(ApiKey).find()
-            if (keys.length === 0) {
-                await createApiKey('DefaultKey')
-                keys = await appServer.AppDataSource.getRepository(ApiKey).find()
-            }
+            const apiKeyRepository = appServer.AppDataSource.getRepository(ApiKey)
+
+            let keys = tenantId ? await apiKeyRepository.findBy({ tenantId }) : await apiKeyRepository.find()
+
+            // If no keys and no tenantId filter, create a default key
+            // if (keys.length === 0 && !tenantId) {
+            //     await createApiKey('DefaultKey')
+            //     keys = await apiKeyRepository.find()
+            // }
+
             return await addChatflowsCount(keys)
         } else {
             throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
@@ -69,7 +74,7 @@ const getApiKey = async (apiKey: string) => {
     }
 }
 
-const createApiKey = async (keyName: string) => {
+const createApiKey = async (keyName: string, tenantId: string) => {
     try {
         if (_apikeysStoredInJson()) {
             const keys = await addAPIKey_json(keyName)
@@ -83,9 +88,12 @@ const createApiKey = async (keyName: string) => {
             newKey.apiKey = apiKey
             newKey.apiSecret = apiSecret
             newKey.keyName = keyName
+            newKey.tenantId = tenantId
+            console.log(newKey, 'newKey')
+
             const key = appServer.AppDataSource.getRepository(ApiKey).create(newKey)
             await appServer.AppDataSource.getRepository(ApiKey).save(key)
-            return getAllApiKeys()
+            return getAllApiKeys(tenantId)
         } else {
             throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }

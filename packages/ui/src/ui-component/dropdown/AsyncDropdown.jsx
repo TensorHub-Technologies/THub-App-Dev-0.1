@@ -6,7 +6,7 @@ import axios from 'axios'
 // Material
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete'
 import { Popper, CircularProgress, TextField, Box, Typography } from '@mui/material'
-import { useTheme, styled } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 
 // API
 import credentialsApi from '@/api/credentials'
@@ -66,10 +66,8 @@ export const AsyncDropdown = ({
     multiple = false
 }) => {
     const customization = useSelector((state) => state.customization)
-
     const userData = useSelector((state) => state.user.userData)
     const tenantId = userData?.uid || localStorage.getItem('userId')
-    const theme = useTheme()
 
     const [open, setOpen] = useState(false)
     const [options, setOptions] = useState([])
@@ -221,17 +219,9 @@ export const AsyncDropdown = ({
                             variant='standard'
                             {...params}
                             value={internalValue}
-                            sx={{
-                                height: '100%',
-                                '& .MuiInputBase-root': {
-                                    height: '100%',
-                                    '& fieldset': {
-                                        borderColor: theme.palette.grey[900] + 25
-                                    }
-                                }
-                            }}
                             InputProps={{
                                 ...params.InputProps,
+                                disableUnderline: true,
                                 startAdornment: (
                                     <>
                                         {matchingOptions.map((option) =>
@@ -258,7 +248,13 @@ export const AsyncDropdown = ({
                                         {loading ? <CircularProgress color='inherit' size={20} /> : null}
                                         {params.InputProps.endAdornment}
                                     </Fragment>
-                                )
+                                ),
+                                sx: {
+                                    borderBottom: customization.isDarkMode ? '2px solid #fff' : '2px solid #000',
+                                    '&:hover': {
+                                        borderBottom: customization.isDarkMode ? '2px solid #e22a90' : '2px solid #3c5ba4'
+                                    }
+                                }
                             }}
                         />
                     )
@@ -280,7 +276,7 @@ export const AsyncDropdown = ({
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography variant='h5'>{option.label}</Typography>
                             {option.description && (
-                                <Typography sx={{ color: customization.isDarkMode ? '#212121' : '' }}>{option.description}</Typography>
+                                <Typography sx={{ color: customization.isDarkMode ? '#9e9e9e' : '' }}>{option.description}</Typography>
                             )}
                         </div>
                     </Box>

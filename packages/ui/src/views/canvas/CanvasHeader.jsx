@@ -74,7 +74,7 @@ const CanvasHeader = ({
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
-    const title = isAgentCanvas ? 'Agents' : 'Chatflow'
+    const title = isAgentCanvas ? 'Agents' : 'Workflow'
 
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
     const canvas = useSelector((state) => state.canvas)
@@ -236,9 +236,10 @@ const CanvasHeader = ({
         else setFlowDialogOpen(true)
     }
 
-    const onConfirmSaveName = (flowName) => {
+    const onConfirmSaveName = (flowName, chatflowDescription) => {
         setFlowDialogOpen(false)
-        handleSaveFlow(flowName)
+        handleSaveFlow(flowName, chatflowDescription)
+        console.log('description', chatflowDescription)
     }
 
     useEffect(() => {
@@ -268,9 +269,22 @@ const CanvasHeader = ({
         <>
             <Stack flexDirection='row' justifyContent='space-between' sx={{ width: '100%' }}>
                 <Stack flexDirection='row' sx={{ width: '100%', maxWidth: '50%' }}>
-                    <div style={{ marginLeft: '-6px', marginTop: '4px' }}>
+                    <button
+                        type='button'
+                        style={{
+                            marginLeft: '-8px',
+                            marginTop: '4px',
+                            background: 'transparent',
+                            border: 'none',
+                            outline: 'none',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => {
+                            navigate('/workflows')
+                        }}
+                    >
                         <img src={ColorfulLogo} alt='THub_Logo' width={35} />
-                    </div>
+                    </button>
                     <Box>
                         <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: 0.5, ml: 3 }}>
                             <Avatar

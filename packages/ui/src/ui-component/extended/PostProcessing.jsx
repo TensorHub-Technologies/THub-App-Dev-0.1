@@ -150,7 +150,7 @@ const PostProcessing = ({ dialogProps }) => {
                         color='primary'
                         onClick={() => onExpandDialogClicked(postProcessingFunction)}
                     >
-                        <IconArrowsMaximize />
+                        <IconArrowsMaximize color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
                     </IconButton>
                 </Box>
 

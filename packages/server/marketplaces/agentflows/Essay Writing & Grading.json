@@ -401,7 +401,7 @@
                                                 "value": "$flow.chatId"
                                             },
                                             {
-                                                "label": "Chatflow Id (string)",
+                                                "label": "Workflow Id(string)",
                                                 "value": "$flow.chatflowId"
                                             }
                                         ],
@@ -622,7 +622,7 @@
                                                 "value": "$flow.chatId"
                                             },
                                             {
-                                                "label": "Chatflow Id (string)",
+                                                "label": "Workflow Id(string)",
                                                 "value": "$flow.chatflowId"
                                             }
                                         ],

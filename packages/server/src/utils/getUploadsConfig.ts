@@ -23,7 +23,7 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<IUploadC
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
     }
 
     const flowObj = JSON.parse(chatflow.flowData)

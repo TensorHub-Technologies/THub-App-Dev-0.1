@@ -105,7 +105,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
     const allowedMenuItemKeys = Object.keys(allowedMenu)
-    const [tab, setTab] = useState(['LangChain'])
+    const [tab, setTab] = useState(['LangChain', 'LlamaIndex'])
     const [tabValue, setTabValue] = useState(0)
 
     useEffect(() => {
@@ -150,7 +150,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             if (userData.subscription_type !== 'free') {
                 setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
             } else {
-                setTab(['LangChain'])
+                setTab(['LangChain', 'LlamaIndex'])
             }
         }
     }, [location.pathname, userData.subscription_type])
@@ -386,7 +386,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                         style={{
                             padding: '3px',
                             borderRadius: '10px',
-                            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
+                            // background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
                             display: 'inline-block',
                             marginBottom: '5px'
                         }}
@@ -407,39 +407,17 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                     </div>
                 ) : (
                     // Gradient border wrapper
-                    <div
+                    <img
                         style={{
-                            padding: '4px',
+                            width: '31px',
+                            height: '32px',
+                            objectFit: 'contain',
                             borderRadius: '10px',
-                            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
-                            display: 'inline-block',
-                            marginBottom: '5px'
+                            marginBottom: '10px'
                         }}
-                    >
-                        <div
-                            style={{
-                                borderRadius: '10%',
-                                backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                gap: '40px',
-                                width: '48px',
-                                height: '48px'
-                            }}
-                        >
-                            <img
-                                style={{
-                                    width: '42px',
-                                    height: '42px',
-                                    objectFit: 'contain',
-                                    borderRadius: '10px'
-                                }}
-                                alt={node.name}
-                                src={`${baseURL}/api/v1/node-icon/${node.name}`}
-                            />
-                        </div>
-                    </div>
+                        alt={node.name}
+                        src={`${baseURL}/api/v1/node-icon/${node.name}`}
+                    />
                 )}
             </ListItemAvatar>
         </Box>
@@ -792,11 +770,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                 '& > .MuiListItem-root': {
                                                                                     backgroundColor: theme.palette.background.default,
                                                                                     borderRadius: `${customization.borderRadius}px`
-                                                                                },
-                                                                                '& > .MuiListItem-root .MuiListItemAvatar-root': {
-                                                                                    background:
-                                                                                        'linear-gradient(to left, #3C5BA4, #E22A90) !important'
                                                                                 }
+                                                                                // '& > .MuiListItem-root .MuiListItemAvatar-root': {
+                                                                                //     background:
+                                                                                //         'linear-gradient(to left, #3C5BA4, #E22A90) !important'
+                                                                                // }
                                                                             }
                                                                         }}
                                                                     >
@@ -808,33 +786,22 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                 display: 'flex',
                                                                                 justifyContent: 'flex-start',
                                                                                 alignItems: 'center',
-                                                                                p: 1
+                                                                                p: 0
                                                                             }}
                                                                         >
-                                                                            <ListItemAvatar
-                                                                                sx={{
-                                                                                    mt: 0,
-                                                                                    borderRadius: `${customization.borderRadius}px`,
-                                                                                    py: 0.3,
-                                                                                    display: 'flex',
-                                                                                    alignItems: 'center',
-                                                                                    justifyContent: 'center',
-                                                                                    background: `linear-gradient(to right, #3C5BA4, #E22A90)`,
-                                                                                    minWidth: 56
-                                                                                }}
-                                                                            >
+                                                                            <ListItemAvatar>
                                                                                 {node.color && !node.icon ? (
                                                                                     <Box
                                                                                         sx={{
-                                                                                            width: 50,
-                                                                                            height: 50,
+                                                                                            width: 40,
+                                                                                            height: 40,
                                                                                             display: 'flex',
                                                                                             alignItems: 'center',
                                                                                             justifyContent: 'center',
-                                                                                            borderRadius: '20%',
-                                                                                            backgroundColor: customization.isDarkMode
-                                                                                                ? '#f0f0f0'
-                                                                                                : '#f0f0f0'
+                                                                                            borderRadius: '20%'
+                                                                                            // backgroundColor: customization.isDarkMode
+                                                                                            //     ? '#f0f0f0'
+                                                                                            //     : '#f0f0f0'
                                                                                         }}
                                                                                     >
                                                                                         {renderIcon(node)}
@@ -845,20 +812,21 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                             display: 'flex',
                                                                                             justifyContent: 'center',
                                                                                             alignItems: 'center',
-                                                                                            width: 50,
-                                                                                            height: 50,
-                                                                                            borderRadius: '20%',
-                                                                                            backgroundColor: customization.isDarkMode
-                                                                                                ? '#f0f0f0'
-                                                                                                : '#f0f0f0'
+                                                                                            width: 40,
+                                                                                            height: 40,
+                                                                                            borderRadius: '20%'
+                                                                                            // backgroundColor: customization.isDarkMode
+                                                                                            //     ? '#f0f0f0'
+                                                                                            //     : '#f0f0f0'
                                                                                         }}
                                                                                     >
                                                                                         <img
                                                                                             style={{
-                                                                                                width: '100%',
-                                                                                                height: '100%',
-                                                                                                padding: 5,
-                                                                                                objectFit: 'contain'
+                                                                                                width: '32px',
+                                                                                                height: '32px',
+                                                                                                objectFit: 'contain',
+                                                                                                borderRadius: '10px',
+                                                                                                marginBottom: '10px'
                                                                                             }}
                                                                                             alt={node.name}
                                                                                             src={`${baseURL}/api/v1/node-icon/${node.name}`}
@@ -878,28 +846,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                         <Typography variant='body2'>
                                                                                             {node.label}
                                                                                         </Typography>
-                                                                                        {node.badge && (
-                                                                                            <Chip
-                                                                                                sx={{
-                                                                                                    ml: 1,
-                                                                                                    height: 18,
-                                                                                                    fontSize: '0.6rem',
-                                                                                                    background:
-                                                                                                        node.badge === 'DEPRECATING'
-                                                                                                            ? theme.palette.warning.main
-                                                                                                            : theme.palette.info.main,
-                                                                                                    color: 'white'
-                                                                                                }}
-                                                                                                size='small'
-                                                                                                label={node.badge}
-                                                                                            />
-                                                                                        )}
                                                                                     </Box>
-                                                                                }
-                                                                                secondary={
-                                                                                    <Typography variant='caption' color='textSecondary'>
-                                                                                        {node.description}
-                                                                                    </Typography>
                                                                                 }
                                                                             />
                                                                         </ListItem>

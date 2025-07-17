@@ -27,7 +27,6 @@ import {
     transformBracesWithColon
 } from '../../../src/utils'
 import {
-    ExtractTool,
     convertStructuredSchemaToZod,
     customGet,
     getVM,
@@ -37,7 +36,6 @@ import {
     restructureMessages,
     checkMessageHistory
 } from '../commonUtils'
-import { ChatGoogleGenerativeAI } from '../../chatmodels/ChatGoogleGenerativeAI/FlowiseChatGoogleGenerativeAI'
 
 const TAB_IDENTIFIER = 'selectedUpdateStateMemoryTab'
 const customOutputFuncDesc = `This is only applicable when you have a custom State at the START node. After agent execution, you might want to update the State values`
@@ -188,7 +186,7 @@ class LLMNode_SeqAgents implements INode {
         this.category = 'Sequential Agents'
         this.description = 'Run Chat Model and return the output'
         this.baseClasses = [this.type]
-        this.documentation = 'https://docs.flowiseai.com/using-flowise/agentflows/sequential-agents#id-5.-llm-node'
+        this.documentation = 'https://docs.thub.tech'
         this.inputs = [
             {
                 label: 'Name',
@@ -361,7 +359,7 @@ class LLMNode_SeqAgents implements INode {
                                         value: '$flow.chatId'
                                     },
                                     {
-                                        label: 'Chatflow Id (string)',
+                                        label: 'Workflow Id(string)',
                                         value: '$flow.chatflowId'
                                     }
                                 ],
@@ -513,19 +511,8 @@ async function createAgent(
         try {
             const structuredOutput = z.object(convertStructuredSchemaToZod(llmStructuredOutput))
 
-            if (llm instanceof ChatGoogleGenerativeAI) {
-                const tool = new ExtractTool({
-                    schema: structuredOutput
-                })
-                // @ts-ignore
-                const modelWithTool = llm.bind({
-                    tools: [tool]
-                }) as any
-                llm = modelWithTool
-            } else {
-                // @ts-ignore
-                llm = llm.withStructuredOutput(structuredOutput)
-            }
+            // @ts-ignore
+            llm = llm.withStructuredOutput(structuredOutput)
         } catch (exception) {
             console.error(exception)
         }
@@ -668,7 +655,7 @@ const getReturnOutput = async (nodeData: INodeData, input: string, options: ICom
     const updateStateMemory = nodeData.inputs?.updateStateMemory as string
 
     const selectedTab = tabIdentifier ? tabIdentifier.split(`_${nodeData.id}`)[0] : 'updateStateMemoryUI'
-    const variables = await getVars(appDataSource, databaseEntities, nodeData)
+    const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
 
     const flow = {
         chatflowId: options.chatflowid,
@@ -721,7 +708,7 @@ const getReturnOutput = async (nodeData: INodeData, input: string, options: ICom
             throw new Error(e)
         }
     } else if (selectedTab === 'updateStateMemoryCode' && updateStateMemoryCode) {
-        const vm = await getVM(appDataSource, databaseEntities, nodeData, flow)
+        const vm = await getVM(appDataSource, databaseEntities, nodeData, options, flow)
         try {
             const response = await vm.run(`module.exports = async function() {${updateStateMemoryCode}}()`, __dirname)
             if (typeof response !== 'object') throw new Error('Return output must be an object')

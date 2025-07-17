@@ -1,11 +1,10 @@
 import { Button, Stack } from '@mui/material'
 import { GitHubIcon } from './CustomIcons'
-import { loginRequest } from './microsoftLogin/config/msalConfig'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import GoogleCustomButton from './googleLogin/GoogleCustomButton'
 import { useEffect, useState } from 'react'
 import { SET_USER_DATA } from '@/store/actions'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
 import { MicrosoftLogin } from './microsoftLogin/MicrosoftLogin'
@@ -14,7 +13,7 @@ export const Top = () => {
     const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
-
+    const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -98,7 +97,7 @@ export const Top = () => {
                     payload: data
                 })
                 localStorage.setItem('userId', data.uid)
-                navigate('/chatflows')
+                navigate('/workflows')
             }
         } catch (error) {
             console.error('Error fetching user data:', error)
@@ -108,22 +107,9 @@ export const Top = () => {
 
     const loginWithGithub = () => {
         const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID
+        console.log(clientId, 'clientId')
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
-    }
-
-    const handleGithubLogin = () => {
-        console.log('Continue With Github')
-    }
-
-    const handleMicrosoftLogin = () => {
-        console.log('Continue With Microsoft')
-        instance.loginPopup(loginRequest).catch((e) => {
-            console.log(e)
-        })
-    }
-    const handleGoogleLogin = () => {
-        console.log('Continue With Google')
     }
 
     return (
@@ -138,12 +124,12 @@ export const Top = () => {
                     onClick={loginWithGithub}
                     sx={{
                         py: 1.5,
-                        color: 'white',
-                        borderColor: '#555',
-                        bgcolor: '#2e2e2e',
-                        '&:hover': { bgcolor: '#3e3e3e', borderColor: '#777' }
+                        color: customization.isDarkMode ? 'white' : 'black',
+                        borderColor: customization.isDarkMode ? 'gray' : '#bdbfd4',
+                        bgcolor: customization.isDarkMode ? '#2e2e2e' : '#ffffff',
+                        '&:hover': { bgcolor: customization.isDarkMode ? '#3e3e3e' : '#f0f0f0', borderColor: '#777' }
                     }}
-                    startIcon={<GitHubIcon />}
+                    startIcon={<GitHubIcon color={customization.isDarkMode ? 'white' : 'black'} />}
                 >
                     Continue With Github
                 </Button>

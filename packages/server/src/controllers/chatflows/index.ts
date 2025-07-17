@@ -51,10 +51,12 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllChatflows = async (req: Request, res: Response, next: NextFunction) => {
     const tenantId: string | undefined = typeof req.query.tenantId === 'string' ? req.query.tenantId : undefined
-    console.log(`tenantId: ${tenantId}`)
+    const page: number = parseInt(req.query.page as string) || 1
+    const limit: number = parseInt(req.query.limit as string) || 12
+    const type: ChatflowType = req.query.type as ChatflowType
 
     try {
-        const apiResponse = await chatflowsService.getAllChatflows(req.query?.type as ChatflowType, tenantId)
+        const apiResponse = await chatflowsService.getAllChatflows(type, tenantId, page, limit)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -120,12 +122,13 @@ const importChatflows = async (req: Request, res: Response, next: NextFunction) 
 
 const updateChatflow = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log(`chatflowsRouter.updateChatflow - req.params: ${JSON.stringify(req.params)}`)
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsRouter.updateChatflow - id not provided!`)
         }
         const chatflow = await chatflowsService.getChatflowById(req.params.id)
         if (!chatflow) {
-            return res.status(404).send(`Chatflow ${req.params.id} not found`)
+            return res.status(404).send(`Workflow ${req.params.id} not found`)
         }
 
         const body = req.body

@@ -40,7 +40,7 @@ function a11yProps(index) {
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.0/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.5/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -62,9 +62,9 @@ const App = () => {
 }
 
 const embedFullpageHtmlCode = (chatflowid) => {
-    return `<flowise-fullchatbot></flowise-fullchatbot>
+    return `<thub-fullchatbot></thub-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.0/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.5/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -121,7 +121,7 @@ export const defaultThemeConfig = {
     chatWindow: {
         showTitle: true,
         showAgentMessages: true,
-        title: 'Flowise Bot',
+        title: 'THub Bot',
         titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
         welcomeMessage: 'Hello! This is custom welcome message',
         errorMessage: 'This is a custom error message',
@@ -170,8 +170,8 @@ export const defaultThemeConfig = {
         footer: {
             textColor: '#303235',
             text: 'Powered by',
-            company: 'Flowise',
-            companyLink: 'https://flowiseai.com'
+            company: 'THub',
+            companyLink: 'https://thub.tech/'
         }
     }
 }
@@ -193,12 +193,12 @@ const customStringify = (obj) => {
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.0/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.5/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
         chatflowConfig: {
-            /* Chatflow Config */
+            /* Workflow Config */
         },
         observersConfig: {
             /* Observers Config */
@@ -217,7 +217,7 @@ const App = () => {
             chatflowid="${chatflowid}"
             apiHost="${baseURL}"
             chatflowConfig={{
-                /* Chatflow Config */
+                /* Workflow Config */
             }}
             observersConfig={{
                 /* Observers Config */
@@ -244,14 +244,14 @@ const getFullPageThemeConfig = () => {
 }
 
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
-    return `<flowise-fullchatbot></flowise-fullchatbot>
+    return `<thub-fullchatbot></thub-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.0/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.5/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
         chatflowConfig: {
-            /* Chatflow Config */
+            /* Workflow Config */
         },
         observersConfig: {
             /* Observers Config */
@@ -270,7 +270,7 @@ const App = () => {
             chatflowid="${chatflowid}"
             apiHost="${baseURL}"
             chatflowConfig={{
-                /* Chatflow Config */
+                /* Workflow Config */
             }}
             observersConfig={{
                 /* Observers Config */

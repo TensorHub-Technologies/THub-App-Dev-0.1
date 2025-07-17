@@ -26,7 +26,7 @@ const checkIfChatflowIsValidForStreaming = async (chatflowId: string): Promise<a
             id: chatflowId
         })
         if (!chatflow) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found`)
         }
 
         /* Check for post-processing settings, if available isStreamValid is always false */
@@ -119,23 +119,74 @@ const deleteChatflow = async (chatflowId: string): Promise<any> => {
     }
 }
 
-const getAllChatflows = async (type?: ChatflowType, tenantId?: string): Promise<ChatFlow[]> => {
-    console.log(tenantId, 'tenantId')
+interface PaginatedChatflows {
+    data: ChatFlow[]
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+    hasNextPage: boolean
+    hasPrevPage: boolean
+}
+
+const getAllChatflows = async (
+    type?: ChatflowType,
+    tenantId?: string,
+    page: number = 1,
+    limit: number = 12
+): Promise<PaginatedChatflows> => {
+    console.log(tenantId, 'tenantId111')
 
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findBy({ tenantId })
-        if (type === 'MULTIAGENT') {
-            return dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
-        } else if (type === 'AGENTFLOW') {
-            return dbResponse.filter((chatflow) => chatflow.type === 'AGENTFLOW')
-        } else if (type === 'ASSISTANT') {
-            return dbResponse.filter((chatflow) => chatflow.type === 'ASSISTANT')
-        } else if (type === 'CHATFLOW') {
-            // fetch all chatflows that are not agentflow
-            return dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
+        const repository = appServer.AppDataSource.getRepository(ChatFlow)
+
+        // Calculate offset for pagination
+        const offset = (page - 1) * limit
+
+        // Build query conditions
+        const whereConditions: any = {}
+        if (tenantId) {
+            whereConditions.tenantId = tenantId
         }
-        return dbResponse
+
+        // Get total count for pagination info
+        const totalCount = await repository.count({ where: whereConditions })
+
+        // Get paginated data with sorting by updatedDate (newest first)
+        const dbResponse = await repository.find({
+            where: whereConditions,
+            order: { updatedDate: 'DESC' },
+            skip: offset,
+            take: limit
+        })
+
+        // Filter by type if specified
+        let filteredData = dbResponse
+        if (type === 'MULTIAGENT') {
+            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
+        } else if (type === 'AGENTFLOW') {
+            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'AGENTFLOW')
+        } else if (type === 'ASSISTANT') {
+            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'ASSISTANT')
+        } else if (type === 'CHATFLOW') {
+            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
+        }
+
+        // Calculate pagination metadata
+        const totalPages = Math.ceil(totalCount / limit)
+        const hasNextPage = page < totalPages
+        const hasPrevPage = page > 1
+
+        return {
+            data: filteredData,
+            total: totalCount,
+            page,
+            limit,
+            totalPages,
+            hasNextPage,
+            hasPrevPage
+        }
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
@@ -157,7 +208,7 @@ const getChatflowByApiKey = async (apiKeyId: string, keyonly?: unknown): Promise
 
         const dbResponse = await query.orderBy('cf.name', 'ASC').getMany()
         if (dbResponse.length < 1) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow not found in the database!`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow not found in the database!`)
         }
         return dbResponse
     } catch (error) {
@@ -175,7 +226,7 @@ const getChatflowById = async (chatflowId: string): Promise<any> => {
             id: chatflowId
         })
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found in the database!`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found in the database!`)
         }
         return dbResponse
     } catch (error) {
@@ -314,7 +365,7 @@ const getSinglePublicChatflow = async (chatflowId: string): Promise<any> => {
         } else if (dbResponse && !dbResponse.isPublic) {
             throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
         }
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
+        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found`)
     } catch (error) {
         if (error instanceof InternalFlowiseError && error.statusCode === StatusCodes.UNAUTHORIZED) {
             throw error
@@ -336,7 +387,7 @@ const getSinglePublicChatbotConfig = async (chatflowId: string): Promise<any> =>
             id: chatflowId
         })
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found`)
         }
         const uploadsConfig = await utilGetUploadsConfig(chatflowId)
         // even if chatbotConfig is not set but uploads are enabled
@@ -346,7 +397,7 @@ const getSinglePublicChatbotConfig = async (chatflowId: string): Promise<any> =>
                 const parsedConfig = dbResponse.chatbotConfig ? JSON.parse(dbResponse.chatbotConfig) : {}
                 return { ...parsedConfig, uploads: uploadsConfig, flowData: dbResponse.flowData }
             } catch (e) {
-                throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error parsing Chatbot Config for Chatflow ${chatflowId}`)
+                throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error parsing Chatbot Config for Workflow ${chatflowId}`)
             }
         }
         return 'OK'

@@ -57,8 +57,7 @@ class MongoDB_Memory implements INode {
                 label: 'Session Id',
                 name: 'sessionId',
                 type: 'string',
-                description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">more</a>',
+                description: 'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.thub.tech">more</a>',
                 default: '',
                 additionalParams: true,
                 optional: true
@@ -86,7 +85,7 @@ const initializeMongoDB = async (nodeData: INodeData, options: ICommonObject): P
 
     const credentialData = await getCredentialData(nodeData.credential ?? '', options)
     const mongoDBConnectUrl = getCredentialParam('mongoDBConnectUrl', credentialData, nodeData)
-    const driverInfo = { name: 'Flowise', version: (await getVersion()).version }
+    const driverInfo = { name: 'THub', version: (await getVersion()).version }
 
     return new BufferMemoryExtended({
         memoryKey: memoryKey ?? 'chat_history',

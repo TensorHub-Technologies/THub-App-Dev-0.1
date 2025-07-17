@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Box,
     Button,
@@ -17,11 +17,12 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Top } from './Top'
 import axios from 'axios'
-import { setUserData } from '@/store/actions'
+import { setUserData, SET_DARKMODE } from '@/store/actions'
 import { useDispatch, useSelector } from 'react-redux'
 
 // images
-import leftImage from '../../assets/images/auth/screen-5.png'
+import darkImage from '../../assets/images/auth/screen-5.png'
+import lightImage from '../../assets/images/auth/screen-8.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
 import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
@@ -32,6 +33,18 @@ const Login = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
+
+    useEffect(() => {
+        const url = new URL(window.location.href)
+        const themeParam = url.searchParams.get('theme')
+        console.log('themeParam', themeParam)
+        if (themeParam) {
+            const isDark = themeParam === 'dark'
+            dispatch({ type: SET_DARKMODE, isDarkMode: isDark })
+            console.log('isDark', isDark)
+            localStorage.setItem('isDarkMode', isDark)
+        }
+    }, [dispatch])
 
     console.log('THub Prod:', import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL)
     console.log('THub Demo:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
@@ -110,40 +123,47 @@ const Login = () => {
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     minHeight: '100vh',
-                    backgroundColor: '#11121C'
+                    backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
                 }}
             >
                 <Box
                     sx={{
-                        width: { xs: '100%', md: '50%' },
+                        flex: 1,
                         display: 'flex',
-                        alignItems: 'center',
+                        mt: 6,
                         justifyContent: 'center'
                     }}
                 >
                     <Box
                         sx={{
-                            width: '80%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 2,
-                            border: '1px solid white',
-                            padding: '80px 40px 80px 40px',
-                            borderRadius: '10px'
+                            width: '90%',
+                            border: customization.isDarkMode ? '1px solid white' : '1px solid gray',
+                            p: 4,
+                            borderRadius: 2,
+                            textAlign: 'center',
+                            height: '90%'
                         }}
                     >
                         <Typography
                             variant='h2'
-                            style={{ fontFamily: 'cambria math', fontWeight: 'bolder', color: 'white', fontSize: '32px' }}
                             align='center'
+                            sx={{
+                                fontFamily: 'Cambria Math',
+                                fontWeight: 'bolder',
+                                color: customization.isDarkMode ? 'white' : 'black',
+                                fontSize: 32
+                            }}
                         >
                             Unlock the Power of
                             <br />
-                            <span style={{ color: '#E22A90' }}>THub</span> GenAI Builder Tool.
+                            <span style={{ color: customization.isDarkMode ? '#E22A90' : '#3c5ba4' }}>THub</span> GenAI Builder Tool.
                         </Typography>
-                        <Box component='img' src={leftImage} alt='login image' sx={{ width: '100%', height: 'auto' }} />
+                        <Box
+                            component='img'
+                            src={customization.isDarkMode ? darkImage : lightImage}
+                            alt='illustration'
+                            sx={{ width: '100%', mt: 2 }}
+                        />
                     </Box>
                 </Box>
 
@@ -153,7 +173,7 @@ const Login = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        bgcolor: '#12121C',
+                        bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
                         flexDirection: 'column'
                     }}
                 >
@@ -161,15 +181,16 @@ const Login = () => {
                         component='img'
                         src={thubLogo}
                         alt='Thub image'
-                        sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px' }}
+                        sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px', cursor: 'pointer' }}
+                        onClick={() => window.location.reload()}
                     />
                     <Top />
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>
                         <Divider sx={{ flexGrow: 0.25 }} />
-                        <Typography sx={{ mx: 2, whiteSpace: 'nowrap' }} variant='h5' color='white'>
+                        <Typography sx={{ mx: 2, whiteSpace: 'nowrap' }} variant='h5' color={customization.isDarkMode ? 'white' : 'black'}>
                             Login with Email
                         </Typography>
-                        <Divider sx={{ flexGrow: 0.25 }} />
+                        <Divider sx={{ flexGrow: 0.25, color: customization.isDarkMode ? 'white' : 'black' }} />
                     </Box>
 
                     <Box
@@ -188,11 +209,14 @@ const Login = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 sx={{
-                                    bgcolor: '#11121c',
-                                    color: 'white',
+                                    bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
+                                    color: customization.isDarkMode ? 'white' : 'black',
+                                    boxShadow: customization.isDarkMode
+                                        ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
+                                        : '0px 5px 10px rgba(0, 0, 0, 0.1)',
                                     '& input': {
-                                        color: 'white',
-                                        backgroundColor: '#11121c'
+                                        color: customization.isDarkMode ? 'white' : 'black',
+                                        backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
                                     },
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         borderColor: '#bdbfd4'
@@ -232,11 +256,14 @@ const Login = () => {
                                     </InputAdornment>
                                 }
                                 sx={{
-                                    bgcolor: '#11121c',
-                                    color: 'white',
+                                    bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
+                                    color: customization.isDarkMode ? 'white' : 'black',
+                                    boxShadow: customization.isDarkMode
+                                        ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
+                                        : '0px 5px 10px rgba(0, 0, 0, 0.1)',
                                     '& input': {
-                                        color: 'white',
-                                        backgroundColor: '#11121c'
+                                        color: customization.isDarkMode ? 'white' : 'black',
+                                        backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
                                     },
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         borderColor: '#bdbfd4'
@@ -260,7 +287,7 @@ const Login = () => {
                         <Link
                             to='/forgot-password'
                             style={{
-                                color: '#E32A90',
+                                color: customization.isDarkMode ? '#E32A90' : '#3c5ba4',
                                 textDecoration: 'underline',
                                 alignSelf: 'flex-end',
                                 fontSize: '0.875rem',
@@ -277,8 +304,8 @@ const Login = () => {
                             // disabled={loading}
                             sx={{
                                 py: 1.5,
-                                bgcolor: '#de1e88',
-                                '&:hover': { bgcolor: '#E32A90' },
+                                bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4',
+                                '&:hover': { bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4' },
                                 mt: 2,
                                 color: 'black',
                                 fontFamily: 'cambira math',
@@ -289,12 +316,12 @@ const Login = () => {
                         </Button>
                         <Typography
                             variant='body2'
-                            color='white'
+                            color={customization.isDarkMode ? 'white' : 'black'}
                             textAlign={'center'}
                             sx={{ mb: 4, fontSize: '16px', fontFamily: 'cambria math' }}
                         >
                             Don&apos;t have an account?
-                            <Link to='/signup' style={{ color: '#E32A90', marginLeft: '6px' }}>
+                            <Link to='/signup' style={{ color: customization.isDarkMode ? '#E32A90' : '#3c5ba4', marginLeft: '6px' }}>
                                 Sign up for free
                             </Link>
                         </Typography>

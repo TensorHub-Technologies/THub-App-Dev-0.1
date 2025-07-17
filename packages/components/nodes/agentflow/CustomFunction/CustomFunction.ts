@@ -18,7 +18,7 @@ interface ICustomFunctionInputVariables {
 }
 
 const exampleFunc = `/*
-* You can use any libraries imported in Flowise
+* You can use any libraries imported in THub
 * You can use properties specified in Input Schema as variables. Ex: Property = userid, Variable = $userid
 * You can get default flow config: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input, $flow.state
 * You can get custom variables: $vars.<variable-name>
@@ -152,12 +152,13 @@ class CustomFunction_Agentflow implements INode {
             newState = updateFlowState(state, _customFunctionUpdateState)
         }
 
-        const variables = await getVars(appDataSource, databaseEntities, nodeData)
+        const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
         const flow = {
             chatflowId: options.chatflowid,
             sessionId: options.sessionId,
             chatId: options.chatId,
-            input
+            input,
+            state: newState
         }
 
         let sandbox: any = {

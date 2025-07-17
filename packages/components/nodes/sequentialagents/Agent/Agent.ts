@@ -22,7 +22,13 @@ import {
     IStateWithMessages,
     ConversationHistorySelection
 } from '../../../src/Interface'
-import { ToolCallingAgentOutputParser, AgentExecutor, SOURCE_DOCUMENTS_PREFIX, ARTIFACTS_PREFIX } from '../../../src/agents'
+import {
+    ToolCallingAgentOutputParser,
+    AgentExecutor,
+    SOURCE_DOCUMENTS_PREFIX,
+    ARTIFACTS_PREFIX,
+    TOOL_ARGS_PREFIX
+} from '../../../src/agents'
 import {
     extractOutputFromArray,
     getInputVariables,
@@ -211,7 +217,7 @@ class Agent_SeqAgents implements INode {
         this.category = 'Sequential Agents'
         this.description = 'Agent that can execute tools'
         this.baseClasses = [this.type]
-        this.documentation = 'https://docs.flowiseai.com/using-flowise/agentflows/sequential-agents#id-4.-agent-node'
+        this.documentation = 'https://docs.thub.tech'
         this.inputs = [
             {
                 label: 'Agent Name',
@@ -418,7 +424,7 @@ class Agent_SeqAgents implements INode {
                                         value: '$flow.chatId'
                                     },
                                     {
-                                        label: 'Chatflow Id (string)',
+                                        label: 'Workflow Id(string)',
                                         value: '$flow.chatflowId'
                                     }
                                 ],
@@ -680,7 +686,7 @@ async function createAgent(
             sessionId: flowObj?.sessionId,
             chatId: flowObj?.chatId,
             input: flowObj?.input,
-            verbose: process.env.DEBUG === 'true',
+            verbose: process.env.DEBUG === 'true' ? true : false,
             maxIterations: maxIterations ? parseFloat(maxIterations) : undefined
         })
         return executor
@@ -877,7 +883,7 @@ const getReturnOutput = async (nodeData: INodeData, input: string, options: ICom
     const updateStateMemory = nodeData.inputs?.updateStateMemory as string
 
     const selectedTab = tabIdentifier ? tabIdentifier.split(`_${nodeData.id}`)[0] : 'updateStateMemoryUI'
-    const variables = await getVars(appDataSource, databaseEntities, nodeData)
+    const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
 
     const flow = {
         chatflowId: options.chatflowid,
@@ -930,7 +936,7 @@ const getReturnOutput = async (nodeData: INodeData, input: string, options: ICom
             throw new Error(e)
         }
     } else if (selectedTab === 'updateStateMemoryCode' && updateStateMemoryCode) {
-        const vm = await getVM(appDataSource, databaseEntities, nodeData, flow)
+        const vm = await getVM(appDataSource, databaseEntities, nodeData, options, flow)
         try {
             const response = await vm.run(`module.exports = async function() {${updateStateMemoryCode}}()`, __dirname)
             if (typeof response !== 'object') throw new Error('Return output must be an object')
@@ -1041,6 +1047,17 @@ class ToolNode<T extends BaseMessage[] | MessagesState> extends RunnableCallable
                     }
                 }
 
+                let toolInput
+                if (typeof output === 'string' && output.includes(TOOL_ARGS_PREFIX)) {
+                    const outputArray = output.split(TOOL_ARGS_PREFIX)
+                    output = outputArray[0]
+                    try {
+                        toolInput = JSON.parse(outputArray[1])
+                    } catch (e) {
+                        console.error('Error parsing tool input from tool')
+                    }
+                }
+
                 return new ToolMessage({
                     name: tool.name,
                     content: typeof output === 'string' ? output : JSON.stringify(output),
@@ -1048,11 +1065,11 @@ class ToolNode<T extends BaseMessage[] | MessagesState> extends RunnableCallable
                     additional_kwargs: {
                         sourceDocuments,
                         artifacts,
-                        args: call.args,
+                        args: toolInput ?? call.args,
                         usedTools: [
                             {
                                 tool: tool.name ?? '',
-                                toolInput: call.args,
+                                toolInput: toolInput ?? call.args,
                                 toolOutput: output
                             }
                         ]

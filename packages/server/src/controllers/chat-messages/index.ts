@@ -145,7 +145,7 @@ const removeAllChatMessages = async (req: Request, res: Response, next: NextFunc
         const chatflowid = req.params.id
         const chatflow = await chatflowsService.getChatflowById(req.params.id)
         if (!chatflow) {
-            return res.status(404).send(`Chatflow ${req.params.id} not found`)
+            return res.status(404).send(`Workflow ${req.params.id} not found`)
         }
         const flowData = chatflow.flowData
         const parsedFlowData: IReactFlowObject = JSON.parse(flowData)

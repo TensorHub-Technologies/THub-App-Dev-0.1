@@ -15,6 +15,12 @@ interface BufferMemoryExtendedInput {
     chatflowid: string
 }
 
+interface NodeFields extends Mem0MemoryInput, Mem0MemoryExtendedInput, BufferMemoryExtendedInput {
+    searchOnly: boolean
+    useFlowiseChatId: boolean
+    input: string
+}
+
 class Mem0_Memory implements INode {
     label: string
     name: string
@@ -49,16 +55,16 @@ class Mem0_Memory implements INode {
                 label: 'User ID',
                 name: 'user_id',
                 type: 'string',
-                description: 'Unique identifier for the user. Required only if "Use Flowise Chat ID" is OFF.',
+                description: 'Unique identifier for the user. Required only if "Use THub Chat ID" is OFF.',
                 default: 'flowise-default-user',
                 optional: true
             },
-            // Added toggle to use Flowise chat ID
+            // Added toggle to use THub chat ID
             {
-                label: 'Use Flowise Chat ID',
+                label: 'Use THub Chat ID',
                 name: 'useFlowiseChatId',
                 type: 'boolean',
-                description: 'Use the Flowise internal Chat ID as the Mem0 User ID, overriding the "User ID" field above.',
+                description: 'Use the THub internal Chat ID as the Mem0 User ID, overriding the "User ID" field above.',
                 default: false,
                 optional: true
             },
@@ -143,17 +149,17 @@ class Mem0_Memory implements INode {
         ]
     }
 
-    async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
-        return await initializeMem0(nodeData, options)
+    async init(nodeData: INodeData, input: string, options: ICommonObject): Promise<any> {
+        return await initializeMem0(nodeData, input, options)
     }
 }
 
-const initializeMem0 = async (nodeData: INodeData, options: ICommonObject): Promise<BaseMem0Memory> => {
+const initializeMem0 = async (nodeData: INodeData, input: string, options: ICommonObject): Promise<BaseMem0Memory> => {
     const initialUserId = nodeData.inputs?.user_id as string
     const useFlowiseChatId = nodeData.inputs?.useFlowiseChatId as boolean
 
     if (!useFlowiseChatId && !initialUserId) {
-        throw new Error('User ID field cannot be empty when "Use Flowise Chat ID" is OFF.')
+        throw new Error('User ID field cannot be empty when "Use THub Chat ID" is OFF.')
     }
 
     const credentialData = await getCredentialData(nodeData.credential ?? '', options)
@@ -183,23 +189,23 @@ const initializeMem0 = async (nodeData: INodeData, options: ICommonObject): Prom
         filters: (nodeData.inputs?.filters as Record<string, any>) || {}
     }
 
-    const obj: Mem0MemoryInput & Mem0MemoryExtendedInput & BufferMemoryExtendedInput & { searchOnly: boolean; useFlowiseChatId: boolean } =
-        {
-            apiKey: apiKey,
-            humanPrefix: nodeData.inputs?.humanPrefix as string,
-            aiPrefix: nodeData.inputs?.aiPrefix as string,
-            inputKey: nodeData.inputs?.inputKey as string,
-            sessionId: constructorSessionId,
-            mem0Options: mem0Options,
-            memoryOptions: memoryOptions,
-            separateMessages: false,
-            returnMessages: false,
-            appDataSource: options.appDataSource as DataSource,
-            databaseEntities: options.databaseEntities as IDatabaseEntity,
-            chatflowid: options.chatflowid as string,
-            searchOnly: (nodeData.inputs?.searchOnly as boolean) || false,
-            useFlowiseChatId: useFlowiseChatId
-        }
+    const obj: NodeFields = {
+        apiKey: apiKey,
+        humanPrefix: nodeData.inputs?.humanPrefix as string,
+        aiPrefix: nodeData.inputs?.aiPrefix as string,
+        inputKey: nodeData.inputs?.inputKey as string,
+        sessionId: constructorSessionId,
+        mem0Options: mem0Options,
+        memoryOptions: memoryOptions,
+        separateMessages: false,
+        returnMessages: false,
+        appDataSource: options.appDataSource as DataSource,
+        databaseEntities: options.databaseEntities as IDatabaseEntity,
+        chatflowid: options.chatflowid as string,
+        searchOnly: (nodeData.inputs?.searchOnly as boolean) || false,
+        useFlowiseChatId: useFlowiseChatId,
+        input: input
+    }
 
     return new Mem0MemoryExtended(obj)
 }
@@ -219,10 +225,9 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
     chatflowid: string
     searchOnly: boolean
     useFlowiseChatId: boolean
+    input: string
 
-    constructor(
-        fields: Mem0MemoryInput & Mem0MemoryExtendedInput & BufferMemoryExtendedInput & { searchOnly: boolean; useFlowiseChatId: boolean }
-    ) {
+    constructor(fields: NodeFields) {
         super(fields)
         this.initialUserId = fields.memoryOptions?.user_id ?? ''
         this.userId = this.initialUserId
@@ -233,9 +238,10 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
         this.chatflowid = fields.chatflowid
         this.searchOnly = fields.searchOnly
         this.useFlowiseChatId = fields.useFlowiseChatId
+        this.input = fields.input
     }
 
-    // Selects Mem0 user_id based on toggle state (Flowise chat ID or input field)
+    // Selects Mem0 user_id based on toggle state (THub chat ID or input field)
     private getEffectiveUserId(overrideUserId?: string): string {
         let effectiveUserId: string | undefined
 
@@ -243,7 +249,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
             if (overrideUserId) {
                 effectiveUserId = overrideUserId
             } else {
-                throw new Error('Mem0: "Use Flowise Chat ID" is ON, but no runtime chat ID (overrideUserId) was provided.')
+                throw new Error('Mem0: "Use THub Chat ID" is ON, but no runtime chat ID (overrideUserId) was provided.')
             }
         } else {
             // If toggle is OFF, ALWAYS use the ID from the input field.
@@ -294,7 +300,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
     ): Promise<IMessage[] | BaseMessage[]> {
         const flowiseSessionId = overrideUserId
         if (!flowiseSessionId) {
-            console.warn('Mem0: getChatMessages called without overrideUserId (Flowise Session ID). Cannot fetch DB messages.')
+            console.warn('Mem0: getChatMessages called without overrideUserId (THub Session ID). Cannot fetch DB messages.')
             return []
         }
 
@@ -318,11 +324,16 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
         if (prependMessages?.length) {
             returnIMessages.unshift(...prependMessages)
             // Reverted to original simpler unshift
-            chatMessage.unshift(...(prependMessages as any)) // Cast as any
+            chatMessage.unshift(...(prependMessages as any))
         }
 
         if (returnBaseMessages) {
-            const memoryVariables = await this.loadMemoryVariables({}, overrideUserId)
+            const memoryVariables = await this.loadMemoryVariables(
+                {
+                    [this.inputKey]: this.input ?? ''
+                },
+                overrideUserId
+            )
             const mem0History = memoryVariables[this.memoryKey]
 
             if (mem0History && typeof mem0History === 'string') {
@@ -367,7 +378,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
                 .getRepository(this.databaseEntities['ChatMessage'])
                 .delete({ sessionId: flowiseSessionId, chatflowid: this.chatflowid })
         } else {
-            console.warn('Mem0: clearChatMessages called without overrideUserId (Flowise Session ID). Cannot clear DB messages.')
+            console.warn('Mem0: clearChatMessages called without overrideUserId (THub Session ID). Cannot clear DB messages.')
         }
     }
 }

@@ -75,7 +75,7 @@ const AgentflowCanvas = () => {
     const URLpath = document.location.pathname.toString().split('/')
     const chatflowId =
         URLpath[URLpath.length - 1] === 'canvas' || URLpath[URLpath.length - 1] === 'agentcanvas' ? '' : URLpath[URLpath.length - 1]
-    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Chatflow'
+    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Workflow'
 
     const { confirm } = useConfirm()
 
@@ -107,9 +107,7 @@ const AgentflowCanvas = () => {
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
-    console.log('User Data:', userData, tenantId)
-
-    // ==============================|| Chatflow API ||============================== //
+    // ==============================|| Workflow API ||============================== //
 
     const getNodesApi = useApi(nodesApi.getAllNodes)
     const createNewChatflowApi = useApi(chatflowsApi.createNewChatflow)
@@ -206,43 +204,88 @@ const AgentflowCanvas = () => {
         }
     }
 
-    const handleSaveFlow = (chatflowName) => {
-        if (reactFlowInstance) {
+    const handleSaveFlow = async (chatflowName, chatflowDescription) => {
+        try {
+            console.log('handleSaveFlow', chatflowName, chatflowDescription)
+
+            // Validate required parameters
+            if (!chatflowName) {
+                throw new Error('Workflow name and description are required')
+            }
+
+            // Validate reactFlowInstance
+            if (!reactFlowInstance || typeof reactFlowInstance.getNodes !== 'function') {
+                throw new Error('React Flow instance is not available or invalid')
+            }
+
+            // Process nodes
             const nodes = reactFlowInstance.getNodes().map((node) => {
                 const nodeData = cloneDeep(node.data)
+
+                // Handle credentials
                 if (Object.prototype.hasOwnProperty.call(nodeData.inputs, FLOWISE_CREDENTIAL_ID)) {
                     nodeData.credential = nodeData.inputs[FLOWISE_CREDENTIAL_ID]
                     nodeData.inputs = omit(nodeData.inputs, [FLOWISE_CREDENTIAL_ID])
                 }
+
+                // Clean up node data
                 node.data = {
                     ...nodeData,
                     selected: false,
                     status: undefined
                 }
+
                 return node
             })
 
+            // Create flow data
             const rfInstanceObject = reactFlowInstance.toObject()
             rfInstanceObject.nodes = nodes
-            const flowData = JSON.stringify(rfInstanceObject)
+
+            let flowData
+            try {
+                flowData = JSON.stringify(rfInstanceObject)
+            } catch (stringifyError) {
+                throw new Error(`Failed to serialize flow data: ${stringifyError.message}`)
+            }
 
             if (!chatflow.id) {
                 const newChatflowBody = {
                     name: chatflowName,
+                    description: chatflowDescription,
                     tenantId: tenantId,
                     deployed: false,
                     isPublic: false,
                     flowData,
                     type: 'AGENTFLOW'
                 }
-                createNewChatflowApi.request(newChatflowBody)
+
+                try {
+                    await createNewChatflowApi.request(newChatflowBody)
+                    console.log('Successfully created new chatflow')
+                } catch (createError) {
+                    throw new Error(`Failed to create chatflow: ${createError.message}`)
+                }
             } else {
+                // Update existing chatflow
                 const updateBody = {
                     name: chatflowName,
+                    description: chatflowDescription,
+                    tenantId: tenantId,
                     flowData
                 }
-                updateChatflowApi.request(chatflow.id, updateBody)
+
+                try {
+                    await updateChatflowApi.request(chatflow.id, updateBody)
+                    await updateChatflowApi.request(tenantId)
+                    console.log('Successfully updated chatflow')
+                } catch (updateError) {
+                    throw new Error(`Failed to update chatflow: ${updateError.message}`)
+                }
             }
+        } catch (error) {
+            console.error('Error in handleSaveFlow:', error)
+            throw error
         }
     }
 

@@ -110,6 +110,7 @@ const ViewHeader = ({
                                 height: '100%',
                                 display: { xs: 'none', sm: 'flex' },
                                 borderRadius: 2,
+                                '& input': { color: customization.isDarkMode ? '#fff' : '#000' },
                                 '& .MuiInput-underline:before': {
                                     borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                 },
@@ -127,7 +128,7 @@ const ViewHeader = ({
                                 startAdornment: (
                                     <Box
                                         sx={{
-                                            color: theme.palette.grey[400],
+                                            color: 'inherit',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',

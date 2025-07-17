@@ -102,7 +102,7 @@ class Condition_SeqAgents implements INode {
         this.category = 'Sequential Agents'
         this.description = 'Conditional function to determine which route to take next'
         this.baseClasses = [this.type]
-        this.documentation = 'https://docs.flowiseai.com/using-flowise/agentflows/sequential-agents#id-7.-conditional-node'
+        this.documentation = 'https://docs.thub.tech'
         this.inputs = [
             {
                 label: 'Condition Name',
@@ -267,7 +267,7 @@ const runCondition = async (nodeData: INodeData, input: string, options: ICommon
     const tabIdentifier = nodeData.inputs?.[`${TAB_IDENTIFIER}_${nodeData.id}`] as string
 
     const selectedTab = tabIdentifier ? tabIdentifier.split(`_${nodeData.id}`)[0] : 'conditionUI'
-    const variables = await getVars(appDataSource, databaseEntities, nodeData)
+    const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
 
     const flow = {
         chatflowId: options.chatflowid,
@@ -279,7 +279,7 @@ const runCondition = async (nodeData: INodeData, input: string, options: ICommon
     }
 
     if (selectedTab === 'conditionFunction' && conditionFunction) {
-        const vm = await getVM(appDataSource, databaseEntities, nodeData, flow)
+        const vm = await getVM(appDataSource, databaseEntities, nodeData, options, flow)
         try {
             const response = await vm.run(`module.exports = async function() {${conditionFunction}}()`, __dirname)
             if (typeof response !== 'string') throw new Error('Condition function must return a string')

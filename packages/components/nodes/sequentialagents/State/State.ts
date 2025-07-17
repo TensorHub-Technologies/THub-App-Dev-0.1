@@ -47,7 +47,7 @@ class State_SeqAgents implements INode {
         this.category = 'Sequential Agents'
         this.description = 'A centralized state object, updated by nodes in the graph, passing from one node to another'
         this.baseClasses = [this.type]
-        this.documentation = 'https://docs.flowiseai.com/using-flowise/agentflows/sequential-agents#id-3.-state-node'
+        this.documentation = 'https://docs.thub.tech'
         this.inputs = [
             {
                 label: 'Custom State',
@@ -190,7 +190,7 @@ class State_SeqAgents implements INode {
                 throw new Error(e)
             }
         } else if (selectedTab === 'stateMemoryCode' && stateMemoryCode) {
-            const variables = await getVars(appDataSource, databaseEntities, nodeData)
+            const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
             const flow = {
                 chatflowId: options.chatflowid,
                 sessionId: options.sessionId,

@@ -1,9 +1,16 @@
 import SvgIcon from '@mui/material/SvgIcon'
-
+import PropTypes from 'prop-types'
 export function GoogleIcon() {
     return (
         <SvgIcon>
-            <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+            <svg
+                width='16'
+                height='16'
+                viewBox='0 0 16 16'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'
+                style={{ backgroundColor: 'transparent' }}
+            >
                 <path
                     d='M15.68 8.18182C15.68 7.61455 15.6291 7.06909 15.5345 6.54545H8V9.64364H12.3055C12.1164 10.64 11.5491 11.4836 10.6982 12.0509V14.0655H13.2945C14.8073 12.6691 15.68 10.6182 15.68 8.18182Z'
                     fill='#4285F4'
@@ -28,7 +35,14 @@ export function GoogleIcon() {
 export function MicrosoftIcon() {
     return (
         <SvgIcon>
-            <svg width='16' height='16' viewBox='0 0 23 23' fill='none' xmlns='http://www.w3.org/2000/svg'>
+            <svg
+                width='16'
+                height='16'
+                viewBox='0 0 23 23'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'
+                style={{ backgroundColor: 'transparent' }}
+            >
                 <rect x='1' y='1' width='10' height='10' fill='#F35325' />
                 <rect x='12' y='1' width='10' height='10' fill='#81BC06' />
                 <rect x='1' y='12' width='10' height='10' fill='#05A6F0' />
@@ -38,12 +52,23 @@ export function MicrosoftIcon() {
     )
 }
 
-export function GitHubIcon() {
+export function GitHubIcon({ color }) {
     return (
         <SvgIcon>
-            <svg width='16' height='16' viewBox='0 0 24 24' fill='white' xmlns='http://www.w3.org/2000/svg'>
+            <svg
+                width='16'
+                height='16'
+                viewBox='0 0 24 24'
+                fill={color}
+                xmlns='http://www.w3.org/2000/svg'
+                style={{ backgroundColor: 'transparent' }}
+            >
                 <path d='M12 0.297C5.37 0.297 0 5.667 0 12.297C0 17.657 3.438 22.157 8.205 23.797C8.805 23.897 9.025 23.547 9.025 23.247C9.025 22.997 9.015 22.247 9.01 21.247C5.672 21.897 4.968 19.647 4.968 19.647C4.422 18.297 3.633 17.947 3.633 17.947C2.546 17.247 3.717 17.262 3.717 17.262C4.922 17.352 5.555 18.497 5.555 18.497C6.633 20.297 8.422 19.772 9.153 19.467C9.253 18.697 9.545 18.197 9.875 17.897C7.195 17.597 4.39 16.522 4.39 11.797C4.39 10.447 4.872 9.357 5.672 8.497C5.545 8.197 5.122 6.922 5.79 5.197C5.79 5.197 6.822 4.872 9.005 6.497C9.985 6.217 11.035 6.077 12.085 6.072C13.135 6.077 14.185 6.217 15.165 6.497C17.347 4.872 18.38 5.197 18.38 5.197C19.048 6.922 18.625 8.197 18.498 8.497C19.298 9.357 19.78 10.447 19.78 11.797C19.78 16.537 16.968 17.592 14.28 17.887C14.715 18.287 15.105 19.087 15.105 20.297C15.105 22.047 15.09 23.547 15.09 23.247C15.09 23.547 15.305 23.902 15.915 23.797C20.685 22.157 24.12 17.657 24.12 12.297C24.12 5.667 18.75 0.297 12 0.297Z' />
             </svg>
         </SvgIcon>
     )
+}
+
+GitHubIcon.propTypes = {
+    color: PropTypes.string
 }

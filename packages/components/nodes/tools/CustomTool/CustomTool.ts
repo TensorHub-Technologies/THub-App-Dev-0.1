@@ -22,7 +22,7 @@ class CustomTool_Tools implements INode {
         this.type = 'CustomTool'
         this.icon = 'customtool.svg'
         this.category = 'Tools'
-        this.description = `Use custom tool you've created in Flowise within chatflow`
+        this.description = `Use custom tool you've created in THub within chatflow`
         this.inputs = [
             {
                 label: 'Select Tool',
@@ -77,7 +77,8 @@ class CustomTool_Tools implements INode {
                 return returnData
             }
 
-            const tools = await appDataSource.getRepository(databaseEntities['Tool']).find()
+            const searchOptions = options.searchOptions || {}
+            const tools = await appDataSource.getRepository(databaseEntities['Tool']).findBy(searchOptions)
 
             for (let i = 0; i < tools.length; i += 1) {
                 const data = {
@@ -122,7 +123,7 @@ class CustomTool_Tools implements INode {
                 obj.schema = zodSchemaFunction(z)
             }
 
-            const variables = await getVars(appDataSource, databaseEntities, nodeData)
+            const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
 
             const flow = { chatflowId: options.chatflowid }
 

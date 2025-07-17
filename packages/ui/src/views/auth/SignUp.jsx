@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import {
     Box,
@@ -20,13 +20,14 @@ import { signUpValidationSchema } from './signUpValidationSchema'
 import toast, { Toaster } from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import OTP_Modal from './OTP_Modal'
-import { SET_USER_DATA } from '@/store/actions'
+import { SET_USER_DATA, SET_DARKMODE } from '@/store/actions'
 import { useNavigate } from 'react-router-dom'
 
 // images
 import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
 import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
-import leftImage from '../../assets/images/auth/screen-5.png'
+import darkImage from '../../assets/images/auth/screen-5.png'
+import lightImage from '../../assets/images/auth/screen-8.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 
 const SignUp = () => {
@@ -41,6 +42,18 @@ const SignUp = () => {
     const [showModal, setShowModal] = useState(false)
     const [email, setEmail] = useState('')
     const [tempUserData, setTempUserData] = useState(null)
+
+    useEffect(() => {
+        const url = new URL(window.location.href)
+        const themeParam = url.searchParams.get('theme')
+        console.log('themeParam', themeParam)
+        if (themeParam) {
+            const isDark = themeParam === 'dark'
+            dispatch({ type: SET_DARKMODE, isDarkMode: isDark })
+            console.log('isDark', isDark)
+            localStorage.setItem('isDarkMode', isDark)
+        }
+    }, [dispatch])
 
     console.log('THub Prod:', import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL)
     console.log('THub Demo:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
@@ -245,7 +258,7 @@ const SignUp = () => {
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     minHeight: '100vh',
-                    backgroundColor: '#11121C'
+                    backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
                 }}
             >
                 {/* Left graphic */}
@@ -260,22 +273,33 @@ const SignUp = () => {
                     <Box
                         sx={{
                             width: '90%',
-                            border: '1px solid white',
+                            border: customization.isDarkMode ? '1px solid white' : '1px solid gray',
                             p: 4,
                             borderRadius: 2,
-                            textAlign: 'center'
+                            textAlign: 'center',
+                            height: '90%'
                         }}
                     >
                         <Typography
                             variant='h2'
                             align='center'
-                            sx={{ fontFamily: 'Cambria Math', fontWeight: 'bolder', color: 'white', fontSize: 32 }}
+                            sx={{
+                                fontFamily: 'Cambria Math',
+                                fontWeight: 'bolder',
+                                color: customization.isDarkMode ? 'white' : 'black',
+                                fontSize: 32
+                            }}
                         >
                             Unlock the Power of
                             <br />
-                            <span style={{ color: '#E22A90' }}>THub</span> GenAI Builder Tool.
+                            <span style={{ color: customization.isDarkMode ? '#E22A90' : '#3c5ba4' }}>THub</span> GenAI Builder Tool.
                         </Typography>
-                        <Box component='img' src={leftImage} alt='illustration' sx={{ width: '100%', mt: 2 }} />
+                        <Box
+                            component='img'
+                            src={customization.isDarkMode ? darkImage : lightImage}
+                            alt='illustration'
+                            sx={{ width: '100%', mt: 2 }}
+                        />
                     </Box>
                 </Box>
 
@@ -302,23 +326,33 @@ const SignUp = () => {
                             alignItems: 'center'
                         }}
                     >
-                        <Box component='img' src={thubLogo} alt='logo' sx={{ width: 160, mb: 2 }} />
+                        <Box
+                            component='img'
+                            src={thubLogo}
+                            alt='logo'
+                            sx={{ width: 160, mb: 2, cursor: 'pointer' }}
+                            onClick={() => window.location.reload()}
+                        />
                         <Top />
 
                         <Box sx={{ display: 'flex', alignItems: 'center', my: 3 }}>
                             <Divider sx={{ flex: 1 }} />
-                            <Typography variant='h5' color='white' sx={{ mx: 2, fontFamily: 'Cambria Math' }}>
+                            <Typography
+                                variant='h5'
+                                color={customization.isDarkMode ? 'white' : 'black'}
+                                sx={{ mx: 2, fontFamily: 'Cambria Math' }}
+                            >
                                 Register with Email
                             </Typography>
-                            <Divider sx={{ flex: 1, color: 'white', width: '300px' }} />
+                            <Divider sx={{ flex: 1, color: customization.isDarkMode ? 'white' : 'black', width: '300px' }} />
                         </Box>
 
                         <form onSubmit={formik.handleSubmit} noValidate>
                             {[
-                                { name: 'email', placeholder: 'user@company.com' },
-                                { name: 'firstName', placeholder: 'John' },
-                                { name: 'lastName', placeholder: 'Doe' },
-                                { name: 'phone', placeholder: '1234567890' }
+                                { name: 'email', placeholder: 'Email' },
+                                { name: 'firstName', placeholder: 'FirstName' },
+                                { name: 'lastName', placeholder: 'LastName' },
+                                { name: 'phone', placeholder: 'Phone Number' }
                             ].map(({ name, placeholder }) => (
                                 <FormControl
                                     key={name}
@@ -335,11 +369,14 @@ const SignUp = () => {
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         sx={{
-                                            bgcolor: '#11121c',
-                                            color: 'white',
+                                            bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
+                                            color: customization.isDarkMode ? 'white' : 'black',
+                                            boxShadow: customization.isDarkMode
+                                                ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
+                                                : '0px 5px 10px rgba(0, 0, 0, 0.1)',
                                             '& input': {
-                                                color: 'white',
-                                                backgroundColor: '#11121c'
+                                                color: customization.isDarkMode ? 'white' : 'black',
+                                                backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
                                             },
                                             '& .MuiOutlinedInput-notchedOutline': {
                                                 borderColor: '#bdbfd4'
@@ -367,7 +404,7 @@ const SignUp = () => {
                                     id='password'
                                     name='password'
                                     type={showPassword ? 'text' : 'password'}
-                                    placeholder='********'
+                                    placeholder='Password'
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
@@ -383,11 +420,14 @@ const SignUp = () => {
                                         </InputAdornment>
                                     }
                                     sx={{
-                                        bgcolor: '#11121c',
-                                        color: 'white',
+                                        bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
+                                        color: customization.isDarkMode ? 'white' : 'black',
+                                        boxShadow: customization.isDarkMode
+                                            ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
+                                            : '0px 5px 10px rgba(0, 0, 0, 0.1)',
                                         '& input': {
-                                            color: 'white',
-                                            backgroundColor: '#11121c'
+                                            color: customization.isDarkMode ? 'white' : 'black',
+                                            backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
                                         },
                                         '& .MuiOutlinedInput-notchedOutline': {
                                             borderColor: '#bdbfd4'
@@ -418,23 +458,30 @@ const SignUp = () => {
                                     id='confirmPassword'
                                     name='confirmPassword'
                                     type={showConfirmPassword ? 'text' : 'password'}
-                                    placeholder='********'
+                                    placeholder='Confirm Password'
                                     value={formik.values.confirmPassword}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     endAdornment={
                                         <InputAdornment position='end'>
                                             <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                                {showConfirmPassword ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
+                                                {showConfirmPassword ? (
+                                                    <EyeCloseIcon color={customization.isDarkMode ? 'white' : 'black'} size={20} />
+                                                ) : (
+                                                    <EyeOpenIcon size={20} />
+                                                )}
                                             </IconButton>
                                         </InputAdornment>
                                     }
                                     sx={{
-                                        bgcolor: '#11121c',
-                                        color: 'white',
+                                        bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
+                                        color: customization.isDarkMode ? 'white' : 'black',
+                                        boxShadow: customization.isDarkMode
+                                            ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
+                                            : '0px 5px 10px rgba(0, 0, 0, 0.1)',
                                         '& input': {
-                                            color: 'white',
-                                            backgroundColor: '#11121c'
+                                            color: customization.isDarkMode ? 'white' : 'black',
+                                            backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
                                         },
                                         '& .MuiOutlinedInput-notchedOutline': {
                                             borderColor: '#bdbfd4'
@@ -462,11 +509,11 @@ const SignUp = () => {
                                 disabled={loading}
                                 sx={{
                                     py: 1.5,
-                                    bgcolor: loading ? '#E22A90' : '#de1e88',
+                                    bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4',
                                     color: 'white',
                                     fontFamily: 'Cambria Math',
                                     fontSize: '1rem',
-                                    '&:hover': { bgcolor: '#E32A90' },
+                                    '&:hover': { bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4' },
                                     '&.Mui-disabled': {
                                         bgcolor: '#E22A90',
                                         color: 'white',
@@ -480,12 +527,12 @@ const SignUp = () => {
 
                         <Typography
                             variant='body2'
-                            color='white'
+                            color={customization.isDarkMode ? 'white' : 'black'}
                             align='center'
                             sx={{ mt: 2, fontFamily: 'Cambria Math', fontSize: '16px' }}
                         >
                             Already have an account?{' '}
-                            <Link to='/' style={{ color: '#E32A90', textDecoration: 'underline' }}>
+                            <Link to='/' style={{ color: customization.isDarkMode ? '#E22A90' : '#3c5ba4', textDecoration: 'underline' }}>
                                 Login
                             </Link>
                         </Typography>

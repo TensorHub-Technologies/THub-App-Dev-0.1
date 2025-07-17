@@ -997,7 +997,7 @@ const CustomAssistantConfigurePreview = () => {
                                                     color='secondary'
                                                     onClick={() => onExpandDialogClicked(customAssistantInstruction)}
                                                 >
-                                                    <IconArrowsMaximize />
+                                                    <IconArrowsMaximize color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
                                                 </IconButton>
                                                 {selectedChatModel?.name && (
                                                     <Button

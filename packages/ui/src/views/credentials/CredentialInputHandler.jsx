@@ -62,7 +62,7 @@ const CredentialInputHandler = ({ inputParam, data, disabled = false }) => {
                                     color='primary'
                                     onClick={() => onExpandDialogClicked(data[inputParam.name] ?? inputParam.default ?? '', inputParam)}
                                 >
-                                    <IconArrowsMaximize />
+                                    <IconArrowsMaximize color={customization.isDarkMode ? '#e22a90' : '#3c5ba4'} />
                                 </IconButton>
                             )}
                         </div>
