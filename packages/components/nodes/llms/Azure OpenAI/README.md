@@ -1,6 +1,6 @@
 # Azure OpenAI LLM
 
-Azure OpenAI LLM integration for Flowise
+Azure OpenAI LLM integration for THub
 
 ## 🌱 Env Variables
 
@@ -13,4 +13,4 @@ Azure OpenAI LLM integration for Flowise
 
 ## License
 
-Source code in this repository is made available under the [Apache License Version 2.0](https://github.com/FlowiseAI/Flowise/blob/master/LICENSE.md).
+Source code in this repository is made available under the [Apache License Version 2.0](https://github.com/FlowiseAI/THub/blob/master/LICENSE.md).

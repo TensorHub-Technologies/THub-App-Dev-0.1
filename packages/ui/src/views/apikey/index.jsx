@@ -147,7 +147,7 @@ function APIKeyRow(props) {
                                 <Table aria-label='chatflow table'>
                                     <TableHead sx={{ height: 48 }}>
                                         <TableRow>
-                                            <StyledTableCell sx={{ width: '30%' }}>Chatflow Name</StyledTableCell>
+                                            <StyledTableCell sx={{ width: '30%' }}>Workflow Name</StyledTableCell>
                                             <StyledTableCell sx={{ width: '20%' }}>Modified On</StyledTableCell>
                                             <StyledTableCell sx={{ width: '50%' }}>Category</StyledTableCell>
                                         </TableRow>

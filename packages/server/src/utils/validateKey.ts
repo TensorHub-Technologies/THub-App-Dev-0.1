@@ -4,7 +4,7 @@ import { compareKeys } from './apiKey'
 import apikeyService from '../services/apikey'
 
 /**
- * Validate Chatflow API Key
+ * Validate Workflow API Key
  * @param {Request} req
  * @param {ChatFlow} chatflow
  */

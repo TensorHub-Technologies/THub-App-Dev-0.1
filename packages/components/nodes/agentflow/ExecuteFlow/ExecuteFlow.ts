@@ -69,7 +69,7 @@ class ExecuteFlow_Agentflow implements INode {
                 name: 'executeFlowBaseURL',
                 type: 'string',
                 description:
-                    'Base URL to Flowise. By default, it is the URL of the incoming request. Useful when you need to execute flow through an alternative route.',
+                    'Base URL to THub. By default, it is the URL of the incoming request. Useful when you need to execute flow through an alternative route.',
                 placeholder: 'http://localhost:3000',
                 optional: true
             },
@@ -130,7 +130,7 @@ class ExecuteFlow_Agentflow implements INode {
             const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).find()
 
             for (let i = 0; i < chatflows.length; i += 1) {
-                let cfType = 'Chatflow'
+                let cfType = 'Workflow'
                 if (chatflows[i].type === 'AGENTFLOW') {
                     cfType = 'Agentflow V2'
                 } else if (chatflows[i].type === 'MULTIAGENT') {

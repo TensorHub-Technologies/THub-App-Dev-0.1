@@ -32,9 +32,9 @@ export const init = async (): Promise<void> => {
 
     if (!fs.existsSync(flowisePath)) {
         fs.mkdirSync(flowisePath)
-        console.log(`.flowise directory created at ${flowisePath}`)
+        console.log(`.thub directory created at ${flowisePath}`)
     } else {
-        console.log(`.flowise directory already exists at ${flowisePath}`)
+        console.log(`.thub directory already exists at ${flowisePath}`)
     }
     try {
         await createFolderInGCS('.flowise')

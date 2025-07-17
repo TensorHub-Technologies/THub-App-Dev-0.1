@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { Box, Modal, Button } from '@mui/material'
 import PropTypes from 'prop-types'
-import './Chatflow.css'
+import './Workflow.css'
 import { useSelector } from 'react-redux'
 import addButton from '../../assets/icons/circle-plus-light.svg'
 import addButton_dark from '../../assets/icons/circle-plus-dark.svg'
 import minusButton from '../../assets/icons/circle-minus-light.svg'
 import minusButton_dark from '../../assets/icons/circle-minus-dark.svg'
 import { agentPlan } from './AgentPlan'
-import chatFlowCss from './Chatflow.module.css'
+import chatFlowCss from './Workflow.module.css'
 
 const style = {
     position: 'absolute',

@@ -212,7 +212,7 @@ export const upsertVector = async (req: Request, isInternal: boolean = false) =>
             id: chatflowid
         })
         if (!chatflow) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
         }
 
         const httpProtocol = req.get('x-forwarded-proto') || req.protocol

@@ -11,7 +11,7 @@ const getSingleFlowConfig = async (chatflowId: string): Promise<any> => {
         const appServer = getRunningExpressApp()
         const chatflow = await chatflowsService.getChatflowById(chatflowId)
         if (!chatflow) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found in the database!`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowId} not found in the database!`)
         }
         const flowData = chatflow.flowData
         const parsedFlowData: IReactFlowObject = JSON.parse(flowData)

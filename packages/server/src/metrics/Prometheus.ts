@@ -30,7 +30,7 @@ export class Prometheus implements IMetricsProvider {
         this.counters = new Map<string, promClient.Counter<string>>()
         const enumEntries = Object.entries(FLOWISE_METRIC_COUNTERS)
         enumEntries.forEach(([name, value]) => {
-            // derive proper counter name from the enum value (chatflow_created = Chatflow Created)
+            // derive proper counter name from the enum value (chatflow_created = Workflow Created)
             const properCounterName: string = name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
             this.counters.set(
                 value,
@@ -46,7 +46,7 @@ export class Prometheus implements IMetricsProvider {
         // version, http_request_duration_ms, http_requests_total
         const versionGaugeCounter = new promClient.Gauge({
             name: 'flowise_version_info',
-            help: 'Flowise version info.',
+            help: 'THub version info.',
             labelNames: ['version']
         })
 

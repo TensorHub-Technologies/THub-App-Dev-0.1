@@ -66,7 +66,7 @@ const MarketplaceCanvasHeader = ({ flowName, flowData, onChatflowCopy }) => {
                 <StyledButton
                     color='secondary'
                     variant='contained'
-                    title='Use Chatflow'
+                    title='Use Workflow'
                     onClick={() => onChatflowCopy(flowData)}
                     startIcon={<IconCopy />}
                 >

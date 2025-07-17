@@ -43,7 +43,7 @@ export const createFileAttachment = async (req: Request) => {
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
     }
 
     // Parse chatbot configuration to get file upload settings
