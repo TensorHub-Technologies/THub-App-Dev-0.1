@@ -34,6 +34,8 @@ const Login = () => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
 
+    const passwordError = formik.touched.password && formik.errors.password
+
     useEffect(() => {
         const url = new URL(window.location.href)
         const themeParam = url.searchParams.get('theme')
@@ -279,9 +281,7 @@ const Login = () => {
                                     }
                                 }}
                             />
-                            <FormHelperText>
-                                {formik.touched.password && formik.errors.password ? formik.errors.password : '\u00A0'}
-                            </FormHelperText>
+                            <FormHelperText>{passwordError || '\u00A0'}</FormHelperText>
                         </FormControl>
 
                         <Link
