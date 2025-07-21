@@ -18,7 +18,7 @@
                 "color": "#06D6A0",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -209,7 +209,7 @@
                 "type": "Condition",
                 "color": "#FF9F1C",
                 "baseClasses": ["Condition"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Split flows based on If Else conditions",
                 "inputParams": [
                     {
@@ -497,7 +497,7 @@
                 "type": "Agent",
                 "color": "#FFD166",
                 "baseClasses": ["Agent"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -844,7 +844,7 @@
                 "type": "Agent",
                 "color": "#FFD166",
                 "baseClasses": ["Agent"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -1188,7 +1188,7 @@
                 "type": "Agent",
                 "color": "#FFD166",
                 "baseClasses": ["Agent"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -1527,7 +1527,7 @@
                 "color": "#FFA07A",
                 "hideOutput": true,
                 "baseClasses": ["Loop"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Loop back to a previous node",
                 "inputParams": [
                     {
@@ -1582,7 +1582,7 @@
                 "color": "#FFA07A",
                 "hideOutput": true,
                 "baseClasses": ["Loop"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Loop back to a previous node",
                 "inputParams": [
                     {
@@ -1636,7 +1636,7 @@
                 "type": "LLM",
                 "color": "#118AB2",
                 "baseClasses": ["LLM"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {

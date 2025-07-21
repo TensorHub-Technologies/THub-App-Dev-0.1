@@ -264,7 +264,7 @@ const Agentflows = () => {
                         onSearchChange={onSearchChange}
                         search={true}
                         searchPlaceholder='Search Name or Category'
-                        title='Agent Pipeline'
+                        title='Agent Studio'
                         description='Multi-agent systems, workflow orchestration'
                     >
                         <ToggleButtonGroup

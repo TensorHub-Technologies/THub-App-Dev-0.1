@@ -85,7 +85,7 @@ const getCategoryIcon = (category, customization) => {
         'Tools (MCP)': <IconTools />,
         Utilities: <AutoFixHighIcon />,
         'Vector Stores': <LayersIcon />,
-        // 'Agent Pipeline': (
+        // 'Agent Studio': (
         //     <img src={AgentPipeline} alt='AgentPipeline' style={{ width: '25px', height: '25px', backgroundColor: 'transparent' }} />
         // ),
         Engine: (

@@ -18,7 +18,7 @@
                 "color": "#06D6A0",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -200,7 +200,7 @@
                 "type": "Agent",
                 "color": "#FFD166",
                 "baseClasses": ["Agent"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -563,7 +563,7 @@
                 "type": "HumanInput",
                 "color": "#52289F",
                 "baseClasses": ["HumanInput"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Request human input, approval or rejection during execution",
                 "inputParams": [
                     {
@@ -701,7 +701,7 @@
                 "color": "#06D6A0",
                 "hideOutput": true,
                 "baseClasses": ["DirectReply"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Directly reply to the user with a message",
                 "inputParams": [
                     {
@@ -747,7 +747,7 @@
                 "color": "#FFA07A",
                 "hideOutput": true,
                 "baseClasses": ["Loop"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Loop back to a previous node",
                 "inputParams": [
                     {
