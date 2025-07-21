@@ -36,7 +36,7 @@ const fetchList = async ({ tenantId, name, nodeData, previousNodes, currentNode 
 
     let lists = await axios
         .post(
-            `${baseURL}/api/v1/node-load-method/${nodeData.name}`,
+            `${baseURL}/api/v1/node-load-method/${nodeData.name}/${tenantId}`,
             { ...nodeData, loadMethod, previousNodes, currentNode },
             {
                 auth: username && password ? { username, password } : undefined,

@@ -18,7 +18,7 @@
                 "color": "#06D6A0",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -212,7 +212,7 @@
                 "type": "LLM",
                 "color": "#118AB2",
                 "baseClasses": ["LLM"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -555,7 +555,7 @@
                 "type": "Iteration",
                 "color": "#9C89B8",
                 "baseClasses": ["Iteration"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Execute the nodes within the iteration block through N iterations",
                 "inputParams": [
                     {
@@ -607,7 +607,7 @@
                 "type": "Agent",
                 "color": "#FFD166",
                 "baseClasses": ["Agent"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -966,7 +966,7 @@
                 "type": "Agent",
                 "color": "#FFD166",
                 "baseClasses": ["Agent"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -1316,7 +1316,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {
@@ -1368,7 +1368,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {
@@ -1420,7 +1420,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {

@@ -88,7 +88,9 @@ const getSingleNodeIcon = async (nodeName: string) => {
     }
 }
 
-const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any): Promise<any> => {
+const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any, tenantId: string): Promise<any> => {
+    console.log(requestBody, 'requestBody', nodeName)
+
     try {
         const appServer = getRunningExpressApp()
         const nodeData: INodeData = requestBody
