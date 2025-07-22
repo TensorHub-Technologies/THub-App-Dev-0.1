@@ -181,7 +181,7 @@ class AutoGPT_Agents implements INode {
                 return undefined
             }
 
-            const res = await executor.run([input])
+            const res = await executor.run([input.replace(/[^\w\s.,?!]/g, '')])
 
             if (!res) {
                 const sentence = `Unfortunately I was not able to complete all the task. Here is the chain of thoughts:`

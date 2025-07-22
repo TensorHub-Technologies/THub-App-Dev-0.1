@@ -1,5 +1,6 @@
 import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface'
 import { DataSource } from 'typeorm'
+import path from 'path'
 
 class DocStore_VectorStores implements INode {
     label: string
@@ -133,7 +134,14 @@ const _createEmbeddingsObject = async (componentNodes: ICommonObject, data: ICom
 
     // init embedding object
     const embeddingNodeInstanceFilePath = embeddingComponent.filePath as string
-    const embeddingNodeModule = await import(embeddingNodeInstanceFilePath)
+
+    const allowedDir = path.resolve(__dirname, '../../')
+    const resolvedPath = path.resolve(embeddingNodeInstanceFilePath)
+    if (!resolvedPath.startsWith(allowedDir)) {
+        throw new Error('Attempted import outside of allowed directory')
+    }
+    const embeddingNodeModule = await import(resolvedPath)
+
     const embeddingNodeInstance = new embeddingNodeModule.nodeClass()
     return await embeddingNodeInstance.init(embeddingNodeData, '', options)
 }
@@ -165,7 +173,14 @@ const _createVectorStoreNodeData = (componentNodes: ICommonObject, data: ICommon
 
 const _createVectorStoreObject = async (componentNodes: ICommonObject, data: ICommonObject) => {
     const vStoreNodeInstanceFilePath = componentNodes[data.vectorStoreName].filePath as string
-    const vStoreNodeModule = await import(vStoreNodeInstanceFilePath)
+
+    const allowedDir = path.resolve(__dirname, '../../')
+    const resolvedPath = path.resolve(vStoreNodeInstanceFilePath)
+    if (!resolvedPath.startsWith(allowedDir)) {
+        throw new Error('Attempted import outside of allowed directory')
+    }
+    const vStoreNodeModule = await import(resolvedPath)
+
     const vStoreNodeInstance = new vStoreNodeModule.nodeClass()
     return vStoreNodeInstance
 }

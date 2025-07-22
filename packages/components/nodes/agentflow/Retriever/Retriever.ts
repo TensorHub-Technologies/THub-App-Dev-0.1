@@ -11,6 +11,7 @@ import { updateFlowState } from '../utils'
 import { DataSource } from 'typeorm'
 import { BaseRetriever } from '@langchain/core/retrievers'
 import { Document } from '@langchain/core/documents'
+import path from 'path'
 
 interface IKnowledgeBase {
     documentStore: string
@@ -154,7 +155,14 @@ class Retriever_Agentflow implements INode {
                 const [storeId, _] = knowledgeBase.documentStore.split(':')
 
                 const docStoreVectorInstanceFilePath = options.componentNodes['documentStoreVS'].filePath as string
-                const docStoreVectorModule = await import(docStoreVectorInstanceFilePath)
+
+                const allowedDir = path.resolve(__dirname, '../../')
+                const resolvedPath = path.resolve(docStoreVectorInstanceFilePath)
+                if (!resolvedPath.startsWith(allowedDir)) {
+                    throw new Error('Attempted import outside of allowed directory')
+                }
+                const docStoreVectorModule = await import(resolvedPath)
+
                 const newDocStoreVectorInstance = new docStoreVectorModule.nodeClass()
                 const docStoreVectorInstance = (await newDocStoreVectorInstance.init(
                     {

@@ -13,6 +13,7 @@ import {
     updateFlowState
 } from '../utils'
 import { get } from 'lodash'
+import path from 'path'
 
 class LLM_Agentflow implements INode {
     label: string
@@ -362,7 +363,13 @@ class LLM_Agentflow implements INode {
 
             // Initialize the LLM model instance
             const nodeInstanceFilePath = options.componentNodes[model].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            // Security fix: Ensure the file path is within the allowed directory
+            const allowedDir = path.resolve(__dirname, '../../')
+            const resolvedPath = path.resolve(nodeInstanceFilePath)
+            if (!resolvedPath.startsWith(allowedDir)) {
+                throw new Error('Attempted import outside of allowed directory')
+            }
+            const nodeModule = await import(resolvedPath)
             const newLLMNodeInstance = new nodeModule.nodeClass()
             const newNodeData = {
                 ...nodeData,

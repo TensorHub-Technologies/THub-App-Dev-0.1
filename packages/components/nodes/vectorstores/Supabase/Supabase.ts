@@ -234,6 +234,7 @@ class Supabase_VectorStores implements INode {
 
         if (supabaseRPCFilter) {
             const funcString = `return rpc.${supabaseRPCFilter};`
+
             const funcFilter = new Function('rpc', funcString)
             obj.filter = (rpc: SupabaseFilterRPCCall) => {
                 return funcFilter(rpc)

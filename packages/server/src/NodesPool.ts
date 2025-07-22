@@ -32,7 +32,12 @@ export class NodesPool {
             nodeFiles.map(async (file) => {
                 if (file.endsWith('.js')) {
                     try {
-                        const nodeModule = await require(file)
+                        const allowedDir = path.resolve(__dirname, '../../')
+                        const resolvedPath = path.resolve(file)
+                        if (!resolvedPath.startsWith(allowedDir)) {
+                            throw new Error('Attempted require outside of allowed directory')
+                        }
+                        const nodeModule = require(resolvedPath)
 
                         if (nodeModule.nodeClass) {
                             const newNodeInstance = new nodeModule.nodeClass()
@@ -90,7 +95,13 @@ export class NodesPool {
         return Promise.all(
             nodeFiles.map(async (file) => {
                 if (file.endsWith('.credential.js')) {
-                    const credentialModule = await require(file)
+                    const allowedDir = path.resolve(__dirname, '../../')
+                    const resolvedPath = path.resolve(file)
+                    if (!resolvedPath.startsWith(allowedDir)) {
+                        throw new Error('Attempted require outside of allowed directory')
+                    }
+                    const credentialModule = require(resolvedPath)
+
                     if (credentialModule.credClass) {
                         const newCredInstance = new credentialModule.credClass()
                         newCredInstance.icon = this.credentialIconPath[newCredInstance.name] ?? ''

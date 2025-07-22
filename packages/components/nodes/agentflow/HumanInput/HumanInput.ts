@@ -12,6 +12,7 @@ import {
 } from '../../../src/Interface'
 import { AIMessageChunk, BaseMessageLike } from '@langchain/core/messages'
 import { DEFAULT_HUMAN_INPUT_DESCRIPTION, DEFAULT_HUMAN_INPUT_DESCRIPTION_HTML } from '../prompt'
+import path from 'path'
 
 class HumanInput_Agentflow implements INode {
     label: string
@@ -217,7 +218,14 @@ class HumanInput_Agentflow implements INode {
             } else {
                 if (model && modelConfig) {
                     const nodeInstanceFilePath = options.componentNodes[model].filePath as string
-                    const nodeModule = await import(nodeInstanceFilePath)
+
+                    const allowedDir = path.resolve(__dirname, '../../')
+                    const resolvedPath = path.resolve(nodeInstanceFilePath)
+                    if (!resolvedPath.startsWith(allowedDir)) {
+                        throw new Error('Attempted import outside of allowed directory')
+                    }
+                    const nodeModule = await import(resolvedPath)
+
                     const newNodeInstance = new nodeModule.nodeClass()
                     const newNodeData = {
                         ...nodeData,

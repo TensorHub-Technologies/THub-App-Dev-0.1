@@ -78,6 +78,10 @@ export class ArxivTool extends DynamicStructuredTool {
         return true
     }
 
+    private sanitizeInput(input: string): string {
+        return input.replace(/[^\w\s.,?!]/g, '')
+    }
+
     private parseArxivResponse(xmlText: string): ArxivResult[] {
         const results: ArxivResult[] = []
 
@@ -97,7 +101,7 @@ export class ArxivTool extends DynamicStructuredTool {
                 const authorRegex = /<author><name>(.*?)<\/name><\/author>/g
                 const authors: string[] = []
                 let authorMatch
-                while ((authorMatch = authorRegex.exec(entry)) !== null) {
+                while ((authorMatch = authorRegex.exec(this.sanitizeInput(entry))) !== null) {
                     authors.push(authorMatch[1])
                 }
 

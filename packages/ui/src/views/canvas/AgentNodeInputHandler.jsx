@@ -611,7 +611,7 @@ const AgentNodeInputHandler = ({
             displayWarning()
             return
         }
-
+        console.log('asyncOptionEditDialogProps', asyncOptionEditDialogProps)
         // Check if model is already selected in the node
         const currentNode = reactFlowInstance?.getNodes().find((node) => node.id === data.id)
         const currentNodeInputs = currentNode?.data?.inputs

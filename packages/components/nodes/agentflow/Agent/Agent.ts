@@ -27,6 +27,7 @@ import {
     replaceBase64ImagesWithFileReferences,
     updateFlowState
 } from '../utils'
+import path from 'path'
 
 interface ITool {
     agentSelectedTool: string
@@ -484,7 +485,15 @@ class Agent_Agentflow implements INode {
             for (const tool of tools) {
                 const toolConfig = tool.agentSelectedToolConfig
                 const nodeInstanceFilePath = options.componentNodes[tool.agentSelectedTool].filePath as string
-                const nodeModule = await import(nodeInstanceFilePath)
+
+                const allowedDir = path.resolve(__dirname, '../../')
+                const resolvedPath = path.resolve(nodeInstanceFilePath)
+                if (!resolvedPath.startsWith(allowedDir)) {
+                    throw new Error('Attempted import outside of allowed directory')
+                }
+                // amazonq-ignore-next-line
+                const nodeModule = await import(resolvedPath)
+
                 const newToolNodeInstance = new nodeModule.nodeClass()
                 const newNodeData = {
                     ...nodeData,
@@ -540,12 +549,26 @@ class Agent_Agentflow implements INode {
             if (knowledgeBases && knowledgeBases.length > 0) {
                 for (const knowledgeBase of knowledgeBases) {
                     const nodeInstanceFilePath = options.componentNodes['retrieverTool'].filePath as string
-                    const nodeModule = await import(nodeInstanceFilePath)
+                    // Security fix: Ensure the file path is within the allowed directory
+                    const allowedDirRetriever = path.resolve(__dirname, '../../')
+                    const resolvedPathRetriever = path.resolve(nodeInstanceFilePath)
+                    if (!resolvedPathRetriever.startsWith(allowedDirRetriever)) {
+                        throw new Error('Attempted import outside of allowed directory')
+                    }
+                    // amazonq-ignore-next-line
+                    const nodeModule = await import(resolvedPathRetriever)
                     const newRetrieverToolNodeInstance = new nodeModule.nodeClass()
                     const [storeId, storeName] = knowledgeBase.documentStore.split(':')
 
                     const docStoreVectorInstanceFilePath = options.componentNodes['documentStoreVS'].filePath as string
-                    const docStoreVectorModule = await import(docStoreVectorInstanceFilePath)
+                    // Security fix: Ensure the file path is within the allowed directory
+                    const allowedDirVS = path.resolve(__dirname, '../../')
+                    const resolvedPathVS = path.resolve(docStoreVectorInstanceFilePath)
+                    if (!resolvedPathVS.startsWith(allowedDirVS)) {
+                        throw new Error('Attempted import outside of allowed directory')
+                    }
+                    // amazonq-ignore-next-line
+                    const docStoreVectorModule = await import(resolvedPathVS)
                     const newDocStoreVectorInstance = new docStoreVectorModule.nodeClass()
                     const docStoreVectorInstance = await newDocStoreVectorInstance.init(
                         {

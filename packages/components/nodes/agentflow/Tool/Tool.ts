@@ -3,6 +3,7 @@ import { updateFlowState } from '../utils'
 import { Tool } from '@langchain/core/tools'
 import { ARTIFACTS_PREFIX } from '../../../src/agents'
 import zodToJsonSchema from 'zod-to-json-schema'
+import path from 'path'
 
 interface IToolInputArgs {
     inputArgName: string
@@ -129,7 +130,13 @@ class Tool_Agentflow implements INode {
 
             const nodeInstanceFilePath = options.componentNodes[selectedTool].filePath as string
 
-            const nodeModule = await import(nodeInstanceFilePath)
+            const allowedDir = path.resolve(__dirname, '../../')
+            const resolvedPath = path.resolve(nodeInstanceFilePath)
+            if (!resolvedPath.startsWith(allowedDir)) {
+                throw new Error('Attempted import outside of allowed directory')
+            }
+            const nodeModule = await import(resolvedPath)
+
             const newToolNodeInstance = new nodeModule.nodeClass()
 
             const newNodeData = {
@@ -207,7 +214,14 @@ class Tool_Agentflow implements INode {
         }
 
         const nodeInstanceFilePath = options.componentNodes[selectedTool].filePath as string
-        const nodeModule = await import(nodeInstanceFilePath)
+
+        const allowedDir = path.resolve(__dirname, '../../')
+        const resolvedPath = path.resolve(nodeInstanceFilePath)
+        if (!resolvedPath.startsWith(allowedDir)) {
+            throw new Error('Attempted import outside of allowed directory')
+        }
+        const nodeModule = await import(resolvedPath)
+
         const newToolNodeInstance = new nodeModule.nodeClass()
         const newNodeData = {
             ...nodeData,

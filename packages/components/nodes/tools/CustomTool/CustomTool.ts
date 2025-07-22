@@ -92,7 +92,12 @@ class CustomTool_Tools implements INode {
         }
     }
 
+    private sanitizeInput(input: string): string {
+        return input.replace(/[^\w\s.,?!]/g, '')
+    }
+
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
+        console.log('inside init')
         const selectedToolId = nodeData.inputs?.selectedTool as string
         const customToolFunc = nodeData.inputs?.customToolFunc as string
         const customToolName = nodeData.inputs?.customToolName as string
@@ -104,6 +109,7 @@ class CustomTool_Tools implements INode {
         const databaseEntities = options.databaseEntities as IDatabaseEntity
 
         try {
+            console.log('Selected Tool ID:')
             const tool = await appDataSource.getRepository(databaseEntities['Tool']).findOneBy({
                 id: selectedToolId
             })
@@ -119,7 +125,7 @@ class CustomTool_Tools implements INode {
             if (customToolName) obj.name = customToolName
             if (customToolDesc) obj.description = customToolDesc
             if (customToolSchema) {
-                const zodSchemaFunction = new Function('z', `return ${customToolSchema}`)
+                const zodSchemaFunction = new Function('z', `return ${this.sanitizeInput(customToolSchema)}`)
                 obj.schema = zodSchemaFunction(z)
             }
 
