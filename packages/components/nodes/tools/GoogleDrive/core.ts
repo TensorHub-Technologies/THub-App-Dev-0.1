@@ -359,13 +359,15 @@ class CreateFileTool extends BaseGoogleDriveTool {
         const url = `https://www.googleapis.com/upload/drive/v3/files?${queryParams.toString()}`
 
         // Create multipart/related body according to RFC 2387
-        const boundary = '-------314159265358979323846'
+        // Generate a random boundary string
+        const boundary = '-------' + Math.random().toString().substring(2)
 
         // Build multipart body - RFC 2387 format
         let body = `--${boundary}\r\n`
 
         // Part 1: Metadata (application/json; charset=UTF-8)
-        body += 'Content-Type: application/json; charset=UTF-8\r\n\r\n'
+        const jsonContentType = 'application/json; charset=UTF-8'
+        body += `Content-Type: ${jsonContentType}\r\n\r\n`
         body += JSON.stringify(fileMetadata) + '\r\n'
 
         // Part 2: Media content (any MIME type)
@@ -393,7 +395,10 @@ class CreateFileTool extends BaseGoogleDriveTool {
                 const errorText = await response.text()
                 console.error('Multipart upload failed:', {
                     url,
-                    headers: { ...headers, Authorization: '[REDACTED]' },
+                    headers: {
+                        ...headers,
+                        Authorization: '[REDACTED]'
+                    },
                     metadata: fileMetadata,
                     contentLength: params.content?.length || 0,
                     error: errorText

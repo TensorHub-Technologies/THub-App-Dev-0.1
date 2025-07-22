@@ -89,9 +89,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
 
     const deleteItem = useCallback(
         (id) => () => {
-            setTimeout(() => {
-                setToolSchema((prevRows) => prevRows.filter((row) => row.id !== id))
-            })
+            setToolSchema((prevRows) => prevRows.filter((row) => row.id !== id))
         },
         []
     )
