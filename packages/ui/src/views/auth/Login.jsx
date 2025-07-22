@@ -34,8 +34,6 @@ const Login = () => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
 
-    const passwordError = formik.touched.password && formik.errors.password
-
     useEffect(() => {
         const url = new URL(window.location.href)
         const themeParam = url.searchParams.get('theme')
@@ -116,6 +114,7 @@ const Login = () => {
             }
         }
     })
+    const passwordError = formik.touched.password && formik.errors.password
 
     return (
         <Box sx={{ bgcolor: '#121212' }}>
