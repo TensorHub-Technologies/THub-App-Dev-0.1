@@ -1,5 +1,4 @@
 import 'reflect-metadata'
-const { Storage } = require('@google-cloud/storage')
 import path from 'path'
 import * as fs from 'fs'
 import { DataSource } from 'typeorm'
@@ -12,9 +11,56 @@ import { postgresMigrations } from './database/migrations/postgres'
 
 let appDataSource: DataSource
 
-// Initialize Google Cloud Storage client
+import { Storage } from '@google-cloud/storage'
+
+// Validate required environment variables
+const requiredEnvVars = [
+    'GOOGLE_CLOUD_TYPE',
+    'GOOGLE_CLOUD_PROJECT_ID',
+    'GOOGLE_CLOUD_PRIVATE_KEY_ID',
+    'GOOGLE_CLOUD_PRIVATE_KEY',
+    'GOOGLE_CLOUD_CLIENT_EMAIL',
+    'GOOGLE_CLOUD_CLIENT_ID'
+]
+
+const missingVars = requiredEnvVars.filter((varName) => !process.env[varName])
+if (missingVars.length > 0) {
+    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`)
+}
+
+const storageCredentials = {
+    type: process.env.GOOGLE_CLOUD_TYPE,
+    project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
+    private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
+    private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
+    client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
+    auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI || 'https://accounts.google.com/o/oauth2/auth',
+    token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI || 'https://oauth2.googleapis.com/token',
+    auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL || 'https://www.googleapis.com/oauth2/v1/certs',
+    client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
+    universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN || 'googleapis.com'
+}
+
+// Debug logging (consider removing in production)
+console.log('Private Key received (first 50 chars):', storageCredentials.private_key?.substring(0, 50) + '...')
+console.log('Private Key length:', storageCredentials.private_key ? storageCredentials.private_key.length : 'undefined')
+console.log(
+    'Private Key contains actual newlines:',
+    storageCredentials.private_key ? storageCredentials.private_key.includes('\n') : 'undefined'
+)
+console.log(
+    'Private Key starts with BEGIN:',
+    storageCredentials.private_key ? storageCredentials.private_key.startsWith('-----BEGIN') : 'undefined'
+)
+
+// Validate private key format
+if (!storageCredentials.private_key?.startsWith('-----BEGIN PRIVATE KEY-----')) {
+    throw new Error('Private key does not have the correct format')
+}
+
 const storage = new Storage({
-    keyFilename: path.join(__dirname, '..', '..', 'server', 'uploads', 'serviceAccountKey.json')
+    credentials: storageCredentials
 })
 
 const bucketName = 'thub-files'
