@@ -694,21 +694,24 @@ export const rearrangeToolsOrdering = (newValues, sourceNodeId) => {
 }
 
 export const throttle = (func, limit) => {
-    let lastFunc
-    let lastRan
+    let lastExecTime = 0
+    let rafId = null
 
     return (...args) => {
-        if (!lastRan) {
-            func(...args)
-            lastRan = Date.now()
-        } else {
-            clearTimeout(lastFunc)
-            lastFunc = setTimeout(() => {
-                if (Date.now() - lastRan >= limit) {
+        const now = Date.now()
+
+        if (now - lastExecTime >= limit) {
+            lastExecTime = now
+            return func(...args)
+        } else if (!rafId) {
+            rafId = requestAnimationFrame(() => {
+                rafId = null
+                const currentTime = Date.now()
+                if (currentTime - lastExecTime >= limit) {
+                    lastExecTime = currentTime
                     func(...args)
-                    lastRan = Date.now()
                 }
-            }, limit - (Date.now() - lastRan))
+            })
         }
     }
 }
