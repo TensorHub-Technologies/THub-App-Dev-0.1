@@ -63,6 +63,7 @@ import {
     SecretsManagerClient,
     SecretsManagerClientConfig
 } from '@aws-sdk/client-secrets-manager'
+import { NodeModules } from '../../../components/src/nodeModules'
 
 export const QUESTION_VAR_PREFIX = 'question'
 export const FILE_ATTACHMENT_PREFIX = 'file_attachment'
@@ -567,7 +568,7 @@ export const buildFlow = async ({
 
         try {
             const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
 
             let flowNodeData = cloneDeep(reactFlowNode.data)
@@ -755,7 +756,7 @@ export const clearSessionMemory = async (
         if (isClearFromViewMessageDialog && memoryType && node.data.label !== memoryType) continue
 
         const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
-        const nodeModule = await import(nodeInstanceFilePath)
+        const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
         const options: ICommonObject = { chatId, appDataSource, databaseEntities, logger }
 
@@ -1658,7 +1659,7 @@ export const getSessionChatHistory = async (
     prependMessages?: IMessage[]
 ): Promise<IMessage[]> => {
     const nodeInstanceFilePath = componentNodes[memoryNode.data.name].filePath as string
-    const nodeModule = await import(nodeInstanceFilePath)
+    const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
     const newNodeInstance = new nodeModule.nodeClass()
 
     // Replace memory's sessionId/chatId
