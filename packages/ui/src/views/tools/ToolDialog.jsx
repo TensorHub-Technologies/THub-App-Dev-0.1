@@ -95,32 +95,28 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
     )
 
     const addNewRow = () => {
-        setTimeout(() => {
-            setToolSchema((prevRows) => {
-                let allRows = [...cloneDeep(prevRows)]
-                const lastRowId = allRows.length ? allRows[allRows.length - 1].id + 1 : 1
-                allRows.push({
-                    id: lastRowId,
-                    property: '',
-                    description: '',
-                    type: '',
-                    required: false
-                })
-                return allRows
+        setToolSchema((prevRows) => {
+            let allRows = [...cloneDeep(prevRows)]
+            const lastRowId = allRows.length ? allRows[allRows.length - 1].id + 1 : 1
+            allRows.push({
+                id: lastRowId,
+                property: '',
+                description: '',
+                type: '',
+                required: false
             })
+            return allRows
         })
     }
 
     const onRowUpdate = (newRow) => {
-        setTimeout(() => {
-            setToolSchema((prevRows) => {
-                let allRows = [...cloneDeep(prevRows)]
-                const indexToUpdate = allRows.findIndex((row) => row.id === newRow.id)
-                if (indexToUpdate >= 0) {
-                    allRows[indexToUpdate] = { ...newRow }
-                }
-                return allRows
-            })
+        setToolSchema((prevRows) => {
+            let allRows = [...cloneDeep(prevRows)]
+            const indexToUpdate = allRows.findIndex((row) => row.id === newRow.id)
+            if (indexToUpdate >= 0) {
+                allRows[indexToUpdate] = { ...newRow }
+            }
+            return allRows
         })
     }
     const onSaveAsTemplate = () => {
