@@ -64,6 +64,7 @@ import { getErrorMessage } from '../errors/utils'
 import { FLOWISE_METRIC_COUNTERS, FLOWISE_COUNTER_STATUS, IMetricsProvider } from '../Interface.Metrics'
 import { OMIT_QUEUE_JOB_DATA } from './constants'
 import { executeAgentFlow } from './buildAgentflow'
+import { NodeModules } from '../../../components/src/nodeModules'
 
 /*
  * Initialize the ending node to be executed
@@ -122,7 +123,7 @@ const initEndingNode = async ({
     logger.debug(`[server]: Running ${reactFlowNodeData.label} (${reactFlowNodeData.id})`)
 
     const nodeInstanceFilePath = componentNodes[reactFlowNodeData.name].filePath as string
-    const nodeModule = await import(nodeInstanceFilePath)
+    const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
     const nodeInstance = new nodeModule.nodeClass({ sessionId })
 
     return { endingNodeData: reactFlowNodeData, endingNodeInstance: nodeInstance }

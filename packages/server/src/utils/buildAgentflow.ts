@@ -52,6 +52,7 @@ import { utilAddChatMessage } from './addChatMesage'
 import { CachePool } from '../CachePool'
 import { ChatMessage } from '../database/entities/ChatMessage'
 import { Telemetry } from './telemetry'
+import { NodeModules } from '../../../components/src/nodeModules'
 
 interface IWaitingNode {
     nodeId: string
@@ -812,7 +813,7 @@ const executeNode = async ({
 
         // Get node implementation
         const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
-        const nodeModule = await import(nodeInstanceFilePath)
+        const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
         // Prepare node data

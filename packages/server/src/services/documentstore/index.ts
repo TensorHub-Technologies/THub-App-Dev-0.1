@@ -51,6 +51,7 @@ import { DOCUMENTSTORE_TOOL_DESCRIPTION_PROMPT_GENERATOR } from '../../utils/pro
 import { DataSource } from 'typeorm'
 import { Telemetry } from '../../utils/telemetry'
 import { INPUT_PARAMS_TYPE, OMIT_QUEUE_JOB_DATA } from '../../utils/constants'
+import { NodeModules } from '../../../../components/src/nodeModules'
 
 const DOCUMENT_STORE_BASE_FOLDER = 'docustore'
 
@@ -496,7 +497,7 @@ const _splitIntoChunks = async (appDataSource: DataSource, componentNodes: IComp
         let splitterInstance = null
         if (data.splitterId && data.splitterConfig && Object.keys(data.splitterConfig).length > 0) {
             const nodeInstanceFilePath = componentNodes[data.splitterId].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             let nodeData = {
                 inputs: { ...data.splitterConfig },
@@ -506,7 +507,7 @@ const _splitIntoChunks = async (appDataSource: DataSource, componentNodes: IComp
         }
         if (!data.loaderId) return []
         const nodeInstanceFilePath = componentNodes[data.loaderId].filePath as string
-        const nodeModule = await import(nodeInstanceFilePath)
+        const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
         // doc loader configs
         const nodeData = {
             credential: data.credential || data.loaderConfig['FLOWISE_CREDENTIAL_ID'] || undefined,
@@ -1367,7 +1368,7 @@ const _createEmbeddingsObject = async (
 
     // init embedding object
     const embeddingNodeInstanceFilePath = embeddingComponent.filePath as string
-    const embeddingNodeModule = await import(embeddingNodeInstanceFilePath)
+    const embeddingNodeModule = await NodeModules.getNodeModule(embeddingNodeInstanceFilePath)
     const embeddingNodeInstance = new embeddingNodeModule.nodeClass()
     const embeddingObj = await embeddingNodeInstance.init(embeddingNodeData, '', options)
     if (!embeddingObj) {
@@ -1401,7 +1402,7 @@ const _createRecordManagerObject = async (
 
     // init record manager object
     const rmNodeInstanceFilePath = recordManagerComponent.filePath as string
-    const rmNodeModule = await import(rmNodeInstanceFilePath)
+    const rmNodeModule = await NodeModules.getNodeModule(rmNodeInstanceFilePath)
     const rmNodeInstance = new rmNodeModule.nodeClass()
     const recordManagerObj = await rmNodeInstance.init(rmNodeData, '', options)
     if (!recordManagerObj) {
@@ -1446,7 +1447,7 @@ const _createVectorStoreObject = async (
     upsertHistory?: Record<string, any>
 ) => {
     const vStoreNodeInstanceFilePath = componentNodes[data.vectorStoreName].filePath as string
-    const vStoreNodeModule = await import(vStoreNodeInstanceFilePath)
+    const vStoreNodeModule = await NodeModules.getNodeModule(vStoreNodeInstanceFilePath)
     const vStoreNodeInstance = new vStoreNodeModule.nodeClass()
     if (upsertHistory) upsertHistory['flowData'] = saveUpsertFlowData(vStoreNodeData, upsertHistory)
     return vStoreNodeInstance
@@ -1856,7 +1857,7 @@ const generateDocStoreToolDesc = async (docStoreId: string, selectedChatModel: I
 
         if (selectedChatModel && Object.keys(selectedChatModel).length > 0) {
             const nodeInstanceFilePath = appServer.nodesPool.componentNodes[selectedChatModel.name].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             const nodeData = {
                 credential: selectedChatModel.credential || selectedChatModel.inputs['FLOWISE_CREDENTIAL_ID'] || undefined,

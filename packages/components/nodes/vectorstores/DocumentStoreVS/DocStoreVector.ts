@@ -1,5 +1,6 @@
 import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface'
 import { DataSource } from 'typeorm'
+import { NodeModules } from '../../../src/nodeModules'
 
 class DocStore_VectorStores implements INode {
     label: string
@@ -132,8 +133,8 @@ const _createEmbeddingsObject = async (componentNodes: ICommonObject, data: ICom
     }
 
     // init embedding object
-    const embeddingNodeInstanceFilePath = embeddingComponent.filePath as string
-    const embeddingNodeModule = await import(embeddingNodeInstanceFilePath)
+    // const embeddingNodeInstanceFilePath = embeddingComponent.filePath as string
+    const embeddingNodeModule = await NodeModules.getNodeModule(embeddingComponent)
     const embeddingNodeInstance = new embeddingNodeModule.nodeClass()
     return await embeddingNodeInstance.init(embeddingNodeData, '', options)
 }
@@ -164,8 +165,8 @@ const _createVectorStoreNodeData = (componentNodes: ICommonObject, data: ICommon
 }
 
 const _createVectorStoreObject = async (componentNodes: ICommonObject, data: ICommonObject) => {
-    const vStoreNodeInstanceFilePath = componentNodes[data.vectorStoreName].filePath as string
-    const vStoreNodeModule = await import(vStoreNodeInstanceFilePath)
+    // const vStoreNodeInstanceFilePath = componentNodes[data.vectorStoreName].filePath as string
+    const vStoreNodeModule = await NodeModules.getNodeModule(data.vectorStoreName)
     const vStoreNodeInstance = new vStoreNodeModule.nodeClass()
     return vStoreNodeInstance
 }

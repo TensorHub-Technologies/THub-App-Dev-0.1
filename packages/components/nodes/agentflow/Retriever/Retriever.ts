@@ -11,6 +11,7 @@ import { updateFlowState } from '../utils'
 import { DataSource } from 'typeorm'
 import { BaseRetriever } from '@langchain/core/retrievers'
 import { Document } from '@langchain/core/documents'
+import { NodeModules } from '../../../src/nodeModules'
 
 interface IKnowledgeBase {
     documentStore: string
@@ -153,7 +154,7 @@ class Retriever_Agentflow implements INode {
             for (const knowledgeBase of knowledgeBases) {
                 const [storeId, _] = knowledgeBase.documentStore.split(':')
 
-                const docStoreVectorInstanceFilePath = options.componentNodes['documentStoreVS'].filePath as string
+                const docStoreVectorInstanceFilePath: string = NodeModules.moduleMap['documentStoreVS']
                 const docStoreVectorModule = await import(docStoreVectorInstanceFilePath)
                 const newDocStoreVectorInstance = new docStoreVectorModule.nodeClass()
                 const docStoreVectorInstance = (await newDocStoreVectorInstance.init(
