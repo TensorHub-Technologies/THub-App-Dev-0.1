@@ -40,6 +40,8 @@ const deleteTool = async (toolId: string): Promise<any> => {
 }
 
 const getAllTools = async (tenantId: any): Promise<Tool[]> => {
+    console.log(tenantId, 'tenantId1111')
+
     try {
         const appServer = getRunningExpressApp()
         const dbResponse = await appServer.AppDataSource.getRepository(Tool).findBy({ tenantId })

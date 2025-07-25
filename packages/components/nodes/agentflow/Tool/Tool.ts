@@ -3,7 +3,6 @@ import { updateFlowState } from '../utils'
 import { Tool } from '@langchain/core/tools'
 import { ARTIFACTS_PREFIX } from '../../../src/agents'
 import zodToJsonSchema from 'zod-to-json-schema'
-import { NodeModules } from '../../../src/nodeModules'
 
 interface IToolInputArgs {
     inputArgName: string
@@ -125,17 +124,12 @@ class Tool_Agentflow implements INode {
         },
         async listToolInputArgs(nodeData: INodeData, options: ICommonObject): Promise<INodeOptionsValue[]> {
             const currentNode = options.currentNode as ICommonObject
-            const selectedTool = currentNode?.inputs?.selectedTool
+            const selectedTool = currentNode?.inputs?.selectedTool as string
             const selectedToolConfig = currentNode?.inputs?.selectedToolConfig as ICommonObject
 
-            if (!selectedTool || typeof selectedTool !== 'string') {
-                throw new Error('Invalid or missing selectedTool')
-            }
+            const nodeInstanceFilePath = options.componentNodes[selectedTool].filePath as string
 
-            // const nodeInstanceFilePath = options.componentNodes[selectedTool].filePath as string
-            // const nodeInstanceFilePathName  = await NodeModules.getNodeModule(selectedTool)
-
-            const nodeModule = await NodeModules.getNodeModule(selectedTool)
+            const nodeModule = await import(nodeInstanceFilePath)
             const newToolNodeInstance = new nodeModule.nodeClass()
 
             const newNodeData = {
@@ -212,8 +206,8 @@ class Tool_Agentflow implements INode {
             throw new Error('Tool not selected')
         }
 
-        // const nodeInstanceFilePath = options.componentNodes[selectedTool].filePath as string
-        const nodeModule = await NodeModules.getNodeModule(selectedTool)
+        const nodeInstanceFilePath = options.componentNodes[selectedTool].filePath as string
+        const nodeModule = await import(nodeInstanceFilePath)
         const newToolNodeInstance = new nodeModule.nodeClass()
         const newNodeData = {
             ...nodeData,
