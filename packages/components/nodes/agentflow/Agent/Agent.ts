@@ -498,9 +498,13 @@ class Agent_Agentflow implements INode {
             for (const tool of tools) {
                 const toolConfig = tool.agentSelectedToolConfig
                 // const nodeInstanceFilePath = options.componentNodes[tool.agentSelectedTool].filePath as string
-
+                console.log(`Loading tool node from: ${tool.agentSelectedTool}`)
+                const nodeInstanceFilePath = NodeModules.moduleMap[tool.agentSelectedTool]
+                if (!nodeInstanceFilePath) {
+                    throw new Error(`Tool node file path for ${tool.agentSelectedTool} not found`)
+                }
                 // amazonq-ignore-next-line
-                const nodeModule = await NodeModules.getNodeModule(tool.agentSelectedTool)
+                const nodeModule = await import(nodeInstanceFilePath)
                 const newToolNodeInstance = new nodeModule.nodeClass()
                 const newNodeData = {
                     ...nodeData,

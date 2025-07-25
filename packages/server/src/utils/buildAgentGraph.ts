@@ -28,7 +28,6 @@ import logger from './logger'
 import { Variable } from '../database/entities/Variable'
 import { DataSource } from 'typeorm'
 import { CachePool } from '../CachePool'
-import { NodeModules } from '../../../components/src/nodeModules'
 
 /**
  * Build Agent Graph
@@ -466,7 +465,7 @@ const compileMultiAgentsGraph = async (params: MultiAgentsGraphParams) => {
     // Init worker nodes
     for (const workerNode of workerNodes) {
         const nodeInstanceFilePath = componentNodes[workerNode.data.name].filePath as string
-        const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
+        const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
         let flowNodeData = cloneDeep(workerNode.data)
@@ -506,7 +505,7 @@ const compileMultiAgentsGraph = async (params: MultiAgentsGraphParams) => {
         if (!supervisorNode) continue
 
         const nodeInstanceFilePath = componentNodes[supervisorNode.data.name].filePath as string
-        const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
+        const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
         let flowNodeData = cloneDeep(supervisorNode.data)
@@ -692,7 +691,7 @@ const compileSeqAgentsGraph = async (params: SeqAgentsGraphParams) => {
 
     const initiateNode = async (node: IReactFlowNode) => {
         const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
-        const nodeModule = await NodeModules.getNodeModule(nodeInstanceFilePath)
+        const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
         flowNodeData = cloneDeep(node.data)

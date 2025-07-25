@@ -9,20 +9,6 @@ import {
 } from '../utils'
 import { CONDITION_AGENT_SYSTEM_PROMPT, DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import { NodeModules } from '../../../src'
-import path from 'path'
-
-// Utility function to validate node file paths
-function validateNodeFilePath(componentNodes: ICommonObject, nodeName: string): string {
-    if (!componentNodes[nodeName]?.filePath) {
-        throw new Error(`Required tool ${nodeName} not found`)
-    }
-    const filePath = componentNodes[nodeName].filePath as string
-    if (!path.isAbsolute(filePath) || !filePath.includes('dist/nodes/')) {
-        throw new Error(`Invalid ${nodeName} path`)
-    }
-    return filePath
-}
 
 class ConditionAgent_Agentflow implements INode {
     label: string
@@ -248,7 +234,7 @@ class ConditionAgent_Agentflow implements INode {
             const abortController = options.abortController as AbortController
 
             // Extract input parameters
-            const model = nodeData.inputs?.conditionAgentModel
+            const model = nodeData.inputs?.conditionAgentModel as string
             const modelConfig = nodeData.inputs?.conditionAgentModelConfig as ICommonObject
             if (!model) {
                 throw new Error('Model is required')
@@ -268,9 +254,8 @@ class ConditionAgent_Agentflow implements INode {
             const runtimeChatHistory = (options.agentflowRuntime?.chatHistory as BaseMessageLike[]) ?? []
 
             // Initialize the LLM model instance
-            // const nodeInstanceFilePath = options.componentNodes[model].filePath as string
-
-            const nodeModule = await NodeModules.getNodeModule(model)
+            const nodeInstanceFilePath = options.componentNodes[model].filePath as string
+            const nodeModule = await import(nodeInstanceFilePath)
             const newLLMNodeInstance = new nodeModule.nodeClass()
             const newNodeData = {
                 ...nodeData,
