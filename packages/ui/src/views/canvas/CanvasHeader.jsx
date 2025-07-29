@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import { Avatar, Box, ButtonBase, Typography, Stack, TextField, Button, IconButton } from '@mui/material'
+import { Avatar, Box, ButtonBase, Typography, Stack, TextField, Button, IconButton, Menu, MenuItem } from '@mui/material'
 
 // icons
 import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons-react'
@@ -19,6 +19,16 @@ import ChatflowConfigurationDialog from '@/ui-component/dialog/ChatflowConfigura
 import UpsertHistoryDialog from '@/views/vectorstore/UpsertHistoryDialog'
 import ViewLeadsDialog from '@/ui-component/dialog/ViewLeadsDialog'
 import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
+import ListIcon from '@mui/icons-material/List'
+import PerfectScrollbar from 'react-perfect-scrollbar'
+
+import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined'
+import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
+import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined'
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
+import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
+import { IconMathIntegral } from '@tabler/icons-react'
+import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -34,6 +44,8 @@ import VectorStorePopUp from '../vectorstore/VectorStorePopUp'
 import toggle_1 from '@/assets/images/toggle_mode-1.svg'
 import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
+import { IconUsersGroup } from '@tabler/icons-react'
+import { IconListCheck } from '@tabler/icons-react'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -68,6 +80,8 @@ const CanvasHeader = ({
     const [upsertHistoryDialogProps, setUpsertHistoryDialogProps] = useState({})
     const [chatflowConfigurationDialogOpen, setChatflowConfigurationDialogOpen] = useState(false)
     const [chatflowConfigurationDialogProps, setChatflowConfigurationDialogProps] = useState({})
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
 
     const [exportAsTemplateDialogOpen, setExportAsTemplateDialogOpen] = useState(false)
     const [exportAsTemplateDialogProps, setExportAsTemplateDialogProps] = useState({})
@@ -86,6 +100,15 @@ const CanvasHeader = ({
         const url = new URL(window.location.href)
         url.searchParams.set('theme', newTheme ? 'dark' : 'dark')
         window.history.replaceState({}, '', url)
+    }
+
+    // navigation
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null)
     }
 
     const onSettingsItemClick = (setting) => {
@@ -288,7 +311,7 @@ const CanvasHeader = ({
                     <Box>
                         <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: 0.5, ml: 3 }}>
                             <Avatar
-                                variant='rounded'
+                                variant='square'
                                 sx={{
                                     ...theme.typography.commonAvatar,
                                     ...theme.typography.mediumAvatar,
@@ -331,7 +354,7 @@ const CanvasHeader = ({
                                 {chatflow?.id && (
                                     <ButtonBase title='Edit Name' sx={{ borderRadius: '50%', ml: 1 }}>
                                         <Avatar
-                                            variant='rounded'
+                                            variant='square'
                                             sx={{
                                                 ...theme.typography.commonAvatar,
                                                 ...theme.typography.mediumAvatar,
@@ -374,7 +397,7 @@ const CanvasHeader = ({
                                 />
                                 <ButtonBase title='Save Name' sx={{ borderRadius: '50%' }}>
                                     <Avatar
-                                        variant='rounded'
+                                        variant='square'
                                         sx={{
                                             ...theme.typography.commonAvatar,
                                             ...theme.typography.mediumAvatar,
@@ -395,7 +418,7 @@ const CanvasHeader = ({
                                 </ButtonBase>
                                 <ButtonBase title='Cancel' sx={{ borderRadius: '50%' }}>
                                     <Avatar
-                                        variant='rounded'
+                                        variant='square'
                                         sx={{
                                             ...theme.typography.commonAvatar,
                                             ...theme.typography.mediumAvatar,
@@ -433,7 +456,7 @@ const CanvasHeader = ({
                     {chatflow?.id && (
                         <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2, ml: isUpsertButtonEnabled ? 0 : 1 }}>
                             <Avatar
-                                variant='rounded'
+                                variant='square'
                                 sx={{
                                     ...theme.typography.commonAvatar,
                                     ...theme.typography.mediumAvatar,
@@ -454,7 +477,7 @@ const CanvasHeader = ({
                     )}
                     <ButtonBase title={`Save ${title}`} sx={{ borderRadius: '50%', mr: 2 }}>
                         <Avatar
-                            variant='rounded'
+                            variant='square'
                             sx={{
                                 ...theme.typography.commonAvatar,
                                 ...theme.typography.mediumAvatar,
@@ -472,9 +495,117 @@ const CanvasHeader = ({
                             <IconDeviceFloppy stroke={1.5} size='1.3rem' />
                         </Avatar>
                     </ButtonBase>
+
+                    <ButtonBase title='Navbar' sx={{ borderRadius: '50%', mr: 2 }}>
+                        <Avatar
+                            variant='square'
+                            sx={{
+                                ...theme.typography.commonAvatar,
+                                ...theme.typography.mediumAvatar,
+                                transition: 'all .2s ease-in-out',
+                                background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                color: '#fff',
+                                '&:hover': {
+                                    background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
+                                    color: '#fff'
+                                }
+                            }}
+                            onClick={handleClick}
+                        >
+                            <ListIcon stroke={1.5} size='1.3rem' style={{ background: 'transparent' }} />
+                        </Avatar>
+
+                        <Menu
+                            style={{ marginTop: '60px', marginLeft: '15px', height: '260px' }}
+                            id='demo-positioned-menu'
+                            aria-labelledby='demo-positioned-button'
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left'
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left'
+                            }}
+                            sx={{
+                                '& .MuiPaper-root': {
+                                    position: 'relative',
+                                    top: '65px',
+                                    width: '220px',
+                                    fontSize: '0.875rem',
+                                    padding: '0',
+                                    overflow: 'hidden',
+                                    height: 'auto',
+                                    fontFamily: 'roboto sans-serif',
+                                    maxHeight: 'calc(-235px + 100vh)',
+                                    marginBottom: '16px'
+                                },
+                                '& .ps__rail-x': {
+                                    display: 'none !important'
+                                }
+                            }}
+                        >
+                            <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
+                                <div style={{ padding: '30px' }}>
+                                    {' '}
+                                    {/* Move padding here */}
+                                    {[
+                                        { icon: <AppsOutlinedIcon />, text: 'AI Workspace', href: '/workflows' },
+                                        { icon: <IconUsersGroup />, text: 'Agent Studio', href: '/agentflows' },
+                                        { icon: <IconListCheck />, text: 'Executions', href: '/executions' },
+                                        { icon: <DynamicFeedOutlinedIcon />, text: 'Templates', href: '/templates' },
+                                        { icon: <ConstructionOutlinedIcon />, text: 'Tools', href: '/tools' },
+                                        { icon: <SmartToyOutlinedIcon />, text: 'Assistants', href: '/assistants' },
+                                        { icon: <HttpsOutlinedIcon />, text: 'Credentials', href: '/credentials' },
+                                        { icon: <IconMathIntegral />, text: 'Variables', href: '/variables' },
+                                        { icon: <VpnKeyOutlinedIcon />, text: 'API Keys', href: '/apikey' }
+                                    ].map((item, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            onClick={handleClose}
+                                            sx={{
+                                                color: customization.isDarkMode ? 'white' : 'black',
+                                                lineHeight: '3em',
+                                                backgroundColor: 'transparent',
+                                                '&:hover': {
+                                                    backgroundColor: 'transparent',
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                    '& .MuiSvgIcon-root': {
+                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            {item.icon}
+                                            <a
+                                                href={item.href}
+                                                style={{
+                                                    color: customization.isDarkMode ? 'white' : 'black',
+                                                    textDecoration: 'none',
+                                                    marginLeft: '13px',
+                                                    lineHeight: '3em',
+                                                    transition: 'color 0.3s ease'
+                                                }}
+                                                onMouseEnter={(e) =>
+                                                    (e.target.style.color = customization.isDarkMode ? '#e22a90' : '#3c5ba4')
+                                                }
+                                                onMouseLeave={(e) => (e.target.style.color = customization.isDarkMode ? '#fff' : '#000')}
+                                            >
+                                                {item.text}
+                                            </a>
+                                        </MenuItem>
+                                    ))}
+                                </div>
+                            </PerfectScrollbar>
+                        </Menu>
+                    </ButtonBase>
+
                     <ButtonBase ref={settingsRef} title='Settings' sx={{ borderRadius: '50%' }}>
                         <Avatar
-                            variant='rounded'
+                            variant='square'
                             sx={{
                                 ...theme.typography.commonAvatar,
                                 ...theme.typography.mediumAvatar,
@@ -493,6 +624,7 @@ const CanvasHeader = ({
                     </ButtonBase>
                 </Box>
             </Stack>
+
             <Settings
                 chatflow={chatflow}
                 isSettingsOpen={isSettingsOpen}
