@@ -257,19 +257,41 @@ const Header = () => {
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={handleSettingClick}>
+                    <MenuItem
+                        onClick={handleSettingClick}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: customization.isDarkMode ? '#424242' : '#f5f5f5' // or any other visible color
+                            }
+                        }}
+                    >
                         <ListItemIcon>
                             <IconSettings color={customization.isDarkMode ? 'white' : '#616161'} />
                         </ListItemIcon>
                         Settings
                     </MenuItem>
-                    <MenuItem onClick={handleSubscriptionClick}>
+
+                    <MenuItem
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: customization.isDarkMode ? '#424242' : '#f5f5f5' // or any other visible color
+                            }
+                        }}
+                        onClick={handleSubscriptionClick}
+                    >
                         <ListItemIcon>
                             <IconUserPlus color={customization.isDarkMode ? 'white' : '#616161'} />
                         </ListItemIcon>
                         Subscription
                     </MenuItem>
-                    <MenuItem onClick={handleLogout}>
+                    <MenuItem
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: customization.isDarkMode ? '#424242' : '#f5f5f5' // or any other visible color
+                            }
+                        }}
+                        onClick={handleLogout}
+                    >
                         <ListItemIcon>
                             <IconLogout color={customization.isDarkMode ? 'white' : '#616161'} />
                         </ListItemIcon>
