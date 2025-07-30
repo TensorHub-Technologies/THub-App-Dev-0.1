@@ -5,6 +5,7 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 
 const getAllNodes = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('HIiiiiiiiiiii1111111111111')
     try {
         const apiResponse = await nodesService.getAllNodes()
         return res.json(apiResponse)
@@ -14,6 +15,7 @@ const getAllNodes = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const getNodeByName = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('HIiiiii2222222222')
     try {
         if (typeof req.params === 'undefined' || !req.params.name) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: nodesController.getNodeByName - name not provided!`)
@@ -26,6 +28,7 @@ const getNodeByName = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 const getNodesByCategory = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('HIiiiiiiii33333333333')
     try {
         if (typeof req.params.name === 'undefined' || req.params.name === '') {
             throw new InternalFlowiseError(

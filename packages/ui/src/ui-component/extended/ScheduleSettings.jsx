@@ -83,6 +83,7 @@ const ScheduleSettings = () => {
                 success: 'Active schedules fetched',
                 error: 'Failed to fetch schedule'
             })
+            console.log(res, 'response from fetch schedules')
             if (Array.isArray(res.data)) {
                 setActiveSchedules(res.data)
                 setPopupOpen(true)
