@@ -5,7 +5,6 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 
 const getAllNodes = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('HIiiiiiiiiiii1111111111111')
     try {
         const apiResponse = await nodesService.getAllNodes()
         return res.json(apiResponse)
