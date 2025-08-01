@@ -10,6 +10,8 @@ import {
     IDocument,
     mapExtToInputField,
     mapMimeTypeToInputField,
+    NodeModules,
+    // NodeModules,
     removeFilesFromStorage,
     removeSpecificFileFromStorage,
     removeSpecificFileFromUpload
@@ -495,8 +497,9 @@ const _splitIntoChunks = async (appDataSource: DataSource, componentNodes: IComp
     try {
         let splitterInstance = null
         if (data.splitterId && data.splitterConfig && Object.keys(data.splitterConfig).length > 0) {
-            const nodeInstanceFilePath = componentNodes[data.splitterId].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            //const nodeInstanceFilePath = componentNodes[data.splitterId].filePath as string
+            const nodeModule = await NodeModules.getNodeModule(data.splitterId)
+            //const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             let nodeData = {
                 inputs: { ...data.splitterConfig },
@@ -505,8 +508,9 @@ const _splitIntoChunks = async (appDataSource: DataSource, componentNodes: IComp
             splitterInstance = await newNodeInstance.init(nodeData)
         }
         if (!data.loaderId) return []
-        const nodeInstanceFilePath = componentNodes[data.loaderId].filePath as string
-        const nodeModule = await import(nodeInstanceFilePath)
+        //const nodeInstanceFilePath = componentNodes[data.loaderId].filePath as string
+        const nodeModule = await NodeModules.getNodeModule(data.loaderId)
+        //const nodeModule = await import(nodeInstanceFilePath)
         // doc loader configs
         const nodeData = {
             credential: data.credential || data.loaderConfig['FLOWISE_CREDENTIAL_ID'] || undefined,
@@ -1366,8 +1370,9 @@ const _createEmbeddingsObject = async (
     if (upsertHistory) upsertHistory['flowData'] = saveUpsertFlowData(embeddingNodeData, upsertHistory)
 
     // init embedding object
-    const embeddingNodeInstanceFilePath = embeddingComponent.filePath as string
-    const embeddingNodeModule = await import(embeddingNodeInstanceFilePath)
+    //const embeddingNodeInstanceFilePath = embeddingComponent.filePath as string
+    //const embeddingNodeModule = await import(embeddingNodeInstanceFilePath)
+    const embeddingNodeModule = await NodeModules.getNodeModule(embeddingComponent.name)
     const embeddingNodeInstance = new embeddingNodeModule.nodeClass()
     const embeddingObj = await embeddingNodeInstance.init(embeddingNodeData, '', options)
     if (!embeddingObj) {
@@ -1400,8 +1405,9 @@ const _createRecordManagerObject = async (
     if (upsertHistory) upsertHistory['flowData'] = saveUpsertFlowData(rmNodeData, upsertHistory)
 
     // init record manager object
-    const rmNodeInstanceFilePath = recordManagerComponent.filePath as string
-    const rmNodeModule = await import(rmNodeInstanceFilePath)
+    //const rmNodeInstanceFilePath = recordManagerComponent.filePath as string
+    //const rmNodeModule = await import(rmNodeInstanceFilePath)
+    const rmNodeModule = await NodeModules.getNodeModule(recordManagerComponent.name)
     const rmNodeInstance = new rmNodeModule.nodeClass()
     const recordManagerObj = await rmNodeInstance.init(rmNodeData, '', options)
     if (!recordManagerObj) {
@@ -1445,8 +1451,9 @@ const _createVectorStoreObject = async (
     vStoreNodeData: INodeData,
     upsertHistory?: Record<string, any>
 ) => {
-    const vStoreNodeInstanceFilePath = componentNodes[data.vectorStoreName].filePath as string
-    const vStoreNodeModule = await import(vStoreNodeInstanceFilePath)
+    //const vStoreNodeInstanceFilePath = componentNodes[data.vectorStoreName].filePath as string
+    const vStoreNodeModule = await NodeModules.getNodeModule(data.vectorStoreName)
+    //const vStoreNodeModule = await import(vStoreNodeInstanceFilePath)
     const vStoreNodeInstance = new vStoreNodeModule.nodeClass()
     if (upsertHistory) upsertHistory['flowData'] = saveUpsertFlowData(vStoreNodeData, upsertHistory)
     return vStoreNodeInstance
@@ -1855,8 +1862,9 @@ const generateDocStoreToolDesc = async (docStoreId: string, selectedChatModel: I
             .join('\n')
 
         if (selectedChatModel && Object.keys(selectedChatModel).length > 0) {
-            const nodeInstanceFilePath = appServer.nodesPool.componentNodes[selectedChatModel.name].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            //const nodeInstanceFilePath = appServer.nodesPool.componentNodes[selectedChatModel.name].filePath as string
+            const nodeModule = await NodeModules.getNodeModule(selectedChatModel.name)
+            //const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             const nodeData = {
                 credential: selectedChatModel.credential || selectedChatModel.inputs['FLOWISE_CREDENTIAL_ID'] || undefined,

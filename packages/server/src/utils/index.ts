@@ -37,7 +37,8 @@ import {
     IMessage,
     FlowiseMemory,
     IFileUpload,
-    getS3Config
+    getS3Config,
+    NodeModules
 } from 'thub-components'
 import { randomBytes } from 'crypto'
 import { AES, enc } from 'crypto-js'
@@ -566,8 +567,9 @@ export const buildFlow = async ({
         if (!reactFlowNode || reactFlowNode === undefined || nodeIndex < 0) continue
 
         try {
-            const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            //const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
+            const nodeModule = await NodeModules.getNodeModule(reactFlowNode.data.name)
+            //const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
 
             let flowNodeData = cloneDeep(reactFlowNode.data)
@@ -754,8 +756,9 @@ export const clearSessionMemory = async (
         // Only clear specific session memory from View Message Dialog UI
         if (isClearFromViewMessageDialog && memoryType && node.data.label !== memoryType) continue
 
-        const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
-        const nodeModule = await import(nodeInstanceFilePath)
+        //const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
+        const nodeModule = await NodeModules.getNodeModule(node.data.name)
+        //const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
         const options: ICommonObject = { chatId, appDataSource, databaseEntities, logger }
 
@@ -1657,8 +1660,9 @@ export const getSessionChatHistory = async (
     logger: any,
     prependMessages?: IMessage[]
 ): Promise<IMessage[]> => {
-    const nodeInstanceFilePath = componentNodes[memoryNode.data.name].filePath as string
-    const nodeModule = await import(nodeInstanceFilePath)
+    //const nodeInstanceFilePath = componentNodes[memoryNode.data.name].filePath as string
+    const nodeModule = await NodeModules.getNodeModule(memoryNode.data.name)
+    //const nodeModule = await import(nodeInstanceFilePath)
     const newNodeInstance = new nodeModule.nodeClass()
 
     // Replace memory's sessionId/chatId
