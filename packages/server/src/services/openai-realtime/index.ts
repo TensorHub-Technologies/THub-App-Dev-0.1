@@ -17,6 +17,7 @@ import { ICommonObject, INodeData } from 'thub-components'
 import { convertToOpenAIFunction } from '@langchain/core/utils/function_calling'
 import { v4 as uuidv4 } from 'uuid'
 import { Variable } from '../../database/entities/Variable'
+import { NodeModules } from 'thub-components'
 
 const SOURCE_DOCUMENTS_PREFIX = '\n\n----THUB_SOURCE_DOCUMENTS----\n\n'
 const ARTIFACTS_PREFIX = '\n\n----THUB_ARTIFACTS----\n\n'
@@ -106,8 +107,9 @@ const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessag
     )
     let nodeToExecuteData = reactFlowNodeData
 
-    const nodeInstanceFilePath = appServer.nodesPool.componentNodes[nodeToExecuteData.name].filePath as string
-    const nodeModule = await import(nodeInstanceFilePath)
+    //const nodeInstanceFilePath = appServer.nodesPool.componentNodes[nodeToExecuteData.name].filePath as string
+    const nodeModule = await NodeModules.getNodeModule(nodeToExecuteData.name)
+    //const nodeModule = await import(nodeInstanceFilePath)
     const nodeInstance = new nodeModule.nodeClass()
 
     const agent = await nodeInstance.init(nodeToExecuteData, '', {

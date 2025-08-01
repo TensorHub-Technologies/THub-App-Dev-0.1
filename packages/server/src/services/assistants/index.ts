@@ -17,6 +17,7 @@ import logger from '../../utils/logger'
 import { ASSISTANT_PROMPT_GENERATOR } from '../../utils/prompt'
 import { INPUT_PARAMS_TYPE } from '../../utils/constants'
 import { validate } from 'uuid'
+import { NodeModules } from 'thub-components'
 
 const createAssistant = async (requestBody: any): Promise<Assistant> => {
     try {
@@ -451,8 +452,9 @@ const generateAssistantInstruction = async (task: string, selectedChatModel: ICo
         const appServer = getRunningExpressApp()
 
         if (selectedChatModel && Object.keys(selectedChatModel).length > 0) {
-            const nodeInstanceFilePath = appServer.nodesPool.componentNodes[selectedChatModel.name].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            //const nodeInstanceFilePath = appServer.nodesPool.componentNodes[selectedChatModel.name].filePath as string
+            const nodeModule = await NodeModules.getNodeModule(selectedChatModel?.name)
+            //const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             const nodeData = {
                 credential: selectedChatModel.credential || selectedChatModel.inputs['FLOWISE_CREDENTIAL_ID'] || undefined,

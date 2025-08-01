@@ -9,6 +9,7 @@ import {
 } from '../utils'
 import { CONDITION_AGENT_SYSTEM_PROMPT, DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
+import { NodeModules } from '../../../src/nodeModules'
 
 class ConditionAgent_Agentflow implements INode {
     label: string
@@ -254,8 +255,8 @@ class ConditionAgent_Agentflow implements INode {
             const runtimeChatHistory = (options.agentflowRuntime?.chatHistory as BaseMessageLike[]) ?? []
 
             // Initialize the LLM model instance
-            const nodeInstanceFilePath = options.componentNodes[model].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            const nodeModule = await NodeModules.getNodeModule(model)
+            //const nodeModule = await import(nodeInstanceFilePath)
             const newLLMNodeInstance = new nodeModule.nodeClass()
             const newNodeData = {
                 ...nodeData,

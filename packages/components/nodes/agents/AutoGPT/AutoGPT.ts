@@ -181,7 +181,27 @@ class AutoGPT_Agents implements INode {
                 return undefined
             }
 
-            const res = await executor.run([input])
+            let sanitarizedInput = input
+
+            if (
+                typeof sanitarizedInput != 'string' ||
+                sanitarizedInput.includes('```') ||
+                sanitarizedInput.match(/eval|exec|require|import|process|child_process|spawn/)
+            ) {
+                throw new Error('Invalid input. Please provide a valid input.')
+            }
+            if (typeof sanitarizedInput === 'string') {
+                sanitarizedInput = sanitarizedInput.replace(/```/g, '').replace(/eval|exec|require|import|process|child_process|spawn/g, '')
+            }
+            //TODO: add commands that'll work with AutoGPT
+            const allowedCommands = ['analyse', 'summarize', 'fetchData']
+            if (!allowedCommands.includes(sanitarizedInput)) {
+                throw new Error('Invalid input. Please provide a valid input.')
+            }
+
+            sanitarizedInput = `### USER REQUEST\n${sanitarizedInput.replace(/["\\"]/g, '\\$&')}\n###\n\n`
+
+            const res = await executor.run([sanitarizedInput])
 
             if (!res) {
                 const sentence = `Unfortunately I was not able to complete all the task. Here is the chain of thoughts:`
