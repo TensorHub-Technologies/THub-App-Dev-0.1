@@ -499,12 +499,9 @@ class Agent_Agentflow implements INode {
                 const toolConfig = tool.agentSelectedToolConfig
                 // const nodeInstanceFilePath = options.componentNodes[tool.agentSelectedTool].filePath as string
                 console.log(`Loading tool node from: ${tool.agentSelectedTool}`)
-                const nodeInstanceFilePath = NodeModules.moduleMap[tool.agentSelectedTool]
-                if (!nodeInstanceFilePath) {
-                    throw new Error(`Tool node file path for ${tool.agentSelectedTool} not found`)
-                }
+
                 // amazonq-ignore-next-line
-                const nodeModule = await import(nodeInstanceFilePath)
+                const nodeModule = await NodeModules.getNodeModule(tool.agentSelectedTool)
                 const newToolNodeInstance = new nodeModule.nodeClass()
                 const newNodeData = {
                     ...nodeData,
@@ -582,15 +579,13 @@ class Agent_Agentflow implements INode {
                     //const nodeInstanceFilePath = validateNodeFilePath(options.componentNodes, 'retrieverTool')
                     // console.log(`Loading retriever tool node from: ${nodeInstanceFilePath}`)
                     // amazonq-ignore-next-line
-                    const nodeInstanceFilePath = NodeModules.moduleMap['retrieverTool']
-                    const nodeModule = await import(nodeInstanceFilePath)
+                    const nodeModule = await NodeModules.getNodeModule('retrieverTool')
                     const newRetrieverToolNodeInstance = new nodeModule.nodeClass()
                     const [storeId, storeName] = knowledgeBase.documentStore.split(':')
 
                     //const docStoreVectorInstanceFilePath =validateNodeFilePath(options.componentNodes, 'documentStoreVS')
-                    const nodeInstanceFilePathDocStore = NodeModules.moduleMap['documentStoreVS']
                     //console.log(`Loading document store vector node from: ${docStoreVectorInstanceFilePath}`)
-                    const docStoreVectorModule = await import(nodeInstanceFilePathDocStore)
+                    const docStoreVectorModule = await NodeModules.getNodeModule('documentStoreVS')
                     const newDocStoreVectorInstance = new docStoreVectorModule.nodeClass()
                     const docStoreVectorInstance = await newDocStoreVectorInstance.init(
                         {
