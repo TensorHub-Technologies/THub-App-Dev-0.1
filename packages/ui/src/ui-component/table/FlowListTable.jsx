@@ -1,39 +1,12 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import moment from 'moment'
-import { styled } from '@mui/material/styles'
-import {
-    Box,
-    Chip,
-    Paper,
-    Skeleton,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TableSortLabel,
-    Tooltip,
-    Typography,
-    CircularProgress,
-    useTheme
-} from '@mui/material'
-import { tableCellClasses } from '@mui/material/TableCell'
+import { Box, Skeleton, Tooltip, Typography, CircularProgress, useTheme } from '@mui/material'
 import FlowListMenu from '../button/FlowListMenu'
 import { Link } from 'react-router-dom'
+import thuicon from '@/assets/images/THub_icon_colorful_logo.png'
 
-const StyledTableRow = styled(TableRow)(() => ({
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0
-    }
-}))
-
-const getLocalStorageKeyName = (name, isAgentCanvas) => {
-    return (isAgentCanvas ? 'agentcanvas' : 'chatflowcanvas') + '_' + name
+const useCustomization = () => {
+    return useSelector((state) => state.customization)
 }
 
 // Helper function to check if icon is an image path or React component
@@ -59,46 +32,8 @@ export const FlowListTable = ({
     hasMore
 }) => {
     const theme = useTheme()
-    const customization = useSelector((state) => state.customization)
-
-    const localStorageKeyOrder = getLocalStorageKeyName('order', isAgentCanvas)
-    const localStorageKeyOrderBy = getLocalStorageKeyName('orderBy', isAgentCanvas)
-
-    const [order, setOrder] = useState(localStorage.getItem(localStorageKeyOrder) || 'desc')
-    const [orderBy, setOrderBy] = useState(localStorage.getItem(localStorageKeyOrderBy) || 'updatedDate')
-
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        borderColor: theme.palette.grey[900] + 25,
-        fontFamily: 'cambria math',
-        [`&.${tableCellClasses.head}`]: {
-            color: customization.isDarkMode ? 'white' : 'black',
-            fontWeight: 'bold'
-        },
-        [`&.${tableCellClasses.body}`]: {
-            fontSize: 14,
-            height: 64
-        }
-    }))
-
-    const StyledTableSortLabel = styled(TableSortLabel)(({ theme }) => ({
-        color: customization.isDarkMode ? 'white !important' : 'black !important',
-        '&.Mui-active': {
-            color: customization.isDarkMode ? 'white !important' : 'black !important',
-            fontSize: '0.875rem'
-        },
-        '& .MuiTableSortLabel-icon': {
-            color: customization.isDarkMode ? 'white !important' : 'black !important'
-        }
-    }))
-
-    const handleRequestSort = (property) => {
-        const isAsc = orderBy === property && order === 'asc'
-        const newOrder = isAsc ? 'desc' : 'asc'
-        setOrder(newOrder)
-        setOrderBy(property)
-        localStorage.setItem(localStorageKeyOrder, newOrder)
-        localStorage.setItem(localStorageKeyOrderBy, property)
-    }
+    const customization = useCustomization()
+    const isDark = customization.isDarkMode
 
     const onFlowClick = (row) => {
         if (!isAgentCanvas) {
@@ -108,23 +43,9 @@ export const FlowListTable = ({
         }
     }
 
-    const sortedData =
-        data && Array.isArray(data)
-            ? [...data].sort((a, b) => {
-                  if (orderBy === 'name') {
-                      return order === 'asc' ? (a.name || '').localeCompare(b.name || '') : (b.name || '').localeCompare(a.name || '')
-                  } else if (orderBy === 'updatedDate') {
-                      return order === 'asc'
-                          ? new Date(a.updatedDate) - new Date(b.updatedDate)
-                          : new Date(b.updatedDate) - new Date(a.updatedDate)
-                  }
-                  return 0
-              })
-            : []
+    const filteredData = data ? data.filter(filterFunction || (() => true)) : []
 
-    const filteredData = sortedData.filter(filterFunction || (() => true))
-
-    // // Render load more indicator
+    // Render load more indicator
     const renderLoadMoreIndicator = () => (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2, mb: 2, gap: 1 }}>
             <CircularProgress size={20} />
@@ -134,227 +55,339 @@ export const FlowListTable = ({
         </Box>
     )
 
-    console.log(isAgentCanvas, isAgentflowV2, 'isAgentCanvas in flowlisttable, isAgentflowV2')
-
     return (
         <>
-            <TableContainer sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }} component={Paper}>
-                <Table sx={{ minWidth: 650, overflowX: 'hidden' }} size='small' aria-label='a dense table'>
-                    <TableHead
-                        sx={{
-                            backgroundColor: customization.isDarkMode ? theme.palette.common.black : theme.palette.grey[100],
-                            height: 56
-                        }}
-                    >
-                        <TableRow>
-                            <StyledTableCell component='th' scope='row' style={{ width: '20%' }} key='0'>
-                                <StyledTableSortLabel
-                                    active={orderBy === 'name'}
-                                    direction={order}
-                                    onClick={() => handleRequestSort('name')}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {isLoading ? (
+                    // Loading skeletons
+                    <>
+                        {[...Array(6)].map((_, index) => (
+                            <Box
+                                key={index}
+                                sx={{
+                                    position: 'relative',
+                                    transform: 'translateY(0)',
+                                    transition: 'all 0.5s ease-in-out'
+                                }}
+                            >
+                                {/* Main Glass Card - matching the actual card structure */}
+                                <Box
+                                    sx={{
+                                        position: 'relative',
+                                        border: '1px solid',
+                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                                        borderRadius: '12px',
+                                        backdropFilter: 'blur(16px)',
+                                        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                                        height: '6rem',
+                                        width: '100%',
+                                        overflow: 'hidden',
+                                        display: 'flex',
+                                        alignItems: 'center'
+                                    }}
                                 >
-                                    Name
-                                </StyledTableSortLabel>
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: '25%' }} key='1'>
-                                Description
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: '25%' }} key='2'>
-                                Category
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: '30%' }} key='3'>
-                                Nodes
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }} key='4'>
-                                <StyledTableSortLabel
-                                    active={orderBy === 'updatedDate'}
-                                    direction={order}
-                                    onClick={() => handleRequestSort('updatedDate')}
-                                >
-                                    Last Modified Date
-                                </StyledTableSortLabel>
-                            </StyledTableCell>
-                            <StyledTableCell style={{ width: '10%' }} key='5'>
-                                Actions
-                            </StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {isLoading ? (
-                            <>
-                                {[...Array(12)].map((_, index) => (
-                                    <StyledTableRow key={index}>
-                                        <StyledTableCell>
-                                            <Skeleton variant='text' />
-                                        </StyledTableCell>
-                                        <StyledTableCell>
-                                            <Skeleton variant='text' />
-                                        </StyledTableCell>
-                                        <StyledTableCell>
-                                            <Skeleton variant='text' />
-                                        </StyledTableCell>
-                                        <StyledTableCell>
-                                            <Skeleton variant='text' />
-                                        </StyledTableCell>
-                                        <StyledTableCell>
-                                            <Skeleton variant='text' />
-                                        </StyledTableCell>
-                                        <StyledTableCell>
-                                            <Skeleton variant='text' />
-                                        </StyledTableCell>
-                                    </StyledTableRow>
-                                ))}
-                            </>
-                        ) : (
-                            <>
-                                {filteredData.map((row, index) => (
-                                    <StyledTableRow key={row.id} ref={index === filteredData.length - 1 ? lastElementRef : null}>
-                                        <StyledTableCell key='0'>
-                                            <Tooltip title={row.templateName || row.name}>
-                                                <Typography
-                                                    sx={{
-                                                        display: '-webkit-box',
-                                                        fontSize: 14,
-                                                        fontWeight: 500,
-                                                        WebkitLineClamp: 2,
-                                                        WebkitBoxOrient: 'vertical',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden'
-                                                    }}
-                                                >
-                                                    <Link to={onFlowClick(row)} style={{ color: '#2196f3', textDecoration: 'none' }}>
-                                                        {row.templateName || row.name}
-                                                    </Link>
-                                                </Typography>
-                                            </Tooltip>
-                                        </StyledTableCell>
-                                        <StyledTableCell key='1'>
-                                            <Tooltip title={row.description || ''} placement='top' arrow enterDelay={300}>
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        flexWrap: 'wrap',
-                                                        marginTop: 5,
-                                                        maxWidth: '250px', // Adjust as needed
-                                                        whiteSpace: 'nowrap',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        cursor: row.description ? 'pointer' : 'default'
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        variant='body2'
-                                                        noWrap
+                                    {/* Content - matching the actual content structure */}
+                                    <Box
+                                        sx={{
+                                            position: 'relative',
+                                            zIndex: 10,
+                                            px: 3,
+                                            py: 2,
+                                            flex: 1,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }}
+                                    >
+                                        {/* Left Section - Title and Description */}
+                                        <Box sx={{ display: 'flex', alignItems: 'flex-start', flex: 1 }}>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mr: 3 }}>
+                                                {/* Icon and Title Row */}
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    {/* THub Icon Skeleton */}
+                                                    <Skeleton
+                                                        variant='circular'
+                                                        width={18}
+                                                        height={18}
                                                         sx={{
-                                                            width: '100%',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis'
+                                                            flexShrink: 0,
+                                                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                                                        }}
+                                                    />
+                                                    {/* Title Skeleton */}
+                                                    <Skeleton
+                                                        variant='text'
+                                                        width={200}
+                                                        height={26}
+                                                        sx={{
+                                                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                                                        }}
+                                                    />
+                                                </Box>
+                                                {/* Description Skeleton */}
+                                                <Box sx={{ maxWidth: '360px' }}>
+                                                    <Skeleton
+                                                        variant='text'
+                                                        width={300}
+                                                        height={18}
+                                                        sx={{
+                                                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                                                        }}
+                                                    />
+                                                    <Skeleton
+                                                        variant='text'
+                                                        width={250}
+                                                        height={18}
+                                                        sx={{
+                                                            mt: 0.5,
+                                                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        </Box>
+
+                                        {/* Center Section - Tools Icons */}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, justifyContent: 'flex-start' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                {[...Array(3)].map((_, iconIndex) => (
+                                                    <Skeleton
+                                                        key={iconIndex}
+                                                        variant='rounded'
+                                                        width={32}
+                                                        height={32}
+                                                        sx={{
+                                                            borderRadius: '20%',
+                                                            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                                                        }}
+                                                    />
+                                                ))}
+                                            </Box>
+                                        </Box>
+
+                                        {/* Right Section - Menu Button */}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                            <Skeleton
+                                                variant='circular'
+                                                width={24}
+                                                height={24}
+                                                sx={{
+                                                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        ))}
+                    </>
+                ) : (
+                    // Actual data
+                    <>
+                        {filteredData.map((row, index) => (
+                            <Box
+                                key={row.id}
+                                ref={index === filteredData.length - 1 ? lastElementRef : null}
+                                sx={{
+                                    position: 'relative',
+                                    transform: 'translateY(0)',
+                                    transition: 'all 0.5s ease-in-out',
+                                    animation: 'float 6s ease-in-out infinite',
+                                    '@keyframes float': {
+                                        '0%, 100%': { transform: 'translateY(0px)' },
+                                        '50%': { transform: 'translateY(-5px)' }
+                                    },
+                                    '&:hover': {
+                                        transform: 'translateY(-3px)'
+                                    }
+                                }}
+                            >
+                                {/* Main Glass Card */}
+                                <Box
+                                    sx={{
+                                        position: 'relative',
+                                        border: '1px solid',
+                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                                        borderRadius: '12px',
+                                        backdropFilter: 'blur(16px)',
+                                        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                                        height: '6rem',
+                                        width: '100%',
+                                        transition: 'all 0.3s ease-in-out',
+                                        overflow: 'hidden',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        cursor: 'pointer',
+                                        '&:hover': {
+                                            '& .glow-effect': {
+                                                opacity: 1
+                                            }
+                                        }
+                                    }}
+                                >
+                                    {/* Content */}
+                                    <Box
+                                        sx={{
+                                            position: 'relative',
+                                            zIndex: 10,
+                                            px: 3,
+                                            py: 2,
+                                            flex: 1,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between'
+                                        }}
+                                    >
+                                        {/* Left Section - Title with THub Icon and Description */}
+                                        <Box sx={{ display: 'flex', alignItems: 'flex-start', flex: 1 }}>
+                                            {/* THub Icon and Title/Description */}
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mr: 3 }}>
+                                                {/* Icon and Title Row */}
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    {/* Add your THub Icon here */}
+                                                    <img
+                                                        style={{
+                                                            width: '18px',
+                                                            height: '18px',
+                                                            flexShrink: 0,
+                                                            marginTop: '1px',
+                                                            marginLeft: '-2px'
+                                                        }}
+                                                        src={thuicon}
+                                                        alt='THub Icon'
+                                                    />
+
+                                                    {/* Title */}
+                                                    <Link to={onFlowClick(row)} style={{ textDecoration: 'none' }}>
+                                                        <Typography
+                                                            variant='h6'
+                                                            sx={{
+                                                                fontFamily: 'Cambria Math',
+                                                                fontWeight: 'bold',
+                                                                color: isDark ? 'white' : 'black',
+                                                                fontSize: '1.1rem',
+                                                                lineHeight: 1.2
+                                                            }}
+                                                        >
+                                                            {row.templateName || row.name}
+                                                        </Typography>
+                                                    </Link>
+                                                </Box>
+
+                                                {/* Description - aligned with icon's left edge */}
+                                                <Tooltip title={row.description || ''} placement='bottom' arrow enterDelay={300}>
+                                                    <Box
+                                                        sx={{
+                                                            maxWidth: '360px',
+                                                            cursor: row.description ? 'pointer' : 'default'
                                                         }}
                                                     >
-                                                        {row.description || '—'}
-                                                    </Typography>
-                                                </div>
-                                            </Tooltip>
-                                        </StyledTableCell>
-                                        <StyledTableCell key='2'>
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    flexWrap: 'wrap',
-                                                    marginTop: 5
-                                                }}
-                                            >
-                                                &nbsp;
-                                                {row.category
-                                                    ? row.category
-                                                          .split(';')
-                                                          .map((tag, index) => (
-                                                              <Chip key={index} label={tag} style={{ marginRight: 5, marginBottom: 5 }} />
-                                                          ))
-                                                    : '—'}
-                                            </div>
-                                        </StyledTableCell>
+                                                        <Typography
+                                                            variant='body2'
+                                                            sx={{
+                                                                color: isDark ? 'white' : 'rgba(0, 0, 0, 0.6)',
+                                                                fontSize: '0.875rem',
+                                                                lineHeight: 1.3,
+                                                                display: '-webkit-box',
+                                                                WebkitLineClamp: 2,
+                                                                WebkitBoxOrient: 'vertical',
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                wordBreak: 'break-word',
+                                                                fontFamily: 'Cambria Math'
+                                                            }}
+                                                        >
+                                                            {row.description || '—'}
+                                                        </Typography>
+                                                    </Box>
+                                                </Tooltip>
+                                            </Box>
+                                        </Box>
 
-                                        <StyledTableCell key='3'>
-                                            {(images[row.id] || icons[row.id]) && (
+                                        {/* Center Section - Tools */}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, justifyContent: 'flex-start' }}>
+                                            {/* Tools Icons */}
+                                            {(images[row.id]?.length > 0 || icons[row.id]?.length > 0) && (
                                                 <Box
                                                     sx={{
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        justifyContent: 'start',
+                                                        justifyContent: 'flex-start',
                                                         gap: 1
                                                     }}
                                                 >
+                                                    {/* Show all tools */}
                                                     {[
-                                                        ...(images[row.id] || []).map((img) => ({ type: 'image', src: img })),
+                                                        ...(images[row.id] || []).map((img) => ({
+                                                            type: 'image',
+                                                            src: img,
+                                                            label: 'Tool'
+                                                        })),
                                                         ...(icons[row.id] || []).map((ic) => ({
-                                                            type: 'icon',
+                                                            type: typeof ic.icon === 'string' ? 'image' : 'icon',
                                                             icon: ic.icon,
-                                                            color: ic.color
+                                                            src: ic.icon,
+                                                            color: ic.color,
+                                                            label: ic.name
                                                         }))
                                                     ]
                                                         .slice(0, 5)
-                                                        .map((item, index) =>
-                                                            item.type === 'image' ? (
+                                                        .map((item, index) => (
+                                                            <Tooltip key={index} title={item.label} placement='top'>
                                                                 <Box
-                                                                    key={item.src}
                                                                     sx={{
-                                                                        width: 30,
-                                                                        height: 30,
-                                                                        borderRadius: '50%',
-                                                                        backgroundColor: customization.isDarkMode
-                                                                            ? theme.palette.common.white
-                                                                            : theme.palette.grey[300] + 75
-                                                                    }}
-                                                                >
-                                                                    <img
-                                                                        style={{
-                                                                            width: '100%',
-                                                                            height: '100%',
-                                                                            padding: 5,
-                                                                            objectFit: 'contain'
-                                                                        }}
-                                                                        alt=''
-                                                                        src={item.src}
-                                                                    />
-                                                                </Box>
-                                                            ) : (
-                                                                <div
-                                                                    key={index}
-                                                                    style={{
-                                                                        width: 30,
-                                                                        height: 30,
+                                                                        width: 32,
+                                                                        height: 32,
                                                                         display: 'flex',
                                                                         alignItems: 'center',
                                                                         justifyContent: 'center',
-                                                                        borderRadius: '50%'
+                                                                        borderRadius: '20%',
+                                                                        backgroundColor: 'transparent',
+                                                                        border: '1px solid rgba(255, 255, 255, 0.3)'
                                                                     }}
                                                                 >
-                                                                    {isImagePath(item.icon) ? (
-                                                                        <img
-                                                                            style={{
-                                                                                width: 25,
-                                                                                height: 25,
+                                                                    {item.type === 'image' ? (
+                                                                        <Box
+                                                                            component='img'
+                                                                            src={item.src}
+                                                                            alt={item.label}
+                                                                            sx={{
+                                                                                width: '80%',
+                                                                                height: '80%',
                                                                                 objectFit: 'contain'
                                                                             }}
-                                                                            alt=''
+                                                                        />
+                                                                    ) : isImagePath(item.icon) ? (
+                                                                        <Box
+                                                                            component='img'
                                                                             src={item.icon}
+                                                                            alt={item.label}
+                                                                            sx={{
+                                                                                width: '80%',
+                                                                                height: '80%',
+                                                                                objectFit: 'contain'
+                                                                            }}
                                                                         />
                                                                     ) : (
-                                                                        <item.icon size={25} color={item.color} />
+                                                                        <Box
+                                                                            component={item.icon}
+                                                                            sx={{ fontSize: 16, color: item.color }}
+                                                                        />
                                                                     )}
-                                                                </div>
-                                                            )
-                                                        )}
+                                                                </Box>
+                                                            </Tooltip>
+                                                        ))}
                                                     {(images[row.id]?.length || 0) + (icons[row.id]?.length || 0) > 5 && (
                                                         <Typography
                                                             sx={{
                                                                 alignItems: 'center',
                                                                 display: 'flex',
                                                                 fontSize: '.9rem',
-                                                                fontWeight: 200
+                                                                fontWeight: 200,
+                                                                color: isDark ? 'white' : 'black',
+                                                                ml: 1
                                                             }}
                                                         >
                                                             + {(images[row.id]?.length || 0) + (icons[row.id]?.length || 0) - 5} More
@@ -362,33 +395,40 @@ export const FlowListTable = ({
                                                     )}
                                                 </Box>
                                             )}
-                                        </StyledTableCell>
-                                        <StyledTableCell key='4'>
-                                            {moment(row.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
-                                        </StyledTableCell>
-                                        <StyledTableCell key='5'>
-                                            <Stack
-                                                direction={{ xs: 'column', sm: 'row' }}
-                                                spacing={1}
-                                                justifyContent='center'
-                                                alignItems='center'
-                                            >
-                                                <FlowListMenu
-                                                    isAgentCanvas={isAgentCanvas}
-                                                    isAgentflowV2={isAgentflowV2}
-                                                    chatflow={row}
-                                                    setError={setError}
-                                                    updateFlowsApi={updateFlowsApi}
-                                                />
-                                            </Stack>
-                                        </StyledTableCell>
-                                    </StyledTableRow>
-                                ))}
-                            </>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                                        </Box>
+
+                                        {/* Right Section - Actions */}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                            <FlowListMenu
+                                                isAgentCanvas={isAgentCanvas}
+                                                isAgentflowV2={isAgentflowV2}
+                                                chatflow={row}
+                                                setError={setError}
+                                                updateFlowsApi={updateFlowsApi}
+                                            />
+                                        </Box>
+                                    </Box>
+
+                                    {/* Soft Glow Effect */}
+                                    <Box
+                                        className='glow-effect'
+                                        sx={{
+                                            position: 'absolute',
+                                            inset: 0,
+                                            borderRadius: '12px',
+                                            background: 'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease-in-out',
+                                            filter: 'blur(8px)',
+                                            zIndex: -1
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                        ))}
+                    </>
+                )}
+            </Box>
 
             {/* Load more indicator for infinite scroll */}
             {isLoadingMore && renderLoadMoreIndicator()}

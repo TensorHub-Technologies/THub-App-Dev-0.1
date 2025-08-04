@@ -1,319 +1,280 @@
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import { useState } from 'react'
 
 // material-ui
-import { styled } from '@mui/material/styles'
+import { Box, Typography, Tooltip } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 // project imports
-import MainCard from '@/ui-component/cards/MainCard'
 import SkeletonChatflowCard from '@/ui-component/cards/Skeleton/ChatflowCard'
 import FlowListMenu from '@/ui-component/button/FlowListMenu'
-import { Typography, Tooltip, Box } from '@mui/material'
-import Dark from '@/assets/images/THub_icon_colorful_logo.png'
-import Light from '@/assets/images/THub_icon_colorful_logo.png'
+import thuicon from '@/assets/images/THub_icon_colorful_logo.png'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
 }
 
-const CardWrapper = styled(MainCard)(({ theme, customization }) => ({
-    position: 'relative',
-    borderRadius: '12px',
-    backdropFilter: 'blur(16px)',
-    background: 'transparent',
-    border: '1px solid',
-    borderColor: customization?.isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    height: '300px',
-    transition: 'all 0.3s ease',
-    cursor: 'pointer',
-    overflow: 'hidden',
-    width: '100%',
-    maxWidth: '80rem',
-    '&:hover': {
-        background: 'linear-gradient(to right, rgba(60, 91, 164, 0.3), rgba(226, 42, 144, 0.3))',
-        backdropFilter: 'blur(16px)',
-        transform: 'translateY(-2px)',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
-        borderColor: customization?.isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.4)'
-    }
-}))
-
-// ===========================|| REDESIGNED CARD ||=========================== //
+// ===========================|| ITEM CARD ||=========================== //
 
 const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons, isAgentCanvas, isAgentflowV2 }) => {
     const customization = useCustomization()
-    const [isHovered, setIsHovered] = useState(false)
-
-    const [isDragging, setIsDragging] = useState(false)
-    const handleStart = () => {
-        setIsDragging(false)
-    }
-    const handleDrag = () => {
-        setIsDragging(true)
-    }
-    const handleStop = () => {
-        setTimeout(() => setIsDragging(false), 0)
-    }
+    const theme = useTheme()
+    const isDark = customization.isDarkMode
 
     return (
-        <>
+        <Box
+            onClick={onClick}
+            sx={{
+                position: 'relative',
+                // maxWidth: '26rem',
+                mx: 'auto',
+                cursor: 'pointer'
+            }}
+        >
             {isLoading ? (
                 <SkeletonChatflowCard />
             ) : (
-                <CardWrapper
-                    border={false}
-                    content={false}
-                    customization={customization}
-                    onClick={() => {
-                        if (!isDragging) {
-                            onClick()
+                <Box
+                    sx={{
+                        position: 'relative',
+                        transform: 'translateY(0)',
+                        transition: 'all 0.5s ease-in-out',
+                        animation: 'float 6s ease-in-out infinite',
+                        '@keyframes float': {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        '&:hover': {
+                            transform: 'translateY(-5px)'
                         }
                     }}
                 >
-                    <div
-                        style={{
-                            height: '100%',
+                    {/* Main Glass Card */}
+                    <Box
+                        sx={{
+                            position: 'relative',
+                            border: '1px solid',
+                            borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                            borderRadius: '12px',
+                            backdropFilter: 'blur(16px)',
+                            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                            height: '18rem',
+                            width: '25rem',
+                            transition: 'all 0.3s ease-in-out',
+                            overflow: 'hidden',
                             display: 'flex',
                             flexDirection: 'column',
-                            padding: '24px',
-                            position: 'relative'
+                            '&:hover': {
+                                '& .glow-effect': {
+                                    opacity: 1
+                                }
+                            }
                         }}
                     >
-                        {/* Header Section with Icon and Title - Fixed Height */}
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'flex-start',
-                                justifyContent: 'center',
-                                marginBottom: '16px',
-                                gap: '12px',
-                                height: '60px',
-                                minHeight: '60px'
-                            }}
-                        >
-                            {/* Icon */}
-                            <div
-                            // style={{
-                            //     width: '26px',
-                            //     height: '26px',
-                            //     borderRadius: '6px',
-                            //     background: data.iconSrc
-                            //         ? 'transparent'
-                            //         : (data.color || 'linear-gradient(135deg, #3C5BA4 0%, #E22A90 100%)'),
-                            //     flexShrink: 0,
-                            //     display: 'flex',
-                            //     alignItems: 'center',
-                            //     justifyContent: 'center'
-                            // }}
+                        {/* Content */}
+                        <Box sx={{ position: 'relative', zIndex: 10, px: 3, pt: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                            {/* Header with Icon and Title */}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    mb: 2,
+                                    minHeight: '3rem' // Reserve space for up to 2 lines of title
+                                }}
                             >
-                                {data.iconSrc ? (
-                                    <img
-                                        style={{
-                                            width: '18px',
-                                            height: '18px',
-                                            borderRadius: '8px',
-                                            objectFit: 'contain'
+                                {/* Icon */}
+                                {data.iconSrc && (
+                                    <Box
+                                        sx={{
+                                            width: 40,
+                                            height: 40,
+                                            mr: 2,
+                                            borderRadius: '20%',
+                                            backgroundImage: `url(${data.iconSrc})`,
+                                            backgroundSize: 'contain',
+                                            backgroundRepeat: 'no-repeat',
+                                            backgroundPosition: 'center',
+                                            flexShrink: 0
                                         }}
-                                        src={data.iconSrc}
-                                        alt='Icon'
                                     />
-                                ) : (
+                                )}
+                                {!data.iconSrc && data.color && (
+                                    <Box
+                                        sx={{
+                                            width: 40,
+                                            height: 40,
+                                            mr: 2,
+                                            borderRadius: '50%',
+                                            backgroundColor: data.color,
+                                            flexShrink: 0
+                                        }}
+                                    />
+                                )}
+
+                                {/* Title with THub Icon */}
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, flex: 1 }}>
                                     <img
                                         style={{
                                             width: '24px',
                                             height: '24px',
-                                            marginTop: '1px'
+                                            marginTop: '1px',
+                                            flexShrink: 0
                                         }}
-                                        src={customization.isDarkMode ? Dark : Light}
-                                        alt='Default Icon'
+                                        src={thuicon}
+                                        alt='THub Icon'
                                     />
-                                )}
-                            </div>
-
-                            {/* Title - Fixed Height Container */}
-                            <div style={{ flex: 1, minWidth: 0, height: '100%', display: 'flex', alignItems: 'flex-start' }}>
-                                <Typography
-                                    variant='h6'
-                                    sx={{
-                                        fontSize: '1.25rem',
-                                        fontWeight: 700,
-                                        lineHeight: '1.4',
-                                        color: customization.isDarkMode ? '#ffffff' : 'black',
-                                        fontFamily: '"Cambria Math", "Cambria", serif',
-                                        wordBreak: 'break-word',
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: 2,
-                                        WebkitBoxOrient: 'vertical',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        height: 'fit-content',
-                                        maxHeight: '56px' // Allow for 2 lines
-                                    }}
-                                >
-                                    {data.templateName || data.name}
-                                </Typography>
-                            </div>
-                        </div>
-
-                        {/* Description - Fixed Height */}
-                        <div
-                            style={{
-                                marginBottom: '20px',
-                                height: '60px', // Fixed height for description
-                                minHeight: '60px'
-                            }}
-                        >
-                            {data.description && (
-                                <Tooltip title={data.description} placement='bottom'>
                                     <Typography
+                                        variant='h6'
                                         sx={{
-                                            fontSize: '1rem',
-                                            fontWeight: 400,
-                                            color: customization.isDarkMode ? 'white' : 'black',
-                                            fontFamily: '"Cambria Math", "Cambria", serif',
+                                            fontFamily: 'Cambria Math',
+                                            fontWeight: 'bold',
+                                            color: isDark ? 'white' : 'black',
+                                            fontSize: '1.1rem',
                                             display: '-webkit-box',
                                             WebkitLineClamp: 2,
                                             WebkitBoxOrient: 'vertical',
                                             overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            height: '60px',
-                                            lineHeight: '1.7',
-                                            cursor: 'pointer'
+                                            lineHeight: '1.5rem',
+                                            flex: 1
                                         }}
                                     >
-                                        {data.description}
+                                        {data.templateName || data.name}
                                     </Typography>
-                                </Tooltip>
-                            )}
-                        </div>
+                                </Box>
+                            </Box>
 
-                        {/* Tools Used Section - Fixed Height */}
-                        <div
-                            style={{
-                                flex: 1,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                minHeight: '96px' // Fixed minimum height for tools section
-                            }}
-                        >
-                            {(images?.length > 0 || icons?.length > 0) && (
-                                <>
-                                    <Typography
-                                        sx={{
-                                            fontSize: '0.875rem',
-                                            fontWeight: 700,
-                                            lineHeight: '1.25rem',
-                                            color: customization.isDarkMode ? 'white' : 'black',
-                                            fontFamily: 'Cambria Math',
-                                            marginBottom: '12px',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.5px',
-                                            height: '20px' // Fixed height for tools label
-                                        }}
-                                    >
-                                        TOOLS
-                                    </Typography>
+                            {/* Description - Fixed height section */}
+                            <Box sx={{ minHeight: '3rem', mb: 2 }}>
+                                {data.description && (
+                                    <Tooltip title={data.description} placement='top' arrow>
+                                        <Typography
+                                            sx={{
+                                                fontFamily: 'Cambria Math',
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
+                                                fontWeight: 'normal',
+                                                color: isDark ? 'white' : 'black',
+                                                cursor: 'pointer',
+                                                lineHeight: '1.5rem'
+                                            }}
+                                        >
+                                            {data.description}
+                                        </Typography>
+                                    </Tooltip>
+                                )}
+                            </Box>
 
+                            {/* Tools Section */}
+                            <Box sx={{ mt: 1, minHeight: '4rem' }}>
+                                <Typography
+                                    variant='subtitle2'
+                                    sx={{
+                                        fontFamily: 'Cambria Math',
+                                        fontWeight: 'bold',
+                                        color: isDark ? 'white' : 'black',
+                                        fontSize: '0.875rem',
+
+                                        letterSpacing: '1px'
+                                    }}
+                                >
+                                    Tools
+                                </Typography>
+
+                                {/* Tools Icons */}
+                                {(images?.length > 0 || icons?.length > 0) && (
                                     <Box
                                         sx={{
                                             display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'flex-start',
+                                            gap: 1,
+                                            marginTop: 1,
                                             flexWrap: 'wrap',
-                                            gap: '8px',
-                                            alignItems: 'flex-start',
-                                            height: '64px', // Fixed height for tools container
-                                            overflow: 'hidden'
+                                            minHeight: '2.5rem' // Reserve space for up to 2 lines of tools
                                         }}
                                     >
-                                        {/* Display tools in pills */}
+                                        {/* Show all tools */}
                                         {[
-                                            ...(images?.slice(0, 8) || []).map((img) => ({
+                                            ...(images || []).map((img) => ({
                                                 type: 'image',
                                                 src: img,
                                                 label: 'Tool'
                                             })),
-                                            ...(icons?.slice(0, Math.max(0, 8 - (images?.length || 0))) || []).map((ic) => ({
-                                                type: ic.icon && typeof ic.icon === 'string' ? 'image' : 'icon',
+                                            ...(icons || []).map((ic) => ({
+                                                type: typeof ic.icon === 'string' ? 'image' : 'icon',
                                                 icon: ic.icon,
                                                 src: ic.icon,
                                                 color: ic.color,
-                                                label: ic.name || 'Tool'
+                                                label: ic.name
                                             }))
                                         ].map((item, index) => (
                                             <Tooltip key={index} title={item.label} placement='top'>
-                                                <div
-                                                    style={{
-                                                        padding: '4px 10px',
-                                                        backgroundColor: customization.isDarkMode
-                                                            ? 'rgba(255, 255, 255, 0.1)'
-                                                            : 'rgba(255, 255, 255, 0.2)',
-                                                        borderRadius: '8px',
-                                                        border: `1px solid ${
-                                                            customization.isDarkMode
-                                                                ? 'rgba(255, 255, 255, 0.2)'
-                                                                : 'rgba(255, 255, 255, 0.3)'
-                                                        }`,
-                                                        backdropFilter: 'blur(8px)',
+                                                <Box
+                                                    sx={{
+                                                        width: 32,
+                                                        height: 32,
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        gap: '6px',
-                                                        height: '28px',
-                                                        cursor: 'pointer'
+                                                        justifyContent: 'center',
+                                                        borderRadius: '20%',
+                                                        backgroundColor: 'transparent',
+                                                        border: '1px solid rgba(255, 255, 255, 0.3)'
                                                     }}
                                                 >
                                                     {item.type === 'image' ? (
-                                                        <img
+                                                        <Box
+                                                            component='img'
                                                             src={item.src}
                                                             alt={item.label}
-                                                            style={{
-                                                                width: '14px',
-                                                                height: '14px',
-                                                                objectFit: 'contain',
-                                                                borderRadius: '2px'
+                                                            sx={{
+                                                                width: '80%',
+                                                                height: '80%',
+                                                                objectFit: 'contain'
                                                             }}
                                                         />
-                                                    ) : item.icon ? (
-                                                        <item.icon
-                                                            size={14}
-                                                            color={item.color || (customization.isDarkMode ? '#ffffff' : '#1e293b')}
-                                                        />
-                                                    ) : null}
-                                                    <Typography
-                                                        sx={{
-                                                            fontSize: '11px',
-                                                            fontWeight: 500,
-                                                            color: customization.isDarkMode
-                                                                ? 'rgba(255, 255, 255, 0.9)'
-                                                                : 'rgba(30, 41, 59, 0.8)',
-                                                            fontFamily: '"Cambria Math", "Cambria", serif',
-                                                            whiteSpace: 'nowrap'
-                                                        }}
-                                                    >
-                                                        Tool
-                                                    </Typography>
-                                                </div>
+                                                    ) : (
+                                                        <Box component={item.icon} sx={{ fontSize: 16, color: item.color }} />
+                                                    )}
+                                                </Box>
                                             </Tooltip>
                                         ))}
                                     </Box>
-                                </>
-                            )}
-                        </div>
-                    </div>
+                                )}
+                            </Box>
+                        </Box>
 
-                    {/* Menu for non-template items */}
+                        {/* Soft Glow Effect */}
+                        <Box
+                            className='glow-effect'
+                            sx={{
+                                position: 'absolute',
+                                inset: 0,
+                                borderRadius: '12px',
+                                background: 'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                opacity: 0,
+                                transition: 'opacity 0.3s ease-in-out',
+                                filter: 'blur(8px)',
+                                zIndex: -1
+                            }}
+                        />
+                    </Box>
+
+                    {/* Flow Menu (if not a template) */}
                     {!data.templateName && (
-                        <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
+                        <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
                             <FlowListMenu
                                 chatflow={chatflow || data}
                                 updateFlowsApi={updateFlowsApi}
                                 isAgentCanvas={isAgentCanvas}
                                 isAgentflowV2={isAgentflowV2}
                             />
-                        </div>
+                        </Box>
                     )}
-                </CardWrapper>
+                </Box>
             )}
-        </>
+        </Box>
     )
 }
 

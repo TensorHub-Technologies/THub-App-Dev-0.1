@@ -44,7 +44,7 @@ const MainCard = forwardRef(function MainCard(
                 backdropFilter: 'blur(24px)',
                 background: customization.isDarkMode
                     ? 'radial-gradient(ellipse 150% 100% at center, rgba(46, 66, 112, 0.87) 0%, rgba(46, 66, 112, 0.4) 60%, rgba(0, 0, 0, 1) 100%)'
-                    : 'rgba(255, 255, 255, 0.5)', // or your light mode background
+                    : 'rgba(255, 255, 255, 0.5)',
                 ':hover': {
                     boxShadow: boxShadow ? shadow || '0 2px 14px 0 rgb(32 40 45 / 8%)' : 'inherit'
                 },
