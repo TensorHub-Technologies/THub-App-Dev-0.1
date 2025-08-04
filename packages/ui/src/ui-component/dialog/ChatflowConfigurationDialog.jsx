@@ -144,7 +144,7 @@ const ChatflowConfigurationDialog = ({ show, isAgentCanvas, dialogProps, onCance
                         {item.id === 'speechToText' ? <SpeechToText dialogProps={dialogProps} /> : null}
                         {item.id === 'scheduleEmail' ? <ScheduleSettings dialogProps={dialogProps} /> : null}
                         {item.id === 'chatFeedback' ? <ChatFeedback dialogProps={dialogProps} /> : null}
-                        {item.id === 'analyseChatflow' ? <AnalyseFlow dialogProps={dialogProps} /> : null}
+                        {item.id === 'analyseWorkflow' ? <AnalyseFlow dialogProps={dialogProps} /> : null}
                         {item.id === 'leads' ? <Leads dialogProps={dialogProps} /> : null}
                         {item.id === 'fileUpload' ? <FileUpload dialogProps={dialogProps} /> : null}
                         {item.id === 'postProcessing' ? <PostProcessing dialogProps={dialogProps} /> : null}
