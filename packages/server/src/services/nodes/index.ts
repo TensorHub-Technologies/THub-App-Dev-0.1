@@ -2,7 +2,7 @@ import { cloneDeep, omit } from 'lodash'
 import { StatusCodes } from 'http-status-codes'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { INodeData, MODE } from '../../Interface'
-import { INodeOptionsValue, ICommonObject } from 'thub-components'
+import { INodeOptionsValue } from 'thub-components'
 import { databaseEntities } from '../../utils'
 import logger from '../../utils/logger'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
@@ -88,7 +88,9 @@ const getSingleNodeIcon = async (nodeName: string) => {
     }
 }
 
-const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any, tenantId?: string): Promise<any> => {
+const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any, tenantId: string): Promise<any> => {
+    console.log(tenantId, 'tenantId')
+
     try {
         const appServer = getRunningExpressApp()
         const nodeData: INodeData = requestBody
@@ -97,20 +99,14 @@ const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any, ten
                 const nodeInstance = appServer.nodesPool.componentNodes[nodeName]
                 const methodName = nodeData.loadMethod || ''
 
-                const paramsForMethod: ICommonObject = {
+                const dbResponse: INodeOptionsValue[] = await nodeInstance.loadMethods![methodName]!.call(nodeInstance, nodeData, {
                     appDataSource: appServer.AppDataSource,
-                    databaseEntities: databaseEntities
-                }
-
-                if (tenantId) {
-                    paramsForMethod['tenantId'] = tenantId
-                }
-
-                const dbResponse: INodeOptionsValue[] = await nodeInstance.loadMethods![methodName]!.call(
-                    nodeInstance,
-                    nodeData,
-                    paramsForMethod
-                )
+                    databaseEntities: databaseEntities,
+                    componentNodes: appServer.nodesPool.componentNodes,
+                    previousNodes: requestBody.previousNodes,
+                    currentNode: requestBody.currentNode,
+                    tenantId: tenantId
+                })
 
                 return dbResponse
             } catch (error) {
