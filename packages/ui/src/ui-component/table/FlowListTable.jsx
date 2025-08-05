@@ -344,8 +344,7 @@ export const FlowListTable = ({
                                                                         alignItems: 'center',
                                                                         justifyContent: 'center',
                                                                         borderRadius: '20%',
-                                                                        backgroundColor: 'transparent',
-                                                                        border: '1px solid rgba(255, 255, 255, 0.3)'
+                                                                        backgroundColor: 'transparent'
                                                                     }}
                                                                 >
                                                                     {item.type === 'image' ? (

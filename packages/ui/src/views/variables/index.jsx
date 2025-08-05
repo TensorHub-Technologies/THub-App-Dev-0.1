@@ -16,8 +16,7 @@ import {
     InputAdornment,
     Typography,
     Tooltip,
-    Skeleton,
-    useTheme
+    Skeleton
 } from '@mui/material'
 
 // project imports
@@ -48,7 +47,7 @@ import { IconSearch } from '@tabler/icons-react'
 // ==============================|| Variables ||============================== //
 
 const Variables = () => {
-    const theme = useTheme()
+    // const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const isDark = customization.isDarkMode
 
@@ -172,7 +171,7 @@ const Variables = () => {
 
     return (
         <>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
+            <MainCard>
                 <Stack flexDirection='row'>
                     <Box sx={{ flexGrow: 1 }}>
                         <Toolbar

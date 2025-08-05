@@ -202,7 +202,7 @@ const APIKey = () => {
 
     return (
         <>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
+            <MainCard>
                 {error ? (
                     <ErrorBoundary error={error} />
                 ) : (

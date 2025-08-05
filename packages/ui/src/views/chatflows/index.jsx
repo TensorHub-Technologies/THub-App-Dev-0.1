@@ -267,11 +267,7 @@ const Chatflows = () => {
     )
 
     return (
-        <MainCard
-            sx={{
-                backgroundColor: 'radial-gradient(circle,rgba(46, 66, 112, 0.87) 2%, rgba(0, 0, 0, 1) 59%)'
-            }}
-        >
+        <MainCard>
             {error ? (
                 <ErrorBoundary error={error} />
             ) : (

@@ -20,6 +20,8 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
     const theme = useTheme()
     const isDark = customization.isDarkMode
 
+    console.log(data, 'data')
+
     return (
         <Box
             onClick={onClick}
@@ -56,7 +58,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                             borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
                             borderRadius: '12px',
                             backdropFilter: 'blur(16px)',
-                            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
                             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                             height: '18rem',
                             width: '25rem',
@@ -94,18 +96,6 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                             backgroundSize: 'contain',
                                             backgroundRepeat: 'no-repeat',
                                             backgroundPosition: 'center',
-                                            flexShrink: 0
-                                        }}
-                                    />
-                                )}
-                                {!data.iconSrc && data.color && (
-                                    <Box
-                                        sx={{
-                                            width: 40,
-                                            height: 40,
-                                            mr: 2,
-                                            borderRadius: '50%',
-                                            backgroundColor: data.color,
                                             flexShrink: 0
                                         }}
                                     />
@@ -219,8 +209,7 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
                                                         borderRadius: '20%',
-                                                        backgroundColor: 'transparent',
-                                                        border: '1px solid rgba(255, 255, 255, 0.3)'
+                                                        backgroundColor: 'transparent'
                                                     }}
                                                 >
                                                     {item.type === 'image' ? (

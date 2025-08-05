@@ -578,10 +578,17 @@ const Credentials = () => {
                                                                     color='primary'
                                                                     onClick={() => edit(credential)}
                                                                     sx={{
-                                                                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                                                                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                                        backgroundColor: customization.isDarkMode
+                                                                            ? 'rgba(226, 42, 144, 0.1)'
+                                                                            : 'rgba(60, 91, 164, 0.1)',
                                                                         '&:hover': {
-                                                                            backgroundColor: 'rgba(25, 118, 210, 0.2)'
-                                                                        }
+                                                                            backgroundColor: customization.isDarkMode
+                                                                                ? 'rgba(226, 42, 144, 0.2)'
+                                                                                : 'rgba(60, 91, 164, 0.2)'
+                                                                        },
+                                                                        width: 40,
+                                                                        height: 40
                                                                     }}
                                                                 >
                                                                     <IconEdit size={18} />
