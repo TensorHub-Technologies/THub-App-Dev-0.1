@@ -4,23 +4,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 import moment from 'moment'
 
 // material-ui
-import { styled } from '@mui/material/styles'
-import { tableCellClasses } from '@mui/material/TableCell'
-import {
-    Button,
-    Box,
-    Skeleton,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    IconButton,
-    useTheme
-} from '@mui/material'
+import { Button, Box, Skeleton, Stack, IconButton, useTheme, Typography, Tooltip } from '@mui/material'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
@@ -50,26 +34,6 @@ import { SET_COMPONENT_CREDENTIALS } from '@/store/actions'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    borderColor: theme.palette.grey[900] + 25,
-    padding: '6px 16px',
-
-    [`&.${tableCellClasses.head}`]: {
-        color: theme.palette.grey[900]
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        height: 64
-    }
-}))
-
-const StyledTableRow = styled(TableRow)(() => ({
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0
-    }
-}))
-
 // ==============================|| Credentials ||============================== //
 
 const Credentials = () => {
@@ -93,6 +57,7 @@ const Credentials = () => {
     const { confirm } = useConfirm()
 
     const userData = useSelector((state) => state.user.userData)
+    const isDark = customization.isDarkMode
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
@@ -181,7 +146,6 @@ const Credentials = () => {
                         )
                     }
                 })
-                onCancel()
             }
         }
     }
@@ -226,6 +190,8 @@ const Credentials = () => {
         }
     }, [getAllComponentsCredentialsApi.data, dispatch])
 
+    const filteredCredentials = credentials ? credentials.filter(filterCredentials) : []
+
     return (
         <>
             <MainCard>
@@ -249,6 +215,7 @@ const Credentials = () => {
                                 Add Credential
                             </StyledButton>
                         </ViewHeader>
+
                         {!isLoading && credentials.length <= 0 ? (
                             <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                                 <Box sx={{ p: 2, height: 'auto' }}>
@@ -261,134 +228,403 @@ const Credentials = () => {
                                 <div>No Credentials Yet</div>
                             </Stack>
                         ) : (
-                            <TableContainer
-                                sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}
-                                component={Paper}
-                            >
-                                <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-                                    <TableHead
-                                        sx={{
-                                            backgroundColor: customization.isDarkMode
-                                                ? theme.palette.common.black
-                                                : theme.palette.grey[100],
-                                            height: 56
-                                        }}
-                                    >
-                                        <TableRow>
-                                            <StyledTableCell>Name</StyledTableCell>
-                                            <StyledTableCell>Last Updated</StyledTableCell>
-                                            <StyledTableCell>Created</StyledTableCell>
-                                            <StyledTableCell> </StyledTableCell>
-                                            <StyledTableCell> </StyledTableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {isLoading ? (
-                                            <>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                            </>
-                                        ) : (
-                                            <>
-                                                {credentials.filter(filterCredentials).map((credential, index) => (
-                                                    <StyledTableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                        <StyledTableCell scope='row'>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                {isLoading ? (
+                                    // Loading skeletons
+                                    <>
+                                        {[...Array(6)].map((_, index) => (
+                                            <Box
+                                                key={index}
+                                                sx={{
+                                                    position: 'relative',
+                                                    transform: 'translateY(0)',
+                                                    transition: 'all 0.5s ease-in-out'
+                                                }}
+                                            >
+                                                {/* Main Glass Card - matching the actual card structure */}
+                                                <Box
+                                                    sx={{
+                                                        position: 'relative',
+                                                        border: '1px solid',
+                                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                                                        borderRadius: '12px',
+                                                        backdropFilter: 'blur(16px)',
+                                                        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                                                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                                                        height: '6rem',
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                        display: 'flex',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    {/* Content - matching the actual content structure */}
+                                                    <Box
+                                                        sx={{
+                                                            position: 'relative',
+                                                            zIndex: 10,
+                                                            px: 3,
+                                                            py: 2,
+                                                            flex: 1,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'space-between'
+                                                        }}
+                                                    >
+                                                        {/* Left Section - Icon and Name */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
+                                                            <Skeleton
+                                                                variant='circular'
+                                                                width={40}
+                                                                height={40}
+                                                                sx={{
+                                                                    flexShrink: 0,
+                                                                    backgroundColor: isDark
+                                                                        ? 'rgba(255, 255, 255, 0.1)'
+                                                                        : 'rgba(0, 0, 0, 0.1)'
+                                                                }}
+                                                            />
+                                                            <Skeleton
+                                                                variant='text'
+                                                                width={180}
+                                                                height={26}
+                                                                sx={{
+                                                                    backgroundColor: isDark
+                                                                        ? 'rgba(255, 255, 255, 0.1)'
+                                                                        : 'rgba(0, 0, 0, 0.1)'
+                                                                }}
+                                                            />
+                                                        </Box>
+
+                                                        {/* Center Section - Last Updated */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                                gap: 0.5,
+                                                                flex: 1,
+                                                                alignItems: 'center'
+                                                            }}
+                                                        >
+                                                            <Skeleton
+                                                                variant='text'
+                                                                width={60}
+                                                                height={16}
+                                                                sx={{
+                                                                    backgroundColor: isDark
+                                                                        ? 'rgba(255, 255, 255, 0.1)'
+                                                                        : 'rgba(0, 0, 0, 0.1)'
+                                                                }}
+                                                            />
+                                                            <Skeleton
+                                                                variant='text'
+                                                                width={120}
+                                                                height={20}
+                                                                sx={{
+                                                                    backgroundColor: isDark
+                                                                        ? 'rgba(255, 255, 255, 0.1)'
+                                                                        : 'rgba(0, 0, 0, 0.1)'
+                                                                }}
+                                                            />
+                                                        </Box>
+
+                                                        {/* Center Right Section - Created */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                                gap: 0.5,
+                                                                flex: 1,
+                                                                alignItems: 'center'
+                                                            }}
+                                                        >
+                                                            <Skeleton
+                                                                variant='text'
+                                                                width={50}
+                                                                height={16}
+                                                                sx={{
+                                                                    backgroundColor: isDark
+                                                                        ? 'rgba(255, 255, 255, 0.1)'
+                                                                        : 'rgba(0, 0, 0, 0.1)'
+                                                                }}
+                                                            />
+                                                            <Skeleton
+                                                                variant='text'
+                                                                width={120}
+                                                                height={20}
+                                                                sx={{
+                                                                    backgroundColor: isDark
+                                                                        ? 'rgba(255, 255, 255, 0.1)'
+                                                                        : 'rgba(0, 0, 0, 0.1)'
+                                                                }}
+                                                            />
+                                                        </Box>
+
+                                                        {/* Right Section - Action Buttons */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 1,
+                                                                justifyContent: 'flex-end'
+                                                            }}
+                                                        >
+                                                            <Skeleton
+                                                                variant='circular'
+                                                                width={24}
+                                                                height={24}
+                                                                sx={{
+                                                                    backgroundColor: isDark
+                                                                        ? 'rgba(255, 255, 255, 0.1)'
+                                                                        : 'rgba(0, 0, 0, 0.1)'
+                                                                }}
+                                                            />
+                                                            <Skeleton
+                                                                variant='circular'
+                                                                width={24}
+                                                                height={24}
+                                                                sx={{
+                                                                    backgroundColor: isDark
+                                                                        ? 'rgba(255, 255, 255, 0.1)'
+                                                                        : 'rgba(0, 0, 0, 0.1)'
+                                                                }}
+                                                            />
+                                                        </Box>
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+                                        ))}
+                                    </>
+                                ) : (
+                                    // Actual data
+                                    <>
+                                        {filteredCredentials.map((credential, index) => (
+                                            <Box
+                                                key={credential.id}
+                                                sx={{
+                                                    position: 'relative',
+                                                    transform: 'translateY(0)',
+                                                    transition: 'all 0.5s ease-in-out',
+                                                    animation: 'float 6s ease-in-out infinite',
+                                                    animationDelay: `${index * 0.1}s`,
+                                                    '@keyframes float': {
+                                                        '0%, 100%': { transform: 'translateY(0px)' },
+                                                        '50%': { transform: 'translateY(-5px)' }
+                                                    },
+                                                    '&:hover': {
+                                                        transform: 'translateY(-3px)'
+                                                    }
+                                                }}
+                                            >
+                                                {/* Main Glass Card */}
+                                                <Box
+                                                    sx={{
+                                                        position: 'relative',
+                                                        border: '1px solid',
+                                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                                                        borderRadius: '12px',
+                                                        backdropFilter: 'blur(16px)',
+                                                        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                                                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                                                        height: '6rem',
+                                                        width: '100%',
+                                                        transition: 'all 0.3s ease-in-out',
+                                                        overflow: 'hidden',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            '& .glow-effect': {
+                                                                opacity: 1
+                                                            }
+                                                        }
+                                                    }}
+                                                >
+                                                    {/* Content */}
+                                                    <Box
+                                                        sx={{
+                                                            position: 'relative',
+                                                            zIndex: 10,
+                                                            px: 3,
+                                                            py: 2,
+                                                            flex: 1,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'space-between'
+                                                        }}
+                                                    >
+                                                        {/* Left Section - Credential Icon and Name */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
                                                             <Box
                                                                 sx={{
+                                                                    width: 40,
+                                                                    height: 40,
+                                                                    borderRadius: '50%',
+                                                                    backgroundColor: isDark
+                                                                        ? theme.palette.common.white
+                                                                        : theme.palette.grey[300] + 75,
                                                                     display: 'flex',
-                                                                    flexDirection: 'row',
                                                                     alignItems: 'center',
-                                                                    gap: 1
+                                                                    justifyContent: 'center',
+                                                                    flexShrink: 0
                                                                 }}
                                                             >
-                                                                <Box
+                                                                <img
+                                                                    style={{
+                                                                        width: '80%',
+                                                                        height: '80%',
+                                                                        objectFit: 'contain'
+                                                                    }}
+                                                                    alt={credential.credentialName}
+                                                                    src={`${baseURL}/api/v1/components-credentials-icon/${credential.credentialName}`}
+                                                                    onError={(e) => {
+                                                                        e.target.onerror = null
+                                                                        e.target.src = keySVG
+                                                                    }}
+                                                                />
+                                                            </Box>
+                                                            <Typography
+                                                                variant='h6'
+                                                                sx={{
+                                                                    fontFamily: 'Cambria Math',
+                                                                    fontWeight: 'bold',
+                                                                    color: isDark ? 'white' : 'black',
+                                                                    fontSize: '1.1rem',
+                                                                    lineHeight: 1.2
+                                                                }}
+                                                            >
+                                                                {credential.name}
+                                                            </Typography>
+                                                        </Box>
+
+                                                        {/* Center Section - Last Updated */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                                gap: 0.5,
+                                                                flex: 1,
+                                                                alignItems: 'center'
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                variant='caption'
+                                                                sx={{
+                                                                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                                    fontSize: '0.75rem',
+                                                                    fontWeight: 500,
+                                                                    textTransform: 'uppercase',
+                                                                    letterSpacing: 0.5
+                                                                }}
+                                                            >
+                                                                Last Updated
+                                                            </Typography>
+                                                            <Typography
+                                                                variant='body2'
+                                                                sx={{
+                                                                    color: isDark ? 'white' : 'black',
+                                                                    fontSize: '0.875rem',
+                                                                    fontFamily: 'Cambria Math'
+                                                                }}
+                                                            >
+                                                                {moment(credential.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
+                                                            </Typography>
+                                                        </Box>
+
+                                                        {/* Center Right Section - Created */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                                gap: 0.5,
+                                                                flex: 1,
+                                                                alignItems: 'center'
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                variant='caption'
+                                                                sx={{
+                                                                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                                    fontSize: '0.75rem',
+                                                                    fontWeight: 500,
+                                                                    textTransform: 'uppercase',
+                                                                    letterSpacing: 0.5
+                                                                }}
+                                                            >
+                                                                Created
+                                                            </Typography>
+                                                            <Typography
+                                                                variant='body2'
+                                                                sx={{
+                                                                    color: isDark ? 'white' : 'black',
+                                                                    fontSize: '0.875rem',
+                                                                    fontFamily: 'Cambria Math'
+                                                                }}
+                                                            >
+                                                                {moment(credential.createdDate).format('MMMM Do, YYYY HH:mm:ss')}
+                                                            </Typography>
+                                                        </Box>
+
+                                                        {/* Right Section - Action Buttons */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 1,
+                                                                justifyContent: 'flex-end'
+                                                            }}
+                                                        >
+                                                            <Tooltip title='Edit' placement='top'>
+                                                                <IconButton
+                                                                    color='primary'
+                                                                    onClick={() => edit(credential)}
                                                                     sx={{
-                                                                        width: 35,
-                                                                        height: 35,
-                                                                        borderRadius: '50%',
-                                                                        backgroundColor: customization.isDarkMode
-                                                                            ? theme.palette.common.white
-                                                                            : theme.palette.grey[300] + 75
+                                                                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                                                                        '&:hover': {
+                                                                            backgroundColor: 'rgba(25, 118, 210, 0.2)'
+                                                                        }
                                                                     }}
                                                                 >
-                                                                    <img
-                                                                        style={{
-                                                                            width: '100%',
-                                                                            height: '100%',
-                                                                            padding: 5,
-                                                                            objectFit: 'contain'
-                                                                        }}
-                                                                        alt={credential.credentialName}
-                                                                        src={`${baseURL}/api/v1/components-credentials-icon/${credential.credentialName}`}
-                                                                        onError={(e) => {
-                                                                            e.target.onerror = null
-                                                                            e.target.style.padding = '5px'
-                                                                            e.target.src = keySVG
-                                                                        }}
-                                                                    />
-                                                                </Box>
-                                                                {credential.name}
-                                                            </Box>
-                                                        </StyledTableCell>
-                                                        <StyledTableCell>
-                                                            {moment(credential.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
-                                                        </StyledTableCell>
-                                                        <StyledTableCell>
-                                                            {moment(credential.createdDate).format('MMMM Do, YYYY HH:mm:ss')}
-                                                        </StyledTableCell>
-                                                        <StyledTableCell>
-                                                            <IconButton title='Edit' color='primary' onClick={() => edit(credential)}>
-                                                                <IconEdit />
-                                                            </IconButton>
-                                                        </StyledTableCell>
-                                                        <StyledTableCell>
-                                                            <IconButton
-                                                                title='Delete'
-                                                                color='error'
-                                                                onClick={() => deleteCredential(credential)}
-                                                            >
-                                                                <IconTrash />
-                                                            </IconButton>
-                                                        </StyledTableCell>
-                                                    </StyledTableRow>
-                                                ))}
-                                            </>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                                                                    <IconEdit size={18} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                            <Tooltip title='Delete' placement='top'>
+                                                                <IconButton
+                                                                    color='error'
+                                                                    onClick={() => deleteCredential(credential)}
+                                                                    sx={{
+                                                                        backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                                                                        '&:hover': {
+                                                                            backgroundColor: 'rgba(211, 47, 47, 0.2)'
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <IconTrash size={18} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </Box>
+                                                    </Box>
+
+                                                    {/* Soft Glow Effect */}
+                                                    <Box
+                                                        className='glow-effect'
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            inset: 0,
+                                                            borderRadius: '12px',
+                                                            background:
+                                                                'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                                            opacity: 0,
+                                                            transition: 'opacity 0.3s ease-in-out',
+                                                            filter: 'blur(8px)',
+                                                            zIndex: -1
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        ))}
+                                    </>
+                                )}
+                            </Box>
                         )}
                     </Stack>
                 )}
