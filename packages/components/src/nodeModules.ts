@@ -28,11 +28,6 @@ export class NodeModules {
             return
         }
 
-        if (this.importedModules[name]) {
-            console.warn(`Module with name ${name} is already registered.`)
-            return
-        }
-
         this.importedModules[name] = importedModule
         // Log the registration for debugging purposes
         // console.log(`Registered module: ${name}`)

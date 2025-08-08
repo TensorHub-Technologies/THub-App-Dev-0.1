@@ -43,16 +43,6 @@ const storageCredentials = {
 }
 
 // Debug logging (consider removing in production)
-console.log('Private Key received (first 50 chars):', storageCredentials.private_key?.substring(0, 50) + '...')
-console.log('Private Key length:', storageCredentials.private_key ? storageCredentials.private_key.length : 'undefined')
-console.log(
-    'Private Key contains actual newlines:',
-    storageCredentials.private_key ? storageCredentials.private_key.includes('\n') : 'undefined'
-)
-console.log(
-    'Private Key starts with BEGIN:',
-    storageCredentials.private_key ? storageCredentials.private_key.startsWith('-----BEGIN') : 'undefined'
-)
 
 // Validate private key format
 if (!storageCredentials.private_key?.startsWith('-----BEGIN PRIVATE KEY-----')) {
@@ -66,7 +56,6 @@ const storage = new Storage({
 const bucketName = 'thub-files'
 
 export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: string, fileNames: string[]) => {
-    console.log('document uploaded to addBase64FilesToStorage')
     const storageType = getStorageType()
     if (storageType === 's3') {
         const { s3Client, Bucket } = getS3Config()
