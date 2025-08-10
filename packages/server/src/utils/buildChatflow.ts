@@ -15,8 +15,7 @@ import {
     mapExtToInputField,
     getFileFromUpload,
     removeSpecificFileFromUpload,
-    handleEscapeCharacters,
-    NodeModules
+    handleEscapeCharacters
 } from 'thub-components'
 import { StatusCodes } from 'http-status-codes'
 import {
@@ -122,9 +121,8 @@ const initEndingNode = async ({
 
     logger.debug(`[server]: Running ${reactFlowNodeData.label} (${reactFlowNodeData.id})`)
 
-    //const nodeInstanceFilePath = componentNodes[reactFlowNodeData.name].filePath as string
-    const nodeModule = await NodeModules.getNodeModule(reactFlowNodeData.name)
-    //const nodeModule = await import(nodeInstanceFilePath)
+    const nodeInstanceFilePath = componentNodes[reactFlowNodeData.name].filePath as string
+    const nodeModule = await import(nodeInstanceFilePath)
     const nodeInstance = new nodeModule.nodeClass({ sessionId })
 
     return { endingNodeData: reactFlowNodeData, endingNodeInstance: nodeInstance }
