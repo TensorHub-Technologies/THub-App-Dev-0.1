@@ -67,7 +67,7 @@ const getAllAgentFlow2Nodes = async () => {
     const nodes = appServer.nodesPool.componentNodes
     const agentFlow2Nodes = []
     for (const node in nodes) {
-        if (nodes[node].category === 'Agent Pipeline') {
+        if (nodes[node].category === 'Agent Studio') {
             agentFlow2Nodes.push({
                 name: nodes[node].name,
                 label: nodes[node].label,

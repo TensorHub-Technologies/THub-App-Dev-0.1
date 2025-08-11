@@ -1,24 +1,24 @@
 {
-    "description": "A customer support agent that can handoff tasks to different agents based on scenarios",
-    "usecases": ["Customer Support"],
+    "description": "Different ways of agents that can interact with APIs",
+    "usecases": ["Interacting with API"],
     "nodes": [
         {
             "id": "startAgentflow_0",
             "type": "agentFlow",
             "position": {
-                "x": -162.58207424380598,
-                "y": 117.81335679543406
+                "x": 122,
+                "y": 46.5
             },
             "data": {
                 "id": "startAgentflow_0",
                 "label": "Start",
-                "version": 1,
+                "version": 1.1,
                 "name": "startAgentflow",
                 "type": "Start",
-                "color": "#06D6A0",
+                "color": "#7EE787",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -133,7 +133,9 @@
                         "name": "startEphemeralMemory",
                         "type": "boolean",
                         "description": "Start fresh for every execution without past chat history",
-                        "optional": true
+                        "optional": true,
+                        "id": "startAgentflow_0-input-startEphemeralMemory-boolean",
+                        "display": true
                     },
                     {
                         "label": "Flow State",
@@ -152,10 +154,20 @@
                                 "label": "Value",
                                 "name": "value",
                                 "type": "string",
-                                "placeholder": "Bar"
+                                "placeholder": "Bar",
+                                "optional": true
                             }
                         ],
                         "id": "startAgentflow_0-input-startState-array",
+                        "display": true
+                    },
+                    {
+                        "label": "Persist State",
+                        "name": "startPersistState",
+                        "type": "boolean",
+                        "description": "Persist the state in the same session",
+                        "optional": true,
+                        "id": "startAgentflow_0-input-startPersistState-boolean",
                         "display": true
                     }
                 ],
@@ -165,7 +177,9 @@
                     "formTitle": "",
                     "formDescription": "",
                     "formInputTypes": "",
-                    "startState": ""
+                    "startEphemeralMemory": "",
+                    "startState": "",
+                    "startPersistState": ""
                 },
                 "outputAnchors": [
                     {
@@ -177,174 +191,30 @@
                 "outputs": {},
                 "selected": false
             },
-            "width": 101,
-            "height": 65,
-            "selected": false,
+            "width": 103,
+            "height": 66,
             "positionAbsolute": {
-                "x": -162.58207424380598,
-                "y": 117.81335679543406
+                "x": 122,
+                "y": 46.5
             },
-            "dragging": false
-        },
-        {
-            "id": "conditionAgentAgentflow_0",
-            "position": {
-                "x": -11.580228601760105,
-                "y": 99.42548336780041
-            },
-            "data": {
-                "id": "conditionAgentAgentflow_0",
-                "label": "Detect User Intention",
-                "version": 1,
-                "name": "conditionAgentAgentflow",
-                "type": "ConditionAgent",
-                "color": "#B6B6C6",
-                "baseClasses": ["ConditionAgent"],
-                "category": "Agent Studio",
-                "description": "Utilize an agent to split flows based on dynamic conditions",
-                "inputParams": [
-                    {
-                        "label": "Model",
-                        "name": "conditionAgentModel",
-                        "type": "asyncOptions",
-                        "loadMethod": "listModels",
-                        "loadConfig": true,
-                        "id": "conditionAgentAgentflow_0-input-conditionAgentModel-asyncOptions",
-                        "display": true
-                    },
-                    {
-                        "label": "Instructions",
-                        "name": "conditionAgentInstructions",
-                        "type": "string",
-                        "description": "A general instructions of what the condition agent should do",
-                        "rows": 4,
-                        "acceptVariable": true,
-                        "placeholder": "Determine if the user is interested in learning about AI",
-                        "id": "conditionAgentAgentflow_0-input-conditionAgentInstructions-string",
-                        "display": true
-                    },
-                    {
-                        "label": "Input",
-                        "name": "conditionAgentInput",
-                        "type": "string",
-                        "description": "Input to be used for the condition agent",
-                        "rows": 4,
-                        "acceptVariable": true,
-                        "default": "<p><span class=\"variable\" data-type=\"mention\" data-id=\"question\" data-label=\"question\">{{ question }}</span> </p>",
-                        "id": "conditionAgentAgentflow_0-input-conditionAgentInput-string",
-                        "display": true
-                    },
-                    {
-                        "label": "Scenarios",
-                        "name": "conditionAgentScenarios",
-                        "description": "Define the scenarios that will be used as the conditions to split the flow",
-                        "type": "array",
-                        "array": [
-                            {
-                                "label": "Scenario",
-                                "name": "scenario",
-                                "type": "string",
-                                "placeholder": "User is asking for a pizza"
-                            }
-                        ],
-                        "default": [
-                            {
-                                "scenario": "User is asking for refund"
-                            },
-                            {
-                                "scenario": "User is looking for item"
-                            }
-                        ],
-                        "id": "conditionAgentAgentflow_0-input-conditionAgentScenarios-array",
-                        "display": true
-                    }
-                ],
-                "inputAnchors": [],
-                "inputs": {
-                    "conditionAgentModel": "chatOpenAI",
-                    "conditionAgentInstructions": "<p>You are a customer support agent for ACME Inc.</p><p>Follow the following routine with the user:</p><p>1. First, greet the user and see how you can help the user</p><p>2. If user is looking for items, handoff to the Sales Agent</p><p>3. If user is looking for refund, handoff to Refund Agent</p><p>4. If user is asking general query, be helpful and answer the query</p><p>Note: Transfers between agents are handled seamlessly in the background; do not mention or draw attention to these transfers in your conversation with the user</p>",
-                    "conditionAgentInput": "<p><span class=\"variable\" data-type=\"mention\" data-id=\"question\" data-label=\"question\">{{ question }}</span> </p>",
-                    "conditionAgentScenarios": [
-                        {
-                            "scenario": "User is asking for refund"
-                        },
-                        {
-                            "scenario": "User is looking for item"
-                        },
-                        {
-                            "scenario": "User is chatting casually or asking general question"
-                        }
-                    ],
-                    "conditionAgentModelConfig": {
-                        "cache": "",
-                        "modelName": "gpt-4o-mini",
-                        "temperature": 0.9,
-                        "streaming": true,
-                        "maxTokens": "",
-                        "topP": "",
-                        "frequencyPenalty": "",
-                        "presencePenalty": "",
-                        "timeout": "",
-                        "strictToolCalling": "",
-                        "stopSequence": "",
-                        "basepath": "",
-                        "proxyUrl": "",
-                        "baseOptions": "",
-                        "allowImageUploads": true,
-                        "reasoningEffort": "medium",
-                        "conditionAgentModel": "chatOpenAI"
-                    }
-                },
-                "outputAnchors": [
-                    {
-                        "id": "conditionAgentAgentflow_0-output-0",
-                        "label": 0,
-                        "name": 0,
-                        "description": "Condition 0"
-                    },
-                    {
-                        "id": "conditionAgentAgentflow_0-output-1",
-                        "label": 1,
-                        "name": 1,
-                        "description": "Condition 1"
-                    },
-                    {
-                        "id": "conditionAgentAgentflow_0-output-2",
-                        "label": 2,
-                        "name": 2,
-                        "description": "Condition 2"
-                    }
-                ],
-                "outputs": {
-                    "conditionAgentAgentflow": ""
-                },
-                "selected": false
-            },
-            "type": "agentFlow",
-            "width": 200,
-            "height": 100,
             "selected": false,
-            "positionAbsolute": {
-                "x": -11.580228601760105,
-                "y": 99.42548336780041
-            },
             "dragging": false
         },
         {
             "id": "agentAgentflow_0",
             "position": {
-                "x": 253.4811075082052,
-                "y": 17.0330403645183
+                "x": 276.5,
+                "y": 30
             },
             "data": {
                 "id": "agentAgentflow_0",
-                "label": "Refund Agent",
+                "label": "Requests Agent",
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#FFD166",
+                "color": "#4DD0E1",
                 "baseClasses": ["Agent"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -625,15 +495,71 @@
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "agentModel": "chatGoogleGenerativeAI",
+                    "agentModel": "chatOpenAI",
                     "agentMessages": [
                         {
                             "role": "system",
-                            "content": "<p>You are a refund agent. Help the user with refunds.</p>"
+                            "content": "<p>You are helpful assistant.</p><p>Todays date time is <span class=\"variable\" data-type=\"mention\" data-id=\"current_date_time\" data-label=\"current_date_time\">{{ current_date_time }}</span></p>"
                         }
                     ],
-                    "agentTools": "",
-                    "agentKnowledgeDocumentStores": "",
+                    "agentTools": [
+                        {
+                            "agentSelectedTool": "requestsGet",
+                            "agentSelectedToolRequiresHumanInput": "",
+                            "agentSelectedToolConfig": {
+                                "requestsGetUrl": "<p>http://localhost:5566/events</p>",
+                                "requestsGetName": "get_events",
+                                "requestsGetDescription": "Use this when you need to get events",
+                                "requestsGetHeaders": "",
+                                "requestsGetQueryParamsSchema": "{\n    \"id\": {\n        \"type\": \"string\",\n        \"in\": \"path\",\n        \"description\": \"ID of the item to get. /:id\"\n    },\n    \"limit\": {\n        \"type\": \"string\",\n        \"in\": \"query\",\n        \"description\": \"Limit the number of items to get. ?limit=10\"\n    }\n}",
+                                "requestsGetMaxOutputLength": "2000",
+                                "agentSelectedTool": "requestsGet"
+                            }
+                        },
+                        {
+                            "agentSelectedTool": "requestsPost",
+                            "agentSelectedToolRequiresHumanInput": "",
+                            "agentSelectedToolConfig": {
+                                "requestsPostUrl": "<p>http://localhost:5566/events</p>",
+                                "requestsPostName": "create_event",
+                                "requestsPostDescription": "Use this when you want to create a new event",
+                                "requestsPostHeaders": "",
+                                "requestPostBody": "",
+                                "requestsPostBodySchema": "{\n    \"name\": {\n        \"type\": \"string\",\n        \"required\": true,\n        \"description\": \"Name of the event\"\n    },\n    \"date\": {\n        \"type\": \"string\",\n        \"required\": true,\n        \"description\": \"Date of the event\"\n    },\n    \"location\": {\n        \"type\": \"string\",\n        \"required\": true,\n        \"description\": \"Location of the event\"\n    }\n}",
+                                "requestsPostMaxOutputLength": "2000",
+                                "agentSelectedTool": "requestsPost"
+                            }
+                        },
+                        {
+                            "agentSelectedTool": "requestsPut",
+                            "agentSelectedToolRequiresHumanInput": "",
+                            "agentSelectedToolConfig": {
+                                "requestsPutUrl": "<p>http://localhost:5566/events</p>",
+                                "requestsPutName": "update_event",
+                                "requestsPutDescription": "Use this when you want to update an event",
+                                "requestsPutHeaders": "",
+                                "requestPutBody": "",
+                                "requestsPutBodySchema": "{\n    \"name\": {\n        \"type\": \"string\",\n        \"required\": true,\n        \"description\": \"Name of the event\"\n    },\n    \"date\": {\n        \"type\": \"string\",\n        \"required\": true,\n        \"description\": \"Date of the event\"\n    },\n    \"location\": {\n        \"type\": \"string\",\n        \"required\": true,\n        \"description\": \"Location of the event\"\n    }\n}",
+                                "requestsPutMaxOutputLength": "2000",
+                                "agentSelectedTool": "requestsPut"
+                            }
+                        },
+                        {
+                            "agentSelectedTool": "requestsDelete",
+                            "agentSelectedToolRequiresHumanInput": "",
+                            "agentSelectedToolConfig": {
+                                "requestsDeleteUrl": "<p>http://localhost:5566/events</p>",
+                                "requestsDeleteName": "delete_event",
+                                "requestsDeleteDescription": "Use this when you need to delete event",
+                                "requestsDeleteHeaders": "",
+                                "requestsDeleteQueryParamsSchema": "{\n    \"id\": {\n        \"type\": \"string\",\n        \"required\": true,\n        \"in\": \"path\",\n        \"description\": \"ID of the item to delete. /:id\"\n    }\n}",
+                                "requestsDeleteMaxOutputLength": "2000",
+                                "agentSelectedTool": "requestsDelete"
+                            }
+                        }
+                    ],
+                    "agentKnowledgeDocumentStores": [],
+                    "agentKnowledgeVSEmbeddings": "",
                     "agentEnableMemory": true,
                     "agentMemoryType": "allMessages",
                     "agentUserMessage": "",
@@ -641,17 +567,23 @@
                     "agentUpdateState": "",
                     "agentModelConfig": {
                         "credential": "",
-                        "modelName": "gemini-2.0-flash",
-                        "customModelName": "",
+                        "modelName": "gpt-4o-mini",
                         "temperature": 0.9,
                         "streaming": true,
-                        "maxOutputTokens": "",
+                        "maxTokens": "",
                         "topP": "",
-                        "topK": "",
-                        "harmCategory": "",
-                        "harmBlockThreshold": "",
+                        "frequencyPenalty": "",
+                        "presencePenalty": "",
+                        "timeout": "",
+                        "strictToolCalling": "",
+                        "stopSequence": "",
+                        "basepath": "",
+                        "proxyUrl": "",
+                        "baseOptions": "",
                         "allowImageUploads": "",
-                        "agentModel": "chatGoogleGenerativeAI"
+                        "imageResolution": "low",
+                        "reasoningEffort": "",
+                        "agentModel": "chatOpenAI"
                     }
                 },
                 "outputAnchors": [
@@ -665,30 +597,30 @@
                 "selected": false
             },
             "type": "agentFlow",
-            "width": 191,
-            "height": 71,
+            "width": 176,
+            "height": 100,
             "selected": false,
             "positionAbsolute": {
-                "x": 253.4811075082052,
-                "y": 17.0330403645183
+                "x": 276.5,
+                "y": 30
             },
             "dragging": false
         },
         {
             "id": "agentAgentflow_1",
             "position": {
-                "x": 253.74384888466125,
-                "y": 113.94007038630222
+                "x": 486.5,
+                "y": 30.25
             },
             "data": {
                 "id": "agentAgentflow_1",
-                "label": "Sales Agent",
+                "label": "OpenAPI Agent",
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#FFD166",
+                "color": "#4DD0E1",
                 "baseClasses": ["Agent"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -973,26 +905,33 @@
                     "agentMessages": [
                         {
                             "role": "system",
-                            "content": "<p>You are a sales assistant. Help user search for the product.</p>"
+                            "content": "<p>You are helpful assistant.</p><p>Todays date time is <span class=\"variable\" data-type=\"mention\" data-id=\"current_date_time\" data-label=\"current_date_time\">{{ current_date_time }}</span></p>"
                         }
                     ],
                     "agentTools": [
                         {
-                            "agentSelectedTool": "googleCustomSearch",
+                            "agentSelectedTool": "openAPIToolkit",
+                            "agentSelectedToolRequiresHumanInput": "",
                             "agentSelectedToolConfig": {
-                                "agentSelectedTool": "googleCustomSearch"
+                                "yamlFile": "",
+                                "returnDirect": "",
+                                "headers": "",
+                                "removeNulls": "",
+                                "customCode": "const fetch = require('node-fetch');\nconst url = $url;\nconst options = $options;\n\ntry {\n\tconst response = await fetch(url, options);\n\tconst resp = await response.json();\n\treturn JSON.stringify(resp);\n} catch (error) {\n\tconsole.error(error);\n\treturn '';\n}\n",
+                                "agentSelectedTool": "openAPIToolkit"
                             }
                         }
                     ],
                     "agentKnowledgeDocumentStores": "",
+                    "agentKnowledgeVSEmbeddings": "",
                     "agentEnableMemory": true,
                     "agentMemoryType": "allMessages",
                     "agentUserMessage": "",
                     "agentReturnResponseAs": "userMessage",
                     "agentUpdateState": "",
                     "agentModelConfig": {
-                        "credential": "",
-                        "modelName": "claude-3-7-sonnet-latest",
+                        "cache": "",
+                        "modelName": "claude-sonnet-4-0",
                         "temperature": 0.9,
                         "streaming": true,
                         "maxTokensToSample": "",
@@ -1015,357 +954,20 @@
                 "selected": false
             },
             "type": "agentFlow",
-            "width": 231,
-            "height": 103,
+            "width": 213,
+            "height": 100,
             "selected": false,
             "positionAbsolute": {
-                "x": 253.74384888466125,
-                "y": 113.94007038630222
-            },
-            "dragging": false
-        },
-        {
-            "id": "agentAgentflow_2",
-            "position": {
-                "x": 250.2139715995238,
-                "y": 234.20808458654034
-            },
-            "data": {
-                "id": "agentAgentflow_2",
-                "label": "General Agent",
-                "version": 1,
-                "name": "agentAgentflow",
-                "type": "Agent",
-                "color": "#FFD166",
-                "baseClasses": ["Agent"],
-                "category": "Agent Studio",
-                "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
-                "inputParams": [
-                    {
-                        "label": "Model",
-                        "name": "agentModel",
-                        "type": "asyncOptions",
-                        "loadMethod": "listModels",
-                        "loadConfig": true,
-                        "id": "agentAgentflow_2-input-agentModel-asyncOptions",
-                        "display": true
-                    },
-                    {
-                        "label": "Messages",
-                        "name": "agentMessages",
-                        "type": "array",
-                        "optional": true,
-                        "acceptVariable": true,
-                        "array": [
-                            {
-                                "label": "Role",
-                                "name": "role",
-                                "type": "options",
-                                "options": [
-                                    {
-                                        "label": "System",
-                                        "name": "system"
-                                    },
-                                    {
-                                        "label": "Assistant",
-                                        "name": "assistant"
-                                    },
-                                    {
-                                        "label": "Developer",
-                                        "name": "developer"
-                                    },
-                                    {
-                                        "label": "User",
-                                        "name": "user"
-                                    }
-                                ]
-                            },
-                            {
-                                "label": "Content",
-                                "name": "content",
-                                "type": "string",
-                                "acceptVariable": true,
-                                "generateInstruction": true,
-                                "rows": 4
-                            }
-                        ],
-                        "id": "agentAgentflow_2-input-agentMessages-array",
-                        "display": true
-                    },
-                    {
-                        "label": "Tools",
-                        "name": "agentTools",
-                        "type": "array",
-                        "optional": true,
-                        "array": [
-                            {
-                                "label": "Tool",
-                                "name": "agentSelectedTool",
-                                "type": "asyncOptions",
-                                "loadMethod": "listTools",
-                                "loadConfig": true
-                            },
-                            {
-                                "label": "Require Human Input",
-                                "name": "agentSelectedToolRequiresHumanInput",
-                                "type": "boolean",
-                                "optional": true
-                            }
-                        ],
-                        "id": "agentAgentflow_2-input-agentTools-array",
-                        "display": true
-                    },
-                    {
-                        "label": "Knowledge (Document Stores)",
-                        "name": "agentKnowledgeDocumentStores",
-                        "type": "array",
-                        "description": "Give your agent context about different document sources. Document stores must be upserted in advance.",
-                        "array": [
-                            {
-                                "label": "Document Store",
-                                "name": "documentStore",
-                                "type": "asyncOptions",
-                                "loadMethod": "listStores"
-                            },
-                            {
-                                "label": "Describe Knowledge",
-                                "name": "docStoreDescription",
-                                "type": "string",
-                                "generateDocStoreDescription": true,
-                                "placeholder": "Describe what the knowledge base is about, this is useful for the AI to know when and how to search for correct information",
-                                "rows": 4
-                            },
-                            {
-                                "label": "Return Source Documents",
-                                "name": "returnSourceDocuments",
-                                "type": "boolean",
-                                "optional": true
-                            }
-                        ],
-                        "optional": true,
-                        "id": "agentAgentflow_2-input-agentKnowledgeDocumentStores-array",
-                        "display": true
-                    },
-                    {
-                        "label": "Knowledge (Vector Embeddings)",
-                        "name": "agentKnowledgeVSEmbeddings",
-                        "type": "array",
-                        "description": "Give your agent context about different document sources from existing vector stores and embeddings",
-                        "array": [
-                            {
-                                "label": "Vector Store",
-                                "name": "vectorStore",
-                                "type": "asyncOptions",
-                                "loadMethod": "listVectorStores",
-                                "loadConfig": true
-                            },
-                            {
-                                "label": "Embedding Model",
-                                "name": "embeddingModel",
-                                "type": "asyncOptions",
-                                "loadMethod": "listEmbeddings",
-                                "loadConfig": true
-                            },
-                            {
-                                "label": "Knowledge Name",
-                                "name": "knowledgeName",
-                                "type": "string",
-                                "placeholder": "A short name for the knowledge base, this is useful for the AI to know when and how to search for correct information"
-                            },
-                            {
-                                "label": "Describe Knowledge",
-                                "name": "knowledgeDescription",
-                                "type": "string",
-                                "placeholder": "Describe what the knowledge base is about, this is useful for the AI to know when and how to search for correct information",
-                                "rows": 4
-                            },
-                            {
-                                "label": "Return Source Documents",
-                                "name": "returnSourceDocuments",
-                                "type": "boolean",
-                                "optional": true
-                            }
-                        ],
-                        "optional": true,
-                        "id": "agentAgentflow_2-input-agentKnowledgeVSEmbeddings-array",
-                        "display": true
-                    },
-                    {
-                        "label": "Enable Memory",
-                        "name": "agentEnableMemory",
-                        "type": "boolean",
-                        "description": "Enable memory for the conversation thread",
-                        "default": true,
-                        "optional": true,
-                        "id": "agentAgentflow_2-input-agentEnableMemory-boolean",
-                        "display": true
-                    },
-                    {
-                        "label": "Memory Type",
-                        "name": "agentMemoryType",
-                        "type": "options",
-                        "options": [
-                            {
-                                "label": "All Messages",
-                                "name": "allMessages",
-                                "description": "Retrieve all messages from the conversation"
-                            },
-                            {
-                                "label": "Window Size",
-                                "name": "windowSize",
-                                "description": "Uses a fixed window size to surface the last N messages"
-                            },
-                            {
-                                "label": "Conversation Summary",
-                                "name": "conversationSummary",
-                                "description": "Summarizes the whole conversation"
-                            },
-                            {
-                                "label": "Conversation Summary Buffer",
-                                "name": "conversationSummaryBuffer",
-                                "description": "Summarize conversations once token limit is reached. Default to 2000"
-                            }
-                        ],
-                        "optional": true,
-                        "default": "allMessages",
-                        "show": {
-                            "agentEnableMemory": true
-                        },
-                        "id": "agentAgentflow_2-input-agentMemoryType-options",
-                        "display": true
-                    },
-                    {
-                        "label": "Window Size",
-                        "name": "agentMemoryWindowSize",
-                        "type": "number",
-                        "default": "20",
-                        "description": "Uses a fixed window size to surface the last N messages",
-                        "show": {
-                            "agentMemoryType": "windowSize"
-                        },
-                        "id": "agentAgentflow_2-input-agentMemoryWindowSize-number",
-                        "display": false
-                    },
-                    {
-                        "label": "Max Token Limit",
-                        "name": "agentMemoryMaxTokenLimit",
-                        "type": "number",
-                        "default": "2000",
-                        "description": "Summarize conversations once token limit is reached. Default to 2000",
-                        "show": {
-                            "agentMemoryType": "conversationSummaryBuffer"
-                        },
-                        "id": "agentAgentflow_2-input-agentMemoryMaxTokenLimit-number",
-                        "display": false
-                    },
-                    {
-                        "label": "Input Message",
-                        "name": "agentUserMessage",
-                        "type": "string",
-                        "description": "Add an input message as user message at the end of the conversation",
-                        "rows": 4,
-                        "optional": true,
-                        "acceptVariable": true,
-                        "show": {
-                            "agentEnableMemory": true
-                        },
-                        "id": "agentAgentflow_2-input-agentUserMessage-string",
-                        "display": true
-                    },
-                    {
-                        "label": "Return Response As",
-                        "name": "agentReturnResponseAs",
-                        "type": "options",
-                        "options": [
-                            {
-                                "label": "User Message",
-                                "name": "userMessage"
-                            },
-                            {
-                                "label": "Assistant Message",
-                                "name": "assistantMessage"
-                            }
-                        ],
-                        "default": "userMessage",
-                        "id": "agentAgentflow_2-input-agentReturnResponseAs-options",
-                        "display": true
-                    },
-                    {
-                        "label": "Update Flow State",
-                        "name": "agentUpdateState",
-                        "description": "Update runtime state during the execution of the workflow",
-                        "type": "array",
-                        "optional": true,
-                        "acceptVariable": true,
-                        "array": [
-                            {
-                                "label": "Key",
-                                "name": "key",
-                                "type": "asyncOptions",
-                                "loadMethod": "listRuntimeStateKeys",
-                                "freeSolo": true
-                            },
-                            {
-                                "label": "Value",
-                                "name": "value",
-                                "type": "string",
-                                "acceptVariable": true,
-                                "acceptNodeOutputAsVariable": true
-                            }
-                        ],
-                        "id": "agentAgentflow_2-input-agentUpdateState-array",
-                        "display": true
-                    }
-                ],
-                "inputAnchors": [],
-                "inputs": {
-                    "agentModel": "groqChat",
-                    "agentMessages": [
-                        {
-                            "role": "system",
-                            "content": "<p>You are helpful assistant</p>"
-                        }
-                    ],
-                    "agentTools": "",
-                    "agentKnowledgeDocumentStores": "",
-                    "agentEnableMemory": true,
-                    "agentMemoryType": "allMessages",
-                    "agentUserMessage": "",
-                    "agentReturnResponseAs": "userMessage",
-                    "agentUpdateState": "",
-                    "agentModelConfig": {
-                        "credential": "",
-                        "modelName": "llama-3.2-3b-preview",
-                        "temperature": 0.9,
-                        "streaming": true,
-                        "agentModel": "groqChat"
-                    }
-                },
-                "outputAnchors": [
-                    {
-                        "id": "agentAgentflow_2-output-agentAgentflow",
-                        "label": "Agent",
-                        "name": "agentAgentflow"
-                    }
-                ],
-                "outputs": {},
-                "selected": false
-            },
-            "type": "agentFlow",
-            "width": 214,
-            "height": 71,
-            "selected": false,
-            "positionAbsolute": {
-                "x": 250.2139715995238,
-                "y": 234.20808458654034
+                "x": 486.5,
+                "y": 30.25
             },
             "dragging": false
         },
         {
             "id": "stickyNoteAgentflow_0",
             "position": {
-                "x": 246.81594867785896,
-                "y": -103.07943752447065
+                "x": 359.646787967208,
+                "y": -168.84288303219904
             },
             "data": {
                 "id": "stickyNoteAgentflow_0",
@@ -1375,7 +977,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {
@@ -1391,7 +993,7 @@
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "note": "We can improve this by adding necessary tools for agents"
+                    "note": "There are two ways of interacting with API\n\n- Request GET, PUT, POST, DELETE tools\n\n- OpenAPI Toolkit"
                 },
                 "outputAnchors": [
                     {
@@ -1404,12 +1006,246 @@
                 "selected": false
             },
             "type": "stickyNote",
-            "width": 189,
-            "height": 101,
+            "width": 210,
+            "height": 183,
             "selected": false,
             "positionAbsolute": {
-                "x": 246.81594867785896,
-                "y": -103.07943752447065
+                "x": 359.646787967208,
+                "y": -168.84288303219904
+            },
+            "dragging": false
+        },
+        {
+            "id": "httpAgentflow_0",
+            "position": {
+                "x": 738.2972542041965,
+                "y": 46.68491774985176
+            },
+            "data": {
+                "id": "httpAgentflow_0",
+                "label": "Send HTTP Request",
+                "version": 1.1,
+                "name": "httpAgentflow",
+                "type": "HTTP",
+                "color": "#FF7F7F",
+                "baseClasses": ["HTTP"],
+                "category": "Agent Flows",
+                "description": "Send a HTTP request",
+                "inputParams": [
+                    {
+                        "label": "HTTP Credential",
+                        "name": "credential",
+                        "type": "credential",
+                        "credentialNames": ["httpBasicAuth", "httpBearerToken", "httpApiKey"],
+                        "optional": true,
+                        "id": "httpAgentflow_0-input-credential-credential",
+                        "display": true
+                    },
+                    {
+                        "label": "Method",
+                        "name": "method",
+                        "type": "options",
+                        "options": [
+                            {
+                                "label": "GET",
+                                "name": "GET"
+                            },
+                            {
+                                "label": "POST",
+                                "name": "POST"
+                            },
+                            {
+                                "label": "PUT",
+                                "name": "PUT"
+                            },
+                            {
+                                "label": "DELETE",
+                                "name": "DELETE"
+                            },
+                            {
+                                "label": "PATCH",
+                                "name": "PATCH"
+                            }
+                        ],
+                        "default": "GET",
+                        "id": "httpAgentflow_0-input-method-options",
+                        "display": true
+                    },
+                    {
+                        "label": "URL",
+                        "name": "url",
+                        "type": "string",
+                        "id": "httpAgentflow_0-input-url-string",
+                        "display": true
+                    },
+                    {
+                        "label": "Headers",
+                        "name": "headers",
+                        "type": "array",
+                        "acceptVariable": true,
+                        "array": [
+                            {
+                                "label": "Key",
+                                "name": "key",
+                                "type": "string",
+                                "default": ""
+                            },
+                            {
+                                "label": "Value",
+                                "name": "value",
+                                "type": "string",
+                                "default": "",
+                                "acceptVariable": true
+                            }
+                        ],
+                        "optional": true,
+                        "id": "httpAgentflow_0-input-headers-array",
+                        "display": true
+                    },
+                    {
+                        "label": "Query Params",
+                        "name": "queryParams",
+                        "type": "array",
+                        "acceptVariable": true,
+                        "array": [
+                            {
+                                "label": "Key",
+                                "name": "key",
+                                "type": "string",
+                                "default": ""
+                            },
+                            {
+                                "label": "Value",
+                                "name": "value",
+                                "type": "string",
+                                "default": "",
+                                "acceptVariable": true
+                            }
+                        ],
+                        "optional": true,
+                        "id": "httpAgentflow_0-input-queryParams-array",
+                        "display": true
+                    },
+                    {
+                        "label": "Body Type",
+                        "name": "bodyType",
+                        "type": "options",
+                        "options": [
+                            {
+                                "label": "JSON",
+                                "name": "json"
+                            },
+                            {
+                                "label": "Raw",
+                                "name": "raw"
+                            },
+                            {
+                                "label": "Form Data",
+                                "name": "formData"
+                            },
+                            {
+                                "label": "x-www-form-urlencoded",
+                                "name": "xWwwFormUrlencoded"
+                            }
+                        ],
+                        "optional": true,
+                        "id": "httpAgentflow_0-input-bodyType-options",
+                        "display": true
+                    },
+                    {
+                        "label": "Body",
+                        "name": "body",
+                        "type": "string",
+                        "acceptVariable": true,
+                        "rows": 4,
+                        "show": {
+                            "bodyType": ["raw", "json"]
+                        },
+                        "optional": true,
+                        "id": "httpAgentflow_0-input-body-string",
+                        "display": false
+                    },
+                    {
+                        "label": "Body",
+                        "name": "body",
+                        "type": "array",
+                        "acceptVariable": true,
+                        "show": {
+                            "bodyType": ["xWwwFormUrlencoded", "formData"]
+                        },
+                        "array": [
+                            {
+                                "label": "Key",
+                                "name": "key",
+                                "type": "string",
+                                "default": ""
+                            },
+                            {
+                                "label": "Value",
+                                "name": "value",
+                                "type": "string",
+                                "default": "",
+                                "acceptVariable": true
+                            }
+                        ],
+                        "optional": true,
+                        "id": "httpAgentflow_0-input-body-array",
+                        "display": false
+                    },
+                    {
+                        "label": "Response Type",
+                        "name": "responseType",
+                        "type": "options",
+                        "options": [
+                            {
+                                "label": "JSON",
+                                "name": "json"
+                            },
+                            {
+                                "label": "Text",
+                                "name": "text"
+                            },
+                            {
+                                "label": "Array Buffer",
+                                "name": "arraybuffer"
+                            },
+                            {
+                                "label": "Raw (Base64)",
+                                "name": "base64"
+                            }
+                        ],
+                        "optional": true,
+                        "id": "httpAgentflow_0-input-responseType-options",
+                        "display": true
+                    }
+                ],
+                "inputAnchors": [],
+                "inputs": {
+                    "method": "GET",
+                    "url": "",
+                    "headers": "",
+                    "queryParams": "",
+                    "bodyType": "",
+                    "body": "",
+                    "responseType": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "httpAgentflow_0-output-httpAgentflow",
+                        "label": "HTTP",
+                        "name": "httpAgentflow"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "type": "agentFlow",
+            "width": 202,
+            "height": 66,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 738.2972542041965,
+                "y": 46.68491774985176
             },
             "dragging": false
         }
@@ -1418,57 +1254,41 @@
         {
             "source": "startAgentflow_0",
             "sourceHandle": "startAgentflow_0-output-startAgentflow",
-            "target": "conditionAgentAgentflow_0",
-            "targetHandle": "conditionAgentAgentflow_0",
-            "data": {
-                "sourceColor": "#06D6A0",
-                "targetColor": "#B6B6C6",
-                "isHumanInput": false
-            },
-            "type": "agentFlow",
-            "id": "startAgentflow_0-startAgentflow_0-output-startAgentflow-conditionAgentAgentflow_0-conditionAgentAgentflow_0"
-        },
-        {
-            "source": "conditionAgentAgentflow_0",
-            "sourceHandle": "conditionAgentAgentflow_0-output-0",
             "target": "agentAgentflow_0",
             "targetHandle": "agentAgentflow_0",
             "data": {
-                "sourceColor": "#B6B6C6",
-                "targetColor": "#FFD166",
-                "edgeLabel": "0",
+                "sourceColor": "#7EE787",
+                "targetColor": "#4DD0E1",
                 "isHumanInput": false
             },
             "type": "agentFlow",
-            "id": "conditionAgentAgentflow_0-conditionAgentAgentflow_0-output-0-agentAgentflow_0-agentAgentflow_0"
+            "id": "startAgentflow_0-startAgentflow_0-output-startAgentflow-agentAgentflow_0-agentAgentflow_0"
         },
         {
-            "source": "conditionAgentAgentflow_0",
-            "sourceHandle": "conditionAgentAgentflow_0-output-1",
+            "source": "agentAgentflow_0",
+            "sourceHandle": "agentAgentflow_0-output-agentAgentflow",
             "target": "agentAgentflow_1",
             "targetHandle": "agentAgentflow_1",
             "data": {
-                "sourceColor": "#B6B6C6",
-                "targetColor": "#FFD166",
-                "edgeLabel": "1",
+                "sourceColor": "#4DD0E1",
+                "targetColor": "#4DD0E1",
                 "isHumanInput": false
             },
             "type": "agentFlow",
-            "id": "conditionAgentAgentflow_0-conditionAgentAgentflow_0-output-1-agentAgentflow_1-agentAgentflow_1"
+            "id": "agentAgentflow_0-agentAgentflow_0-output-agentAgentflow-agentAgentflow_1-agentAgentflow_1"
         },
         {
-            "source": "conditionAgentAgentflow_0",
-            "sourceHandle": "conditionAgentAgentflow_0-output-2",
-            "target": "agentAgentflow_2",
-            "targetHandle": "agentAgentflow_2",
+            "source": "agentAgentflow_1",
+            "sourceHandle": "agentAgentflow_1-output-agentAgentflow",
+            "target": "httpAgentflow_0",
+            "targetHandle": "httpAgentflow_0",
             "data": {
-                "sourceColor": "#B6B6C6",
-                "targetColor": "#FFD166",
-                "edgeLabel": "2",
+                "sourceColor": "#4DD0E1",
+                "targetColor": "#FF7F7F",
                 "isHumanInput": false
             },
             "type": "agentFlow",
-            "id": "conditionAgentAgentflow_0-conditionAgentAgentflow_0-output-2-agentAgentflow_2-agentAgentflow_2"
+            "id": "agentAgentflow_1-agentAgentflow_1-output-agentAgentflow-httpAgentflow_0-httpAgentflow_0"
         }
     ]
 }

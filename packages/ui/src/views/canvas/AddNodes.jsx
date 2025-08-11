@@ -110,7 +110,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
     useEffect(() => {
         if (userData.subscription_type !== 'free') {
-            setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
+            setTab(['LangChain', 'LlamaIndex', 'Agent Studio'])
         }
     }, [])
 
@@ -144,11 +144,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         if (hasCanvasId) {
             setTab(['LangChain', 'LlamaIndex'])
         } else if (hasAgentCanvasId) {
-            setTab(['Agent Pipeline'])
+            setTab(['Agent Studio'])
             setTabValue(0)
         } else if (pathname === '/canvas' || pathname === '/v2/agentcanvas') {
             if (userData.subscription_type !== 'free') {
-                setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
+                setTab(['LangChain', 'LlamaIndex', 'Agent Studio'])
             } else {
                 setTab(['LangChain', 'LlamaIndex'])
             }
@@ -172,7 +172,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         filterSearch(searchValue, newValue)
         const selectedTab = tab[newValue]
 
-        if (selectedTab === 'Agent Pipeline') {
+        if (selectedTab === 'Agent Studio') {
             if (location.pathname.startsWith('/v2/agentcanvas/')) {
                 return
             }
@@ -264,11 +264,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             const filteredResult = {}
             for (const category in result) {
                 if (isAgentCanvasV2) {
-                    if (category !== 'Agent Pipeline') {
+                    if (category !== 'Agent Studio') {
                         continue
                     }
                 } else {
-                    if (category === 'Agent Pipeline') {
+                    if (category === 'Agent Studio') {
                         continue
                     }
                 }
@@ -290,7 +290,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             accordianCategories['Multi Agents'] = true
             accordianCategories['Sequential Agents'] = true
             accordianCategories['Memory'] = true
-            accordianCategories['Agent Pipeline'] = true
+            accordianCategories['Agent Studio'] = true
             setCategoryExpanded(accordianCategories)
         } else {
             const taggedNodes = groupByTags(nodes, newTabValue)
@@ -304,7 +304,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
             const filteredResult = {}
             for (const category in result) {
-                if (category === 'Agent Pipeline') {
+                if (category === 'Agent Studio') {
                     continue
                 }
                 if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
@@ -335,7 +335,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             return LangChainPNG
         } else if (tab === 'LlamaIndex') {
             return LlamaindexPNG
-        } else if (tab === 'Agent Pipeline') {
+        } else if (tab === 'Agent Studio') {
             return agentPipelinePNG
         }
     }
@@ -664,7 +664,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                 {Object.keys(nodes)
                                     .sort()
                                     .map((category) => {
-                                        const isAgentPipeline = category.replace(';NEW', '') === 'Agent Pipeline'
+                                        const isAgentPipeline = category.replace(';NEW', '') === 'Agent Studio'
 
                                         return (
                                             <Accordion

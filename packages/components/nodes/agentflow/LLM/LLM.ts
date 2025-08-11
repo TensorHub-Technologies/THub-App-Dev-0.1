@@ -33,7 +33,7 @@ class LLM_Agentflow implements INode {
         this.name = 'llmAgentflow'
         this.version = 1.0
         this.type = 'LLM'
-        this.category = 'Agent Pipeline'
+        this.category = 'Agent Studio'
         this.description = 'Large language models to analyze user-provided inputs and generate responses'
         this.color = '#118AB2'
         this.baseClasses = [this.type]

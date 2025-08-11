@@ -32,7 +32,7 @@ class ExecuteFlow_Agentflow implements INode {
         this.name = 'executeFlowAgentflow'
         this.version = 1.0
         this.type = 'ExecuteFlow'
-        this.category = 'Agent Pipeline'
+        this.category = 'Agent Studio'
         this.description = 'Execute another flow'
         this.baseClasses = [this.type]
         this.color = '#F0F0F5'
@@ -123,25 +123,36 @@ class ExecuteFlow_Agentflow implements INode {
 
             const appDataSource = options.appDataSource as DataSource
             const databaseEntities = options.databaseEntities as IDatabaseEntity
+
             if (appDataSource === undefined || !appDataSource) {
                 return returnData
             }
 
-            const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).find()
+            let tenantId = options.tenantId
+            console.log(tenantId, 'tenantId for flows')
 
-            for (let i = 0; i < chatflows.length; i += 1) {
-                let cfType = 'Workflow'
-                if (chatflows[i].type === 'AGENTFLOW') {
-                    cfType = 'Agentflow V2'
-                } else if (chatflows[i].type === 'MULTIAGENT') {
-                    cfType = 'Agentflow V1'
+            try {
+                // Fix: Use proper object syntax for findBy with tenantId
+                const whereClause = tenantId ? { tenantId: tenantId } : {}
+                const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).findBy(whereClause)
+
+                for (let i = 0; i < chatflows.length; i += 1) {
+                    let cfType = 'Workflow'
+                    if (chatflows[i].type === 'AGENTFLOW') {
+                        cfType = 'Agentflow V2'
+                    } else if (chatflows[i].type === 'MULTIAGENT') {
+                        cfType = 'Agentflow V1'
+                    }
+                    const data = {
+                        label: chatflows[i].name,
+                        name: chatflows[i].id,
+                        description: cfType
+                    } as INodeOptionsValue
+                    returnData.push(data)
                 }
-                const data = {
-                    label: chatflows[i].name,
-                    name: chatflows[i].id,
-                    description: cfType
-                } as INodeOptionsValue
-                returnData.push(data)
+            } catch (error) {
+                console.error('Error fetching flows by tenantId:', error)
+                // Return empty array on error to prevent breaking the UI
             }
 
             // order by label
@@ -178,6 +189,26 @@ class ExecuteFlow_Agentflow implements INode {
             const chatflowApiKey = getCredentialParam('chatflowApiKey', credentialData, nodeData)
 
             if (selectedFlowId === options.chatflowid) throw new Error('Cannot call the same agentflow!')
+
+            // Additional security check: Verify the selected flow belongs to the same tenant
+            const appDataSource = options.appDataSource as DataSource
+            const databaseEntities = options.databaseEntities as IDatabaseEntity
+            const tenantId = options.tenantId
+
+            if (tenantId && appDataSource && databaseEntities) {
+                try {
+                    const selectedFlow = await appDataSource
+                        .getRepository(databaseEntities['ChatFlow'])
+                        .findOneBy({ id: selectedFlowId, tenantId: tenantId })
+
+                    if (!selectedFlow) {
+                        throw new Error(`Flow ${selectedFlowId} not found or access denied`)
+                    }
+                } catch (error) {
+                    console.error('Error verifying flow access:', error)
+                    throw new Error('Access denied to the selected flow')
+                }
+            }
 
             let headers: Record<string, string> = {
                 'Content-Type': 'application/json'

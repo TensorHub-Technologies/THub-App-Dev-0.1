@@ -1,24 +1,24 @@
 {
-    "description": "An email reply HITL (human in the loop) agent that can proceed or refine the email with user input",
-    "usecases": ["Human In Loop"],
+    "description": "An agent that can post AI responses to Workplace channels like Slack and Teams",
+    "usecases": ["Agent"],
     "nodes": [
         {
             "id": "startAgentflow_0",
             "type": "agentFlow",
             "position": {
-                "x": -212.0817769699585,
-                "y": 95.2304753249555
+                "x": -192.5,
+                "y": 68
             },
             "data": {
                 "id": "startAgentflow_0",
                 "label": "Start",
-                "version": 1,
+                "version": 1.1,
                 "name": "startAgentflow",
                 "type": "Start",
-                "color": "#06D6A0",
+                "color": "#7EE787",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -157,6 +157,15 @@
                         ],
                         "id": "startAgentflow_0-input-startState-array",
                         "display": true
+                    },
+                    {
+                        "label": "Persist State",
+                        "name": "startPersistState",
+                        "type": "boolean",
+                        "description": "Persist the state in the same session",
+                        "optional": true,
+                        "id": "startAgentflow_0-input-startPersistState-boolean",
+                        "display": true
                     }
                 ],
                 "inputAnchors": [],
@@ -177,44 +186,44 @@
                 "outputs": {},
                 "selected": false
             },
-            "width": 101,
-            "height": 65,
+            "width": 103,
+            "height": 66,
             "selected": false,
             "positionAbsolute": {
-                "x": -212.0817769699585,
-                "y": 95.2304753249555
+                "x": -192.5,
+                "y": 68
             },
             "dragging": false
         },
         {
-            "id": "agentAgentflow_0",
+            "id": "llmAgentflow_0",
             "position": {
-                "x": -62.25,
-                "y": 76
+                "x": -31.25,
+                "y": 64.5
             },
             "data": {
-                "id": "agentAgentflow_0",
-                "label": "Email Reply Agent",
+                "id": "llmAgentflow_0",
+                "label": "General Agent",
                 "version": 1,
-                "name": "agentAgentflow",
-                "type": "Agent",
-                "color": "#FFD166",
-                "baseClasses": ["Agent"],
-                "category": "Agent Studio",
-                "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
+                "name": "llmAgentflow",
+                "type": "LLM",
+                "color": "#64B5F6",
+                "baseClasses": ["LLM"],
+                "category": "Agent Flows",
+                "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
                         "label": "Model",
-                        "name": "agentModel",
+                        "name": "llmModel",
                         "type": "asyncOptions",
                         "loadMethod": "listModels",
                         "loadConfig": true,
-                        "id": "agentAgentflow_0-input-agentModel-asyncOptions",
+                        "id": "llmAgentflow_0-input-llmModel-asyncOptions",
                         "display": true
                     },
                     {
                         "label": "Messages",
-                        "name": "agentMessages",
+                        "name": "llmMessages",
                         "type": "array",
                         "optional": true,
                         "acceptVariable": true,
@@ -251,120 +260,22 @@
                                 "rows": 4
                             }
                         ],
-                        "id": "agentAgentflow_0-input-agentMessages-array",
-                        "display": true
-                    },
-                    {
-                        "label": "Tools",
-                        "name": "agentTools",
-                        "type": "array",
-                        "optional": true,
-                        "array": [
-                            {
-                                "label": "Tool",
-                                "name": "agentSelectedTool",
-                                "type": "asyncOptions",
-                                "loadMethod": "listTools",
-                                "loadConfig": true
-                            },
-                            {
-                                "label": "Require Human Input",
-                                "name": "agentSelectedToolRequiresHumanInput",
-                                "type": "boolean",
-                                "optional": true
-                            }
-                        ],
-                        "id": "agentAgentflow_0-input-agentTools-array",
-                        "display": true
-                    },
-                    {
-                        "label": "Knowledge (Document Stores)",
-                        "name": "agentKnowledgeDocumentStores",
-                        "type": "array",
-                        "description": "Give your agent context about different document sources. Document stores must be upserted in advance.",
-                        "array": [
-                            {
-                                "label": "Document Store",
-                                "name": "documentStore",
-                                "type": "asyncOptions",
-                                "loadMethod": "listStores"
-                            },
-                            {
-                                "label": "Describe Knowledge",
-                                "name": "docStoreDescription",
-                                "type": "string",
-                                "generateDocStoreDescription": true,
-                                "placeholder": "Describe what the knowledge base is about, this is useful for the AI to know when and how to search for correct information",
-                                "rows": 4
-                            },
-                            {
-                                "label": "Return Source Documents",
-                                "name": "returnSourceDocuments",
-                                "type": "boolean",
-                                "optional": true
-                            }
-                        ],
-                        "optional": true,
-                        "id": "agentAgentflow_0-input-agentKnowledgeDocumentStores-array",
-                        "display": true
-                    },
-                    {
-                        "label": "Knowledge (Vector Embeddings)",
-                        "name": "agentKnowledgeVSEmbeddings",
-                        "type": "array",
-                        "description": "Give your agent context about different document sources from existing vector stores and embeddings",
-                        "array": [
-                            {
-                                "label": "Vector Store",
-                                "name": "vectorStore",
-                                "type": "asyncOptions",
-                                "loadMethod": "listVectorStores",
-                                "loadConfig": true
-                            },
-                            {
-                                "label": "Embedding Model",
-                                "name": "embeddingModel",
-                                "type": "asyncOptions",
-                                "loadMethod": "listEmbeddings",
-                                "loadConfig": true
-                            },
-                            {
-                                "label": "Knowledge Name",
-                                "name": "knowledgeName",
-                                "type": "string",
-                                "placeholder": "A short name for the knowledge base, this is useful for the AI to know when and how to search for correct information"
-                            },
-                            {
-                                "label": "Describe Knowledge",
-                                "name": "knowledgeDescription",
-                                "type": "string",
-                                "placeholder": "Describe what the knowledge base is about, this is useful for the AI to know when and how to search for correct information",
-                                "rows": 4
-                            },
-                            {
-                                "label": "Return Source Documents",
-                                "name": "returnSourceDocuments",
-                                "type": "boolean",
-                                "optional": true
-                            }
-                        ],
-                        "optional": true,
-                        "id": "agentAgentflow_0-input-agentKnowledgeVSEmbeddings-array",
+                        "id": "llmAgentflow_0-input-llmMessages-array",
                         "display": true
                     },
                     {
                         "label": "Enable Memory",
-                        "name": "agentEnableMemory",
+                        "name": "llmEnableMemory",
                         "type": "boolean",
                         "description": "Enable memory for the conversation thread",
                         "default": true,
                         "optional": true,
-                        "id": "agentAgentflow_0-input-agentEnableMemory-boolean",
+                        "id": "llmAgentflow_0-input-llmEnableMemory-boolean",
                         "display": true
                     },
                     {
                         "label": "Memory Type",
-                        "name": "agentMemoryType",
+                        "name": "llmMemoryType",
                         "type": "options",
                         "options": [
                             {
@@ -391,52 +302,52 @@
                         "optional": true,
                         "default": "allMessages",
                         "show": {
-                            "agentEnableMemory": true
+                            "llmEnableMemory": true
                         },
-                        "id": "agentAgentflow_0-input-agentMemoryType-options",
+                        "id": "llmAgentflow_0-input-llmMemoryType-options",
                         "display": true
                     },
                     {
                         "label": "Window Size",
-                        "name": "agentMemoryWindowSize",
+                        "name": "llmMemoryWindowSize",
                         "type": "number",
                         "default": "20",
                         "description": "Uses a fixed window size to surface the last N messages",
                         "show": {
-                            "agentMemoryType": "windowSize"
+                            "llmMemoryType": "windowSize"
                         },
-                        "id": "agentAgentflow_0-input-agentMemoryWindowSize-number",
+                        "id": "llmAgentflow_0-input-llmMemoryWindowSize-number",
                         "display": false
                     },
                     {
                         "label": "Max Token Limit",
-                        "name": "agentMemoryMaxTokenLimit",
+                        "name": "llmMemoryMaxTokenLimit",
                         "type": "number",
                         "default": "2000",
                         "description": "Summarize conversations once token limit is reached. Default to 2000",
                         "show": {
-                            "agentMemoryType": "conversationSummaryBuffer"
+                            "llmMemoryType": "conversationSummaryBuffer"
                         },
-                        "id": "agentAgentflow_0-input-agentMemoryMaxTokenLimit-number",
+                        "id": "llmAgentflow_0-input-llmMemoryMaxTokenLimit-number",
                         "display": false
                     },
                     {
                         "label": "Input Message",
-                        "name": "agentUserMessage",
+                        "name": "llmUserMessage",
                         "type": "string",
                         "description": "Add an input message as user message at the end of the conversation",
                         "rows": 4,
                         "optional": true,
                         "acceptVariable": true,
                         "show": {
-                            "agentEnableMemory": true
+                            "llmEnableMemory": true
                         },
-                        "id": "agentAgentflow_0-input-agentUserMessage-string",
+                        "id": "llmAgentflow_0-input-llmUserMessage-string",
                         "display": true
                     },
                     {
                         "label": "Return Response As",
-                        "name": "agentReturnResponseAs",
+                        "name": "llmReturnResponseAs",
                         "type": "options",
                         "options": [
                             {
@@ -449,12 +360,88 @@
                             }
                         ],
                         "default": "userMessage",
-                        "id": "agentAgentflow_0-input-agentReturnResponseAs-options",
+                        "id": "llmAgentflow_0-input-llmReturnResponseAs-options",
+                        "display": true
+                    },
+                    {
+                        "label": "JSON Structured Output",
+                        "name": "llmStructuredOutput",
+                        "description": "Instruct the LLM to give output in a JSON structured schema",
+                        "type": "array",
+                        "optional": true,
+                        "acceptVariable": true,
+                        "array": [
+                            {
+                                "label": "Key",
+                                "name": "key",
+                                "type": "string"
+                            },
+                            {
+                                "label": "Type",
+                                "name": "type",
+                                "type": "options",
+                                "options": [
+                                    {
+                                        "label": "String",
+                                        "name": "string"
+                                    },
+                                    {
+                                        "label": "String Array",
+                                        "name": "stringArray"
+                                    },
+                                    {
+                                        "label": "Number",
+                                        "name": "number"
+                                    },
+                                    {
+                                        "label": "Boolean",
+                                        "name": "boolean"
+                                    },
+                                    {
+                                        "label": "Enum",
+                                        "name": "enum"
+                                    },
+                                    {
+                                        "label": "JSON Array",
+                                        "name": "jsonArray"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Enum Values",
+                                "name": "enumValues",
+                                "type": "string",
+                                "placeholder": "value1, value2, value3",
+                                "description": "Enum values. Separated by comma",
+                                "optional": true,
+                                "show": {
+                                    "llmStructuredOutput[$index].type": "enum"
+                                }
+                            },
+                            {
+                                "label": "JSON Schema",
+                                "name": "jsonSchema",
+                                "type": "code",
+                                "placeholder": "{\n    \"answer\": {\n        \"type\": \"string\",\n        \"description\": \"Value of the answer\"\n    },\n    \"reason\": {\n        \"type\": \"string\",\n        \"description\": \"Reason for the answer\"\n    },\n    \"optional\": {\n        \"type\": \"boolean\"\n    },\n    \"count\": {\n        \"type\": \"number\"\n    },\n    \"children\": {\n        \"type\": \"array\",\n        \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"value\": {\n                    \"type\": \"string\",\n                    \"description\": \"Value of the children's answer\"\n                }\n            }\n        }\n    }\n}",
+                                "description": "JSON schema for the structured output",
+                                "optional": true,
+                                "show": {
+                                    "llmStructuredOutput[$index].type": "jsonArray"
+                                }
+                            },
+                            {
+                                "label": "Description",
+                                "name": "description",
+                                "type": "string",
+                                "placeholder": "Description of the key"
+                            }
+                        ],
+                        "id": "llmAgentflow_0-input-llmStructuredOutput-array",
                         "display": true
                     },
                     {
                         "label": "Update Flow State",
-                        "name": "agentUpdateState",
+                        "name": "llmUpdateState",
                         "description": "Update runtime state during the execution of the workflow",
                         "type": "array",
                         "optional": true,
@@ -475,41 +462,22 @@
                                 "acceptNodeOutputAsVariable": true
                             }
                         ],
-                        "id": "agentAgentflow_0-input-agentUpdateState-array",
+                        "id": "llmAgentflow_0-input-llmUpdateState-array",
                         "display": true
                     }
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "agentModel": "chatOpenAI",
-                    "agentMessages": [
-                        {
-                            "role": "system",
-                            "content": "<p>You are a customer support agent working in THub Inc. Write a professional email reply to user's query. Use the web search tools to get more details about the prospect.</p>"
-                        }
-                    ],
-                    "agentTools": [
-                        {
-                            "agentSelectedTool": "googleCustomSearch",
-                            "agentSelectedToolConfig": {
-                                "agentSelectedTool": "googleCustomSearch"
-                            }
-                        },
-                        {
-                            "agentSelectedTool": "currentDateTime",
-                            "agentSelectedToolConfig": {
-                                "agentSelectedTool": "currentDateTime"
-                            }
-                        }
-                    ],
-                    "agentKnowledgeDocumentStores": "",
-                    "agentEnableMemory": true,
-                    "agentMemoryType": "allMessages",
-                    "agentUserMessage": "",
-                    "agentReturnResponseAs": "userMessage",
-                    "agentUpdateState": "",
-                    "agentModelConfig": {
-                        "cache": "",
+                    "llmModel": "chatOpenAI",
+                    "llmMessages": "",
+                    "llmEnableMemory": true,
+                    "llmMemoryType": "allMessages",
+                    "llmUserMessage": "",
+                    "llmReturnResponseAs": "userMessage",
+                    "llmStructuredOutput": "",
+                    "llmUpdateState": "",
+                    "llmModelConfig": {
+                        "credential": "",
                         "modelName": "gpt-4o-mini",
                         "temperature": 0.9,
                         "streaming": true,
@@ -525,183 +493,165 @@
                         "baseOptions": "",
                         "allowImageUploads": "",
                         "imageResolution": "low",
-                        "reasoningEffort": "medium",
-                        "agentModel": "chatOpenAI"
+                        "reasoningEffort": "",
+                        "llmModel": "chatOpenAI"
                     }
                 },
                 "outputAnchors": [
                     {
-                        "id": "agentAgentflow_0-output-agentAgentflow",
-                        "label": "Agent",
-                        "name": "agentAgentflow"
+                        "id": "llmAgentflow_0-output-llmAgentflow",
+                        "label": "LLM",
+                        "name": "llmAgentflow"
                     }
                 ],
                 "outputs": {},
                 "selected": false
             },
             "type": "agentFlow",
-            "width": 182,
-            "height": 103,
+            "width": 175,
+            "height": 72,
             "selected": false,
             "positionAbsolute": {
-                "x": -62.25,
-                "y": 76
+                "x": -31.25,
+                "y": 64.5
             },
             "dragging": false
         },
         {
-            "id": "humanInputAgentflow_0",
+            "id": "toolAgentflow_0",
             "position": {
-                "x": 156.05666363734434,
-                "y": 86.62266545493773
+                "x": 181.67112630208328,
+                "y": 28.357731119791666
             },
             "data": {
-                "id": "humanInputAgentflow_0",
-                "label": "Human Input 0",
-                "version": 1,
-                "name": "humanInputAgentflow",
-                "type": "HumanInput",
-                "color": "#52289F",
-                "baseClasses": ["HumanInput"],
-                "category": "Agent Studio",
-                "description": "Request human input, approval or rejection during execution",
+                "id": "toolAgentflow_0",
+                "label": "Post to Slack",
+                "version": 1.1,
+                "name": "toolAgentflow",
+                "type": "Tool",
+                "color": "#d4a373",
+                "baseClasses": ["Tool"],
+                "category": "Agent Flows",
+                "description": "Tools allow LLM to interact with external systems",
                 "inputParams": [
                     {
-                        "label": "Description Type",
-                        "name": "humanInputDescriptionType",
-                        "type": "options",
-                        "options": [
+                        "label": "Tool",
+                        "name": "toolAgentflowSelectedTool",
+                        "type": "asyncOptions",
+                        "loadMethod": "listTools",
+                        "loadConfig": true,
+                        "id": "toolAgentflow_0-input-toolAgentflowSelectedTool-asyncOptions",
+                        "display": true
+                    },
+                    {
+                        "label": "Tool Input Arguments",
+                        "name": "toolInputArgs",
+                        "type": "array",
+                        "acceptVariable": true,
+                        "refresh": true,
+                        "array": [
                             {
-                                "label": "Fixed",
-                                "name": "fixed",
-                                "description": "Specify a fixed description"
+                                "label": "Input Argument Name",
+                                "name": "inputArgName",
+                                "type": "asyncOptions",
+                                "loadMethod": "listToolInputArgs",
+                                "refresh": true
                             },
                             {
-                                "label": "Dynamic",
-                                "name": "dynamic",
-                                "description": "Use LLM to generate a description"
+                                "label": "Input Argument Value",
+                                "name": "inputArgValue",
+                                "type": "string",
+                                "acceptVariable": true
                             }
                         ],
-                        "id": "humanInputAgentflow_0-input-humanInputDescriptionType-options",
+                        "show": {
+                            "toolAgentflowSelectedTool": ".+"
+                        },
+                        "id": "toolAgentflow_0-input-toolInputArgs-array",
                         "display": true
                     },
                     {
-                        "label": "Description",
-                        "name": "humanInputDescription",
-                        "type": "string",
-                        "placeholder": "Are you sure you want to proceed?",
+                        "label": "Update Flow State",
+                        "name": "toolUpdateState",
+                        "description": "Update runtime state during the execution of the workflow",
+                        "type": "array",
+                        "optional": true,
                         "acceptVariable": true,
-                        "rows": 4,
-                        "show": {
-                            "humanInputDescriptionType": "fixed"
-                        },
-                        "id": "humanInputAgentflow_0-input-humanInputDescription-string",
-                        "display": true
-                    },
-                    {
-                        "label": "Model",
-                        "name": "humanInputModel",
-                        "type": "asyncOptions",
-                        "loadMethod": "listModels",
-                        "loadConfig": true,
-                        "show": {
-                            "humanInputDescriptionType": "dynamic"
-                        },
-                        "id": "humanInputAgentflow_0-input-humanInputModel-asyncOptions",
-                        "display": false
-                    },
-                    {
-                        "label": "Prompt",
-                        "name": "humanInputModelPrompt",
-                        "type": "string",
-                        "default": "<p>Summarize the conversation between the user and the assistant, reiterate the last message from the assistant, and ask if user would like to proceed or if they have any feedback. </p>\n<ul>\n<li>Begin by capturing the key points of the conversation, ensuring that you reflect the main ideas and themes discussed.</li>\n<li>Then, clearly reproduce the last message sent by the assistant to maintain continuity. Make sure the whole message is reproduced.</li>\n<li>Finally, ask the user if they would like to proceed, or provide any feedback on the last assistant message</li>\n</ul>\n<h2 id=\"output-format-the-output-should-be-structured-in-three-parts-\">Output Format The output should be structured in three parts in text:</h2>\n<ul>\n<li>A summary of the conversation (1-3 sentences).</li>\n<li>The last assistant message (exactly as it appeared).</li>\n<li>Ask the user if they would like to proceed, or provide any feedback on last assistant message. No other explanation and elaboration is needed.</li>\n</ul>\n",
-                        "acceptVariable": true,
-                        "generateInstruction": true,
-                        "rows": 4,
-                        "show": {
-                            "humanInputDescriptionType": "dynamic"
-                        },
-                        "id": "humanInputAgentflow_0-input-humanInputModelPrompt-string",
-                        "display": false
-                    },
-                    {
-                        "label": "Enable Feedback",
-                        "name": "humanInputEnableFeedback",
-                        "type": "boolean",
-                        "default": true,
-                        "id": "humanInputAgentflow_0-input-humanInputEnableFeedback-boolean",
+                        "array": [
+                            {
+                                "label": "Key",
+                                "name": "key",
+                                "type": "asyncOptions",
+                                "loadMethod": "listRuntimeStateKeys",
+                                "freeSolo": true
+                            },
+                            {
+                                "label": "Value",
+                                "name": "value",
+                                "type": "string",
+                                "acceptVariable": true,
+                                "acceptNodeOutputAsVariable": true
+                            }
+                        ],
+                        "id": "toolAgentflow_0-input-toolUpdateState-array",
                         "display": true
                     }
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "humanInputDescriptionType": "fixed",
-                    "humanInputEnableFeedback": true,
-                    "humanInputModelConfig": {
-                        "cache": "",
-                        "modelName": "gpt-4o-mini",
-                        "temperature": 0.9,
-                        "streaming": true,
-                        "maxTokens": "",
-                        "topP": "",
-                        "frequencyPenalty": "",
-                        "presencePenalty": "",
-                        "timeout": "",
-                        "strictToolCalling": "",
-                        "stopSequence": "",
-                        "basepath": "",
-                        "proxyUrl": "",
-                        "baseOptions": "",
-                        "allowImageUploads": "",
-                        "imageResolution": "low",
-                        "reasoningEffort": "medium",
-                        "humanInputModel": "chatOpenAI"
-                    },
-                    "humanInputDescription": "<p>Are you sure you want to proceed?</p>"
+                    "toolAgentflowSelectedTool": "slackMCP",
+                    "toolInputArgs": [
+                        {
+                            "inputArgName": "channel_id",
+                            "inputArgValue": "<p>ABCDEFG</p>"
+                        },
+                        {
+                            "inputArgName": "text",
+                            "inputArgValue": "<p><span class=\"variable\" data-type=\"mention\" data-id=\"llmAgentflow_0\" data-label=\"llmAgentflow_0\">{{ llmAgentflow_0 }}</span> </p>"
+                        }
+                    ],
+                    "toolUpdateState": "",
+                    "toolAgentflowSelectedToolConfig": {
+                        "mcpActions": "[\"slack_post_message\"]",
+                        "toolAgentflowSelectedTool": "slackMCP"
+                    }
                 },
                 "outputAnchors": [
                     {
-                        "id": "humanInputAgentflow_0-output-0",
-                        "label": "Human Input",
-                        "name": "humanInputAgentflow"
-                    },
-                    {
-                        "id": "humanInputAgentflow_0-output-1",
-                        "label": "Human Input",
-                        "name": "humanInputAgentflow"
+                        "id": "toolAgentflow_0-output-toolAgentflow",
+                        "label": "Tool",
+                        "name": "toolAgentflow"
                     }
                 ],
-                "outputs": {
-                    "humanInputAgentflow": ""
-                },
+                "outputs": {},
                 "selected": false
             },
             "type": "agentFlow",
-            "width": 161,
-            "height": 80,
+            "width": 156,
+            "height": 68,
             "selected": false,
             "positionAbsolute": {
-                "x": 156.05666363734434,
-                "y": 86.62266545493773
+                "x": 181.67112630208328,
+                "y": 28.357731119791666
             },
             "dragging": false
         },
         {
             "id": "directReplyAgentflow_0",
             "position": {
-                "x": 363.0101864947954,
-                "y": 35.15053748988734
+                "x": 373.22324218750003,
+                "y": 66.96056315104161
             },
             "data": {
                 "id": "directReplyAgentflow_0",
-                "label": "Direct Reply 0",
+                "label": "Direct Reply To Chat",
                 "version": 1,
                 "name": "directReplyAgentflow",
                 "type": "DirectReply",
-                "color": "#06D6A0",
+                "color": "#4DDBBB",
                 "hideOutput": true,
                 "baseClasses": ["DirectReply"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Directly reply to the user with a message",
                 "inputParams": [
                     {
@@ -716,74 +666,145 @@
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "directReplyMessage": "<p><span class=\"variable\" data-type=\"mention\" data-id=\"agentAgentflow_0\" data-label=\"agentAgentflow_0\">{{ agentAgentflow_0 }}</span> </p>"
+                    "directReplyMessage": "<p><span class=\"variable\" data-type=\"mention\" data-id=\"llmAgentflow_0\" data-label=\"llmAgentflow_0\">{{ llmAgentflow_0 }}</span> </p>"
                 },
                 "outputAnchors": [],
                 "outputs": {},
                 "selected": false
             },
             "type": "agentFlow",
-            "width": 155,
-            "height": 65,
+            "width": 204,
+            "height": 66,
             "selected": false,
             "positionAbsolute": {
-                "x": 363.0101864947954,
-                "y": 35.15053748988734
+                "x": 373.22324218750003,
+                "y": 66.96056315104161
             },
             "dragging": false
         },
         {
-            "id": "loopAgentflow_0",
+            "id": "toolAgentflow_1",
             "position": {
-                "x": 366.5975521223236,
-                "y": 130.12266545493773
+                "x": 177.461181640625,
+                "y": 108.73382161458332
             },
             "data": {
-                "id": "loopAgentflow_0",
-                "label": "Loop 0",
-                "version": 1,
-                "name": "loopAgentflow",
-                "type": "Loop",
-                "color": "#FFA07A",
-                "hideOutput": true,
-                "baseClasses": ["Loop"],
-                "category": "Agent Studio",
-                "description": "Loop back to a previous node",
+                "id": "toolAgentflow_1",
+                "label": "Post to Teams",
+                "version": 1.1,
+                "name": "toolAgentflow",
+                "type": "Tool",
+                "color": "#d4a373",
+                "baseClasses": ["Tool"],
+                "category": "Agent Flows",
+                "description": "Tools allow LLM to interact with external systems",
                 "inputParams": [
                     {
-                        "label": "Loop Back To",
-                        "name": "loopBackToNode",
+                        "label": "Tool",
+                        "name": "toolAgentflowSelectedTool",
                         "type": "asyncOptions",
-                        "loadMethod": "listPreviousNodes",
-                        "freeSolo": true,
-                        "id": "loopAgentflow_0-input-loopBackToNode-asyncOptions",
+                        "loadMethod": "listTools",
+                        "loadConfig": true,
+                        "id": "toolAgentflow_1-input-toolAgentflowSelectedTool-asyncOptions",
                         "display": true
                     },
                     {
-                        "label": "Max Loop Count",
-                        "name": "maxLoopCount",
-                        "type": "number",
-                        "default": 5,
-                        "id": "loopAgentflow_0-input-maxLoopCount-number",
+                        "label": "Tool Input Arguments",
+                        "name": "toolInputArgs",
+                        "type": "array",
+                        "acceptVariable": true,
+                        "refresh": true,
+                        "array": [
+                            {
+                                "label": "Input Argument Name",
+                                "name": "inputArgName",
+                                "type": "asyncOptions",
+                                "loadMethod": "listToolInputArgs",
+                                "refresh": true
+                            },
+                            {
+                                "label": "Input Argument Value",
+                                "name": "inputArgValue",
+                                "type": "string",
+                                "acceptVariable": true
+                            }
+                        ],
+                        "show": {
+                            "toolAgentflowSelectedTool": ".+"
+                        },
+                        "id": "toolAgentflow_1-input-toolInputArgs-array",
+                        "display": true
+                    },
+                    {
+                        "label": "Update Flow State",
+                        "name": "toolUpdateState",
+                        "description": "Update runtime state during the execution of the workflow",
+                        "type": "array",
+                        "optional": true,
+                        "acceptVariable": true,
+                        "array": [
+                            {
+                                "label": "Key",
+                                "name": "key",
+                                "type": "asyncOptions",
+                                "loadMethod": "listRuntimeStateKeys",
+                                "freeSolo": true
+                            },
+                            {
+                                "label": "Value",
+                                "name": "value",
+                                "type": "string",
+                                "acceptVariable": true,
+                                "acceptNodeOutputAsVariable": true
+                            }
+                        ],
+                        "id": "toolAgentflow_1-input-toolUpdateState-array",
                         "display": true
                     }
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "loopBackToNode": "agentAgentflow_0-Email Reply Agent",
-                    "maxLoopCount": 5
+                    "toolAgentflowSelectedTool": "microsoftTeams",
+                    "toolInputArgs": [
+                        {
+                            "inputArgName": "teamId",
+                            "inputArgValue": "<p>&lt;your-team-id&gt;</p>"
+                        },
+                        {
+                            "inputArgName": "chatChannelId",
+                            "inputArgValue": "<p>&lt;your-channel-id&gt;</p>"
+                        },
+                        {
+                            "inputArgName": "messageBody",
+                            "inputArgValue": "<p><span class=\"variable\" data-type=\"mention\" data-id=\"llmAgentflow_0\" data-label=\"llmAgentflow_0\">{{ llmAgentflow_0 }}</span> </p>"
+                        }
+                    ],
+                    "toolUpdateState": "",
+                    "toolAgentflowSelectedToolConfig": {
+                        "credential": "",
+                        "teamsType": "chatMessage",
+                        "chatMessageActions": "[\"sendMessage\"]",
+                        "toolAgentflowSelectedTool": "microsoftTeams",
+                        "chatChannelIdSendMessage": "ABCDEFG"
+                    }
                 },
-                "outputAnchors": [],
+                "outputAnchors": [
+                    {
+                        "id": "toolAgentflow_1-output-toolAgentflow",
+                        "label": "Tool",
+                        "name": "toolAgentflow"
+                    }
+                ],
                 "outputs": {},
                 "selected": false
             },
             "type": "agentFlow",
-            "width": 113,
-            "height": 65,
+            "width": 163,
+            "height": 68,
             "selected": false,
             "positionAbsolute": {
-                "x": 366.5975521223236,
-                "y": 130.12266545493773
+                "x": 177.461181640625,
+                "y": 108.73382161458332
             },
             "dragging": false
         }
@@ -792,56 +813,67 @@
         {
             "source": "startAgentflow_0",
             "sourceHandle": "startAgentflow_0-output-startAgentflow",
-            "target": "agentAgentflow_0",
-            "targetHandle": "agentAgentflow_0",
+            "target": "llmAgentflow_0",
+            "targetHandle": "llmAgentflow_0",
             "data": {
-                "sourceColor": "#06D6A0",
-                "targetColor": "#FFD166",
+                "sourceColor": "#7EE787",
+                "targetColor": "#64B5F6",
                 "isHumanInput": false
             },
             "type": "agentFlow",
-            "id": "startAgentflow_0-startAgentflow_0-output-startAgentflow-agentAgentflow_0-agentAgentflow_0"
+            "id": "startAgentflow_0-startAgentflow_0-output-startAgentflow-llmAgentflow_0-llmAgentflow_0"
         },
         {
-            "source": "agentAgentflow_0",
-            "sourceHandle": "agentAgentflow_0-output-agentAgentflow",
-            "target": "humanInputAgentflow_0",
-            "targetHandle": "humanInputAgentflow_0",
+            "source": "llmAgentflow_0",
+            "sourceHandle": "llmAgentflow_0-output-llmAgentflow",
+            "target": "toolAgentflow_0",
+            "targetHandle": "toolAgentflow_0",
             "data": {
-                "sourceColor": "#FFD166",
-                "targetColor": "#52289F",
+                "sourceColor": "#64B5F6",
+                "targetColor": "#d4a373",
                 "isHumanInput": false
             },
             "type": "agentFlow",
-            "id": "agentAgentflow_0-agentAgentflow_0-output-agentAgentflow-humanInputAgentflow_0-humanInputAgentflow_0"
+            "id": "llmAgentflow_0-llmAgentflow_0-output-llmAgentflow-toolAgentflow_0-toolAgentflow_0"
         },
         {
-            "source": "humanInputAgentflow_0",
-            "sourceHandle": "humanInputAgentflow_0-output-0",
+            "source": "toolAgentflow_0",
+            "sourceHandle": "toolAgentflow_0-output-toolAgentflow",
             "target": "directReplyAgentflow_0",
             "targetHandle": "directReplyAgentflow_0",
             "data": {
-                "sourceColor": "#52289F",
-                "targetColor": "#06D6A0",
-                "edgeLabel": "proceed",
-                "isHumanInput": true
+                "sourceColor": "#d4a373",
+                "targetColor": "#4DDBBB",
+                "isHumanInput": false
             },
             "type": "agentFlow",
-            "id": "humanInputAgentflow_0-humanInputAgentflow_0-output-0-directReplyAgentflow_0-directReplyAgentflow_0"
+            "id": "toolAgentflow_0-toolAgentflow_0-output-toolAgentflow-directReplyAgentflow_0-directReplyAgentflow_0"
         },
         {
-            "source": "humanInputAgentflow_0",
-            "sourceHandle": "humanInputAgentflow_0-output-1",
-            "target": "loopAgentflow_0",
-            "targetHandle": "loopAgentflow_0",
+            "source": "llmAgentflow_0",
+            "sourceHandle": "llmAgentflow_0-output-llmAgentflow",
+            "target": "toolAgentflow_1",
+            "targetHandle": "toolAgentflow_1",
             "data": {
-                "sourceColor": "#52289F",
-                "targetColor": "#FFA07A",
-                "edgeLabel": "reject",
-                "isHumanInput": true
+                "sourceColor": "#64B5F6",
+                "targetColor": "#d4a373",
+                "isHumanInput": false
             },
             "type": "agentFlow",
-            "id": "humanInputAgentflow_0-humanInputAgentflow_0-output-1-loopAgentflow_0-loopAgentflow_0"
+            "id": "llmAgentflow_0-llmAgentflow_0-output-llmAgentflow-toolAgentflow_1-toolAgentflow_1"
+        },
+        {
+            "source": "toolAgentflow_1",
+            "sourceHandle": "toolAgentflow_1-output-toolAgentflow",
+            "target": "directReplyAgentflow_0",
+            "targetHandle": "directReplyAgentflow_0",
+            "data": {
+                "sourceColor": "#d4a373",
+                "targetColor": "#4DDBBB",
+                "isHumanInput": false
+            },
+            "type": "agentFlow",
+            "id": "toolAgentflow_1-toolAgentflow_1-output-toolAgentflow-directReplyAgentflow_0-directReplyAgentflow_0"
         }
     ]
 }

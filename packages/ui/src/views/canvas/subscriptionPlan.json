@@ -572,7 +572,7 @@
             "Response Synthesizer": ["Refine", "TreeSummarize", "Compact And Refine", "Sub Question Query Engine"],
             "Tools (MCP)": ["Brave Search MCP", "Custom MCP", "Github MCP", "PostgreSQL MCP", "Sequential Thinking MCP", "Slack MCP"],
             "Utilities": ["Custom JS Function", "Get Variable", "IfElse Function", "Set Variable", "Sticky Note"],
-            "Agent Pipeline": [
+            "Agent Studio": [
                 "Agent",
                 "Condition",
                 "Condition Agent",
@@ -877,7 +877,7 @@
             "Engine": ["Context Chat Engine", "Simple Chat Engine", "Query Engine", "QueryEngine Tools"],
             "Response Synthesizer": ["Refine", "TreeSummarize", "Compact And Refine", "Sub Question Query Engine"],
             "Utilities": ["Custom JS Function", "Get Variable", "IfElse Function", "Set Variable", "Sticky Note"],
-            "Agent Pipeline": [
+            "Agent Studio": [
                 "Agent",
                 "Condition",
                 "Condition Agent",

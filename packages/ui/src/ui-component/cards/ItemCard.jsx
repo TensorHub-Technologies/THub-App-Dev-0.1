@@ -1,387 +1,269 @@
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-import { useState } from 'react'
 
 // material-ui
-import { styled } from '@mui/material/styles'
+import { Box, Typography, Tooltip } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 // project imports
-import MainCard from '@/ui-component/cards/MainCard'
 import SkeletonChatflowCard from '@/ui-component/cards/Skeleton/ChatflowCard'
 import FlowListMenu from '@/ui-component/button/FlowListMenu'
-import { Typography, Tooltip, Box } from '@mui/material'
-import Dark from '@/assets/images/Pink.png'
-import Light from '@/assets/images/Light.png'
-import MoreItemsTooltip from '../tooltip/MoreItemsTooltip'
+import thuicon from '@/assets/images/THub_icon_colorful_logo.png'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
 }
 
-const CardWrapper = styled(MainCard)(({ theme }) => ({
-    background: theme.palette.card.main,
-    color: theme.darkTextPrimary,
-    // color: useCustomization().isDarkMode ? '#E22A90' : '#3C5BA4',
-    overflow: 'auto',
-    position: 'relative',
-    cursor: 'pointer',
-    '&:hover': {
-        backgroundImage: 'linear-gradient(to left, "#3C5BA4", "#E22A90")',
-        boxShadow: '0 0 20px rgba(60, 91, 164, 0.8), 0 0 30px rgba(226, 42, 144, 0.8)',
-        '& + button': {
-            '& svg': {
-                transform: 'rotate(-45deg)'
-            }
-        }
-    },
-    maxHeight: '280px',
-    maxWidth: '100%',
-    overflowWrap: 'break-word',
-    whiteSpace: 'pre-line'
-}))
-
-// ===========================|| CARD ||=========================== //
+// ===========================|| ITEM CARD ||=========================== //
 
 const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons, isAgentCanvas, isAgentflowV2 }) => {
     const customization = useCustomization()
+    const theme = useTheme()
+    const isDark = customization.isDarkMode
 
-    const [isDragging, setIsDragging] = useState(false)
-    const handleStart = () => {
-        setIsDragging(false)
-    }
-    const handleDrag = () => {
-        setIsDragging(true)
-    }
-    const handleStop = () => {
-        setTimeout(() => setIsDragging(false), 0)
-    }
-    const handleClick = () => {
-        if (!isDragging) {
-            onClick()
-        }
-    }
+    console.log(data, 'data')
 
     return (
-        <div
-            style={{
+        <Box
+            onClick={onClick}
+            sx={{
                 position: 'relative',
-                background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                width: '280px',
-                height: '280px',
-                borderRadius: '12px',
-                padding: 1
+                // maxWidth: '26rem',
+                mx: 'auto',
+                cursor: 'pointer'
             }}
         >
             {isLoading ? (
                 <SkeletonChatflowCard />
             ) : (
-                <div
-                    style={{
-                        position: 'absolute',
-                        background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                        width: '280px',
-                        height: '280px',
-                        borderRadius: '12px',
-                        padding: 1
+                <Box
+                    sx={{
+                        position: 'relative',
+                        transform: 'translateY(0)',
+                        transition: 'all 0.5s ease-in-out',
+                        animation: 'float 6s ease-in-out infinite',
+                        '@keyframes float': {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        '&:hover': {
+                            transform: 'translateY(-5px)'
+                        }
                     }}
                 >
-                    <CardWrapper
-                        // sx={{ background: customization.isDarkMode ? 'theme.palette.common.black': `url(${image1}) !important`,}}
-                        border={false}
-                        content={false}
-                        onClick={() => {
-                            if (!isDragging) {
-                                onClick()
+                    {/* Main Glass Card */}
+                    <Box
+                        sx={{
+                            position: 'relative',
+                            border: '1px solid',
+                            borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                            borderRadius: '12px',
+                            backdropFilter: 'blur(16px)',
+                            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                            height: '18rem',
+                            width: '25rem',
+                            transition: 'all 0.3s ease-in-out',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            '&:hover': {
+                                '& .glow-effect': {
+                                    opacity: 1
+                                }
                             }
                         }}
                     >
-                        <div
-                            style={{
-                                height: '270px',
-                                overflow: 'hidden',
-                                borderRadius: '12px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                background: 'transparent',
-                                position: 'relative'
-                            }}
-                        >
-                            <div
-                                style={{
-                                    borderBottomRightRadius: '10px',
-                                    borderTopLeftRadius: '12px',
-                                    height: '30px',
-                                    width: '170px',
-                                    background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                                    position: 'relative',
-                                    transform: 'skew(-40deg)',
-                                    boxShadow: '-10px -10px 0 0 #3C5BA4'
-                                }}
-                            ></div>
-                            <div
-                                style={{
-                                    content: '""',
-                                    position: 'absolute',
-                                    top: '30px',
-                                    left: '0',
-                                    height: '15px',
-                                    width: '15px',
-                                    borderTopLeftRadius: '12px',
-                                    boxShadow: '-5px -5px 0 2px #3C5BA4'
-                                }}
-                            ></div>
-                            <div
-                                style={{
-                                    content: '""',
-                                    position: 'absolute',
-                                    top: '20px',
-                                    left: '30px',
-                                    height: '20px',
-                                    width: '30px',
-                                    borderTopLeftRadius: '12px',
-                                    borderBottomRightRadius: '30px',
-                                    boxShadow: '-30px -20px 0 0 #3C5BA4'
-                                }}
-                            ></div>
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    top: '0',
-                                    width: '100%',
-                                    height: '30px',
+                        {/* Content */}
+                        <Box sx={{ position: 'relative', zIndex: 10, px: 3, pt: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                            {/* Header with Icon and Title */}
+                            <Box
+                                sx={{
                                     display: 'flex',
-                                    justifyContent: 'space-between'
+                                    alignItems: 'flex-start',
+                                    mb: 2,
+                                    minHeight: '3rem' // Reserve space for up to 2 lines of title
                                 }}
                             >
-                                <div
-                                    style={{
-                                        height: '100%',
-                                        aspectRatio: '1',
-                                        padding: '5px 0 0 15px'
-                                    }}
-                                >
-                                    <img
-                                        style={{ objectFit: 'contain', height: 'auto', width: 15 }}
-                                        src={customization.isDarkMode ? Dark : Light}
-                                        alt='THub Logo Icon'
-                                    />
-                                </div>
-                            </div>
-
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    overflow: 'hidden',
-                                    marginTop: 10,
-                                    padding: '10px 10px'
-                                }}
-                            >
+                                {/* Icon */}
                                 {data.iconSrc && (
-                                    <div
-                                        style={{
-                                            width: 35,
-                                            height: 35,
-                                            marginRight: 10,
+                                    <Box
+                                        sx={{
+                                            width: 40,
+                                            height: 40,
+                                            mr: 2,
                                             borderRadius: '20%',
-                                            background: `url(${data.iconSrc})`,
+                                            backgroundImage: `url(${data.iconSrc})`,
                                             backgroundSize: 'contain',
                                             backgroundRepeat: 'no-repeat',
-                                            backgroundPosition: 'center center'
+                                            backgroundPosition: 'center',
+                                            flexShrink: 0
                                         }}
-                                    ></div>
+                                    />
                                 )}
-                                {!data.iconSrc && data.color && (
-                                    <div
+
+                                {/* Title with THub Icon */}
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, flex: 1 }}>
+                                    <img
                                         style={{
-                                            width: 35,
-                                            height: 35,
-                                            marginRight: 10,
-                                            borderRadius: '50%',
-                                            background: data.color
+                                            width: '24px',
+                                            height: '24px',
+                                            marginTop: '1px',
+                                            flexShrink: 0
                                         }}
-                                    ></div>
-                                )}
-                                <Typography
-                                    sx={{
-                                        fontSize: '1.1rem',
-                                        fontWeight: 500,
-                                        height: '40px',
-                                        background: 'transparent',
-                                        overflowWrap: 'break-word',
-                                        whiteSpace: 'pre-line'
-                                    }}
-                                >
-                                    {data.templateName || data.name}
-                                </Typography>
-                            </div>
-                            {data.description && (
-                                <Tooltip title={data?.description || ''}>
-                                    <span
-                                        style={{
-                                            display: 'block',
-                                            padding: '0px 20px',
-                                            overflowWrap: 'break-word',
-                                            whiteSpace: 'pre-line', // Allows multi-line text wrapping
-                                            overflow: 'hidden', // Ensures overflow content is hidden
-                                            height: '18px', // Limits to two lines based on line height
-                                            lineHeight: '20px', // Adjust to control the height for two lines
-                                            width: '250px',
-                                            fontFamily: 'Roboto, sans-serif'
+                                        src={thuicon}
+                                        alt='THub Icon'
+                                    />
+                                    <Typography
+                                        variant='h6'
+                                        sx={{
+                                            fontFamily: 'Cambria Math',
+                                            fontWeight: 'bold',
+                                            color: isDark ? 'white' : 'black',
+                                            fontSize: '1.1rem',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            lineHeight: '1.5rem',
+                                            flex: 1
                                         }}
                                     >
-                                        {data.description}
-                                    </span>
-                                </Tooltip>
-                            )}
-                            <div
-                                style={{
-                                    padding: '10px '
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        marginTop: '0px'
+                                        {data.templateName || data.name}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {/* Description - Fixed height section */}
+                            <Box sx={{ minHeight: '3rem', mb: 2 }}>
+                                {data.description && (
+                                    <Tooltip title={data.description} placement='top' arrow>
+                                        <Typography
+                                            sx={{
+                                                fontFamily: 'Cambria Math',
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
+                                                fontWeight: 'normal',
+                                                color: isDark ? 'white' : 'black',
+                                                cursor: 'pointer',
+                                                lineHeight: '1.5rem'
+                                            }}
+                                        >
+                                            {data.description}
+                                        </Typography>
+                                    </Tooltip>
+                                )}
+                            </Box>
+
+                            {/* Tools Section */}
+                            <Box sx={{ mt: 1, minHeight: '4rem' }}>
+                                <Typography
+                                    variant='subtitle2'
+                                    sx={{
+                                        fontFamily: 'Cambria Math',
+                                        fontWeight: 'bold',
+                                        color: isDark ? 'white' : 'black',
+                                        fontSize: '0.875rem',
+
+                                        letterSpacing: '1px'
                                     }}
                                 >
-                                    {images && (
-                                        <div>
-                                            <div
-                                                style={{
-                                                    fontSize: '15px',
-                                                    fontWeight: 'bold',
-                                                    textAlign: 'center',
-                                                    letterSpacing: '2px'
-                                                }}
-                                            >
-                                                Nodes
-                                            </div>
-                                            {(images?.length > 0 || icons?.length > 0) && (
+                                    Tools
+                                </Typography>
+
+                                {/* Tools Icons */}
+                                {(images?.length > 0 || icons?.length > 0) && (
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'flex-start',
+                                            gap: 1,
+                                            marginTop: 1,
+                                            flexWrap: 'wrap',
+                                            minHeight: '2.5rem' // Reserve space for up to 2 lines of tools
+                                        }}
+                                    >
+                                        {/* Show all tools */}
+                                        {[
+                                            ...(images || []).map((img) => ({
+                                                type: 'image',
+                                                src: img,
+                                                label: 'Tool'
+                                            })),
+                                            ...(icons || []).map((ic) => ({
+                                                type: typeof ic.icon === 'string' ? 'image' : 'icon',
+                                                icon: ic.icon,
+                                                src: ic.icon,
+                                                color: ic.color,
+                                                label: ic.name
+                                            }))
+                                        ].map((item, index) => (
+                                            <Tooltip key={index} title={item.label} placement='top'>
                                                 <Box
                                                     sx={{
+                                                        width: 32,
+                                                        height: 32,
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        justifyContent: 'start',
-                                                        gap: 1
+                                                        justifyContent: 'center',
+                                                        borderRadius: '20%',
+                                                        backgroundColor: 'transparent'
                                                     }}
                                                 >
-                                                    {[
-                                                        ...(icons || []).map((ic) => ({
-                                                            type:
-                                                                (ic.icon || ic.icon) && typeof (ic.icon || ic.icon) === 'string'
-                                                                    ? 'image'
-                                                                    : 'icon',
-                                                            icon: ic.icon,
-                                                            src: ic.icon || ic.icon,
-                                                            color: ic.color,
-                                                            label: ic.name
-                                                        }))
-                                                    ]
-                                                        .slice(0, 3)
-                                                        .map((item, index) => (
-                                                            <Tooltip key={item.icon || index} title={item.label} placement='top'>
-                                                                <div
-                                                                    style={{
-                                                                        width: 30,
-                                                                        height: 30,
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'center',
-                                                                        borderRadius: '20%',
-                                                                        backgroundColor: item.type === 'image' ? '#fff' : 'transparent',
-                                                                        boxShadow:
-                                                                            item.type === 'image'
-                                                                                ? '2px 2px 14px 2px rgb(32 40 45 / 8%)'
-                                                                                : 'none'
-                                                                    }}
-                                                                >
-                                                                    {item.type === 'image' ? (
-                                                                        <img
-                                                                            src={item.icon}
-                                                                            alt={item.label}
-                                                                            style={{
-                                                                                width: '100%',
-                                                                                height: '100%',
-                                                                                objectFit: 'contain'
-                                                                            }}
-                                                                        />
-                                                                    ) : (
-                                                                        <item.icon size={25} color={item.color} />
-                                                                    )}
-                                                                </div>
-                                                            </Tooltip>
-                                                        ))}
-
-                                                    {(images?.length || 0) + (icons?.length || 0) > 3 && (
-                                                        <MoreItemsTooltip
-                                                            images={[
-                                                                ...(images?.slice(3) || []),
-                                                                ...(icons?.slice(Math.max(0, 3 - (images?.length || 0))) || []).map(
-                                                                    (ic) => ({ label: ic.name })
-                                                                )
-                                                            ]}
-                                                        ></MoreItemsTooltip>
-                                                    )}
-                                                </Box>
-                                            )}
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    flexWrap: 'wrap',
-                                                    overflow: 'auto',
-                                                    height: '80px',
-                                                    WebkitOverflowScrolling: 'touch',
-                                                    scrollbarWidth: 'none'
-                                                    // '-ms-overflow-style': 'none'
-                                                }}
-                                            >
-                                                {images.map((img) => (
-                                                    <div
-                                                        key={img}
-                                                        style={{
-                                                            width: 30,
-                                                            height: 30,
-                                                            marginRight: 5,
-                                                            borderRadius: '20%',
-                                                            boxShadow: '2px 2px 14px 2px rgb(32 40 45 / 8%)',
-                                                            background: `${customization.isDarkMode ? '#fff' : '#fff'}`,
-                                                            marginTop: 5
-                                                        }}
-                                                    >
-                                                        <img
-                                                            style={{
-                                                                width: '100%',
-                                                                height: '100%',
-                                                                padding: 5,
+                                                    {item.type === 'image' ? (
+                                                        <Box
+                                                            component='img'
+                                                            src={item.src}
+                                                            alt={item.label}
+                                                            sx={{
+                                                                width: '80%',
+                                                                height: '80%',
                                                                 objectFit: 'contain'
                                                             }}
-                                                            alt=''
-                                                            src={img}
                                                         />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </CardWrapper>
+                                                    ) : (
+                                                        <Box component={item.icon} sx={{ fontSize: 16, color: item.color }} />
+                                                    )}
+                                                </Box>
+                                            </Tooltip>
+                                        ))}
+                                    </Box>
+                                )}
+                            </Box>
+                        </Box>
 
-                    {!data.templateName && (
-                        <FlowListMenu
-                            chatflow={chatflow || data}
-                            updateFlowsApi={updateFlowsApi}
-                            isAgentCanvas={isAgentCanvas}
-                            isAgentflowV2={isAgentflowV2}
+                        {/* Soft Glow Effect */}
+                        <Box
+                            className='glow-effect'
+                            sx={{
+                                position: 'absolute',
+                                inset: 0,
+                                borderRadius: '12px',
+                                background: 'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                opacity: 0,
+                                transition: 'opacity 0.3s ease-in-out',
+                                filter: 'blur(8px)',
+                                zIndex: -1
+                            }}
                         />
+                    </Box>
+
+                    {/* Flow Menu (if not a template) */}
+                    {!data.templateName && (
+                        <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
+                            <FlowListMenu
+                                chatflow={chatflow || data}
+                                updateFlowsApi={updateFlowsApi}
+                                isAgentCanvas={isAgentCanvas}
+                                isAgentflowV2={isAgentflowV2}
+                            />
+                        </Box>
                     )}
-                </div>
+                </Box>
             )}
-        </div>
+        </Box>
     )
 }
 

@@ -162,7 +162,7 @@ function handleElapsedRecordingTime() {
  */
 function displayElapsedTimeDuringAudioRecording(elapsedTime) {
     //1. display the passed elapsed time as the elapsed time in the elapsedTime HTML element
-    elapsedTimeTag.innerHTML = elapsedTime
+    elapsedTimeTag.textContent = elapsedTime
     //2. Stop the recording when the max number of hours is reached
     if (elapsedTimeReachedMaximumNumberOfHours(elapsedTime)) {
         stopAudioRecording()

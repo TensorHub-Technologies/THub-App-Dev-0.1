@@ -314,22 +314,24 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
 
     return (
         <div>
-            <button
-                style={{
-                    position: 'absolute',
-                    top: 1,
-                    right: 5,
-                    zIndex: 1,
-                    background: 'transparent',
-                    outline: 'none',
-                    border: 'none',
-                    cursor: 'pointer'
-                }}
-                id='demo-customized-button'
-                onClick={handleClick}
-            >
-                <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
-            </button>
+            {view !== 'list' && (
+                <button
+                    style={{
+                        position: 'absolute',
+                        top: 1,
+                        right: 5,
+                        zIndex: 1,
+                        background: 'transparent',
+                        outline: 'none',
+                        border: 'none',
+                        cursor: 'pointer'
+                    }}
+                    id='demo-customized-button'
+                    onClick={handleClick}
+                >
+                    <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
+                </button>
+            )}
             {view !== 'card' && (
                 <Button
                     id='demo-customized-button'

@@ -114,6 +114,7 @@ const Login = () => {
             }
         }
     })
+    const passwordError = formik.touched.password && formik.errors.password
 
     return (
         <Box sx={{ bgcolor: '#121212' }}>
@@ -279,9 +280,7 @@ const Login = () => {
                                     }
                                 }}
                             />
-                            <FormHelperText>
-                                {formik.touched.password && formik.errors.password ? formik.errors.password : '\u00A0'}
-                            </FormHelperText>
+                            <FormHelperText>{passwordError || '\u00A0'}</FormHelperText>
                         </FormControl>
 
                         <Link

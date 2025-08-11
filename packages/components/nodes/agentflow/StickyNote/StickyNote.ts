@@ -19,7 +19,7 @@ class StickyNote_Agentflow implements INode {
         this.version = 1.0
         this.type = 'StickyNote'
         this.color = '#fee440'
-        this.category = 'Agent Pipeline'
+        this.category = 'Agent Studio'
         this.description = 'Add notes to the agent flow'
         this.inputs = [
             {

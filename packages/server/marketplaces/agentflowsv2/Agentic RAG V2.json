@@ -18,7 +18,7 @@
                 "color": "#06D6A0",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -205,7 +205,7 @@
                 "type": "ConditionAgent",
                 "color": "#B6B6C6",
                 "baseClasses": ["ConditionAgent"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Utilize an agent to split flows based on dynamic conditions",
                 "inputParams": [
                     {
@@ -339,7 +339,7 @@
                 "type": "LLM",
                 "color": "#118AB2",
                 "baseClasses": ["LLM"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -671,7 +671,7 @@
                 "type": "LLM",
                 "color": "#118AB2",
                 "baseClasses": ["LLM"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -993,7 +993,7 @@
                 "type": "Retriever",
                 "color": "#B6B6C6",
                 "baseClasses": ["Retriever"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Retrieve information from vector database",
                 "inputParams": [
                     {
@@ -1112,7 +1112,7 @@
                 "type": "ConditionAgent",
                 "color": "#B6B6C6",
                 "baseClasses": ["ConditionAgent"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Utilize an agent to split flows based on dynamic conditions",
                 "inputParams": [
                     {
@@ -1246,7 +1246,7 @@
                 "type": "LLM",
                 "color": "#118AB2",
                 "baseClasses": ["LLM"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -1568,7 +1568,7 @@
                 "type": "LLM",
                 "color": "#118AB2",
                 "baseClasses": ["LLM"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -1901,7 +1901,7 @@
                 "color": "#FFA07A",
                 "hideOutput": true,
                 "baseClasses": ["Loop"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Loop back to a previous node",
                 "inputParams": [
                     {
@@ -1955,7 +1955,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {
@@ -2007,7 +2007,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Pipeline",
+                "category": "Agent Studio",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {
