@@ -41,24 +41,11 @@ const MainCard = forwardRef(function MainCard(
             {...otherProps}
             className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
             sx={{
-                // border: border ? '1px solid' : 'none',
-                // borderColor: theme.palette.primary[200] + 75,
-                // background: customization.isDarkMode
-                //     ? 'radial-gradient(circle at center bottom, rgba(60, 91, 164, 1) 14%, rgba(0, 0, 0, 1) 82%)'
-                //     : 'radial-gradient(circle at center bottom, rgb(186, 198, 225) 14%, rgb(255, 255, 255) 82%)',
-                // backdropFilter: 'blur(12px)',
-                // WebkitBackdropFilter: 'blur(12px)',
-                // borderRadius: '16px',
-                // // Make it follow the viewport
-                // backgroundAttachment: 'fixed',
-                // backgroundSize: '100vw 100vh',
-                // backgroundPosition: 'center center',
-                // backgroundRepeat: 'no-repeat',
                 ':hover': {
                     boxShadow: boxShadow ? shadow || '0 2px 14px 0 rgb(32 40 45 / 8%)' : 'inherit'
                 },
-                // maxWidth: '1280px',
                 mx: 'auto',
+                borderRadius: '0px',
                 ...sx
             }}
         >
