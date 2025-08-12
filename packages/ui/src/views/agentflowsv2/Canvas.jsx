@@ -733,9 +733,7 @@ const AgentflowCanvas = () => {
                     position='fixed'
                     color='inherit'
                     elevation={1}
-                    sx={{
-                        bgcolor: theme.palette.background.default
-                    }}
+                    className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
                 >
                     <Toolbar>
                         <CanvasHeader

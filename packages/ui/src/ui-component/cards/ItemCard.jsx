@@ -18,8 +18,6 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
     const customization = useCustomization()
     const isDark = customization.isDarkMode
 
-    console.log(data, 'data')
-
     return (
         <Box
             onClick={onClick}
