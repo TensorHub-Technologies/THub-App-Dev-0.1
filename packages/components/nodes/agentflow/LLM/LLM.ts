@@ -13,7 +13,6 @@ import {
     updateFlowState
 } from '../utils'
 import { get } from 'lodash'
-import { NodeModules } from '../../../src/nodeModules'
 
 class LLM_Agentflow implements INode {
     label: string
@@ -362,9 +361,8 @@ class LLM_Agentflow implements INode {
             const chatId = options.chatId as string
 
             // Initialize the LLM model instance
-            //const nodeInstanceFilePath = options.componentNodes[model].filePath as string
-            const nodeModule = await NodeModules.getNodeModule(model)
-            //const nodeModule = await import(nodeInstanceFilePath)
+            const nodeInstanceFilePath = options.componentNodes[model].filePath as string
+            const nodeModule = await import(nodeInstanceFilePath)
             const newLLMNodeInstance = new nodeModule.nodeClass()
             const newNodeData = {
                 ...nodeData,

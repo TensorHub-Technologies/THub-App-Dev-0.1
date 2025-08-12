@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types'
 import { forwardRef } from 'react'
+import { useSelector } from 'react-redux'
+import './card.css'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
@@ -31,18 +33,19 @@ const MainCard = forwardRef(function MainCard(
 ) {
     const otherProps = { ...others, border: others.border === false ? undefined : others.border }
     const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
+
     return (
         <Card
             ref={ref}
             {...otherProps}
+            className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
             sx={{
-                border: border ? '1px solid' : 'none',
-                borderColor: theme.palette.primary[200] + 75,
                 ':hover': {
                     boxShadow: boxShadow ? shadow || '0 2px 14px 0 rgb(32 40 45 / 8%)' : 'inherit'
                 },
-                // maxWidth: '1280px',
                 mx: 'auto',
+                borderRadius: '0px',
                 ...sx
             }}
         >

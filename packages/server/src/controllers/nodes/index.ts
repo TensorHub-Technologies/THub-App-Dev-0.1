@@ -54,6 +54,8 @@ const getSingleNodeIcon = async (req: Request, res: Response, next: NextFunction
 }
 
 const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body.tenantId, 'req111111111111111111')
+
     try {
         if (!req.body) {
             throw new InternalFlowiseError(
@@ -61,13 +63,13 @@ const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: Next
                 `Error: nodesController.getSingleNodeAsyncOptions - body not provided!`
             )
         }
-        if (typeof req.params === 'undefined' || !req.params.name || !req.params.tenantId) {
+        if (typeof req.params === 'undefined' || !req.params.name || !req.body.tenantId) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: nodesController.getSingleNodeAsyncOptions - name not provided!`
             )
         }
-        const apiResponse = await nodesService.getSingleNodeAsyncOptions(req.params.name, req.body, req.params.tenantId)
+        const apiResponse = await nodesService.getSingleNodeAsyncOptions(req.params.name, req.body, req.body.tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

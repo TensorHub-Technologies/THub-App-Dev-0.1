@@ -233,7 +233,7 @@ const Chatflows = () => {
 
     // Render loading skeletons
     const renderSkeletons = () => (
-        <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+        <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
             {[...Array(12)].map((_, index) => (
                 <Skeleton key={index} variant='rounded' height={280} />
             ))}
@@ -361,7 +361,7 @@ const Chatflows = () => {
                                 renderEmptyState()
                             ) : (
                                 <>
-                                    <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+                                    <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
                                         {processedData.map((data, index) => (
                                             <div key={data.id} ref={index === processedData.length - 1 ? lastElementRef : null}>
                                                 <ItemCard

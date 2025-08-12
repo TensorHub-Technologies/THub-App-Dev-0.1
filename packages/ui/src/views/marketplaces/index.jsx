@@ -690,14 +690,14 @@ const Marketplace = () => {
                             {!view || view === 'card' ? (
                                 <>
                                     {isLoading ? (
-                                        <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+                                        <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
                                             <Skeleton variant='rounded' height={280} />
                                             <Skeleton variant='rounded' height={280} />
                                             <Skeleton variant='rounded' height={280} />
                                             <Skeleton variant='rounded' height={280} />
                                         </Box>
                                     ) : (
-                                        <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+                                        <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
                                             {getAllTemplatesMarketplacesApi.data
                                                 ?.filter(filterByBadge)
                                                 .filter(filterByType)

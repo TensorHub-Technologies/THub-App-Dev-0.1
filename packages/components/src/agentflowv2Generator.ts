@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { StructuredOutputParser } from '@langchain/core/output_parsers'
 import { isEqual, get, cloneDeep } from 'lodash'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import { NodeModules } from './nodeModules'
 
 const ToolType = z.array(z.string()).describe('List of tools')
 
@@ -303,9 +302,8 @@ const _generateSelectedTools = async (config: Record<string, any>, question: str
         if (!chatModelComponent) {
             throw new Error('Chat model component not found')
         }
-        //const nodeInstanceFilePath = chatModelComponent.filePath as string
-        const nodeModule = await NodeModules.getNodeModule(config.selectedChatModel?.name)
-        //const nodeModule = await import(nodeInstanceFilePath)
+        const nodeInstanceFilePath = chatModelComponent.filePath as string
+        const nodeModule = await import(nodeInstanceFilePath)
         const newToolNodeInstance = new nodeModule.nodeClass()
         const model = (await newToolNodeInstance.init(config.selectedChatModel, '', options)) as BaseChatModel
 
@@ -360,9 +358,8 @@ const generateNodesEdges = async (config: Record<string, any>, question: string,
         if (!chatModelComponent) {
             throw new Error('Chat model component not found')
         }
-        //const nodeInstanceFilePath = chatModelComponent.filePath as string
-        const nodeModule = await NodeModules.getNodeModule(config.selectedChatModel?.name)
-        //const nodeModule = await import(nodeInstanceFilePath)
+        const nodeInstanceFilePath = chatModelComponent.filePath as string
+        const nodeModule = await import(nodeInstanceFilePath)
         const newToolNodeInstance = new nodeModule.nodeClass()
         const model = (await newToolNodeInstance.init(config.selectedChatModel, '', options)) as BaseChatModel
 

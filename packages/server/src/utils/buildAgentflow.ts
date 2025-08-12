@@ -11,8 +11,7 @@ import {
     IMessage,
     IServerSideEventStreamer,
     convertChatHistoryToText,
-    generateFollowUpPrompts,
-    NodeModules
+    generateFollowUpPrompts
 } from 'thub-components'
 import {
     IncomingAgentflowInput,
@@ -812,9 +811,8 @@ const executeNode = async ({
         })
 
         // Get node implementation
-        //const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
-        const nodeModule = await NodeModules.getNodeModule(reactFlowNode.data.name)
-        //const nodeModule = await import(nodeInstanceFilePath)
+        const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
+        const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
         // Prepare node data

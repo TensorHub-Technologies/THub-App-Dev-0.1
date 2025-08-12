@@ -247,86 +247,11 @@ class ApiLoader extends BaseDocumentLoader {
     }
 
     public async load(): Promise<IDocument[]> {
-        const sanitizedUrl = this.getSafeUrl(this.url)
-        if (!sanitizedUrl) {
-            throw new Error('Invalid URL provided')
-        }
-
-        const sanitarizedCertificate = this.getValidCertificate(this.ca)
-        if (!sanitarizedCertificate) {
-            throw new Error('Invalid SSL certificate provided')
-        }
-
-        if (!this.method || !['GET', 'POST'].includes(this.method)) {
-            throw new Error(`Method ${this.method} is not supported. Only GET and POST are allowed.`)
-        }
-        if (!this.isValidHeaders(this.headers)) {
-            throw new Error(`Headers must be an object. Received: ${typeof this.headers}`)
-        }
-
-        const sanitarizedBody = this.convertInputToObject(this.body)
-        const sanitarizedHeaders = this.convertInputToObject(this.headers)
         if (this.method === 'POST') {
-            if (!this.isValidBody(this.body)) {
-                throw new Error(`Body must be an object for POST requests. Received: ${typeof this.body}`)
-            }
-            return this.executePostRequest(sanitizedUrl, sanitarizedHeaders, sanitarizedBody, sanitarizedCertificate)
+            return this.executePostRequest(this.url, this.headers, this.body, this.ca)
         } else {
-            return this.executeGetRequest(sanitizedUrl, sanitarizedHeaders, sanitarizedCertificate)
+            return this.executeGetRequest(this.url, this.headers, this.ca)
         }
-    }
-
-    private getSafeUrl(url: string): string {
-        const safeProtocols = ['http:', 'https:']
-        const urlObj = new URL(url)
-        if (!safeProtocols.includes(urlObj.protocol)) {
-            throw new Error(`Unsafe URL protocol: ${urlObj.protocol}. Only http and https are allowed.`)
-        }
-        return urlObj.href
-    }
-
-    private convertInputToObject(input: ICommonObject | undefined): any {
-        if (!input) return {}
-        // convert an ICommonObject to a regular object
-        if (typeof input === 'object' && !Array.isArray(input)) {
-            return input
-        }
-    }
-
-    private isValidHeaders(headers: ICommonObject | undefined): boolean {
-        if (!headers) return false
-        if (typeof headers !== 'object' || Array.isArray(headers)) {
-            return false
-        }
-        for (const key in headers) {
-            if (typeof headers[key] !== 'string') {
-                return false
-            }
-        }
-        return true
-    }
-
-    private isValidBody(body: ICommonObject | undefined): boolean {
-        if (!body) return false
-        if (typeof body !== 'object' || Array.isArray(body)) {
-            return false
-        }
-        for (const key in body) {
-            if (typeof body[key] !== 'string') {
-                return false
-            }
-        }
-        return true
-    }
-
-    private getValidCertificate(ca: string | undefined): string {
-        if (!ca) return ''
-
-        if (!ca.includes('-----BEGIN CERTIFICATE-----') || !ca.includes('-----END CERTIFICATE-----')) {
-            return ''
-        }
-
-        return ca
     }
 
     protected async executeGetRequest(url: string, headers?: ICommonObject, ca?: string): Promise<IDocument[]> {

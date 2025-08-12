@@ -30,19 +30,25 @@ export class NodesPool {
         const nodeFiles = await this.getFiles(nodesPath)
         //console.log("nodeFiles: ",nodeFiles)
 
-        // Register modules in NodeModules
-        await NodeModules.registerModules(nodeFiles)
-        const regirestedModulesLength = Object.keys(NodeModules.importedModules).length
-        logger.info(`${regirestedModulesLength} NodeModules are registerd.`)
+        const moduleMap: Record<string, string> = {}
+        nodeFiles.forEach((file) => {
+            if (file.endsWith('.js')) {
+                const fileName = path.basename(file, '.js')
+                // convert to camelCase
+                const camelCaseFileName = fileName[0].toLowerCase() + fileName.slice(1)
+                moduleMap[camelCaseFileName] = file
+            }
+        })
 
+        NodeModules.moduleMap = moduleMap
+        // console.log("moduleMap: ",moduleMap)
         return Promise.all(
             nodeFiles.map(async (file) => {
                 if (file.endsWith('.js')) {
                     try {
-                        const nodeModule = await NodeModules.getNodeModule(file)
-                        //const nodeModule = await require(file)
+                        const nodeModule = await require(file)
 
-                        if (nodeModule && nodeModule.nodeClass) {
+                        if (nodeModule.nodeClass) {
                             const newNodeInstance = new nodeModule.nodeClass()
                             newNodeInstance.filePath = file
 
@@ -95,18 +101,11 @@ export class NodesPool {
         const packagePath = getNodeModulesPackagePath('thub-components')
         const nodesPath = path.join(packagePath, 'dist', 'credentials')
         const nodeFiles = await this.getFiles(nodesPath)
-
-        // Register modules in NodeModules
-        await NodeModules.registerModules(nodeFiles)
-        const regirestedModulesLength = Object.keys(NodeModules.importedModules).length
-        logger.info(`${regirestedModulesLength} Credential NodeModules are registerd.`)
-
         return Promise.all(
             nodeFiles.map(async (file) => {
                 if (file.endsWith('.credential.js')) {
-                    const credentialModule = await NodeModules.getNodeModule(file)
-                    //const credentialModule = await require(file)
-                    if (credentialModule && credentialModule.credClass) {
+                    const credentialModule = await require(file)
+                    if (credentialModule.credClass) {
                         const newCredInstance = new credentialModule.credClass()
                         newCredInstance.icon = this.credentialIconPath[newCredInstance.name] ?? ''
                         this.componentCredentials[newCredInstance.name] = newCredInstance
