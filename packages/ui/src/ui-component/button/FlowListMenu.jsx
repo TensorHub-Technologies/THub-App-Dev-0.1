@@ -358,35 +358,37 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
             aria-label='Menu container'
         >
             {view !== 'list' && (
-                <button
-                    style={{
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        backdropFilter: 'blur(10px)',
-                        outline: 'none',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        padding: '8px',
-                        width: '40px',
-                        height: '40px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.2s ease-in-out'
-                    }}
+                <Button
+                    style={
+                        {
+                            // background: 'rgba(255, 255, 255, 0.1)',
+                            // backdropFilter: 'blur(10px)',
+                            // outline: 'none',
+                            // border: '1px solid rgba(255, 255, 255, 0.2)',
+                            // borderRadius: '8px',
+                            // cursor: 'pointer',
+                            // padding: '8px',
+                            // width: '40px',
+                            // height: '40px',
+                            // display: 'flex',
+                            // alignItems: 'center',
+                            // justifyContent: 'center',
+                            // transition: 'all 0.2s ease-in-out'
+                        }
+                    }
                     id='demo-customized-button'
                     onClick={handleClick}
                     onMouseEnter={(e) => {
-                        e.target.style.background = 'rgba(255, 255, 255, 0.2)'
+                        // e.target.style.background = 'rgba(255, 255, 255, 0.2)'
                         e.target.style.transform = 'scale(1.05)'
                     }}
                     onMouseLeave={(e) => {
-                        e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                        // e.target.style.background = 'rgba(255, 255, 255, 0.1)'
                         e.target.style.transform = 'scale(1)'
                     }}
                 >
                     <IconDotsVertical size={20} color={customization.isDarkMode ? 'white' : 'black'} />
-                </button>
+                </Button>
             )}
             {view !== 'card' && (
                 <Button
