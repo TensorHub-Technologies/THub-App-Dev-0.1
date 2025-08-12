@@ -31,6 +31,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { styled } from '@mui/material/styles'
 import CanvasNode from './CanvasNode'
 import ButtonEdge from './ButtonEdge'
+import '../../ui-component/cards/card.css'
 // import StickyNote from './StickyNote'
 import StickyNote from '../canvas/StickyNote'
 import CanvasHeader from './CanvasHeader'
@@ -813,11 +814,10 @@ const Canvas = () => {
                 <AppBar
                     enableColorOnDark
                     position='fixed'
-                    background='red'
                     color='inherit'
                     elevation={1}
+                    className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
                     sx={{
-                        bgcolor: theme.palette.background.default,
                         height: '80px',
                         zIndex: 1300
                     }}

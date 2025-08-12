@@ -128,7 +128,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                 backgroundColor: 'transparent !important',
                 // backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
                 '&:hover': {
-                    background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
+                    // background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
                     '& .MuiListItemButton-root': {
                         backgroundColor: theme.palette.background.default,
                         color: customization?.isDarkMode ? '#fff' : '#000',
@@ -152,18 +152,21 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: 'transparent',
-                    // backgroundColor: theme.palette.background.default,
                     color: customization?.isDarkMode ? '#fff' : '#000',
                     '&.Mui-selected': {
-                        backgroundColor: theme.palette.background.default,
+                        backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff',
+                        borderRadius: `10px`,
                         color: customization?.isDarkMode ? '#fff' : '#000',
                         '& .icon-hover': {
-                            color: customization?.isDarkMode ? '#fff' : '#000'
+                            color: customization?.isDarkMode ? '#fff' : '#000',
+                            borderRadius: `10px`
                         },
                         '&:hover': {
-                            backgroundColor: theme.palette.background.default,
+                            backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff',
+                            borderRadius: `10px`,
                             '& .icon-hover': {
-                                color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                borderRadius: `10px`
                             }
                         }
                     }
@@ -208,11 +211,6 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                                     </Typography>
                                 )
                             }
-                            // sx={{
-                            //     '&:hover': {
-                            //         color: customization?.isDarkMode ? '#e22a90' : '#3c5ba4'
-                            //     }
-                            // }}
                         />
                     )}
                 </Box>
