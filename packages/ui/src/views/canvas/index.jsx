@@ -834,7 +834,7 @@ const Canvas = () => {
                     </Toolbar>
                 </AppBar>
 
-                <Box sx={{ display: 'flex', mt: '34px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
+                <Box sx={{ display: 'flex', mt: '32px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
                     <Box sx={{ width: customization.menu_open ? '86px' : '86px' }}>
                         <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
                     </Box>
@@ -842,8 +842,9 @@ const Canvas = () => {
                     <Box sx={{ width: '100%' }} onClick={handleClick}>
                         <div className='reactflow-parent-wrapper'>
                             <div
-                                className='reactflow-wrapper'
-                                style={{ background: customization.isDarkMode ? '#000' : '#fff' }}
+                                className={`reactflow-wrapper ${
+                                    customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'
+                                }`}
                                 ref={reactFlowWrapper}
                             >
                                 <ReactFlow

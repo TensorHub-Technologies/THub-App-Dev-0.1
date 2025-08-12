@@ -2,13 +2,12 @@ import { memo, useState, useRef, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { Button, Drawer } from '@mui/material'
+import { Button, Card, Drawer } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { IconMessage, IconX, IconEraser } from '@tabler/icons-react'
 
 // project import
 import { StyledFab } from '@/ui-component/button/StyledFab'
-import MainCard from '@/ui-component/cards/MainCard'
 import ChatMessage from './ChatMessage'
 
 // api
@@ -218,7 +217,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                             flexDirection: 'column'
                         }}
                     >
-                        <MainCard
+                        <Card
                             border={false}
                             className='cloud-wrapper'
                             elevation={0}
@@ -248,7 +247,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                                 setPreviews={setPreviews}
                                 isDialog={true}
                             />
-                        </MainCard>
+                        </Card>
                     </div>
                 </div>
             </Drawer>
