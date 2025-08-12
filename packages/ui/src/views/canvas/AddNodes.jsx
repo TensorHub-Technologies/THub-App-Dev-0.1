@@ -36,7 +36,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 // project imports
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import AgentflowGeneratorDialog from '@/ui-component/dialog/AgentflowGeneratorDialog'
-
+import '../../ui-component/cards/card.css'
 // icons
 import { IconSearch, IconX, IconSparkles } from '@tabler/icons-react'
 import LlamaindexPNG from '@/assets/images/llamaindex.png'
@@ -84,7 +84,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
     const userData = useSelector((state) => state.user.userData)
     const subscription = userData?.subscription_type
-    console.log(subscription, 'subscription')
 
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
@@ -494,6 +493,9 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             {/* Mini/Full Drawer */}
             <Drawer
                 variant='permanent'
+                classes={{
+                    paper: customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'
+                }}
                 sx={{
                     width: isExpanded ? DRAWER_WIDTH : MINI_DRAWER_WIDTH,
                     flexShrink: 0,
@@ -505,7 +507,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                             duration: theme.transitions.duration.enteringScreen
                         }),
                         overflowX: 'hidden',
-                        backgroundColor: theme.palette.background.paper,
+                        // backgroundColor: theme.palette.background.paper,
                         borderRight: `1px solid ${theme.palette.divider}`
                     }
                 }}
@@ -581,7 +583,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                             aria-label='tabs'
                             TabIndicatorProps={{
                                 style: {
-                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                                     padding: '0px'
                                 }
                             }}
@@ -644,6 +645,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                             <List
                                 sx={{
                                     width: '100%',
+                                    // border:"2px solid red",
                                     maxWidth: 350,
                                     py: 0,
                                     borderRadius: '10px',
@@ -674,6 +676,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                 disableGutters
                                                 sx={{
                                                     boxShadow: 'none',
+                                                    background: 'transparent',
                                                     '&:before': { display: 'none' }
                                                 }}
                                             >
@@ -771,10 +774,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                     backgroundColor: theme.palette.background.default,
                                                                                     borderRadius: `${customization.borderRadius}px`
                                                                                 }
-                                                                                // '& > .MuiListItem-root .MuiListItemAvatar-root': {
-                                                                                //     background:
-                                                                                //         'linear-gradient(to left, #3C5BA4, #E22A90) !important'
-                                                                                // }
                                                                             }
                                                                         }}
                                                                     >
