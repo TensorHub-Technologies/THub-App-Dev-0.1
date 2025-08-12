@@ -124,7 +124,9 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
+                // border:"2px solid red",
+                backgroundColor: 'transparent !important',
+                // backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
                 '&:hover': {
                     background: `linear-gradient(to right, #3C5BA4, #E22A90) !important`,
                     '& .MuiListItemButton-root': {
@@ -149,7 +151,8 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: theme.palette.background.default,
+                    backgroundColor: 'transparent',
+                    // backgroundColor: theme.palette.background.default,
                     color: customization?.isDarkMode ? '#fff' : '#000',
                     '&.Mui-selected': {
                         backgroundColor: theme.palette.background.default,
