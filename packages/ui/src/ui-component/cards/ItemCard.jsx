@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 
 // material-ui
 import { Box, Typography, Tooltip } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
 // project imports
 import SkeletonChatflowCard from '@/ui-component/cards/Skeleton/ChatflowCard'
 import FlowListMenu from '@/ui-component/button/FlowListMenu'
@@ -17,7 +16,6 @@ const useCustomization = () => {
 
 const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons, isAgentCanvas, isAgentflowV2 }) => {
     const customization = useCustomization()
-    const theme = useTheme()
     const isDark = customization.isDarkMode
 
     console.log(data, 'data')
@@ -73,6 +71,33 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                             }
                         }}
                     >
+                        {/* Flow Menu (moved inside the card container and repositioned) */}
+                        {!data.templateName && (
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 12,
+                                    right: 12,
+                                    zIndex: 20,
+                                    // Ensure it stays within card boundaries
+                                    maxWidth: 'calc(100% - 24px)', // Leave 12px margin on both sides
+                                    '& button': {
+                                        // Override any absolute positioning from FlowListMenu
+                                        position: 'relative !important',
+                                        top: 'auto !important',
+                                        right: 'auto !important'
+                                    }
+                                }}
+                            >
+                                <FlowListMenu
+                                    chatflow={chatflow || data}
+                                    updateFlowsApi={updateFlowsApi}
+                                    isAgentCanvas={isAgentCanvas}
+                                    isAgentflowV2={isAgentflowV2}
+                                />
+                            </Box>
+                        )}
+
                         {/* Content */}
                         <Box sx={{ position: 'relative', zIndex: 10, px: 3, pt: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
                             {/* Header with Icon and Title */}
@@ -81,7 +106,9 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                     display: 'flex',
                                     alignItems: 'flex-start',
                                     mb: 2,
-                                    minHeight: '3rem' // Reserve space for up to 2 lines of title
+                                    minHeight: '3rem', // Reserve space for up to 2 lines of title
+                                    // Add padding to the right to avoid overlap with menu button
+                                    pr: !data.templateName ? 6 : 0
                                 }}
                             >
                                 {/* Icon */}
@@ -249,18 +276,6 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                             }}
                         />
                     </Box>
-
-                    {/* Flow Menu (if not a template) */}
-                    {!data.templateName && (
-                        <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 20 }}>
-                            <FlowListMenu
-                                chatflow={chatflow || data}
-                                updateFlowsApi={updateFlowsApi}
-                                isAgentCanvas={isAgentCanvas}
-                                isAgentflowV2={isAgentflowV2}
-                            />
-                        </Box>
-                    )}
                 </Box>
             )}
         </Box>
