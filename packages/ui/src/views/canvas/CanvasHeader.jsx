@@ -541,7 +541,10 @@ const CanvasHeader = ({
                                     height: 'auto',
                                     fontFamily: 'roboto sans-serif',
                                     maxHeight: 'calc(-235px + 100vh)',
-                                    marginBottom: '16px'
+                                    marginBottom: '16px',
+                                    background: customization.isDarkMode
+                                        ? 'radial-gradient(circle at top left, black 0%, rgb(28, 43, 77) 50%, rgb(28, 43, 77) 72%, rgb(60, 91, 164) 100%), radial-gradient(circle at top left, rgb(255, 255, 255) 0%, rgb(242, 242, 242) 17%, rgba(186, 198, 225, 1) 67%, rgba(186, 198, 225, 1) 100%)'
+                                        : 'radial-gradient(circle at top left, rgb(255, 255, 255) 0%, rgb(242, 242, 242) 17%, rgba(186, 198, 225, 1) 67%, rgba(186, 198, 225, 1) 100%)'
                                 },
                                 '& .ps__rail-x': {
                                     display: 'none !important'
