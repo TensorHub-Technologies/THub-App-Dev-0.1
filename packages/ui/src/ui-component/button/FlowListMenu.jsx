@@ -65,7 +65,7 @@ const StyledMenu = styled((props) => (
         boxShadow:
             'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
         '& .MuiMenu-list': {
-            padding: '4px 0'
+            padding: '0'
         },
         '& .MuiMenuItem-root': {
             '& .MuiSvgIcon-root': {
@@ -362,19 +362,6 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
                     style={{
                         marginRight: '-14px',
                         marginTop: '4px'
-                        // background: 'rgba(255, 255, 255, 0.1)',
-                        // backdropFilter: 'blur(10px)',
-                        // outline: 'none',
-                        // border: '1px solid rgba(255, 255, 255, 0.2)',
-                        // borderRadius: '8px',
-                        // cursor: 'pointer',
-                        // padding: '8px',
-                        // width: '40px',
-                        // height: '40px',
-                        // display: 'flex',
-                        // alignItems: 'center',
-                        // justifyContent: 'center',
-                        // transition: 'all 0.2s ease-in-out'
                     }}
                     id='demo-customized-button'
                     onClick={handleClick}
@@ -420,48 +407,50 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                <MenuItem onClick={handleFlowRename} disableRipple>
-                    <EditIcon />
-                    Rename
-                </MenuItem>
-                <MenuItem onClick={handleDuplicate} disableRipple>
-                    <FileCopyIcon />
-                    Duplicate
-                </MenuItem>
-                <MenuItem onClick={handleExport} disableRipple>
-                    <FileDownloadIcon />
-                    Export
-                </MenuItem>
-                <MenuItem onClick={handleExportTemplate} disableRipple>
-                    <ExportTemplateOutlinedIcon />
-                    Save As Template
-                </MenuItem>
-                <Divider sx={{ my: 0.5 }} />
-                <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
-                    <PictureInPictureAltIcon />
-                    Starter Prompts
-                </MenuItem>
-                <MenuItem onClick={handleFlowChatFeedback} disableRipple>
-                    <ThumbsUpDownOutlinedIcon />
-                    Chat Feedback
-                </MenuItem>
-                <MenuItem onClick={handleAllowedDomains} disableRipple>
-                    <VpnLockOutlinedIcon />
-                    Allowed Domains
-                </MenuItem>
-                <MenuItem onClick={handleSpeechToText} disableRipple>
-                    <MicNoneOutlinedIcon />
-                    Speech To Text
-                </MenuItem>
-                <MenuItem onClick={handleFlowCategory} disableRipple>
-                    <FileCategoryIcon />
-                    Update Category
-                </MenuItem>
-                <Divider sx={{ my: 0.5 }} />
-                <MenuItem onClick={handleDelete} disableRipple>
-                    <FileDeleteIcon />
-                    Delete
-                </MenuItem>
+                <div className={`${customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}`}>
+                    <MenuItem onClick={handleFlowRename} disableRipple>
+                        <EditIcon />
+                        Rename
+                    </MenuItem>
+                    <MenuItem onClick={handleDuplicate} disableRipple>
+                        <FileCopyIcon />
+                        Duplicate
+                    </MenuItem>
+                    <MenuItem onClick={handleExport} disableRipple>
+                        <FileDownloadIcon />
+                        Export
+                    </MenuItem>
+                    <MenuItem onClick={handleExportTemplate} disableRipple>
+                        <ExportTemplateOutlinedIcon />
+                        Save As Template
+                    </MenuItem>
+                    <Divider sx={{ my: 0.5 }} />
+                    <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
+                        <PictureInPictureAltIcon />
+                        Starter Prompts
+                    </MenuItem>
+                    <MenuItem onClick={handleFlowChatFeedback} disableRipple>
+                        <ThumbsUpDownOutlinedIcon />
+                        Chat Feedback
+                    </MenuItem>
+                    <MenuItem onClick={handleAllowedDomains} disableRipple>
+                        <VpnLockOutlinedIcon />
+                        Allowed Domains
+                    </MenuItem>
+                    <MenuItem onClick={handleSpeechToText} disableRipple>
+                        <MicNoneOutlinedIcon />
+                        Speech To Text
+                    </MenuItem>
+                    <MenuItem onClick={handleFlowCategory} disableRipple>
+                        <FileCategoryIcon />
+                        Update Category
+                    </MenuItem>
+                    <Divider sx={{ my: 0.5 }} />
+                    <MenuItem onClick={handleDelete} disableRipple>
+                        <FileDeleteIcon />
+                        Delete
+                    </MenuItem>
+                </div>
             </StyledMenu>
             <SaveChatflowDialog
                 show={flowDialogOpen}

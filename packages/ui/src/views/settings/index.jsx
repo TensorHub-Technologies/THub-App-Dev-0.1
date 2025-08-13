@@ -86,7 +86,7 @@ const Settings = ({ chatflow, isSettingsOpen, isCustomAssistant, anchorEl, isAge
                     py: 1.25,
                     pl: `24px`,
                     '&:hover': {
-                        backgroundColor: customization.isDarkMode ? '#23262c' : '#fff',
+                        backgroundColor: 'transparent',
                         color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                         '& .MuiListItemIcon-root': {
                             color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
