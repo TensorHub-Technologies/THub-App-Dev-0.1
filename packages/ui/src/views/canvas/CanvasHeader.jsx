@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import { Avatar, Box, ButtonBase, Typography, Stack, TextField, Button, IconButton, Menu, MenuItem } from '@mui/material'
+import { Avatar, Box, Typography, Stack, TextField, Button, Menu, MenuItem } from '@mui/material'
 
 // icons
 import { IconSettings, IconChevronLeft, IconDeviceFloppy, IconPencil, IconCheck, IconX, IconCode } from '@tabler/icons-react'
@@ -46,6 +46,7 @@ import toggle_2 from '@/assets/images/toggle_mode-2.svg'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import { IconUsersGroup } from '@tabler/icons-react'
 import { IconListCheck } from '@tabler/icons-react'
+import { StyledFab } from '@/ui-component/button/StyledFab'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
@@ -182,7 +183,6 @@ const CanvasHeader = ({
             try {
                 const flowData = JSON.parse(chatflow.flowData)
                 let dataStr = JSON.stringify(generateExportFlowData(flowData), null, 2)
-                //let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
                 const blob = new Blob([dataStr], { type: 'application/json' })
                 const dataUri = URL.createObjectURL(blob)
 
@@ -290,8 +290,9 @@ const CanvasHeader = ({
 
     return (
         <>
-            <Stack flexDirection='row' justifyContent='space-between' sx={{ width: '100%' }}>
-                <Stack flexDirection='row' sx={{ width: '100%', maxWidth: '50%' }}>
+            <Stack flexDirection='row' justifyContent='space-between' alignItems='center' sx={{ width: '100%' }}>
+                {/* Left Section */}
+                <Stack flexDirection='row' alignItems='center' sx={{ minWidth: 0, flex: 1, maxWidth: '60%' }}>
                     <button
                         type='button'
                         style={{
@@ -300,7 +301,8 @@ const CanvasHeader = ({
                             background: 'transparent',
                             border: 'none',
                             outline: 'none',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            flexShrink: 0
                         }}
                         onClick={() => {
                             navigate('/workflows')
@@ -308,83 +310,61 @@ const CanvasHeader = ({
                     >
                         <img src={ColorfulLogo} alt='THub_Logo' width={35} />
                     </button>
-                    <Box>
-                        <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: 0.5, ml: 3 }}>
-                            <Avatar
-                                variant='square'
-                                sx={{
-                                    ...theme.typography.commonAvatar,
-                                    ...theme.typography.mediumAvatar,
-                                    transition: 'all .2s ease-in-out',
-                                    background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    color: 'white',
-                                    '&:hover': {
-                                        background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                        color: 'white'
-                                    }
-                                }}
-                                color='inherit'
-                                onClick={() => {
-                                    if (window.history.state && window.history.state.idx > 0) {
-                                        navigate(-1)
-                                    } else {
-                                        navigate(-1, { replace: true })
-                                    }
-                                }}
-                            >
-                                <IconChevronLeft stroke={1.5} size='1.3rem' />
-                            </Avatar>
-                        </ButtonBase>
-                    </Box>
-                    <Box sx={{ width: '100%', mt: 0.5 }}>
+
+                    <StyledFab
+                        aria-label='back'
+                        title='Back'
+                        style={{ marginLeft: '14px', marginRight: '6px' }}
+                        onClick={() => {
+                            if (window.history.state && window.history.state.idx > 0) {
+                                navigate(-1)
+                            } else {
+                                navigate(-1, { replace: true })
+                            }
+                        }}
+                    >
+                        <IconChevronLeft />
+                    </StyledFab>
+                    {/* Flow Name Section */}
+                    <Box sx={{ minWidth: 0, flex: 1, display: 'flex', alignItems: 'center' }}>
                         {!isEditingFlowName ? (
-                            <Stack flexDirection='row'>
+                            <Stack flexDirection='row' alignItems='center' sx={{ minWidth: 0, width: '100%' }}>
                                 <Typography
                                     sx={{
                                         fontSize: '1.5rem',
                                         fontWeight: 600,
-                                        ml: 2,
                                         textOverflow: 'ellipsis',
                                         overflow: 'hidden',
-                                        whiteSpace: 'nowrap'
+                                        whiteSpace: 'nowrap',
+                                        minWidth: 0,
+                                        maxWidth: 'calc(100% - 60px)' // Reserve space for edit button
                                     }}
+                                    title={flowName} // Show full name on hover
                                 >
                                     {canvas.isDirty && <strong style={{ color: theme.palette.orange.main }}>*</strong>} {flowName}
                                 </Typography>
                                 {chatflow?.id && (
-                                    <ButtonBase title='Edit Name' sx={{ borderRadius: '50%', ml: 1 }}>
-                                        <Avatar
-                                            variant='square'
-                                            sx={{
-                                                ...theme.typography.commonAvatar,
-                                                ...theme.typography.mediumAvatar,
-                                                transition: 'all .2s ease-in-out',
-                                                ml: 1,
-                                                background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                                color: 'white',
-                                                '&:hover': {
-                                                    background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                                    color: 'white'
-                                                }
-                                            }}
-                                            color='inherit'
-                                            onClick={() => setEditingFlowName(true)}
-                                        >
-                                            <IconPencil stroke={1.5} size='1.3rem' />
-                                        </Avatar>
-                                    </ButtonBase>
+                                    <StyledFab
+                                        aria-label='editname'
+                                        title='Edit Name'
+                                        sx={{ flexShrink: 0, ml: 2 }}
+                                        onClick={() => setEditingFlowName(true)}
+                                    >
+                                        <IconPencil />
+                                    </StyledFab>
                                 )}
                             </Stack>
                         ) : (
-                            <Stack flexDirection='row' sx={{ width: '100%' }}>
+                            <Stack flexDirection='row' alignItems='center' sx={{ width: '100%', minWidth: 0 }}>
                                 <TextField
                                     //eslint-disable-next-line jsx-a11y/no-autofocus
                                     autoFocus
                                     size='small'
                                     inputRef={flowNameRef}
                                     sx={{
-                                        width: '100%',
-                                        ml: 2
+                                        flex: 1,
+                                        minWidth: 0,
+                                        maxWidth: 'calc(100% - 100px)' // Reserve space for buttons
                                     }}
                                     defaultValue={flowName}
                                     onKeyDown={(e) => {
@@ -395,124 +375,57 @@ const CanvasHeader = ({
                                         }
                                     }}
                                 />
-                                <ButtonBase title='Save Name' sx={{ borderRadius: '50%' }}>
-                                    <Avatar
-                                        variant='square'
-                                        sx={{
-                                            ...theme.typography.commonAvatar,
-                                            ...theme.typography.mediumAvatar,
-                                            transition: 'all .2s ease-in-out',
-                                            background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                            color: 'white',
-                                            ml: 1,
-                                            '&:hover': {
-                                                background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                                color: 'white'
-                                            }
-                                        }}
-                                        color='inherit'
-                                        onClick={submitFlowName}
-                                    >
-                                        <IconCheck stroke={1.5} size='1.3rem' />
-                                    </Avatar>
-                                </ButtonBase>
-                                <ButtonBase title='Cancel' sx={{ borderRadius: '50%' }}>
-                                    <Avatar
-                                        variant='square'
-                                        sx={{
-                                            ...theme.typography.commonAvatar,
-                                            ...theme.typography.mediumAvatar,
-                                            transition: 'all .2s ease-in-out',
-                                            background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                            color: 'white',
-                                            ml: 1,
-                                            '&:hover': {
-                                                background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                                color: 'white'
-                                            }
-                                        }}
-                                        color='inherit'
-                                        onClick={() => setEditingFlowName(false)}
-                                    >
-                                        <IconX stroke={1.5} size='1.3rem' />
-                                    </Avatar>
-                                </ButtonBase>
+
+                                <StyledFab aria-label='savename' title='Save Name' sx={{ flexShrink: 0, ml: 1 }} onClick={submitFlowName}>
+                                    <IconCheck />
+                                </StyledFab>
+
+                                <StyledFab
+                                    aria-label='cancel'
+                                    title='Cancel'
+                                    sx={{ flexShrink: 0, ml: 1 }}
+                                    onClick={() => setEditingFlowName(false)}
+                                >
+                                    <IconX />
+                                </StyledFab>
                             </Stack>
                         )}
                     </Box>
                 </Stack>
-                <Box>
-                    <IconButton onClick={changeDarkMode}>
+
+                {/* Right Section - Action Buttons */}
+                <Stack flexDirection='row' alignItems='center' gap={2} sx={{ flexShrink: 0 }}>
+                    <StyledFab aria-label='mode' title='Theme' onClick={changeDarkMode}>
                         <img
                             src={customization.isDarkMode ? toggle_1 : toggle_2}
-                            style={{ width: '30px', marginRight: '8px' }}
+                            style={{ width: '24px', height: '24px' }}
                             alt={customization.isDarkMode ? 'dark' : 'lite'}
                         />
-                    </IconButton>
-                    <ButtonBase>
+                    </StyledFab>
+
+                    <StyledFab>
                         <VectorStorePopUp chatflowid={chatflow?.id} isUpsertButtonEnabled={isUpsertButtonEnabled} />
-                    </ButtonBase>
+                    </StyledFab>
 
                     {chatflow?.id && (
-                        <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2, ml: isUpsertButtonEnabled ? 0 : 1 }}>
-                            <Avatar
-                                variant='square'
-                                sx={{
-                                    ...theme.typography.commonAvatar,
-                                    ...theme.typography.mediumAvatar,
-                                    transition: 'all .2s ease-in-out',
-                                    background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    color: 'white',
-                                    '&:hover': {
-                                        background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                        color: 'white'
-                                    }
-                                }}
-                                color='inherit'
-                                onClick={onAPIDialogClick}
-                            >
-                                <IconCode stroke={1.5} size='1.3rem' />
-                            </Avatar>
-                        </ButtonBase>
+                        <StyledFab aria-label='apiendpoint' title='API Endpoint' onClick={onAPIDialogClick}>
+                            <IconCode />
+                        </StyledFab>
                     )}
-                    <ButtonBase title={`Save ${title}`} sx={{ borderRadius: '50%', mr: 2 }}>
-                        <Avatar
-                            variant='square'
-                            sx={{
-                                ...theme.typography.commonAvatar,
-                                ...theme.typography.mediumAvatar,
-                                transition: 'all .2s ease-in-out',
-                                background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                color: 'white',
-                                '&:hover': {
-                                    background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                    color: 'white'
-                                }
-                            }}
-                            color='inherit'
-                            onClick={onSaveChatflowClick}
-                        >
-                            <IconDeviceFloppy stroke={1.5} size='1.3rem' />
-                        </Avatar>
-                    </ButtonBase>
 
-                    <ButtonBase title='Navbar' sx={{ borderRadius: '50%', mr: 2 }}>
+                    <StyledFab aria-label={`Save ${title}`} title={`Save ${title}`} onClick={onSaveChatflowClick}>
+                        <IconDeviceFloppy />
+                    </StyledFab>
+
+                    <StyledFab title='Navbar'>
                         <Avatar
-                            variant='square'
                             sx={{
-                                ...theme.typography.commonAvatar,
-                                ...theme.typography.mediumAvatar,
-                                transition: 'all .2s ease-in-out',
-                                background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                color: '#fff',
-                                '&:hover': {
-                                    background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                    color: '#fff'
-                                }
+                                color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                background: 'transparent'
                             }}
                             onClick={handleClick}
                         >
-                            <ListIcon stroke={1.5} size='1.3rem' style={{ background: 'transparent' }} />
+                            <ListIcon style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4', background: 'transparent' }} />
                         </Avatar>
 
                         <Menu
@@ -601,28 +514,12 @@ const CanvasHeader = ({
                                 </div>
                             </PerfectScrollbar>
                         </Menu>
-                    </ButtonBase>
+                    </StyledFab>
 
-                    <ButtonBase ref={settingsRef} title='Settings' sx={{ borderRadius: '50%' }}>
-                        <Avatar
-                            variant='square'
-                            sx={{
-                                ...theme.typography.commonAvatar,
-                                ...theme.typography.mediumAvatar,
-                                transition: 'all .2s ease-in-out',
-                                background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                color: 'white',
-                                '&:hover': {
-                                    background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                                    color: 'white'
-                                }
-                            }}
-                            onClick={() => setSettingsOpen(!isSettingsOpen)}
-                        >
-                            <IconSettings stroke={1.5} size='1.3rem' />
-                        </Avatar>
-                    </ButtonBase>
-                </Box>
+                    <StyledFab ref={settingsRef} aria-label='settings' title='Settings' onClick={() => setSettingsOpen(!isSettingsOpen)}>
+                        <IconSettings />
+                    </StyledFab>
+                </Stack>
             </Stack>
 
             <Settings
