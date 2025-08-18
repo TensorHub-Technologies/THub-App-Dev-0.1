@@ -1,22 +1,21 @@
-import { ChatOpenAI as LangchainChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
+import { ChatXAI as LCChatXAI, ChatXAIInput } from '@langchain/xai'
 import { IMultiModalOption, IVisionChatModal } from '../../../src'
 
-export class ChatOpenAI extends LangchainChatOpenAI implements IVisionChatModal {
+export class ChatXAI extends LCChatXAI implements IVisionChatModal {
     configuredModel: string
     configuredMaxToken?: number
     multiModalOption: IMultiModalOption
-    builtInTools: Record<string, any>[] = []
     id: string
 
-    constructor(id: string, fields?: ChatOpenAIFields) {
+    constructor(id: string, fields?: ChatXAIInput) {
         super(fields)
         this.id = id
-        this.configuredModel = fields?.modelName ?? ''
+        this.configuredModel = fields?.model ?? ''
         this.configuredMaxToken = fields?.maxTokens
     }
 
     revertToOriginalModel(): void {
-        this.model = this.configuredModel
+        this.modelName = this.configuredModel
         this.maxTokens = this.configuredMaxToken
     }
 
@@ -26,9 +25,5 @@ export class ChatOpenAI extends LangchainChatOpenAI implements IVisionChatModal 
 
     setVisionModel(): void {
         // pass
-    }
-
-    addBuiltInTools(builtInTool: Record<string, any>): void {
-        this.builtInTools.push(builtInTool)
     }
 }
