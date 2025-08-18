@@ -1,4 +1,3 @@
-import * as PropTypes from 'prop-types'
 import moment from 'moment/moment'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -8,30 +7,27 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 import {
     Button,
     Box,
-    Chip,
     Skeleton,
     Stack,
-    Table,
-    TableBody,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
     IconButton,
     Popover,
-    Collapse,
-    Typography
+    Typography,
+    Tooltip,
+    Toolbar,
+    TextField,
+    ButtonGroup,
+    InputAdornment,
+    useTheme
 } from '@mui/material'
-import TableCell, { tableCellClasses } from '@mui/material/TableCell'
-import { useTheme, styled } from '@mui/material/styles'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import APIKeyDialog from './APIKeyDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
-import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
+import emptyImage from '../../assets/images/glass.svg'
+import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 // API
 import apiKeyApi from '@/api/apikey'
@@ -44,156 +40,14 @@ import useConfirm from '@/hooks/useConfirm'
 import useNotifier from '@/utils/useNotifier'
 
 // Icons
-import { IconTrash, IconEdit, IconCopy, IconChevronsUp, IconChevronsDown, IconX, IconPlus, IconEye, IconEyeOff } from '@tabler/icons-react'
-import APIEmptySVG from '@/assets/images/api_empty.svg'
-import UploadJSONFileDialog from '@/views/apikey/UploadJSONFileDialog'
+import { IconTrash, IconEdit, IconCopy, IconX, IconPlus, IconEye, IconEyeOff, IconSearch } from '@tabler/icons-react'
 
 // ==============================|| APIKey ||============================== //
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    borderColor: theme.palette.grey[900] + 25,
-    padding: '6px 16px',
-
-    [`&.${tableCellClasses.head}`]: {
-        color: theme.palette.grey[900]
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        height: 64
-    }
-}))
-
-const StyledTableRow = styled(TableRow)(() => ({
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0
-    }
-}))
-
-function APIKeyRow(props) {
-    const [open, setOpen] = useState(false)
-    const theme = useTheme()
-    const customization = useSelector((state) => state.customization)
-
-    return (
-        <>
-            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <StyledTableCell scope='row' style={{ width: '15%' }}>
-                    {props.apiKey.keyName}
-                </StyledTableCell>
-                <StyledTableCell style={{ width: '40%' }}>
-                    {props.showApiKeys.includes(props.apiKey.apiKey)
-                        ? props.apiKey.apiKey
-                        : `${props.apiKey.apiKey.substring(0, 2)}${'•'.repeat(18)}${props.apiKey.apiKey.substring(
-                              props.apiKey.apiKey.length - 5
-                          )}`}
-                    <IconButton
-                        title='Copy'
-                        style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }}
-                        onClick={props.onCopyClick}
-                    >
-                        <IconCopy />
-                    </IconButton>
-                    <IconButton title='Show' color='inherit' onClick={props.onShowAPIClick}>
-                        {props.showApiKeys.includes(props.apiKey.apiKey) ? <IconEyeOff /> : <IconEye />}
-                    </IconButton>
-                    <Popover
-                        open={props.open}
-                        anchorEl={props.anchorEl}
-                        onClose={props.onClose}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right'
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left'
-                        }}
-                    >
-                        <Typography variant='h6' sx={{ pl: 1, pr: 1, color: 'white', background: props.theme.palette.success.dark }}>
-                            Copied!
-                        </Typography>
-                    </Popover>
-                </StyledTableCell>
-                <StyledTableCell>
-                    {props.apiKey.chatFlows.length}{' '}
-                    {props.apiKey.chatFlows.length > 0 && (
-                        <IconButton aria-label='expand row' size='small' color='inherit' onClick={() => setOpen(!open)}>
-                            {props.apiKey.chatFlows.length > 0 && open ? <IconChevronsUp /> : <IconChevronsDown />}
-                        </IconButton>
-                    )}
-                </StyledTableCell>
-                <StyledTableCell>{moment(props.apiKey.createdAt).format('MMMM Do, YYYY')}</StyledTableCell>
-                <StyledTableCell>
-                    <IconButton
-                        title='Edit'
-                        style={{ color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }}
-                        onClick={props.onEditClick}
-                    >
-                        <IconEdit />
-                    </IconButton>
-                </StyledTableCell>
-                <StyledTableCell>
-                    <IconButton title='Delete' color='error' onClick={props.onDeleteClick}>
-                        <IconTrash />
-                    </IconButton>
-                </StyledTableCell>
-            </TableRow>
-            {open && (
-                <TableRow sx={{ '& td': { border: 0 } }}>
-                    <StyledTableCell sx={{ p: 2 }} colSpan={6}>
-                        <Collapse in={open} timeout='auto' unmountOnExit>
-                            <Box sx={{ borderRadius: 2, border: 1, borderColor: theme.palette.grey[900] + 25, overflow: 'hidden' }}>
-                                <Table aria-label='chatflow table'>
-                                    <TableHead sx={{ height: 48 }}>
-                                        <TableRow>
-                                            <StyledTableCell sx={{ width: '30%' }}>Workflow Name</StyledTableCell>
-                                            <StyledTableCell sx={{ width: '20%' }}>Modified On</StyledTableCell>
-                                            <StyledTableCell sx={{ width: '50%' }}>Category</StyledTableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {props.apiKey.chatFlows.map((flow, index) => (
-                                            <TableRow key={index}>
-                                                <StyledTableCell>{flow.flowName}</StyledTableCell>
-                                                <StyledTableCell>{moment(flow.updatedDate).format('MMMM Do, YYYY')}</StyledTableCell>
-                                                <StyledTableCell>
-                                                    &nbsp;
-                                                    {flow.category &&
-                                                        flow.category
-                                                            .split(';')
-                                                            .map((tag, index) => (
-                                                                <Chip key={index} label={tag} style={{ marginRight: 5, marginBottom: 5 }} />
-                                                            ))}
-                                                </StyledTableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </Box>
-                        </Collapse>
-                    </StyledTableCell>
-                </TableRow>
-            )}
-        </>
-    )
-}
-
-APIKeyRow.propTypes = {
-    apiKey: PropTypes.any,
-    showApiKeys: PropTypes.arrayOf(PropTypes.any),
-    onCopyClick: PropTypes.func,
-    onShowAPIClick: PropTypes.func,
-    open: PropTypes.bool,
-    anchorEl: PropTypes.any,
-    onClose: PropTypes.func,
-    theme: PropTypes.any,
-    onEditClick: PropTypes.func,
-    onDeleteClick: PropTypes.func
-}
 const APIKey = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const isDark = customization.isDarkMode
 
     const userData = useSelector((state) => state.user.userData)
     const tenantId = userData?.uid || localStorage.getItem('userId')
@@ -213,25 +67,21 @@ const APIKey = () => {
     const [showApiKeys, setShowApiKeys] = useState([])
     const openPopOver = Boolean(anchorEl)
 
-    const [showUploadDialog, setShowUploadDialog] = useState(false)
-    const [uploadDialogProps, setUploadDialogProps] = useState({})
-
     const [search, setSearch] = useState('')
     const onSearchChange = (event) => {
         setSearch(event.target.value)
     }
+
     function filterKeys(data) {
         return data.keyName.toLowerCase().indexOf(search.toLowerCase()) > -1
     }
 
     const { confirm } = useConfirm()
-
     const getAllAPIKeysApi = useApi(apiKeyApi.getAllAPIKeys)
 
     const onShowApiKeyClick = (apikey) => {
         const index = showApiKeys.indexOf(apikey)
         if (index > -1) {
-            //showApiKeys.splice(index, 1)
             const newShowApiKeys = showApiKeys.filter(function (item) {
                 return item !== apikey
             })
@@ -268,17 +118,6 @@ const APIKey = () => {
         }
         setDialogProps(dialogProp)
         setShowDialog(true)
-    }
-
-    const uploadDialog = () => {
-        const dialogProp = {
-            type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Upload',
-            data: {}
-        }
-        setUploadDialogProps(dialogProp)
-        setShowUploadDialog(true)
     }
 
     const deleteKey = async (key) => {
@@ -328,20 +167,17 @@ const APIKey = () => {
                         )
                     }
                 })
-                onCancel()
             }
         }
     }
 
     const onConfirm = () => {
         setShowDialog(false)
-        setShowUploadDialog(false)
         getAllAPIKeysApi.request(tenantId)
     }
 
     useEffect(() => {
         getAllAPIKeysApi.request(tenantId)
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -362,164 +198,489 @@ const APIKey = () => {
         }
     }, [getAllAPIKeysApi.error])
 
+    const filteredAPIKeys = apiKeys ? apiKeys.filter(filterKeys) : []
+
     return (
         <>
             <MainCard>
                 {error ? (
                     <ErrorBoundary error={error} />
                 ) : (
-                    <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader
-                            onSearchChange={onSearchChange}
-                            search={true}
-                            searchPlaceholder='Search API Keys'
-                            title='API Keys'
-                            description='THub API & SDK authentication keys'
-                        >
-                            {/* <Button
-                                variant='outlined'
-                                sx={{ borderRadius: 2, height: '100%' }}
-                                onClick={uploadDialog}
-                                startIcon={<IconFileUpload />}
-                                id='btn_importApiKeys'
-                            >
-                                Import
-                            </Button> */}
-                            <StyledButton
-                                variant='contained'
-                                sx={{ borderRadius: 2, height: '100%' }}
-                                onClick={addNew}
-                                startIcon={<IconPlus />}
-                                id='btn_createApiKey'
-                            >
-                                Create Key
-                            </StyledButton>
-                        </ViewHeader>
-                        {!isLoading && apiKeys.length <= 0 ? (
+                    <>
+                        <Stack flexDirection='row'>
+                            <Box sx={{ flexGrow: 1 }}>
+                                <Toolbar
+                                    disableGutters={true}
+                                    style={{
+                                        margin: 1,
+                                        padding: 1,
+                                        paddingBottom: 10,
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        width: '100%'
+                                    }}
+                                >
+                                    <h1
+                                        style={{
+                                            background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            color: 'transparent',
+                                            fontSize: '24px',
+                                            lineHeight: '1.3'
+                                        }}
+                                    >
+                                        API Keys
+                                    </h1>
+                                    <TextField
+                                        size='small'
+                                        sx={{
+                                            display: { xs: 'none', sm: 'block' },
+                                            ml: 3,
+                                            transition: 'all .2s ease-in-out',
+                                            '& input': { color: customization.isDarkMode ? '#fff' : '#000', width: '180px' },
+                                            '& label.Mui-focused': { color: customization.isDarkMode ? '#E22A90' : '#3C5BA4' },
+                                            '& .MuiInput-underline:after': {
+                                                borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                            },
+                                            '& .MuiInput-underline:before': {
+                                                borderBottomColor: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                            },
+                                            '&:hover': {
+                                                '& .MuiInput-underline:before': {
+                                                    borderBottomColor: customization.isDarkMode
+                                                        ? '#e22a90 !important'
+                                                        : '#3c5ba4 !important'
+                                                }
+                                            }
+                                        }}
+                                        variant='standard'
+                                        placeholder='Search API Keys'
+                                        onChange={onSearchChange}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position='start'>
+                                                    <IconSearch
+                                                        style={{ color: customization.isDarkMode ? '#fff' : '#000', width: 16, height: 16 }}
+                                                    />
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                    />
+                                    <Box sx={{ flexGrow: 1 }} />
+                                    <ButtonGroup
+                                        sx={{ maxHeight: 40 }}
+                                        disableElevation
+                                        variant='contained'
+                                        aria-label='outlined primary button group'
+                                    >
+                                        <ButtonGroup disableElevation aria-label='outlined primary button group'>
+                                            <StyledButton
+                                                variant='contained'
+                                                sx={{ color: 'white', mr: 1, height: 37 }}
+                                                onClick={addNew}
+                                                startIcon={<IconPlus />}
+                                                id='btn_createApiKey'
+                                            >
+                                                Create Key
+                                            </StyledButton>
+                                        </ButtonGroup>
+                                    </ButtonGroup>
+                                </Toolbar>
+                            </Box>
+                        </Stack>
+
+                        {apiKeys.length === 0 && !isLoading && (
                             <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                                 <Box sx={{ p: 2, height: 'auto' }}>
                                     <img
-                                        style={{ objectFit: 'cover', height: '20vh', width: 'auto' }}
-                                        src={APIEmptySVG}
-                                        alt='APIEmptySVG'
+                                        style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
+                                        src={customization.isDarkMode ? emptyImage : emptyImagelite}
+                                        alt='APIKeysEmptySVG'
                                     />
                                 </Box>
                                 <div>No API Keys Yet</div>
                             </Stack>
-                        ) : (
-                            <TableContainer
-                                sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}
-                                component={Paper}
-                            >
-                                <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-                                    <TableHead
-                                        sx={{
-                                            backgroundColor: customization.isDarkMode
-                                                ? theme.palette.common.black
-                                                : theme.palette.grey[100],
-                                            height: 56
-                                        }}
-                                    >
-                                        <TableRow>
-                                            <StyledTableCell>Key Name</StyledTableCell>
-                                            <StyledTableCell>API Key</StyledTableCell>
-                                            <StyledTableCell>Usage</StyledTableCell>
-                                            <StyledTableCell>Created</StyledTableCell>
-                                            <StyledTableCell> </StyledTableCell>
-                                            <StyledTableCell> </StyledTableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {isLoading ? (
-                                            <>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                            </>
-                                        ) : (
-                                            <>
-                                                {apiKeys?.filter(filterKeys).map((key, index) => (
-                                                    <APIKeyRow
-                                                        key={index}
-                                                        apiKey={key}
-                                                        showApiKeys={showApiKeys}
-                                                        onCopyClick={(event) => {
-                                                            navigator.clipboard.writeText(key.apiKey)
-                                                            setAnchorEl(event.currentTarget)
-                                                            setTimeout(() => {
-                                                                handleClosePopOver()
-                                                            }, 1500)
-                                                        }}
-                                                        onShowAPIClick={() => onShowApiKeyClick(key.apiKey)}
-                                                        open={openPopOver}
-                                                        anchorEl={anchorEl}
-                                                        onClose={handleClosePopOver}
-                                                        theme={theme}
-                                                        onEditClick={() => edit(key)}
-                                                        onDeleteClick={() => deleteKey(key)}
-                                                    />
-                                                ))}
-                                            </>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
                         )}
-                    </Stack>
+
+                        {/* FlowListTable Style Cards */}
+                        {(apiKeys.length > 0 || isLoading) && (
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                                {isLoading ? (
+                                    // Loading skeletons - 6 default skeletons
+                                    <>
+                                        {[...Array(6)].map((_, index) => (
+                                            <Box
+                                                key={index}
+                                                sx={{
+                                                    position: 'relative',
+                                                    transform: 'translateY(0)',
+                                                    transition: 'all 0.5s ease-in-out'
+                                                }}
+                                            >
+                                                <Box
+                                                    sx={{
+                                                        position: 'relative',
+                                                        border: '1px solid',
+                                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                                                        borderRadius: '12px',
+                                                        backdropFilter: 'blur(16px)',
+                                                        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                                                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                                                        height: '5rem',
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        px: 3,
+                                                        py: 2
+                                                    }}
+                                                >
+                                                    <Skeleton variant='text' width='100%' height={40} />
+                                                </Box>
+                                            </Box>
+                                        ))}
+                                    </>
+                                ) : (
+                                    // Actual data
+                                    <>
+                                        {filteredAPIKeys.map((apiKey, index) => (
+                                            <Box
+                                                key={apiKey.id}
+                                                sx={{
+                                                    position: 'relative',
+                                                    transform: 'translateY(0)',
+                                                    transition: 'all 0.5s ease-in-out',
+                                                    animation: 'float 6s ease-in-out infinite',
+                                                    animationDelay: `${index * 0.1}s`,
+                                                    '@keyframes float': {
+                                                        '0%, 100%': { transform: 'translateY(0px)' },
+                                                        '50%': { transform: 'translateY(-5px)' }
+                                                    },
+                                                    '&:hover': {
+                                                        transform: 'translateY(-3px)'
+                                                    }
+                                                }}
+                                            >
+                                                {/* Main Glass Card */}
+                                                <Box
+                                                    sx={{
+                                                        position: 'relative',
+                                                        border: '1px solid',
+                                                        borderColor: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+                                                        borderRadius: '12px',
+                                                        backdropFilter: 'blur(16px)',
+                                                        backgroundColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                                                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                                                        height: '5rem',
+                                                        width: '100%',
+                                                        transition: 'all 0.3s ease-in-out',
+                                                        overflow: 'hidden',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            '& .glow-effect': {
+                                                                opacity: 1
+                                                            }
+                                                        }
+                                                    }}
+                                                >
+                                                    {/* Content */}
+                                                    <Box
+                                                        sx={{
+                                                            position: 'relative',
+                                                            zIndex: 10,
+                                                            px: 3,
+                                                            py: 2,
+                                                            flex: 1,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'space-between'
+                                                        }}
+                                                    >
+                                                        {/* Left Section - Key Name */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
+                                                            <Typography
+                                                                variant='h6'
+                                                                sx={{
+                                                                    fontFamily: 'Cambria Math',
+                                                                    fontWeight: 'bold',
+                                                                    color: isDark ? 'white' : 'black',
+                                                                    fontSize: '1.1rem',
+                                                                    lineHeight: 1.2,
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                                    whiteSpace: 'nowrap',
+                                                                    marginTop: 2
+                                                                }}
+                                                            >
+                                                                {apiKey.keyName}
+                                                            </Typography>
+                                                        </Box>
+
+                                                        {/* API Key Section */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                                gap: 0.5,
+                                                                flex: 2,
+                                                                alignItems: 'center',
+                                                                minWidth: 0
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                variant='caption'
+                                                                sx={{
+                                                                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                                    fontSize: '0.85rem',
+                                                                    fontWeight: 500,
+                                                                    fontFamily: 'Cambria Math',
+                                                                    textTransform: 'uppercase',
+                                                                    letterSpacing: 0.5
+                                                                }}
+                                                            >
+                                                                API Key
+                                                            </Typography>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                <Typography
+                                                                    variant='body2'
+                                                                    sx={{
+                                                                        color: isDark ? 'white' : 'black',
+                                                                        fontSize: '1rem',
+                                                                        fontFamily: 'Cambria Math',
+                                                                        maxWidth: '200px',
+                                                                        overflow: 'hidden',
+                                                                        textOverflow: 'ellipsis',
+                                                                        whiteSpace: 'nowrap'
+                                                                    }}
+                                                                >
+                                                                    {showApiKeys.includes(apiKey.apiKey)
+                                                                        ? apiKey.apiKey
+                                                                        : `${apiKey.apiKey.substring(0, 2)}${'•'.repeat(
+                                                                              18
+                                                                          )}${apiKey.apiKey.substring(apiKey.apiKey.length - 5)}`}
+                                                                </Typography>
+                                                                <Tooltip title='Copy' placement='top'>
+                                                                    <IconButton
+                                                                        onClick={(event) => {
+                                                                            navigator.clipboard.writeText(apiKey.apiKey)
+                                                                            setAnchorEl(event.currentTarget)
+                                                                            setTimeout(() => {
+                                                                                handleClosePopOver()
+                                                                            }, 1500)
+                                                                        }}
+                                                                        sx={{
+                                                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                                            width: 32,
+                                                                            height: 32
+                                                                        }}
+                                                                    >
+                                                                        <IconCopy size={24} />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                                <Tooltip
+                                                                    title={showApiKeys.includes(apiKey.apiKey) ? 'Hide' : 'Show'}
+                                                                    placement='top'
+                                                                >
+                                                                    <IconButton
+                                                                        onClick={() => onShowApiKeyClick(apiKey.apiKey)}
+                                                                        sx={{
+                                                                            color: isDark ? 'white' : 'black',
+                                                                            width: 32,
+                                                                            height: 32
+                                                                        }}
+                                                                    >
+                                                                        {showApiKeys.includes(apiKey.apiKey) ? (
+                                                                            <IconEyeOff size={24} />
+                                                                        ) : (
+                                                                            <IconEye size={24} />
+                                                                        )}
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                            </Box>
+                                                        </Box>
+
+                                                        {/* Usage Section */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                                gap: 0.5,
+                                                                flex: 0.8,
+                                                                alignItems: 'center',
+                                                                minWidth: 0
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                variant='caption'
+                                                                sx={{
+                                                                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                                    fontSize: '0.75rem',
+                                                                    fontWeight: 500,
+                                                                    fontFamily: 'Cambria Math',
+                                                                    textTransform: 'uppercase',
+                                                                    letterSpacing: 0.5
+                                                                }}
+                                                            >
+                                                                Usage
+                                                            </Typography>
+                                                            <Typography
+                                                                variant='body2'
+                                                                sx={{
+                                                                    color: isDark ? 'white' : 'black',
+                                                                    fontSize: '1rem',
+                                                                    fontWeight: 'bold',
+                                                                    fontFamily: 'Cambria Math'
+                                                                }}
+                                                            >
+                                                                {apiKey.chatFlows.length}
+                                                            </Typography>
+                                                        </Box>
+
+                                                        {/* Created Section */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                                gap: 0.5,
+                                                                flex: 1.2,
+                                                                alignItems: 'center',
+                                                                minWidth: 0
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                variant='caption'
+                                                                sx={{
+                                                                    color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+                                                                    fontSize: '0.75rem',
+                                                                    fontFamily: 'Cambria Math',
+                                                                    fontWeight: 500,
+                                                                    textTransform: 'uppercase',
+                                                                    letterSpacing: 0.5
+                                                                }}
+                                                            >
+                                                                Created
+                                                            </Typography>
+                                                            <Typography
+                                                                variant='body2'
+                                                                sx={{
+                                                                    color: isDark ? 'white' : 'black',
+                                                                    fontSize: '0.825rem',
+                                                                    fontFamily: 'Cambria Math',
+                                                                    textAlign: 'center',
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                                    whiteSpace: 'nowrap',
+                                                                    maxWidth: '140px'
+                                                                }}
+                                                            >
+                                                                {moment(apiKey.createdAt).format('MMM Do, YYYY')}
+                                                            </Typography>
+                                                        </Box>
+
+                                                        {/* Right Section - Action Buttons */}
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 1.5,
+                                                                justifyContent: 'flex-end',
+                                                                flexShrink: 0,
+                                                                minWidth: '100px',
+                                                                pl: 1
+                                                            }}
+                                                        >
+                                                            <Tooltip title='Edit' placement='top'>
+                                                                <IconButton
+                                                                    onClick={() => edit(apiKey)}
+                                                                    sx={{
+                                                                        color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                                        backgroundColor: customization.isDarkMode
+                                                                            ? 'rgba(226, 42, 144, 0.1)'
+                                                                            : 'rgba(60, 91, 164, 0.1)',
+                                                                        '&:hover': {
+                                                                            backgroundColor: customization.isDarkMode
+                                                                                ? 'rgba(226, 42, 144, 0.2)'
+                                                                                : 'rgba(60, 91, 164, 0.2)'
+                                                                        },
+                                                                        width: 40,
+                                                                        height: 40
+                                                                    }}
+                                                                >
+                                                                    <IconEdit size={22} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                            <Tooltip title='Delete' placement='top'>
+                                                                <IconButton
+                                                                    color='error'
+                                                                    onClick={() => deleteKey(apiKey)}
+                                                                    sx={{
+                                                                        backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                                                                        '&:hover': {
+                                                                            backgroundColor: 'rgba(211, 47, 47, 0.2)'
+                                                                        },
+                                                                        width: 40,
+                                                                        height: 40
+                                                                    }}
+                                                                >
+                                                                    <IconTrash size={22} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </Box>
+                                                    </Box>
+
+                                                    {/* Soft Glow Effect */}
+                                                    <Box
+                                                        className='glow-effect'
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            inset: 0,
+                                                            borderRadius: '12px',
+                                                            background:
+                                                                'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                                            opacity: 0,
+                                                            transition: 'opacity 0.3s ease-in-out',
+                                                            filter: 'blur(8px)',
+                                                            zIndex: -1
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        ))}
+                                    </>
+                                )}
+                            </Box>
+                        )}
+                    </>
                 )}
             </MainCard>
+
             <APIKeyDialog
                 show={showDialog}
                 dialogProps={dialogProps}
                 onCancel={() => setShowDialog(false)}
                 onConfirm={onConfirm}
                 setError={setError}
-            ></APIKeyDialog>
-            {showUploadDialog && (
-                <UploadJSONFileDialog
-                    show={showUploadDialog}
-                    dialogProps={uploadDialogProps}
-                    onCancel={() => setShowUploadDialog(false)}
-                    onConfirm={onConfirm}
-                ></UploadJSONFileDialog>
-            )}
+            />
+
+            <Popover
+                open={openPopOver}
+                anchorEl={anchorEl}
+                onClose={handleClosePopOver}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right'
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left'
+                }}
+            >
+                <Typography variant='h6' sx={{ pl: 1, pr: 1, color: 'white', background: theme.palette.success.dark }}>
+                    Copied!
+                </Typography>
+            </Popover>
+
             <ConfirmDialog />
         </>
     )

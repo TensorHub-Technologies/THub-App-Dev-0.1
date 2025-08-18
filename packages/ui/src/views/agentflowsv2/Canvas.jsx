@@ -733,9 +733,7 @@ const AgentflowCanvas = () => {
                     position='fixed'
                     color='inherit'
                     elevation={1}
-                    sx={{
-                        bgcolor: theme.palette.background.default
-                    }}
+                    className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
                 >
                     <Toolbar>
                         <CanvasHeader
@@ -750,7 +748,12 @@ const AgentflowCanvas = () => {
                 </AppBar>
                 <Box sx={{ pt: '70px', height: '100vh', width: '100%' }}>
                     <div className='reactflow-parent-wrapper'>
-                        <div className='reactflow-wrapper' ref={reactFlowWrapper}>
+                        <div
+                            className={`reactflow-wrapper ${
+                                customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'
+                            }`}
+                            ref={reactFlowWrapper}
+                        >
                             <ReactFlow
                                 nodes={nodes}
                                 edges={edges}

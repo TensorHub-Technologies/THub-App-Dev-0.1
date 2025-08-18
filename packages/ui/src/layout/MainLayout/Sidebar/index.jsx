@@ -13,6 +13,7 @@ import { BrowserView, MobileView } from 'react-device-detect'
 import MenuList from './MenuList'
 import LogoSection from '../LogoSection'
 import { SHOW_MENU } from '@/store/constant'
+import '../../../ui-component/cards/card.css'
 
 // ==============================|| SIDEBAR DRAWER ||============================== //
 
@@ -35,6 +36,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
             <BrowserView>
                 <PerfectScrollbar
                     component='div'
+                    className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
                     style={{
                         height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
                         paddingLeft: '5px',

@@ -10,8 +10,7 @@ import {
     ISeqAgentNode,
     IUsedTool,
     IDocument,
-    IServerSideEventStreamer,
-    NodeModules
+    IServerSideEventStreamer
 } from 'thub-components'
 import { omit, cloneDeep, flatten, uniq } from 'lodash'
 import { StateGraph, END, START } from '@langchain/langgraph'
@@ -465,9 +464,8 @@ const compileMultiAgentsGraph = async (params: MultiAgentsGraphParams) => {
 
     // Init worker nodes
     for (const workerNode of workerNodes) {
-        //const nodeInstanceFilePath = componentNodes[workerNode.data.name].filePath as string
-        const nodeModule = await NodeModules.getNodeModule(workerNode.data.name)
-        //const nodeModule = await import(nodeInstanceFilePath)
+        const nodeInstanceFilePath = componentNodes[workerNode.data.name].filePath as string
+        const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
         let flowNodeData = cloneDeep(workerNode.data)
@@ -506,9 +504,8 @@ const compileMultiAgentsGraph = async (params: MultiAgentsGraphParams) => {
         const supervisorNode = reactFlowNodes.find((node) => supervisorInputLabel === node.data.inputs?.supervisorName)
         if (!supervisorNode) continue
 
-        //const nodeInstanceFilePath = componentNodes[supervisorNode.data.name].filePath as string
-        const nodeModule = await NodeModules.getNodeModule(supervisorNode.data.name)
-        //const nodeModule = await import(nodeInstanceFilePath)
+        const nodeInstanceFilePath = componentNodes[supervisorNode.data.name].filePath as string
+        const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
         let flowNodeData = cloneDeep(supervisorNode.data)
@@ -693,9 +690,8 @@ const compileSeqAgentsGraph = async (params: SeqAgentsGraphParams) => {
     const { nodeOverrides, variableOverrides, apiOverrideStatus } = getAPIOverrideConfig(agentflow)
 
     const initiateNode = async (node: IReactFlowNode) => {
-        //const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
-        const nodeModule = await NodeModules.getNodeModule(node.data.name)
-        //const nodeModule = await import(nodeInstanceFilePath)
+        const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
+        const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
         flowNodeData = cloneDeep(node.data)

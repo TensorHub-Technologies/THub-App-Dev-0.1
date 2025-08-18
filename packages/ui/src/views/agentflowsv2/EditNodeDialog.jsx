@@ -63,6 +63,11 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                     (param) => param.name.includes('form') || param.name.includes('Form') || param.name === 'startInputType'
                 )
 
+            case 'loop':
+                return visibleParams.some(
+                    (param) => param.name.includes('Loop') || param.name.includes('loop') || param.loadMethod === 'listPreviousNodes'
+                )
+
             case 'additional': {
                 const excludedParams = [
                     'Model',
@@ -79,9 +84,16 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                     'UpdateState',
                     'form',
                     'Form',
-                    'startInputType'
+                    'startInputType',
+                    'Loop',
+                    'loop'
                 ]
-                return visibleParams.some((param) => !excludedParams.some((excluded) => param.name.includes(excluded)))
+                const excludedLoadMethods = ['listModels', 'listTools', 'listStores', 'listVectorStores', 'listPreviousNodes']
+                return visibleParams.some((param) => {
+                    const hasExcludedName = excludedParams.some((excluded) => param.name.includes(excluded))
+                    const hasExcludedLoadMethod = param.loadMethod && excludedLoadMethods.includes(param.loadMethod)
+                    return !hasExcludedName && !hasExcludedLoadMethod
+                })
             }
 
             default:
@@ -127,6 +139,9 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                     case 'form':
                         return param.name.includes('form') || param.name.includes('Form') || param.name === 'startInputType'
 
+                    case 'loop':
+                        return param.name.includes('Loop') || param.name.includes('loop') || param.loadMethod === 'listPreviousNodes'
+
                     case 'additional': {
                         const excludedParams = [
                             'Model',
@@ -143,9 +158,14 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                             'UpdateState',
                             'form',
                             'Form',
-                            'startInputType'
+                            'startInputType',
+                            'Loop',
+                            'loop'
                         ]
-                        return !excludedParams.some((excluded) => param.name.includes(excluded))
+                        const excludedLoadMethods = ['listModels', 'listTools', 'listStores', 'listVectorStores', 'listPreviousNodes']
+                        const hasExcludedName = excludedParams.some((excluded) => param.name.includes(excluded))
+                        const hasExcludedLoadMethod = param.loadMethod && excludedLoadMethods.includes(param.loadMethod)
+                        return !hasExcludedName && !hasExcludedLoadMethod
                     }
 
                     default:
@@ -163,7 +183,8 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
         { key: 'memory', label: 'Memory', value: '5' },
         { key: 'state', label: 'State', value: '6' },
         { key: 'form', label: 'Form', value: '7' },
-        { key: 'additional', label: 'Additional', value: '8' }
+        { key: 'loop', label: 'Loop', value: '8' },
+        { key: 'additional', label: 'Additional', value: '9' }
     ]
 
     // Filter tabs based on available parameters
@@ -347,19 +368,22 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
             onClose={onCancel}
             open={show}
             fullWidth
-            maxWidth='sm'
+            maxWidth='lg'
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
             PaperProps={{
                 sx: {
-                    width: '600px',
+                    width: '650px',
                     height: '80vh',
                     maxHeight: '90vh',
                     overflowY: 'auto'
                 }
             }}
         >
-            <DialogContent sx={{ padding: '0px' }}>
+            <DialogContent
+                className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
+                sx={{ padding: '0px' }}
+            >
                 {data && data.name && (
                     <Box
                         sx={{

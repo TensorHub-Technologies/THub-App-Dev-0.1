@@ -1,10 +1,8 @@
 // material-ui
 import { styled } from '@mui/material/styles'
+import { Card } from '@mui/material'
 
-// project imports
-import MainCard from './MainCard'
-
-const NodeCardWrapper = styled(MainCard)(({ theme }) => ({
+const NodeCardWrapper = styled(Card)(({ theme }) => ({
     background: theme.palette.card.main,
     color: theme.darkTextPrimary,
     border: `1px solid ${theme.customization?.isDarkMode ? theme.palette.grey[900] + 25 : theme.palette.primary[200] + 75}`,

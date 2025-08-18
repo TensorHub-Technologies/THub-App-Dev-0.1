@@ -3,19 +3,7 @@ import { useSelector } from 'react-redux'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import {
-    Box,
-    ButtonBase,
-    Avatar,
-    ClickAwayListener,
-    List,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Paper,
-    Popper,
-    Typography
-} from '@mui/material'
+import { Box, ClickAwayListener, List, ListItemButton, ListItemIcon, ListItemText, Paper, Popper, Typography } from '@mui/material'
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -28,6 +16,7 @@ import AboutDialog from '@/ui-component/dialog/AboutDialog'
 import { IconMenu2 } from '@tabler/icons-react'
 
 import './index.css'
+import { StyledFab } from '@/ui-component/button/StyledFab'
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -61,27 +50,9 @@ const ProfileSection = () => {
 
     return (
         <>
-            <ButtonBase ref={anchorRef} sx={{ borderRadius: '12px', overflow: 'hidden' }}>
-                <Avatar
-                    variant='rounded'
-                    sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        transition: 'all .2s ease-in-out',
-                        background: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
-                        color: '#fff',
-                        '&:hover': {
-                            background: 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)',
-                            color: '#fff'
-                        },
-                        borderRadius: '12px'
-                    }}
-                    onClick={settingToggle}
-                    color='inherit'
-                >
-                    <IconMenu2 stroke={2} size={24} style={{ background: 'transparent' }} />
-                </Avatar>
-            </ButtonBase>
+            <StyledFab ref={anchorRef} title='About' onClick={settingToggle}>
+                <IconMenu2 />
+            </StyledFab>
             <Popper
                 placement='bottom-end'
                 open={open}

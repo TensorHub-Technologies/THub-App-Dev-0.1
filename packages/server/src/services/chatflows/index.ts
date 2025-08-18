@@ -135,6 +135,8 @@ const getAllChatflows = async (
     page: number = 1,
     limit: number = 12
 ): Promise<PaginatedChatflows> => {
+    console.log(tenantId, 'tenantId111')
+
     try {
         const appServer = getRunningExpressApp()
         const repository = appServer.AppDataSource.getRepository(ChatFlow)
