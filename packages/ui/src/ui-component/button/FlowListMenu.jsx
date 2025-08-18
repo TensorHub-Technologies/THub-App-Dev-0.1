@@ -409,45 +409,45 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
             >
                 <div className={`${customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}`}>
                     <MenuItem onClick={handleFlowRename} disableRipple>
-                        <EditIcon />
+                        <EditIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Rename
                     </MenuItem>
                     <MenuItem onClick={handleDuplicate} disableRipple>
-                        <FileCopyIcon />
+                        <FileCopyIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Duplicate
                     </MenuItem>
                     <MenuItem onClick={handleExport} disableRipple>
-                        <FileDownloadIcon />
+                        <FileDownloadIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Export
                     </MenuItem>
                     <MenuItem onClick={handleExportTemplate} disableRipple>
-                        <ExportTemplateOutlinedIcon />
+                        <ExportTemplateOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Save As Template
                     </MenuItem>
                     <Divider sx={{ my: 0.5 }} />
                     <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
-                        <PictureInPictureAltIcon />
+                        <PictureInPictureAltIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Starter Prompts
                     </MenuItem>
                     <MenuItem onClick={handleFlowChatFeedback} disableRipple>
-                        <ThumbsUpDownOutlinedIcon />
+                        <ThumbsUpDownOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Chat Feedback
                     </MenuItem>
                     <MenuItem onClick={handleAllowedDomains} disableRipple>
-                        <VpnLockOutlinedIcon />
+                        <VpnLockOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Allowed Domains
                     </MenuItem>
                     <MenuItem onClick={handleSpeechToText} disableRipple>
-                        <MicNoneOutlinedIcon />
+                        <MicNoneOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Speech To Text
                     </MenuItem>
                     <MenuItem onClick={handleFlowCategory} disableRipple>
-                        <FileCategoryIcon />
+                        <FileCategoryIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Update Category
                     </MenuItem>
                     <Divider sx={{ my: 0.5 }} />
                     <MenuItem onClick={handleDelete} disableRipple>
-                        <FileDeleteIcon />
+                        <FileDeleteIcon sx={{ backgroundColor: 'transparent !important' }} />
                         Delete
                     </MenuItem>
                 </div>

@@ -81,7 +81,10 @@ const MainLayout = () => {
     }, [matchDownMd])
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box
+            sx={{ display: 'flex' }}
+            // className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
+        >
             <CssBaseline />
             {/* header */}
             <AppBar
