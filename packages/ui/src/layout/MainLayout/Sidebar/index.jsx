@@ -69,12 +69,14 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                     '& .MuiDrawer-paper': {
                         transition: 'width .2s, box-shadow .2s',
                         width: customization.menu_open ? '300px' : '100px',
+                        // overflow:"hidden",
                         // width: drawerWidth,
-                        background: theme.palette.background.default,
+                        background: 'transparent',
                         color: theme.palette.text.primary,
                         borderRight: 'none',
                         whiteSpace: 'nowrap',
                         boxSizing: 'border-box',
+                        // height:"100vh",
                         [theme.breakpoints.up('md')]: {
                             top: '75px'
                         }

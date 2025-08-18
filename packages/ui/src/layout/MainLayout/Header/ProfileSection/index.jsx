@@ -83,6 +83,7 @@ const ProfileSection = () => {
                                                 sx={{
                                                     width: '100%',
                                                     maxWidth: 250,
+                                                    bgcolor: 'purple',
                                                     minWidth: 200,
                                                     backgroundColor: theme.palette.background.paper,
                                                     borderRadius: '10px',

@@ -43,7 +43,7 @@ const PriceDropdown = ({ onCurrencyChange }) => {
     }, [])
 
     return (
-        <div style={{ position: 'absolute', zIndex: '1000', right: '60px', top: '185px' }} ref={dropdownRef}>
+        <div style={{ position: 'absolute', zIndex: '1000', right: '60px', top: '82px' }} ref={dropdownRef}>
             <button
                 onClick={toggleDropdown}
                 style={{
