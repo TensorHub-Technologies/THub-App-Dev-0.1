@@ -1,6 +1,9 @@
 import { LLM, BaseLLMParams } from '@langchain/core/language_models/llms'
 import { getEnvironmentVariable } from '../../../src/utils'
 
+// Define constant for environment variable name
+const HF_API_KEY_ENV_NAME = 'HUGGINGFACEHUB_API_KEY'
+
 export interface HFInput {
     /** Model to use */
     model: string
@@ -32,7 +35,7 @@ export interface HFInput {
 export class HuggingFaceInference extends LLM implements HFInput {
     get lc_secrets(): { [key: string]: string } | undefined {
         return {
-            apiKey: 'HUGGINGFACEHUB_API_KEY'
+            apiKey: process.env.HF_API_KEY_ENV_NAME ?? 'HF_API_KEY_ENV_NAME'
         }
     }
 
@@ -62,10 +65,10 @@ export class HuggingFaceInference extends LLM implements HFInput {
         this.topK = fields?.topK ?? this.topK
         this.frequencyPenalty = fields?.frequencyPenalty ?? this.frequencyPenalty
         this.endpoint = fields?.endpoint ?? ''
-        this.apiKey = fields?.apiKey ?? getEnvironmentVariable('HUGGINGFACEHUB_API_KEY')
+        this.apiKey = fields?.apiKey ?? getEnvironmentVariable(HF_API_KEY_ENV_NAME)
         if (!this.apiKey) {
             throw new Error(
-                'Please set an API key for HuggingFace Hub in the environment variable HUGGINGFACEHUB_API_KEY or in the apiKey field of the HuggingFaceInference constructor.'
+                `Please set an API key for HuggingFace Hub in the environment variable ${HF_API_KEY_ENV_NAME} or in the apiKey field of the HuggingFaceInference constructor.`
             )
         }
     }

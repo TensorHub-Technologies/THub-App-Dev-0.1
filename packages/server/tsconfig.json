@@ -14,6 +14,6 @@
         "strictPropertyInitialization": false,
         "declaration": true
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "../components/NodeModules.ts"],
     "exclude": ["node_modules", "**/*.test.ts"]
 }

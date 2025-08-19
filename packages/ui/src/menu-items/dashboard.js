@@ -35,7 +35,7 @@ const dashboard = {
         },
         {
             id: 'agentflows',
-            title: 'Agent Pipeline',
+            title: 'Agent Studio',
             type: 'item',
             url: '/agentflows',
             icon: icons.IconUsersGroup,

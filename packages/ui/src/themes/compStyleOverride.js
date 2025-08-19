@@ -4,6 +4,12 @@ export default function componentStyleOverrides(theme) {
         MuiCssBaseline: {
             styleOverrides: {
                 body: {
+                    background: theme?.customization?.isDarkMode
+                        ? 'radial-gradient(circle at top left, black 0%, rgb(28, 43, 77) 50%, rgb(28, 43, 77) 72%, rgb(60, 91, 164) 100%)'
+                        : 'radial-gradient(circle at top left, rgb(255, 255, 255) 0%, rgb(242, 242, 242) 17%, rgba(186, 198, 225, 1) 67%, rgba(186, 198, 225, 1) 100%)',
+                    backgroundAttachment: 'fixed',
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
                     scrollbarWidth: 'thin',
                     scrollbarColor: theme?.customization?.isDarkMode
                         ? `${theme.colors?.grey500} ${theme.colors?.darkPrimaryMain}`
@@ -77,7 +83,7 @@ export default function componentStyleOverrides(theme) {
         MuiCardContent: {
             styleOverrides: {
                 root: {
-                    padding: '24px'
+                    // padding: '24px'
                 }
             }
         },

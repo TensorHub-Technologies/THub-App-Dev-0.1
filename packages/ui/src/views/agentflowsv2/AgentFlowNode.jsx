@@ -5,7 +5,7 @@ import { Handle, Position, useUpdateNodeInternals, NodeToolbar } from 'reactflow
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles'
-import { ButtonGroup, Avatar, Box, Typography, IconButton, Tooltip } from '@mui/material'
+import { ButtonGroup, Avatar, Box, Typography, IconButton, Tooltip, Card } from '@mui/material'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
@@ -182,11 +182,12 @@ const AgentFlowNode = ({ data }) => {
                     </IconButton>
                 </ButtonGroup>
             </StyledNodeToolbar>
-            <CardWrapper
+            <Card
                 content={false}
                 sx={{
-                    borderColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                    borderColor: nodeColor,
                     borderWidth: '1px',
+                    borderStyle: 'solid',
                     // minHeight: getMinimumHeight(),
                     height: '70px',
                     width: '100px',
@@ -351,7 +352,7 @@ const AgentFlowNode = ({ data }) => {
                         )
                     })}
                 </Box>
-            </CardWrapper>
+            </Card>
             <NodeInfoDialog show={showInfoDialog} dialogProps={infoDialogProps} onCancel={() => setShowInfoDialog(false)}></NodeInfoDialog>
         </div>
     )

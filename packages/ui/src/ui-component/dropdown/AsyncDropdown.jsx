@@ -5,7 +5,7 @@ import axios from 'axios'
 
 // Material
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete'
-import { Popper, CircularProgress, TextField, Box, Typography } from '@mui/material'
+import { Popper, CircularProgress, TextField, Box, Typography, Tooltip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
 // API
@@ -31,17 +31,25 @@ const StyledPopper = styled(Popper)({
 const fetchList = async ({ tenantId, name, nodeData, previousNodes, currentNode }) => {
     const selectedParam = nodeData.inputParams.find((param) => param.name === name)
     const loadMethod = selectedParam?.loadMethod
-    const username = localStorage.getItem('username')
-    const password = localStorage.getItem('password')
+
+    let credentialId = nodeData.credential
+    if (!credentialId && (nodeData.inputs?.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID'])) {
+        credentialId = nodeData.inputs.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID']
+    }
+
+    let config = {
+        headers: {
+            'x-request-from': 'internal',
+            'Content-type': 'application/json'
+        },
+        withCredentials: true
+    }
 
     let lists = await axios
         .post(
             `${baseURL}/api/v1/node-load-method/${nodeData.name}`,
-            { ...nodeData, loadMethod, previousNodes, currentNode },
-            {
-                auth: username && password ? { username, password } : undefined,
-                headers: { 'Content-type': 'application/json', 'x-request-from': 'internal' }
-            }
+            { ...nodeData, loadMethod, previousNodes, currentNode, credential: credentialId, tenantId },
+            config
         )
         .then(async function (response) {
             return response.data
@@ -63,7 +71,8 @@ export const AsyncDropdown = ({
     disabled = false,
     freeSolo = false,
     disableClearable = false,
-    multiple = false
+    multiple = false,
+    fullWidth = false
 }) => {
     const customization = useSelector((state) => state.customization)
     const userData = useSelector((state) => state.user.userData)
@@ -213,12 +222,22 @@ export const AsyncDropdown = ({
                     const matchingOptions = multiple
                         ? findMatchingOptions(options, internalValue)
                         : [findMatchingOptions(options, internalValue)].filter(Boolean)
-                    return (
+
+                    const textField = (
                         <TextField
                             id='standard-basic'
                             variant='standard'
                             {...params}
                             value={internalValue}
+                            sx={{
+                                height: '100%',
+                                '& .MuiInputBase-root': {
+                                    height: '100%'
+                                    // '& fieldset': {
+                                    //     borderColor: theme.palette.grey[900] + 25
+                                    // }
+                                }
+                            }}
                             InputProps={{
                                 ...params.InputProps,
                                 disableUnderline: true,
@@ -257,6 +276,20 @@ export const AsyncDropdown = ({
                                 }
                             }}
                         />
+                    )
+
+                    return !multiple ? (
+                        textField
+                    ) : (
+                        <Tooltip
+                            title={
+                                typeof internalValue === 'string' ? internalValue.replace(/[[\]"]/g, '').replace(/,/g, ', ') : internalValue
+                            }
+                            placement='top'
+                            arrow
+                        >
+                            {textField}
+                        </Tooltip>
                     )
                 }}
                 renderOption={(props, option) => (
@@ -297,5 +330,6 @@ AsyncDropdown.propTypes = {
     credentialNames: PropTypes.array,
     disableClearable: PropTypes.bool,
     isCreateNewOption: PropTypes.bool,
-    multiple: PropTypes.bool
+    multiple: PropTypes.bool,
+    fullWidth: PropTypes.bool
 }

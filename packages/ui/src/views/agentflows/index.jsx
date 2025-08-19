@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // material-ui
-import { Box, Chip, Skeleton, Stack, ToggleButton, ToggleButtonGroup, CircularProgress, Typography } from '@mui/material'
+import { Box, Skeleton, Stack, ToggleButton, ToggleButtonGroup, CircularProgress, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
@@ -227,7 +227,7 @@ const Agentflows = () => {
 
     // Render loading skeletons
     const renderSkeletons = () => (
-        <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+        <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
             {[...Array(12)].map((_, index) => (
                 <Skeleton key={index} variant='rounded' height={280} />
             ))}
@@ -259,15 +259,15 @@ const Agentflows = () => {
             {error ? (
                 <ErrorBoundary error={error} />
             ) : (
-                <Stack flexDirection='column' sx={{ gap: 3 }}>
+                <Stack flexDirection='column' sx={{ gap: 2 }}>
                     <ViewHeader
                         onSearchChange={onSearchChange}
                         search={true}
                         searchPlaceholder='Search Name or Category'
-                        title='Agent Pipeline'
+                        title='Agent Studio'
                         description='Multi-agent systems, workflow orchestration'
                     >
-                        <ToggleButtonGroup
+                        {/* <ToggleButtonGroup
                             sx={{ borderRadius: 2, maxHeight: 40 }}
                             value={agentflowVersion}
                             color='primary'
@@ -299,42 +299,49 @@ const Agentflows = () => {
                             >
                                 V1
                             </ToggleButton>
-                        </ToggleButtonGroup>
-                        <ToggleButtonGroup
-                            sx={{ borderRadius: 2, maxHeight: 40 }}
-                            value={view}
-                            color='primary'
-                            exclusive
-                            onChange={handleChange}
-                        >
-                            <ToggleButton
-                                sx={{
-                                    borderColor: theme.palette.grey[900] + 25,
-                                    borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
-                                }}
-                                variant='contained'
-                                value='card'
-                                title='Card View'
+                        </ToggleButtonGroup> */}
+                        <Stack flexDirection='row' gap={1} sx={{ ml: '40px' }}>
+                            <ToggleButtonGroup
+                                sx={{ borderRadius: 2, maxHeight: 40 }}
+                                value={view}
+                                color='primary'
+                                exclusive
+                                onChange={handleChange}
                             >
-                                <IconLayoutGrid style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
-                            </ToggleButton>
-                            <ToggleButton
-                                sx={{
-                                    borderColor: theme.palette.grey[900] + 25,
-                                    borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
-                                }}
+                                <ToggleButton
+                                    sx={{
+                                        borderColor: theme.palette.grey[900] + 25,
+                                        borderRadius: 2,
+                                        color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    }}
+                                    variant='contained'
+                                    value='card'
+                                    title='Card View'
+                                >
+                                    <IconLayoutGrid style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
+                                </ToggleButton>
+                                <ToggleButton
+                                    sx={{
+                                        borderColor: theme.palette.grey[900] + 25,
+                                        borderRadius: 2,
+                                        color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    }}
+                                    variant='contained'
+                                    value='list'
+                                    title='List View'
+                                >
+                                    <IconList style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                            <StyledButton
                                 variant='contained'
-                                value='list'
-                                title='List View'
+                                onClick={addNew}
+                                startIcon={<IconPlus />}
+                                sx={{ borderRadius: 2, height: 40 }}
                             >
-                                <IconList style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                        <StyledButton variant='contained' onClick={addNew} startIcon={<IconPlus />} sx={{ borderRadius: 2, height: 40 }}>
-                            Create
-                        </StyledButton>
+                                Create
+                            </StyledButton>
+                        </Stack>
                     </ViewHeader>
 
                     {/* Card View */}
@@ -346,7 +353,7 @@ const Agentflows = () => {
                                 renderEmptyState()
                             ) : (
                                 <>
-                                    <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+                                    <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
                                         {processedData.map((data, index) => (
                                             <div key={data.id} ref={index === processedData.length - 1 ? lastElementRef : null}>
                                                 <ItemCard

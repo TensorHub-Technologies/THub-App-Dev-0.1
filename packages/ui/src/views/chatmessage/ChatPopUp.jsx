@@ -2,13 +2,12 @@ import { memo, useState, useRef, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { Button, Drawer } from '@mui/material'
+import { Button, Card, Drawer } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { IconMessage, IconX, IconEraser } from '@tabler/icons-react'
 
 // project import
 import { StyledFab } from '@/ui-component/button/StyledFab'
-import MainCard from '@/ui-component/cards/MainCard'
 import ChatMessage from './ChatMessage'
 
 // api
@@ -115,12 +114,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 sx={{
                     position: 'absolute',
                     right: 20,
-                    top: 20,
-                    bgcolor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                    '&:hover': {
-                        background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                        color: 'white'
-                    }
+                    top: 20
                 }}
                 ref={anchorRef}
                 size='small'
@@ -179,7 +173,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                             sx={{
                                 position: 'absolute',
                                 right: 60,
-                                top: 0,
+                                top: 12,
                                 background: 'transparent',
                                 boxShadow: '0',
                                 color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
@@ -196,7 +190,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                             sx={{
                                 position: 'absolute',
                                 right: 20,
-                                top: 0,
+                                top: 12,
                                 background: 'transparent',
                                 boxShadow: '0',
                                 color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
@@ -218,7 +212,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                             flexDirection: 'column'
                         }}
                     >
-                        <MainCard
+                        <Card
                             border={false}
                             className='cloud-wrapper'
                             elevation={0}
@@ -248,7 +242,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                                 setPreviews={setPreviews}
                                 isDialog={true}
                             />
-                        </MainCard>
+                        </Card>
                     </div>
                 </div>
             </Drawer>

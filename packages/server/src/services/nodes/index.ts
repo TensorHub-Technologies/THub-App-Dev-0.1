@@ -88,7 +88,9 @@ const getSingleNodeIcon = async (nodeName: string) => {
     }
 }
 
-const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any): Promise<any> => {
+const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any, tenantId: string): Promise<any> => {
+    console.log(tenantId, 'tenantId')
+
     try {
         const appServer = getRunningExpressApp()
         const nodeData: INodeData = requestBody
@@ -102,7 +104,8 @@ const getSingleNodeAsyncOptions = async (nodeName: string, requestBody: any): Pr
                     databaseEntities: databaseEntities,
                     componentNodes: appServer.nodesPool.componentNodes,
                     previousNodes: requestBody.previousNodes,
-                    currentNode: requestBody.currentNode
+                    currentNode: requestBody.currentNode,
+                    tenantId: tenantId
                 })
 
                 return dbResponse

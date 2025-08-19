@@ -87,14 +87,13 @@ export default function themeTypography(theme) {
             }
         },
         mainContent: {
-            backgroundColor: theme.background,
+            backgroundColor: 'transparent',
             width: '100%',
             minHeight: 'calc(100vh - 75px)',
             flexGrow: 1,
-            padding: '20px',
-            marginTop: '75px',
-            marginRight: '20px',
-            borderRadius: `${theme?.customization?.borderRadius}px`
+            marginTop: '80px',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)'
         },
         menuCaption: {
             fontSize: '0.875rem',

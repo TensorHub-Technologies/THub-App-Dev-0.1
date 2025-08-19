@@ -13,7 +13,7 @@ import { drawerWidth } from '@/store/constant'
 import { SET_MENU } from '@/store/actions'
 import RegisterationForm from '../../views/register/RegisterationForm'
 import LoginForm from '@/views/register/LoginForm'
-
+import '../../ui-component/cards/card.css'
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
     ...theme.typography.mainContent,
@@ -64,7 +64,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 const MainLayout = () => {
     const theme = useTheme()
     const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'))
-    // const customization = useSelector((state) => state.customization)
+    const customization = useSelector((state) => state.customization)
     const user = useSelector((state) => state.user.userData)
     const showRegisterModalState = useSelector((state) => state.modal.showRegisterModal)
     const showLoginModal = useSelector((state) => state.modal.showLoginModal)
@@ -81,7 +81,10 @@ const MainLayout = () => {
     }, [matchDownMd])
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box
+            sx={{ display: 'flex' }}
+            // className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
+        >
             <CssBaseline />
             {/* header */}
             <AppBar
@@ -89,9 +92,9 @@ const MainLayout = () => {
                 position='fixed'
                 color='inherit'
                 elevation={0}
+                className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
                 sx={{
                     height: '80px',
-
                     bgcolor: theme.palette.background.default,
                     transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
                 }}

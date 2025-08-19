@@ -16,6 +16,7 @@ import IconSettings from '@/assets/custom-svg/IconSettings'
 import IconUserPlus from '@/assets/custom-svg/IconUserPlus'
 import IconLogout from '@/assets/custom-svg/IconLogout'
 import { useMsal } from '@azure/msal-react'
+import { StyledFab } from '@/ui-component/button/StyledFab'
 
 const Header = () => {
     const [userName, setUserName] = useState('')
@@ -162,6 +163,7 @@ const Header = () => {
                 sx={{
                     width: 228,
                     display: 'flex',
+                    // border:"2px solid red",
                     cursor: 'pointer',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
@@ -176,13 +178,15 @@ const Header = () => {
             </Box>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}></Toolbar>
             <Box sx={{ flexGrow: 1 }} />
-            <IconButton onClick={changeDarkMode}>
+
+            <StyledFab aria-label='mode' title='Theme' onClick={changeDarkMode}>
                 <img
                     src={customization.isDarkMode ? toggle_1 : toggle_2}
-                    style={{ width: '30px', marginRight: '3px' }}
+                    style={{ width: '24px', height: '24px' }}
                     alt={customization.isDarkMode ? 'dark' : 'lite'}
                 />
-            </IconButton>
+            </StyledFab>
+
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection />
             <React.Fragment>
@@ -199,8 +203,8 @@ const Header = () => {
                             {userImg ? (
                                 <Avatar
                                     sx={{
-                                        width: 38,
-                                        height: 38,
+                                        width: 32,
+                                        height: 32,
                                         color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
@@ -210,8 +214,8 @@ const Header = () => {
                             ) : (
                                 <Avatar
                                     sx={{
-                                        width: 38,
-                                        height: 38,
+                                        width: 32,
+                                        height: 32,
                                         color: '#FFFFFF',
                                         background: customization.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }}
@@ -257,19 +261,41 @@ const Header = () => {
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={handleSettingClick}>
+                    <MenuItem
+                        onClick={handleSettingClick}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: customization.isDarkMode ? '#424242' : '#f5f5f5' // or any other visible color
+                            }
+                        }}
+                    >
                         <ListItemIcon>
                             <IconSettings color={customization.isDarkMode ? 'white' : '#616161'} />
                         </ListItemIcon>
                         Settings
                     </MenuItem>
-                    <MenuItem onClick={handleSubscriptionClick}>
+
+                    <MenuItem
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: customization.isDarkMode ? '#424242' : '#f5f5f5' // or any other visible color
+                            }
+                        }}
+                        onClick={handleSubscriptionClick}
+                    >
                         <ListItemIcon>
                             <IconUserPlus color={customization.isDarkMode ? 'white' : '#616161'} />
                         </ListItemIcon>
                         Subscription
                     </MenuItem>
-                    <MenuItem onClick={handleLogout}>
+                    <MenuItem
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: customization.isDarkMode ? '#424242' : '#f5f5f5' // or any other visible color
+                            }
+                        }}
+                        onClick={handleLogout}
+                    >
                         <ListItemIcon>
                             <IconLogout color={customization.isDarkMode ? 'white' : '#616161'} />
                         </ListItemIcon>

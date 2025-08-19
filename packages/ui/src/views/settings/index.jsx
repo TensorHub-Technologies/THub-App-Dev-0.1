@@ -84,7 +84,14 @@ const Settings = ({ chatflow, isSettingsOpen, isCustomAssistant, anchorEl, isAge
                     mb: 0.5,
                     alignItems: 'flex-start',
                     py: 1.25,
-                    pl: `24px`
+                    pl: `24px`,
+                    '&:hover': {
+                        backgroundColor: 'transparent',
+                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                        '& .MuiListItemIcon-root': {
+                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                        }
+                    }
                 }}
                 onClick={() => {
                     if (menu.id === 'loadChatflow' && inputFile) {

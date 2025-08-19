@@ -4,7 +4,7 @@ export const fetchAIResponse = async (text) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer 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`
+                Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
             },
             body: JSON.stringify({
                 model: 'gpt-4',

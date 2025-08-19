@@ -10,6 +10,7 @@ import {
     IServerSideEventStreamer,
     IUsedTool
 } from '../../../src/Interface'
+import { NodeModules } from '../../../src/nodeModules'
 import { AIMessageChunk, BaseMessageLike, MessageContentText } from '@langchain/core/messages'
 import { AnalyticHandler } from '../../../src/handler'
 import { DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt'
@@ -20,6 +21,7 @@ import { flatten } from 'lodash'
 import zodToJsonSchema from 'zod-to-json-schema'
 import { getErrorMessage } from '../../../src/error'
 import { DataSource } from 'typeorm'
+import path from 'path'
 import {
     getPastChatHistoryImageMessages,
     getUniqueImageMessages,
@@ -27,6 +29,18 @@ import {
     replaceBase64ImagesWithFileReferences,
     updateFlowState
 } from '../utils'
+
+// Utility function to validate node file paths
+function validateNodeFilePath(componentNodes: ICommonObject, nodeName: string): string {
+    if (!componentNodes[nodeName]?.filePath) {
+        throw new Error(`Required tool ${nodeName} not found`)
+    }
+    const filePath = componentNodes[nodeName].filePath as string
+    if (!path.isAbsolute(filePath) || !filePath.includes('dist/nodes/')) {
+        throw new Error(`Invalid ${nodeName} path`)
+    }
+    return filePath
+}
 
 interface ITool {
     agentSelectedTool: string
@@ -79,7 +93,7 @@ class Agent_Agentflow implements INode {
         this.name = 'agentAgentflow'
         this.version = 1.0
         this.type = 'Agent'
-        this.category = 'Agent Pipeline'
+        this.category = 'Agent Studio'
         this.description = 'Dynamically choose and utilize tools during runtime, enabling multi-step reasoning'
         this.color = '#FFD166'
         this.baseClasses = [this.type]
@@ -483,7 +497,13 @@ class Agent_Agentflow implements INode {
             const toolsInstance: Tool[] = []
             for (const tool of tools) {
                 const toolConfig = tool.agentSelectedToolConfig
-                const nodeInstanceFilePath = options.componentNodes[tool.agentSelectedTool].filePath as string
+                // const nodeInstanceFilePath = options.componentNodes[tool.agentSelectedTool].filePath as string
+                console.log(`Loading tool node from: ${tool.agentSelectedTool}`)
+                const nodeInstanceFilePath = NodeModules.moduleMap[tool.agentSelectedTool]
+                if (!nodeInstanceFilePath) {
+                    throw new Error(`Tool node file path for ${tool.agentSelectedTool} not found`)
+                }
+                // amazonq-ignore-next-line
                 const nodeModule = await import(nodeInstanceFilePath)
                 const newToolNodeInstance = new nodeModule.nodeClass()
                 const newNodeData = {
@@ -537,15 +557,40 @@ class Agent_Agentflow implements INode {
 
             // Extract knowledge
             const knowledgeBases = nodeData.inputs?.agentKnowledgeDocumentStores as IKnowledgeBase[]
+
             if (knowledgeBases && knowledgeBases.length > 0) {
                 for (const knowledgeBase of knowledgeBases) {
-                    const nodeInstanceFilePath = options.componentNodes['retrieverTool'].filePath as string
+                    // Validate retrieverTool exists in componentNodes
+                    if (!options.componentNodes['retrieverTool']?.filePath) {
+                        throw new Error('Required tool retrieverTool not found')
+                    }
+                    if (!options.componentNodes['documentStoreVS']?.filePath) {
+                        throw new Error('Required tool documentStoreVS not found')
+                    }
+
+                    // Validate file paths are absolute and within expected directory
+                    const retrieverToolPath = options.componentNodes['retrieverTool'].filePath as string
+                    const docStoreVectorPath = options.componentNodes['documentStoreVS'].filePath as string
+
+                    if (!path.isAbsolute(retrieverToolPath) || !retrieverToolPath.includes('dist/nodes/')) {
+                        throw new Error('Invalid retrieverTool path')
+                    }
+                    if (!path.isAbsolute(docStoreVectorPath) || !docStoreVectorPath.includes('dist/nodes/')) {
+                        throw new Error('Invalid documentStoreVS path')
+                    }
+
+                    //const nodeInstanceFilePath = validateNodeFilePath(options.componentNodes, 'retrieverTool')
+                    // console.log(`Loading retriever tool node from: ${nodeInstanceFilePath}`)
+                    // amazonq-ignore-next-line
+                    const nodeInstanceFilePath = NodeModules.moduleMap['retrieverTool']
                     const nodeModule = await import(nodeInstanceFilePath)
                     const newRetrieverToolNodeInstance = new nodeModule.nodeClass()
                     const [storeId, storeName] = knowledgeBase.documentStore.split(':')
 
-                    const docStoreVectorInstanceFilePath = options.componentNodes['documentStoreVS'].filePath as string
-                    const docStoreVectorModule = await import(docStoreVectorInstanceFilePath)
+                    //const docStoreVectorInstanceFilePath =validateNodeFilePath(options.componentNodes, 'documentStoreVS')
+                    const nodeInstanceFilePathDocStore = NodeModules.moduleMap['documentStoreVS']
+                    //console.log(`Loading document store vector node from: ${docStoreVectorInstanceFilePath}`)
+                    const docStoreVectorModule = await import(nodeInstanceFilePathDocStore)
                     const newDocStoreVectorInstance = new docStoreVectorModule.nodeClass()
                     const docStoreVectorInstance = await newDocStoreVectorInstance.init(
                         {
@@ -603,14 +648,14 @@ class Agent_Agentflow implements INode {
             const knowledgeBasesForVSEmbeddings = nodeData.inputs?.agentKnowledgeVSEmbeddings as IKnowledgeBaseVSEmbeddings[]
             if (knowledgeBasesForVSEmbeddings && knowledgeBasesForVSEmbeddings.length > 0) {
                 for (const knowledgeBase of knowledgeBasesForVSEmbeddings) {
-                    const nodeInstanceFilePath = options.componentNodes['retrieverTool'].filePath as string
-                    const nodeModule = await import(nodeInstanceFilePath)
+                    const retrieverToolPath = validateNodeFilePath(options.componentNodes, 'retrieverTool')
+                    const nodeModule = await import(retrieverToolPath)
                     const newRetrieverToolNodeInstance = new nodeModule.nodeClass()
 
                     const selectedEmbeddingModel = knowledgeBase.embeddingModel
                     const selectedEmbeddingModelConfig = knowledgeBase.embeddingModelConfig
-                    const embeddingInstanceFilePath = options.componentNodes[selectedEmbeddingModel].filePath as string
-                    const embeddingModule = await import(embeddingInstanceFilePath)
+                    const embeddingPath = validateNodeFilePath(options.componentNodes, selectedEmbeddingModel)
+                    const embeddingModule = await import(embeddingPath)
                     const newEmbeddingInstance = new embeddingModule.nodeClass()
                     const newEmbeddingNodeData = {
                         ...nodeData,
@@ -624,8 +669,8 @@ class Agent_Agentflow implements INode {
 
                     const selectedVectorStore = knowledgeBase.vectorStore
                     const selectedVectorStoreConfig = knowledgeBase.vectorStoreConfig
-                    const vectorStoreInstanceFilePath = options.componentNodes[selectedVectorStore].filePath as string
-                    const vectorStoreModule = await import(vectorStoreInstanceFilePath)
+                    const vectorStorePath = validateNodeFilePath(options.componentNodes, selectedVectorStore)
+                    const vectorStoreModule = await import(vectorStorePath)
                     const newVectorStoreInstance = new vectorStoreModule.nodeClass()
                     const newVSNodeData = {
                         ...nodeData,
@@ -695,8 +740,8 @@ class Agent_Agentflow implements INode {
             const chatId = options.chatId as string
 
             // Initialize the LLM model instance
-            const nodeInstanceFilePath = options.componentNodes[model].filePath as string
-            const nodeModule = await import(nodeInstanceFilePath)
+            const modelPath = validateNodeFilePath(options.componentNodes, model)
+            const nodeModule = await import(modelPath)
             const newLLMNodeInstance = new nodeModule.nodeClass()
             const newNodeData = {
                 ...nodeData,
