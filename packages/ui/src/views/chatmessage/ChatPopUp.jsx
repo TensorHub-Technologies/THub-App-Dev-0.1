@@ -114,7 +114,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 sx={{
                     position: 'absolute',
                     right: 20,
-                    top: 20
+                    top: 40
                 }}
                 ref={anchorRef}
                 size='small'
