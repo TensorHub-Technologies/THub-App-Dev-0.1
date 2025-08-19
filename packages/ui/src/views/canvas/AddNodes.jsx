@@ -393,12 +393,12 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                         <div
                             style={{
                                 borderRadius: '10%',
-                                backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
+                                // backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
                                 display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                width: '48px',
-                                height: '48px'
+                                width: '32px',
+                                height: '32px'
                             }}
                         >
                             {renderIcon(node)}
@@ -461,7 +461,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                         position: 'fixed',
                         // left: 1240,
                         right: 140,
-                        top: 19,
+                        top: 40,
 
                         zIndex: theme.zIndex.drawer + 2
                     }}
@@ -575,6 +575,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                             aria-label='tabs'
                             TabIndicatorProps={{
                                 style: {
+                                    backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                                     padding: '0px'
                                 }
                             }}
