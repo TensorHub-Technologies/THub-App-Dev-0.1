@@ -56,6 +56,7 @@
                 "QueryEngine Tool",
                 "Python Interpreter",
                 "Read File",
+                "JSON Path Extractor",
                 "Requests Get",
                 "Requests Post",
                 "Retriever Tool",
@@ -152,7 +153,8 @@
                 "Zep Collection - Open Source",
                 "Zep Collection - Cloud",
                 "Pinecone",
-                "SimpleStore"
+                "SimpleStore",
+                "AWS Kendra"
             ],
             "Output Parsers": [
                 "CSV Output Parser",
@@ -238,6 +240,8 @@
                 "ChatOpenAI",
                 "ChatOpenAI Custom",
                 "ChatOpenRouter",
+                "ChatPerplexity",
+                "ChatSambanova",
                 "ChatTogetherAI",
                 "GroqChat",
                 "AzureChatOpenAI",
@@ -276,6 +280,7 @@
                 "GooglePaLM",
                 "GoogleVertexAI",
                 "IBMWatsonx",
+                "Sambanova",
                 "HuggingFace Inference",
                 "Ollama",
                 "OpenAI",
@@ -344,6 +349,7 @@
                 "QueryEngine Tool",
                 "Python Interpreter",
                 "Read File",
+                "JSON Path Extractor",
                 "Requests Get",
                 "Requests Post",
                 "Retriever Tool",
@@ -438,7 +444,8 @@
                 "Zep Collection - Open Source",
                 "Zep Collection - Cloud",
                 "Pinecone",
-                "SimpleStore"
+                "SimpleStore",
+                "AWS Kendra"
             ],
             "Output Parsers": [
                 "CSV Output Parser",
@@ -524,6 +531,8 @@
                 "ChatOpenAI",
                 "ChatOpenAI Custom",
                 "ChatOpenRouter",
+                "ChatPerplexity",
+                "ChatSambanova",
                 "ChatTogetherAI",
                 "GroqChat",
                 "AzureChatOpenAI",
@@ -562,6 +571,7 @@
                 "GooglePaLM",
                 "GoogleVertexAI",
                 "IBMWatsonx",
+                "Sambanova",
                 "HuggingFace Inference",
                 "Ollama",
                 "OpenAI",
@@ -648,6 +658,7 @@
                 "QueryEngine Tool",
                 "Python Interpreter",
                 "Read File",
+                "JSON Path Extractor",
                 "Requests Get",
                 "Requests Post",
                 "Retriever Tool",
@@ -744,7 +755,8 @@
                 "Zep Collection - Open Source",
                 "Zep Collection - Cloud",
                 "Pinecone",
-                "SimpleStore"
+                "SimpleStore",
+                "AWS Kendra"
             ],
             "Output Parsers": [
                 "CSV Output Parser",
@@ -830,6 +842,8 @@
                 "ChatOpenAI",
                 "ChatOpenAI Custom",
                 "ChatOpenRouter",
+                "ChatPerplexity",
+                "ChatSambanova",
                 "ChatTogetherAI",
                 "GroqChat",
                 "AzureChatOpenAI",
@@ -868,6 +882,7 @@
                 "GooglePaLM",
                 "GoogleVertexAI",
                 "IBMWatsonx",
+                "Sambanova",
                 "HuggingFace Inference",
                 "Ollama",
                 "OpenAI",
