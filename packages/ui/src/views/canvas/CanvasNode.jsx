@@ -22,7 +22,6 @@ import NodeInfoDialog from '@/ui-component/dialog/NodeInfoDialog'
 import { baseURL } from '@/store/constant'
 import { IconTrash, IconCopy, IconInfoCircle, IconAlertTriangle } from '@tabler/icons-react'
 import { flowContext } from '@/store/context/ReactFlowContext'
-import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import { setNodesMinMax } from '@/store/actions'
 
 // ===========================|| CANVAS NODE ||=========================== //
@@ -31,7 +30,6 @@ const CanvasNode = ({ data }) => {
     const theme = useTheme()
     const canvas = useSelector((state) => state.canvas)
     const { deleteNode, duplicateNode } = useContext(flowContext)
-
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
     const [showInfoDialog, setShowInfoDialog] = useState(false)
@@ -70,19 +68,8 @@ const CanvasNode = ({ data }) => {
         setOpen(false)
     }
 
-    const [isForceCloseNodeInfo, setIsForceCloseNodeInfo] = useState(null)
-
-    const handleClose = () => {
-        setOpen(false)
-    }
-
     const handleOpen = () => {
-        setOpen(true)
-    }
-
-    const getNodeInfoOpenStatus = () => {
-        if (isForceCloseNodeInfo) return false
-        else return !canvas.canvasDialogShow && open
+        setOpen(!open)
     }
 
     const borderColorMap = {
@@ -145,18 +132,6 @@ const CanvasNode = ({ data }) => {
         setShowDialog(true)
     }
 
-    // useEffect(() => {
-    //     const componentNode = canvas.componentNodes.find((nd) => nd.name === data.name)
-    //     if (componentNode) {
-    //         if (!data.version) {
-    //             setWarningMessage(nodeVersionEmptyMessage(componentNode.version))
-    //         } else if (data.version && componentNode.version > data.version) {
-    //             setWarningMessage(nodeOutdatedMessage(data.version, componentNode.version))
-    //         } else if (componentNode.badge === 'DEPRECATING') {
-    //             setWarningMessage('This node will be deprecated in the next release. Change to a new node tagged with NEW')
-    //         }
-    //     }
-    // }, [canvas.componentNodes, data.name, data.version])
     return (
         <>
             <div>
@@ -183,9 +158,7 @@ const CanvasNode = ({ data }) => {
                         <MoreVertIcon />
                     </Tooltip>
                     <NodeTooltip
-                        open={getNodeInfoOpenStatus()}
-                        onClose={handleClose}
-                        onOpen={handleOpen}
+                        open={!canvas.canvasDialogShow && open}
                         disableFocusListener={true}
                         title={
                             <div
@@ -300,13 +273,7 @@ const CanvasNode = ({ data }) => {
                                                 borderRadius: '50%',
                                                 padding: 15
                                             }}
-                                        >
-                                            <img
-                                                style={{ width: '25px', height: '25px', borderRadius: '50%', objectFit: 'contain' }}
-                                                src={LlamaindexPNG}
-                                                alt='LlamaIndex'
-                                            />
-                                        </div>
+                                        ></div>
                                     </>
                                 )}
                                 {warningMessage && (
@@ -343,20 +310,8 @@ const CanvasNode = ({ data }) => {
                                     ))}
                                     {data.inputParams
                                         .filter((inputParam) => !inputParam.hidden)
-                                        .filter((inputParam) => inputParam.display !== false)
                                         .map((inputParam, index) => (
-                                            <NodeInputHandler
-                                                key={index}
-                                                inputParam={inputParam}
-                                                data={data}
-                                                onHideNodeInfoDialog={(status) => {
-                                                    if (status) {
-                                                        setIsForceCloseNodeInfo(true)
-                                                    } else {
-                                                        setIsForceCloseNodeInfo(null)
-                                                    }
-                                                }}
-                                            />
+                                            <NodeInputHandler key={index} inputParam={inputParam} data={data} background='red' />
                                         ))}
                                     {data.inputParams.find((param) => param.additionalParams) && (
                                         <div
@@ -410,7 +365,7 @@ const CanvasNode = ({ data }) => {
                                         <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} />
                                     ))}
                                     {data.outputAnchors.map((outputAnchor, index) => (
-                                        <NodeOutputHandler key={JSON.stringify(data)} outputAnchor={outputAnchor} data={data} />
+                                        <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data} />
                                     ))}
                                 </>
                             )}

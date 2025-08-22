@@ -151,11 +151,7 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
                     sx={{
                         position: 'absolute',
                         right: 80,
-                        top: 20,
-                        '&:hover': {
-                            background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                            color: 'white'
-                        }
+                        top: 40
                     }}
                     ref={anchorRef}
                     size='small'

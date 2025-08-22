@@ -114,12 +114,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 sx={{
                     position: 'absolute',
                     right: 20,
-                    top: 20,
-                    bgcolor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                    '&:hover': {
-                        background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                        color: 'white'
-                    }
+                    top: 40
                 }}
                 ref={anchorRef}
                 size='small'
@@ -178,7 +173,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                             sx={{
                                 position: 'absolute',
                                 right: 60,
-                                top: 0,
+                                top: 12,
                                 background: 'transparent',
                                 boxShadow: '0',
                                 color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
@@ -195,7 +190,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                             sx={{
                                 position: 'absolute',
                                 right: 20,
-                                top: 0,
+                                top: 12,
                                 background: 'transparent',
                                 boxShadow: '0',
                                 color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'

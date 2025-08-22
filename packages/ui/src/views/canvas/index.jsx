@@ -834,7 +834,14 @@ const Canvas = () => {
                     </Toolbar>
                 </AppBar>
 
-                <Box sx={{ display: 'flex', mt: '32px', height: 'calc(100vh - 70px)', overflow: 'hidden' }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        height: 'calc(100vh - 50px)',
+                        overflowX: 'hidden', // hides horizontal scroll
+                        overflowY: 'auto'
+                    }}
+                >
                     <Box sx={{ width: customization.menu_open ? '86px' : '86px' }}>
                         <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
                     </Box>

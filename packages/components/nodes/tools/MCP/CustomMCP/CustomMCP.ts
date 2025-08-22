@@ -58,7 +58,7 @@ class Custom_MCP implements INode {
         this.name = 'customMCP'
         this.version = 1.1
         this.type = 'Custom MCP Tool'
-        this.icon = 'customMCP.png'
+        this.icon = 'customMCP.svg'
         this.category = 'Tools (MCP)'
         this.description = 'Custom MCP Config'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search'

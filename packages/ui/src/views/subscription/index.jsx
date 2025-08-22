@@ -22,6 +22,7 @@ import EnterpriceForm from './Enterprice_Form'
 
 // toastify
 import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 // project import
 const Subscription = () => {
@@ -79,6 +80,7 @@ const Subscription = () => {
     }
 
     const handleLoading = (message) => {
+        console.log('Loading:', message)
         toast.success(message, {
             theme: 'colored',
             autoClose: 2000,
@@ -146,7 +148,6 @@ const Subscription = () => {
 
             try {
                 const response = await axios.post(`${apiUrl}/api/payments/create-subscription`, requestData)
-                console.log(response, 'response from create-subscription')
                 const paymentData = response.data
                 // Create a form dynamically to post the paymentData to PayU's payment gateway
                 const form = document.createElement('form')
@@ -279,7 +280,14 @@ const Subscription = () => {
                             className={customization.isDarkMode ? subStyle.card_selection_dark : subStyle.card_selection_light}
                         >
                             <Card
-                                sx={{ maxWidth: 345 }}
+                                sx={{
+                                    maxWidth: 345,
+                                    '&:hover': {
+                                        '& .glow-effect': {
+                                            opacity: 1
+                                        }
+                                    }
+                                }}
                                 className={customization.isDarkMode ? subStyle.card_content_dark : subStyle.card_content_light}
                             >
                                 {plan.title === 'Free' && user.subscription_type === 'free' ? (
@@ -420,13 +428,24 @@ const Subscription = () => {
                                                     }
                                                     key={index}
                                                 >
-                                                    {feature.includes('₹ 17,999/per Additional Agents') && plan.title === 'Pro'
-                                                        ? `${getIncreasePrice(plan)}/Per Additional Agents`
-                                                        : feature}
+                                                    {feature}
                                                 </li>
                                             ))}
                                         </ul>
                                     </div>
+                                    <Box
+                                        className='glow-effect'
+                                        sx={{
+                                            position: 'absolute',
+                                            inset: 0,
+                                            borderRadius: '12px',
+                                            background: 'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease-in-out',
+                                            filter: 'blur(8px)',
+                                            zIndex: -1
+                                        }}
+                                    />
                                 </CardContent>
                             </Card>
                         </Grid>
