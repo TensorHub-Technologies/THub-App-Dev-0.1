@@ -68,7 +68,8 @@
                 "Web Browser",
                 "WolframAlpha",
                 "Tavily API",
-                "Write File"
+                "Write File",
+                "Web Scraper Tool"
             ],
             "Tools (MCP)": ["Brave Search MCP", "Custom MCP", "Github MCP", "PostgreSQL MCP", "Sequential Thinking MCP", "Slack MCP"],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
@@ -361,7 +362,8 @@
                 "Web Browser",
                 "WolframAlpha",
                 "Tavily API",
-                "Write File"
+                "Write File",
+                "Web Scraper Tool"
             ],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
             "Moderation": ["OpenAI Moderation", "Simple Prompt Moderation"],
@@ -670,7 +672,8 @@
                 "Web Browser",
                 "WolframAlpha",
                 "Tavily API",
-                "Write File"
+                "Write File",
+                "Web Scraper Tool"
             ],
             "Tools (MCP)": ["Brave Search MCP", "Custom MCP", "Github MCP", "PostgreSQL MCP", "Sequential Thinking MCP", "Slack MCP"],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
