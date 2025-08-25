@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     HIDE_CANVAS_DIALOG,
     SHOW_CANVAS_DIALOG,
@@ -30,6 +30,8 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
 
     const dispatch = useDispatch()
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     // ==============================|| Snackbar ||============================== //
 
     useNotifier()
@@ -69,7 +71,8 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         try {
             const obj = {
                 name: documentStoreName,
-                description: documentStoreDesc
+                description: documentStoreDesc,
+                tenantId: tenantId
             }
             const createResp = await documentStoreApi.createDocumentStore(obj)
             if (createResp.data) {

@@ -32,6 +32,7 @@
             "Tools": [
                 "Agent as Tool",
                 "Arxiv",
+                "AWS SNS",
                 "BraveSearch API",
                 "Calculator",
                 "Chain Tool",
@@ -326,6 +327,7 @@
             "Tools": [
                 "Agent as Tool",
                 "Arxiv",
+                "AWS SNS",
                 "BraveSearch API",
                 "Calculator",
                 "Chain Tool",
@@ -636,6 +638,7 @@
             "Tools": [
                 "Agent as Tool",
                 "Arxiv",
+                "AWS SNS",
                 "BraveSearch API",
                 "Calculator",
                 "Chain Tool",
