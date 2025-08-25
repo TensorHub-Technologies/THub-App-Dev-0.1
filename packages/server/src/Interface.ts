@@ -410,3 +410,9 @@ export interface IVariableOverride {
 
 // DocumentStore related
 export * from './Interface.DocumentStore'
+
+export enum UserPlan {
+    STARTER = 'STARTER',
+    PRO = 'PRO',
+    FREE = 'FREE'
+}

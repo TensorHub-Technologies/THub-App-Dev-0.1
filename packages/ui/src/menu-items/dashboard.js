@@ -5,7 +5,7 @@ import ConstructionOutlinedIcon from '@/assets/custom-svg/ConstructionOutlinedIc
 import HttpsOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
 import VpnKeyOutlinedIcon from '@/assets/custom-svg/VpnKeyOutlinedIcon'
 import IconMathIntegral from '@/assets/custom-svg/IconMathIntegral'
-import { IconUsersGroup, IconListCheck } from '@tabler/icons-react'
+import { IconUsersGroup, IconListCheck, IconFiles } from '@tabler/icons-react'
 
 const icons = {
     AppsOutlinedIcon,
@@ -15,7 +15,8 @@ const icons = {
     HttpsOutlinedIcon,
     VpnKeyOutlinedIcon,
     IconUsersGroup,
-    IconListCheck
+    IconListCheck,
+    IconFiles
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -88,6 +89,15 @@ const dashboard = {
             url: '/apikey',
             icon: icons.VpnKeyOutlinedIcon,
             breadcrumbs: true
+        },
+        {
+            id: 'document-stores',
+            title: 'Document Stores',
+            type: 'item',
+            url: '/document-stores',
+            icon: icons.IconFiles,
+            breadcrumbs: true,
+            permission: 'documentStores:view'
         }
     ]
 }

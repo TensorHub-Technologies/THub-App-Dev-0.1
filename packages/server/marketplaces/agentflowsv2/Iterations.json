@@ -12,13 +12,13 @@
             "data": {
                 "id": "startAgentflow_0",
                 "label": "Start",
-                "version": 1,
+                "version": 1.1,
                 "name": "startAgentflow",
                 "type": "Start",
-                "color": "#06D6A0",
+                "color": "#7EE787",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -157,6 +157,15 @@
                         ],
                         "id": "startAgentflow_0-input-startState-array",
                         "display": true
+                    },
+                    {
+                        "label": "Persist State",
+                        "name": "startPersistState",
+                        "type": "boolean",
+                        "description": "Persist the state in the same session",
+                        "optional": true,
+                        "id": "startAgentflow_0-input-startPersistState-boolean",
+                        "display": true
                     }
                 ],
                 "inputAnchors": [],
@@ -200,7 +209,7 @@
                 "type": "Iteration",
                 "color": "#9C89B8",
                 "baseClasses": ["Iteration"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Execute the nodes within the iteration block through N iterations",
                 "inputParams": [
                     {
@@ -255,9 +264,9 @@
                 "version": 1,
                 "name": "llmAgentflow",
                 "type": "LLM",
-                "color": "#118AB2",
+                "color": "#64B5F6",
                 "baseClasses": ["LLM"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -573,9 +582,9 @@
                 "version": 1,
                 "name": "llmAgentflow",
                 "type": "LLM",
-                "color": "#118AB2",
+                "color": "#64B5F6",
                 "baseClasses": ["LLM"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -899,9 +908,9 @@
                 "version": 1,
                 "name": "agentAgentflow",
                 "type": "Agent",
-                "color": "#FFD166",
+                "color": "#4DD0E1",
                 "baseClasses": ["Agent"],
-                "category": "Agent Studio",
+                "category": "Agent Flows",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -1208,7 +1217,7 @@
                         "baseOptions": "",
                         "allowImageUploads": "",
                         "imageResolution": "low",
-                        "reasoningEffort": "medium",
+                        "reasoningEffort": "",
                         "agentModel": "chatOpenAI"
                     }
                 },
@@ -1240,7 +1249,7 @@
             "target": "iterationAgentflow_0",
             "targetHandle": "iterationAgentflow_0",
             "data": {
-                "sourceColor": "#06D6A0",
+                "sourceColor": "#7EE787",
                 "targetColor": "#9C89B8",
                 "isHumanInput": false
             },
@@ -1253,8 +1262,8 @@
             "target": "llmAgentflow_1",
             "targetHandle": "llmAgentflow_1",
             "data": {
-                "sourceColor": "#118AB2",
-                "targetColor": "#118AB2",
+                "sourceColor": "#64B5F6",
+                "targetColor": "#64B5F6",
                 "isHumanInput": false
             },
             "zIndex": 9999,
@@ -1268,7 +1277,7 @@
             "targetHandle": "agentAgentflow_0",
             "data": {
                 "sourceColor": "#9C89B8",
-                "targetColor": "#FFD166",
+                "targetColor": "#4DD0E1",
                 "isHumanInput": false
             },
             "type": "agentFlow",

@@ -56,6 +56,7 @@
                 "QueryEngine Tool",
                 "Python Interpreter",
                 "Read File",
+                "JSON Path Extractor",
                 "Requests Get",
                 "Requests Post",
                 "Retriever Tool",
@@ -67,7 +68,8 @@
                 "Web Browser",
                 "WolframAlpha",
                 "Tavily API",
-                "Write File"
+                "Write File",
+                "Web Scraper Tool"
             ],
             "Tools (MCP)": ["Brave Search MCP", "Custom MCP", "Github MCP", "PostgreSQL MCP", "Sequential Thinking MCP", "Slack MCP"],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
@@ -152,7 +154,8 @@
                 "Zep Collection - Open Source",
                 "Zep Collection - Cloud",
                 "Pinecone",
-                "SimpleStore"
+                "SimpleStore",
+                "AWS Kendra"
             ],
             "Output Parsers": [
                 "CSV Output Parser",
@@ -238,6 +241,8 @@
                 "ChatOpenAI",
                 "ChatOpenAI Custom",
                 "ChatOpenRouter",
+                "ChatPerplexity",
+                "ChatSambanova",
                 "ChatTogetherAI",
                 "GroqChat",
                 "AzureChatOpenAI",
@@ -276,6 +281,7 @@
                 "GooglePaLM",
                 "GoogleVertexAI",
                 "IBMWatsonx",
+                "Sambanova",
                 "HuggingFace Inference",
                 "Ollama",
                 "OpenAI",
@@ -344,6 +350,7 @@
                 "QueryEngine Tool",
                 "Python Interpreter",
                 "Read File",
+                "JSON Path Extractor",
                 "Requests Get",
                 "Requests Post",
                 "Retriever Tool",
@@ -355,7 +362,8 @@
                 "Web Browser",
                 "WolframAlpha",
                 "Tavily API",
-                "Write File"
+                "Write File",
+                "Web Scraper Tool"
             ],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
             "Moderation": ["OpenAI Moderation", "Simple Prompt Moderation"],
@@ -438,7 +446,8 @@
                 "Zep Collection - Open Source",
                 "Zep Collection - Cloud",
                 "Pinecone",
-                "SimpleStore"
+                "SimpleStore",
+                "AWS Kendra"
             ],
             "Output Parsers": [
                 "CSV Output Parser",
@@ -524,6 +533,8 @@
                 "ChatOpenAI",
                 "ChatOpenAI Custom",
                 "ChatOpenRouter",
+                "ChatPerplexity",
+                "ChatSambanova",
                 "ChatTogetherAI",
                 "GroqChat",
                 "AzureChatOpenAI",
@@ -562,6 +573,7 @@
                 "GooglePaLM",
                 "GoogleVertexAI",
                 "IBMWatsonx",
+                "Sambanova",
                 "HuggingFace Inference",
                 "Ollama",
                 "OpenAI",
@@ -648,6 +660,7 @@
                 "QueryEngine Tool",
                 "Python Interpreter",
                 "Read File",
+                "JSON Path Extractor",
                 "Requests Get",
                 "Requests Post",
                 "Retriever Tool",
@@ -659,7 +672,8 @@
                 "Web Browser",
                 "WolframAlpha",
                 "Tavily API",
-                "Write File"
+                "Write File",
+                "Web Scraper Tool"
             ],
             "Tools (MCP)": ["Brave Search MCP", "Custom MCP", "Github MCP", "PostgreSQL MCP", "Sequential Thinking MCP", "Slack MCP"],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
@@ -744,7 +758,8 @@
                 "Zep Collection - Open Source",
                 "Zep Collection - Cloud",
                 "Pinecone",
-                "SimpleStore"
+                "SimpleStore",
+                "AWS Kendra"
             ],
             "Output Parsers": [
                 "CSV Output Parser",
@@ -830,6 +845,8 @@
                 "ChatOpenAI",
                 "ChatOpenAI Custom",
                 "ChatOpenRouter",
+                "ChatPerplexity",
+                "ChatSambanova",
                 "ChatTogetherAI",
                 "GroqChat",
                 "AzureChatOpenAI",
@@ -868,6 +885,7 @@
                 "GooglePaLM",
                 "GoogleVertexAI",
                 "IBMWatsonx",
+                "Sambanova",
                 "HuggingFace Inference",
                 "Ollama",
                 "OpenAI",

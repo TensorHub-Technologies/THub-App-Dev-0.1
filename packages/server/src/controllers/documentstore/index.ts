@@ -6,6 +6,7 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { DocumentStoreDTO } from '../../Interface'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { FLOWISE_COUNTER_STATUS, FLOWISE_METRIC_COUNTERS } from '../../Interface.Metrics'
+import { getPageAndLimitParams } from '../../utils/pagination'
 
 const createDocumentStore = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -26,8 +27,17 @@ const createDocumentStore = async (req: Request, res: Response, next: NextFuncti
 
 const getAllDocumentStores = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await documentStoreService.getAllDocumentStores()
-        return res.json(DocumentStoreDTO.fromEntities(apiResponse))
+        const { page, limit } = getPageAndLimitParams(req)
+
+        const apiResponse: any = await documentStoreService.getAllDocumentStores(page, limit)
+        if (apiResponse?.total >= 0) {
+            return res.json({
+                total: apiResponse.total,
+                data: DocumentStoreDTO.fromEntities(apiResponse.data)
+            })
+        } else {
+            return res.json(DocumentStoreDTO.fromEntities(apiResponse))
+        }
     } catch (error) {
         next(error)
     }
@@ -248,6 +258,7 @@ const deleteDocumentStore = async (req: Request, res: Response, next: NextFuncti
                 `Error: documentStoreController.deleteDocumentStore - storeId not provided!`
             )
         }
+
         const apiResponse = await documentStoreService.deleteDocumentStore(req.params.id)
         return res.json(apiResponse)
     } catch (error) {
@@ -263,6 +274,7 @@ const previewFileChunks = async (req: Request, res: Response, next: NextFunction
                 `Error: documentStoreController.previewFileChunks - body not provided!`
             )
         }
+
         const body = req.body
         body.preview = true
         const apiResponse = await documentStoreService.previewChunksMiddleware(body)
@@ -287,7 +299,7 @@ const insertIntoVectorStore = async (req: Request, res: Response, next: NextFunc
             throw new Error('Error: documentStoreController.insertIntoVectorStore - body not provided!')
         }
         const body = req.body
-        const apiResponse = await documentStoreService.insertIntoVectorStoreMiddleware(body)
+        const apiResponse = await documentStoreService.insertIntoVectorStoreMiddleware(body, false)
         getRunningExpressApp().metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.VECTORSTORE_UPSERT, {
             status: FLOWISE_COUNTER_STATUS.SUCCESS
         })

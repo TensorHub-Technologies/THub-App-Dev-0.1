@@ -1,8 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
-import { ChatXAI, ChatXAIInput } from '@langchain/xai'
-import { ICommonObject, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface'
+import { ChatXAIInput } from '@langchain/xai'
+import { ICommonObject, IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { ChatXAI } from './FlowiseChatXAI'
 
 class ChatXAI_ChatModels implements INode {
     label: string
@@ -19,7 +19,7 @@ class ChatXAI_ChatModels implements INode {
     constructor() {
         this.label = 'ChatXAI'
         this.name = 'chatXAI'
-        this.version = 1.0
+        this.version = 2.0
         this.type = 'ChatXAI'
         this.icon = 'xai.png'
         this.category = 'Chat Models'
@@ -41,9 +41,8 @@ class ChatXAI_ChatModels implements INode {
             {
                 label: 'Model',
                 name: 'modelName',
-                type: 'asyncOptions',
-                loadMethod: 'listModels',
-                default: 'grok-3'
+                type: 'string',
+                placeholder: 'grok-beta'
             },
             {
                 label: 'Temperature',
@@ -76,15 +75,17 @@ class ChatXAI_ChatModels implements INode {
                 step: 1,
                 optional: true,
                 additionalParams: true
+            },
+            {
+                label: 'Allow Image Uploads',
+                name: 'allowImageUploads',
+                type: 'boolean',
+                description:
+                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
+                default: false,
+                optional: true
             }
         ]
-    }
-
-    loadMethods = {
-        async listModels(): Promise<INodeOptionsValue[]> {
-            const models = await getModels(MODEL_TYPE.CHAT, 'chatXAI')
-            return models
-        }
     }
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
@@ -93,6 +94,7 @@ class ChatXAI_ChatModels implements INode {
         const modelName = nodeData.inputs?.modelName as string
         const maxTokens = nodeData.inputs?.maxTokens as string
         const streaming = nodeData.inputs?.streaming as boolean
+        const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const xaiApiKey = getCredentialParam('xaiApiKey', credentialData, nodeData)
@@ -106,7 +108,15 @@ class ChatXAI_ChatModels implements INode {
         if (cache) obj.cache = cache
         if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)
 
-        const model = new ChatXAI(obj)
+        const multiModalOption: IMultiModalOption = {
+            image: {
+                allowImageUploads: allowImageUploads ?? false
+            }
+        }
+
+        const model = new ChatXAI(nodeData.id, obj)
+        model.setMultiModalOption(multiModalOption)
+
         return model
     }
 }

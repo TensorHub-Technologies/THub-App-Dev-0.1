@@ -37,9 +37,17 @@ router.post('/loader/process/:loaderId', documentStoreController.processLoader)
 
 /** Document Store - Loaders - Chunks */
 // delete specific file chunk from the store
-router.delete('/chunks/:storeId/:loaderId/:chunkId', documentStoreController.deleteDocumentStoreFileChunk)
+router.delete(
+    '/chunks/:storeId/:loaderId/:chunkId',
+
+    documentStoreController.deleteDocumentStoreFileChunk
+)
 // edit specific file chunk from the store
-router.put('/chunks/:storeId/:loaderId/:chunkId', documentStoreController.editDocumentStoreFileChunk)
+router.put(
+    '/chunks/:storeId/:loaderId/:chunkId',
+
+    documentStoreController.editDocumentStoreFileChunk
+)
 // Get all file chunks from the store
 router.get('/chunks/:storeId/:fileId/:pageNo', documentStoreController.getDocumentStoreFileChunks)
 
