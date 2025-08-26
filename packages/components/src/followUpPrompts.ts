@@ -5,8 +5,6 @@ import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { ChatMistralAI } from '@langchain/mistralai'
 import { ChatOpenAI, AzureChatOpenAI } from '@langchain/openai'
 import { z } from 'zod'
-import { PromptTemplate } from '@langchain/core/prompts'
-import { StructuredOutputParser } from '@langchain/core/output_parsers'
 import { ChatGroq } from '@langchain/groq'
 import { Ollama } from 'ollama'
 
@@ -55,19 +53,9 @@ export const generateFollowUpPrompts = async (
                     model: providerConfig.modelName,
                     temperature: parseFloat(`${providerConfig.temperature}`)
                 })
-                // use structured output parser because withStructuredOutput is not working
-                const parser = StructuredOutputParser.fromZodSchema(FollowUpPromptType)
-                const formatInstructions = parser.getFormatInstructions()
-                const prompt = PromptTemplate.fromTemplate(`
-                    ${providerConfig.prompt}
-                                
-                    {format_instructions}
-                `)
-                const chain = prompt.pipe(llm).pipe(parser)
-                const structuredResponse = await chain.invoke({
-                    history: apiMessageContent,
-                    format_instructions: formatInstructions
-                })
+                // use withStructuredOutput for AzureChatOpenAI
+                const structuredLLM = llm.withStructuredOutput(FollowUpPromptType)
+                const structuredResponse = await structuredLLM.invoke(followUpPromptsPrompt)
                 return structuredResponse
             }
             case FollowUpPromptProvider.GOOGLE_GENAI: {
@@ -95,8 +83,10 @@ export const generateFollowUpPrompts = async (
                 const model = new ChatOpenAI({
                     apiKey: credentialData.openAIApiKey,
                     model: providerConfig.modelName,
-                    temperature: parseFloat(`${providerConfig.temperature}`)
+                    temperature: parseFloat(`${providerConfig.temperature}`),
+                    useResponsesApi: true
                 })
+                // @ts-ignore
                 const structuredLLM = model.withStructuredOutput(FollowUpPromptType)
                 const structuredResponse = await structuredLLM.invoke(followUpPromptsPrompt)
                 return structuredResponse

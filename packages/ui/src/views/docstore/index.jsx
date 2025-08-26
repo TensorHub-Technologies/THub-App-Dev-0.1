@@ -25,11 +25,15 @@ import doc_store_empty from '@/assets/images/doc_store_empty.svg'
 // const
 import { baseURL, gridSpacing } from '@/store/constant'
 import { DocumentStoreTable } from '@/ui-component/table/DocumentStoreTable'
+import { useSelector } from 'react-redux'
 
 // ==============================|| DOCUMENTS ||============================== //
 
 const Documents = () => {
     const theme = useTheme()
+
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     const navigate = useNavigate()
     const getAllDocumentStores = useApi(documentsApi.getAllDocumentStores)
@@ -98,6 +102,7 @@ const Documents = () => {
     const applyFilters = (page, limit) => {
         setLoading(true)
         const params = {
+            tenantId,
             page: page || currentPage,
             limit: limit || pageLimit
         }
