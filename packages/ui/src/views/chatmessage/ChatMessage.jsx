@@ -524,8 +524,6 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         setRecordingNotSupported(false)
     }
 
-    console.log('rec', rec)
-
     const onRecordingStopped = async () => {
         setRec(true)
         setIsLoadingRecording(true)
