@@ -28,8 +28,17 @@ const createDocumentStore = async (req: Request, res: Response, next: NextFuncti
 const getAllDocumentStores = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { page, limit } = getPageAndLimitParams(req)
+        const { tenantId } = req.query
 
-        const apiResponse: any = await documentStoreService.getAllDocumentStores(page, limit)
+        // Validate tenantId
+        if (!tenantId) {
+            return res.status(400).json({
+                error: 'TenantId is required'
+            })
+        }
+
+        const apiResponse: any = await documentStoreService.getAllDocumentStores(page, limit, tenantId as string)
+
         if (apiResponse?.total >= 0) {
             return res.json({
                 total: apiResponse.total,
