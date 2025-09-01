@@ -70,12 +70,17 @@ const createDocumentStore = async (newDocumentStore: DocumentStore) => {
     }
 }
 
-const getAllDocumentStores = async (page: number = -1, limit: number = -1) => {
+const getAllDocumentStores = async (page: number = -1, limit: number = -1, tenantId?: string) => {
     try {
         const appServer = getRunningExpressApp()
         const queryBuilder = appServer.AppDataSource.getRepository(DocumentStore)
             .createQueryBuilder('doc_store')
             .orderBy('doc_store.updatedDate', 'DESC')
+
+        // Add tenantId filter if provided
+        if (tenantId) {
+            queryBuilder.where('doc_store.tenantId = :tenantId', { tenantId })
+        }
 
         if (page > 0 && limit > 0) {
             queryBuilder.skip((page - 1) * limit)
