@@ -70,7 +70,8 @@
                 "WolframAlpha",
                 "Tavily API",
                 "Write File",
-                "Web Scraper Tool"
+                "Web Scraper Tool",
+                "A2A Client"
             ],
             "Tools (MCP)": ["Brave Search MCP", "Custom MCP", "Github MCP", "PostgreSQL MCP", "Sequential Thinking MCP", "Slack MCP"],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
@@ -365,6 +366,7 @@
                 "WolframAlpha",
                 "Tavily API",
                 "Write File",
+                "A2A Client",
                 "Web Scraper Tool"
             ],
             "Record Manager": ["MySQL Record Manager", "Postgres Record Manager", "SQLite Record Manager"],
@@ -676,6 +678,7 @@
                 "WolframAlpha",
                 "Tavily API",
                 "Write File",
+                "A2A Client",
                 "Web Scraper Tool"
             ],
             "Tools (MCP)": ["Brave Search MCP", "Custom MCP", "Github MCP", "PostgreSQL MCP", "Sequential Thinking MCP", "Slack MCP"],
