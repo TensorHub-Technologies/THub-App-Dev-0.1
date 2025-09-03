@@ -14,6 +14,7 @@ import MarketplaceCanvasNode from './MarketplaceCanvasNode'
 import MarketplaceCanvasHeader from './MarketplaceCanvasHeader'
 import StickyNote from '../canvas/StickyNote'
 import { useSelector } from 'react-redux'
+import '../../ui-component/cards/card.css'
 
 const nodeTypes = { customNode: MarketplaceCanvasNode, stickyNote: StickyNote }
 const edgeTypes = { buttonedge: '' }
@@ -64,7 +65,7 @@ const MarketplaceCanvas = () => {
                     color='inherit'
                     elevation={1}
                     sx={{
-                        bgcolor: theme.palette.background.default
+                        bgcolor: 'transparent'
                     }}
                 >
                     <Toolbar>
