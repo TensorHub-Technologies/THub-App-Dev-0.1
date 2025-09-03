@@ -3,17 +3,21 @@ import { useNavigate } from 'react-router-dom'
 
 // material-ui
 import { useTheme } from '@mui/material/styles'
-import { Avatar, Box, ButtonBase, Typography, Stack } from '@mui/material'
+import { Avatar, Box, Typography, Stack } from '@mui/material'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 
 // icons
 import { IconCopy, IconChevronLeft } from '@tabler/icons-react'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
+import { StyledFab } from '@/ui-component/button/StyledFab'
+import { useSelector } from 'react-redux'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
 const MarketplaceCanvasHeader = ({ flowName, flowData, onChatflowCopy }) => {
     const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
+
     const navigate = useNavigate()
 
     return (
@@ -28,26 +32,23 @@ const MarketplaceCanvasHeader = ({ flowName, flowData, onChatflowCopy }) => {
                 >
                     <img src={ColorfulLogo} alt='THub_Logo' width={35} />
                 </button>
-                <ButtonBase title='Back' sx={{ borderRadius: '50%', mt: -4, ml: 3 }}>
+                <StyledFab title='Back' sx={{ borderRadius: '50%', mt: -4, ml: 3 }}>
                     <Avatar
                         variant='rounded'
                         sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.mediumAvatar,
-                            transition: 'all .2s ease-in-out',
-                            background: theme.palette.secondary.light,
-                            color: theme.palette.secondary.dark,
-                            '&:hover': {
-                                background: theme.palette.secondary.dark,
-                                color: theme.palette.secondary.light
-                            }
+                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                            background: 'transparent'
+                            // '&:hover': {
+                            //     background: theme.palette.secondary.dark,
+                            //     color: theme.palette.secondary.light
+                            // }
                         }}
                         color='inherit'
                         onClick={() => navigate(-1)}
                     >
                         <IconChevronLeft stroke={1.5} size='1.3rem' />
                     </Avatar>
-                </ButtonBase>
+                </StyledFab>
             </Box>
             <Box sx={{ flexGrow: 1 }}>
                 <Stack flexDirection='row'>

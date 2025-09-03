@@ -17,6 +17,8 @@ import MarketplaceCanvasHeader from '@/views/marketplaces/MarketplaceCanvasHeade
 import StickyNote from './StickyNote'
 import EditNodeDialog from '@/views/agentflowsv2/EditNodeDialog'
 import { flowContext } from '@/store/context/ReactFlowContext'
+import { useSelector } from 'react-redux'
+import '../../ui-component/cards/card.css'
 
 const nodeTypes = { agentFlow: AgentFlowNode, stickyNote: StickyNote, iteration: IterationNode }
 const edgeTypes = { agentFlow: AgentFlowEdge }
@@ -26,6 +28,7 @@ const edgeTypes = { agentFlow: AgentFlowEdge }
 const MarketplaceCanvasV2 = () => {
     const theme = useTheme()
     const navigate = useNavigate()
+    const customization = useSelector((state) => state.customization)
 
     const { state } = useLocation()
     const { flowData, name } = state
