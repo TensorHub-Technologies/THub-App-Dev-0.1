@@ -40,7 +40,10 @@ import {
     getGlobalVariable,
     getStartingNode,
     getTelemetryFlowObj,
-    QUESTION_VAR_PREFIX
+    QUESTION_VAR_PREFIX,
+    CURRENT_DATE_TIME_VAR_PREFIX,
+    _removeCredentialId,
+    validateHistorySchema
 } from '.'
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { Variable } from '../database/entities/Variable'
@@ -99,8 +102,10 @@ interface IExecuteNodeParams {
     chatId: string
     sessionId: string
     apiMessageId: string
+    evaluationRunId?: string
     isInternal: boolean
     pastChatHistory: IMessage[]
+    prependedChatHistory: IMessage[]
     appDataSource: DataSource
     telemetry: Telemetry
     componentNodes: IComponentNodes
@@ -192,21 +197,6 @@ const updateExecution = async (appDataSource: DataSource, executionId: string, d
     await appDataSource.getRepository(Execution).save(execution)
 }
 
-export const _removeCredentialId = (obj: any): any => {
-    if (!obj || typeof obj !== 'object') return obj
-
-    if (Array.isArray(obj)) {
-        return obj.map((item) => _removeCredentialId(item))
-    }
-
-    const newObj: Record<string, any> = {}
-    for (const [key, value] of Object.entries(obj)) {
-        if (key === 'FLOWISE_CREDENTIAL_ID') continue
-        newObj[key] = _removeCredentialId(value)
-    }
-    return newObj
-}
-
 export const resolveVariables = async (
     reactFlowNodeData: INodeData,
     question: string,
@@ -282,6 +272,10 @@ export const resolveVariables = async (
 
             if (variableFullPath === RUNTIME_MESSAGES_LENGTH_VAR_PREFIX) {
                 resolvedValue = resolvedValue.replace(match, flowConfig?.runtimeChatHistoryLength ?? 0)
+            }
+
+            if (variableFullPath === CURRENT_DATE_TIME_VAR_PREFIX) {
+                resolvedValue = resolvedValue.replace(match, new Date().toISOString())
             }
 
             if (variableFullPath.startsWith('$iteration')) {
@@ -807,8 +801,10 @@ const executeNode = async ({
     chatId,
     sessionId,
     apiMessageId,
+    evaluationRunId,
     parentExecutionId,
     pastChatHistory,
+    prependedChatHistory,
     appDataSource,
     telemetry,
     componentNodes,
@@ -961,12 +957,14 @@ const executeNode = async ({
             isLastNode,
             sseStreamer,
             pastChatHistory,
+            prependedChatHistory,
             agentflowRuntime,
             abortController,
             analyticHandlers,
             parentTraceIds,
             humanInputAction,
-            iterationContext
+            iterationContext,
+            evaluationRunId
         }
 
         // Execute node
@@ -1274,6 +1272,17 @@ export const executeAgentFlow = async ({
     const chatflowid = chatflow.id
     const sessionId = overrideConfig.sessionId || chatId
     const humanInput: IHumanInput | undefined = incomingInput.humanInput
+
+    // Validate history schema if provided
+    if (incomingInput.history && incomingInput.history.length > 0) {
+        if (!validateHistorySchema(incomingInput.history)) {
+            throw new Error(
+                'Invalid history format. Each history item must have: ' + '{ role: "apiMessage" | "userMessage", content: string }'
+            )
+        }
+    }
+
+    const prependedChatHistory = incomingInput.history ?? []
     const apiMessageId = uuidv4()
 
     /*** Get chatflows and prepare data  ***/
@@ -1690,6 +1699,7 @@ export const executeAgentFlow = async ({
                 parentExecutionId,
                 isInternal,
                 pastChatHistory,
+                prependedChatHistory,
                 appDataSource,
                 telemetry,
                 componentNodes,

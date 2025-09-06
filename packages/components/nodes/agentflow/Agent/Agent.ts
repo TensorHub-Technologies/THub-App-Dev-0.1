@@ -2214,7 +2214,14 @@ class Agent_Agentflow implements INode {
             const mimeType = this.getMimeTypeFromFilename(filename)
 
             // Store the file using the same storage utility as OpenAIAssistant
-            const path = await addSingleFileToStorage(mimeType, dataBuffer, filename, options.orgId, options.chatflowid, options.chatId)
+            const path = await addSingleFileToStorage(
+                mimeType,
+                dataBuffer,
+                filename,
+
+                options.chatflowid,
+                options.chatId
+            )
 
             return { filePath: path }
         } catch (error) {
