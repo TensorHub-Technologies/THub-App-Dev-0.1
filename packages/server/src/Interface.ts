@@ -28,7 +28,8 @@ export enum MODE {
 
 export enum ChatType {
     INTERNAL = 'INTERNAL',
-    EXTERNAL = 'EXTERNAL'
+    EXTERNAL = 'EXTERNAL',
+    EVALUATION = 'EVALUATION'
 }
 
 export enum ChatMessageRatingType {
@@ -311,7 +312,7 @@ export interface IOverrideConfig {
     label: string
     name: string
     type: string
-    schema?: ICommonObject[]
+    schema?: ICommonObject[] | Record<string, string>
 }
 
 export type ICredentialDataDecrypted = ICommonObject
@@ -381,6 +382,8 @@ export interface IExecuteFlowParams extends IPredictionQueueAppServer {
     chatId: string
     baseURL: string
     isInternal: boolean
+    isEvaluation?: boolean
+    evaluationRunId?: string
     signal?: AbortController
     files?: Express.Multer.File[]
     fileUploads?: IFileUpload[]
@@ -391,7 +394,6 @@ export interface IExecuteFlowParams extends IPredictionQueueAppServer {
     iterationContext?: ICommonObject
     isTool?: boolean
 }
-
 export interface INodeOverrides {
     [key: string]: {
         label: string

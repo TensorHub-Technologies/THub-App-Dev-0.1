@@ -55,7 +55,7 @@ class HTTP_Agentflow implements INode {
         this.name = 'httpAgentflow'
         this.version = 1.1
         this.type = 'HTTP'
-        this.category = 'Agent Flows'
+        this.category = 'Agent Studio'
         this.description = 'Send a HTTP request'
         this.baseClasses = [this.type]
         this.color = '#FF7F7F'
