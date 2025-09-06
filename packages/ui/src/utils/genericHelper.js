@@ -229,7 +229,7 @@ export const initNode = (nodeData, newNodeId, isAgentflow) => {
 export const updateOutdatedNodeData = (newComponentNodeData, existingComponentNodeData, isAgentflow) => {
     const initNewComponentNodeData = initNode(newComponentNodeData, existingComponentNodeData.id, isAgentflow)
 
-    const isAgentFlowV2 = newComponentNodeData.category === 'Agent Flows' || existingComponentNodeData.category === 'Agent Flows'
+    const isAgentFlowV2 = newComponentNodeData.category === 'Agent Studio' || existingComponentNodeData.category === 'Agent Studio'
 
     // Update credentials with existing credentials
     if (existingComponentNodeData.credential) {
@@ -292,7 +292,7 @@ export const updateOutdatedNodeData = (newComponentNodeData, existingComponentNo
 export const updateOutdatedNodeEdge = (newComponentNodeData, edges) => {
     const removedEdges = []
 
-    const isAgentFlowV2 = newComponentNodeData.category === 'Agent Flows'
+    const isAgentFlowV2 = newComponentNodeData.category === 'Agent Studio'
 
     for (const edge of edges) {
         const targetNodeId = edge.targetHandle.split('-')[0]
@@ -555,7 +555,7 @@ export const getAvailableNodesForVariable = (nodes, edges, target, targetHandle,
     //                    {source}  -{sourceHandle}                           -{target}  -{targetHandle}
     const parentNodes = []
 
-    const isAgentFlowV2 = nodes.find((nd) => nd.id === target)?.data?.category === 'Agent Flows'
+    const isAgentFlowV2 = nodes.find((nd) => nd.id === target)?.data?.category === 'Agent Studio'
 
     const isSeqAgent = nodes.find((nd) => nd.id === target)?.data?.category === 'Sequential Agents'
 
