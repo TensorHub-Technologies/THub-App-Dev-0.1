@@ -7,7 +7,7 @@ export class Execution implements IExecution {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column({ type: 'text' })
+    @Column({ type: 'longtext' })
     executionData: string
 
     @Column()
@@ -18,7 +18,7 @@ export class Execution implements IExecution {
     agentflowId: string
 
     @Index()
-    @Column({ type: 'uuid' })
+    @Column({ type: 'varchar' })
     sessionId: string
 
     @Column({ nullable: true, type: 'text' })
