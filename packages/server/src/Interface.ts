@@ -36,6 +36,13 @@ export enum ChatMessageRatingType {
     THUMBS_UP = 'THUMBS_UP',
     THUMBS_DOWN = 'THUMBS_DOWN'
 }
+
+export enum Platform {
+    OPEN_SOURCE = 'open source',
+    CLOUD = 'cloud',
+    ENTERPRISE = 'enterprise'
+}
+
 /**
  * Databases
  */

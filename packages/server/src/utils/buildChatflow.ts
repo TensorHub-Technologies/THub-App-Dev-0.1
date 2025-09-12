@@ -554,8 +554,8 @@ export const executeFlow = async ({
                     appDataSource,
                     databaseEntities
                 })
-                if (generatedFollowUpPrompts?.questions) {
-                    apiMessage.followUpPrompts = JSON.stringify(generatedFollowUpPrompts.questions)
+                if ((generatedFollowUpPrompts as any)?.questions) {
+                    apiMessage.followUpPrompts = JSON.stringify((generatedFollowUpPrompts as any).questions)
                 }
             }
             const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
@@ -748,8 +748,8 @@ export const executeFlow = async ({
                 appDataSource,
                 databaseEntities
             })
-            if (followUpPrompts?.questions) {
-                apiMessage.followUpPrompts = JSON.stringify(followUpPrompts.questions)
+            if ((followUpPrompts as any)?.questions) {
+                apiMessage.followUpPrompts = JSON.stringify((followUpPrompts as any).questions)
             }
         }
 
@@ -858,6 +858,20 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
     const files = (req.files as Express.Multer.File[]) || []
     const abortControllerId = `${chatflow.id}_${chatId}`
     const isTool = req.get('flowise-tool') === 'true'
+    const isEvaluation: boolean = req.headers['X-Flowise-Evaluation'] || req.body.evaluation
+    let evaluationRunId = ''
+    evaluationRunId = req.body.evaluationRunId
+    if (isEvaluation && chatflow.type !== 'AGENTFLOW' && req.body.evaluationRunId) {
+        // this is needed for the collection of token metrics for non-agent flows,
+        // for agentflows the execution trace has the info needed
+        const newEval = {
+            evaluation: {
+                status: true,
+                evaluationRunId
+            }
+        }
+        chatflow.analytic = JSON.stringify(newEval)
+    }
 
     try {
         // Validate API Key if its external API request
@@ -875,7 +889,8 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             baseURL,
             isInternal,
             files,
-
+            isEvaluation,
+            evaluationRunId,
             appDataSource: appServer.AppDataSource,
             sseStreamer: appServer.sseStreamer,
             telemetry: appServer.telemetry,
@@ -895,7 +910,6 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             if (!result) {
                 throw new Error('Job execution failed')
             }
-
             incrementSuccessMetricCounter(appServer.metricsProvider, isInternal, isAgentFlow)
             return result
         } else {
