@@ -1248,6 +1248,7 @@ export const executeAgentFlow = async ({
     incomingInput,
     chatflow,
     chatId,
+    evaluationRunId,
     appDataSource,
     telemetry,
     cachePool,
@@ -1696,6 +1697,7 @@ export const executeAgentFlow = async ({
                 chatId,
                 sessionId,
                 apiMessageId,
+                evaluationRunId,
                 parentExecutionId,
                 isInternal,
                 pastChatHistory,
@@ -1933,7 +1935,7 @@ export const executeAgentFlow = async ({
         role: 'userMessage',
         content: finalUserInput,
         chatflowid,
-        chatType: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+        chatType: evaluationRunId ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
         chatId,
         sessionId,
         createdDate: userMessageDateTime,
@@ -1948,7 +1950,7 @@ export const executeAgentFlow = async ({
         role: 'apiMessage',
         content: content,
         chatflowid,
-        chatType: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+        chatType: evaluationRunId ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
         chatId,
         sessionId,
         executionId: newExecution.id
@@ -1965,8 +1967,8 @@ export const executeAgentFlow = async ({
             appDataSource,
             databaseEntities
         })
-        if (followUpPrompts?.questions) {
-            apiMessage.followUpPrompts = JSON.stringify(followUpPrompts.questions)
+        if ((followUpPrompts as any)?.questions) {
+            apiMessage.followUpPrompts = JSON.stringify((followUpPrompts as any).questions)
         }
     }
     if (lastNodeOutput?.humanInputAction && Object.keys(lastNodeOutput.humanInputAction).length)
@@ -1980,7 +1982,7 @@ export const executeAgentFlow = async ({
         version: await getAppVersion(),
         chatflowId: chatflowid,
         chatId,
-        type: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+        type: evaluationRunId ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
         flowGraph: getTelemetryFlowObj(nodes, edges)
     })
 
