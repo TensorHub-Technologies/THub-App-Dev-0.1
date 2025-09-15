@@ -195,6 +195,7 @@ class Pdf_DocumentLoaders implements INode {
 
     private async extractDocs(usage: string, bf: Buffer, legacyBuild: boolean, textSplitter: TextSplitter, docs: IDocument[]) {
         if (usage === 'perFile') {
+            // @ts-ignore
             const loader = new PDFLoader(new Blob([bf]), {
                 splitPages: false,
                 pdfjs: () =>
@@ -209,6 +210,7 @@ class Pdf_DocumentLoaders implements INode {
                 docs.push(...(await loader.load()))
             }
         } else {
+            // @ts-ignore
             const loader = new PDFLoader(new Blob([bf]), {
                 pdfjs: () =>
                     // @ts-ignore
