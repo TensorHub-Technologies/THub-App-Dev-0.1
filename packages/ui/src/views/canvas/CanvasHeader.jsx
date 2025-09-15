@@ -29,6 +29,7 @@ import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'
 import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined'
 import { IconMathIntegral } from '@tabler/icons-react'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
+import FileCopyIcon from '@mui/icons-material/FileCopy'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -471,6 +472,7 @@ const CanvasHeader = ({
                                     {[
                                         { icon: <AppsOutlinedIcon />, text: 'AI Workspace', href: '/workflows' },
                                         { icon: <IconUsersGroup />, text: 'Agent Studio', href: '/agentflows' },
+                                        { icon: <FileCopyIcon />, text: 'Document-Stores', href: '/document-stores' },
                                         { icon: <IconListCheck />, text: 'Executions', href: '/executions' },
                                         { icon: <DynamicFeedOutlinedIcon />, text: 'Templates', href: '/templates' },
                                         { icon: <ConstructionOutlinedIcon />, text: 'Tools', href: '/tools' },

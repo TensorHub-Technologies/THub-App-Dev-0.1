@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
 // material-ui
 import {
-    Pagination,
     Box,
     Stack,
     TextField,
@@ -21,8 +20,8 @@ import {
     DialogTitle,
     IconButton,
     Tooltip,
-    Typography,
-    useTheme
+    useTheme,
+    CircularProgress
 } from '@mui/material'
 
 // project imports
@@ -46,10 +45,14 @@ import { omit } from 'lodash'
 
 // ==============================|| AGENT EXECUTIONS ||============================== //
 
+const ITEMS_PER_PAGE = 10
+
 const AgentExecutions = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const borderColor = theme.palette.grey[900] + 25
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     const getAllExecutions = useApi(executionsApi.getAllExecutions)
     const deleteExecutionsApi = useApi(executionsApi.deleteExecutions)
@@ -57,23 +60,22 @@ const AgentExecutions = () => {
 
     const [error, setError] = useState(null)
     const [isLoading, setLoading] = useState(true)
+    const [isLoadingMore, setLoadingMore] = useState(false)
     const [executions, setExecutions] = useState([])
     const [openDrawer, setOpenDrawer] = useState(false)
     const [selectedExecutionData, setSelectedExecutionData] = useState([])
     const [selectedMetadata, setSelectedMetadata] = useState({})
     const [selectedExecutionIds, setSelectedExecutionIds] = useState([])
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [hasMore, setHasMore] = useState(true)
+    const [total, setTotal] = useState(0)
     const [filters, setFilters] = useState({
         state: '',
         startDate: null,
         endDate: null,
         agentflowId: '',
         sessionId: ''
-    })
-    const [pagination, setPagination] = useState({
-        page: 1,
-        limit: 10,
-        total: 0
     })
 
     const handleFilterChange = (field, value) => {
@@ -93,26 +95,10 @@ const AgentExecutions = () => {
         })
     }
 
-    const handlePageChange = (event, newPage) => {
-        setPagination({
-            ...pagination,
-            page: newPage
-        })
-    }
-
-    const handleLimitChange = (event) => {
-        setPagination({
-            ...pagination,
-            page: 1, // Reset to first page when changing items per page
-            limit: parseInt(event.target.value, 10)
-        })
-    }
-
-    const applyFilters = () => {
-        setLoading(true)
+    const buildRequestParams = (page) => {
         const params = {
-            page: pagination.page,
-            limit: pagination.limit
+            page,
+            limit: ITEMS_PER_PAGE
         }
 
         if (filters.state) params.state = filters.state
@@ -140,8 +126,42 @@ const AgentExecutions = () => {
         if (filters.agentflowId) params.agentflowId = filters.agentflowId
         if (filters.sessionId) params.sessionId = filters.sessionId
 
+        return params
+    }
+
+    const applyFilters = (isNewSearch = false) => {
+        // Reset pagination for new search/filter
+        setCurrentPage(1)
+        setExecutions([])
+        setHasMore(true)
+        setLoading(true)
+
+        const params = buildRequestParams(1)
         getAllExecutions.request(params)
     }
+
+    const loadMore = useCallback(() => {
+        if (!isLoading && !isLoadingMore && hasMore) {
+            const nextPage = currentPage + 1
+            setCurrentPage(nextPage)
+            setLoadingMore(true)
+
+            const params = buildRequestParams(nextPage)
+            getAllExecutions.request(params)
+        }
+    }, [currentPage, hasMore, isLoading, isLoadingMore, filters])
+
+    // Infinite scroll handler
+    const handleScroll = useCallback(() => {
+        if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1000) {
+            loadMore()
+        }
+    }, [loadMore])
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [handleScroll])
 
     const resetFilters = () => {
         setFilters({
@@ -151,7 +171,12 @@ const AgentExecutions = () => {
             agentflowId: '',
             sessionId: ''
         })
-        getAllExecutions.request()
+        // Reset pagination and load fresh data
+        setCurrentPage(1)
+        setExecutions([])
+        setHasMore(true)
+        setLoading(true)
+        getAllExecutions.request({ page: 1, limit: ITEMS_PER_PAGE })
     }
 
     const handleExecutionSelectionChange = (selectedIds) => {
@@ -174,47 +199,58 @@ const AgentExecutions = () => {
     }
 
     useEffect(() => {
-        getAllExecutions.request()
-
+        // Initial load
+        getAllExecutions.request({ page: 1, limit: ITEMS_PER_PAGE })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         if (getAllExecutions.data) {
             try {
-                const { data, total } = getAllExecutions.data
+                const { data, total: totalCount } = getAllExecutions.data
                 if (!Array.isArray(data)) return
-                setExecutions(data)
-                setPagination((prev) => ({ ...prev, total }))
+
+                // If it's the first page, replace the data
+                if (currentPage === 1) {
+                    setExecutions(data)
+                } else {
+                    // Append new data for infinite scroll
+                    setExecutions((prevExecutions) => [...prevExecutions, ...data])
+                }
+
+                setTotal(totalCount)
+
+                // Check if there are more items to load
+                const loadedItems = currentPage === 1 ? data.length : executions.length + data.length
+                setHasMore(loadedItems < totalCount)
             } catch (e) {
                 console.error(e)
             }
         }
-    }, [getAllExecutions.data])
+    }, [getAllExecutions.data, currentPage])
 
     useEffect(() => {
-        setLoading(getAllExecutions.loading)
-    }, [getAllExecutions.loading])
+        if (currentPage === 1) {
+            setLoading(getAllExecutions.loading)
+        } else {
+            setLoadingMore(getAllExecutions.loading)
+        }
+    }, [getAllExecutions.loading, currentPage])
 
     useEffect(() => {
         setError(getAllExecutions.error)
     }, [getAllExecutions.error])
 
     useEffect(() => {
-        applyFilters()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pagination.page, pagination.limit])
-
-    useEffect(() => {
         if (deleteExecutionsApi.data) {
-            // Refresh the executions list
-            getAllExecutions.request({
-                page: pagination.page,
-                limit: pagination.limit
-            })
+            // Refresh the executions list - reset to first page
+            setCurrentPage(1)
+            setExecutions([])
+            setHasMore(true)
+            const params = buildRequestParams(1)
+            getAllExecutions.request(params)
             setSelectedExecutionIds([])
         }
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deleteExecutionsApi.data])
 
@@ -227,6 +263,8 @@ const AgentExecutions = () => {
             setSelectedMetadata(omit(execution, ['executionData']))
         }
     }, [getExecutionByIdApi.data])
+
+    const hasExecutions = executions && executions.length > 0
 
     return (
         <MainCard>
@@ -381,7 +419,7 @@ const AgentExecutions = () => {
                                         variant='contained'
                                         color='primary'
                                         sx={{ bgcolor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }}
-                                        onClick={applyFilters}
+                                        onClick={() => applyFilters(true)}
                                         size='medium'
                                     >
                                         Apply
@@ -433,38 +471,24 @@ const AgentExecutions = () => {
                         }}
                     />
 
-                    {/* Pagination and Page Size Controls */}
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Typography variant='body2'>Items per page:</Typography>
-                            <FormControl
-                                variant='outlined'
-                                size='small'
-                                sx={{
-                                    minWidth: 80,
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: borderColor
-                                    },
-                                    '& .MuiSvgIcon-root': {
-                                        color: customization.isDarkMode ? '#fff' : 'inherit'
-                                    }
-                                }}
-                            >
-                                <Select value={pagination.limit} onChange={handleLimitChange} displayEmpty>
-                                    <MenuItem value={10}>10</MenuItem>
-                                    <MenuItem value={50}>50</MenuItem>
-                                    <MenuItem value={100}>100</MenuItem>
-                                    <MenuItem value={1000}>1000</MenuItem>
-                                </Select>
-                            </FormControl>
+                    {/* Loading indicators */}
+                    {isLoading && (
+                        <Box display='flex' justifyContent='center' sx={{ mt: 2 }}>
+                            <CircularProgress />
                         </Box>
-                        <Pagination
-                            count={Math.ceil(pagination.total / pagination.limit)}
-                            page={pagination.page}
-                            onChange={handlePageChange}
-                            color='primary'
-                        />
-                    </Box>
+                    )}
+
+                    {isLoadingMore && (
+                        <Box display='flex' justifyContent='center' sx={{ mt: 2 }}>
+                            <CircularProgress size={24} />
+                        </Box>
+                    )}
+
+                    {!hasMore && hasExecutions && (
+                        <Box display='flex' justifyContent='center' sx={{ mt: 2, color: 'text.secondary' }}>
+                            No more executions to load
+                        </Box>
+                    )}
 
                     <ExecutionDetails
                         open={openDrawer}
@@ -473,13 +497,28 @@ const AgentExecutions = () => {
                         onClose={() => setOpenDrawer(false)}
                         onProceedSuccess={() => {
                             setOpenDrawer(false)
-                            getAllExecutions.request()
+                            // Reset and reload data
+                            setCurrentPage(1)
+                            setExecutions([])
+                            setHasMore(true)
+                            const params = buildRequestParams(1)
+                            getAllExecutions.request(params)
                         }}
                         onUpdateSharing={() => {
-                            getAllExecutions.request()
+                            // Reset and reload data
+                            setCurrentPage(1)
+                            setExecutions([])
+                            setHasMore(true)
+                            const params = buildRequestParams(1)
+                            getAllExecutions.request(params)
                         }}
                         onRefresh={(executionId) => {
-                            getAllExecutions.request()
+                            // Reset and reload data
+                            setCurrentPage(1)
+                            setExecutions([])
+                            setHasMore(true)
+                            const params = buildRequestParams(1)
+                            getAllExecutions.request(params)
                             getExecutionByIdApi.request(executionId)
                         }}
                     />
@@ -508,7 +547,7 @@ const AgentExecutions = () => {
                         </DialogActions>
                     </Dialog>
 
-                    {!isLoading && (!executions || executions.length === 0) && (
+                    {!isLoading && !hasExecutions && (
                         <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                             <Box sx={{ p: 2, height: 'auto' }}>
                                 <img

@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // material-ui
-import { Box, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Box, Stack, ToggleButton, ToggleButtonGroup, CircularProgress } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
 import ErrorBoundary from '@/ErrorBoundary'
 import MainCard from '@/ui-component/cards/MainCard'
-import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 import DocumentStoreCard from '@/ui-component/cards/DocumentStoreCard'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import AddDocStoreDialog from '@/views/docstore/AddDocStoreDialog'
@@ -29,6 +28,8 @@ import { useSelector } from 'react-redux'
 
 // ==============================|| DOCUMENTS ||============================== //
 
+const ITEMS_PER_PAGE = 9
+
 const Documents = () => {
     const theme = useTheme()
 
@@ -40,12 +41,16 @@ const Documents = () => {
 
     const [error, setError] = useState(null)
     const [isLoading, setLoading] = useState(true)
+    const [isLoadingMore, setLoadingMore] = useState(false)
     const [images, setImages] = useState({})
     const [search, setSearch] = useState('')
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
     const [docStores, setDocStores] = useState([])
     const [view, setView] = useState(localStorage.getItem('docStoreDisplayStyle') || 'card')
+    const [currentPage, setCurrentPage] = useState(1)
+    const [hasMore, setHasMore] = useState(true)
+    const [total, setTotal] = useState(0)
 
     const handleChange = (event, nextView) => {
         if (nextView === null) return
@@ -61,6 +66,11 @@ const Documents = () => {
 
     const onSearchChange = (event) => {
         setSearch(event.target.value)
+        // Reset pagination when search changes
+        setCurrentPage(1)
+        setDocStores([])
+        setHasMore(true)
+        applyFilters(1, ITEMS_PER_PAGE, true)
     }
 
     const goToDocumentStore = (id) => {
@@ -80,41 +90,60 @@ const Documents = () => {
 
     const onConfirm = () => {
         setShowDialog(false)
-        applyFilters(currentPage, pageLimit)
+        // Reset and reload data
+        setCurrentPage(1)
+        setDocStores([])
+        setHasMore(true)
+        applyFilters(1, ITEMS_PER_PAGE, true)
     }
 
-    useEffect(() => {
-        applyFilters(currentPage, pageLimit)
+    const applyFilters = (page, limit, isNewSearch = false) => {
+        if (page === 1 || isNewSearch) {
+            setLoading(true)
+        } else {
+            setLoadingMore(true)
+        }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    /* Table Pagination */
-    const [currentPage, setCurrentPage] = useState(1)
-    const [pageLimit, setPageLimit] = useState(DEFAULT_ITEMS_PER_PAGE)
-    const [total, setTotal] = useState(0)
-    const onChange = (page, pageLimit) => {
-        setCurrentPage(page)
-        setPageLimit(pageLimit)
-        applyFilters(page, pageLimit)
-    }
-
-    const applyFilters = (page, limit) => {
-        setLoading(true)
         const params = {
             tenantId,
-            page: page || currentPage,
-            limit: limit || pageLimit
+            page,
+            limit
         }
         getAllDocumentStores.request(params)
     }
 
+    const loadMore = useCallback(() => {
+        if (!isLoading && !isLoadingMore && hasMore) {
+            const nextPage = currentPage + 1
+            setCurrentPage(nextPage)
+            applyFilters(nextPage, ITEMS_PER_PAGE)
+        }
+    }, [currentPage, hasMore, isLoading, isLoadingMore])
+
+    // Infinite scroll handler
+    const handleScroll = useCallback(() => {
+        if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1000) {
+            loadMore()
+        }
+    }, [loadMore])
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [handleScroll])
+
+    useEffect(() => {
+        applyFilters(1, ITEMS_PER_PAGE, true)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     useEffect(() => {
         if (getAllDocumentStores.data) {
             try {
-                const { data, total } = getAllDocumentStores.data
+                const { data, total: totalCount } = getAllDocumentStores.data
                 if (!Array.isArray(data)) return
-                const loaderImages = {}
+
+                const loaderImages = { ...images }
 
                 for (let i = 0; i < data.length; i += 1) {
                     const loaders = data[i].loaders ?? []
@@ -122,6 +151,7 @@ const Documents = () => {
                     let totalChunks = 0
                     let totalChars = 0
                     loaderImages[data[i].id] = []
+
                     for (let j = 0; j < loaders.length; j += 1) {
                         const imageSrc = `${baseURL}/api/v1/node-icon/${loaders[j].loaderId}`
                         if (!loaderImages[data[i].id].includes(imageSrc)) {
@@ -134,23 +164,42 @@ const Documents = () => {
                     data[i].totalChunks = totalChunks
                     data[i].totalChars = totalChars
                 }
-                setDocStores(data)
-                setTotal(total)
+
+                // If it's the first page or a new search, replace the data
+                if (currentPage === 1) {
+                    setDocStores(data)
+                } else {
+                    // Append new data for infinite scroll
+                    setDocStores((prevStores) => [...prevStores, ...data])
+                }
+
+                setTotal(totalCount)
                 setImages(loaderImages)
+
+                // Check if there are more items to load
+                const loadedItems = currentPage === 1 ? data.length : docStores.length + data.length
+                setHasMore(loadedItems < totalCount)
             } catch (e) {
                 console.error(e)
             }
         }
-    }, [getAllDocumentStores.data])
+    }, [getAllDocumentStores.data, currentPage])
 
     useEffect(() => {
-        setLoading(getAllDocumentStores.loading)
-    }, [getAllDocumentStores.loading])
+        if (currentPage === 1) {
+            setLoading(getAllDocumentStores.loading)
+        } else {
+            setLoadingMore(getAllDocumentStores.loading)
+        }
+    }, [getAllDocumentStores.loading, currentPage])
 
-    const hasDocStores = docStores && docStores.length > 0
     useEffect(() => {
         setError(getAllDocumentStores.error)
     }, [getAllDocumentStores.error])
+
+    const filteredDocStores = docStores?.filter(filterDocStores) || []
+    const hasDocStores = docStores && docStores.length > 0
+
     return (
         <MainCard>
             {error ? (
@@ -208,7 +257,8 @@ const Documents = () => {
                             Add New
                         </StyledButton>
                     </ViewHeader>
-                    {!hasDocStores ? (
+
+                    {!hasDocStores && !isLoading ? (
                         <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                             <Box sx={{ p: 2, height: 'auto' }}>
                                 <img
@@ -223,9 +273,9 @@ const Documents = () => {
                         <React.Fragment>
                             {!view || view === 'card' ? (
                                 <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                    {docStores?.filter(filterDocStores).map((data, index) => (
+                                    {filteredDocStores.map((data, index) => (
                                         <DocumentStoreCard
-                                            key={index}
+                                            key={`${data.id}-${index}`}
                                             images={images[data.id]}
                                             data={data}
                                             onClick={() => goToDocumentStore(data.id)}
@@ -235,13 +285,30 @@ const Documents = () => {
                             ) : (
                                 <DocumentStoreTable
                                     isLoading={isLoading}
-                                    data={docStores?.filter(filterDocStores)}
+                                    data={filteredDocStores}
                                     images={images}
                                     onRowClick={(row) => goToDocumentStore(row.id)}
                                 />
                             )}
-                            {/* Pagination and Page Size Controls */}
-                            <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
+
+                            {/* Loading indicators */}
+                            {isLoading && (
+                                <Box display='flex' justifyContent='center' sx={{ mt: 2 }}>
+                                    <CircularProgress />
+                                </Box>
+                            )}
+
+                            {isLoadingMore && (
+                                <Box display='flex' justifyContent='center' sx={{ mt: 2 }}>
+                                    <CircularProgress size={24} />
+                                </Box>
+                            )}
+
+                            {!hasMore && hasDocStores && (
+                                <Box display='flex' justifyContent='center' sx={{ mt: 2, color: 'text.secondary' }}>
+                                    No more items to load
+                                </Box>
+                            )}
                         </React.Fragment>
                     )}
                 </Stack>
