@@ -18,6 +18,7 @@ import { omit, cloneDeep } from 'lodash'
 // material-ui
 import { Toolbar, Box, AppBar, Button, Fab } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import { IconMapPin2 } from '@tabler/icons-react'
 
 // project imports
 import CanvasNode from './AgentFlowNode'
@@ -92,7 +93,11 @@ const AgentflowCanvas = () => {
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
     // ==============================|| ReactFlow ||============================== //
+    const [showMinimap, setShowMinimap] = useState(false)
 
+    const handleToggleMinimap = () => {
+        setShowMinimap((prev) => !prev)
+    }
     const [nodes, setNodes, onNodesChange] = useNodesState()
     const [edges, setEdges, onEdgesChange] = useEdgesState()
 
@@ -779,18 +784,45 @@ const AgentflowCanvas = () => {
                                         flexDirection: 'row',
                                         left: '50%',
                                         transform: 'translate(-50%, -50%)',
-                                        backgroundColor: customization.isDarkMode ? theme.palette.background.default : '#fff'
+                                        position: 'absolute',
+                                        margin: '0',
+                                        boxShadow: 'none'
                                     }}
-                                />
-                                <MiniMap
-                                    nodeStrokeWidth={3}
-                                    nodeColor={customization.isDarkMode ? '#2d2d2d' : '#e2e2e2'}
-                                    nodeStrokeColor={customization.isDarkMode ? '#525252' : '#fff'}
-                                    maskColor={customization.isDarkMode ? 'rgb(45, 45, 45, 0.6)' : 'rgb(240, 240, 240, 0.6)'}
-                                    style={{
-                                        backgroundColor: customization.isDarkMode ? theme.palette.background.default : '#fff'
-                                    }}
-                                />
+                                >
+                                    <Button
+                                        sx={{
+                                            backgroundColor: '#fefefe',
+                                            boxSizing: 'content-box',
+                                            height: '18px',
+                                            padding: '4.5px -0px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            borderRadius: 'inherit',
+                                            minWidth: '34px',
+                                            '&:hover': {
+                                                backgroundColor: '#f0f0f0'
+                                            }
+                                        }}
+                                        title='Minimap'
+                                        onClick={handleToggleMinimap}
+                                    >
+                                        <IconMapPin2 id='MapIcon' size={18} color='#000000' />
+                                    </Button>
+                                </Controls>
+
+                                {showMinimap && (
+                                    <MiniMap
+                                        nodeStrokeWidth={3}
+                                        nodeColor={customization.isDarkMode ? '#2d2d2d' : '#e2e2e2'}
+                                        nodeStrokeColor={customization.isDarkMode ? '#525252' : '#fff'}
+                                        maskColor={customization.isDarkMode ? 'rgb(45, 45, 45, 0.6)' : 'rgb(240, 240, 240, 0.6)'}
+                                        style={{
+                                            backgroundColor: customization.isDarkMode ? theme.palette.background.default : '#fff'
+                                        }}
+                                    />
+                                )}
+
                                 <Background color='#aaa' gap={16} />
                                 <AddNodes
                                     isAgentCanvas={true}

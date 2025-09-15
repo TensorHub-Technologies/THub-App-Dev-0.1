@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react'
+import '../../ui-component/cards/card.css'
 
 import INRFlag from '../../assets/images/flags/india.png'
 import USDFlag from '../../assets/images/flags/usd.png'
@@ -46,6 +47,7 @@ const PriceDropdown = ({ onCurrencyChange }) => {
         <div style={{ position: 'absolute', zIndex: '1000', right: '60px', top: '82px' }} ref={dropdownRef}>
             <button
                 onClick={toggleDropdown}
+                className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
                 style={{
                     width: '180px',
                     padding: '14px',
@@ -55,7 +57,7 @@ const PriceDropdown = ({ onCurrencyChange }) => {
                     border: customization.isDarkMode ? '1px solid #8D8D8A' : '1px solid #8D8D8A',
                     color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                     borderRadius: '5px',
-                    background: customization.isDarkMode ? '#191B1F' : '#F5FAFF',
+                    // background: customization.isDarkMode ? '#191B1F' : '#F5FAFF',
                     cursor: 'pointer'
                 }}
             >
@@ -74,7 +76,7 @@ const PriceDropdown = ({ onCurrencyChange }) => {
                         width: '180px',
                         border: '1px solid #ccc',
                         borderRadius: '5px',
-                        background: '#fff',
+                        // background: '#fff',
                         boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                     }}
                 >

@@ -38,6 +38,8 @@ const Documents = Loadable(lazy(() => import('@/views/docstore')))
 const DocumentStoreDetail = Loadable(lazy(() => import('@/views/docstore/DocumentStoreDetail')))
 const ShowStoredChunks = Loadable(lazy(() => import('@/views/docstore/ShowStoredChunks')))
 const LoaderConfigPreviewChunks = Loadable(lazy(() => import('@/views/docstore/LoaderConfigPreviewChunks')))
+const VectorStoreConfigure = Loadable(lazy(() => import('@/views/docstore/VectorStoreConfigure')))
+const VectorStoreQuery = Loadable(lazy(() => import('@/views/docstore/VectorStoreQuery')))
 
 // subscription routing
 const Subscription = Loadable(lazy(() => import('@/views/subscription')))
@@ -136,7 +138,7 @@ const MainRoutes = {
             )
         },
         {
-            path: '/document-stores/:id',
+            path: '/document-stores/:storeId',
             element: (
                 <PrivateRoute>
                     <DocumentStoreDetail />
@@ -144,7 +146,7 @@ const MainRoutes = {
             )
         },
         {
-            path: '/document-stores/chunks/:id/:id',
+            path: '/document-stores/chunks/:storeId/:fileId',
             element: (
                 <PrivateRoute>
                     <ShowStoredChunks />
@@ -152,10 +154,34 @@ const MainRoutes = {
             )
         },
         {
-            path: '/document-stores/:id/:name',
+            path: '/document-stores/:storeId/:name',
             element: (
                 <PrivateRoute>
                     <LoaderConfigPreviewChunks />
+                </PrivateRoute>
+            )
+        },
+        {
+            path: '/document-stores/vector/:storeId',
+            element: (
+                <PrivateRoute>
+                    <VectorStoreConfigure />
+                </PrivateRoute>
+            )
+        },
+        {
+            path: '/document-stores/vector/:storeId/:docId',
+            element: (
+                <PrivateRoute>
+                    <VectorStoreConfigure />
+                </PrivateRoute>
+            )
+        },
+        {
+            path: '/document-stores/query/:storeId',
+            element: (
+                <PrivateRoute>
+                    <VectorStoreQuery />
                 </PrivateRoute>
             )
         },

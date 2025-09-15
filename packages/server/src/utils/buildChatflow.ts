@@ -15,6 +15,7 @@ import {
     mapExtToInputField,
     getFileFromUpload,
     removeSpecificFileFromUpload,
+    EvaluationRunner,
     handleEscapeCharacters
 } from 'thub-components'
 import { StatusCodes } from 'http-status-codes'
@@ -22,8 +23,8 @@ import {
     IncomingInput,
     IMessage,
     INodeData,
-    IReactFlowObject,
     IReactFlowNode,
+    IReactFlowObject,
     IDepthQueue,
     ChatType,
     IChatMessage,
@@ -230,6 +231,8 @@ export const executeFlow = async ({
     incomingInput,
     chatflow,
     chatId,
+    isEvaluation,
+    evaluationRunId,
     appDataSource,
     telemetry,
     cachePool,
@@ -382,6 +385,7 @@ export const executeFlow = async ({
             incomingInput,
             chatflow,
             chatId,
+            evaluationRunId,
             appDataSource,
             telemetry,
             cachePool,
@@ -515,7 +519,7 @@ export const executeFlow = async ({
                 role: 'userMessage',
                 content: incomingInput.question,
                 chatflowid: agentflow.id,
-                chatType: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+                chatType: isEvaluation ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
                 chatId,
                 memoryType,
                 sessionId,
@@ -530,7 +534,7 @@ export const executeFlow = async ({
                 role: 'apiMessage',
                 content: finalResult,
                 chatflowid: agentflow.id,
-                chatType: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+                chatType: isEvaluation ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
                 chatId,
                 memoryType,
                 sessionId
@@ -550,8 +554,8 @@ export const executeFlow = async ({
                     appDataSource,
                     databaseEntities
                 })
-                if (generatedFollowUpPrompts?.questions) {
-                    apiMessage.followUpPrompts = JSON.stringify(generatedFollowUpPrompts.questions)
+                if ((generatedFollowUpPrompts as any)?.questions) {
+                    apiMessage.followUpPrompts = JSON.stringify((generatedFollowUpPrompts as any).questions)
                 }
             }
             const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
@@ -560,7 +564,7 @@ export const executeFlow = async ({
                 version: await getAppVersion(),
                 agentflowId: agentflow.id,
                 chatId,
-                type: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+                type: isEvaluation ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
                 flowGraph: getTelemetryFlowObj(nodes, edges)
             })
 
@@ -596,6 +600,7 @@ export const executeFlow = async ({
             // Prepare response
             let result: ICommonObject = {}
             result.text = finalResult
+
             result.question = incomingInput.question
             result.chatId = chatId
             result.chatMessageId = chatMessage?.id
@@ -605,7 +610,6 @@ export const executeFlow = async ({
             if (finalAction && Object.keys(finalAction).length) result.action = finalAction
             if (Object.keys(setVariableNodesOutput).length) result.flowVariables = setVariableNodesOutput
             result.followUpPrompts = JSON.stringify(apiMessage.followUpPrompts)
-
             return result
         }
         return undefined
@@ -648,11 +652,12 @@ export const executeFlow = async ({
             apiMessageId,
             logger,
             appDataSource,
-            databaseEntities,
+
             analytic: chatflow.analytic,
             uploads,
             prependMessages,
-            ...(isStreamValid && { sseStreamer, shouldStreamResponse: isStreamValid })
+            ...(isStreamValid && { sseStreamer, shouldStreamResponse: isStreamValid }),
+            evaluationRunId
         }
 
         /*** Run the ending node ***/
@@ -669,7 +674,7 @@ export const executeFlow = async ({
             role: 'userMessage',
             content: question,
             chatflowid,
-            chatType: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+            chatType: isEvaluation ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
             chatId,
             memoryType,
             sessionId,
@@ -701,6 +706,7 @@ export const executeFlow = async ({
                         rawOutput: resultText,
                         appDataSource,
                         databaseEntities,
+
                         logger
                     }
                     const customFuncNodeInstance = new nodeModule.nodeClass()
@@ -725,7 +731,7 @@ export const executeFlow = async ({
             role: 'apiMessage',
             content: resultText,
             chatflowid,
-            chatType: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+            chatType: isEvaluation ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
             chatId,
             memoryType,
             sessionId
@@ -742,20 +748,23 @@ export const executeFlow = async ({
                 appDataSource,
                 databaseEntities
             })
-            if (followUpPrompts?.questions) {
-                apiMessage.followUpPrompts = JSON.stringify(followUpPrompts.questions)
+            if ((followUpPrompts as any)?.questions) {
+                apiMessage.followUpPrompts = JSON.stringify((followUpPrompts as any).questions)
             }
         }
 
         const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
 
-        logger.debug(`[server]: Finished running ${endingNodeData.label} (${endingNodeData.id})`)
-
+        logger.debug(`[server]: [$}]: Finished running ${endingNodeData.label} (${endingNodeData.id})`)
+        if (evaluationRunId) {
+            const metrics = await EvaluationRunner.getAndDeleteMetrics(evaluationRunId)
+            result.metrics = metrics
+        }
         await telemetry.sendTelemetry('prediction_sent', {
             version: await getAppVersion(),
             chatflowId: chatflowid,
             chatId,
-            type: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
+            type: isEvaluation ? ChatType.EVALUATION : isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
             flowGraph: getTelemetryFlowObj(nodes, edges)
         })
 
@@ -830,6 +839,7 @@ const checkIfStreamValid = async (
  */
 export const utilBuildChatflow = async (req: Request, isInternal: boolean = false): Promise<any> => {
     const appServer = getRunningExpressApp()
+
     const chatflowid = req.params.id
 
     // Check if chatflow exists
@@ -837,11 +847,10 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
+        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
     }
 
     const isAgentFlow = chatflow.type === 'MULTIAGENT'
-
     const httpProtocol = req.get('x-forwarded-proto') || req.protocol
     const baseURL = `${httpProtocol}://${req.get('host')}`
     const incomingInput: IncomingInput = req.body || {} // Ensure incomingInput is never undefined
@@ -849,6 +858,20 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
     const files = (req.files as Express.Multer.File[]) || []
     const abortControllerId = `${chatflow.id}_${chatId}`
     const isTool = req.get('flowise-tool') === 'true'
+    const isEvaluation: boolean = req.headers['X-Flowise-Evaluation'] || req.body.evaluation
+    let evaluationRunId = ''
+    evaluationRunId = req.body.evaluationRunId
+    if (isEvaluation && chatflow.type !== 'AGENTFLOW' && req.body.evaluationRunId) {
+        // this is needed for the collection of token metrics for non-agent flows,
+        // for agentflows the execution trace has the info needed
+        const newEval = {
+            evaluation: {
+                status: true,
+                evaluationRunId
+            }
+        }
+        chatflow.analytic = JSON.stringify(newEval)
+    }
 
     try {
         // Validate API Key if its external API request
@@ -866,6 +889,8 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             baseURL,
             isInternal,
             files,
+            isEvaluation,
+            evaluationRunId,
             appDataSource: appServer.AppDataSource,
             sseStreamer: appServer.sseStreamer,
             telemetry: appServer.telemetry,
@@ -885,7 +910,6 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             if (!result) {
                 throw new Error('Job execution failed')
             }
-
             incrementSuccessMetricCounter(appServer.metricsProvider, isInternal, isAgentFlow)
             return result
         } else {
@@ -893,6 +917,7 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             const signal = new AbortController()
             appServer.abortControllerPool.add(abortControllerId, signal)
             executeData.signal = signal
+
             const result = await executeFlow(executeData)
 
             appServer.abortControllerPool.remove(abortControllerId)

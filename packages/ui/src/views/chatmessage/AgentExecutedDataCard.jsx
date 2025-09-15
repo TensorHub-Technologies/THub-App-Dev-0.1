@@ -173,7 +173,6 @@ function CustomLabel({ icon: Icon, itemStatus, children, name, label, data, meta
                             </Box>
                         )
                     }
-
                     return null
                 })()}
 

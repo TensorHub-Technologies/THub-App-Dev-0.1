@@ -1,4 +1,5 @@
 import { Logger } from 'winston'
+import { URL } from 'url'
 import { v4 as uuidv4 } from 'uuid'
 import { Client } from 'langsmith'
 import CallbackHandler from 'langfuse-langchain'
@@ -91,14 +92,27 @@ interface PhoenixTracerOptions {
     enableCallback?: boolean
 }
 
-function getPhoenixTracer(options: PhoenixTracerOptions): Tracer | undefined {
+export function getPhoenixTracer(options: PhoenixTracerOptions): Tracer | undefined {
     const SEMRESATTRS_PROJECT_NAME = 'openinference.project.name'
     try {
+        const parsedURL = new URL(options.baseUrl)
+        const baseEndpoint = `${parsedURL.protocol}//${parsedURL.host}`
+
+        // Remove trailing slashes
+        let path = parsedURL.pathname.replace(/\/$/, '')
+
+        // Remove any existing /v1/traces suffix
+        path = path.replace(/\/v1\/traces$/, '')
+
+        const exporterUrl = `${baseEndpoint}${path}/v1/traces`
+        const exporterHeaders = {
+            api_key: options.apiKey || '',
+            authorization: `Bearer ${options.apiKey || ''}`
+        }
+
         const traceExporter = new ProtoOTLPTraceExporter({
-            url: `${options.baseUrl}/v1/traces`,
-            headers: {
-                api_key: options.apiKey
-            }
+            url: exporterUrl,
+            headers: exporterHeaders
         })
         const tracerProvider = new NodeTracerProvider({
             resource: new Resource({
@@ -185,7 +199,7 @@ export function tryJsonStringify(obj: unknown, fallback: string) {
 
 export function elapsed(run: Run): string {
     if (!run.end_time) return ''
-    const elapsed = run.end_time - run.start_time
+    const elapsed = Number(run.end_time) - Number(run.start_time)
     if (elapsed < 1000) {
         return `${elapsed}ms`
     }
@@ -570,6 +584,15 @@ export const additionalCallbacks = async (nodeData: INodeData, options: ICommonO
                     })
 
                     const trace = langwatch.getTrace()
+
+                    if (nodeData?.inputs?.analytics?.langWatch) {
+                        trace.update({
+                            metadata: {
+                                ...nodeData?.inputs?.analytics?.langWatch
+                            }
+                        })
+                    }
+
                     callbacks.push(trace.getLangChainCallback())
                 } else if (provider === 'arize') {
                     const arizeApiKey = getCredentialParam('arizeApiKey', credentialData, nodeData)

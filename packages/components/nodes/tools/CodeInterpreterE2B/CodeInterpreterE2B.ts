@@ -1,7 +1,7 @@
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { StructuredTool, ToolInputParsingException, ToolParams } from '@langchain/core/tools'
-import { CodeInterpreter } from '@e2b/code-interpreter'
+import { Sandbox } from '@e2b/code-interpreter'
 import { z } from 'zod'
 import { addSingleFileToStorage } from '../../../src/storageUtils'
 import { CallbackManager, CallbackManagerForToolRun, Callbacks, parseCallbackConfigArg } from '@langchain/core/callbacks/manager'
@@ -105,7 +105,7 @@ export class E2BTool extends StructuredTool {
 
     description = DESC
 
-    instance: CodeInterpreter
+    instance: Sandbox
 
     apiKey: string
 
@@ -198,8 +198,8 @@ export class E2BTool extends StructuredTool {
         flowConfig = { ...this.flowObj, ...flowConfig }
         try {
             if ('input' in arg) {
-                this.instance = await CodeInterpreter.create({ apiKey: this.apiKey })
-                const execution = await this.instance.notebook.execCell(arg?.input)
+                this.instance = await Sandbox.create({ apiKey: this.apiKey })
+                const execution = await this.instance.runCode(arg?.input, { language: 'python' })
 
                 const artifacts = []
                 for (const result of execution.results) {
@@ -212,35 +212,36 @@ export class E2BTool extends StructuredTool {
 
                             const filename = `artifact_${Date.now()}.png`
 
-                            const res = await addSingleFileToStorage(
+                            // Don't check storage usage because this is incoming file, and if we throw error, agent will keep on retrying
+                            const path = await addSingleFileToStorage(
                                 'image/png',
                                 pngData,
                                 filename,
                                 this.chatflowid,
                                 flowConfig!.chatId as string
                             )
-                            artifacts.push({ type: 'png', data: res })
+
+                            artifacts.push({ type: 'png', data: path })
                         } else if (key === 'jpeg') {
                             //@ts-ignore
                             const jpegData = Buffer.from(result.jpeg, 'base64')
 
                             const filename = `artifact_${Date.now()}.jpg`
 
-                            const res = await addSingleFileToStorage(
+                            const path = await addSingleFileToStorage(
                                 'image/jpg',
                                 jpegData,
                                 filename,
                                 this.chatflowid,
                                 flowConfig!.chatId as string
                             )
-                            artifacts.push({ type: 'jpeg', data: res })
+
+                            artifacts.push({ type: 'jpeg', data: path })
                         } else if (key === 'html' || key === 'markdown' || key === 'latex' || key === 'json' || key === 'javascript') {
                             artifacts.push({ type: key, data: (result as any)[key] })
                         } //TODO: support for pdf
                     }
                 }
-
-                this.instance.close()
 
                 let output = ''
 
@@ -256,7 +257,7 @@ export class E2BTool extends StructuredTool {
                 return 'No input provided'
             }
         } catch (e) {
-            if (this.instance) this.instance.close()
+            if (this.instance) this.instance.kill()
             return typeof e === 'string' ? e : JSON.stringify(e, null, 2)
         }
     }

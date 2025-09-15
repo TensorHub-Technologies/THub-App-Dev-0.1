@@ -152,7 +152,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                                     fontFamily: "'Cambria Math', serif"
                                                 }
                                             }}
-                                            helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
+                                            helperText={<ErrorMessage name='lastName' component='div' className='error_message' />}
                                             sx={{
                                                 '& .MuiInput-underline:before': {
                                                     borderBottomColor: customization.isDarkMode ? '#949494' : ''
@@ -182,7 +182,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                                     fontFamily: "'Cambria Math', serif"
                                                 }
                                             }}
-                                            helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
+                                            helperText={<ErrorMessage name='companyName' component='div' className='error_message' />}
                                             sx={{
                                                 '& .MuiInput-underline:before': {
                                                     borderBottomColor: customization.isDarkMode ? '#949494' : ''
@@ -212,7 +212,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                                     fontFamily: "'Cambria Math', serif"
                                                 }
                                             }}
-                                            helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
+                                            helperText={<ErrorMessage name='designation' component='div' className='error_message' />}
                                             sx={{
                                                 '& .MuiInput-underline:before': {
                                                     borderBottomColor: customization.isDarkMode ? '#949494' : ''
@@ -242,7 +242,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                                     fontFamily: "'Cambria Math', serif"
                                                 }
                                             }}
-                                            helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
+                                            helperText={<ErrorMessage name='email' component='div' className='error_message' />}
                                             sx={{
                                                 '& .MuiInput-underline:before': {
                                                     borderBottomColor: customization.isDarkMode ? '#949494' : ''
@@ -272,7 +272,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                                     fontFamily: "'Cambria Math', serif"
                                                 }
                                             }}
-                                            helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
+                                            helperText={<ErrorMessage name='contactNumber' component='div' className='error_message' />}
                                             sx={{
                                                 '& .MuiInput-underline:before': {
                                                     borderBottomColor: customization.isDarkMode ? '#949494' : ''
@@ -304,7 +304,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
                                                     fontFamily: "'Cambria Math', serif"
                                                 }
                                             }}
-                                            helperText={<ErrorMessage name='firstName' component='div' className='error_message' />}
+                                            helperText={<ErrorMessage name='description' component='div' className='error_message' />}
                                             sx={{
                                                 '& .MuiInput-underline:before': {
                                                     borderBottomColor: customization.isDarkMode ? '#949494' : ''

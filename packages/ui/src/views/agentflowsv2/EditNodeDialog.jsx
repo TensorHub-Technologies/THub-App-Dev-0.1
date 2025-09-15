@@ -20,6 +20,17 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
 
     // Helper function to check if a tab should be displayed
     const shouldShowTab = (tabType, inputParams) => {
+        // For tools tab, check all params including those with display: false
+        if (tabType === 'tools') {
+            return inputParams.some(
+                (param) =>
+                    param.name.includes('Tools') ||
+                    param.name.includes('Tool') ||
+                    param.loadMethod === 'listTools' ||
+                    param.name === 'agentToolsBuiltInOpenAI' // Include OpenAI built-in tools regardless of display
+            )
+        }
+
         const visibleParams = inputParams.filter((param) => param.display !== false)
 
         switch (tabType) {
@@ -35,11 +46,6 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                         param.name.includes('UserMessage') ||
                         param.name.includes('Input') ||
                         (param.type === 'array' && param.name.toLowerCase().includes('message'))
-                )
-
-            case 'tools':
-                return visibleParams.some(
-                    (param) => param.name.includes('Tools') || param.name.includes('Tool') || param.loadMethod === 'listTools'
                 )
 
             case 'knowledge':
@@ -89,10 +95,13 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                     'loop'
                 ]
                 const excludedLoadMethods = ['listModels', 'listTools', 'listStores', 'listVectorStores', 'listPreviousNodes']
+                const excludedSpecificNames = ['agentToolsBuiltInOpenAI'] // Exclude OpenAI built-in tools from additional tab
+
                 return visibleParams.some((param) => {
                     const hasExcludedName = excludedParams.some((excluded) => param.name.includes(excluded))
                     const hasExcludedLoadMethod = param.loadMethod && excludedLoadMethods.includes(param.loadMethod)
-                    return !hasExcludedName && !hasExcludedLoadMethod
+                    const hasExcludedSpecificName = excludedSpecificNames.includes(param.name)
+                    return !hasExcludedName && !hasExcludedLoadMethod && !hasExcludedSpecificName
                 })
             }
 
@@ -104,7 +113,14 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
     // Get filtered parameters for each tab
     const getTabParameters = (tabType, inputParams) => {
         return inputParams
-            .filter((param) => param.display !== false)
+            .filter((param) => {
+                // For tools tab, include OpenAI built-in tools even if display is false
+                if (tabType === 'tools' && param.name === 'agentToolsBuiltInOpenAI') {
+                    return true
+                }
+                // For other parameters, respect the display property
+                return param.display !== false
+            })
             .filter((param) => {
                 switch (tabType) {
                     case 'model':
@@ -119,7 +135,12 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                         )
 
                     case 'tools':
-                        return param.name.includes('Tools') || param.name.includes('Tool') || param.loadMethod === 'listTools'
+                        return (
+                            param.name.includes('Tools') ||
+                            param.name.includes('Tool') ||
+                            param.loadMethod === 'listTools' ||
+                            param.name === 'agentToolsBuiltInOpenAI' // Include OpenAI built-in tools
+                        )
 
                     case 'knowledge':
                         return (
@@ -163,9 +184,12 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                             'loop'
                         ]
                         const excludedLoadMethods = ['listModels', 'listTools', 'listStores', 'listVectorStores', 'listPreviousNodes']
+                        const excludedSpecificNames = ['agentToolsBuiltInOpenAI'] // Exclude OpenAI built-in tools from additional tab
+
                         const hasExcludedName = excludedParams.some((excluded) => param.name.includes(excluded))
                         const hasExcludedLoadMethod = param.loadMethod && excludedLoadMethods.includes(param.loadMethod)
-                        return !hasExcludedName && !hasExcludedLoadMethod
+                        const hasExcludedSpecificName = excludedSpecificNames.includes(param.name)
+                        return !hasExcludedName && !hasExcludedLoadMethod && !hasExcludedSpecificName
                     }
 
                     default:

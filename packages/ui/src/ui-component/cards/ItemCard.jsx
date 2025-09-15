@@ -7,6 +7,7 @@ import { Box, Typography, Tooltip } from '@mui/material'
 import SkeletonChatflowCard from '@/ui-component/cards/Skeleton/ChatflowCard'
 import FlowListMenu from '@/ui-component/button/FlowListMenu'
 import thuicon from '@/assets/images/THub_icon_colorful_logo.png'
+import { useState } from 'react'
 
 const useCustomization = () => {
     return useSelector((state) => state.customization)
@@ -17,6 +18,7 @@ const useCustomization = () => {
 const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, icons, isAgentCanvas, isAgentflowV2 }) => {
     const customization = useCustomization()
     const isDark = customization.isDarkMode
+    const [failedImages, setFailedImages] = useState(new Set())
 
     return (
         <Box
@@ -210,50 +212,73 @@ const ItemCard = ({ isLoading, data, images, onClick, chatflow, updateFlowsApi, 
                                             minHeight: '2.5rem' // Reserve space for up to 2 lines of tools
                                         }}
                                     >
-                                        {/* Show all tools */}
+                                        {/* Show all tools, filtering out undefined images and failed images */}
                                         {[
-                                            ...(images || []).map((img) => ({
-                                                type: 'image',
-                                                src: img,
-                                                label: 'Tool'
-                                            })),
-                                            ...(icons || []).map((ic) => ({
-                                                type: typeof ic.icon === 'string' ? 'image' : 'icon',
-                                                icon: ic.icon,
-                                                src: ic.icon,
-                                                color: ic.color,
-                                                label: ic.name
-                                            }))
-                                        ].map((item, index) => (
-                                            <Tooltip key={index} title={item.label} placement='top'>
-                                                <Box
-                                                    sx={{
-                                                        width: 32,
-                                                        height: 32,
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        borderRadius: '20%',
-                                                        backgroundColor: 'transparent'
-                                                    }}
-                                                >
-                                                    {item.type === 'image' ? (
-                                                        <Box
-                                                            component='img'
-                                                            src={item.src}
-                                                            alt={item.label}
-                                                            sx={{
-                                                                width: '80%',
-                                                                height: '80%',
-                                                                objectFit: 'contain'
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <Box component={item.icon} sx={{ fontSize: 16, color: item.color }} />
-                                                    )}
-                                                </Box>
-                                            </Tooltip>
-                                        ))}
+                                            ...(images || [])
+                                                .filter((img) => img && img.trim() !== '') // Filter out undefined, null, or empty images
+                                                .filter((img) => !failedImages.has(img)) // Filter out failed images
+                                                .map((img, imgIndex) => {
+                                                    const toolName =
+                                                        (img.split('/').pop() || 'Tool').charAt(0).toUpperCase() +
+                                                        (img.split('/').pop() || 'Tool').slice(1)
+                                                    const imageItem = {
+                                                        type: 'image',
+                                                        src: img,
+                                                        label: toolName
+                                                    }
+                                                    return imageItem
+                                                }),
+                                            ...(icons || [])
+                                                .filter((ic) => ic && ic.icon && ic.name) // Filter out undefined icons
+                                                .map((ic, icIndex) => {
+                                                    const toolName =
+                                                        (ic.name.split('/').pop() || 'Tool').charAt(0).toUpperCase() +
+                                                        (ic.name.split('/').pop() || 'Tool').slice(1)
+                                                    const iconItem = {
+                                                        type: typeof ic.icon === 'string' ? 'image' : 'icon',
+                                                        icon: ic.icon,
+                                                        src: ic.icon,
+                                                        color: ic.color,
+                                                        label: toolName
+                                                    }
+                                                    return iconItem
+                                                })
+                                        ]
+                                            .filter((item) => item && item.src && item.label) // Filter out any undefined items after mapping
+                                            .map((item, index) => (
+                                                <Tooltip key={`${item.type}-${index}`} title={item.label || 'Tool'} placement='top'>
+                                                    <Box
+                                                        sx={{
+                                                            width: 32,
+                                                            height: 32,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            borderRadius: '20%',
+                                                            backgroundColor: 'transparent'
+                                                        }}
+                                                    >
+                                                        {item.type === 'image' ? (
+                                                            <Box
+                                                                component='img'
+                                                                src={item.src}
+                                                                alt={item.label || 'Tool'}
+                                                                sx={{
+                                                                    width: '80%',
+                                                                    height: '80%',
+                                                                    objectFit: 'contain'
+                                                                }}
+                                                                onError={() => {
+                                                                    // Add failed image to state to remove it from display
+                                                                    setFailedImages((prev) => new Set([...prev, item.src]))
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <Box component={item.icon} sx={{ fontSize: 16, color: item.color }} />
+                                                        )}
+                                                    </Box>
+                                                </Tooltip>
+                                            ))}
                                     </Box>
                                 )}
                             </Box>

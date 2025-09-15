@@ -13,6 +13,8 @@ import { useTheme } from '@mui/material/styles'
 import MarketplaceCanvasNode from './MarketplaceCanvasNode'
 import MarketplaceCanvasHeader from './MarketplaceCanvasHeader'
 import StickyNote from '../canvas/StickyNote'
+import { useSelector } from 'react-redux'
+import '../../ui-component/cards/card.css'
 
 const nodeTypes = { customNode: MarketplaceCanvasNode, stickyNote: StickyNote }
 const edgeTypes = { buttonedge: '' }
@@ -30,6 +32,7 @@ const MarketplaceCanvas = () => {
 
     const [nodes, setNodes, onNodesChange] = useNodesState()
     const [edges, setEdges, onEdgesChange] = useEdgesState()
+    const customization = useSelector((state) => state.customization)
 
     const reactFlowWrapper = useRef(null)
 
@@ -62,7 +65,7 @@ const MarketplaceCanvas = () => {
                     color='inherit'
                     elevation={1}
                     sx={{
-                        bgcolor: theme.palette.background.default
+                        bgcolor: 'transparent'
                     }}
                 >
                     <Toolbar>

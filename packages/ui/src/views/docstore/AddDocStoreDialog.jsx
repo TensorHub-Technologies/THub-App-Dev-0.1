@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     HIDE_CANVAS_DIALOG,
     SHOW_CANVAS_DIALOG,
@@ -30,6 +30,8 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
 
     const dispatch = useDispatch()
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     // ==============================|| Snackbar ||============================== //
 
     useNotifier()
@@ -69,7 +71,8 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         try {
             const obj = {
                 name: documentStoreName,
-                description: documentStoreDesc
+                description: documentStoreDesc,
+                tenantId: tenantId
             }
             const createResp = await documentStoreApi.createDocumentStore(obj)
             if (createResp.data) {
@@ -87,10 +90,11 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 })
                 onConfirm(createResp.data.id)
             }
-        } catch (err) {
-            const errorData = typeof err === 'string' ? err : err.response?.data || `${err.response.data.message}`
+        } catch (error) {
             enqueueSnackbar({
-                message: `Failed to add new Document Store: ${errorData}`,
+                message: `Failed to add new Document Store: ${
+                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -130,9 +134,10 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 onConfirm(saveResp.data.id)
             }
         } catch (error) {
-            const errorData = error.response?.data || `${error.response?.status}: ${error.response?.statusText}`
             enqueueSnackbar({
-                message: `Failed to update Document Store: ${errorData}`,
+                message: `Failed to update Document Store: ${
+                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',

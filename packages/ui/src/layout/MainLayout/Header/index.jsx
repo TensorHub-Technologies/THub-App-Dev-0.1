@@ -49,7 +49,6 @@ const Header = () => {
     }
 
     const userId = localStorage.getItem('userId')
-    console.log(userImg, 'user Image use state')
     const handleLogout = () => {
         if (loginType === 'azure_ad') {
             instance.logoutPopup({

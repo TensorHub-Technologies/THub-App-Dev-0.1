@@ -22,6 +22,7 @@ import EnterpriceForm from './Enterprice_Form'
 
 // toastify
 import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 // project import
 const Subscription = () => {
@@ -79,6 +80,7 @@ const Subscription = () => {
     }
 
     const handleLoading = (message) => {
+        console.log('Loading:', message)
         toast.success(message, {
             theme: 'colored',
             autoClose: 2000,
@@ -146,7 +148,6 @@ const Subscription = () => {
 
             try {
                 const response = await axios.post(`${apiUrl}/api/payments/create-subscription`, requestData)
-                console.log(response, 'response from create-subscription')
                 const paymentData = response.data
                 // Create a form dynamically to post the paymentData to PayU's payment gateway
                 const form = document.createElement('form')

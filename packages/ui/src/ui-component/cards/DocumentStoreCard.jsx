@@ -3,16 +3,15 @@ import { useSelector } from 'react-redux'
 
 // material-ui
 import { styled } from '@mui/material/styles'
-import { Box, Grid, Typography, useTheme } from '@mui/material'
+import { Box, Card, Grid, Typography, useTheme } from '@mui/material'
 import { IconVectorBezier2, IconLanguage, IconScissors } from '@tabler/icons-react'
 
 // project imports
-import MainCard from '@/ui-component/cards/MainCard'
 import DocumentStoreStatus from '@/views/docstore/DocumentStoreStatus'
 
 import { kFormatter } from '@/utils/genericHelper'
 
-const CardWrapper = styled(MainCard)(({ theme }) => ({
+const CardWrapper = styled(Card)(({ theme }) => ({
     background: theme.palette.card.main,
     color: theme.darkTextPrimary,
     overflow: 'auto',
@@ -38,7 +37,28 @@ const DocumentStoreCard = ({ data, images, onClick }) => {
     const customization = useSelector((state) => state.customization)
 
     return (
-        <CardWrapper content={false} onClick={onClick} sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}>
+        <Card
+            content={false}
+            onClick={onClick}
+            sx={{
+                border: 1,
+                borderColor: theme.palette.grey[900] + 25,
+                borderRadius: 2,
+                bgcolor: 'transparent',
+                cursor: 'pointer',
+                position: 'relative',
+                transform: 'translateY(0)',
+                transition: 'all 0.5s ease-in-out',
+                animation: 'float 6s ease-in-out infinite',
+                '@keyframes float': {
+                    '0%, 100%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-10px)' }
+                },
+                '&:hover': {
+                    transform: 'translateY(-5px)'
+                }
+            }}
+        >
             <Box sx={{ height: '100%', p: 2.25 }}>
                 <Grid container justifyContent='space-between' direction='column' sx={{ height: '100%' }} gap={2}>
                     <Box display='flex' flexDirection='column' sx={{ flex: 1, width: '100%' }}>
@@ -179,7 +199,7 @@ const DocumentStoreCard = ({ data, images, onClick }) => {
                     )}
                 </Grid>
             </Box>
-        </CardWrapper>
+        </Card>
     )
 }
 
