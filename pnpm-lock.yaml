@@ -451,8 +451,8 @@ importers:
                 specifier: ^1.1.1
                 version: 1.1.1
             pdfjs-dist:
-                specifier: ^5.3.93
-                version: 5.4.54
+                specifier: 2.16.105
+                version: 2.16.105
             pg:
                 specifier: ^8.11.2
                 version: 8.13.1
@@ -4547,70 +4547,6 @@ packages:
             '@emotion/styled':
                 optional: true
 
-    '@napi-rs/canvas-android-arm64@0.1.77':
-        resolution: { integrity: sha512-jC8YX0rbAnu9YrLK1A52KM2HX9EDjrJSCLVuBf9Dsov4IC6GgwMLS2pwL9GFLJnSZBFgdwnA84efBehHT9eshA== }
-        engines: { node: '>= 10' }
-        cpu: [arm64]
-        os: [android]
-
-    '@napi-rs/canvas-darwin-arm64@0.1.77':
-        resolution: { integrity: sha512-VFaCaCgAV0+hPwXajDIiHaaGx4fVCuUVYp/CxCGXmTGz699ngIEBx3Sa2oDp0uk3X+6RCRLueb7vD44BKBiPIg== }
-        engines: { node: '>= 10' }
-        cpu: [arm64]
-        os: [darwin]
-
-    '@napi-rs/canvas-darwin-x64@0.1.77':
-        resolution: { integrity: sha512-uD2NSkf6I4S3o0POJDwweK85FE4rfLNA2N714MgiEEMMw5AmupfSJGgpYzcyEXtPzdaca6rBfKcqNvzR1+EyLQ== }
-        engines: { node: '>= 10' }
-        cpu: [x64]
-        os: [darwin]
-
-    '@napi-rs/canvas-linux-arm-gnueabihf@0.1.77':
-        resolution: { integrity: sha512-03GxMMZGhHRQxiA4gyoKT6iQSz8xnA6T9PAfg/WNJnbkVMFZG782DwUJUb39QIZ1uE1euMCPnDgWAJ092MmgJQ== }
-        engines: { node: '>= 10' }
-        cpu: [arm]
-        os: [linux]
-
-    '@napi-rs/canvas-linux-arm64-gnu@0.1.77':
-        resolution: { integrity: sha512-ZO+d2gRU9JU1Bb7SgJcJ1k9wtRMCpSWjJAJ+2phhu0Lw5As8jYXXXmLKmMTGs1bOya2dBMYDLzwp7KS/S/+aCA== }
-        engines: { node: '>= 10' }
-        cpu: [arm64]
-        os: [linux]
-
-    '@napi-rs/canvas-linux-arm64-musl@0.1.77':
-        resolution: { integrity: sha512-S1KtnP1+nWs2RApzNkdNf8X4trTLrHaY7FivV61ZRaL8NvuGOkSkKa+gWN2iedIGFEDz6gecpl/JAUSewwFXYg== }
-        engines: { node: '>= 10' }
-        cpu: [arm64]
-        os: [linux]
-
-    '@napi-rs/canvas-linux-riscv64-gnu@0.1.77':
-        resolution: { integrity: sha512-A4YIKFYUwDtrSzCtdCAO5DYmRqlhCVKHdpq0+dBGPnIEhOQDFkPBTfoTAjO3pjlEnorlfKmNMOH21sKQg2esGA== }
-        engines: { node: '>= 10' }
-        cpu: [riscv64]
-        os: [linux]
-
-    '@napi-rs/canvas-linux-x64-gnu@0.1.77':
-        resolution: { integrity: sha512-Lt6Sef5l0+5O1cSZ8ysO0JI+x+rSrqZyXs5f7+kVkCAOVq8X5WTcDVbvWvEs2aRhrWTp5y25Jf2Bn+3IcNHOuQ== }
-        engines: { node: '>= 10' }
-        cpu: [x64]
-        os: [linux]
-
-    '@napi-rs/canvas-linux-x64-musl@0.1.77':
-        resolution: { integrity: sha512-NiNFvC+D+omVeJ3IjYlIbyt/igONSABVe9z0ZZph29epHgZYu4eHwV9osfpRt1BGGOAM8LkFrHk4LBdn2EDymA== }
-        engines: { node: '>= 10' }
-        cpu: [x64]
-        os: [linux]
-
-    '@napi-rs/canvas-win32-x64-msvc@0.1.77':
-        resolution: { integrity: sha512-fP6l0hZiWykyjvpZTS3sI46iib8QEflbPakNoUijtwyxRuOPTTBfzAWZUz5z2vKpJJ/8r305wnZeZ8lhsBHY5A== }
-        engines: { node: '>= 10' }
-        cpu: [x64]
-        os: [win32]
-
-    '@napi-rs/canvas@0.1.77':
-        resolution: { integrity: sha512-N9w2DkEKE1AXGp3q55GBOP6BEoFrqChDiFqJtKViTpQCWNOSVuMz7LkoGehbnpxtidppbsC36P0kCZNqJKs29w== }
-        engines: { node: '>= 10' }
-
     '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
         resolution: { integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg== }
 
@@ -8700,6 +8636,7 @@ packages:
 
     composio-core@0.4.8:
         resolution: { integrity: sha512-XcC3zib6M7o+zgk5gCqE/BNXKqR0uyonOaaRNO4jKbIjArihKrk0MPXC5dF1V23GvsN+qA4OF0tFmQl8poOjTA== }
+        deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
         hasBin: true
 
     compressible@2.0.18:
@@ -9531,6 +9468,10 @@ packages:
         resolution: { integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w== }
         engines: { node: '>= 4' }
 
+    dommatrix@1.0.3:
+        resolution: { integrity: sha512-l32Xp/TLgWb8ReqbVJAFIvXmY7go4nTxxlWiAFyhoQw9RKEOHBZNnyGvJWqDVSPmq3Y9HlM4npqF/T6VMOXhww== }
+        deprecated: dommatrix is no longer maintained. Please use @thednp/dommatrix.
+
     dompurify@3.2.6:
         resolution: { integrity: sha512-/2GogDQlohXPZe6D6NOgQvXLPSYBqIWMnZ8zzOhn09REE4eyAzb+Hed3jhoM9OkuaJ8P6ZGTTVWQKAi8ieIzfQ== }
 
@@ -9864,6 +9805,7 @@ packages:
     eslint-plugin-markdown@3.0.1:
         resolution: { integrity: sha512-8rqoc148DWdGdmYF6WSQFT3uQ6PO7zXYgeBpHAOAakX/zpq+NvFYbDA/H7PYzHajwtmaOzAwfxyl++x0g1/N9A== }
         engines: { node: ^12.22.0 || ^14.17.0 || >=16.0.0 }
+        deprecated: Please use @eslint/markdown instead
         peerDependencies:
             eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
 
@@ -13893,9 +13835,13 @@ packages:
         resolution: { integrity: sha512-v6ZJ/efsBpGrGGknjtq9J/oC8tZWq0KWL5vQrk2GlzLEQPUDB1ex+13Rmidl1neNN358Jn9EHZw5y07FFtaC7A== }
         engines: { node: '>=6.8.1' }
 
-    pdfjs-dist@5.4.54:
-        resolution: { integrity: sha512-TBAiTfQw89gU/Z4LW98Vahzd2/LoCFprVGvGbTgFt+QCB1F+woyOPmNNVgLa6djX9Z9GGTnj7qE1UzpOVJiINw== }
-        engines: { node: '>=20.16.0 || >=22.3.0' }
+    pdfjs-dist@2.16.105:
+        resolution: { integrity: sha512-J4dn41spsAwUxCpEoVf6GVoz908IAA3mYiLmNxg8J9kfRXc2jxpbUepcP0ocp0alVNLFthTAM8DZ1RaHh8sU0A== }
+        peerDependencies:
+            worker-loader: ^3.0.8
+        peerDependenciesMeta:
+            worker-loader:
+                optional: true
 
     peberminta@0.9.0:
         resolution: { integrity: sha512-XIxfHpEuSJbITd1H3EeQwpcZbTLHc+VVr8ANI9t5sit565tsI4/xK3KWTUFE2e6QiangUkh3B0jihzmGnNrRsQ== }
@@ -14762,7 +14708,7 @@ packages:
     puppeteer@20.9.0:
         resolution: { integrity: sha512-kAglT4VZ9fWEGg3oLc4/de+JcONuEJhlh3J6f5R1TLkrY/EHHIHxWXDOzXvaxQCtedmyVXBwg8M+P8YCO/wZjw== }
         engines: { node: '>=16.3.0' }
-        deprecated: < 22.8.2 is no longer supported
+        deprecated: < 24.10.2 is no longer supported
 
     pure-color@1.3.0:
         resolution: { integrity: sha512-QFADYnsVoBMw1srW7OVKEYjG+MbIa49s54w1MA1EDY6r2r/sTcKKYqRX1f4GYvnXP7eN/Pe9HFcX+hwzmrXRHA== }
@@ -23171,50 +23117,6 @@ snapshots:
         transitivePeerDependencies:
             - '@types/react'
 
-    '@napi-rs/canvas-android-arm64@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-darwin-arm64@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-darwin-x64@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-linux-arm-gnueabihf@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-linux-arm64-gnu@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-linux-arm64-musl@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-linux-riscv64-gnu@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-linux-x64-gnu@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-linux-x64-musl@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas-win32-x64-msvc@0.1.77':
-        optional: true
-
-    '@napi-rs/canvas@0.1.77':
-        optionalDependencies:
-            '@napi-rs/canvas-android-arm64': 0.1.77
-            '@napi-rs/canvas-darwin-arm64': 0.1.77
-            '@napi-rs/canvas-darwin-x64': 0.1.77
-            '@napi-rs/canvas-linux-arm-gnueabihf': 0.1.77
-            '@napi-rs/canvas-linux-arm64-gnu': 0.1.77
-            '@napi-rs/canvas-linux-arm64-musl': 0.1.77
-            '@napi-rs/canvas-linux-riscv64-gnu': 0.1.77
-            '@napi-rs/canvas-linux-x64-gnu': 0.1.77
-            '@napi-rs/canvas-linux-x64-musl': 0.1.77
-            '@napi-rs/canvas-win32-x64-msvc': 0.1.77
-        optional: true
-
     '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
         dependencies:
             eslint-scope: 5.1.1
@@ -29273,6 +29175,8 @@ snapshots:
         dependencies:
             domelementtype: 2.3.0
 
+    dommatrix@1.0.3: {}
+
     dompurify@3.2.6:
         optionalDependencies:
             '@types/trusted-types': 2.0.7
@@ -31935,7 +31839,7 @@ snapshots:
 
     is-reference@3.0.3:
         dependencies:
-            '@types/estree': 1.0.6
+            '@types/estree': 1.0.8
 
     is-regex@1.2.1:
         dependencies:
@@ -35236,9 +35140,10 @@ snapshots:
         transitivePeerDependencies:
             - supports-color
 
-    pdfjs-dist@5.4.54:
-        optionalDependencies:
-            '@napi-rs/canvas': 0.1.77
+    pdfjs-dist@2.16.105:
+        dependencies:
+            dommatrix: 1.0.3
+            web-streams-polyfill: 3.3.3
 
     peberminta@0.9.0: {}
 
@@ -38143,7 +38048,7 @@ snapshots:
         dependencies:
             '@ampproject/remapping': 2.3.0
             '@jridgewell/sourcemap-codec': 1.5.0
-            '@types/estree': 1.0.6
+            '@types/estree': 1.0.8
             acorn: 8.14.0
             acorn-typescript: 1.4.13(acorn@8.14.0)
             aria-query: 5.3.2
