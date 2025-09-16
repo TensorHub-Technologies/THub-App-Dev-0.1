@@ -27,16 +27,12 @@ const GoogleCustomButton = () => {
         apiUrl = thubWebServerProdUrl
     }
 
-    console.log('API URL Google:', apiUrl)
     const login = useGoogleLogin({
         onSuccess: async (response) => {
-            console.log('Authorization Code:', response)
-
             try {
                 const { data } = await axios.post(`${apiUrl}/api/auth/google`, {
                     code: response.code
                 })
-                console.log('Response Data:', data)
 
                 dispatch({
                     type: SET_USER_DATA,

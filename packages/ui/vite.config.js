@@ -27,7 +27,8 @@ export default defineConfig(async ({ mode }) => {
         plugins: [react()],
         resolve: {
             alias: {
-                '@': resolve(__dirname, 'src')
+                '@': resolve(__dirname, 'src'),
+                '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs'
             }
         },
         root: resolve(__dirname),
