@@ -1,11 +1,5 @@
-import { useCallback, useContext, useEffect } from 'react'
+import { useContext, useEffect, useCallback } from 'react'
 import { UNSAFE_NavigationContext as NavigationContext } from 'react-router-dom'
-
-// https://stackoverflow.com/questions/71572678/react-router-v-6-useprompt-typescript
-
-if (!NavigationContext) {
-    throw new Error('NavigationContext is undefined. Check react-router-dom version and import.')
-}
 
 export function useBlocker(blocker, when = true) {
     const { navigator } = useContext(NavigationContext)
@@ -32,6 +26,7 @@ export function useBlocker(blocker, when = true) {
 export function usePrompt(message, when = true) {
     const blocker = useCallback(
         (tx) => {
+            // eslint-disable-next-line no-alert
             if (window.confirm(message)) tx.retry()
         },
         [message]
