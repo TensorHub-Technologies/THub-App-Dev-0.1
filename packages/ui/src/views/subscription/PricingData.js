@@ -10,7 +10,7 @@ export const pricingData = {
             },
             planId: '',
             duration: 'monthly',
-            description: 'For starters to explore and integrate',
+            description: 'For starters: one user, 3 agents, endless potential.',
             buttonInfo: 'Start for Free',
             list: [
                 'Single User',
@@ -39,7 +39,7 @@ export const pricingData = {
             },
             planId: 'plan_PhdG5GMrYCqm6Z',
             duration: 'monthly',
-            description: 'For small & medium businesses',
+            description: 'For teams: 5 users, 10 agents, tools to scale.',
             buttonInfo: 'Choose Plan',
             messagePopup: 'Loading PayU Payment Gateway',
             list: [
@@ -62,7 +62,7 @@ export const pricingData = {
                 Euro: 'Contact for Price'
             },
             duration: 'monthly',
-            description: 'For large teams and enterprises.',
+            description: 'For giants: unlimited users, unlimited possibilities.',
             buttonInfo: 'Get in Touch',
             messagePopup: 'Form Is Loading',
             list: ['All Pro Features', 'Unlimited Users', 'Unlimited Agents']
@@ -77,7 +77,7 @@ export const pricingData = {
                 GBP: '£ 0',
                 Euro: '€ 0'
             },
-            description: 'For starters to explore and integrate',
+            description: 'For starters: one user, 3 agents, endless potential.',
             buttonInfo: 'Start for Free',
             list: [
                 'Single User',
@@ -106,7 +106,7 @@ export const pricingData = {
             },
             planId: 'plan_PhdbTzJPTel2e3',
             duration: 'yearly',
-            description: 'For small & medium businesses',
+            description: 'For teams: 5 users, 10 agents, tools to scale.',
             buttonInfo: 'Choose Plan',
             messagePopup: 'Loading PayU Payment Gateway',
             list: [
@@ -131,7 +131,7 @@ export const pricingData = {
             },
             planId: 'YOUR_ENTERPRISE_PLAN_ID',
             duration: 'yearly',
-            description: 'For large teams and enterprises.',
+            description: 'For giants: unlimited users, unlimited possibilities.',
             buttonInfo: 'Get in Touch',
             messagePopup: 'Form Is Loading',
             list: ['All Pro Features', 'Unlimited Users', 'Unlimited Agents']
