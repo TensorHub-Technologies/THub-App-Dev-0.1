@@ -346,17 +346,6 @@ const Subscription = () => {
                                             className={customization.isDarkMode ? subStyle.price_amount_dark : subStyle.price_amount_light}
                                         >
                                             {getPrice(plan)}
-                                            <span
-                                                style={{
-                                                    fontSize: '16px',
-                                                    verticalAlign: 'super',
-                                                    marginLeft: '4px',
-                                                    fontWeight: 'bolder',
-                                                    color: customization.isDarkMode ? 'white' : 'black'
-                                                }}
-                                            >
-                                                /agent
-                                            </span>
                                         </Typography>
                                     ) : (
                                         <Typography
