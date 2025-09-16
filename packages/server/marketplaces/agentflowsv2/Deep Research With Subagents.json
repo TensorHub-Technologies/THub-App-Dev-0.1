@@ -18,7 +18,7 @@
                 "color": "#7EE787",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -225,7 +225,7 @@
                 "type": "LLM",
                 "color": "#64B5F6",
                 "baseClasses": ["LLM"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -561,7 +561,7 @@
                 "type": "Iteration",
                 "color": "#9C89B8",
                 "baseClasses": ["Iteration"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Execute the nodes within the iteration block through N iterations",
                 "inputParams": [
                     {
@@ -613,7 +613,7 @@
                 "type": "Agent",
                 "color": "#4DD0E1",
                 "baseClasses": ["Agent"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -994,7 +994,7 @@
                 "type": "Agent",
                 "color": "#4DD0E1",
                 "baseClasses": ["Agent"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Dynamically choose and utilize tools during runtime, enabling multi-step reasoning",
                 "inputParams": [
                     {
@@ -1347,7 +1347,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {
@@ -1399,7 +1399,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {
@@ -1451,7 +1451,7 @@
                 "type": "ConditionAgent",
                 "color": "#ff8fab",
                 "baseClasses": ["ConditionAgent"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Utilize an agent to split flows based on dynamic conditions",
                 "inputParams": [
                     {
@@ -1607,7 +1607,7 @@
                 "color": "#FFA07A",
                 "hideOutput": true,
                 "baseClasses": ["Loop"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Loop back to a previous node",
                 "inputParams": [
                     {
@@ -1662,7 +1662,7 @@
                 "color": "#4DDBBB",
                 "hideOutput": true,
                 "baseClasses": ["DirectReply"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Directly reply to the user with a message",
                 "inputParams": [
                     {
@@ -1707,7 +1707,7 @@
                 "type": "StickyNote",
                 "color": "#fee440",
                 "baseClasses": ["StickyNote"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Add notes to the agent flow",
                 "inputParams": [
                     {

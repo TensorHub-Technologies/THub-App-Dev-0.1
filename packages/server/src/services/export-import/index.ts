@@ -116,10 +116,16 @@ const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{
             usecases: JSON.stringify(customTemplate.usecases)
         }))
 
-        let DocumentStore: DocumentStore[] = exportInput.document_store === true ? await documenStoreService.getAllDocumentStores() : []
+        let DocumentStore: DocumentStore[] | { data: DocumentStore[]; total: number } =
+            exportInput.document_store === true ? await documenStoreService.getAllDocumentStores() : []
+        DocumentStore = 'data' in DocumentStore ? DocumentStore.data : DocumentStore
+
+        const documentStoreIds = DocumentStore.map((documentStore) => documentStore.id)
 
         let DocumentStoreFileChunk: DocumentStoreFileChunk[] =
-            exportInput.document_store === true ? await documenStoreService.getAllDocumentFileChunks() : []
+            exportInput.document_store === true
+                ? await documenStoreService.getAllDocumentFileChunksByDocumentStoreIds(documentStoreIds)
+                : []
 
         const { data: totalExecutions } = exportInput.execution === true ? await executionService.getAllExecutions() : { data: [] }
         let Execution: Execution[] = exportInput.execution === true ? totalExecutions : []

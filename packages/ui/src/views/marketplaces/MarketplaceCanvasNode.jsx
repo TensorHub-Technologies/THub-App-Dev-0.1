@@ -3,10 +3,9 @@ import { useState } from 'react'
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles'
-import { Box, Typography, Divider, Button } from '@mui/material'
+import { Box, Typography, Divider, Button, Card } from '@mui/material'
 
 // project imports
-import MainCard from '@/ui-component/cards/MainCard'
 import NodeInputHandler from '@/views/canvas/NodeInputHandler'
 import NodeOutputHandler from '@/views/canvas/NodeOutputHandler'
 import AdditionalParamsDialog from '@/ui-component/dialog/AdditionalParamsDialog'
@@ -15,7 +14,7 @@ import AdditionalParamsDialog from '@/ui-component/dialog/AdditionalParamsDialog
 import { baseURL } from '@/store/constant'
 import LlamaindexPNG from '@/assets/images/llamaindex.png'
 
-const CardWrapper = styled(MainCard)(({ theme }) => ({
+const CardWrapper = styled(Card)(({ theme }) => ({
     background: theme.palette.card.main,
     color: theme.darkTextPrimary,
     border: 'solid 1px',
@@ -36,6 +35,11 @@ const MarketplaceCanvasNode = ({ data }) => {
 
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
+
+    const lightColors = ['#e09ba5ff', '#94abbaff', '#d9e3a3ff', '#93ada4ff', '#b997beff']
+
+    const colorIndex = Math.abs(data.name.charCodeAt(0) % lightColors.length)
+    const headerColor = lightColors[colorIndex]
 
     const onDialogClicked = () => {
         const dialogProps = {
@@ -60,7 +64,7 @@ const MarketplaceCanvasNode = ({ data }) => {
                 border={false}
             >
                 <Box>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', backgroundColor: headerColor }}>
                         <Box style={{ width: 50, marginRight: 10, padding: 5 }}>
                             <div
                                 style={{

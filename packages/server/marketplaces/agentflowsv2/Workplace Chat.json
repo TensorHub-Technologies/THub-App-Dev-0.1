@@ -18,7 +18,7 @@
                 "color": "#7EE787",
                 "hideInput": true,
                 "baseClasses": ["Start"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Starting point of the agentflow",
                 "inputParams": [
                     {
@@ -209,7 +209,7 @@
                 "type": "LLM",
                 "color": "#64B5F6",
                 "baseClasses": ["LLM"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Large language models to analyze user-provided inputs and generate responses",
                 "inputParams": [
                     {
@@ -531,7 +531,7 @@
                 "type": "Tool",
                 "color": "#d4a373",
                 "baseClasses": ["Tool"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Tools allow LLM to interact with external systems",
                 "inputParams": [
                     {
@@ -651,7 +651,7 @@
                 "color": "#4DDBBB",
                 "hideOutput": true,
                 "baseClasses": ["DirectReply"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Directly reply to the user with a message",
                 "inputParams": [
                     {
@@ -696,7 +696,7 @@
                 "type": "Tool",
                 "color": "#d4a373",
                 "baseClasses": ["Tool"],
-                "category": "Agent Flows",
+                "category": "Agent Studio",
                 "description": "Tools allow LLM to interact with external systems",
                 "inputParams": [
                     {

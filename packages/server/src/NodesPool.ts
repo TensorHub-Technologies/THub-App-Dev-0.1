@@ -3,7 +3,7 @@ import path from 'path'
 import { Dirent } from 'fs'
 import { getNodeModulesPackagePath } from './utils'
 import { promises } from 'fs'
-import { ICommonObject, NodeModules } from 'thub-components'
+import { ICommonObject } from 'thub-components'
 import logger from './utils/logger'
 import { appConfig } from './AppConfig'
 
@@ -28,20 +28,6 @@ export class NodesPool {
         const packagePath = getNodeModulesPackagePath('thub-components')
         const nodesPath = path.join(packagePath, 'dist', 'nodes')
         const nodeFiles = await this.getFiles(nodesPath)
-        //console.log("nodeFiles: ",nodeFiles)
-
-        const moduleMap: Record<string, string> = {}
-        nodeFiles.forEach((file) => {
-            if (file.endsWith('.js')) {
-                const fileName = path.basename(file, '.js')
-                // convert to camelCase
-                const camelCaseFileName = fileName[0].toLowerCase() + fileName.slice(1)
-                moduleMap[camelCaseFileName] = file
-            }
-        })
-
-        NodeModules.moduleMap = moduleMap
-        // console.log("moduleMap: ",moduleMap)
         return Promise.all(
             nodeFiles.map(async (file) => {
                 if (file.endsWith('.js')) {

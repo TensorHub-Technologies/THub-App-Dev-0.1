@@ -119,7 +119,7 @@ const UserDetailsTable = () => {
                                                     className={customization.isDarkMode ? 'button-upgrade-dark' : 'button-upgrade-light'}
                                                     onClick={handleSave}
                                                 >
-                                                    Save11
+                                                    Save
                                                 </Button>
                                             ) : (
                                                 <IconEdit

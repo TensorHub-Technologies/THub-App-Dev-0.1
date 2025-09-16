@@ -151,7 +151,7 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
                     sx={{
                         position: 'absolute',
                         right: 80,
-                        top: 20
+                        top: 40
                     }}
                     ref={anchorRef}
                     size='small'
