@@ -332,8 +332,8 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                                         onGenerate()
                                     }}
                                     sx={{
-                                        background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)',
-                                        '&:hover': { background: 'linear-gradient(45deg, #FF8E53 30%, #FF6B6B 90%)' }
+                                        background: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                        '&:hover': { background: customization.isDarkMode ? '#bc2377ff' : '#2d467fff' }
                                     }}
                                     startIcon={<IconSparkles size={20} />}
                                     disabled={
