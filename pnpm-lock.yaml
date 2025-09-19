@@ -1034,6 +1034,9 @@ importers:
             lodash:
                 specifier: ^4.17.21
                 version: 4.17.21
+            lucide-react:
+                specifier: ^0.488.0
+                version: 0.488.0(react@18.3.1)
             microsoft-cognitiveservices-speech-sdk:
                 specifier: ^1.42.0
                 version: 1.42.0(bufferutil@4.0.9)(utf-8-validate@6.0.5)
@@ -1089,10 +1092,10 @@ importers:
                 specifier: ^2.1.0
                 version: 2.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
             react-router:
-                specifier: ~6.3.0
+                specifier: 6.3.0
                 version: 6.3.0(react@18.3.1)
             react-router-dom:
-                specifier: ~6.3.0
+                specifier: 6.3.0
                 version: 6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
             react-say:
                 specifier: 1.1.1-master.5b4782e
@@ -1178,7 +1181,7 @@ importers:
                 version: 12.8.3(@testing-library/dom@9.3.4)
             '@vitejs/plugin-react':
                 specifier: ^4.2.0
-                version: 4.3.4(vite@5.4.7(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1))
+                version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1))
             pretty-quick:
                 specifier: ^3.1.3
                 version: 3.3.1(prettier@3.5.0)
@@ -1196,10 +1199,10 @@ importers:
                 version: 5.7.3
             vite:
                 specifier: ^5.0.2
-                version: 5.4.7(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1)
+                version: 5.4.14(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1)
             vite-plugin-pwa:
                 specifier: ^0.17.0
-                version: 0.17.5(vite@5.4.7(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1))(workbox-build@6.6.0(@types/babel__core@7.20.5))(workbox-window@6.6.0)
+                version: 0.17.5(vite@5.4.14(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1))(workbox-build@6.6.0(@types/babel__core@7.20.5))(workbox-window@6.6.0)
             vite-plugin-react-js-support:
                 specifier: ^1.0.7
                 version: 1.0.7
@@ -2769,7 +2772,6 @@ packages:
     '@e2b/code-interpreter@1.5.1':
         resolution: { integrity: sha512-mkyKjAW2KN5Yt0R1I+1lbH3lo+W/g/1+C2lnwlitXk5wqi/g94SEO41XKdmDf5WWpKG3mnxWDR5d6S/lyjmMEw== }
         engines: { node: '>=18' }
-        deprecated: 'This version is deprecated. Please migrate to v1. Migration guide: https://e2b.dev/docs/quickstart/migrating-from-v0'
 
     '@elastic/elasticsearch@8.17.0':
         resolution: { integrity: sha512-FZ+gQUrPsMpQ2RRIXwTmCoUeFCEausMhp4eQOyxT9j1cwGXHJrhelR6jffM1SC95kQUkB7+TcTq7oQ+bG2BQ9g== }
@@ -9519,7 +9521,6 @@ packages:
     e2b@1.13.2:
         resolution: { integrity: sha512-m8acE/MzMAJo1A57DakR2X1Sl5Mt1tcQO2aJfygNaQHLXby/4xsjF0UeJUB70jF7xntiR41pAMbZEHnkzrT9tw== }
         engines: { node: '>=18' }
-        deprecated: 'This version is deprecated. Please migrate to v1. Migration guide: https://e2b.dev/docs/quickstart/migrating-from-v0'
 
     each-props@1.3.2:
         resolution: { integrity: sha512-vV0Hem3zAGkJAyU7JSjixeU66rwdynTAa1vofCrSA5fEln+m67Az9CcnkVD776/fsN/UjIWmBDoNRS6t6G9RfA== }
@@ -12506,6 +12507,11 @@ packages:
     lru.min@1.1.1:
         resolution: { integrity: sha512-FbAj6lXil6t8z4z3j0E5mfRlPzxkySotzUHwRXjlpRh10vc6AI6WN62ehZj82VG7M20rqogJ0GLwar2Xa05a8Q== }
         engines: { bun: '>=1.0.0', deno: '>=1.30.0', node: '>=8.0.0' }
+
+    lucide-react@0.488.0:
+        resolution: { integrity: sha512-ronlL0MyKut4CEzBY/ai2ZpKPxyWO4jUqdAkm2GNK5Zn3Rj+swDz+3lvyAUXN0PNqPKIX6XM9Xadwz/skLs/pQ== }
+        peerDependencies:
+            react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
     lunary@0.7.15:
         resolution: { integrity: sha512-qBuAxsCG/weIr6Zhapn9oVLxNcjJGzmZRJj8Tu/L+1QOufRjLXfbZ9ouMjSwX36MUTNIxUpgKBbsmIEEcOio4Q== }
@@ -17259,8 +17265,8 @@ packages:
             terser:
                 optional: true
 
-    vite@5.4.7:
-        resolution: { integrity: sha512-5l2zxqMEPVENgvzTuBpHer2awaetimj2BGkhBPdnwKbPNOlHsODU+oiazEZzLK7KhAnOrO+XGYJYn4ZlUhDtDQ== }
+    vite@5.4.14:
+        resolution: { integrity: sha512-EK5cY7Q1D8JNhSaPKVK4pwBFvaTmZxEnoKXLG/U9gmdDcihQGNzFlgIvaxezFR4glP1LsuiedwMBqCXH3wZccA== }
         engines: { node: ^18.0.0 || >=20.0.0 }
         hasBin: true
         peerDependencies:
@@ -26642,14 +26648,14 @@ snapshots:
         transitivePeerDependencies:
             - supports-color
 
-    '@vitejs/plugin-react@4.3.4(vite@5.4.7(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1))':
+    '@vitejs/plugin-react@4.3.4(vite@5.4.14(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1))':
         dependencies:
             '@babel/core': 7.26.8
             '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.8)
             '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.8)
             '@types/babel__core': 7.20.5
             react-refresh: 0.14.2
-            vite: 5.4.7(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1)
+            vite: 5.4.14(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1)
         transitivePeerDependencies:
             - supports-color
 
@@ -33463,6 +33469,10 @@ snapshots:
 
     lru.min@1.1.1: {}
 
+    lucide-react@0.488.0(react@18.3.1):
+        dependencies:
+            react: 18.3.1
+
     lunary@0.7.15(openai@4.96.0(encoding@0.1.13)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@6.0.5))(zod@3.22.4))(react@18.3.1):
         dependencies:
             unctx: 2.4.1
@@ -39117,12 +39127,12 @@ snapshots:
             remove-trailing-separator: 1.1.0
             replace-ext: 1.0.1
 
-    vite-plugin-pwa@0.17.5(vite@5.4.7(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1))(workbox-build@6.6.0(@types/babel__core@7.20.5))(workbox-window@6.6.0):
+    vite-plugin-pwa@0.17.5(vite@5.4.14(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1))(workbox-build@6.6.0(@types/babel__core@7.20.5))(workbox-window@6.6.0):
         dependencies:
             debug: 4.4.0(supports-color@8.1.1)
             fast-glob: 3.3.3
             pretty-bytes: 6.1.1
-            vite: 5.4.7(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1)
+            vite: 5.4.14(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1)
             workbox-build: 6.6.0(@types/babel__core@7.20.5)
             workbox-window: 6.6.0
         transitivePeerDependencies:
@@ -39157,7 +39167,7 @@ snapshots:
             sass: 1.84.0
             terser: 5.38.1
 
-    vite@5.4.7(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1):
+    vite@5.4.14(@types/node@22.13.1)(sass@1.84.0)(terser@5.38.1):
         dependencies:
             esbuild: 0.21.5
             postcss: 8.5.1
