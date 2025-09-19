@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useContext, memo, useRef, useState, useEffect } from 'react'
+import React, { useContext, memo, useRef, useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Handle, Position, useUpdateNodeInternals, NodeToolbar } from 'reactflow'
 
