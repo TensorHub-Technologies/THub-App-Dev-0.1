@@ -270,7 +270,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                                         ...theme.typography.commonAvatar,
                                         ...theme.typography.mediumAvatar,
                                         borderRadius: '15px',
-                                        backgroundColor: foundIcon.color,
+                                        backgroundColor: 'transparent',
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
@@ -278,7 +278,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                                         cursor: 'default'
                                     }}
                                 >
-                                    <img src={foundIcon.icon} alt={nodeName} style={{ width: 20, height: 20, objectFit: 'contain' }} />
+                                    <img src={foundIcon.icon} alt={nodeName} style={{ width: 30, height: 30, objectFit: 'contain' }} />
                                 </div>
                             )
                         } else {
