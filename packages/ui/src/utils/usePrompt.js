@@ -32,13 +32,5 @@ export function usePrompt(message, when = true) {
         [message]
     )
 
-    useEffect(() => {
-        if (blocker.state === 'blocked') {
-            if (window.confirm(message)) {
-                blocker.proceed()
-            } else {
-                blocker.reset()
-            }
-        }
-    }, [blocker, message])
+    useBlocker(blocker, when)
 }

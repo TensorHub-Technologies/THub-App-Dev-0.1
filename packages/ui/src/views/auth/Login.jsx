@@ -37,12 +37,19 @@ const Login = () => {
     useEffect(() => {
         const url = new URL(window.location.href)
         const themeParam = url.searchParams.get('theme')
+        console.log('themeParam', themeParam)
         if (themeParam) {
             const isDark = themeParam === 'dark'
             dispatch({ type: SET_DARKMODE, isDarkMode: isDark })
+            console.log('isDark', isDark)
             localStorage.setItem('isDarkMode', isDark)
         }
     }, [dispatch])
+
+    console.log('THub Prod:', import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL)
+    console.log('THub Demo:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
+    console.log('THub local:', import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL)
+    console.log('THub VITE_TEST_ENV:', import.meta.env.VITE_TEST_ENV)
 
     const thubWebServerDevUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
@@ -79,16 +86,20 @@ const Login = () => {
                 } else {
                     apiUrl = thubWebServerProdUrl
                 }
+                console.log('API URL Google Login:', apiUrl)
                 const loginResponse = await axios.post(`${apiUrl}/loginUser`, {
                     email: values.email,
                     password: values.password
                 })
+
+                console.log('Login Success:', loginResponse.data)
 
                 const userId = loginResponse.data?.userId
                 if (!userId) {
                     throw new Error('User ID not found in login response')
                 }
                 localStorage.setItem('userId', userId)
+                console.log('User ID:', userId)
                 // Second API call: Get full user data
                 const userDataResponse = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
 

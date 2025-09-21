@@ -312,6 +312,8 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
     const [isEditingNodeName, setEditingNodeName] = useState(null)
     const [nodeName, setNodeName] = useState('')
 
+    console.log(inputParams, 'inputParams')
+
     const onNodeLabelChange = () => {
         reactFlowInstance.setNodes((nds) =>
             nds.map((node) => {
@@ -504,7 +506,6 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                                     }}
                                     inputRef={nodeNameRef}
                                     defaultValue={nodeName}
-                                    inputProps={{ maxLength: 30 }}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
                                             data.label = nodeNameRef.current.value
