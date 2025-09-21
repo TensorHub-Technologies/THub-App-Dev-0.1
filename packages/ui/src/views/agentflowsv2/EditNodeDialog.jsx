@@ -18,7 +18,7 @@ import TabPanel from '@mui/lab/TabPanel'
 const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange }) => {
     const customization = useSelector((state) => state.customization)
 
-    // Helper function to check if a tab should be displayed
+    // Helper function to check if a tab should be displayedd
     const shouldShowTab = (tabType, inputParams) => {
         // For tools tab, check all params including those with display: false
         if (tabType === 'tools') {
@@ -312,8 +312,6 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
     const [isEditingNodeName, setEditingNodeName] = useState(null)
     const [nodeName, setNodeName] = useState('')
 
-    console.log(inputParams, 'inputParams')
-
     const onNodeLabelChange = () => {
         reactFlowInstance.setNodes((nds) =>
             nds.map((node) => {
@@ -506,6 +504,7 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                                     }}
                                     inputRef={nodeNameRef}
                                     defaultValue={nodeName}
+                                    inputProps={{ maxLength: 30 }}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
                                             data.label = nodeNameRef.current.value
