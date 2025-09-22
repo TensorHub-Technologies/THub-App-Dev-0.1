@@ -1,32 +1,36 @@
+# Build local monorepo image
+# docker build --no-cache -t  flowise .
+
+# Run image
+# docker run -d -p 3000:3000 flowise
+
 FROM node:20-alpine
 RUN apk add --update libc6-compat python3 make g++
+# needed for pdfjs-dist
 RUN apk add --no-cache build-base cairo-dev pango-dev
+
+# Install Chromium
 RUN apk add --no-cache chromium
-RUN apk add --no-cache poppler-utils
+
+# Install curl for container-level health checks
+# Fixes: https://github.com/FlowiseAI/Flowise/issues/4126
+RUN apk add --no-cache curl
 
 #install PNPM globaly
 RUN npm install -g pnpm
 
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-ENV NODE_OPTIONS="--max-old-space-size=8192 --trace-warnings"
+
+ENV NODE_OPTIONS=--max-old-space-size=8192
 
 WORKDIR /usr/src
 
-# Copy workspace configuration first
-COPY pnpm-workspace.yaml ./
-COPY package.json pnpm-lock.yaml ./
-
-# Copy all package.json files to establish workspace structure
-COPY packages/*/package.json ./packages/*/
-
-# Install all dependencies (this will set up workspace links)
-RUN pnpm install --frozen-lockfile
-
-# Copy the rest of the source code
+# Copy app source
 COPY . .
 
-# Build arguments and environment variables
+RUN pnpm install
+
 ARG VITE_GOOGLE_CLIENT_ID
 ARG VITE_GITHUB_CLIENT_ID
 ARG VITE_THUB_WEB_SERVER_PROD_URL
@@ -41,8 +45,8 @@ ENV VITE_THUB_WEB_SERVER_DEMO_URL=${VITE_THUB_WEB_SERVER_DEMO_URL}
 ENV VITE_THUB_WEB_SERVER_LOCAL_URL=${VITE_THUB_WEB_SERVER_LOCAL_URL}
 ENV VITE_TEST_ENV=${VITE_TEST_ENV}
 
-# Build the project
 RUN pnpm build
 
 EXPOSE 3000
+
 CMD [ "pnpm", "start" ]
