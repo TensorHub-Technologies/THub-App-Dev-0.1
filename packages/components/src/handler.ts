@@ -8,12 +8,12 @@ import { RunTree, RunTreeConfig, Client as LangsmithClient } from 'langsmith'
 import { Langfuse, LangfuseTraceClient, LangfuseSpanClient, LangfuseGenerationClient } from 'langfuse'
 import { LangChainInstrumentation } from '@arizeai/openinference-instrumentation-langchain'
 import { Metadata } from '@grpc/grpc-js'
-import opentelemetry, { Span, SpanStatusCode, type Tracer } from '@opentelemetry/api'
+import opentelemetry, { Span, SpanStatusCode } from '@opentelemetry/api'
 import { OTLPTraceExporter as GrpcOTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc'
 import { OTLPTraceExporter as ProtoOTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
 import { Resource } from '@opentelemetry/resources'
-import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base'
+import { SimpleSpanProcessor, Tracer } from '@opentelemetry/sdk-trace-base'
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions'
 
@@ -67,6 +67,7 @@ function getArizeTracer(options: ArizeTracerOptions): Tracer | undefined {
                 model_id: options.projectName
             })
         })
+        //@ts-ignore
         tracerProvider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
         if (options.enableCallback) {
             registerInstrumentations({
@@ -76,6 +77,7 @@ function getArizeTracer(options: ArizeTracerOptions): Tracer | undefined {
             lcInstrumentation.manuallyInstrument(CallbackManagerModule)
             tracerProvider.register()
         }
+        //@ts-ignore
         return tracerProvider.getTracer(`arize-tracer-${uuidv4().toString()}`)
     } catch (err) {
         if (process.env.DEBUG === 'true') console.error(`Error setting up Arize tracer: ${err.message}`)
@@ -121,6 +123,7 @@ export function getPhoenixTracer(options: PhoenixTracerOptions): Tracer | undefi
                 [SEMRESATTRS_PROJECT_NAME]: options.projectName
             })
         })
+        //@ts-ignore
         tracerProvider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
         if (options.enableCallback) {
             registerInstrumentations({
@@ -130,6 +133,7 @@ export function getPhoenixTracer(options: PhoenixTracerOptions): Tracer | undefi
             lcInstrumentation.manuallyInstrument(CallbackManagerModule)
             tracerProvider.register()
         }
+        //@ts-ignore
         return tracerProvider.getTracer(`phoenix-tracer-${uuidv4().toString()}`)
     } catch (err) {
         if (process.env.DEBUG === 'true') console.error(`Error setting up Phoenix tracer: ${err.message}`)
@@ -165,6 +169,7 @@ function getOpikTracer(options: OpikTracerOptions): Tracer | undefined {
                 [SEMRESATTRS_PROJECT_NAME]: options.projectName
             })
         })
+        //@ts-ignore
         tracerProvider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
         if (options.enableCallback) {
             registerInstrumentations({
@@ -174,6 +179,7 @@ function getOpikTracer(options: OpikTracerOptions): Tracer | undefined {
             lcInstrumentation.manuallyInstrument(CallbackManagerModule)
             tracerProvider.register()
         }
+        //@ts-ignore
         return tracerProvider.getTracer(`opik-tracer-${uuidv4().toString()}`)
     } catch (err) {
         if (process.env.DEBUG === 'true') console.error(`Error setting up Opik tracer: ${err.message}`)
@@ -199,7 +205,7 @@ export function tryJsonStringify(obj: unknown, fallback: string) {
 
 export function elapsed(run: Run): string {
     if (!run.end_time) return ''
-    // @ts-ignore
+    //@ts-ignore
     const elapsed = run.end_time - run.start_time
     if (elapsed < 1000) {
         return `${elapsed}ms`
