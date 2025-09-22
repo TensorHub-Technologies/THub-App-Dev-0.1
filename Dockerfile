@@ -1,9 +1,3 @@
-# Build local monorepo image
-# docker build --no-cache -t  flowise .
-
-# Run image
-# docker run -d -p 3000:3000 flowise
-
 FROM node:20-alpine
 RUN apk add --update libc6-compat python3 make g++
 # needed for pdfjs-dist
@@ -26,10 +20,15 @@ WORKDIR /usr/src
 
 VOLUME /usr/src/data
 
-# Copy app source
-COPY . .
+# Copy dependency files first for better caching
+COPY package.json pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./ 
 
-RUN pnpm install
+# Install dependencies with frozen lockfile
+RUN pnpm install --frozen-lockfile
+
+# Copy rest of the source code
+COPY . .
 
 ARG VITE_GOOGLE_CLIENT_ID
 ARG VITE_GITHUB_CLIENT_ID
