@@ -85,6 +85,7 @@ export class UnstructuredLoader extends BaseDocumentLoader {
 
     async _partition(buffer: Buffer, fileName: string): Promise<Element[]> {
         const formData = new FormData()
+        // @ts-ignore
         formData.append('files', new Blob([buffer]), fileName)
         formData.append('strategy', this.strategy)
         this.ocrLanguages.forEach((language) => {

@@ -144,12 +144,14 @@ class AutoGPT_Agents implements INode {
                     executor.fullMessageHistory.push(new AIMessage(assistantReply))
 
                     const action = await executor.outputParser.parse(assistantReply)
+                    // @ts-ignore
                     const tools = executor.tools.reduce((acc, tool) => ({ ...acc, [tool.name]: tool }), {} as { [key: string]: ObjectTool })
                     if (action.name === FINISH_NAME) {
                         return action.args.response
                     }
                     let result: string
                     if (action.name in tools) {
+                        // @ts-ignore
                         const tool = tools[action.name]
                         let observation
                         try {
