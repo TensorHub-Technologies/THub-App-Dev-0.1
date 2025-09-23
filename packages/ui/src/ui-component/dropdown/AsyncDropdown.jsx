@@ -81,6 +81,7 @@ export const AsyncDropdown = ({
     const [open, setOpen] = useState(false)
     const [options, setOptions] = useState([])
     const [loading, setLoading] = useState(false)
+
     const findMatchingOptions = (options = [], value) => {
         if (multiple) {
             let values = []
@@ -93,6 +94,7 @@ export const AsyncDropdown = ({
         }
         return options.find((option) => option.name === value)
     }
+
     const getDefaultOptionValue = () => (multiple ? [] : '')
     const addNewOption = [{ label: '- Create New -', name: '-create-' }]
     let [internalValue, setInternalValue] = useState(value ?? 'choose an option')
@@ -167,8 +169,31 @@ export const AsyncDropdown = ({
                         response[j].imageSrc = imageSrc
                     }
                 }
-                if (isCreateNewOption) setOptions([...response, ...addNewOption])
-                else setOptions([...response])
+
+                let finalOptions = []
+                if (isCreateNewOption) {
+                    finalOptions = [...response, ...addNewOption]
+                } else {
+                    finalOptions = [...response]
+                }
+
+                setOptions(finalOptions)
+
+                // Auto-select first option if no value is set and options are available
+                if ((!value || value === 'choose an option') && response.length > 0) {
+                    if (multiple) {
+                        // For multiple selection, select the first option as an array
+                        const firstOptionValue = JSON.stringify([response[0].name])
+                        setInternalValue(firstOptionValue)
+                        onSelect(firstOptionValue)
+                    } else {
+                        // For single selection, select the first option
+                        const firstOptionValue = response[0].name
+                        setInternalValue(firstOptionValue)
+                        onSelect(firstOptionValue)
+                    }
+                }
+
                 setLoading(false)
             }
             fetchData()
