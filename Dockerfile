@@ -12,7 +12,9 @@ RUN apk add --no-cache build-base cairo-dev pango-dev
 # Install Chromium
 RUN apk add --no-cache chromium
 
-RUN apk add --no-cache poppler-utils
+# Install curl for container-level health checks
+# Fixes: https://github.com/FlowiseAI/Flowise/issues/4126
+RUN apk add --no-cache curl
 
 #install PNPM globaly
 RUN npm install -g pnpm
@@ -23,8 +25,6 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 ENV NODE_OPTIONS=--max-old-space-size=8192
 
 WORKDIR /usr/src
-
-VOLUME /usr/src/data
 
 # Copy app source
 COPY . .

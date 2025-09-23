@@ -80,6 +80,7 @@ export const convertSpeechToText = async (upload: IFileUpload, speechToTextConfi
                     const apiVersion = credentialData.apiVersion || '2024-05-15-preview'
 
                     const formData = new FormData()
+                    // @ts-ignore
                     const audioBlob = new Blob([audio_file], { type: upload.type })
                     formData.append('audio', audioBlob, upload.name)
 

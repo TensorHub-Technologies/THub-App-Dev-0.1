@@ -67,6 +67,7 @@ function getArizeTracer(options: ArizeTracerOptions): Tracer | undefined {
                 model_id: options.projectName
             })
         })
+        //@ts-ignore
         tracerProvider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
         if (options.enableCallback) {
             registerInstrumentations({
@@ -76,6 +77,7 @@ function getArizeTracer(options: ArizeTracerOptions): Tracer | undefined {
             lcInstrumentation.manuallyInstrument(CallbackManagerModule)
             tracerProvider.register()
         }
+        //@ts-ignore
         return tracerProvider.getTracer(`arize-tracer-${uuidv4().toString()}`)
     } catch (err) {
         if (process.env.DEBUG === 'true') console.error(`Error setting up Arize tracer: ${err.message}`)
@@ -121,6 +123,7 @@ export function getPhoenixTracer(options: PhoenixTracerOptions): Tracer | undefi
                 [SEMRESATTRS_PROJECT_NAME]: options.projectName
             })
         })
+        //@ts-ignore
         tracerProvider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
         if (options.enableCallback) {
             registerInstrumentations({
@@ -130,6 +133,7 @@ export function getPhoenixTracer(options: PhoenixTracerOptions): Tracer | undefi
             lcInstrumentation.manuallyInstrument(CallbackManagerModule)
             tracerProvider.register()
         }
+        //@ts-ignore
         return tracerProvider.getTracer(`phoenix-tracer-${uuidv4().toString()}`)
     } catch (err) {
         if (process.env.DEBUG === 'true') console.error(`Error setting up Phoenix tracer: ${err.message}`)
@@ -165,6 +169,7 @@ function getOpikTracer(options: OpikTracerOptions): Tracer | undefined {
                 [SEMRESATTRS_PROJECT_NAME]: options.projectName
             })
         })
+        //@ts-ignore
         tracerProvider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
         if (options.enableCallback) {
             registerInstrumentations({
@@ -174,6 +179,7 @@ function getOpikTracer(options: OpikTracerOptions): Tracer | undefined {
             lcInstrumentation.manuallyInstrument(CallbackManagerModule)
             tracerProvider.register()
         }
+        //@ts-ignore
         return tracerProvider.getTracer(`opik-tracer-${uuidv4().toString()}`)
     } catch (err) {
         if (process.env.DEBUG === 'true') console.error(`Error setting up Opik tracer: ${err.message}`)
@@ -199,7 +205,8 @@ export function tryJsonStringify(obj: unknown, fallback: string) {
 
 export function elapsed(run: Run): string {
     if (!run.end_time) return ''
-    const elapsed = Number(run.end_time) - Number(run.start_time)
+    //@ts-ignore
+    const elapsed = run.end_time - run.start_time
     if (elapsed < 1000) {
         return `${elapsed}ms`
     }

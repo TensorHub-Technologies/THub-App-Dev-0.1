@@ -10,6 +10,7 @@ import { IconCheckbox, IconMessage, IconX, IconExclamationCircle, IconChecklist 
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import MainCard from '@/ui-component/cards/MainCard'
 import Transitions from '@/ui-component/extended/Transitions'
+import validate_empty from '@/assets/images/validate_empty.svg'
 
 // api
 import validationApi from '@/api/validation'
@@ -272,11 +273,11 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
                                                     alignItems: 'center'
                                                 }}
                                             >
-                                                {/* <img
+                                                <img
                                                     style={{ objectFit: 'cover', height: '15vh', width: 'auto' }}
                                                     src={validate_empty}
                                                     alt='validate_empty'
-                                                /> */}
+                                                />
                                             </Box>
                                         )}
                                     </Box>

@@ -125,6 +125,7 @@ class MicrosoftWord_DocumentLoaders implements INode {
             if (!file) continue
 
             const fileData = await this.getFileData(file, { chatflowid }, fromStorage)
+            // @ts-ignore
             const blob = new Blob([fileData])
             const loader = new WordLoader(blob)
 
