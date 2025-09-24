@@ -7,6 +7,11 @@ export function useBlocker(blocker, when = true) {
     useEffect(() => {
         if (!when) return
 
+        if (!navigator || !navigator.block) {
+            console.warn('Navigation blocking is not supported in this version.')
+            return
+        }
+
         const unblock = navigator.block((tx) => {
             const autoUnblockingTx = {
                 ...tx,
@@ -26,8 +31,9 @@ export function useBlocker(blocker, when = true) {
 export function usePrompt(message, when = true) {
     const blocker = useCallback(
         (tx) => {
-            // eslint-disable-next-line no-alert
-            if (window.confirm(message)) tx.retry()
+            if (window.confirm(message)) {
+                tx.retry()
+            }
         },
         [message]
     )
