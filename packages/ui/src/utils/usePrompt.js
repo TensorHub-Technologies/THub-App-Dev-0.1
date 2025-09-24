@@ -13,6 +13,11 @@ export function useBlocker(blocker, when = true) {
             return
         }
 
+        if (!navigator || !navigator.block) {
+            console.warn('Navigation blocking is not supported in this version.')
+            return
+        }
+
         const unblock = navigator.block((tx) => {
             const autoUnblockingTx = {
                 ...tx,
