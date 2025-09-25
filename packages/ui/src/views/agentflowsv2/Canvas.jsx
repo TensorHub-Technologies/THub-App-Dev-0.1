@@ -211,8 +211,6 @@ const AgentflowCanvas = () => {
 
     const handleSaveFlow = async (chatflowName, chatflowDescription) => {
         try {
-            console.log('handleSaveFlow', chatflowName, chatflowDescription)
-
             // Validate required parameters
             if (!chatflowName) {
                 throw new Error('Workflow name and description are required')
