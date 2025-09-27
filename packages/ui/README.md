@@ -1,1 +1,1 @@
-TensorHub - SaaS based Low-code ETL Platform for Vector Embeddings & Building GenAI Apps
+THub - Build AI Apps 30X Faster | No-Code GenAI Platform
