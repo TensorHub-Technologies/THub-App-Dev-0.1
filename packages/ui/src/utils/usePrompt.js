@@ -1,82 +1,32 @@
-import { useCallback, useEffect, useRef } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useCallback } from 'react'
+import { useBlocker } from 'react-router-dom'
 
+// Using the official useBlocker hook from React Router v6.4+
 export function usePrompt(message, when = true) {
-    const navigate = useNavigate()
-    const location = useLocation()
-    const currentPath = useRef(location.pathname)
-    const isNavigating = useRef(false)
-
-    // Update current path when location changes (but not during our controlled navigation)
-    useEffect(() => {
-        if (!isNavigating.current) {
-            currentPath.current = location.pathname
-        }
-        isNavigating.current = false
-    }, [location.pathname])
-
-    // Handle browser back/forward navigation
-    useEffect(() => {
-        if (!when) return
-
-        const handlePopState = (event) => {
-            if (when && !isNavigating.current) {
-                const shouldProceed = window.confirm(message)
-                if (!shouldProceed) {
-                    // Prevent the navigation by pushing the current state back
-                    isNavigating.current = true
-                    window.history.pushState(null, document.title, currentPath.current)
-                    // Force React Router to update to the current path
-                    navigate(currentPath.current, { replace: true })
-                    event.preventDefault()
-                    return false
-                }
+    const blocker = useBlocker(
+        useCallback(() => {
+            if (when && !window.confirm(message)) {
+                return true // Block the navigation
             }
-        }
-
-        // Listen for popstate events (back/forward button)
-        window.addEventListener('popstate', handlePopState)
-
-        // Push an initial state to detect back button presses
-        window.history.pushState(null, document.title, window.location.pathname)
-
-        return () => {
-            window.removeEventListener('popstate', handlePopState)
-        }
-    }, [when, message, navigate])
-
-    // Handle browser reload/close/tab close
-    useEffect(() => {
-        const handleBeforeUnload = (event) => {
-            if (when) {
-                event.preventDefault()
-                event.returnValue = message
-                return message
-            }
-        }
-
-        if (when) {
-            window.addEventListener('beforeunload', handleBeforeUnload)
-            return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-        }
-    }, [when, message])
-
-    // Return a custom navigate function that shows confirmation
-    const promptedNavigate = useCallback(
-        (to, options = {}) => {
-            if (when && to !== location.pathname) {
-                const shouldProceed = window.confirm(message)
-                if (shouldProceed) {
-                    isNavigating.current = true
-                    navigate(to, options)
-                }
-            } else {
-                isNavigating.current = true
-                navigate(to, options)
-            }
-        },
-        [when, message, location.pathname, navigate]
+            return false // Allow navigation
+        }, [message, when])
     )
+}
 
-    return promptedNavigate
+// Alternative implementation that returns the blocker state
+export function usePromptWithState(message, when = true) {
+    const blocker = useBlocker(({ currentLocation, nextLocation }) => {
+        return when && currentLocation.pathname !== nextLocation.pathname
+    })
+
+    // Handle the blocking logic
+    if (blocker.state === 'blocked') {
+        if (window.confirm(message)) {
+            blocker.proceed()
+        } else {
+            blocker.reset()
+        }
+    }
+
+    return blocker
 }
