@@ -1,32 +1,60 @@
-import { useCallback } from 'react'
-import { useBlocker } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { useLocation, useNavigationType } from 'react-router-dom'
 
-// Using the official useBlocker hook from React Router v6.4+
 export function usePrompt(message, when = true) {
-    const blocker = useBlocker(
-        useCallback(() => {
-            if (when && !window.confirm(message)) {
-                return true // Block the navigation
-            }
-            return false // Allow navigation
-        }, [message, when])
-    )
-}
+    const location = useLocation()
+    const navigationType = useNavigationType()
+    const unblockRef = useRef()
+    const hasAddedHistoryEntry = useRef(false)
 
-// Alternative implementation that returns the blocker state
-export function usePromptWithState(message, when = true) {
-    const blocker = useBlocker(({ currentLocation, nextLocation }) => {
-        return when && currentLocation.pathname !== nextLocation.pathname
-    })
-
-    // Handle the blocking logic
-    if (blocker.state === 'blocked') {
-        if (window.confirm(message)) {
-            blocker.proceed()
-        } else {
-            blocker.reset()
+    useEffect(() => {
+        if (!when) {
+            hasAddedHistoryEntry.current = false
+            return
         }
-    }
 
-    return blocker
+        // Handle browser back/forward buttons and page refresh
+        const handleBeforeUnload = (event) => {
+            if (when) {
+                event.preventDefault()
+                event.returnValue = message
+                return message
+            }
+        }
+
+        // Handle programmatic navigation within the app
+        const handlePopState = (event) => {
+            if (when) {
+                const shouldNavigate = window.confirm(message)
+                if (!shouldNavigate) {
+                    // User clicked Cancel - stay on current page
+                    // Push the current state back to prevent navigation
+                    window.history.pushState(null, '', location.pathname + location.search)
+                } else {
+                    // User clicked OK - allow navigation by going back again
+                    hasAddedHistoryEntry.current = false
+                    window.history.back()
+                }
+            }
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        window.addEventListener('popstate', handlePopState)
+
+        // Add a history entry only once when the prompt is enabled
+        if (when && !hasAddedHistoryEntry.current) {
+            window.history.pushState(null, '', location.pathname + location.search)
+            hasAddedHistoryEntry.current = true
+        }
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+            window.removeEventListener('popstate', handlePopState)
+        }
+    }, [message, when, location.pathname, location.search])
+
+    // Reset the history entry flag when navigating to a new location
+    useEffect(() => {
+        hasAddedHistoryEntry.current = false
+    }, [location.pathname])
 }
