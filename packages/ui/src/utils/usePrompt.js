@@ -1,60 +1,68 @@
 import { useEffect, useRef } from 'react'
-import { useLocation, useNavigationType } from 'react-router-dom'
 
 export function usePrompt(message, when = true) {
-    const location = useLocation()
-    const navigationType = useNavigationType()
-    const unblockRef = useRef()
-    const hasAddedHistoryEntry = useRef(false)
+    const isBlockingRef = useRef(false)
 
     useEffect(() => {
+        console.log('[usePrompt] Effect triggered. when =', when, ', message =', message)
+
         if (!when) {
-            hasAddedHistoryEntry.current = false
+            console.log('[usePrompt] Navigation blocking disabled.')
+            isBlockingRef.current = false
             return
         }
 
         // Handle browser back/forward buttons and page refresh
         const handleBeforeUnload = (event) => {
+            console.log('[usePrompt] beforeunload event fired.')
             if (when) {
+                console.log('[usePrompt] Blocking unload with message:', message)
                 event.preventDefault()
                 event.returnValue = message
                 return message
+            } else {
+                console.log('[usePrompt] Skipping unload block since when=false.')
             }
         }
 
-        // Handle programmatic navigation within the app
+        // Handle back button navigation
         const handlePopState = (event) => {
-            if (when) {
-                const shouldNavigate = window.confirm(message)
-                if (!shouldNavigate) {
-                    // User clicked Cancel - stay on current page
-                    // Push the current state back to prevent navigation
-                    window.history.pushState(null, '', location.pathname + location.search)
-                } else {
-                    // User clicked OK - allow navigation by going back again
-                    hasAddedHistoryEntry.current = false
+            console.log('[usePrompt] popstate event fired. isBlockingRef =', isBlockingRef.current)
+
+            if (when && !isBlockingRef.current) {
+                console.log('[usePrompt] Blocking back navigation. Showing confirm dialog...')
+                isBlockingRef.current = true
+
+                // Show confirmation dialog
+                const shouldLeave = window.confirm(message)
+                console.log('[usePrompt] User decision =', shouldLeave)
+
+                if (shouldLeave) {
+                    console.log('[usePrompt] User confirmed navigation. Going back...')
+                    isBlockingRef.current = false
                     window.history.back()
+                } else {
+                    console.log('[usePrompt] User canceled navigation. Staying on page.')
+                    window.history.pushState(null, null, window.location.href)
+                    isBlockingRef.current = false
                 }
+            } else {
+                console.log('[usePrompt] Navigation block skipped. when =', when, ', isBlockingRef =', isBlockingRef.current)
             }
         }
+
+        // Add a history entry to intercept back button
+        console.log('[usePrompt] Pushing state to history to track back button.')
+        window.history.pushState(null, null, window.location.href)
 
         window.addEventListener('beforeunload', handleBeforeUnload)
         window.addEventListener('popstate', handlePopState)
 
-        // Add a history entry only once when the prompt is enabled
-        if (when && !hasAddedHistoryEntry.current) {
-            window.history.pushState(null, '', location.pathname + location.search)
-            hasAddedHistoryEntry.current = true
-        }
-
         return () => {
+            console.log('[usePrompt] Cleanup triggered. Removing listeners.')
             window.removeEventListener('beforeunload', handleBeforeUnload)
             window.removeEventListener('popstate', handlePopState)
+            isBlockingRef.current = false
         }
-    }, [message, when, location.pathname, location.search])
-
-    // Reset the history entry flag when navigating to a new location
-    useEffect(() => {
-        hasAddedHistoryEntry.current = false
-    }, [location.pathname])
+    }, [message, when])
 }
