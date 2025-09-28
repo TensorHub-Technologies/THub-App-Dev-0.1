@@ -1,40 +1,32 @@
-# Build local monorepo image
-# docker build --no-cache -t  flowise .
+# Use Node 22 for better compatibility
+FROM node:22.14.0-alpine
 
-# Run image
-# docker run -d -p 3000:3000 flowise
+# Install dependencies needed for building packages and PDF support
+RUN apk add --no-cache libc6-compat python3 make g++ build-base cairo-dev pango-dev chromium curl
 
-FROM node:20-alpine
-RUN apk add --update libc6-compat python3 make g++
-# needed for pdfjs-dist
-RUN apk add --no-cache build-base cairo-dev pango-dev
-
-# Install Chromium
-RUN apk add --no-cache chromium
-
-# Install curl for container-level health checks
-# Fixes: https://github.com/FlowiseAI/Flowise/issues/4126
-RUN apk add --no-cache curl
-
-#install PNPM globaly
+# Install pnpm globally
 RUN npm install -g pnpm
 
+# Puppeteer settings
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
+# Increase Node memory
 ENV NODE_OPTIONS=--max-old-space-size=8192
 
+# Set working directory
 WORKDIR /usr/src
 
+# Copy root package.json and lockfile first for caching
 COPY package.json pnpm-lock.yaml ./
 
-RUN npm install -g pnpm && pnpm install
+# Install dependencies (monorepo aware)
+RUN pnpm install --frozen-lockfile
 
-# Copy app source
+# Copy all source files
 COPY . .
 
-RUN pnpm build
-
+# Set build environment variables (can be overridden during build)
 ARG VITE_GOOGLE_CLIENT_ID
 ARG VITE_GITHUB_CLIENT_ID
 ARG VITE_THUB_WEB_SERVER_PROD_URL
@@ -49,6 +41,11 @@ ENV VITE_THUB_WEB_SERVER_DEMO_URL=${VITE_THUB_WEB_SERVER_DEMO_URL}
 ENV VITE_THUB_WEB_SERVER_LOCAL_URL=${VITE_THUB_WEB_SERVER_LOCAL_URL}
 ENV VITE_TEST_ENV=${VITE_TEST_ENV}
 
+# Build all packages recursively (monorepo-safe)
+RUN pnpm -r build
+
+# Expose port
 EXPOSE 3000
 
-CMD [ "pnpm", "start" ]
+# Start application
+CMD ["pnpm", "start"]
