@@ -55,7 +55,6 @@ import {
     isValidConnectionAgentflowV2
 } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
-import { usePrompt } from '@/utils/usePrompt'
 
 // const
 import { FLOWISE_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
@@ -688,7 +687,7 @@ const AgentflowCanvas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [templateFlowData])
 
-    usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
+    // usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
 
     const [chatPopupOpen, setChatPopupOpen] = useState(false)
 

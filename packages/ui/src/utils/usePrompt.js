@@ -1,82 +1,70 @@
-import { useCallback, useEffect, useRef } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
 
 export function usePrompt(message, when = true) {
-    const navigate = useNavigate()
-    const location = useLocation()
-    const currentPath = useRef(location.pathname)
-    const isNavigating = useRef(false)
+    console.log('Hiii')
 
-    // Update current path when location changes (but not during our controlled navigation)
+    const isBlockingRef = useRef(false)
+
     useEffect(() => {
-        if (!isNavigating.current) {
-            currentPath.current = location.pathname
-        }
-        isNavigating.current = false
-    }, [location.pathname])
+        console.log('[usePrompt] Effect triggered. when =', when, ', message =', message)
 
-    // Handle browser back/forward navigation
-    useEffect(() => {
-        if (!when) return
-
-        const handlePopState = (event) => {
-            if (when && !isNavigating.current) {
-                const shouldProceed = window.confirm(message)
-                if (!shouldProceed) {
-                    // Prevent the navigation by pushing the current state back
-                    isNavigating.current = true
-                    window.history.pushState(null, document.title, currentPath.current)
-                    // Force React Router to update to the current path
-                    navigate(currentPath.current, { replace: true })
-                    event.preventDefault()
-                    return false
-                }
-            }
+        if (!when) {
+            console.log('[usePrompt] Navigation blocking disabled.')
+            isBlockingRef.current = false
+            return
         }
 
-        // Listen for popstate events (back/forward button)
-        window.addEventListener('popstate', handlePopState)
-
-        // Push an initial state to detect back button presses
-        window.history.pushState(null, document.title, window.location.pathname)
-
-        return () => {
-            window.removeEventListener('popstate', handlePopState)
-        }
-    }, [when, message, navigate])
-
-    // Handle browser reload/close/tab close
-    useEffect(() => {
+        // Handle browser back/forward buttons and page refresh
         const handleBeforeUnload = (event) => {
+            console.log('[usePrompt] beforeunload event fired.')
             if (when) {
+                console.log('[usePrompt] Blocking unload with message:', message)
                 event.preventDefault()
                 event.returnValue = message
                 return message
+            } else {
+                console.log('[usePrompt] Skipping unload block since when=false.')
             }
         }
 
-        if (when) {
-            window.addEventListener('beforeunload', handleBeforeUnload)
-            return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-        }
-    }, [when, message])
+        // Handle back button navigation
+        const handlePopState = (event) => {
+            console.log('[usePrompt] popstate event fired. isBlockingRef =', isBlockingRef.current)
 
-    // Return a custom navigate function that shows confirmation
-    const promptedNavigate = useCallback(
-        (to, options = {}) => {
-            if (when && to !== location.pathname) {
-                const shouldProceed = window.confirm(message)
-                if (shouldProceed) {
-                    isNavigating.current = true
-                    navigate(to, options)
+            if (when && !isBlockingRef.current) {
+                console.log('[usePrompt] Blocking back navigation. Showing confirm dialog...')
+                isBlockingRef.current = true
+
+                // Show confirmation dialog
+                const shouldLeave = window.confirm(message)
+                console.log('[usePrompt] User decision =', shouldLeave)
+
+                if (shouldLeave) {
+                    console.log('[usePrompt] User confirmed navigation. Going back...')
+                    isBlockingRef.current = false
+                    window.history.back()
+                } else {
+                    console.log('[usePrompt] User canceled navigation. Staying on page.')
+                    window.history.pushState(null, null, window.location.href)
+                    isBlockingRef.current = false
                 }
             } else {
-                isNavigating.current = true
-                navigate(to, options)
+                console.log('[usePrompt] Navigation block skipped. when =', when, ', isBlockingRef =', isBlockingRef.current)
             }
-        },
-        [when, message, location.pathname, navigate]
-    )
+        }
 
-    return promptedNavigate
+        // Add a history entry to intercept back button
+        console.log('[usePrompt] Pushing state to history to track back button.')
+        window.history.pushState(null, null, window.location.href)
+
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        window.addEventListener('popstate', handlePopState)
+
+        return () => {
+            console.log('[usePrompt] Cleanup triggered. Removing listeners.')
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+            window.removeEventListener('popstate', handlePopState)
+            isBlockingRef.current = false
+        }
+    }, [message, when])
 }

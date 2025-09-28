@@ -61,7 +61,6 @@ import {
     updateOutdatedNodeEdge
 } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
-import { usePrompt } from '@/utils/usePrompt'
 
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
@@ -737,7 +736,7 @@ const Canvas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [templateFlowData])
 
-    usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
+    // usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
     const [notesVisible, setNotesVisible] = useState(false)
     const [noteContent, setNoteContent] = useState('')
     const handleNotesToggle = () => setNotesVisible(!notesVisible)
