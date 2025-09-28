@@ -1,35 +1,30 @@
-import { useCallback, useContext, useEffect } from 'react'
-import { UNSAFE_NavigationContext as NavigationContext } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 
-export function useBlocker(blocker, when = true) {
-    const { navigator } = useContext(NavigationContext)
+export function usePrompt(message, when = true) {
+    const navigate = useNavigate()
+    const location = useLocation()
 
     useEffect(() => {
         if (!when) return
 
-        const unblock = navigator.block((tx) => {
-            const autoUnblockingTx = {
-                ...tx,
-                retry() {
-                    unblock()
-                    tx.retry()
-                }
-            }
+        const handleBeforeUnload = (e) => {
+            e.preventDefault()
+            e.returnValue = message
+            return message
+        }
 
-            blocker(autoUnblockingTx)
+        window.addEventListener('beforeunload', handleBeforeUnload)
+
+        const unblock = navigate.block((tx) => {
+            if (window.confirm(message)) {
+                tx.retry()
+            }
         })
 
-        return unblock
-    }, [navigator, blocker, when])
-}
-
-export function usePrompt(message, when = true) {
-    const blocker = useCallback(
-        (tx) => {
-            if (window.confirm(message)) tx.retry()
-        },
-        [message]
-    )
-
-    useBlocker(blocker, when)
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+            unblock()
+        }
+    }, [navigate, message, when, location])
 }
