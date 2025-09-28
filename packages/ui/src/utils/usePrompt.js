@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 
 export function usePrompt(message, when = true) {
+    console.log('Hiii')
+
     const isBlockingRef = useRef(false)
 
     useEffect(() => {
