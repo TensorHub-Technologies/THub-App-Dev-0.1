@@ -39,13 +39,43 @@ export default defineConfig(async ({ mode }) => {
         },
         root: resolve(__dirname),
         build: {
-            outDir: './build'
+            outDir: './build',
+            rollupOptions: {
+                // Ensure proper chunking and bundling
+                output: {
+                    manualChunks: {
+                        // Keep react-router-dom in its own chunk to prevent bundling issues
+                        router: ['react-router-dom', 'react-router'],
+                        codemirror: [
+                            '@codemirror/state',
+                            '@codemirror/view',
+                            '@codemirror/language',
+                            '@codemirror/lang-javascript',
+                            '@codemirror/lang-json',
+                            '@uiw/react-codemirror',
+                            '@uiw/codemirror-theme-vscode',
+                            '@uiw/codemirror-theme-sublime',
+                            '@lezer/common',
+                            '@lezer/highlight'
+                        ]
+                    }
+                }
+            },
+            // Ensure consistent builds
+            sourcemap: mode === 'development'
         },
         server: {
             open: true,
             proxy,
             port: process.env.VITE_PORT ?? 8080,
             host: process.env.VITE_HOST
+        },
+        optimizeDeps: {
+            include: ['react-router-dom', 'react-router', '@codemirror/state', '@codemirror/view', '@codemirror/language']
+        },
+        // Add define to ensure consistent environment
+        define: {
+            __DEV__: mode === 'development'
         }
     }
 })
