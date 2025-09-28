@@ -1,29 +1,49 @@
-import { useCallback, useEffect } from 'react'
-import { useBlocker } from 'react-router-dom'
+import { useCallback, useEffect, useRef } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 export function usePrompt(message, when = true) {
-    // useBlocker expects a function that returns true when navigation should be blocked
-    const blocker = useBlocker(
-        useCallback(
-            ({ currentLocation, nextLocation }) => {
-                // Block navigation when 'when' is true and we're actually navigating somewhere different
-                return when && currentLocation.pathname !== nextLocation.pathname
-            },
-            [when]
-        )
-    )
+    const navigate = useNavigate()
+    const location = useLocation()
+    const currentPath = useRef(location.pathname)
+    const isNavigating = useRef(false)
 
-    // Handle the confirmation dialog when navigation is blocked
+    // Update current path when location changes (but not during our controlled navigation)
     useEffect(() => {
-        if (blocker.state === 'blocked') {
-            const shouldProceed = window.confirm(message)
-            if (shouldProceed) {
-                blocker.proceed()
-            } else {
-                blocker.reset()
+        if (!isNavigating.current) {
+            currentPath.current = location.pathname
+        }
+        isNavigating.current = false
+    }, [location.pathname])
+
+    // Handle browser back/forward navigation
+    useEffect(() => {
+        if (!when) return
+
+        const handlePopState = (event) => {
+            if (when && !isNavigating.current) {
+                const shouldProceed = window.confirm(message)
+                if (!shouldProceed) {
+                    // Prevent the navigation by pushing the current state back
+                    isNavigating.current = true
+                    window.history.pushState(null, document.title, currentPath.current)
+                    // Force React Router to update to the current path
+                    navigate(currentPath.current, { replace: true })
+                    event.preventDefault()
+                    return false
+                }
             }
         }
-    }, [blocker, message])
+
+        // Listen for popstate events (back/forward button)
+        window.addEventListener('popstate', handlePopState)
+
+        // Push an initial state to detect back button presses
+        window.history.pushState(null, document.title, window.location.pathname)
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState)
+        }
+    }, [when, message, navigate])
 
     // Handle browser reload/close/tab close
     useEffect(() => {
@@ -40,4 +60,23 @@ export function usePrompt(message, when = true) {
             return () => window.removeEventListener('beforeunload', handleBeforeUnload)
         }
     }, [when, message])
+
+    // Return a custom navigate function that shows confirmation
+    const promptedNavigate = useCallback(
+        (to, options = {}) => {
+            if (when && to !== location.pathname) {
+                const shouldProceed = window.confirm(message)
+                if (shouldProceed) {
+                    isNavigating.current = true
+                    navigate(to, options)
+                }
+            } else {
+                isNavigating.current = true
+                navigate(to, options)
+            }
+        },
+        [when, message, location.pathname, navigate]
+    )
+
+    return promptedNavigate
 }
