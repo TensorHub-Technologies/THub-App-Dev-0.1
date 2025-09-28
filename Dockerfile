@@ -1,5 +1,5 @@
 # Use Node 22 for better compatibility
-FROM node:22.14.0-alpine
+FROM node:20-alpine
 
 # Install dependencies needed for building packages and PDF support
 RUN apk add --no-cache libc6-compat python3 make g++ build-base cairo-dev pango-dev chromium curl
