@@ -1010,21 +1010,15 @@ importers:
             clsx:
                 specifier: ^1.1.1
                 version: 1.2.1
+            dagre:
+                specifier: ^0.8.5
+                version: 0.8.5
             dompurify:
                 specifier: ^3.2.6
                 version: 3.2.7
             dotenv:
                 specifier: ^16.0.0
                 version: 16.6.1
-            flowise-embed:
-                specifier: latest
-                version: 3.0.4
-            flowise-embed-react:
-                specifier: latest
-                version: 3.0.3(@types/node@24.5.2)(flowise-embed@3.0.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.2)(terser@5.44.0)(typescript@5.9.2)
-            flowise-react-json-view:
-                specifier: '*'
-                version: 1.21.7(@types/react@18.3.24)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
             formik:
                 specifier: ^2.2.6
                 version: 2.4.6(@types/react@18.3.24)(react@18.3.1)
@@ -8760,6 +8754,9 @@ packages:
         resolution: { integrity: sha512-MOqHvMWF9/9MX6nza0KgvFH4HpMU0EF5uUDXqX/BtxtU8NfB0QzRtJ8Oe/6SuS4kbhyzVJwjd97EA4PKrzJ8bw== }
         engines: { node: '>=0.12' }
 
+    dagre@0.8.5:
+        resolution: { integrity: sha512-/aTqmnRta7x7MCCpExk7HQL2O4owCT2h8NT//9I1OQ9vt29Pa0BzSAkR5lwFUcQ7491yVi/3CXU9jQ5o0Mn2Sw== }
+
     damerau-levenshtein@1.0.8:
         resolution: { integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA== }
 
@@ -9981,23 +9978,8 @@ packages:
     flatted@3.3.3:
         resolution: { integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg== }
 
-    flowise-embed-react@3.0.3:
-        resolution: { integrity: sha512-+7Ta33EUvF8mC3qKIG9ppf2GMViJjiSVaFOPt725IlH6jgikHRdcGuXGGPavjQzQH22L3P8WnhaniVHJnRn6kg== }
-        peerDependencies:
-            flowise-embed: '*'
-            react: 18.x
-
-    flowise-embed@3.0.4:
-        resolution: { integrity: sha512-FjDtQRYsXLbpwzePN4wbA8/aLTXiJN3Ji9iL/CRGR9EdrgA85UHF1JuGBrqDvrsKm81KKXBjvBlnNus6+NyW+w== }
-
     flowise-nim-container-manager@1.0.11:
         resolution: { integrity: sha512-Er/leiIzJZ691kWqXkjCWv29g0G5qWA4juBOcGZ1P5kBLnkKFxbWc5x8JsSPcHuJQIiGNX/dYEzp2ZrOV3YYMg== }
-
-    flowise-react-json-view@1.21.7:
-        resolution: { integrity: sha512-oFjwtSLJkUWk6waLh8heCQ4o9b60FJRA2X8LefaZp5WaJvj/Rr2HILjk+ocf1JkfTcq8jc6t2jfIybg4leWsaQ== }
-        peerDependencies:
-            react: ^17.0.0 || ^16.3.0 || ^15.5.4
-            react-dom: ^17.0.0 || ^16.3.0 || ^15.5.4
 
     flush-write-stream@1.1.1:
         resolution: { integrity: sha512-3Z4XhFZ3992uIq0XOqb9AreonueSYphE6oYbpt5+3u06JWklbsPkNv3ZKkP9Bz/r+1MWCaMoSQ28P85+1Yc77w== }
@@ -10421,6 +10403,9 @@ packages:
 
     graphemer@1.4.0:
         resolution: { integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag== }
+
+    graphlib@2.1.8:
+        resolution: { integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A== }
 
     graphql-request@5.2.0:
         resolution: { integrity: sha512-pLhKIvnMyBERL0dtFI3medKqWOz/RhHdcgbZ+hMMIb32mEPa5MJSzS4AuXxfI4sRAu6JVVk5tvXuGfCWl9JYWQ== }
@@ -27531,6 +27516,11 @@ snapshots:
             es5-ext: 0.10.64
             type: 2.7.3
 
+    dagre@0.8.5:
+        dependencies:
+            graphlib: 2.1.8
+            lodash: 4.17.21
+
     damerau-levenshtein@1.0.8: {}
 
     dashdash@1.14.1:
@@ -29113,46 +29103,6 @@ snapshots:
 
     flatted@3.3.3: {}
 
-    flowise-embed-react@3.0.3(@types/node@24.5.2)(flowise-embed@3.0.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.2)(terser@5.44.0)(typescript@5.9.2):
-        dependencies:
-            '@ladle/react': 2.5.1(@types/node@24.5.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.2)(terser@5.44.0)(typescript@5.9.2)
-            flowise-embed: 3.0.4
-            react: 18.3.1
-        transitivePeerDependencies:
-            - '@types/node'
-            - less
-            - lightningcss
-            - react-dom
-            - sass
-            - stylus
-            - sugarss
-            - supports-color
-            - terser
-            - typescript
-
-    flowise-embed@3.0.4:
-        dependencies:
-            '@babel/core': 7.28.4
-            '@microsoft/fetch-event-source': 2.0.1
-            '@ts-stack/markdown': 1.5.0
-            axios: 1.12.0(debug@4.4.3)
-            cors: 2.8.5
-            cross-env: 7.0.3
-            device-detector-js: 3.0.3
-            dotenv: 16.6.1
-            express: 4.21.2
-            form-data: 4.0.4
-            lodash: 4.17.21
-            multer: 1.4.5-lts.2
-            node-fetch: 3.3.2
-            prettier: 3.6.2
-            solid-element: 1.7.0(solid-js@1.9.7)
-            solid-js: 1.9.7
-            zod: 3.22.4
-        transitivePeerDependencies:
-            - debug
-            - supports-color
-
     flowise-nim-container-manager@1.0.11:
         dependencies:
             dockerode: 4.0.8
@@ -29161,18 +29111,6 @@ snapshots:
             - bare-buffer
             - react-native-b4a
             - supports-color
-
-    flowise-react-json-view@1.21.7(@types/react@18.3.24)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-        dependencies:
-            flux: 4.0.4(encoding@0.1.13)(react@18.3.1)
-            react: 18.3.1
-            react-base16-styling: 0.6.0
-            react-dom: 18.3.1(react@18.3.1)
-            react-lifecycles-compat: 3.0.4
-            react-textarea-autosize: 8.5.9(@types/react@18.3.24)(react@18.3.1)
-        transitivePeerDependencies:
-            - '@types/react'
-            - encoding
 
     flush-write-stream@1.1.1:
         dependencies:
@@ -29727,6 +29665,10 @@ snapshots:
     graceful-fs@4.2.11: {}
 
     graphemer@1.4.0: {}
+
+    graphlib@2.1.8:
+        dependencies:
+            lodash: 4.17.21
 
     graphql-request@5.2.0(encoding@0.1.13)(graphql@16.11.0):
         dependencies:
