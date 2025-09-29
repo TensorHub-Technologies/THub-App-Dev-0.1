@@ -4,6 +4,7 @@
     "license": "SEE LICENSE IN LICENSE.md",
     "homepage": "https://thub.tech",
     "dependencies": {
+        "@azure/msal-react": "^3.0.12",
         "@codemirror/lang-javascript": "^6.2.1",
         "@codemirror/lang-json": "^6.0.1",
         "@codemirror/lang-markdown": "^6.2.5",
@@ -71,6 +72,7 @@
         "reactflow": "^11.5.6",
         "recharts": "^2.12.6",
         "redux": "^4.0.5",
+        "redux-persist": "^6.0.0",
         "rehype-mathjax": "^4.0.2",
         "rehype-raw": "^7.0.0",
         "remark-gfm": "^3.0.1",
@@ -78,7 +80,10 @@
         "showdown": "^2.1.0",
         "tippy.js": "^6.3.7",
         "uuid": "^9.0.1",
-        "yup": "^0.32.9"
+        "yup": "^0.32.9",
+        "thub-embed": "^9.4.5",
+        "thub-embed-react": "2.1.1",
+        "thub-react-json-view": "1.21.11"
     },
     "scripts": {
         "dev": "vite",
