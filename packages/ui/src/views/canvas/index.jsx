@@ -72,6 +72,7 @@ import { IconFilePencil } from '@tabler/icons-react'
 import { IconMapPin2 } from '@tabler/icons-react'
 import { IconArrowsVertical } from '@tabler/icons-react'
 import { IconArrowsHorizontal } from '@tabler/icons-react'
+import { usePrompt } from '@/utils/usePrompt'
 
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
 
@@ -736,7 +737,7 @@ const Canvas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [templateFlowData])
 
-    // usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
+    usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
     const [notesVisible, setNotesVisible] = useState(false)
     const [noteContent, setNoteContent] = useState('')
     const handleNotesToggle = () => setNotesVisible(!notesVisible)
