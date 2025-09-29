@@ -1,6 +1,6 @@
 {
     "name": "thub",
-    "version": "2.2.7",
+    "version": "3.0.5",
     "private": true,
     "homepage": "https://thub.tech",
     "workspaces": [
@@ -61,7 +61,7 @@
             "sqlite3"
         ],
         "overrides": {
-            "axios": "1.10.0",
+            "axios": "1.12.0",
             "body-parser": "2.0.2",
             "braces": "3.0.3",
             "cross-spawn": "7.0.6",
@@ -124,9 +124,6 @@
         ]
     },
     "dependencies": {
-        "@react-oauth/google": "^0.12.2",
-        "babel-runtime": "^6.26.0",
-        "react-toastify": "^10.0.6",
-        "tesseract.js": "^6.0.1"
+        "@react-oauth/google": "^0.12.2"
     }
 }
