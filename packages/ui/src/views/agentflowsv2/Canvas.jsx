@@ -58,6 +58,7 @@ import useNotifier from '@/utils/useNotifier'
 
 // const
 import { FLOWISE_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
+import { usePrompt } from '@/utils/usePrompt'
 
 const nodeTypes = { agentFlow: CanvasNode, stickyNote: StickyNote, iteration: IterationNode }
 const edgeTypes = { agentFlow: AgentFlowEdge }
@@ -687,7 +688,7 @@ const AgentflowCanvas = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [templateFlowData])
 
-    // usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
+    usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
 
     const [chatPopupOpen, setChatPopupOpen] = useState(false)
 

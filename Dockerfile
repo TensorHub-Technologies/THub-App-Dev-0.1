@@ -1,25 +1,37 @@
-FROM node:20-alpine
+# Build local monorepo image
+# docker build --no-cache -t  flowise .
 
-RUN apk add --no-cache libc6-compat python3 make g++ build-base cairo-dev pango-dev chromium curl git
+# Run image
+# docker run -d -p 3000:3000 flowise
 
-# Install PNPM globally
+FROM node:22-alpine
+RUN apk add --update libc6-compat python3 make g++
+# needed for pdfjs-dist
+RUN apk add --no-cache build-base cairo-dev pango-dev
+
+# Install Chromium
+RUN apk add --no-cache chromium
+
+# Install curl for container-level health checks
+# Fixes: https://github.com/FlowiseAI/Flowise/issues/4126
+RUN apk add --no-cache curl
+
+#install PNPM globaly
 RUN npm install -g pnpm
 
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 ENV NODE_OPTIONS=--max-old-space-size=8192
 
 WORKDIR /usr/src
 
-# Copy everything
+# Copy app source
 COPY . .
 
-# Install all dependencies including devDependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
-# Build all workspace packages
-RUN pnpm --recursive run build
-
+RUN pnpm build
 # Set environment variables
 ARG VITE_GOOGLE_CLIENT_ID
 ARG VITE_GITHUB_CLIENT_ID
@@ -36,4 +48,5 @@ ENV VITE_THUB_WEB_SERVER_LOCAL_URL=${VITE_THUB_WEB_SERVER_LOCAL_URL}
 ENV VITE_TEST_ENV=${VITE_TEST_ENV}
 
 EXPOSE 3000
-CMD ["pnpm", "start"]
+
+CMD [ "pnpm", "start" ]
