@@ -34,12 +34,42 @@ export default defineConfig(async ({ mode }) => {
                 '@uiw/codemirror-theme-vscode': resolve(__dirname, '../../node_modules/@uiw/codemirror-theme-vscode'),
                 '@uiw/codemirror-theme-sublime': resolve(__dirname, '../../node_modules/@uiw/codemirror-theme-sublime'),
                 '@lezer/common': resolve(__dirname, '../../node_modules/@lezer/common'),
-                '@lezer/highlight': resolve(__dirname, '../../node_modules/@lezer/highlight')
+                '@lezer/highlight': resolve(__dirname, '../../node_modules/@lezer/highlight'),
+                // Add ReactFlow aliases
+                'reactflow': resolve(__dirname, '../../node_modules/reactflow'),
+                '@reactflow/core': resolve(__dirname, '../../node_modules/@reactflow/core'),
+                '@reactflow/background': resolve(__dirname, '../../node_modules/@reactflow/background'),
+                '@reactflow/controls': resolve(__dirname, '../../node_modules/@reactflow/controls'),
+                '@reactflow/minimap': resolve(__dirname, '../../node_modules/@reactflow/minimap'),
+                '@reactflow/node-toolbar': resolve(__dirname, '../../node_modules/@reactflow/node-toolbar')
             }
+        },
+        // Add these optimizations
+        optimizeDeps: {
+            include: [
+                'reactflow',
+                '@reactflow/core',
+                '@reactflow/background',
+                '@reactflow/controls',
+                '@reactflow/minimap',
+                '@reactflow/node-toolbar'
+            ],
+            exclude: []
         },
         root: resolve(__dirname),
         build: {
-            outDir: './build'
+            outDir: './build',
+            // Add these build options
+            commonjsOptions: {
+                include: [/reactflow/, /node_modules/]
+            },
+            rollupOptions: {
+                output: {
+                    manualChunks: {
+                        'reactflow-vendor': ['reactflow']
+                    }
+                }
+            }
         },
         server: {
             open: true,
