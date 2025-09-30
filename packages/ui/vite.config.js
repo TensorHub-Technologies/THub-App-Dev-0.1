@@ -37,28 +37,9 @@ export default defineConfig(async ({ mode }) => {
                 '@lezer/highlight': resolve(__dirname, '../../node_modules/@lezer/highlight')
             }
         },
-        // Critical: Force ReactFlow to be pre-bundled
-        optimizeDeps: {
-            include: ['reactflow'],
-            force: true // Force re-optimization
-        },
         root: resolve(__dirname),
         build: {
-            outDir: './build',
-            // Ensure ReactFlow is handled correctly in production
-            commonjsOptions: {
-                include: [/reactflow/, /node_modules/],
-                transformMixedEsModules: true
-            },
-            rollupOptions: {
-                output: {
-                    manualChunks(id) {
-                        if (id.includes('reactflow')) {
-                            return 'reactflow-vendor'
-                        }
-                    }
-                }
-            }
+            outDir: './build'
         },
         server: {
             open: true,
