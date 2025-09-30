@@ -34,39 +34,28 @@ export default defineConfig(async ({ mode }) => {
                 '@uiw/codemirror-theme-vscode': resolve(__dirname, '../../node_modules/@uiw/codemirror-theme-vscode'),
                 '@uiw/codemirror-theme-sublime': resolve(__dirname, '../../node_modules/@uiw/codemirror-theme-sublime'),
                 '@lezer/common': resolve(__dirname, '../../node_modules/@lezer/common'),
-                '@lezer/highlight': resolve(__dirname, '../../node_modules/@lezer/highlight'),
-                // Add ReactFlow aliases
-                'reactflow': resolve(__dirname, '../../node_modules/reactflow'),
-                '@reactflow/core': resolve(__dirname, '../../node_modules/@reactflow/core'),
-                '@reactflow/background': resolve(__dirname, '../../node_modules/@reactflow/background'),
-                '@reactflow/controls': resolve(__dirname, '../../node_modules/@reactflow/controls'),
-                '@reactflow/minimap': resolve(__dirname, '../../node_modules/@reactflow/minimap'),
-                '@reactflow/node-toolbar': resolve(__dirname, '../../node_modules/@reactflow/node-toolbar')
+                '@lezer/highlight': resolve(__dirname, '../../node_modules/@lezer/highlight')
             }
         },
-        // Add these optimizations
+        // Critical: Force ReactFlow to be pre-bundled
         optimizeDeps: {
-            include: [
-                'reactflow',
-                '@reactflow/core',
-                '@reactflow/background',
-                '@reactflow/controls',
-                '@reactflow/minimap',
-                '@reactflow/node-toolbar'
-            ],
-            exclude: []
+            include: ['reactflow'],
+            force: true // Force re-optimization
         },
         root: resolve(__dirname),
         build: {
             outDir: './build',
-            // Add these build options
+            // Ensure ReactFlow is handled correctly in production
             commonjsOptions: {
-                include: [/reactflow/, /node_modules/]
+                include: [/reactflow/, /node_modules/],
+                transformMixedEsModules: true
             },
             rollupOptions: {
                 output: {
-                    manualChunks: {
-                        'reactflow-vendor': ['reactflow']
+                    manualChunks(id) {
+                        if (id.includes('reactflow')) {
+                            return 'reactflow-vendor'
+                        }
                     }
                 }
             }
