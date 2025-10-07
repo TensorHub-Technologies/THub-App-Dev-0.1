@@ -61,7 +61,6 @@ import {
     updateOutdatedNodeEdge
 } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
-import { usePrompt } from '@/utils/usePrompt'
 
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
@@ -73,6 +72,7 @@ import { IconFilePencil } from '@tabler/icons-react'
 import { IconMapPin2 } from '@tabler/icons-react'
 import { IconArrowsVertical } from '@tabler/icons-react'
 import { IconArrowsHorizontal } from '@tabler/icons-react'
+import { usePrompt } from '@/utils/usePrompt'
 
 const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
 

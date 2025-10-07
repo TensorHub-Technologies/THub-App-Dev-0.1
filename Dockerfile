@@ -4,7 +4,7 @@
 # Run image
 # docker run -d -p 3000:3000 flowise
 
-FROM node:20-alpine
+FROM node:22-alpine
 RUN apk add --update libc6-compat python3 make g++
 # needed for pdfjs-dist
 RUN apk add --no-cache build-base cairo-dev pango-dev
@@ -31,6 +31,8 @@ COPY . .
 
 RUN pnpm install
 
+RUN pnpm build
+# Set environment variables
 ARG VITE_GOOGLE_CLIENT_ID
 ARG VITE_GITHUB_CLIENT_ID
 ARG VITE_THUB_WEB_SERVER_PROD_URL
@@ -44,8 +46,6 @@ ENV VITE_THUB_WEB_SERVER_PROD_URL=${VITE_THUB_WEB_SERVER_PROD_URL}
 ENV VITE_THUB_WEB_SERVER_DEMO_URL=${VITE_THUB_WEB_SERVER_DEMO_URL}
 ENV VITE_THUB_WEB_SERVER_LOCAL_URL=${VITE_THUB_WEB_SERVER_LOCAL_URL}
 ENV VITE_TEST_ENV=${VITE_TEST_ENV}
-
-RUN pnpm build
 
 EXPOSE 3000
 

@@ -55,10 +55,10 @@ import {
     isValidConnectionAgentflowV2
 } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
-import { usePrompt } from '@/utils/usePrompt'
 
 // const
 import { FLOWISE_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
+import { usePrompt } from '@/utils/usePrompt'
 
 const nodeTypes = { agentFlow: CanvasNode, stickyNote: StickyNote, iteration: IterationNode }
 const edgeTypes = { agentFlow: AgentFlowEdge }

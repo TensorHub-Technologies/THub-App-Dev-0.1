@@ -1,16 +1,13 @@
-import { useContext, useEffect, useCallback } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { UNSAFE_NavigationContext as NavigationContext } from 'react-router-dom'
+
+// https://stackoverflow.com/questions/71572678/react-router-v-6-useprompt-typescript
 
 export function useBlocker(blocker, when = true) {
     const { navigator } = useContext(NavigationContext)
 
     useEffect(() => {
         if (!when) return
-
-        if (!navigator || !navigator.block) {
-            console.warn('Navigation blocking is not supported in this version.')
-            return
-        }
 
         const unblock = navigator.block((tx) => {
             const autoUnblockingTx = {
@@ -31,9 +28,7 @@ export function useBlocker(blocker, when = true) {
 export function usePrompt(message, when = true) {
     const blocker = useCallback(
         (tx) => {
-            if (window.confirm(message)) {
-                tx.retry()
-            }
+            if (window.confirm(message)) tx.retry()
         },
         [message]
     )

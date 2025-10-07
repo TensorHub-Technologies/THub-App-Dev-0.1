@@ -47,9 +47,6 @@ export default defineConfig(async ({ mode }) => {
             proxy,
             port: process.env.VITE_PORT ?? 8080,
             host: process.env.VITE_HOST
-        },
-        optimizeDeps: {
-            include: ['lodash-es', 'react', 'react-dom']
         }
     }
 })
