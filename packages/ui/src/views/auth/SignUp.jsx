@@ -46,18 +46,12 @@ const SignUp = () => {
     useEffect(() => {
         const url = new URL(window.location.href)
         const themeParam = url.searchParams.get('theme')
-        console.log('themeParam', themeParam)
         if (themeParam) {
             const isDark = themeParam === 'dark'
             dispatch({ type: SET_DARKMODE, isDarkMode: isDark })
-            console.log('isDark', isDark)
             localStorage.setItem('isDarkMode', isDark)
         }
     }, [dispatch])
-
-    console.log('THub Prod:', import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL)
-    console.log('THub Demo:', import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL)
-    console.log('THub local:', import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL)
 
     const thubWebServerDevUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
@@ -87,7 +81,6 @@ const SignUp = () => {
 
     // Verify the OTP
     const verifyOtp = async (otp) => {
-        console.log('OTP Sent to email:', email)
         try {
             const response = await axios.post(`${apiUrl}/verify-otp`, { email, otp })
             if (response.status === 200) {
