@@ -81,7 +81,12 @@
         "yup": "^0.32.9",
         "thub-embed": "^9.4.5",
         "thub-embed-react": "2.1.1",
-        "thub-react-json-view": "1.21.11"
+        "thub-react-json-view": "1.21.11",
+        "genkit": "^1.8.0",
+        "@genkit-ai/googleai": "^1.8.0",
+        "@genkit-ai/vertexai": "^1.8.0",
+        "@a2a-js/sdk": "^0.3.0",
+        "express": "^4.21.2"
     },
     "scripts": {
         "dev": "vite",

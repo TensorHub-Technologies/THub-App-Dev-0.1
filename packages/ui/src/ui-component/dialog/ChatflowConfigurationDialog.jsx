@@ -13,6 +13,7 @@ import FollowUpPrompts from '@/ui-component/extended/FollowUpPrompts'
 import FileUpload from '@/ui-component/extended/FileUpload'
 import PostProcessing from '@/ui-component/extended/PostProcessing'
 import ScheduleSettings from '../extended/ScheduleSettings'
+import A2AServer from '../extended/A2AServer'
 
 const CHATFLOW_CONFIGURATION_TABS = [
     {
@@ -34,6 +35,10 @@ const CHATFLOW_CONFIGURATION_TABS = [
     {
         label: 'Schedule Settings',
         id: 'scheduleEmail'
+    },
+    {
+        label: 'A2A Server',
+        id: 'A2AServer'
     },
     {
         label: 'Chat Feedback',
@@ -143,6 +148,7 @@ const ChatflowConfigurationDialog = ({ show, isAgentCanvas, dialogProps, onCance
                         {item.id === 'followUpPrompts' ? <FollowUpPrompts dialogProps={dialogProps} /> : null}
                         {item.id === 'speechToText' ? <SpeechToText dialogProps={dialogProps} /> : null}
                         {item.id === 'scheduleEmail' ? <ScheduleSettings dialogProps={dialogProps} /> : null}
+                        {item.id === 'A2AServer' ? <A2AServer dialogProps={dialogProps} /> : null}
                         {item.id === 'chatFeedback' ? <ChatFeedback dialogProps={dialogProps} /> : null}
                         {item.id === 'analyseWorkflow' ? <AnalyseFlow dialogProps={dialogProps} /> : null}
                         {item.id === 'leads' ? <Leads dialogProps={dialogProps} /> : null}

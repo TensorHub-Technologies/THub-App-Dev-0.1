@@ -46,6 +46,41 @@ export enum Platform {
 /**
  * Databases
  */
+
+export interface IAgentCards {
+    id: number
+    workflow_id: string
+    is_agent_enabled: boolean
+    protocol_version: string
+    name: string
+    description?: string
+    version?: string
+    provider_organization?: string
+    provider_url?: string
+    capabilities_streaming: boolean
+    capabilities_push_notifications: boolean
+    capabilities_state_transition_history: boolean
+    authentication?: string
+    security_schemes?: string
+    security?: string
+    default_input_modes?: string
+    default_output_modes?: string
+    supports_authenticated_extended_card: boolean
+    prompt: string
+}
+
+export interface IAgentCardSkills {
+    id: number
+    agent_card_id: number
+    skill_id: string
+    name: string
+    description?: string
+    tags?: string
+    examples?: string
+    input_modes?: string
+    output_modes?: string
+}
+
 export interface IChatFlow {
     id: string
     name: string

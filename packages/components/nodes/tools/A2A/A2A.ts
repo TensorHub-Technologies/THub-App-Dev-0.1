@@ -28,14 +28,12 @@ class A2AClientTool extends Tool {
 
     async _call(initialInput: string): Promise<string> {
         let result_A2A = ''
-        console.log('Initial Input: ', initialInput)
+
         if (!initialInput || typeof initialInput !== 'string') {
             return JSON.stringify({ error: 'Input must be a single URL string.' })
         }
 
         try {
-            console.log('inside A2A try: ', this.serverUrl)
-
             const client = new A2AClient(this.serverUrl)
             const messageId = uuidv4()
             let taskId: string | undefined
@@ -55,11 +53,8 @@ class A2AClientTool extends Tool {
             }
 
             const agentCard = await client.getAgentCard()
-            //console.log("Agent Card:", agentCard);
 
             const sendResponse: SendMessageResponse = await client.sendMessage(sendParams)
-
-            //console.log("Send Message Response:", sendResponse);
 
             // On success, the result can be a Task or a Message. Check which one it is.
             const result = (sendResponse as SendMessageSuccessResponse).result
@@ -70,9 +65,6 @@ class A2AClientTool extends Tool {
                 const getResponse: GetTaskResponse = await client.getTask(getParams)
                 const getTaskResult = (getResponse as GetTaskSuccessResponse).result
 
-                console.log('getTaskResult.status.message.parts:', getTaskResult.status?.message?.parts)
-                //console.log("getTaskResult.status.message.part:", getTaskResult.status?.message?.parts?.[0]);
-
                 forEach(getTaskResult.status?.message?.parts, (part) => {
                     if (part.kind === 'text' && part.text) {
                         result_A2A += part.text
@@ -82,7 +74,6 @@ class A2AClientTool extends Tool {
                 if (getTaskResult.status?.message?.parts) {
                     ;(getTaskResult.status.message.parts as Array<{ kind: string; text?: string }>).forEach((part) => {
                         if (part.kind === 'text' && part.text) {
-                            console.log('Task output:', part.text)
                             return part.text
                         }
                     })
@@ -154,10 +145,7 @@ class A2A implements INode {
     }
 
     async init(nodeData: INodeData, _: string): Promise<any> {
-        console.log('A2AServerurl: ', nodeData.inputs?.A2AServerurl)
-
         const tool = new A2AClientTool(nodeData.inputs?.A2AServerurl)
-
         return tool
     }
 }

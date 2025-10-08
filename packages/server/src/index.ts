@@ -18,6 +18,7 @@ import { getAPIKeys } from './utils/apiKey'
 import { sanitizeMiddleware, getCorsOptions, getAllowedIframeOrigins } from './utils/XSS'
 import { Telemetry } from './utils/telemetry'
 import flowiseApiV1Router from './routes'
+import a2aRouter from './routes/a2a'
 import errorHandlerMiddleware from './middlewares/errors'
 import { SSEStreamer } from './utils/SSEStreamer'
 import { validateAPIKey } from './utils/validateKey'
@@ -29,6 +30,11 @@ import { RedisEventSubscriber } from './queue/RedisEventSubscriber'
 import { WHITELIST_URLS } from './utils/constants'
 import { ExpressAdapter } from '@bull-board/express'
 import 'global-agent/bootstrap'
+import { AgentCard } from './a2a/types'
+import { MyAgentExecutor } from './a2a/AgentExecutor/AgentExecutor'
+import { A2ARequestHandlers } from './A2ARequestHandlers'
+import { AgentCards } from './database/entities/AgentCards'
+import { AgentCardSkills } from './database/entities/AgentCardSkills'
 
 declare global {
     namespace Express {
@@ -92,9 +98,13 @@ export class App {
             await getEncryptionKey()
             logger.info('🔑 [server]: Encryption key initialized successfully')
 
+            // Get All workflows
+            const chatFlowRepository = this.AppDataSource.getRepository(ChatFlow)
+            const allChatFlows = await chatFlowRepository.find()
+            logger.info(`🧠 [server]: ${allChatFlows.length} chatflows loaded from the database`)
             // Initialize Rate Limit
             this.rateLimiterManager = RateLimiterManager.getInstance()
-            await this.rateLimiterManager.initializeRateLimiters(await getDataSource().getRepository(ChatFlow).find())
+            await this.rateLimiterManager.initializeRateLimiters(allChatFlows)
             logger.info('🚦 [server]: Rate limiters initialized successfully')
 
             // Initialize cache pool
@@ -108,6 +118,70 @@ export class App {
             // Initialize SSE Streamer
             this.sseStreamer = new SSEStreamer()
             logger.info('🌊 [server]: SSE Streamer initialized successfully')
+
+            // Register default workflows here for A2A request handlers
+            // workflowId, agentCard, agentExecutor
+            // filter based on isAgentEnabled in chatflows
+
+            //TODO: call agentCards.isEnabled and fetch all data
+
+            const apiHostName = process.env.API_HOST_NAME || 'http://localhost:3000'
+
+            const agentCardsRepository = this.AppDataSource.getRepository(AgentCards)
+
+            const agentCards = await agentCardsRepository.find()
+
+            logger.info(`🧠 [A2A]: ${agentCards.length} agentCards loaded from the database`)
+
+            // loop through filteredChatflowsForAgents and register each agent
+
+            for (const agentCard of agentCards) {
+                if (agentCard.is_agent_enabled) {
+                    const agentCardSkillsRepository = this.AppDataSource.getRepository(AgentCardSkills)
+                    const agentCardSkills = await agentCardSkillsRepository.find({
+                        where: { agent_card_id: agentCard.id }
+                    })
+
+                    console.log('agentCard:', agentCard)
+                    console.log('Agent Card Skills:', agentCardSkills)
+
+                    const mappedAgentCard: AgentCard = {
+                        protocolVersion: agentCard.protocol_version,
+                        name: agentCard.name,
+                        description: agentCard.description,
+                        url: `${apiHostName}/a2a/${agentCard.workflow_id}`,
+                        provider: {
+                            organization: agentCard.provider_organization ?? 'A2A Samples',
+                            url: agentCard.provider_url ?? 'https://example.com/a2a-samples'
+                        },
+                        version: agentCard.version,
+                        capabilities: {
+                            streaming: Boolean(agentCard.capabilities_streaming),
+                            pushNotifications: Boolean(agentCard.capabilities_push_notifications),
+                            stateTransitionHistory: Boolean(agentCard.capabilities_state_transition_history)
+                        },
+                        //TODO: enable security
+                        securitySchemes: agentCard.security_schemes ? JSON.parse(agentCard.security_schemes) : undefined,
+                        security: agentCard.security ? JSON.parse(agentCard.security) : undefined,
+                        defaultInputModes: agentCard.default_input_modes?.split(',') ?? ['text'],
+                        defaultOutputModes: agentCard.default_output_modes?.split(',') ?? ['text', 'task-status'],
+                        skills: agentCardSkills.map((skill) => ({
+                            id: skill.skill_id,
+                            name: skill.name,
+                            description: skill.description ?? '',
+                            tags: skill.tags?.split(',') ?? [],
+                            examples: skill.examples ? skill.examples.split('||') : [],
+                            inputModes: skill.input_modes?.split(',') ?? ['text'],
+                            outputModes: skill.output_modes?.split(',') ?? ['text', 'task-status']
+                        })),
+                        supportsAuthenticatedExtendedCard: Boolean(agentCard.supports_authenticated_extended_card)
+                    }
+
+                    const agentExecutor = new MyAgentExecutor(agentCard.workflow_id)
+
+                    A2ARequestHandlers.registerRequestHandler(agentCard.workflow_id, mappedAgentCard, agentExecutor)
+                }
+            }
 
             // Init Queues
             if (process.env.MODE === MODE.QUEUE) {
@@ -265,6 +339,7 @@ export class App {
         }
 
         this.app.use('/api/v1', flowiseApiV1Router)
+        this.app.use('/a2a', a2aRouter)
 
         // ----------------------------------------
         // Configure number of proxies in Host Environment
@@ -325,9 +400,13 @@ export async function start(): Promise<void> {
     await serverApp.initDatabase()
     await serverApp.config()
 
+    //starting point of  server
     server.listen(port, host, () => {
         logger.info(`⚡️ [server]: THub Server is listening at ${host ? 'http://' + host : ''}:${port}`)
     })
+
+    //API call to hit server
+    // agent enabled for workflows, workflowId, isAgentEnabled
 }
 
 export function getInstance(): App | undefined {

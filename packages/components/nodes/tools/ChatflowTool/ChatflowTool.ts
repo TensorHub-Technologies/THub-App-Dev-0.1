@@ -354,6 +354,8 @@ class ChatflowTool extends StructuredTool {
             }
         }
 
+        console.log('chatflow tool body:', body)
+
         const options = {
             method: 'POST',
             headers: {
@@ -411,6 +413,8 @@ try {
 
         const vm = new NodeVM(vmOptions)
         const response = await vm.run(`module.exports = async function() {${code}}()`, __dirname)
+
+        console.log('chatflow tool response:', response)
 
         return response
     }
