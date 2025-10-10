@@ -9,4 +9,5 @@ router.post('/:workflowId', a2aController.getAgentResponse)
 router.get('/:workflowId/.well-known/agent-card.json', a2aController.getAgentCard)
 //router.get(['/', '/:taskId'], a2aController.getResponse)
 
+router.post('/a2a', a2aController.saveAgentCard)
 export default router

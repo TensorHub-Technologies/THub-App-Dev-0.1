@@ -36,6 +36,7 @@ const ScheduleSettings = () => {
     } else {
         apiUrl = thubWebServerProdUrl
     }
+
     const handleScheduleChange = (e) => {
         setSelectedSchedule(e.target.value)
         setFollowUpPromptsConfig({})

@@ -9,6 +9,13 @@ import { AgentCards } from '../../database/entities/AgentCards'
 import path from 'path'
 import fs from 'fs'
 
+const saveAgentCard = async (agentCard: string): Promise<any> => {
+    console.log('service.saveAgentCard:', 'workflowId', agentCard)
+    const appServer = getRunningExpressApp()
+    await appServer.AppDataSource.getRepository(AgentCards).save({ agentCard: agentCard, workflow_id: 'workflowId' })
+    return { status: 'success' }
+}
+
 const createPromptFile = async (workflowId: string): Promise<any> => {
     const appServer = getRunningExpressApp()
     const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: workflowId })
@@ -115,5 +122,6 @@ const getAgentResponse = async (workflowId: string, req: Request, res: Response)
 export default {
     getAgentCard,
     getAgentResponse,
-    createPromptFile
+    createPromptFile,
+    saveAgentCard
 }

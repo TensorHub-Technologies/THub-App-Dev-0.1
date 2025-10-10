@@ -1,6 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
 import a2aService from '../../services/a2a'
 
+//TODO enable agent card in ui, change
+const saveAgentCard = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('controller.saveAgentCard:', req.body)
+    var agentCard = req.body
+    return res.send(await a2aService.saveAgentCard(agentCard))
+}
+
 const getAgentCard = async (req: Request, res: Response, next: NextFunction) => {
     var workflowId = req.params.workflowId
     var agentCard = await a2aService.getAgentCard(workflowId)
@@ -17,5 +24,6 @@ const getAgentResponse = async (req: Request, res: Response, next: NextFunction)
 
 export default {
     getAgentCard,
-    getAgentResponse
+    getAgentResponse,
+    saveAgentCard
 }

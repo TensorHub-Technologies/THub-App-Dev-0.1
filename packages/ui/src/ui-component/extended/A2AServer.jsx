@@ -17,6 +17,7 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import a2a from '@/api/a2a'
 
 const AgentCardForm = ({ initialData = null, onSubmit }) => {
     const [formValues, setFormValues] = useState(
@@ -146,11 +147,20 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
         }))
     }
 
-    const handleSubmit = () => {
-        if (onSubmit) {
-            onSubmit(formValues)
+    const handleSubmit = async () => {
+        console.log('inside handleSubmit:', formValues)
+        try {
+            console.log('before onSubmit:', formValues)
+            const saveResp = await a2a.saveAgentCard(formValues)
+            console.log('saveResp:', saveResp)
+            if (onSubmit) {
+                onSubmit(formValues)
+            }
+
+            console.log('saveResp:', saveResp)
+        } catch (error) {
+            console.error('Error submitting form:', error)
         }
-        console.log('Form submitted:', formValues)
     }
 
     return (
