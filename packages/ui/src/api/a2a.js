@@ -1,6 +1,6 @@
 import client from './client'
 
-const saveAgentCard = (body) => client.post(`/a2a`, body)
+const saveAgentCard = (body) => client.post(`/agent2agent`, body)
 
 export default {
     saveAgentCard

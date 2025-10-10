@@ -37,7 +37,7 @@ export const WHITELIST_URLS = [
     '/api/v1/user/test',
     '/api/v1/oauth2-credential/callback',
     '/api/v1/oauth2-credential/refresh',
-    '/api/v1/a2a'
+    '/api/v1/agent2agent'
 ]
 
 export const enum GeneralErrorMessage {

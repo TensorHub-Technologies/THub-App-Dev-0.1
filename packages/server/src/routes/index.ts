@@ -102,6 +102,6 @@ router.use('/nvidia-nim', nvidiaNimRouter)
 router.use('/executions', executionsRouter)
 router.use('/validation', validationRouter)
 router.use('/agentflowv2-generator', agentflowv2GeneratorRouter)
-router.use('/a2a', a2aRouter)
+router.use('/agent2agent', a2aRouter)
 
 export default router
