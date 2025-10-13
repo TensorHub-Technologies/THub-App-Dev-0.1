@@ -18,12 +18,14 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import a2a from '@/api/a2a'
+import toast, { Toaster } from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
 
 const AgentCardForm = ({ initialData = null, onSubmit }) => {
     const location = useLocation()
     const path = location.pathname
     const pathSegments = path.split('/').filter(Boolean)
+    const [isAgentEnabled, setIsAgentEnabled] = useState(false)
 
     const [formValues, setFormValues] = useState(
         initialData || {
@@ -68,6 +70,11 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
             ...prev,
             [field]: value
         }))
+    }
+
+    const handleToggle = (event) => {
+        setIsAgentEnabled(event.target.checked)
+        console.log('Agent Enabled:', event.target.checked)
     }
 
     const handleNestedChange = (parent, field, value) => {
@@ -154,10 +161,13 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
         }))
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         try {
+            console.log('form submitted', formValues)
             //TODO create a toast to say form is saved
             const saveResp = await a2a.saveAgentCard(formValues)
+            toast.success('Agent Card saved successfully!')
             if (onSubmit) {
                 onSubmit(formValues)
             }
@@ -168,9 +178,21 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
 
     return (
         <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-            <Typography variant='h4' sx={{ mb: 3, fontWeight: 'bold' }}>
-                Agent Card Configuration
-            </Typography>
+            <Toaster position='top-right' reverseOrder={false} />
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+                <div>
+                    <Typography variant='h4' sx={{ mb: 3, fontWeight: 'bold' }}>
+                        Agent Card Configuration
+                    </Typography>
+                </div>
+                <div>
+                    <FormControlLabel
+                        control={<Switch checked={isAgentEnabled} onChange={handleToggle} color='primary' />}
+                        label='Agent Enabled'
+                    />
+                </div>
+            </Box>
 
             {/* Basic Information */}
             <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
@@ -209,26 +231,6 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
                             value={formValues.description}
                             onChange={(e) => handleChange('description', e.target.value)}
                             placeholder='An agent that can answer questions about movies...'
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Agent URL'
-                            fullWidth
-                            required
-                            placeholder='http://localhost:41242/...'
-                            value={formValues.url}
-                            onChange={(e) => handleChange('url', e.target.value)}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Version'
-                            fullWidth
-                            value={formValues.version}
-                            onChange={(e) => handleChange('version', e.target.value)}
                         />
                     </Grid>
                 </Grid>
