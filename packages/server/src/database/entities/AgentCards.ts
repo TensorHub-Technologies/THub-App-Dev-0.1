@@ -7,13 +7,13 @@ export class AgentCards implements IAgentCards {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({ type: 'varchar', length: 36 })
+    @Column({ type: 'varchar', length: 36, default: '' })
     workflow_id: string
 
     @Column({ type: 'boolean', default: false })
     is_agent_enabled: boolean
 
-    @Column({ type: 'varchar', length: 10 })
+    @Column({ type: 'varchar', length: 10, default: '1.0' })
     protocol_version: string
 
     @Column({ type: 'varchar', length: 255 })

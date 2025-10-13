@@ -18,10 +18,16 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import a2a from '@/api/a2a'
+import { useLocation } from 'react-router-dom'
 
 const AgentCardForm = ({ initialData = null, onSubmit }) => {
+    const location = useLocation()
+    const path = location.pathname
+    const pathSegments = path.split('/').filter(Boolean)
+
     const [formValues, setFormValues] = useState(
         initialData || {
+            workflow_id: pathSegments[1],
             protocolVersion: '1.0',
             name: '',
             description: '',
@@ -39,7 +45,8 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
             defaultInputModes: ['text'],
             defaultOutputModes: ['text'],
             skills: [],
-            supportsAuthenticatedExtendedCard: false
+            supportsAuthenticatedExtendedCard: false,
+            prompt: ''
         }
     )
 
@@ -148,16 +155,12 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
     }
 
     const handleSubmit = async () => {
-        console.log('inside handleSubmit:', formValues)
         try {
-            console.log('before onSubmit:', formValues)
+            //TODO create a toast to say form is saved
             const saveResp = await a2a.saveAgentCard(formValues)
-            console.log('saveResp:', saveResp)
             if (onSubmit) {
                 onSubmit(formValues)
             }
-
-            console.log('saveResp:', saveResp)
         } catch (error) {
             console.error('Error submitting form:', error)
         }
@@ -533,6 +536,40 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
                             Add Skill
                         </Button>
                     </Grid>
+                </Grid>
+            </Paper>
+            <Paper>
+                <Typography variant='subtitle1' sx={{ mb: 2, fontWeight: 'medium' }}>
+                    Prompt
+                </Typography>
+                <Grid item xs={12}>
+                    <TextField
+                        label='Prompt'
+                        fullWidth
+                        multiline
+                        rows={3}
+                        required
+                        value={formValues.prompt}
+                        onChange={(e) => handleChange('prompt', e.target.value)}
+                        placeholder={`{{role "system"}}
+                        You are a movie expert. Answer the user's question about movies and film industry personalities, using the searchMovies and searchPeople tools to find out more information as needed. Feel free to call them multiple times in parallel if necessary.{{#if goal}}
+
+                        Your goal in this task is: {{goal}}{{/if}}
+
+                        The current date and time is: {{now}}
+
+                        If the user asks you for specific information about a movie or person (such as the plot or a specific role an actor played), do a search for that movie/actor using the available functions before responding.
+
+                        ## Output Instructions
+
+                        ALWAYS end your response with either "COMPLETED". If you have answered the user's question, use COMPLETED.
+                        </question>
+                        <output>
+                        [some_movie] was released on October 3, 1992.
+                        COMPLETED
+                        </output>
+                        </example>`}
+                    />
                 </Grid>
             </Paper>
 

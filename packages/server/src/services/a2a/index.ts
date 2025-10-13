@@ -9,10 +9,33 @@ import { AgentCards } from '../../database/entities/AgentCards'
 import path from 'path'
 import fs from 'fs'
 
-const saveAgentCard = async (agentCard: string): Promise<any> => {
-    console.log('service.saveAgentCard:', 'workflowId', agentCard)
+const saveAgentCard = async (req: Request): Promise<any> => {
+    console.log('service.saveAgentCard:', req.body)
+
     const appServer = getRunningExpressApp()
-    await appServer.AppDataSource.getRepository(AgentCards).save({ agentCard: agentCard, workflow_id: 'workflowId' })
+
+    const card = appServer.AppDataSource.getRepository(AgentCards).create({
+        workflow_id: req.body.workflow_id,
+        is_agent_enabled: true,
+        protocol_version: req.body.protocolVersion,
+        name: req.body.name,
+        description: req.body.description,
+        version: req.body.version,
+        provider_organization: req.body.provider?.organization,
+        provider_url: req.body.provider?.url,
+        capabilities_streaming: req.body.capabilities?.streaming,
+        capabilities_push_notifications: req.body.capabilities?.pushNotifications,
+        capabilities_state_transition_history: req.body.capabilities?.stateTransitionHistory,
+        authentication: req.body.authentication,
+        security_schemes: req.body.securitySchemes?.join(', '),
+        security: req.body.security?.join(', '),
+        default_input_modes: req.body.defaultInputModes?.join(','),
+        default_output_modes: req.body.defaultOutputModes?.join(','),
+        supports_authenticated_extended_card: req.body.supportsAuthenticatedExtendedCard,
+        prompt: req.body.prompt
+    })
+    await appServer.AppDataSource.getRepository(AgentCards).save(card)
+
     return { status: 'success' }
 }
 
@@ -20,6 +43,7 @@ const createPromptFile = async (workflowId: string): Promise<any> => {
     const appServer = getRunningExpressApp()
     const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: workflowId })
 
+    console.log('createPromptFile workflowId:', workflowId)
     const promptdirname = path.join('/', '/prompts')
     const promptFileName = workflowId + '.prompt'
     if (!fs.existsSync(promptdirname)) fs.mkdirSync(promptdirname, { recursive: true })
@@ -27,6 +51,7 @@ const createPromptFile = async (workflowId: string): Promise<any> => {
     const promptFilePath = path.join(promptdirname, promptFileName)
 
     console.log('createPromptFile:', promptFilePath)
+    console.log('agentCard:', agentCard?.prompt)
     await writeFile(promptFilePath, agentCard?.prompt ?? '', 'utf-8')
     return promptFileName
 }

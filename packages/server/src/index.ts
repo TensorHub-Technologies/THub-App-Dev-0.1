@@ -125,6 +125,7 @@ export class App {
 
             //TODO: call agentCards.isEnabled and fetch all data
 
+            //TODO:
             const apiHostName = process.env.API_HOST_NAME || 'http://localhost:3000'
 
             const agentCardsRepository = this.AppDataSource.getRepository(AgentCards)
@@ -141,9 +142,6 @@ export class App {
                     const agentCardSkills = await agentCardSkillsRepository.find({
                         where: { agent_card_id: agentCard.id }
                     })
-
-                    console.log('agentCard:', agentCard)
-                    console.log('Agent Card Skills:', agentCardSkills)
 
                     const mappedAgentCard: AgentCard = {
                         protocolVersion: agentCard.protocol_version,
