@@ -16,7 +16,7 @@ const saveAgentCard = async (req: Request): Promise<any> => {
 
     const card = appServer.AppDataSource.getRepository(AgentCards).create({
         workflow_id: req.body.workflow_id,
-        is_agent_enabled: true,
+        is_agent_enabled: req.body.isAgentEnabled,
         protocol_version: req.body.protocolVersion,
         name: req.body.name,
         description: req.body.description,
@@ -35,6 +35,22 @@ const saveAgentCard = async (req: Request): Promise<any> => {
         prompt: req.body.prompt
     })
     await appServer.AppDataSource.getRepository(AgentCards).save(card)
+    /*
+    //TODO: after saving the agent card, take the agent id and store skills
+    const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: req.body.workflow_id })
+
+        const agentCardSkills = appServer.AppDataSource.getRepository(AgentCardSkills).create({
+        agent_card_id: agentCard?.id,
+        skill_id: req.body.isAgentEnabled,
+        name: req.body.protocolVersion,
+        description: req.body.name,
+        tags: req.body.description,
+        examples: req.body.version,
+        input_modes: req.body.provider?.organization,
+        output_modes: req.body.provider?.url,
+    }) 
+    await appServer.AppDataSource.getRepository(AgentCardSkills).save(agentCardSkills)
+*/
 
     return { status: 'success' }
 }
