@@ -1,6 +1,7 @@
 import { A2ARequestHandlers } from '../../A2ARequestHandlers'
 import { JsonRpcTransportHandler } from '../../a2a/server/transports/jsonrpc_transport_handler'
 import { Request, Response } from 'express'
+import { Storage } from '@google-cloud/storage'
 import { JSONRPCErrorResponse, JSONRPCSuccessResponse, JSONRPCResponse } from '@a2a-js/sdk'
 import { A2AError } from '../../a2a/server/error'
 import { writeFile } from 'fs/promises'
@@ -60,16 +61,73 @@ const createPromptFile = async (workflowId: string): Promise<any> => {
     const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: workflowId })
 
     console.log('createPromptFile workflowId:', workflowId)
-    const promptdirname = path.join('/', '/prompts')
     const promptFileName = workflowId + '.prompt'
-    if (!fs.existsSync(promptdirname)) fs.mkdirSync(promptdirname, { recursive: true })
+    const storageType = process.env.STORAGE_TYPE ? process.env.STORAGE_TYPE : 'local'
 
-    const promptFilePath = path.join(promptdirname, promptFileName)
+    if (storageType === 'gcs') {
+        // Validate required environment variables
+        const requiredEnvVars = [
+            'GOOGLE_CLOUD_TYPE',
+            'GOOGLE_CLOUD_PROJECT_ID',
+            'GOOGLE_CLOUD_PRIVATE_KEY_ID',
+            'GOOGLE_CLOUD_PRIVATE_KEY',
+            'GOOGLE_CLOUD_CLIENT_EMAIL',
+            'GOOGLE_CLOUD_CLIENT_ID'
+        ]
 
-    console.log('createPromptFile:', promptFilePath)
-    console.log('agentCard:', agentCard?.prompt)
-    await writeFile(promptFilePath, agentCard?.prompt ?? '', 'utf-8')
-    return promptFileName
+        const missingVars = requiredEnvVars.filter((varName) => !process.env[varName])
+        if (missingVars.length > 0) {
+            throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`)
+        }
+
+        const storageCredentials = {
+            type: process.env.GOOGLE_CLOUD_TYPE,
+            project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
+            private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
+            private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+            client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
+            client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
+            auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI || 'https://accounts.google.com/o/oauth2/auth',
+            token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI || 'https://oauth2.googleapis.com/token',
+            auth_provider_x509_cert_url:
+                process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL || 'https://www.googleapis.com/oauth2/v1/certs',
+            client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
+            universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN || 'googleapis.com'
+        }
+
+        const storage = new Storage({
+            credentials: storageCredentials
+        })
+
+        const bucketName = 'thub-files'
+        const bucket = storage.bucket(bucketName)
+        const file = bucket.file(`prompts/${promptFileName}`)
+
+        // Upload the prompt content to GCS
+        await file.save(agentCard?.prompt ?? '', {
+            contentType: 'text/plain',
+            metadata: {
+                cacheControl: 'public, max-age=31536000'
+            }
+        })
+
+        console.log(`createPromptFile: gs://${bucketName}/prompts/${promptFileName}`)
+        console.log('agentCard:', agentCard?.prompt)
+
+        return promptFileName
+    } else {
+        // Local file system implementation
+        const promptdirname = path.join('/', '/prompts')
+        if (!fs.existsSync(promptdirname)) fs.mkdirSync(promptdirname, { recursive: true })
+
+        const promptFilePath = path.join(promptdirname, promptFileName)
+
+        console.log('createPromptFile:', promptFilePath)
+        console.log('agentCard:', agentCard?.prompt)
+        await writeFile(promptFilePath, agentCard?.prompt ?? '', 'utf-8')
+
+        return promptFileName
+    }
 }
 
 const getAgentCard = async (workflowId: string): Promise<any> => {
