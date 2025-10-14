@@ -5,40 +5,48 @@ import {
     Typography,
     TextField,
     Button,
-    Switch,
-    FormControlLabel,
+    Stack,
     IconButton,
     Chip,
-    Grid,
     Paper,
     Divider,
-    Card,
-    CardContent
+    FormControlLabel,
+    Switch,
+    useTheme
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import { IconX } from '@tabler/icons-react'
 import a2a from '@/api/a2a'
-import toast, { Toaster } from 'react-hot-toast'
 import { useLocation } from 'react-router-dom'
+import { StyledButton } from '../button/StyledButton'
 
 const AgentCardForm = ({ initialData = null, onSubmit }) => {
     const location = useLocation()
-    const path = location.pathname
-    const pathSegments = path.split('/').filter(Boolean)
-    const [isAgentEnabled, setIsAgentEnabled] = useState(false)
+
+    const theme = useTheme()
+    const isDarkMode = theme.palette.mode === 'dark'
+
+    // Extract workflow_id from URL (mock implementation)
+    const getWorkflowId = () => {
+        const path = window.location.pathname
+        const pathSegments = path.split('/').filter(Boolean)
+        return pathSegments[1] || 'default-workflow'
+    }
+
+    const [isAgentEnabled, setIsAgentEnabled] = useState(initialData?.enabled || false)
+    const [notification, setNotification] = useState(null)
 
     const [formValues, setFormValues] = useState(
         initialData || {
-            workflow_id: pathSegments[1],
+            workflow_id: getWorkflowId(),
             protocolVersion: '1.0',
             name: '',
             description: '',
-            url: '',
             provider: {
                 organization: '',
                 url: ''
             },
-            version: '0.0.1',
             capabilities: {
                 streaming: false,
                 pushNotifications: false,
@@ -46,44 +54,35 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
             },
             defaultInputModes: ['text'],
             defaultOutputModes: ['text'],
-            skills: [],
+            skills: {
+                name: '',
+                description: '',
+                tags: [],
+                examples: [],
+                inputModes: ['text'],
+                outputModes: ['text']
+            },
             supportsAuthenticatedExtendedCard: false,
             prompt: ''
         }
     )
 
-    const [currentSkill, setCurrentSkill] = useState({
-        id: '',
-        name: '',
-        description: '',
-        tags: [],
-        examples: [],
-        inputModes: ['text'],
-        outputModes: ['text']
-    })
-
     const [tagInput, setTagInput] = useState('')
     const [exampleInput, setExampleInput] = useState('')
 
-    const handleChange = (field, value) => {
-        setFormValues((prev) => ({
-            ...prev,
-            [field]: value
-        }))
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type })
+        setTimeout(() => setNotification(null), 5000)
     }
 
-    const handleToggle = (event) => {
-        setIsAgentEnabled(event.target.checked)
-        console.log('Agent Enabled:', event.target.checked)
+    const handleChange = (field, value) => {
+        setFormValues((prev) => ({ ...prev, [field]: value }))
     }
 
     const handleNestedChange = (parent, field, value) => {
         setFormValues((prev) => ({
             ...prev,
-            [parent]: {
-                ...prev[parent],
-                [field]: value
-            }
+            [parent]: { ...prev[parent], [field]: value }
         }))
     }
 
@@ -96,494 +95,377 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
     }
 
     const handleSkillChange = (field, value) => {
-        setCurrentSkill((prev) => ({
+        setFormValues((prev) => ({
             ...prev,
-            [field]: value
+            skills: { ...prev.skills, [field]: value }
         }))
     }
 
     const addTag = () => {
         if (tagInput.trim()) {
-            setCurrentSkill((prev) => ({
+            setFormValues((prev) => ({
                 ...prev,
-                tags: [...prev.tags, tagInput.trim()]
+                skills: {
+                    ...prev.skills,
+                    tags: [...prev.skills.tags, tagInput.trim()]
+                }
             }))
             setTagInput('')
         }
     }
 
     const removeTag = (index) => {
-        setCurrentSkill((prev) => ({
+        setFormValues((prev) => ({
             ...prev,
-            tags: prev.tags.filter((_, i) => i !== index)
+            skills: {
+                ...prev.skills,
+                tags: prev.skills.tags.filter((_, i) => i !== index)
+            }
         }))
     }
 
     const addExample = () => {
         if (exampleInput.trim()) {
-            setCurrentSkill((prev) => ({
+            setFormValues((prev) => ({
                 ...prev,
-                examples: [...prev.examples, exampleInput.trim()]
+                skills: {
+                    ...prev.skills,
+                    examples: [...prev.skills.examples, exampleInput.trim()]
+                }
             }))
             setExampleInput('')
         }
     }
 
     const removeExample = (index) => {
-        setCurrentSkill((prev) => ({
-            ...prev,
-            examples: prev.examples.filter((_, i) => i !== index)
-        }))
-    }
-
-    const addSkill = () => {
-        if (currentSkill.id && currentSkill.name) {
-            setFormValues((prev) => ({
-                ...prev,
-                skills: [...prev.skills, { ...currentSkill }]
-            }))
-            setCurrentSkill({
-                id: '',
-                name: '',
-                description: '',
-                tags: [],
-                examples: [],
-                inputModes: ['text'],
-                outputModes: ['text']
-            })
-        }
-    }
-
-    const removeSkill = (index) => {
         setFormValues((prev) => ({
             ...prev,
-            skills: prev.skills.filter((_, i) => i !== index)
+            skills: {
+                ...prev.skills,
+                examples: prev.skills.examples.filter((_, i) => i !== index)
+            }
         }))
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+    const checkDisabled = () => {
+        if (!isAgentEnabled) return false
+        return !formValues.name || !formValues.description || !formValues.provider.organization || !formValues.provider.url
+    }
+
+    const handleSubmit = async () => {
         try {
-            console.log('form submitted', formValues)
-            //TODO create a toast to say form is saved
-            const saveResp = await a2a.saveAgentCard(formValues)
-            toast.success('Agent Card saved successfully!')
+            const dataToSave = {
+                ...formValues,
+                enabled: isAgentEnabled
+            }
+
+            // Log all form data to console
+            console.log('=== Agent Card Configuration Data ===')
+            console.log('Full Data:', JSON.stringify(dataToSave, null, 2))
+
+            const saveResp = await a2a.saveAgentCard(dataToSave)
+            showNotification('Agent Card Configuration Saved', 'success')
+
             if (onSubmit) {
-                onSubmit(formValues)
+                onSubmit(dataToSave)
             }
         } catch (error) {
-            console.error('Error submitting form:', error)
+            showNotification(`Failed to save Agent Card Configuration: ${error?.response?.data?.message || error.message}`, 'error')
         }
     }
 
+    const textField = (label, value, field, parent = null, props = {}) => (
+        <Stack direction='column' spacing={1}>
+            <Typography variant='body1'>{label}</Typography>
+            <TextField
+                fullWidth
+                size='small'
+                value={value}
+                onChange={(e) => (parent ? handleNestedChange(parent, field, e.target.value) : handleChange(field, e.target.value))}
+                {...props}
+            />
+        </Stack>
+    )
+
     return (
-        <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-            <Toaster position='top-right' reverseOrder={false} />
+        <Box sx={{ width: '100%', p: 0 }}>
+            {/* Notification */}
+            {notification && (
+                <Paper
+                    sx={{
+                        mb: 2,
+                        p: 2,
+                        bgcolor: notification.type === 'success' ? 'success.main' : 'error.main',
+                        color: 'white',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}
+                >
+                    <Typography>{notification.message}</Typography>
+                    <IconButton size='small' onClick={() => setNotification(null)} sx={{ color: 'white' }}>
+                        <IconX />
+                    </IconButton>
+                </Paper>
+            )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-                <div>
-                    <Typography variant='h4' sx={{ mb: 3, fontWeight: 'bold' }}>
-                        Agent Card Configuration
-                    </Typography>
-                </div>
-                <div>
+            <Stack direction='column' spacing={3}>
+                {/* Header */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant='h4'>Agent Card Configuration</Typography>
                     <FormControlLabel
-                        control={<Switch checked={isAgentEnabled} onChange={handleToggle} color='primary' />}
-                        label='Agent Enabled'
+                        control={<Switch checked={isAgentEnabled} onChange={(e) => setIsAgentEnabled(e.target.checked)} color='primary' />}
+                        label='Enable Agent'
                     />
-                </div>
-            </Box>
+                </Box>
 
-            {/* Basic Information */}
-            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                <Typography variant='h6' sx={{ mb: 2 }}>
-                    Basic Information
-                </Typography>
+                {isAgentEnabled && (
+                    <>
+                        {/* Basic Information */}
+                        <Stack direction='column' spacing={2}>
+                            {/* <Typography variant='h6'>Basic Information</Typography> */}
+                            {textField('Agent Name', formValues.name, 'name', null, {
+                                placeholder: 'Movie Agent',
+                                required: true
+                            })}
+                            {textField('Protocol Version', formValues.protocolVersion, 'protocolVersion')}
+                            {textField('Description', formValues.description, 'description', null, {
+                                placeholder: 'An agent that can answer questions about movies...',
+                                multiline: true,
+                                rows: 3,
+                                required: true
+                            })}
+                        </Stack>
 
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Agent Name'
-                            fullWidth
-                            required
-                            value={formValues.name}
-                            onChange={(e) => handleChange('name', e.target.value)}
-                            placeholder='Movie Agent'
-                        />
-                    </Grid>
+                        <Divider />
 
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Protocol Version'
-                            fullWidth
-                            value={formValues.protocolVersion}
-                            onChange={(e) => handleChange('protocolVersion', e.target.value)}
-                        />
-                    </Grid>
+                        {/* Provider Information */}
+                        <Stack direction='column' spacing={2}>
+                            <Typography variant='h6'>Provider Information</Typography>
+                            {textField('Provider Organization', formValues.provider.organization, 'organization', 'provider', {
+                                placeholder: 'A2A Samples',
+                                required: true
+                            })}
+                            {textField('Provider URL', formValues.provider.url, 'url', 'provider', {
+                                placeholder: 'https://example.com/provider',
+                                required: true
+                            })}
+                        </Stack>
 
-                    <Grid item xs={12}>
-                        <TextField
-                            label='Description'
-                            fullWidth
-                            multiline
-                            rows={3}
-                            required
-                            value={formValues.description}
-                            onChange={(e) => handleChange('description', e.target.value)}
-                            placeholder='An agent that can answer questions about movies...'
-                        />
-                    </Grid>
-                </Grid>
-            </Paper>
+                        <Divider />
 
-            {/* Provider Information */}
-            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                <Typography variant='h6' sx={{ mb: 2 }}>
-                    Provider Information
-                </Typography>
-
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Provider Organization'
-                            fullWidth
-                            required
-                            value={formValues.provider.organization}
-                            onChange={(e) => handleNestedChange('provider', 'organization', e.target.value)}
-                            placeholder='A2A Samples'
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Provider URL'
-                            fullWidth
-                            required
-                            value={formValues.provider.url}
-                            onChange={(e) => handleNestedChange('provider', 'url', e.target.value)}
-                            placeholder='https://example.com/provider'
-                        />
-                    </Grid>
-                </Grid>
-            </Paper>
-
-            {/* Capabilities */}
-            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                <Typography variant='h6' sx={{ mb: 2 }}>
-                    Capabilities
-                </Typography>
-
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={formValues.capabilities.streaming}
-                                    onChange={(e) => handleNestedChange('capabilities', 'streaming', e.target.checked)}
+                        {/* Capabilities */}
+                        <Stack direction='column' spacing={2}>
+                            <Typography variant='h6'>Capabilities</Typography>
+                            <Stack direction='row' spacing={2} flexWrap='wrap'>
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={formValues.capabilities.streaming}
+                                            onChange={(e) => handleNestedChange('capabilities', 'streaming', e.target.checked)}
+                                        />
+                                    }
+                                    label='Streaming'
                                 />
-                            }
-                            label='Streaming'
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={3}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={formValues.capabilities.pushNotifications}
-                                    onChange={(e) => handleNestedChange('capabilities', 'pushNotifications', e.target.checked)}
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={formValues.capabilities.pushNotifications}
+                                            onChange={(e) => handleNestedChange('capabilities', 'pushNotifications', e.target.checked)}
+                                        />
+                                    }
+                                    label='Push Notifications'
                                 />
-                            }
-                            label='Push Notifications'
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={3}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={formValues.capabilities.stateTransitionHistory}
-                                    onChange={(e) => handleNestedChange('capabilities', 'stateTransitionHistory', e.target.checked)}
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={formValues.capabilities.stateTransitionHistory}
+                                            onChange={(e) => handleNestedChange('capabilities', 'stateTransitionHistory', e.target.checked)}
+                                        />
+                                    }
+                                    label='State History'
                                 />
-                            }
-                            label='State History'
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={3}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={formValues.supportsAuthenticatedExtendedCard}
-                                    onChange={(e) => handleChange('supportsAuthenticatedExtendedCard', e.target.checked)}
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={formValues.supportsAuthenticatedExtendedCard}
+                                            onChange={(e) => handleChange('supportsAuthenticatedExtendedCard', e.target.checked)}
+                                        />
+                                    }
+                                    label='Auth Extended Card'
                                 />
-                            }
-                            label='Auth Extended Card'
-                        />
-                    </Grid>
-                </Grid>
-            </Paper>
+                            </Stack>
+                        </Stack>
 
-            {/* Default Modes */}
-            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                <Typography variant='h6' sx={{ mb: 2 }}>
-                    Default Modes
-                </Typography>
+                        <Divider />
 
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Default Input Modes'
-                            fullWidth
-                            placeholder='text, voice (comma-separated)'
-                            value={formValues.defaultInputModes.join(', ')}
-                            onChange={(e) => handleArrayChange('defaultInputModes', e.target.value)}
-                            helperText='Comma-separated values'
-                        />
-                    </Grid>
+                        {/* Default Modes */}
+                        <Stack direction='column' spacing={2}>
+                            <Typography variant='h6'>Default Modes</Typography>
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Default Input Modes</Typography>
+                                <TextField
+                                    fullWidth
+                                    size='small'
+                                    placeholder='text, voice (comma-separated)'
+                                    value={formValues.defaultInputModes.join(', ')}
+                                    onChange={(e) => handleArrayChange('defaultInputModes', e.target.value)}
+                                    helperText='Comma-separated values'
+                                />
+                            </Stack>
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Default Output Modes</Typography>
+                                <TextField
+                                    fullWidth
+                                    size='small'
+                                    placeholder='text, task-status (comma-separated)'
+                                    value={formValues.defaultOutputModes.join(', ')}
+                                    onChange={(e) => handleArrayChange('defaultOutputModes', e.target.value)}
+                                    helperText='Comma-separated values'
+                                />
+                            </Stack>
+                        </Stack>
 
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Default Output Modes'
-                            fullWidth
-                            placeholder='text, task-status (comma-separated)'
-                            value={formValues.defaultOutputModes.join(', ')}
-                            onChange={(e) => handleArrayChange('defaultOutputModes', e.target.value)}
-                            helperText='Comma-separated values'
-                        />
-                    </Grid>
-                </Grid>
-            </Paper>
+                        <Divider />
 
-            {/* Skills */}
-            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                <Typography variant='h6' sx={{ mb: 2 }}>
-                    Skills
-                </Typography>
+                        {/* Skill Configuration */}
+                        <Stack direction='column' spacing={2}>
+                            <Typography variant='h6'>Skill Configuration</Typography>
 
-                {/* Existing Skills */}
-                {formValues.skills.length > 0 && (
-                    <Box sx={{ mb: 3 }}>
-                        <Typography variant='subtitle1' sx={{ mb: 2, fontWeight: 'medium' }}>
-                            Configured Skills
-                        </Typography>
-                        {formValues.skills.map((skill, index) => (
-                            <Card key={index} variant='outlined' sx={{ mb: 2, bgcolor: '#fafafa' }}>
-                                <CardContent>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                                        <Box sx={{ flex: 1 }}>
-                                            <Typography variant='subtitle1' fontWeight='bold'>
-                                                {skill.name}
-                                            </Typography>
-                                            <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
-                                                ID: {skill.id}
-                                            </Typography>
-                                            <Typography variant='body2' sx={{ mb: 1 }}>
-                                                {skill.description}
-                                            </Typography>
-                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
-                                                {skill.tags.map((tag, i) => (
-                                                    <Chip key={i} label={tag} size='small' color='primary' variant='outlined' />
-                                                ))}
-                                            </Box>
-                                            <Typography variant='caption' color='text.secondary'>
-                                                {skill.examples.length} example(s)
-                                            </Typography>
-                                        </Box>
-                                        <IconButton onClick={() => removeSkill(index)} color='error'>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </Box>
+                            {textField('Skill Name', formValues.skills.name, 'name', 'skills', {
+                                placeholder: 'General Movie Chat'
+                            })}
+
+                            {textField('Skill Description', formValues.skills.description, 'description', 'skills', {
+                                placeholder: 'Answer general questions or chat about movies...',
+                                multiline: true,
+                                rows: 2
+                            })}
+
+                            {/* Tags */}
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Tags</Typography>
+                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                    <TextField
+                                        size='small'
+                                        fullWidth
+                                        value={tagInput}
+                                        onChange={(e) => setTagInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                                        placeholder='Add a tag...'
+                                    />
+                                    <Button variant='outlined' onClick={addTag} startIcon={<AddIcon />}>
+                                        Add
+                                    </Button>
+                                </Box>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
+                                    {formValues.skills.tags.map((tag, i) => (
+                                        <Chip key={i} label={tag} size='small' onDelete={() => removeTag(i)} color='primary' />
+                                    ))}
+                                </Box>
+                            </Stack>
+
+                            {/* Examples */}
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Examples</Typography>
+                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                    <TextField
+                                        size='small'
+                                        fullWidth
+                                        value={exampleInput}
+                                        onChange={(e) => setExampleInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addExample())}
+                                        placeholder='Add an example...'
+                                    />
+                                    <Button variant='outlined' onClick={addExample} startIcon={<AddIcon />}>
+                                        Add
+                                    </Button>
+                                </Box>
+                                {formValues.skills.examples.length > 0 && (
+                                    <Stack spacing={1} sx={{ mt: 1 }}>
+                                        {formValues.skills.examples.map((example, i) => (
+                                            <Paper
+                                                key={i}
+                                                variant='outlined'
+                                                sx={{
+                                                    p: 1.5,
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center'
+                                                }}
+                                            >
+                                                <Typography variant='body2'>{example}</Typography>
+                                                <IconButton size='small' onClick={() => removeExample(i)}>
+                                                    <DeleteIcon fontSize='small' />
+                                                </IconButton>
+                                            </Paper>
+                                        ))}
+                                    </Stack>
+                                )}
+                            </Stack>
+
+                            {/* Input/Output Modes */}
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Input Modes</Typography>
+                                <TextField
+                                    fullWidth
+                                    size='small'
+                                    placeholder='text, voice'
+                                    value={formValues.skills.inputModes.join(', ')}
+                                    onChange={(e) => {
+                                        const modes = e.target.value
+                                            .split(',')
+                                            .map((m) => m.trim())
+                                            .filter((m) => m)
+                                        handleSkillChange('inputModes', modes)
+                                    }}
+                                />
+                            </Stack>
+
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Output Modes</Typography>
+                                <TextField
+                                    fullWidth
+                                    size='small'
+                                    placeholder='text, task-status'
+                                    value={formValues.skills.outputModes.join(', ')}
+                                    onChange={(e) => {
+                                        const modes = e.target.value
+                                            .split(',')
+                                            .map((m) => m.trim())
+                                            .filter((m) => m)
+                                        handleSkillChange('outputModes', modes)
+                                    }}
+                                />
+                            </Stack>
+                        </Stack>
+
+                        <Divider />
+
+                        {/* Prompt */}
+                        <Stack direction='column' spacing={2}>
+                            <Typography variant='h6'>Prompt Configuration</Typography>
+                            {textField('Prompt', formValues.prompt, 'prompt', null, {
+                                placeholder: `{{role "system"}}
+You are a movie expert. Answer the user's question about movies...
+
+## Output Instructions
+ALWAYS end your response with "COMPLETED"`,
+                                multiline: true,
+                                rows: 6,
+                                required: true
+                            })}
+                        </Stack>
+                    </>
                 )}
 
-                <Divider sx={{ my: 3 }} />
-
-                {/* Add New Skill */}
-                <Typography variant='subtitle1' sx={{ mb: 2, fontWeight: 'medium' }}>
-                    Add New Skill
-                </Typography>
-
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Skill ID'
-                            fullWidth
-                            value={currentSkill.id}
-                            onChange={(e) => handleSkillChange('id', e.target.value)}
-                            placeholder='general_movie_chat'
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Skill Name'
-                            fullWidth
-                            value={currentSkill.name}
-                            onChange={(e) => handleSkillChange('name', e.target.value)}
-                            placeholder='General Movie Chat'
-                        />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <TextField
-                            label='Skill Description'
-                            fullWidth
-                            multiline
-                            rows={2}
-                            value={currentSkill.description}
-                            onChange={(e) => handleSkillChange('description', e.target.value)}
-                            placeholder='Answer general questions or chat about movies...'
-                        />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <Typography variant='body2' sx={{ mb: 1, fontWeight: 'medium' }}>
-                            Tags
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                            <TextField
-                                size='small'
-                                fullWidth
-                                value={tagInput}
-                                onChange={(e) => setTagInput(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                                placeholder='Add a tag...'
-                            />
-                            <Button variant='outlined' onClick={addTag} startIcon={<AddIcon />}>
-                                Add
-                            </Button>
-                        </Box>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                            {currentSkill.tags.map((tag, i) => (
-                                <Chip key={i} label={tag} size='small' onDelete={() => removeTag(i)} color='primary' />
-                            ))}
-                        </Box>
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <Typography variant='body2' sx={{ mb: 1, fontWeight: 'medium' }}>
-                            Examples
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                            <TextField
-                                size='small'
-                                fullWidth
-                                value={exampleInput}
-                                onChange={(e) => setExampleInput(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addExample())}
-                                placeholder='Add an example...'
-                            />
-                            <Button variant='outlined' onClick={addExample} startIcon={<AddIcon />}>
-                                Add
-                            </Button>
-                        </Box>
-                        {currentSkill.examples.length > 0 && (
-                            <Box sx={{ mt: 1 }}>
-                                {currentSkill.examples.map((example, i) => (
-                                    <Paper
-                                        key={i}
-                                        variant='outlined'
-                                        sx={{ p: 1.5, mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                                    >
-                                        <Typography variant='body2'>{example}</Typography>
-                                        <IconButton size='small' onClick={() => removeExample(i)}>
-                                            <DeleteIcon fontSize='small' />
-                                        </IconButton>
-                                    </Paper>
-                                ))}
-                            </Box>
-                        )}
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Input Modes'
-                            fullWidth
-                            size='small'
-                            placeholder='text, voice'
-                            value={currentSkill.inputModes.join(', ')}
-                            onChange={(e) => {
-                                const modes = e.target.value
-                                    .split(',')
-                                    .map((m) => m.trim())
-                                    .filter((m) => m)
-                                handleSkillChange('inputModes', modes)
-                            }}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            label='Output Modes'
-                            fullWidth
-                            size='small'
-                            placeholder='text, task-status'
-                            value={currentSkill.outputModes.join(', ')}
-                            onChange={(e) => {
-                                const modes = e.target.value
-                                    .split(',')
-                                    .map((m) => m.trim())
-                                    .filter((m) => m)
-                                handleSkillChange('outputModes', modes)
-                            }}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <Button variant='outlined' onClick={addSkill} startIcon={<AddIcon />} fullWidth color='success'>
-                            Add Skill
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Paper>
-            <Paper>
-                <Typography variant='subtitle1' sx={{ mb: 2, fontWeight: 'medium' }}>
-                    Prompt
-                </Typography>
-                <Grid item xs={12}>
-                    <TextField
-                        label='Prompt'
-                        fullWidth
-                        multiline
-                        rows={3}
-                        required
-                        value={formValues.prompt}
-                        onChange={(e) => handleChange('prompt', e.target.value)}
-                        placeholder={`{{role "system"}}
-                        You are a movie expert. Answer the user's question about movies and film industry personalities, using the searchMovies and searchPeople tools to find out more information as needed. Feel free to call them multiple times in parallel if necessary.{{#if goal}}
-
-                        Your goal in this task is: {{goal}}{{/if}}
-
-                        The current date and time is: {{now}}
-
-                        If the user asks you for specific information about a movie or person (such as the plot or a specific role an actor played), do a search for that movie/actor using the available functions before responding.
-
-                        ## Output Instructions
-
-                        ALWAYS end your response with either "COMPLETED". If you have answered the user's question, use COMPLETED.
-                        </question>
-                        <output>
-                        [some_movie] was released on October 3, 1992.
-                        COMPLETED
-                        </output>
-                        </example>`}
-                    />
-                </Grid>
-            </Paper>
-
-            {/* Action Buttons */}
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                <Button variant='outlined' size='large'>
-                    Cancel
-                </Button>
-                <Button variant='contained' size='large' onClick={handleSubmit}>
-                    Save Agent Card
-                </Button>
-            </Box>
+                {/* Save Button */}
+                <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
+                    <StyledButton variant='contained' disabled={checkDisabled()} onClick={handleSubmit} sx={{ minWidth: 120 }}>
+                        Save
+                    </StyledButton>
+                </Box>
+            </Stack>
         </Box>
     )
 }
