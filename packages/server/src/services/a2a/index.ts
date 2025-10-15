@@ -7,6 +7,7 @@ import { A2AError } from '../../a2a/server/error'
 import { writeFile } from 'fs/promises'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { AgentCards } from '../../database/entities/AgentCards'
+import { AgentCardSkills } from '../../database/entities/AgentCardSkills'
 import path from 'path'
 import fs from 'fs'
 
@@ -15,43 +16,96 @@ const saveAgentCard = async (req: Request): Promise<any> => {
 
     const appServer = getRunningExpressApp()
 
-    const card = appServer.AppDataSource.getRepository(AgentCards).create({
-        workflow_id: req.body.workflow_id,
-        is_agent_enabled: req.body.isAgentEnabled,
-        protocol_version: req.body.protocolVersion,
-        name: req.body.name,
-        description: req.body.description,
-        version: req.body.version,
-        provider_organization: req.body.provider?.organization,
-        provider_url: req.body.provider?.url,
-        capabilities_streaming: req.body.capabilities?.streaming,
-        capabilities_push_notifications: req.body.capabilities?.pushNotifications,
-        capabilities_state_transition_history: req.body.capabilities?.stateTransitionHistory,
-        authentication: req.body.authentication,
-        security_schemes: req.body.securitySchemes?.join(', '),
-        security: req.body.security?.join(', '),
-        default_input_modes: req.body.defaultInputModes?.join(','),
-        default_output_modes: req.body.defaultOutputModes?.join(','),
-        supports_authenticated_extended_card: req.body.supportsAuthenticatedExtendedCard,
-        prompt: req.body.prompt
-    })
-    await appServer.AppDataSource.getRepository(AgentCards).save(card)
-    /*
-    //TODO: after saving the agent card, take the agent id and store skills
-    const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: req.body.workflow_id })
+    const checkAgentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: req.body.workflow_id })
+
+    console.log('service.saveAgentCard checkAgentCard:', checkAgentCard?.id)
+
+    if (!checkAgentCard) {
+        const card = appServer.AppDataSource.getRepository(AgentCards).create({
+            workflow_id: req.body.workflow_id,
+            is_agent_enabled: req.body.isAgentEnabled,
+            protocol_version: req.body.protocolVersion,
+            name: req.body.name,
+            description: req.body.description,
+            version: req.body.version,
+            provider_organization: req.body.provider?.organization,
+            provider_url: req.body.provider?.url,
+            capabilities_streaming: req.body.capabilities?.streaming,
+            capabilities_push_notifications: req.body.capabilities?.pushNotifications,
+            capabilities_state_transition_history: req.body.capabilities?.stateTransitionHistory,
+            authentication: req.body.authentication,
+            security_schemes: req.body.securitySchemes?.join(', '),
+            security: req.body.security?.join(', '),
+            default_input_modes: req.body.defaultInputModes?.join(','),
+            default_output_modes: req.body.defaultOutputModes?.join(','),
+            supports_authenticated_extended_card: req.body.supportsAuthenticatedExtendedCard,
+            prompt: req.body.prompt
+        })
+
+        await appServer.AppDataSource.getRepository(AgentCards).save(card)
+
+        //TODO: after saving the agent card, take the agent id and store skills
+        const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: req.body.workflow_id })
+
+        console.log('saveAgentCardSkills:', agentCard?.id)
 
         const agentCardSkills = appServer.AppDataSource.getRepository(AgentCardSkills).create({
-        agent_card_id: agentCard?.id,
-        skill_id: req.body.isAgentEnabled,
-        name: req.body.protocolVersion,
-        description: req.body.name,
-        tags: req.body.description,
-        examples: req.body.version,
-        input_modes: req.body.provider?.organization,
-        output_modes: req.body.provider?.url,
-    }) 
-    await appServer.AppDataSource.getRepository(AgentCardSkills).save(agentCardSkills)
-*/
+            skill_id: '',
+            agent_card_id: agentCard?.id,
+            name: req.body.skills.name,
+            description: req.body.skills.description,
+            tags: Array.isArray(req.body.skills.tags) ? req.body.skills.tags.join(', ') : req.body.skills.tags ?? '',
+            examples: Array.isArray(req.body.skills.examples) ? req.body.skills.examples.join(', ') : req.body.skills.examples ?? '',
+            input_modes: Array.isArray(req.body.skills?.inputModes)
+                ? req.body.skills?.inputModes.join(',')
+                : req.body.skills?.inputModes ?? '',
+            output_modes: Array.isArray(req.body.skills?.outputModes)
+                ? req.body.skills?.outputModes.join(',')
+                : req.body.skills?.outputModes ?? ''
+        })
+        await appServer.AppDataSource.getRepository(AgentCardSkills).save(agentCardSkills)
+    } else {
+        const card = appServer.AppDataSource.getRepository(AgentCards).create({
+            workflow_id: req.body.workflow_id,
+            is_agent_enabled: req.body.isAgentEnabled,
+            protocol_version: req.body.protocolVersion,
+            name: req.body.name,
+            description: req.body.description,
+            version: req.body.version,
+            provider_organization: req.body.provider?.organization,
+            provider_url: req.body.provider?.url,
+            capabilities_streaming: req.body.capabilities?.streaming,
+            capabilities_push_notifications: req.body.capabilities?.pushNotifications,
+            capabilities_state_transition_history: req.body.capabilities?.stateTransitionHistory,
+            authentication: req.body.authentication,
+            security_schemes: req.body.securitySchemes?.join(', '),
+            security: req.body.security?.join(', '),
+            default_input_modes: req.body.defaultInputModes?.join(','),
+            default_output_modes: req.body.defaultOutputModes?.join(','),
+            supports_authenticated_extended_card: req.body.supportsAuthenticatedExtendedCard,
+            prompt: req.body.prompt
+        })
+
+        await appServer.AppDataSource.getRepository(AgentCards).update({ id: checkAgentCard.id }, card)
+
+        const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: req.body.workflow_id })
+
+        const agentCardSkills = appServer.AppDataSource.getRepository(AgentCardSkills).create({
+            skill_id: '',
+            agent_card_id: agentCard?.id,
+            name: req.body.skills.name,
+            description: req.body.skills.description,
+            tags: Array.isArray(req.body.skills.tags) ? req.body.skills.tags.join(', ') : req.body.skills.tags ?? '',
+            examples: Array.isArray(req.body.skills.examples) ? req.body.skills.examples.join(', ') : req.body.skills.examples ?? '',
+            input_modes: Array.isArray(req.body.skills?.inputModes)
+                ? req.body.skills?.inputModes.join(',')
+                : req.body.skills?.inputModes ?? '',
+            output_modes: Array.isArray(req.body.skills?.outputModes)
+                ? req.body.skills?.outputModes.join(',')
+                : req.body.skills?.outputModes ?? ''
+        })
+        await appServer.AppDataSource.getRepository(AgentCardSkills).update({ agent_card_id: agentCard?.id }, agentCardSkills)
+    }
 
     return { status: 'success' }
 }
