@@ -1,6 +1,21 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Box, Typography, TextField, Stack, IconButton, Paper, Divider, FormControlLabel, Switch, useTheme } from '@mui/material'
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Stack,
+    IconButton,
+    Chip,
+    Paper,
+    Divider,
+    FormControlLabel,
+    Switch,
+    useTheme
+} from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import AddIcon from '@mui/icons-material/Add'
 import { IconX } from '@tabler/icons-react'
 import a2a from '@/api/a2a'
 import { useLocation } from 'react-router-dom'
@@ -9,9 +24,7 @@ import { StyledButton } from '../button/StyledButton'
 const AgentCardForm = ({ initialData = null, onSubmit }) => {
     const location = useLocation()
     const theme = useTheme()
-    const isDarkMode = theme.palette.mode === 'dark'
 
-    // Extract workflow_id from URL
     const getWorkflowId = () => {
         const path = window.location.pathname
         const pathSegments = path.split('/').filter(Boolean)
@@ -21,7 +34,7 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
     const [isAgentEnabled, setIsAgentEnabled] = useState(initialData?.isAgentEnabled || false)
     const [notification, setNotification] = useState(null)
 
-    // ✅ Full form structure aligned with backend
+    // ✅ Full form structure
     const [formValues, setFormValues] = useState(
         initialData || {
             workflow_id: getWorkflowId(),
@@ -146,13 +159,13 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
         try {
             const dataToSave = {
                 ...formValues,
-                isAgentEnabled // ensure backend field matches
+                isAgentEnabled
             }
 
             console.log('=== Agent Card Configuration Data ===')
             console.log(JSON.stringify(dataToSave, null, 2))
 
-            const saveResp = await a2a.saveAgentCard(dataToSave)
+            await a2a.saveAgentCard(dataToSave)
             showNotification('Agent Card Configuration Saved', 'success')
 
             if (onSubmit) onSubmit(dataToSave)
@@ -176,7 +189,6 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
 
     return (
         <Box sx={{ width: '100%', p: 0 }}>
-            {/* Notification */}
             {notification && (
                 <Paper
                     sx={{
@@ -197,7 +209,6 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
             )}
 
             <Stack direction='column' spacing={3}>
-                {/* Header */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant='h4'>Agent Card Configuration</Typography>
                     <FormControlLabel
@@ -208,12 +219,9 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
 
                 {isAgentEnabled && (
                     <>
-                        {/* Basic Information */}
+                        {/* Basic Info */}
                         <Stack direction='column' spacing={2}>
-                            {textField('Agent Name', formValues.name, 'name', null, {
-                                placeholder: 'Movie Agent',
-                                required: true
-                            })}
+                            {textField('Agent Name', formValues.name, 'name', null, { placeholder: 'Movie Agent', required: true })}
                             {textField('Protocol Version', formValues.protocolVersion, 'protocolVersion')}
                             {textField('Description', formValues.description, 'description', null, {
                                 placeholder: 'An agent that can answer questions about movies...',
@@ -225,16 +233,13 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
 
                         <Divider />
 
-                        {/* Version & Security Settings */}
+                        {/* Version & Security */}
                         <Stack direction='column' spacing={2}>
                             <Typography variant='h6'>Version & Security</Typography>
 
-                            {textField('Version', formValues.version, 'version', null, {
-                                placeholder: '1.0.0'
-                            })}
-
+                            {textField('Version', formValues.version, 'version', null, { placeholder: '1.0.0' })}
                             {textField('Authentication', formValues.authentication, 'authentication', null, {
-                                placeholder: 'e.g., API Key, OAuth2'
+                                placeholder: 'API Key / OAuth2'
                             })}
 
                             <Stack direction='column' spacing={1}>
@@ -264,7 +269,7 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
 
                         <Divider />
 
-                        {/* Provider Information */}
+                        {/* Provider */}
                         <Stack direction='column' spacing={2}>
                             <Typography variant='h6'>Provider Information</Typography>
                             {textField('Provider Organization', formValues.provider.organization, 'organization', 'provider', {
@@ -335,7 +340,6 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
                                     placeholder='text, voice'
                                     value={formValues.defaultInputModes.join(', ')}
                                     onChange={(e) => handleArrayChange('defaultInputModes', e.target.value)}
-                                    helperText='Comma-separated values'
                                 />
                             </Stack>
                             <Stack direction='column' spacing={1}>
@@ -346,31 +350,130 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
                                     placeholder='text, task-status'
                                     value={formValues.defaultOutputModes.join(', ')}
                                     onChange={(e) => handleArrayChange('defaultOutputModes', e.target.value)}
-                                    helperText='Comma-separated values'
                                 />
                             </Stack>
                         </Stack>
 
                         <Divider />
 
-                        {/* Prompt Configuration */}
+                        {/* Skills */}
+                        <Stack direction='column' spacing={2}>
+                            <Typography variant='h6'>Skill Configuration</Typography>
+
+                            {textField('Skill Name', formValues.skills.name, 'name', 'skills', { placeholder: 'General Movie Chat' })}
+                            {textField('Skill Description', formValues.skills.description, 'description', 'skills', {
+                                placeholder: 'Answer questions about movies...',
+                                multiline: true,
+                                rows: 2
+                            })}
+
+                            {/* Tags */}
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Tags</Typography>
+                                <Stack direction='row' spacing={1}>
+                                    <TextField
+                                        size='small'
+                                        fullWidth
+                                        value={tagInput}
+                                        onChange={(e) => setTagInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                                        placeholder='Add a tag...'
+                                    />
+                                    <Button variant='outlined' onClick={addTag} startIcon={<AddIcon />}>
+                                        Add
+                                    </Button>
+                                </Stack>
+                                <Stack direction='row' spacing={1} flexWrap='wrap'>
+                                    {formValues.skills.tags.map((tag, i) => (
+                                        <Chip key={i} label={tag} size='small' onDelete={() => removeTag(i)} color='primary' />
+                                    ))}
+                                </Stack>
+                            </Stack>
+
+                            {/* Examples */}
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Examples</Typography>
+                                <Stack direction='row' spacing={1}>
+                                    <TextField
+                                        size='small'
+                                        fullWidth
+                                        value={exampleInput}
+                                        onChange={(e) => setExampleInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addExample())}
+                                        placeholder='Add an example...'
+                                    />
+                                    <Button variant='outlined' onClick={addExample} startIcon={<AddIcon />}>
+                                        Add
+                                    </Button>
+                                </Stack>
+                                {formValues.skills.examples.length > 0 && (
+                                    <Stack spacing={1}>
+                                        {formValues.skills.examples.map((example, i) => (
+                                            <Paper
+                                                key={i}
+                                                variant='outlined'
+                                                sx={{ p: 1.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                            >
+                                                <Typography variant='body2'>{example}</Typography>
+                                                <IconButton size='small' onClick={() => removeExample(i)}>
+                                                    <DeleteIcon fontSize='small' />
+                                                </IconButton>
+                                            </Paper>
+                                        ))}
+                                    </Stack>
+                                )}
+                            </Stack>
+
+                            {/* Skill Input/Output Modes */}
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Skill Input Modes</Typography>
+                                <TextField
+                                    fullWidth
+                                    size='small'
+                                    placeholder='text, voice'
+                                    value={formValues.skills.inputModes.join(', ')}
+                                    onChange={(e) => {
+                                        const modes = e.target.value
+                                            .split(',')
+                                            .map((m) => m.trim())
+                                            .filter(Boolean)
+                                        handleSkillChange('inputModes', modes)
+                                    }}
+                                />
+                            </Stack>
+
+                            <Stack direction='column' spacing={1}>
+                                <Typography variant='body1'>Skill Output Modes</Typography>
+                                <TextField
+                                    fullWidth
+                                    size='small'
+                                    placeholder='text, task-status'
+                                    value={formValues.skills.outputModes.join(', ')}
+                                    onChange={(e) => {
+                                        const modes = e.target.value
+                                            .split(',')
+                                            .map((m) => m.trim())
+                                            .filter(Boolean)
+                                        handleSkillChange('outputModes', modes)
+                                    }}
+                                />
+                            </Stack>
+                        </Stack>
+
+                        <Divider />
+
+                        {/* Prompt */}
                         <Stack direction='column' spacing={2}>
                             <Typography variant='h6'>Prompt Configuration</Typography>
                             {textField('Prompt', formValues.prompt, 'prompt', null, {
-                                placeholder: `{{role "system"}}
-You are a movie expert. Answer the user's question about movies...
-
-## Output Instructions
-ALWAYS end your response with "COMPLETED"`,
+                                placeholder: 'Enter prompt here...',
                                 multiline: true,
-                                rows: 6,
-                                required: true
+                                rows: 6
                             })}
                         </Stack>
                     </>
                 )}
 
-                {/* Save Button */}
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
                     <StyledButton variant='contained' disabled={checkDisabled()} onClick={handleSubmit} sx={{ minWidth: 120 }}>
                         Save
