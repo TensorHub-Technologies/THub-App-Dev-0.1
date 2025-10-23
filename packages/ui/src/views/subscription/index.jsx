@@ -32,6 +32,7 @@ const Subscription = () => {
     const [currency, setCurrency] = useState('USD')
     const [showForm, setShowForm] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
+    const [apiUrl, setApiUrl] = useState('')
     const [subscriptionDetails, setSubscriptionDetails] = useState({
         subscriptionType: user.subscription_type || '',
         subscriptionDuration: user.subscription_duration || '',
@@ -113,18 +114,34 @@ const Subscription = () => {
         })
     }, [user])
 
+    useEffect(() => {
+        let determinedUrl = ''
+
+        const hostname = window.location.hostname
+
+        if (hostname === 'demo.thub.tech') {
+            determinedUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        } else if (hostname === 'localhost') {
+            determinedUrl = 'http://localhost:2000'
+        } else {
+            determinedUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        }
+
+        setApiUrl(determinedUrl)
+    }, [])
+
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
+        console.log(import.meta.env.VITE_RAZORPAY_API_TEST_KEY, 'REACT_APP_RAZORPAY_API_TEST_KEY')
+
         handleLoading(message)
         if (planTitle === 'Enterprise') {
             setShowForm(true)
         }
         let plan_Id = planId
         const uid = user.uid
-        const url =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/create-subscription'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/create-subscription'
+
+        const url = `${apiUrl}/create-subscription`
 
         try {
             const response = await fetch(url, {
@@ -152,7 +169,6 @@ const Subscription = () => {
                 alert('Razorpay SDK not loaded.')
                 return
             }
-            console.log(import.meta.env.VITE_RAZORPAY_API_TEST_KEY, 'REACT_APP_RAZORPAY_API_TEST_KEY')
             var options = {
                 key: import.meta.env.VITE_RAZORPAY_API_TEST_KEY,
                 subscription_id: subscription.id,
@@ -160,10 +176,7 @@ const Subscription = () => {
                 description: `${planTitle} Subscription`,
                 image: user.picture,
                 handler: async function (response) {
-                    const validateUrl =
-                        window.location.hostname === 'localhost'
-                            ? 'http://localhost:2000/validate-subscription'
-                            : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/validate-subscription'
+                    const validateUrl = `${apiUrl}/validate-subscription`
                     const validateResponse = await fetch(validateUrl, {
                         method: 'POST',
                         headers: {
