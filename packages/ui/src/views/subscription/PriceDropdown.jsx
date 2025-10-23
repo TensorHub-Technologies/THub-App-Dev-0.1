@@ -11,13 +11,13 @@ import EuroFlag from '../../assets/images/flags/ero.png'
 
 const PriceDropdown = ({ onCurrencyChange }) => {
     const [isOpen, setIsOpen] = useState(false)
-    const [selectedOption, setSelectedOption] = useState('INR')
+    const [selectedOption, setSelectedOption] = useState('USD')
     const customization = useSelector((state) => state.customization)
     const dropdownRef = useRef(null)
 
     const currencyOptions = [
-        { code: 'INR', flag: INRFlag },
         { code: 'USD', flag: USDFlag },
+        { code: 'INR', flag: INRFlag },
         { code: 'GBP', flag: GBPFlag },
         { code: 'Euro', flag: EuroFlag }
     ]

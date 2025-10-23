@@ -1,75 +1,91 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import {
-    Box,
-    Typography,
-    TextField,
-    Button,
-    Stack,
-    IconButton,
-    Chip,
-    Paper,
-    Divider,
-    FormControlLabel,
-    Switch,
-    useTheme
-} from '@mui/material'
+import { Box, Typography, TextField, Button, Stack, IconButton, Chip, Paper, Divider, FormControlLabel, Switch } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { IconX } from '@tabler/icons-react'
 import a2a from '@/api/a2a'
-import { useLocation } from 'react-router-dom'
 import { StyledButton } from '../button/StyledButton'
 
 const AgentCardForm = ({ initialData = null, onSubmit }) => {
-    const location = useLocation()
-    const theme = useTheme()
+    const { id } = useParams()
 
-    const getWorkflowId = () => {
-        const path = window.location.pathname
-        const pathSegments = path.split('/').filter(Boolean)
-        return pathSegments[1] || 'default-workflow'
+    // Normalize data to ensure all fields are properly formatted
+    const normalizeData = (data) => {
+        if (!data) {
+            return {
+                workflow_id: id,
+                isAgentEnabled: false,
+                protocolVersion: '1.0',
+                version: '',
+                name: '',
+                description: '',
+                provider: {
+                    organization: '',
+                    url: ''
+                },
+                capabilities: {
+                    streaming: false,
+                    pushNotifications: false,
+                    stateTransitionHistory: false
+                },
+                authentication: '',
+                securitySchemes: [],
+                security: [],
+                defaultInputModes: ['text'],
+                defaultOutputModes: ['text'],
+                supportsAuthenticatedExtendedCard: false,
+                prompt: '',
+                skills: {
+                    name: '',
+                    description: '',
+                    tags: [],
+                    examples: [],
+                    inputModes: ['text'],
+                    outputModes: ['text']
+                }
+            }
+        }
+
+        return {
+            workflow_id: data?.workflow_id || id,
+            isAgentEnabled: data?.isAgentEnabled || false,
+            protocolVersion: data?.protocolVersion || '1.0',
+            version: data?.version || '',
+            name: data?.name || '',
+            description: data?.description || '',
+            provider: {
+                organization: data?.provider?.organization || '',
+                url: data?.provider?.url || ''
+            },
+            capabilities: {
+                streaming: data?.capabilities?.streaming || false,
+                pushNotifications: data?.capabilities?.pushNotifications || false,
+                stateTransitionHistory: data?.capabilities?.stateTransitionHistory || false
+            },
+            authentication: data?.authentication || '',
+            securitySchemes: Array.isArray(data?.securitySchemes) ? data.securitySchemes : [],
+            security: Array.isArray(data?.security) ? data.security : [],
+            defaultInputModes: Array.isArray(data?.defaultInputModes) ? data.defaultInputModes : ['text'],
+            defaultOutputModes: Array.isArray(data?.defaultOutputModes) ? data.defaultOutputModes : ['text'],
+            supportsAuthenticatedExtendedCard: data?.supportsAuthenticatedExtendedCard || false,
+            prompt: data?.prompt || '',
+            skills: {
+                name: data?.skills?.name || '',
+                description: data?.skills?.description || '',
+                tags: Array.isArray(data?.skills?.tags) ? data.skills.tags : [],
+                examples: Array.isArray(data?.skills?.examples) ? data.skills.examples : [],
+                inputModes: Array.isArray(data?.skills?.inputModes) ? data.skills.inputModes : ['text'],
+                outputModes: Array.isArray(data?.skills?.outputModes) ? data.skills.outputModes : ['text']
+            }
+        }
     }
 
     const [isAgentEnabled, setIsAgentEnabled] = useState(initialData?.isAgentEnabled || false)
     const [notification, setNotification] = useState(null)
-
-    // ✅ Full form structure
-    const [formValues, setFormValues] = useState(
-        initialData || {
-            workflow_id: getWorkflowId(),
-            isAgentEnabled: false,
-            protocolVersion: '1.0',
-            version: '',
-            name: '',
-            description: '',
-            provider: {
-                organization: '',
-                url: ''
-            },
-            capabilities: {
-                streaming: false,
-                pushNotifications: false,
-                stateTransitionHistory: false
-            },
-            authentication: '',
-            securitySchemes: [],
-            security: [],
-            defaultInputModes: ['text'],
-            defaultOutputModes: ['text'],
-            supportsAuthenticatedExtendedCard: false,
-            prompt: '',
-            skills: {
-                name: '',
-                description: '',
-                tags: [],
-                examples: [],
-                inputModes: ['text'],
-                outputModes: ['text']
-            }
-        }
-    )
-
+    const [loading, setLoading] = useState(true)
+    const [formValues, setFormValues] = useState(normalizeData(initialData))
     const [tagInput, setTagInput] = useState('')
     const [exampleInput, setExampleInput] = useState('')
 
@@ -186,6 +202,34 @@ const AgentCardForm = ({ initialData = null, onSubmit }) => {
             />
         </Stack>
     )
+
+    useEffect(() => {
+        const fetchAgentCard = async () => {
+            try {
+                const res = await a2a.getAgentCardByWorkflowId(id)
+                if (res?.data) {
+                    const data = res.data
+                    const normalized = normalizeData(data)
+                    setFormValues(normalized)
+                    setIsAgentEnabled(normalized.isAgentEnabled)
+                }
+            } catch (error) {
+                console.warn('No existing AgentCard found for this workflow:', id)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchAgentCard()
+    }, [id])
+
+    if (loading) {
+        return (
+            <Box sx={{ p: 3, textAlign: 'center' }}>
+                <Typography variant='body1'>Loading Agent Card...</Typography>
+            </Box>
+        )
+    }
 
     return (
         <Box sx={{ width: '100%', p: 0 }}>

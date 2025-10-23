@@ -184,18 +184,17 @@ const createPromptFile = async (workflowId: string): Promise<any> => {
     }
 }
 
-const getAgentCard = async (workflowId: string): Promise<any> => {
-    try {
-        const handler = A2ARequestHandlers.getRequestHandler(workflowId)
-        if (!handler) {
-            return `error: No handler found for workflowId: ${workflowId}`
-        }
-        // getAgentCard is on A2ARequestHandler, which DefaultRequestHandler implements
-        const agentCard = await handler.getAgentCard()
-        return agentCard
-    } catch (error: any) {
-        return 'Error fetching agent card: ' + error
-    }
+export const getAgentCard = async (workflowId: string) => {
+    const appServer = getRunningExpressApp()
+    const repo = appServer.AppDataSource.getRepository(AgentCards)
+    const skillRepo = appServer.AppDataSource.getRepository(AgentCardSkills)
+
+    const agentCard = await repo.findOneBy({ workflow_id: workflowId })
+    if (!agentCard) return null
+
+    const skill = await skillRepo.findOneBy({ agent_card_id: agentCard.id })
+
+    return { ...agentCard, skills: skill }
 }
 
 const getAgentResponse = async (workflowId: string, req: Request, res: Response): Promise<any> => {
