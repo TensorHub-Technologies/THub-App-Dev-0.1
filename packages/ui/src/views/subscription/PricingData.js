@@ -37,8 +37,8 @@ export const pricingData = {
                 GBP: '£149',
                 Euro: '€159'
             },
-            // planId: 'plan_PhdG5GMrYCqm6Z',
-            planId: 'plan_PguBI476fHCWGG',
+            planId: 'plan_PhdG5GMrYCqm6Z',
+            // planId: 'plan_PguBI476fHCWGG',
             duration: 'monthly',
             description: 'For teams: 1 primary account with access for up to 5 users.',
             buttonInfo: 'Choose Plan',
