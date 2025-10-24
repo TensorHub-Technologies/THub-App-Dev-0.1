@@ -132,7 +132,7 @@ const Subscription = () => {
 
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
-        console.log(import.meta.env.VITE_RAZORPAY_API_TEST_KEY, 'REACT_APP_RAZORPAY_API_TEST_KEY')
+        console.log(import.meta.env.VITE_RAZORPAY_API_LIVE_KEY, 'VITE_RAZORPAY_API_LIVE_KEY')
 
         handleLoading(message)
         if (planTitle === 'Enterprise') {
@@ -170,7 +170,7 @@ const Subscription = () => {
                 return
             }
             var options = {
-                key: import.meta.env.VITE_RAZORPAY_API_TEST_KEY,
+                key: import.meta.env.VITE_RAZORPAY_API_LIVE_KEY,
                 subscription_id: subscription.id,
                 name: 'THub',
                 description: `${planTitle} Subscription`,
