@@ -132,7 +132,6 @@ const Subscription = () => {
 
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
-        console.log(import.meta.env.VITE_RAZORPAY_API_LIVE_KEY, 'VITE_RAZORPAY_API_LIVE_KEY')
 
         handleLoading(message)
         if (planTitle === 'Enterprise') {
@@ -190,7 +189,6 @@ const Subscription = () => {
                             user_id: userId
                         })
                     })
-                    console.log(validateResponse, 'validateResponse')
                     const validateStatus = await validateResponse.json()
                     if (validateResponse.ok && validateStatus.msg === 'success') {
                         location.reload()

@@ -42,18 +42,6 @@ const storageCredentials = {
     universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN || 'googleapis.com'
 }
 
-// Debug logging (consider removing in production)
-console.log('Private Key received (first 50 chars):', storageCredentials.private_key?.substring(0, 50) + '...')
-console.log('Private Key length:', storageCredentials.private_key ? storageCredentials.private_key.length : 'undefined')
-console.log(
-    'Private Key contains actual newlines:',
-    storageCredentials.private_key ? storageCredentials.private_key.includes('\n') : 'undefined'
-)
-console.log(
-    'Private Key starts with BEGIN:',
-    storageCredentials.private_key ? storageCredentials.private_key.startsWith('-----BEGIN') : 'undefined'
-)
-
 // Validate private key format
 if (!storageCredentials.private_key?.startsWith('-----BEGIN PRIVATE KEY-----')) {
     throw new Error('Private key does not have the correct format')
