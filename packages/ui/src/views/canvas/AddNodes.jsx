@@ -107,8 +107,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const [tab, setTab] = useState(['LangChain', 'LlamaIndex'])
     const [tabValue, setTabValue] = useState(0)
 
-    console.log('nodes: ', nodes)
-
     useEffect(() => {
         if (userData.subscription_type !== 'free') {
             setTab(['LangChain', 'LlamaIndex', 'Agent Studio'])

@@ -102,7 +102,6 @@ const RegistrationForm = () => {
             }
 
             const response = await axios.post(`${apiUrl}/user/invite/register`, finalValues)
-            console.log(response, 'from register backend')
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
                 window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`
