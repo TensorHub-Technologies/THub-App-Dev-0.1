@@ -72,8 +72,6 @@ const AgentFlowNode = ({ data }) => {
         return data.outputAnchors ?? []
     }
 
-    console.log(data.id, 'data')
-
     const getAnchorPosition = (index) => {
         const currentHeight = ref.current?.clientHeight || 0
         const spacing = currentHeight / (getOutputAnchors().length + 1)

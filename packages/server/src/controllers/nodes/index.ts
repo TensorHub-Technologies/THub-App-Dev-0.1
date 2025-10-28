@@ -54,8 +54,6 @@ const getSingleNodeIcon = async (req: Request, res: Response, next: NextFunction
 }
 
 const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body.tenantId, 'req111111111111111111')
-
     try {
         if (!req.body) {
             throw new InternalFlowiseError(
