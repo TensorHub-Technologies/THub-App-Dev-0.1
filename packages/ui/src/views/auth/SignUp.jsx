@@ -173,7 +173,6 @@ const SignUp = () => {
             const response = await axios.post(`${apiUrl}/user/register`, payload)
             if (response.status === 200) {
                 const data = response.data
-                console.log('Registration response:', data)
                 dispatch({
                     type: SET_USER_DATA,
                     payload: data.user
@@ -214,7 +213,6 @@ const SignUp = () => {
         },
         validationSchema: signUpValidationSchema,
         onSubmit: async (values) => {
-            console.log('Form values:', values)
             setLoading(true)
             try {
                 const exists = await checkEmail(values.email)
