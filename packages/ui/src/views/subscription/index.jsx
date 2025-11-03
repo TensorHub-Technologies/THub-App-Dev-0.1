@@ -33,6 +33,7 @@ const Subscription = () => {
     const [showForm, setShowForm] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
     const [apiUrl, setApiUrl] = useState('')
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
     const [subscriptionDetails, setSubscriptionDetails] = useState({
         subscriptionType: user.subscription_type || '',
         subscriptionDuration: user.subscription_duration || '',
@@ -132,7 +133,8 @@ const Subscription = () => {
 
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
-
+        if (isProcessingPayment) return
+        setIsProcessingPayment(true)
         handleLoading(message)
         if (planTitle === 'Enterprise') {
             setShowForm(true)
@@ -426,6 +428,7 @@ const Subscription = () => {
                                             }}
                                             className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
                                             disabled={
+                                                isProcessingPayment ||
                                                 (user.subscription_type === 'premium' && plan.buttonInfo !== 'Get in Touch') ||
                                                 (user.subscription_type === 'free' && plan.title === 'Free') ||
                                                 (user.subscription_type === 'pro' &&
@@ -450,7 +453,7 @@ const Subscription = () => {
                                                     user.subscription_duration === selectedPlan)
                                             }
                                         >
-                                            {plan.buttonInfo}
+                                            {isProcessingPayment ? 'Processing...' : plan.buttonInfo}
                                         </Button>
                                     </div>
                                     <div>
