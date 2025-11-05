@@ -43,7 +43,7 @@ import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import LangChainPNG from '@/assets/images/langchain.png'
 import agentPipelinePNG from '@/assets/images/agentpipeline.png'
 import { getCategoryIcon } from './CategoryIcon'
-import subscriptionPlan from './subscriptionPlan'
+import subscriptionPlan from './subscriptionPlan.json'
 
 // const
 import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
@@ -84,14 +84,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
     const userData = useSelector((state) => state.user.userData)
     const subscription = userData?.subscription_type
-
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
     const [isExpanded, setIsExpanded] = useState(true)
     const [categoryExpanded, setCategoryExpanded] = useState({})
-
     const [hoveredNode, setHoveredNode] = useState(null)
-
     const [openDialog, setOpenDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
 
@@ -103,28 +100,14 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         userData.subscription_type = localStorage.getItem('subscription_type')
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
-    const allowedMenuItemKeys = Object.keys(allowedMenu)
     const [tab, setTab] = useState(['LangChain', 'LlamaIndex'])
     const [tabValue, setTabValue] = useState(0)
 
-    console.log('nodes: ', nodes)
-
-    useEffect(() => {
-        if (userData.subscription_type !== 'free') {
-            setTab(['LangChain', 'LlamaIndex', 'Agent Studio'])
-        }
-    }, [])
-
     for (let nodeKey in nodes) {
-        if (Object.prototype.hasOwnProperty.call(nodes, nodeKey) && !allowedMenuItemKeys.includes(nodeKey)) {
-            delete nodes[nodeKey]
-        } else {
-            const allowedSubMenuItems = allowedMenu[nodeKey]
-            const subMenuItemToCheck = nodes[nodeKey]
-
-            const updatedSubMenuItems = subMenuItemToCheck.filter((val) => allowedSubMenuItems.includes(val.label))
-            nodes[nodeKey] = updatedSubMenuItems
-        }
+        const allowedSubMenuItems = allowedMenu[nodeKey]
+        const subMenuItemToCheck = nodes[nodeKey]
+        const updatedSubMenuItems = subMenuItemToCheck.filter((val) => allowedSubMenuItems.includes(val.label))
+        nodes[nodeKey] = updatedSubMenuItems
     }
 
     const ps = useRef()
@@ -138,7 +121,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
     useEffect(() => {
         const pathname = location.pathname
-
         const hasCanvasId = pathname.startsWith('/canvas/') && pathname !== '/canvas'
         const hasAgentCanvasId = pathname.startsWith('/v2/agentcanvas/') && pathname !== '/v2/agentcanvas'
 
@@ -148,11 +130,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             setTab(['Agent Studio'])
             setTabValue(0)
         } else if (pathname === '/canvas' || pathname === '/v2/agentcanvas') {
-            if (userData.subscription_type !== 'free') {
-                setTab(['LangChain', 'LlamaIndex', 'Agent Studio'])
-            } else {
-                setTab(['LangChain', 'LlamaIndex'])
-            }
+            setTab(['LangChain', 'LlamaIndex', 'Agent Studio'])
         }
     }, [location.pathname, userData.subscription_type])
 
