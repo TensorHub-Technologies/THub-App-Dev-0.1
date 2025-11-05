@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 // material-ui
 import { Box, Skeleton, Stack, ToggleButton, ToggleButtonGroup, CircularProgress, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import { Toaster } from 'react-hot-toast'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
@@ -256,6 +257,7 @@ const Agentflows = () => {
 
     return (
         <MainCard>
+            <Toaster position='top-right' />
             {error ? (
                 <ErrorBoundary error={error} />
             ) : (
