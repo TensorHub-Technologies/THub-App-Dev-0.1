@@ -135,7 +135,6 @@ const Subscription = () => {
         if (e) e.preventDefault()
         if (isProcessingPayment) return
         setIsProcessingPayment(true)
-
         handleLoading(message)
         if (planTitle === 'Enterprise') {
             setShowForm(true)
@@ -192,7 +191,6 @@ const Subscription = () => {
                             user_id: userId
                         })
                     })
-                    console.log(validateResponse, 'validateResponse')
                     const validateStatus = await validateResponse.json()
                     if (validateResponse.ok && validateStatus.msg === 'success') {
                         location.reload()
