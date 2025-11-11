@@ -292,7 +292,24 @@
             ],
             "Engine": ["Context Chat Engine", "Simple Chat Engine", "Query Engine", "QueryEngine Tools"],
             "Response Synthesizer": ["Refine", "TreeSummarize", "Compact And Refine", "Sub Question Query Engine"],
-            "Utilities": ["Custom JS Function", "Get Variable", "IfElse Function", "Set Variable", "Sticky Note"]
+            "Utilities": ["Custom JS Function", "Get Variable", "IfElse Function", "Set Variable", "Sticky Note"],
+            "Agent Studio": [
+                "Agent",
+                "Condition",
+                "Condition Agent",
+                "Custom Function",
+                "Direct Reply",
+                "Execute Flow",
+                "HTTP",
+                "Human Input",
+                "Iteration",
+                "LLM",
+                "Loop",
+                "Retriever",
+                "Start",
+                "Sticky Note",
+                "Tool"
+            ]
         }
     },
     {
