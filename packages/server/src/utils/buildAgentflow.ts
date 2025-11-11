@@ -55,6 +55,7 @@ import { utilAddChatMessage } from './addChatMesage'
 import { CachePool } from '../CachePool'
 import { ChatMessage } from '../database/entities/ChatMessage'
 import { Telemetry } from './telemetry'
+import { generateTTSForResponseStream, shouldAutoPlayTTS } from './buildChatflow'
 
 interface IWaitingNode {
     nodeId: string
@@ -1998,6 +1999,27 @@ export const executeAgentFlow = async ({
     result.agentFlowExecutedData = agentFlowExecutedData
 
     if (sessionId) result.sessionId = sessionId
+
+    if (shouldAutoPlayTTS(chatflow.textToSpeech) && result.text) {
+        const options = {
+            chatflowid,
+            chatId,
+            appDataSource,
+            databaseEntities
+        }
+
+        if (sseStreamer) {
+            await generateTTSForResponseStream(
+                result.text,
+                chatflow.textToSpeech,
+                options,
+                chatId,
+                chatMessage?.id,
+                sseStreamer,
+                abortController
+            )
+        }
+    }
 
     return result
 }
