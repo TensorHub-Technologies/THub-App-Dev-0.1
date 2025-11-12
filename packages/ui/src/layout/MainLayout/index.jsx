@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Outlet } from 'react-router-dom'
+import { useState } from 'react'
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles'
@@ -14,6 +15,7 @@ import { SET_MENU } from '@/store/actions'
 import RegisterationForm from '../../views/register/RegisterationForm'
 import LoginForm from '@/views/register/LoginForm'
 import '../../ui-component/cards/card.css'
+
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
     ...theme.typography.mainContent,
@@ -65,9 +67,12 @@ const MainLayout = () => {
     const theme = useTheme()
     const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'))
     const customization = useSelector((state) => state.customization)
+    const [showModal, setShowModal] = useState(false)
     const user = useSelector((state) => state.user.userData)
     const showRegisterModalState = useSelector((state) => state.modal.showRegisterModal)
     const showLoginModal = useSelector((state) => state.modal.showLoginModal)
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     // Handle left drawer
     const leftDrawerOpened = useSelector((state) => state.customization.opened)
@@ -79,13 +84,20 @@ const MainLayout = () => {
     useEffect(() => {
         setTimeout(() => dispatch({ type: SET_MENU, opened: !matchDownMd }), 0)
     }, [matchDownMd])
+    console.log(showModal, 'showModalout')
+
+    useEffect(() => {
+        const modalShown = sessionStorage.getItem('modalShown')
+
+        if ((userData?.company === '' || userData?.company === null) && !modalShown) {
+            setShowModal(true)
+        }
+    }, [tenantId])
 
     return (
-        <Box
-            sx={{ display: 'flex' }}
-            // className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
-        >
+        <Box sx={{ display: 'flex' }}>
             <CssBaseline />
+            {/* {showModal && <UserInfo showModal={showModal} setShowModal={setShowModal} />} */}
             {/* header */}
             <AppBar
                 enableColorOnDark

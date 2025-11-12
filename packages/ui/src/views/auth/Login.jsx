@@ -29,6 +29,7 @@ import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
+    const { uid } = useSelector((state) => state.user.userData)
     const [showPassword, setShowPassword] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -91,7 +92,6 @@ const Login = () => {
                 localStorage.setItem('userId', userId)
                 // Second API call: Get full user data
                 const userDataResponse = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
-
                 const userData = userDataResponse.data[0]
                 dispatch(setUserData(userData))
                 navigate('/workflows')
