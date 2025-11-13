@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import { Box, Dialog, DialogContent, DialogTitle, Tabs, Tab } from '@mui/material'
 import { tabsClasses } from '@mui/material/Tabs'
 import SpeechToText from '@/ui-component/extended/SpeechToText'
+import TextToSpeech from '@/ui-component/extended/TextToSpeech'
 import Security from '@/ui-component/extended/Security'
 import ChatFeedback from '@/ui-component/extended/ChatFeedback'
 import AnalyseFlow from '@/ui-component/extended/AnalyseFlow'
@@ -35,6 +36,11 @@ const CHATFLOW_CONFIGURATION_TABS = [
         label: 'Schedule Settings',
         id: 'scheduleEmail'
     },
+    {
+        label: 'Text to Speech',
+        id: 'textToSpeech'
+    },
+
     {
         label: 'Chat Feedback',
         id: 'chatFeedback'
@@ -143,6 +149,7 @@ const ChatflowConfigurationDialog = ({ show, isAgentCanvas, dialogProps, onCance
                         {item.id === 'followUpPrompts' ? <FollowUpPrompts dialogProps={dialogProps} /> : null}
                         {item.id === 'speechToText' ? <SpeechToText dialogProps={dialogProps} /> : null}
                         {item.id === 'scheduleEmail' ? <ScheduleSettings dialogProps={dialogProps} /> : null}
+                        {item.id === 'textToSpeech' ? <TextToSpeech dialogProps={dialogProps} /> : null}
                         {item.id === 'chatFeedback' ? <ChatFeedback dialogProps={dialogProps} /> : null}
                         {item.id === 'analyseWorkflow' ? <AnalyseFlow dialogProps={dialogProps} /> : null}
                         {item.id === 'leads' ? <Leads dialogProps={dialogProps} /> : null}

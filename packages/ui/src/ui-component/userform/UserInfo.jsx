@@ -67,7 +67,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                     }
                 })
                 resetForm()
-                // window.location.href = `https://${values.workspace}.thub.tech/?theme=dark&uid=${uid}`
+                window.location.href = `https://${values.workspace}.thub.tech/?theme=dark&uid=${uid}`
                 handleClose()
             }
         } catch (error) {
