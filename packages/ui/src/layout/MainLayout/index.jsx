@@ -15,6 +15,7 @@ import { SET_MENU } from '@/store/actions'
 import RegisterationForm from '../../views/register/RegisterationForm'
 import LoginForm from '@/views/register/LoginForm'
 import '../../ui-component/cards/card.css'
+import UserInfo from '@/ui-component/userform/UserInfo'
 
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -84,12 +85,10 @@ const MainLayout = () => {
     useEffect(() => {
         setTimeout(() => dispatch({ type: SET_MENU, opened: !matchDownMd }), 0)
     }, [matchDownMd])
-    console.log(showModal, 'showModalout')
 
     useEffect(() => {
         const modalShown = sessionStorage.getItem('modalShown')
-
-        if ((userData?.company === '' || userData?.company === null) && !modalShown) {
+        if ((userData?.company === '' || userData?.company === null || !userData?.company) && !modalShown) {
             setShowModal(true)
         }
     }, [tenantId])
@@ -97,7 +96,7 @@ const MainLayout = () => {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            {/* {showModal && <UserInfo showModal={showModal} setShowModal={setShowModal} />} */}
+            {showModal && <UserInfo showModal={showModal} setShowModal={setShowModal} />}
             {/* header */}
             <AppBar
                 enableColorOnDark
