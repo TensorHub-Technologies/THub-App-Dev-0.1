@@ -29,6 +29,7 @@ import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
+    const { uid } = useSelector((state) => state.user.userData)
     const [showPassword, setShowPassword] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -64,11 +65,6 @@ const Login = () => {
         onSubmit: async (values) => {
             try {
                 setLoading(true)
-                const thubWebServerDevUrl =
-                    import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-                const thubWebServerProdUrl =
-                    import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-                const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
                 let apiUrl
 
@@ -79,25 +75,48 @@ const Login = () => {
                 } else {
                     apiUrl = thubWebServerProdUrl
                 }
+
+                // 1️⃣ Login
                 const loginResponse = await axios.post(`${apiUrl}/loginUser`, {
                     email: values.email,
                     password: values.password
                 })
 
                 const userId = loginResponse.data?.userId
-                if (!userId) {
-                    throw new Error('User ID not found in login response')
-                }
+                if (!userId) throw new Error('User ID missing')
+
                 localStorage.setItem('userId', userId)
-                // Second API call: Get full user data
-                const userDataResponse = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
+
+                // 2️⃣ Fetch user full data
+                const userDataResponse = await axios.get(`${apiUrl}/userdata`, {
+                    params: { userId }
+                })
 
                 const userData = userDataResponse.data[0]
                 dispatch(setUserData(userData))
-                navigate('/workflows')
+
+                let workspace = userData?.workspace
+
+                const currentHost = window.location.hostname
+
+                if (!workspace) {
+                    if (currentHost === 'app.thub.tech') {
+                        workspace = 'app'
+                    } else if (currentHost === 'demo.thub.tech') {
+                        workspace = 'demo'
+                    } else if (currentHost === 'localhost') {
+                        navigate('/workflows')
+                        return
+                    } else {
+                        workspace = 'app'
+                    }
+                }
+
+                // 4️⃣ Redirect to correct workspace subdomain
+                window.location.href = `https://${workspace}.thub.tech/workflows?uid=${userId}&theme=dark`
             } catch (error) {
-                console.error('Login Error:', error.response?.data || error.message)
-                alert(error.response?.data?.message || 'Login failed. Please try again.')
+                console.error('Login Error:', error)
+                alert(error.response?.data?.message || 'Login failed')
             } finally {
                 setLoading(false)
             }
