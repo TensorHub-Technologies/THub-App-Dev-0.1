@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import { Box, IconButton, Toolbar, Tooltip, Avatar, Menu, MenuItem, ListItemIcon } from '@mui/material'
 import { SET_DARKMODE, setUserData } from '@/store/actions'
@@ -31,6 +31,7 @@ const Header = () => {
     const open = Boolean(anchorEl)
 
     const { instance } = useMsal()
+    const location = useLocation()
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -67,9 +68,8 @@ const Header = () => {
     useEffect(() => {
         const getUserData = async () => {
             try {
-                // Extract the UID from the URL
-                const url = new URL(window.location.href)
-                const uid = url.searchParams.get('uid')
+                const params = new URLSearchParams(location.search)
+                const uid = params.get('uid')
 
                 if (uid) {
                     localStorage.setItem('userId', uid)
@@ -98,7 +98,6 @@ const Header = () => {
 
                 // Fetch user data by userId
                 const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
-
                 if (response.status === 200) {
                     const userData = response.data[0]
                     dispatch(setUserData(userData))
