@@ -69,12 +69,10 @@ const MainLayout = () => {
     const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'))
     const customization = useSelector((state) => state.customization)
     const [showModal, setShowModal] = useState(false)
-    const user = useSelector((state) => state.user.userData)
     const showRegisterModalState = useSelector((state) => state.modal.showRegisterModal)
     const showLoginModal = useSelector((state) => state.modal.showLoginModal)
     const userData = useSelector((state) => state.user.userData)
     const tenantId = userData?.uid || localStorage.getItem('userId')
-
     // Handle left drawer
     const leftDrawerOpened = useSelector((state) => state.customization.opened)
     const dispatch = useDispatch()
@@ -87,11 +85,14 @@ const MainLayout = () => {
     }, [matchDownMd])
 
     useEffect(() => {
+        if (!userData || Object.keys(userData).length === 0) return
+
         const modalShown = sessionStorage.getItem('modalShown')
-        if ((userData?.company === '' || userData?.company === null || !userData?.company) && !modalShown) {
+
+        if ((!userData.workspace || userData.workspace.trim() === '') && !modalShown) {
             setShowModal(true)
         }
-    }, [tenantId])
+    }, [userData])
 
     return (
         <Box sx={{ display: 'flex' }}>

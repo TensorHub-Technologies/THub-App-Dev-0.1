@@ -1,18 +1,19 @@
-// src/routes/PrivateRoute.jsx
+import { useLocation, Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { Navigate, useLocation } from 'react-router-dom'
 
 const PrivateRoute = ({ children }) => {
-    const url = new URL(window.location.href)
-    const uid = url.searchParams.get('uid')
-    const isAuthenticated = localStorage.getItem('userId') || uid
     const location = useLocation()
+
+    const params = new URLSearchParams(location.search)
+    const uid = params.get('uid')
+
+    const isAuthenticated = localStorage.getItem('userId') || uid
 
     return isAuthenticated ? children : <Navigate to='/' replace state={{ from: location }} />
 }
 
 PrivateRoute.propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node.isRequired
 }
 
 export default PrivateRoute
