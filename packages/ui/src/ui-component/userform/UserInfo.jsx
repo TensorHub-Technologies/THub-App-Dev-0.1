@@ -52,7 +52,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                 : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/updateUser'
 
         try {
-            const response = await axios.post(Url, { ...values, uid })
+            const response = await axios.post(Url, { ...values, uid, role: 'admin' })
             if (response.status === 200) {
                 enqueueSnackbar({
                     message: 'User data updated successfully',
