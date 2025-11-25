@@ -17,19 +17,11 @@ const CanvasRoutes = {
     children: [
         {
             path: '/canvas',
-            element: (
-                <ProtectedRoute>
-                    <Canvas />
-                </ProtectedRoute>
-            )
+            element: <Canvas />
         },
         {
             path: '/canvas/:id',
-            element: (
-                <ProtectedRoute>
-                    <Canvas />
-                </ProtectedRoute>
-            )
+            element: <Canvas />
         },
         {
             path: '/agentcanvas',
