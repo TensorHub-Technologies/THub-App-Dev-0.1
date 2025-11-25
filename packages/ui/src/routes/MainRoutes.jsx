@@ -57,9 +57,9 @@ const MainRoutes = {
         {
             path: '/workflows',
             element: (
-                <PrivateRoute>
-                    <Chatflows />
-                </PrivateRoute>
+                // <PrivateRoute>
+                <Chatflows />
+                // </PrivateRoute>
             )
         },
         {
