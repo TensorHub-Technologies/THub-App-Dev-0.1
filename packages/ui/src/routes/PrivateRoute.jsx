@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useLocation, Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
@@ -8,12 +7,9 @@ const PrivateRoute = ({ children }) => {
     const params = new URLSearchParams(location.search)
     const uidFromURL = params.get('uid')
 
-    useEffect(() => {
-        if (uidFromURL) {
-            localStorage.setItem('userId', uidFromURL)
-        }
-        console.log(uidFromURL, 'UID FROM URL')
-    }, [uidFromURL])
+    if (uidFromURL) {
+        localStorage.setItem('userId', uidFromURL)
+    }
 
     const isAuthenticated = uidFromURL || localStorage.getItem('userId')
 

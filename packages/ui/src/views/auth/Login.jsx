@@ -111,7 +111,6 @@ const Login = () => {
                         workspace = 'app'
                     }
                 }
-
                 // 4️⃣ Redirect to correct workspace subdomain
                 window.location.href = `https://${workspace}.thub.tech/workflows?uid=${userId}&theme=dark`
             } catch (error) {
