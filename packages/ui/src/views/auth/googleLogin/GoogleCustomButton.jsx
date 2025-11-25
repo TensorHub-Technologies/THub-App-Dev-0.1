@@ -34,13 +34,22 @@ const GoogleCustomButton = () => {
                     code: response.code
                 })
 
+                // Save to Redux
                 dispatch({
                     type: SET_USER_DATA,
                     payload: data.user
                 })
+
+                // Store IDs
                 localStorage.setItem('id_token', data.id_token)
                 localStorage.setItem('userId', data.userId)
-                navigate('/workflows')
+
+                // IMPORTANT: read workspace and theme
+                const workspace = data.user.workspace || 'app'
+                const theme = customization.isDarkMode ? 'dark' : 'light'
+
+                // Redirect to workspace domain with UID + theme
+                window.location.href = `https://${workspace}.thub.tech/workflows?uid=${data.userId}&theme=${theme}`
             } catch (error) {
                 console.error('Failed to exchange code:', error)
             }
