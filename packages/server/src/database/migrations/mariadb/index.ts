@@ -17,9 +17,12 @@ import { AddFeedback1707213626553 } from './1707213626553-AddFeedback'
 import { AddUpsertHistoryEntity1709814301358 } from './1709814301358-AddUpsertHistoryEntity'
 import { AddLead1710832127079 } from './1710832127079-AddLead'
 import { AddLeadToChatMessage1711538023578 } from './1711538023578-AddLeadToChatMessage'
-import { AddVectorStoreConfigToDocStore1715861032479 } from './1715861032479-AddVectorStoreConfigToDocStore'
 import { AddDocumentStore1711637331047 } from './1711637331047-AddDocumentStore'
+import { AddEvaluation1714548873039 } from './1714548873039-AddEvaluation'
+import { AddDatasets1714548903384 } from './1714548903384-AddDataset'
 import { AddAgentReasoningToChatMessage1714679514451 } from './1714679514451-AddAgentReasoningToChatMessage'
+import { AddEvaluator1714808591644 } from './1714808591644-AddEvaluator'
+import { AddVectorStoreConfigToDocStore1715861032479 } from './1715861032479-AddVectorStoreConfigToDocStore'
 import { AddTypeToChatFlow1716300000000 } from './1716300000000-AddTypeToChatFlow'
 import { AddApiKey1720230151480 } from './1720230151480-AddApiKey'
 import { AddActionToChatMessage1721078251523 } from './1721078251523-AddActionToChatMessage'
@@ -28,7 +31,15 @@ import { AddCustomTemplate1725629836652 } from './1725629836652-AddCustomTemplat
 import { AddArtifactsToChatMessage1726156258465 } from './1726156258465-AddArtifactsToChatMessage'
 import { AddFollowUpPrompts1726666318346 } from './1726666318346-AddFollowUpPrompts'
 import { AddTypeToAssistant1733011290987 } from './1733011290987-AddTypeToAssistant'
+import { AddSeqNoToDatasetRow1733752119696 } from './1733752119696-AddSeqNoToDatasetRow'
 import { AddExecutionEntity1738090872625 } from './1738090872625-AddExecutionEntity'
+import { FixOpenSourceAssistantTable1743758056188 } from './1743758056188-FixOpenSourceAssistantTable'
+import { AddErrorToEvaluationRun1744964560174 } from './1744964560174-AddErrorToEvaluationRun'
+import { ModifyExecutionDataColumnType1747902489801 } from './1747902489801-ModifyExecutionDataColumnType'
+import { AddTextToSpeechToChatFlow1754986457485 } from './1754986457485-AddTextToSpeechToChatFlow'
+import { ModifyChatflowType1755066758601 } from './1755066758601-ModifyChatflowType'
+import { AddTextToSpeechToChatFlow1759419231100 } from './1759419231100-AddTextToSpeechToChatFlow'
+import { AddChatFlowNameIndex1759424809984 } from './1759424809984-AddChatFlowNameIndex'
 
 export const mariadbMigrations = [
     Init1693840429259,
@@ -51,15 +62,28 @@ export const mariadbMigrations = [
     AddDocumentStore1711637331047,
     AddLead1710832127079,
     AddLeadToChatMessage1711538023578,
+    AddEvaluation1714548873039,
+    AddDatasets1714548903384,
     AddAgentReasoningToChatMessage1714679514451,
-    AddTypeToChatFlow1716300000000,
+    AddEvaluator1714808591644,
     AddVectorStoreConfigToDocStore1715861032479,
+    AddTypeToChatFlow1716300000000,
     AddApiKey1720230151480,
     AddActionToChatMessage1721078251523,
     LongTextColumn1722301395521,
     AddCustomTemplate1725629836652,
-    AddArtifactsToChatMessage1726156258465,
     AddFollowUpPrompts1726666318346,
     AddTypeToAssistant1733011290987,
-    AddExecutionEntity1738090872625
+    AddArtifactsToChatMessage1726156258465,
+
+    AddSeqNoToDatasetRow1733752119696,
+
+    AddExecutionEntity1738090872625,
+    FixOpenSourceAssistantTable1743758056188,
+    AddErrorToEvaluationRun1744964560174,
+    ModifyExecutionDataColumnType1747902489801,
+    AddTextToSpeechToChatFlow1754986457485,
+    ModifyChatflowType1755066758601,
+    AddTextToSpeechToChatFlow1759419231100,
+    AddChatFlowNameIndex1759424809984
 ]

@@ -2,7 +2,8 @@ import { lazy } from 'react'
 
 // project imports
 import Loadable from '@/ui-component/loading/Loadable'
-import PrivateRoute from '@/routes/PrivateRoute' // Import the PrivateRoute component
+// import PrivateRoute from '@/routes/PrivateRoute'
+import JoinWorkspace from '@/views/workspace'
 
 // chatflows routing
 const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
@@ -51,171 +52,91 @@ const Settings = Loadable(lazy(() => import('@/views/homesettings')))
 
 const MainRoutes = {
     path: '/',
-    element: (
-        <PrivateRoute>
-            <MainLayout />
-        </PrivateRoute>
-    ),
+    element: <MainLayout />,
     children: [
         {
             path: '/workflows',
-            element: (
-                <PrivateRoute>
-                    <Chatflows />
-                </PrivateRoute>
-            )
+            element: <Chatflows />
         },
         {
             path: '/templates',
-            element: (
-                <PrivateRoute>
-                    <Marketplaces />
-                </PrivateRoute>
-            )
+            element: <Marketplaces />
         },
         {
             path: 'agentflows',
-            element: (
-                <PrivateRoute>
-                    <Agentflows />
-                </PrivateRoute>
-            )
+            element: <Agentflows />
         },
         {
             path: 'executions',
-            element: (
-                <PrivateRoute>
-                    <Executions />
-                </PrivateRoute>
-            )
+            element: <Executions />
         },
         {
             path: '/apikey',
-            element: (
-                <PrivateRoute>
-                    <APIKey />
-                </PrivateRoute>
-            )
+            element: <APIKey />
         },
         {
             path: '/tools',
-            element: (
-                <PrivateRoute>
-                    <Tools />
-                </PrivateRoute>
-            )
+            element: <Tools />
         },
         {
             path: '/assistants',
-            element: (
-                <PrivateRoute>
-                    <Assistants />
-                </PrivateRoute>
-            )
+            element: <Assistants />
         },
         {
             path: '/credentials',
-            element: (
-                <PrivateRoute>
-                    <Credentials />
-                </PrivateRoute>
-            )
+            element: <Credentials />
         },
         {
             path: '/variables',
-            element: (
-                <PrivateRoute>
-                    <Variables />
-                </PrivateRoute>
-            )
+            element: <Variables />
         },
         {
             path: '/document-stores',
-            element: (
-                <PrivateRoute>
-                    <Documents />
-                </PrivateRoute>
-            )
+            element: <Documents />
         },
         {
             path: '/document-stores/:storeId',
-            element: (
-                <PrivateRoute>
-                    <DocumentStoreDetail />
-                </PrivateRoute>
-            )
+            element: <DocumentStoreDetail />
         },
         {
             path: '/document-stores/chunks/:storeId/:fileId',
-            element: (
-                <PrivateRoute>
-                    <ShowStoredChunks />
-                </PrivateRoute>
-            )
+            element: <ShowStoredChunks />
         },
         {
             path: '/document-stores/:storeId/:name',
-            element: (
-                <PrivateRoute>
-                    <LoaderConfigPreviewChunks />
-                </PrivateRoute>
-            )
+            element: <LoaderConfigPreviewChunks />
         },
         {
             path: '/document-stores/vector/:storeId',
-            element: (
-                <PrivateRoute>
-                    <VectorStoreConfigure />
-                </PrivateRoute>
-            )
+            element: <VectorStoreConfigure />
         },
         {
             path: '/document-stores/vector/:storeId/:docId',
-            element: (
-                <PrivateRoute>
-                    <VectorStoreConfigure />
-                </PrivateRoute>
-            )
+            element: <VectorStoreConfigure />
         },
         {
             path: '/document-stores/query/:storeId',
-            element: (
-                <PrivateRoute>
-                    <VectorStoreQuery />
-                </PrivateRoute>
-            )
+            element: <VectorStoreQuery />
         },
         {
             path: '/subscription',
-            element: (
-                <PrivateRoute>
-                    <Subscription />
-                </PrivateRoute>
-            )
+            element: <Subscription />
         },
         {
             path: '/subscription/api/payments/payment-success',
-            element: (
-                <PrivateRoute>
-                    <Subscription />
-                </PrivateRoute>
-            )
+            element: <Subscription />
         },
         {
             path: '/subscription/api/payments/payment-failure',
-            element: (
-                <PrivateRoute>
-                    <Subscription />
-                </PrivateRoute>
-            )
+            element: <Subscription />
         },
         {
             path: '/setting',
-            element: (
-                <PrivateRoute>
-                    <Settings />
-                </PrivateRoute>
-            )
+            element: <Settings />
+        },
+        {
+            path: '/join',
+            element: <JoinWorkspace />
         }
     ]
 }

@@ -18,9 +18,12 @@ import { AddUpsertHistoryEntity1709814301358 } from './1709814301358-AddUpsertHi
 import { FieldTypes1710497452584 } from './1710497452584-FieldTypes'
 import { AddLead1710832137905 } from './1710832137905-AddLead'
 import { AddLeadToChatMessage1711538016098 } from './1711538016098-AddLeadToChatMessage'
-import { AddVectorStoreConfigToDocStore1715861032479 } from './1715861032479-AddVectorStoreConfigToDocStore'
 import { AddDocumentStore1711637331047 } from './1711637331047-AddDocumentStore'
+import { AddEvaluation1714548873039 } from './1714548873039-AddEvaluation'
+import { AddDatasets1714548903384 } from './1714548903384-AddDataset'
 import { AddAgentReasoningToChatMessage1714679514451 } from './1714679514451-AddAgentReasoningToChatMessage'
+import { AddEvaluator1714808591644 } from './1714808591644-AddEvaluator'
+import { AddVectorStoreConfigToDocStore1715861032479 } from './1715861032479-AddVectorStoreConfigToDocStore'
 import { AddTypeToChatFlow1716300000000 } from './1716300000000-AddTypeToChatFlow'
 import { AddApiKey1720230151480 } from './1720230151480-AddApiKey'
 import { AddActionToChatMessage1721078251523 } from './1721078251523-AddActionToChatMessage'
@@ -28,7 +31,15 @@ import { AddCustomTemplate1725629836652 } from './1725629836652-AddCustomTemplat
 import { AddArtifactsToChatMessage1726156258465 } from './1726156258465-AddArtifactsToChatMessage'
 import { AddFollowUpPrompts1726666309552 } from './1726666309552-AddFollowUpPrompts'
 import { AddTypeToAssistant1733011290987 } from './1733011290987-AddTypeToAssistant'
+import { AddSeqNoToDatasetRow1733752119696 } from './1733752119696-AddSeqNoToDatasetRow'
 import { AddExecutionEntity1738090872625 } from './1738090872625-AddExecutionEntity'
+import { FixOpenSourceAssistantTable1743758056188 } from './1743758056188-FixOpenSourceAssistantTable'
+import { AddErrorToEvaluationRun1744964560174 } from './1744964560174-AddErrorToEvaluationRun'
+import { ModifyExecutionSessionIdFieldType1748450230238 } from './1748450230238-ModifyExecutionSessionIdFieldType'
+import { AddTextToSpeechToChatFlow1754986480347 } from './1754986480347-AddTextToSpeechToChatFlow'
+import { ModifyChatflowType1755066758601 } from './1755066758601-ModifyChatflowType'
+import { AddTextToSpeechToChatFlow1759419194331 } from './1759419194331-AddTextToSpeechToChatFlow'
+import { AddChatFlowNameIndex1759424903973 } from './1759424903973-AddChatFlowNameIndex'
 
 export const postgresMigrations = [
     Init1693891895163,
@@ -49,17 +60,30 @@ export const postgresMigrations = [
     AddUpsertHistoryEntity1709814301358,
     AddFeedback1707213601923,
     FieldTypes1710497452584,
+    AddEvaluation1714548873039,
+    AddDatasets1714548903384,
+    AddEvaluator1714808591644,
     AddDocumentStore1711637331047,
     AddLead1710832137905,
     AddLeadToChatMessage1711538016098,
     AddAgentReasoningToChatMessage1714679514451,
-    AddTypeToChatFlow1716300000000,
     AddVectorStoreConfigToDocStore1715861032479,
+    AddTypeToChatFlow1716300000000,
     AddApiKey1720230151480,
     AddActionToChatMessage1721078251523,
     AddCustomTemplate1725629836652,
     AddArtifactsToChatMessage1726156258465,
     AddFollowUpPrompts1726666309552,
     AddTypeToAssistant1733011290987,
-    AddExecutionEntity1738090872625
+
+    AddSeqNoToDatasetRow1733752119696,
+
+    AddExecutionEntity1738090872625,
+    FixOpenSourceAssistantTable1743758056188,
+    AddErrorToEvaluationRun1744964560174,
+    ModifyExecutionSessionIdFieldType1748450230238,
+    AddTextToSpeechToChatFlow1754986480347,
+    ModifyChatflowType1755066758601,
+    AddTextToSpeechToChatFlow1759419194331,
+    AddChatFlowNameIndex1759424903973
 ]

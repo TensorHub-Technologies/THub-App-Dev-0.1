@@ -34,10 +34,13 @@ const GoogleCustomButton = () => {
                     code: response.code
                 })
 
+                // Save to Redux
                 dispatch({
                     type: SET_USER_DATA,
                     payload: data.user
                 })
+
+                // Store IDs
                 localStorage.setItem('id_token', data.id_token)
                 localStorage.setItem('userId', data.userId)
                 navigate('/workflows')

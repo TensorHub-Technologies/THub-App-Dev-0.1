@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import { Box, IconButton, Toolbar, Tooltip, Avatar, Menu, MenuItem, ListItemIcon } from '@mui/material'
 import { SET_DARKMODE, setUserData } from '@/store/actions'
@@ -31,6 +31,7 @@ const Header = () => {
     const open = Boolean(anchorEl)
 
     const { instance } = useMsal()
+    const location = useLocation()
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -64,88 +65,73 @@ const Header = () => {
         navigate('/')
         setAnchorEl(null)
     }
-
     useEffect(() => {
         const getUserData = async () => {
-            if (userId) {
-                try {
-                    const thubWebServerDevUrl =
-                        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-                    const thubWebServerProdUrl =
-                        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-                    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+            try {
+                const params = new URLSearchParams(location.search)
+                const uid = params.get('uid')
 
-                    let apiUrl
-
-                    if (window.location.hostname === 'demo.thub.tech') {
-                        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-                    } else if (window.location.hostname === 'localhost') {
-                        apiUrl = 'http://localhost:2000'
-                    } else {
-                        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-                    }
-                    const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
-                    if (response.status === 200) {
-                        const userData = response?.data[0]
-
-                        dispatch(setUserData(userData))
-
-                        const name = userData?.name[0].toUpperCase()
-                        setUserFullName(userData?.name)
-                        setUserName(name)
-                        const proPicture = userData?.picture
-                        setUserImg(proPicture)
-                        setLoginType(userData?.login_type)
-
-                        const dateObj = new Date(userData?.subscription_date)
-
-                        const monthlySubscription = new Date(dateObj)
-                        monthlySubscription.setUTCDate(monthlySubscription.getUTCDate() + 30)
-                        monthlySubscription.setUTCFullYear(monthlySubscription.getUTCFullYear() + 1)
-
-                        if (userData?.subscription_duration === 'monthly') {
-                            // check if user subscription limit is reached
-                            const SubscriptionDay = monthlySubscription.getUTCDate()
-                            const SubscriptionMonth = monthlySubscription.getUTCMonth() + 1
-
-                            const currentDate = new Date() // Get the current date
-
-                            const currentmonth = currentDate.getMonth() + 1
-                            const currentday = currentDate.getDate()
-
-                            if (SubscriptionMonth === currentmonth && currentday >= SubscriptionDay) {
-                                // subscription date complete, update subscription
-                            }
-                        } else if (userData?.subscription_duration === 'yearly') {
-                            // check if user subscription limit is reached
-                            const SubscriptionDay = monthlySubscription.getUTCDate()
-                            const SubscriptionMonth = monthlySubscription.getUTCMonth() + 1
-                            const SubscriptionYear = monthlySubscription.getUTCFullYear()
-
-                            const currentDate = new Date() // Get the current date
-
-                            // Extract the year, month, and day
-                            const currentyear = currentDate.getFullYear()
-                            const currentmonth = currentDate.getMonth() + 1
-                            const currentday = currentDate.getDate()
-
-                            if (SubscriptionYear === currentyear && currentmonth === SubscriptionMonth && currentday >= SubscriptionDay) {
-                                // subscription date complete, update subscription
-                            }
-                        }
-                    } else {
-                        console.error('Error:', response.statusText)
-                    }
-                } catch (error) {
-                    console.error('Error:', error)
+                if (uid) {
+                    localStorage.setItem('userId', uid)
+                    // You can also store workspace (subdomain)
+                    const subdomain = window.location.hostname.split('.')[0]
+                    localStorage.setItem('workspace', subdomain)
                 }
-            } else {
-                console.warn('UID parameter is missing in the URL')
+
+                const userId = localStorage.getItem('userId')
+                if (!userId) {
+                    console.warn('UID parameter is missing in the URL')
+                    return
+                }
+
+                // Determine correct backend base URL
+                let apiUrl
+                const hostname = window.location.hostname
+
+                if (hostname === 'demo.thub.tech') {
+                    apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                } else if (hostname === 'localhost') {
+                    apiUrl = 'http://localhost:2000'
+                } else {
+                    apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+                }
+
+                // Fetch user data by userId
+                const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
+                if (response.status === 200) {
+                    const userData = response.data[0]
+                    dispatch(setUserData(userData))
+
+                    // Set user-specific info
+                    const name = userData?.name?.[0]?.toUpperCase() || ''
+                    setUserFullName(userData?.name)
+                    setUserName(name)
+                    setUserImg(userData?.picture)
+                    setLoginType(userData?.login_type)
+
+                    // Handle subscription validation
+                    const subscriptionDate = new Date(userData?.subscription_date)
+                    const expiryDate = new Date(subscriptionDate)
+
+                    if (userData?.subscription_duration === 'monthly') {
+                        expiryDate.setUTCDate(expiryDate.getUTCDate() + 30)
+                    } else if (userData?.subscription_duration === 'yearly') {
+                        expiryDate.setUTCFullYear(expiryDate.getUTCFullYear() + 1)
+                    }
+
+                    if (new Date() >= expiryDate) {
+                        console.warn('Subscription expired — update subscription status.')
+                    }
+                } else {
+                    console.error('Error:', response.statusText)
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error)
             }
         }
 
         getUserData()
-    }, [dispatch, userId])
+    }, [dispatch])
 
     const changeDarkMode = () => {
         const newTheme = !customization.isDarkMode
