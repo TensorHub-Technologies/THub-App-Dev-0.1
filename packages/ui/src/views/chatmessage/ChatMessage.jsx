@@ -177,6 +177,9 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const dispatch = useDispatch()
     const { onAgentflowNodeStatusUpdate, clearAgentflowNodeStatus } = useContext(flowContext)
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
+
     useNotifier()
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
@@ -998,12 +1001,12 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
 
         clearPreviews()
         setMessages((prevMessages) => [...prevMessages, { message: input, type: 'userMessage', fileUploads: uploads }])
-
         // Send user question to Prediction Internal API
         try {
             const params = {
                 question: input,
-                chatId
+                chatId,
+                tenantId
             }
             if (typeof selectedInput === 'object') {
                 params.form = selectedInput
@@ -2304,9 +2307,11 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 clearPreviews()
                 setMessages((prevMessages) => [...prevMessages, { message: transcript, type: 'userMessage' }])
 
+                const tenantId = userData?.uid || localStorage.getItem('userId')
                 const params = {
                     question: transcript,
-                    chatId: chatflowid
+                    chatId: chatflowid,
+                    tenantId: tenantId
                 }
                 questions.current += 1
                 const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)

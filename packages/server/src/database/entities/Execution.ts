@@ -41,4 +41,7 @@ export class Execution implements IExecution {
     @ManyToOne(() => ChatFlow)
     @JoinColumn({ name: 'agentflowId' })
     agentflow: ChatFlow
+
+    @Column({ nullable: true })
+    tenantId?: string
 }

@@ -401,6 +401,7 @@ export interface IExecuteFlowParams extends IPredictionQueueAppServer {
     parentExecutionId?: string
     iterationContext?: ICommonObject
     isTool?: boolean
+    tenantId?: string
 }
 export interface INodeOverrides {
     [key: string]: {
