@@ -43,7 +43,27 @@ const GoogleCustomButton = () => {
                 // Store IDs
                 localStorage.setItem('id_token', data?.id_token)
                 localStorage.setItem('userId', data?.userId)
-                window.location.href = `https://${data?.workspace}.thub.tech/workflows?theme=dark&uid=${data.userId}`
+
+                // -------------------------
+                // DEFAULT WORKSPACE LOGIC
+                // -------------------------
+                let workspace = data?.workspace
+
+                // If workspace missing → assign default
+                if (!workspace || workspace.trim() === '') {
+                    if (window.location.hostname === 'demo.thub.tech') {
+                        workspace = 'demo'
+                    } else if (window.location.hostname === 'localhost') {
+                        workspace = 'app'
+                    } else {
+                        workspace = 'app' // production default
+                    }
+                }
+
+                // -------------------------
+                // REDIRECT
+                // -------------------------
+                window.location.href = `https://${workspace}.thub.tech/workflows?theme=dark&uid=${data.userId}`
             } catch (error) {
                 console.error('Failed to exchange code:', error)
             }
