@@ -3,6 +3,7 @@ import axios from 'axios'
 import PropTypes from 'prop-types'
 import userImage_light from '../../assets/images/userForm/userForm.svg'
 import userImage_dark from '../../assets/images/userForm/userForm_dark.svg'
+import { useEffect } from 'react'
 import { Box, Button, FormControl, Stack, TextField, Typography, IconButton } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
@@ -14,6 +15,8 @@ import * as Yup from 'yup'
 const UserInfo = ({ setShowModal, showModal }) => {
     const navigate = useNavigate()
     const { uid } = useSelector((state) => state.user.userData)
+    const userData = useSelector((state) => state.user.userData)
+    console.log(userData, 'user data')
     const dispatch = useDispatch()
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
@@ -44,6 +47,17 @@ const UserInfo = ({ setShowModal, showModal }) => {
             .matches(/^[a-zA-Z0-9]*$/, 'Workspace name can only contain letters and numbers')
             .required('Workspace Name is required')
     })
+    let workspace
+    useEffect(() => {
+        const hostName = window.location.hostname
+        if (hostName === 'localhost') {
+            workspace = 'app'
+        } else if (hostName === 'demo.thub.tech') {
+            workspace = 'demo'
+        } else {
+            workspace = 'app'
+        }
+    }, [])
 
     const handleSubmit = async (values, { resetForm }) => {
         const Url =
@@ -67,7 +81,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                     }
                 })
                 resetForm()
-                window.location.href = `https://${values.workspace}.thub.tech/?theme=dark&uid=${uid}`
+                window.location.href = `https://${values.workspace}.thub.tech/workflows?theme=dark&uid=${uid}`
                 handleClose()
             }
         } catch (error) {

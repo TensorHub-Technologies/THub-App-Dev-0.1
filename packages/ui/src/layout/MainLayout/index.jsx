@@ -85,14 +85,26 @@ const MainLayout = () => {
     }, [matchDownMd])
 
     useEffect(() => {
-        if (!userData || Object.keys(userData).length === 0) return
+        validateWorkspace()
+    }, [userData])
 
+    const validateWorkspace = () => {
+        if (!userData) return
+
+        // If workspace exists (non-empty OR empty string), do nothing
+        if (userData?.workspace || userData?.workspace?.trim() === '') {
+            console.log('workspace already exists => no modal')
+            setShowModal(false)
+            return
+        }
+
+        // If workspace is null or undefined, show modal once per session
         const modalShown = sessionStorage.getItem('modalShown')
-
-        if ((!userData.workspace || userData.workspace.trim() === '') && !modalShown) {
+        console.log(modalShown, 'modal shown')
+        if (!modalShown) {
             setShowModal(true)
         }
-    }, [userData])
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>
