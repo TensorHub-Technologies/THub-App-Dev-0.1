@@ -41,9 +41,9 @@ const GoogleCustomButton = () => {
                 })
 
                 // Store IDs
-                localStorage.setItem('id_token', data.id_token)
-                localStorage.setItem('userId', data.userId)
-                navigate('/workflows')
+                localStorage.setItem('id_token', data?.id_token)
+                localStorage.setItem('userId', data?.userId)
+                window.location.href = `https://${data?.workspace}.thub.tech/workflows?theme=dark&uid=${data.userId}`
             } catch (error) {
                 console.error('Failed to exchange code:', error)
             }
