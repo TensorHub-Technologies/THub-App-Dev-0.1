@@ -16,7 +16,6 @@ const UserInfo = ({ setShowModal, showModal }) => {
     const navigate = useNavigate()
     const { uid } = useSelector((state) => state.user.userData)
     const userData = useSelector((state) => state.user.userData)
-    console.log(userData, 'user data')
     const dispatch = useDispatch()
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))

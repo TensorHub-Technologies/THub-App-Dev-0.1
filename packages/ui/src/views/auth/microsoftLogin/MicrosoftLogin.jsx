@@ -47,8 +47,6 @@ export const MicrosoftLogin = () => {
                                 workspace: ''
                             }
 
-                            console.log('THub local for microsoft:', import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL)
-
                             const thubWebServerDevUrl =
                                 import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL ||
                                 'https://thub-web-server-demo-378678297066.us-central1.run.app'

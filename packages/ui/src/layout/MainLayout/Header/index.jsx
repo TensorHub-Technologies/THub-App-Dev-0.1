@@ -27,6 +27,7 @@ const Header = () => {
     const theme = useTheme()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
+    const userData = useSelector((state) => state.user.userData)
     const dispatch = useDispatch()
     const open = Boolean(anchorEl)
 
@@ -55,6 +56,18 @@ const Header = () => {
             instance.logoutPopup({
                 postLogoutRedirectUri: '/'
             })
+        }
+
+        if (loginType === 'google') {
+            localStorage.removeItem('userId')
+            sessionStorage.removeItem('modalShown')
+            localStorage.removeItem('access_token')
+            dispatch(setUserData(''))
+            setUserName('')
+            setUserImg('')
+            window.location.href = 'https://app.thub.tech/'
+            setAnchorEl(null)
+            return
         }
         localStorage.removeItem('userId')
         sessionStorage.removeItem('modalShown')

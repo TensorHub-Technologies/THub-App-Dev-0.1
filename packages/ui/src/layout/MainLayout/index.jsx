@@ -85,24 +85,34 @@ const MainLayout = () => {
     }, [matchDownMd])
 
     useEffect(() => {
+        if (!userData || Object.keys(userData).length === 0) return
         validateWorkspace()
     }, [userData])
 
     const validateWorkspace = () => {
-        if (!userData) return
+        const workspace = userData?.workspace
 
-        // If workspace exists (non-empty OR empty string), do nothing
-        if (userData?.workspace || userData?.workspace?.trim() === '') {
-            console.log('workspace already exists => no modal')
+        // 1️⃣ If login type is azure_ad or github → do NOT show modal
+        if (userData.login_type === 'azure_ad' || userData.login_type === 'github') {
+            console.log('Azure/GitHub login → no workspace modal needed')
             setShowModal(false)
             return
         }
 
-        // If workspace is null or undefined, show modal once per session
+        // 2️⃣ If workspace exists & is NOT empty → do NOT show modal
+        if (workspace && workspace.trim() !== '') {
+            console.log('Workspace exists → no modal')
+            setShowModal(false)
+            return
+        }
+
+        // 3️⃣ If workspace is null/undefined/empty → show once per session
         const modalShown = sessionStorage.getItem('modalShown')
-        console.log(modalShown, 'modal shown')
+
         if (!modalShown) {
+            console.log('No workspace → showing modal once')
             setShowModal(true)
+            sessionStorage.setItem('modalShown', 'true')
         }
     }
 
