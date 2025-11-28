@@ -98,7 +98,8 @@ const AgentExecutions = () => {
     const buildRequestParams = (page) => {
         const params = {
             page,
-            limit: ITEMS_PER_PAGE
+            limit: ITEMS_PER_PAGE,
+            tenantId
         }
 
         if (filters.state) params.state = filters.state
@@ -176,7 +177,7 @@ const AgentExecutions = () => {
         setExecutions([])
         setHasMore(true)
         setLoading(true)
-        getAllExecutions.request({ page: 1, limit: ITEMS_PER_PAGE })
+        getAllExecutions.request({ page: 1, limit: ITEMS_PER_PAGE, tenantId })
     }
 
     const handleExecutionSelectionChange = (selectedIds) => {
@@ -200,7 +201,7 @@ const AgentExecutions = () => {
 
     useEffect(() => {
         // Initial load
-        getAllExecutions.request({ page: 1, limit: ITEMS_PER_PAGE })
+        getAllExecutions.request({ page: 1, limit: ITEMS_PER_PAGE, tenantId })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

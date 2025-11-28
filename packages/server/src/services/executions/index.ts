@@ -18,6 +18,7 @@ export interface ExecutionFilters {
     endDate?: Date
     page?: number
     limit?: number
+    tenantId?: string
 }
 
 const getExecutionById = async (executionId: string, workspaceId?: string): Promise<Execution | null> => {
@@ -65,7 +66,7 @@ const getPublicExecutionById = async (executionId: string): Promise<Execution | 
 const getAllExecutions = async (filters: ExecutionFilters = {}): Promise<{ data: Execution[]; total: number }> => {
     try {
         const appServer = getRunningExpressApp()
-        const { id, agentflowId, agentflowName, sessionId, state, startDate, endDate, page = 1, limit = 12 } = filters
+        const { id, agentflowId, agentflowName, sessionId, state, startDate, endDate, tenantId, page = 1, limit = 12 } = filters
 
         // Handle UUID fields properly using raw parameters to avoid type conversion issues
         // This uses the query builder instead of direct objects for compatibility with UUID fields
@@ -75,6 +76,8 @@ const getAllExecutions = async (filters: ExecutionFilters = {}): Promise<{ data:
             .orderBy('execution.updatedDate', 'DESC')
             .skip((page - 1) * limit)
             .take(limit)
+
+        if (tenantId) queryBuilder.andWhere('execution.tenantId = :tenantId', { tenantId })
 
         if (id) queryBuilder.andWhere('execution.id = :id', { id })
         if (agentflowId) queryBuilder.andWhere('execution.agentflowId = :agentflowId', { agentflowId })

@@ -311,7 +311,8 @@ export const executeFlow = async ({
     isInternal,
     files,
     signal,
-    isTool
+    isTool,
+    tenantId
 }: IExecuteFlowParams) => {
     // Ensure incomingInput has all required properties with default values
     incomingInput = {
@@ -465,7 +466,8 @@ export const executeFlow = async ({
             uploadedFilesContent,
             fileUploads,
             signal,
-            isTool
+            isTool,
+            tenantId
         })
     }
 
@@ -976,7 +978,8 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             telemetry: appServer.telemetry,
             cachePool: appServer.cachePool,
             componentNodes: appServer.nodesPool.componentNodes,
-            isTool // used to disable streaming if incoming request its from ChatflowTool
+            isTool, // used to disable streaming if incoming request its from ChatflowTool
+            tenantId: req.body.tenantId //take it from the request header req.query.tenantId
         }
 
         if (process.env.MODE === MODE.QUEUE) {
