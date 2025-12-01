@@ -52,32 +52,54 @@ const Header = () => {
 
     const userId = localStorage.getItem('userId')
     const handleLogout = () => {
+        const currentHost = window.location.hostname
+
+        // 1️⃣ Clear all local/session storage
+        localStorage.removeItem('userId')
+        localStorage.removeItem('workspace')
+        localStorage.removeItem('access_token')
+        sessionStorage.removeItem('modalShown')
+
+        // Reset Redux
+        dispatch(setUserData(''))
+        setUserName('')
+        setUserImg('')
+
+        setAnchorEl(null)
+
+        // 2️⃣ Handle login type specific logout
         if (loginType === 'azure_ad') {
             instance.logoutPopup({
                 postLogoutRedirectUri: '/'
             })
+            return
         }
 
         if (loginType === 'google') {
-            localStorage.removeItem('userId')
-            sessionStorage.removeItem('modalShown')
-            localStorage.removeItem('access_token')
-            dispatch(setUserData(''))
-            setUserName('')
-            setUserImg('')
-            window.location.href = 'https://app.thub.tech/'
-            setAnchorEl(null)
+            if (currentHost === 'demo.thub.tech') {
+                window.location.href = 'https://demo.thub.tech/'
+            } else if (currentHost === 'localhost') {
+                window.location.href = 'http://localhost:8080/'
+            } else {
+                window.location.href = 'https://app.thub.tech/'
+            }
             return
         }
-        localStorage.removeItem('userId')
-        sessionStorage.removeItem('modalShown')
-        localStorage.removeItem('access_token')
-        dispatch(setUserData(''))
-        setUserName('')
-        setUserImg('')
-        navigate('/')
-        setAnchorEl(null)
+
+        // 3️⃣ Normal email/password login logout
+        if (currentHost === 'demo.thub.tech') {
+            window.location.href = 'https://demo.thub.tech/'
+            return
+        }
+
+        if (currentHost === 'localhost') {
+            window.location.href = 'http://localhost:8080/'
+            return
+        }
+
+        window.location.href = 'https://app.thub.tech/'
     }
+
     useEffect(() => {
         const getUserData = async () => {
             try {
@@ -141,7 +163,6 @@ const Header = () => {
                 console.error('Error fetching user data:', error)
             }
         }
-
         getUserData()
     }, [dispatch])
 
