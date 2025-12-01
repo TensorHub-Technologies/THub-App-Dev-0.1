@@ -55,7 +55,7 @@ const GoogleCustomButton = () => {
                 // 2️⃣ DEMO → always default workspace = demo
                 // --------------------------------
                 if (hostname === 'demo.thub.tech') {
-                    workspace = workspace || 'demo'
+                    workspace = 'demo'
                     window.location.href = `https://demo.thub.tech/workflows?theme=dark&uid=${data.userId}`
                     return
                 }
