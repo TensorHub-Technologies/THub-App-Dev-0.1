@@ -86,7 +86,6 @@ const Header = () => {
 
                 if (uid) {
                     localStorage.setItem('userId', uid)
-                    // You can also store workspace (subdomain)
                     const subdomain = window.location.hostname.split('.')[0]
                     localStorage.setItem('workspace', subdomain)
                 }
