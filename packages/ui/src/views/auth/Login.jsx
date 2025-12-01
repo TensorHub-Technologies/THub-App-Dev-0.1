@@ -95,24 +95,29 @@ const Login = () => {
                 const userData = userDataResponse.data[0]
                 dispatch(setUserData(userData))
 
-                let workspace = userData?.workspace
+                let workspace = userData?.workspace?.trim()
 
                 const currentHost = window.location.hostname
 
-                if (!workspace) {
-                    if (currentHost === 'app.thub.tech') {
-                        workspace = 'app'
-                    } else if (currentHost === 'demo.thub.tech') {
-                        workspace = 'demo'
-                    } else if (currentHost === 'localhost') {
-                        navigate('/workflows')
-                        return
-                    } else {
-                        workspace = 'app'
-                    }
+                if (currentHost === 'localhost') {
+                    workspace = 'localhost'
+                    window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${userId}`
+                    return
                 }
+
+                if (currentHost === 'demo.thub.tech') {
+                    workspace = 'demo'
+                    window.location.href = `https://demo.thub.tech/workflows?theme=dark&uid=${userId}`
+                    return
+                }
+
+                if (!workspace) {
+                    workspace = 'app'
+                }
+
                 // 4️⃣ Redirect to correct workspace subdomain
                 window.location.href = `https://${workspace}.thub.tech/workflows?uid=${userId}&theme=dark`
+                return
             } catch (error) {
                 console.error('Login Error:', error)
                 alert(error.response?.data?.message || 'Login failed')
