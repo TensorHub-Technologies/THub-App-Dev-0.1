@@ -34,35 +34,39 @@ const GoogleCustomButton = () => {
                     code: response.code
                 })
 
-                // Save to Redux
-                dispatch({
-                    type: SET_USER_DATA,
-                    payload: data.user
-                })
+                // Save Redux & Local
+                dispatch({ type: SET_USER_DATA, payload: data.user })
+                localStorage.setItem('id_token', data.id_token)
+                localStorage.setItem('userId', data.userId)
 
-                // Store IDs
-                localStorage.setItem('id_token', data?.id_token)
-                localStorage.setItem('userId', data?.userId)
-
-                // -------------------------
-                // DEFAULT WORKSPACE LOGIC
-                // -------------------------
-                let workspace = data?.workspace
-
-                // If workspace missing → assign default
-                if (!workspace || workspace.trim() === '') {
-                    if (window.location.hostname === 'demo.thub.tech') {
-                        workspace = 'demo'
-                    } else if (window.location.hostname === 'localhost') {
-                        workspace = 'app'
-                    } else {
-                        workspace = 'app' // production default
-                    }
+                const hostname = window.location.hostname
+                let workspace = data?.workspace?.trim()
+                console.log(workspace, 'workspace')
+                // --------------------------------
+                // 1️⃣ LOCALHOST → no workspace logic
+                // --------------------------------
+                if (hostname === 'localhost') {
+                    workspace = 'local'
+                    window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${data.userId}`
+                    return
                 }
 
-                // -------------------------
-                // REDIRECT
-                // -------------------------
+                // --------------------------------
+                // 2️⃣ DEMO → always default workspace = demo
+                // --------------------------------
+                if (hostname === 'demo.thub.tech') {
+                    workspace = workspace || 'demo'
+                    window.location.href = `https://demo.thub.tech/workflows?theme=dark&uid=${data.userId}`
+                    return
+                }
+
+                // --------------------------------
+                // 3️⃣ PRODUCTION → use workspace OR default to app
+                // --------------------------------
+                if (!workspace) {
+                    workspace = 'app'
+                }
+
                 window.location.href = `https://${workspace}.thub.tech/workflows?theme=dark&uid=${data.userId}`
             } catch (error) {
                 console.error('Failed to exchange code:', error)
