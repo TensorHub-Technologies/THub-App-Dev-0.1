@@ -704,15 +704,20 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             // When usedTools are received, check if there are matching calledTools to replace
             const lastMessage = allMessages[allMessages.length - 1]
             if (lastMessage.calledTools && lastMessage.calledTools.length > 0) {
-                // Replace calledTools with usedTools for matching tool names
-                const updatedCalledTools = lastMessage.calledTools.map((calledTool) => {
-                    const matchingUsedTool = usedTools.find((usedTool) => usedTool.tool === calledTool.tool)
+                console.log(lastMessage, 'lastmessage')
+
+                // Parse calledTools if it's a string
+                const parsedCalledTools =
+                    typeof lastMessage?.calledTools === 'string' ? JSON.parse(lastMessage.calledTools) : lastMessage.calledTools || []
+
+                const updatedCalledTools = parsedCalledTools.map((calledTool) => {
+                    const matchingUsedTool = usedTools.find((usedTool) => usedTool.tool === calledTool.name)
                     return matchingUsedTool || calledTool
                 })
 
                 // Remove calledTools that have been replaced by usedTools
                 const remainingCalledTools = updatedCalledTools.filter(
-                    (calledTool) => !usedTools.some((usedTool) => usedTool.tool === calledTool.tool)
+                    (calledTool) => !usedTools.some((usedTool) => usedTool.tool === calledTool.name)
                 )
 
                 allMessages[allMessages.length - 1].calledTools = remainingCalledTools.length > 0 ? remainingCalledTools : undefined
@@ -2641,32 +2646,47 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                     width: '100%'
                                                 }}
                                             >
-                                                {message.calledTools.map((tool, index) => {
-                                                    return tool ? (
-                                                        <Chip
-                                                            size='small'
-                                                            key={`called-${index}`}
-                                                            label={tool.tool}
-                                                            component='a'
-                                                            sx={{
-                                                                mr: 1,
-                                                                mt: 1,
-                                                                borderColor: 'primary.main',
-                                                                color: 'primary.main',
-                                                                backgroundColor: 'rgba(25, 118, 210, 0.1)',
-                                                                opacity: 0.9,
-                                                                '&:hover': {
-                                                                    backgroundColor: 'rgba(25, 118, 210, 0.2)',
-                                                                    opacity: 1
-                                                                }
-                                                            }}
-                                                            variant='outlined'
-                                                            clickable
-                                                            icon={<CircularProgress size={15} color='primary' />}
-                                                            onClick={() => onSourceDialogClick(tool, 'Called Tools')}
-                                                        />
-                                                    ) : null
-                                                })}
+                                                {(() => {
+                                                    try {
+                                                        const calledTools =
+                                                            typeof message?.calledTools === 'string'
+                                                                ? JSON.parse(message.calledTools)
+                                                                : message?.calledTools || []
+
+                                                        return (
+                                                            Array.isArray(calledTools) &&
+                                                            calledTools.map((tool, index) => {
+                                                                return tool ? (
+                                                                    <Chip
+                                                                        size='small'
+                                                                        key={`called-${index}`}
+                                                                        label={tool.name} // Note: it's 'name' not 'tool' based on your response
+                                                                        component='a'
+                                                                        sx={{
+                                                                            mr: 1,
+                                                                            mt: 1,
+                                                                            borderColor: 'primary.main',
+                                                                            color: 'primary.main',
+                                                                            backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                                                                            opacity: 0.9,
+                                                                            '&:hover': {
+                                                                                backgroundColor: 'rgba(25, 118, 210, 0.2)',
+                                                                                opacity: 1
+                                                                            }
+                                                                        }}
+                                                                        variant='outlined'
+                                                                        clickable
+                                                                        icon={<CircularProgress size={15} color='primary' />}
+                                                                        onClick={() => onSourceDialogClick(tool, 'Called Tools')}
+                                                                    />
+                                                                ) : null
+                                                            })
+                                                        )
+                                                    } catch (error) {
+                                                        console.error('Error parsing calledTools:', error)
+                                                        return null
+                                                    }
+                                                })()}
                                             </div>
                                         )}
                                         {message.usedTools && (
