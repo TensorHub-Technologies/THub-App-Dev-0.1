@@ -194,6 +194,40 @@ const updateExecution = async (appDataSource: DataSource, executionId: string, d
         }
     }
 
+    bodyExecution.total_tokens = 0
+    bodyExecution.total_time = 0
+
+    try {
+        const exectutedDataList = JSON.parse(bodyExecution.executionData) as IAgentflowExecutedData[]
+
+        for (let executedData of exectutedDataList) {
+            if (
+                typeof executedData.data.output === 'object' &&
+                executedData.data.output !== null &&
+                'usageMetadata' in executedData.data.output &&
+                typeof executedData.data.output.usageMetadata === 'object' &&
+                executedData.data.output.usageMetadata.total_tokens
+            ) {
+                bodyExecution.total_tokens += executedData.data.output.usageMetadata.total_tokens
+            }
+
+            if (
+                typeof executedData.data.output === 'object' &&
+                executedData.data.output !== null &&
+                'timeMetadata' in executedData.data.output &&
+                typeof executedData.data.output.timeMetadata === 'object' &&
+                executedData.data.output.timeMetadata.delta
+            ) {
+                bodyExecution.total_time += executedData.data.output.timeMetadata.delta
+            }
+        }
+    } catch (err) {
+        logger.error(`Error parsing execution data for execution ${executionId}: ${getErrorMessage(err)}`)
+    }
+
+    console.log('total tokens in update execution:', bodyExecution.total_tokens)
+    console.log('total times in update execution:', bodyExecution.total_time)
+
     Object.assign(updateExecution, bodyExecution)
 
     appDataSource.getRepository(Execution).merge(execution, updateExecution)

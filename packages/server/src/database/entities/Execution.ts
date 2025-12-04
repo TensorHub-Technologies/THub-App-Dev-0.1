@@ -44,4 +44,10 @@ export class Execution implements IExecution {
 
     @Column({ nullable: true })
     tenantId?: string
+
+    @Column({ nullable: true })
+    total_tokens?: number
+
+    @Column({ nullable: true })
+    total_time?: number
 }
