@@ -99,6 +99,13 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
         }
     }
 
+    const formatTime = (ms) => {
+        if (!ms) return '0m 0s'
+        const minutes = Math.floor(ms / 60000)
+        const seconds = Math.floor((ms % 60000) / 1000)
+        return `${minutes}m ${seconds}s`
+    }
+
     const handleClick = (event, id) => {
         event.stopPropagation()
         const selectedIndex = selected.indexOf(id)
@@ -138,8 +145,10 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                 <Box sx={{ px: 3, py: 2 }}>
                     <Box
                         sx={{
-                            display: 'grid',
-                            gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            // display: 'grid',
+                            // gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
                             gap: 3,
                             alignItems: 'center'
                         }}
@@ -196,8 +205,30 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                         >
                             Agentflow
                         </Typography>
-
                         <Typography
+                            variant='h6'
+                            sx={{
+                                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                fontFamily: 'Cambria Math'
+                            }}
+                        >
+                            Total Tokens
+                        </Typography>
+                        <Typography
+                            variant='h6'
+                            sx={{
+                                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                fontFamily: 'Cambria Math'
+                            }}
+                        >
+                            Total Time
+                        </Typography>
+
+                        {/* <Typography
                             variant='h6'
                             sx={{
                                 color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
@@ -208,7 +239,7 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                             }}
                         >
                             Session
-                        </Typography>
+                        </Typography> */}
 
                         {/* Empty spacer column */}
                         <Box></Box>
@@ -286,6 +317,7 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                 // Actual data
                 <>
                     {(data || []).map((row, index) => {
+                        console.log(data, 'data')
                         const isItemSelected = isSelected(row.id)
                         const StatusIcon = getIconFromStatus(row.state, theme)
                         const statusChipColors = getStatusChipColor(row.state, isDark)
@@ -348,8 +380,8 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                         {/* Grid Layout */}
                                         <Box
                                             sx={{
-                                                display: 'grid',
-                                                gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
                                                 gap: 3,
                                                 alignItems: 'center'
                                             }}
@@ -437,9 +469,38 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                                     </Typography>
                                                 </Tooltip>
                                             </Box>
-
+                                            {/* Total Tokens */}
+                                            <Box>
+                                                <Tooltip title={row?.total_tokens || 'no tokens consumed'} placement='top' arrow>
+                                                    <Typography
+                                                        variant='body2'
+                                                        sx={{
+                                                            color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+                                                            fontSize: '0.85rem',
+                                                            fontWeight: 500
+                                                        }}
+                                                    >
+                                                        {row?.total_tokens}
+                                                    </Typography>
+                                                </Tooltip>
+                                            </Box>
+                                            {/* Total time */}
+                                            <Box>
+                                                <Tooltip title={row?.total_time || 'no tokens consumed'} placement='top' arrow>
+                                                    <Typography
+                                                        variant='body2'
+                                                        sx={{
+                                                            color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+                                                            fontSize: '0.85rem',
+                                                            fontWeight: 500
+                                                        }}
+                                                    >
+                                                        {formatTime(row.total_time)}
+                                                    </Typography>
+                                                </Tooltip>
+                                            </Box>
                                             {/* Session */}
-                                            <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                            {/*<Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                                                 <Tooltip title={row.sessionId} placement='top' arrow>
                                                     <Typography
                                                         variant='body2'
@@ -456,7 +517,7 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                                         {row.sessionId}
                                                     </Typography>
                                                 </Tooltip>
-                                            </Box>
+                                            </Box>*/}
 
                                             {/* Empty spacer column */}
                                             <Box></Box>

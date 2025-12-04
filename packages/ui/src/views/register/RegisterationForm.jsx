@@ -89,7 +89,7 @@ const RegistrationForm = () => {
     }
 
     const handleSubmit = async (values) => {
-        console.log("handleSubmit Clicked")
+        console.log('handleSubmit Clicked')
         try {
             const emailExists = await checkEmail(values.email)
             if (emailExists) {
