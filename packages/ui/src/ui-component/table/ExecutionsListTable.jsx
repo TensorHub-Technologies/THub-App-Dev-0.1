@@ -145,10 +145,8 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                 <Box sx={{ px: 3, py: 2 }}>
                     <Box
                         sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            // display: 'grid',
-                            // gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
+                            display: 'grid',
+                            gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
                             gap: 3,
                             alignItems: 'center'
                         }}
@@ -317,7 +315,6 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                 // Actual data
                 <>
                     {(data || []).map((row, index) => {
-                        console.log(data, 'data')
                         const isItemSelected = isSelected(row.id)
                         const StatusIcon = getIconFromStatus(row.state, theme)
                         const statusChipColors = getStatusChipColor(row.state, isDark)
@@ -380,8 +377,8 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                         {/* Grid Layout */}
                                         <Box
                                             sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
+                                                display: 'grid',
+                                                gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
                                                 gap: 3,
                                                 alignItems: 'center'
                                             }}

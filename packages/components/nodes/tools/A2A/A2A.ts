@@ -28,14 +28,11 @@ class A2AClientTool extends Tool {
 
     async _call(initialInput: string): Promise<string> {
         let result_A2A = ''
-        console.log('Initial Input: ', initialInput)
         if (!initialInput || typeof initialInput !== 'string') {
             return JSON.stringify({ error: 'Input must be a single URL string.' })
         }
 
         try {
-            console.log('inside A2A try: ', this.serverUrl)
-
             const client = new A2AClient(this.serverUrl)
             const messageId = uuidv4()
             let taskId: string | undefined
