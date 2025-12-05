@@ -239,9 +239,6 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                             Session
                         </Typography> */}
 
-                        {/* Empty spacer column */}
-                        <Box></Box>
-
                         <Typography
                             variant='h6'
                             sx={{
@@ -515,9 +512,6 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                                     </Typography>
                                                 </Tooltip>
                                             </Box>*/}
-
-                                            {/* Empty spacer column */}
-                                            <Box></Box>
 
                                             {/* Created */}
                                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
