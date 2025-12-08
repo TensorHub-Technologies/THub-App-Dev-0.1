@@ -148,14 +148,16 @@ const addExecution = async (
     appDataSource: DataSource,
     agentflowId: string,
     agentFlowExecutedData: IAgentflowExecutedData[],
-    sessionId: string
+    sessionId: string,
+    tenantId?: string
 ) => {
     const newExecution = new Execution()
     const bodyExecution = {
         agentflowId,
         state: 'INPROGRESS',
         sessionId,
-        executionData: JSON.stringify(agentFlowExecutedData)
+        executionData: JSON.stringify(agentFlowExecutedData),
+        tenantId
     }
     Object.assign(newExecution, bodyExecution)
 
@@ -191,6 +193,40 @@ const updateExecution = async (appDataSource: DataSource, executionId: string, d
             bodyExecution.stoppedDate = new Date()
         }
     }
+
+    bodyExecution.total_tokens = 0
+    bodyExecution.total_time = 0
+
+    try {
+        const exectutedDataList = JSON.parse(bodyExecution.executionData) as IAgentflowExecutedData[]
+
+        for (let executedData of exectutedDataList) {
+            if (
+                typeof executedData.data.output === 'object' &&
+                executedData.data.output !== null &&
+                'usageMetadata' in executedData.data.output &&
+                typeof executedData.data.output.usageMetadata === 'object' &&
+                executedData.data.output.usageMetadata.total_tokens
+            ) {
+                bodyExecution.total_tokens += executedData.data.output.usageMetadata.total_tokens
+            }
+
+            if (
+                typeof executedData.data.output === 'object' &&
+                executedData.data.output !== null &&
+                'timeMetadata' in executedData.data.output &&
+                typeof executedData.data.output.timeMetadata === 'object' &&
+                executedData.data.output.timeMetadata.delta
+            ) {
+                bodyExecution.total_time += executedData.data.output.timeMetadata.delta
+            }
+        }
+    } catch (err) {
+        logger.error(`Error parsing execution data for execution ${executionId}: ${getErrorMessage(err)}`)
+    }
+
+    console.log('total tokens in update execution:', bodyExecution.total_tokens)
+    console.log('total times in update execution:', bodyExecution.total_time)
 
     Object.assign(updateExecution, bodyExecution)
 
@@ -1262,7 +1298,8 @@ export const executeAgentFlow = async ({
     isRecursive = false,
     parentExecutionId,
     iterationContext,
-    isTool = false
+    isTool = false,
+    tenantId
 }: IExecuteAgentFlowParams) => {
     logger.debug('\n🚀 Starting flow execution')
 
@@ -1538,7 +1575,7 @@ export const executeAgentFlow = async ({
             newExecution = parentExecution
         } else {
             console.warn(`   ⚠️ Parent execution ID ${parentExecutionId} not found, will create new execution`)
-            newExecution = await addExecution(appDataSource, chatflowid, agentFlowExecutedData, sessionId)
+            newExecution = await addExecution(appDataSource, chatflowid, agentFlowExecutedData, sessionId, tenantId)
             parentExecutionId = newExecution.id
         }
     } else {
@@ -1547,7 +1584,7 @@ export const executeAgentFlow = async ({
         checkForMultipleStartNodes(startingNodeIds, isRecursive, nodes)
 
         // Only create a new execution if this is not a recursive call
-        newExecution = await addExecution(appDataSource, chatflowid, agentFlowExecutedData, sessionId)
+        newExecution = await addExecution(appDataSource, chatflowid, agentFlowExecutedData, sessionId, tenantId)
         parentExecutionId = newExecution.id
     }
 

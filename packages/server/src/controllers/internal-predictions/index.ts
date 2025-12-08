@@ -8,7 +8,7 @@ import { MODE } from '../../Interface'
 const createInternalPrediction = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (req.body.streaming || req.body.streaming === 'true') {
-            createAndStreamInternalPrediction(req, res, next)
+            await createAndStreamInternalPrediction(req, res, next)
             return
         } else {
             const apiResponse = await utilBuildChatflow(req, true)

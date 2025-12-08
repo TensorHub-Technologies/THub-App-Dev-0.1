@@ -34,13 +34,40 @@ const GoogleCustomButton = () => {
                     code: response.code
                 })
 
-                dispatch({
-                    type: SET_USER_DATA,
-                    payload: data.user
-                })
+                // Save Redux & Local
+                dispatch({ type: SET_USER_DATA, payload: data.user })
                 localStorage.setItem('id_token', data.id_token)
                 localStorage.setItem('userId', data.userId)
-                navigate('/workflows')
+
+                const hostname = window.location.hostname
+                let workspace = data?.workspace?.trim()
+                console.log(workspace, 'workspace')
+                // --------------------------------
+                // 1️⃣ LOCALHOST → no workspace logic
+                // --------------------------------
+                if (hostname === 'localhost') {
+                    workspace = 'local'
+                    window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${data.userId}`
+                    return
+                }
+
+                // --------------------------------
+                // 2️⃣ DEMO → always default workspace = demo
+                // --------------------------------
+                if (hostname === 'demo.thub.tech') {
+                    workspace = 'demo'
+                    window.location.href = `https://demo.thub.tech/workflows?theme=dark&uid=${data.userId}`
+                    return
+                }
+
+                // --------------------------------
+                // 3️⃣ PRODUCTION → use workspace OR default to app
+                // --------------------------------
+                if (!workspace) {
+                    workspace = 'app'
+                }
+
+                window.location.href = `https://${workspace}.thub.tech/workflows?theme=dark&uid=${data.userId}`
             } catch (error) {
                 console.error('Failed to exchange code:', error)
             }

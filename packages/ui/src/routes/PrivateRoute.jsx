@@ -5,9 +5,13 @@ const PrivateRoute = ({ children }) => {
     const location = useLocation()
 
     const params = new URLSearchParams(location.search)
-    const uid = params.get('uid')
+    const uidFromURL = params.get('uid')
 
-    const isAuthenticated = localStorage.getItem('userId') || uid
+    if (uidFromURL) {
+        localStorage.setItem('userId', uidFromURL)
+    }
+
+    const isAuthenticated = uidFromURL || localStorage.getItem('userId')
 
     return isAuthenticated ? children : <Navigate to='/' replace state={{ from: location }} />
 }
