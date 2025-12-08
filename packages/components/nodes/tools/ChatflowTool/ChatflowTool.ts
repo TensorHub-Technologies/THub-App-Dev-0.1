@@ -127,7 +127,6 @@ class ChatflowTool_Tools implements INode {
             }
 
             let tenantId = options.tenantId
-            console.log(tenantId, 'tenantId for chatflows')
 
             try {
                 // Fix: Use proper object syntax for findBy with tenantId

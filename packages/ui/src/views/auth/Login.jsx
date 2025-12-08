@@ -81,7 +81,7 @@ const Login = () => {
                     email: values.email,
                     password: values.password
                 })
-
+                console.log(apiUrl)
                 const userId = loginResponse.data?.userId
                 if (!userId) throw new Error('User ID missing')
 
