@@ -34,7 +34,7 @@ function ImageUpload() {
         } else if (window.location.hostname === 'localhost') {
             apiUrl = 'http://localhost:2000'
         } else {
-            apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
         }
 
         const file = event.target.files[0]

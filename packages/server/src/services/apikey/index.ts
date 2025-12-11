@@ -89,7 +89,6 @@ const createApiKey = async (keyName: string, tenantId: string) => {
             newKey.apiSecret = apiSecret
             newKey.keyName = keyName
             newKey.tenantId = tenantId
-            console.log(newKey, 'newKey')
 
             const key = appServer.AppDataSource.getRepository(ApiKey).create(newKey)
             await appServer.AppDataSource.getRepository(ApiKey).save(key)

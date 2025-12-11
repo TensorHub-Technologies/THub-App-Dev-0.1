@@ -23,7 +23,7 @@ export const Top = () => {
     const thubWebServerDevUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
     const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     let apiUrl
@@ -41,10 +41,9 @@ export const Top = () => {
         const code = urlParams.get('code')
         const accessToken = localStorage.getItem('access_token')
 
-        const thubWebServerDevUrl =
-            import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        const thubWebServerDevUrl = import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL
         const thubWebServerProdUrl =
-            import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
         const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
         let apiUrl
@@ -110,12 +109,12 @@ export const Top = () => {
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
     }
-
+    console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID, 'import.meta.env.VITE_GOOGLE_CLIENT_ID')
     return (
         <div>
             <Stack gap={2} sx={{ mt: 2 }} style={{ width: '450px' }}>
-                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-                    <GoogleCustomButton />
+                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ''}>
+                    {import.meta.env.VITE_GOOGLE_CLIENT_ID ? <GoogleCustomButton /> : <div>Google Sign-In not configured</div>}
                 </GoogleOAuthProvider>
                 <Button
                     variant='outlined'

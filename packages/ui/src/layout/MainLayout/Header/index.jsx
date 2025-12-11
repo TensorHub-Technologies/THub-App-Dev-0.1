@@ -81,7 +81,7 @@ const Header = () => {
             } else if (currentHost === 'localhost') {
                 window.location.href = 'http://localhost:8080/'
             } else {
-                window.location.href = 'https://app.thub.tech/'
+                window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io'
             }
             return
         }
@@ -97,7 +97,7 @@ const Header = () => {
             return
         }
 
-        window.location.href = 'https://app.thub.tech/'
+        window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io'
     }
 
     useEffect(() => {
@@ -127,7 +127,7 @@ const Header = () => {
                 } else if (hostname === 'localhost') {
                     apiUrl = 'http://localhost:2000'
                 } else {
-                    apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+                    apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
                 }
 
                 // Fetch user data by userId
