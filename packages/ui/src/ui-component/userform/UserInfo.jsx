@@ -62,7 +62,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
         const Url =
             window.location.hostname === 'localhost'
                 ? 'http://localhost:2000/updateUser'
-                : 'https://thub-web-server-2-0-378678297066.us-central1.run.app/updateUser'
+                : `https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io/updateUser`
 
         try {
             const response = await axios.post(Url, { ...values, uid, role: 'admin' })
@@ -80,7 +80,7 @@ const UserInfo = ({ setShowModal, showModal }) => {
                     }
                 })
                 resetForm()
-                window.location.href = `https://${values.workspace}.thub.tech/workflows?theme=dark&uid=${uid}`
+                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${uid}`
                 handleClose()
             }
         } catch (error) {
