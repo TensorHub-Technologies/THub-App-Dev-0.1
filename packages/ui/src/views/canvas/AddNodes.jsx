@@ -106,7 +106,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     for (let nodeKey in nodes) {
         const allowedSubMenuItems = allowedMenu[nodeKey]
         const subMenuItemToCheck = nodes[nodeKey]
-        const updatedSubMenuItems = subMenuItemToCheck.filter((val) => allowedSubMenuItems.includes(val.label))
+        const updatedSubMenuItems = subMenuItemToCheck.filter((val) => allowedSubMenuItems?.includes(val.label))
         nodes[nodeKey] = updatedSubMenuItems
     }
 
