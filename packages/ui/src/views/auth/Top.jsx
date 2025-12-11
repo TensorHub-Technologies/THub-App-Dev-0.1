@@ -109,6 +109,7 @@ export const Top = () => {
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
     }
+    console.log('google login')
     return (
         <div>
             <Stack gap={2} sx={{ mt: 2 }} style={{ width: '450px' }}>
