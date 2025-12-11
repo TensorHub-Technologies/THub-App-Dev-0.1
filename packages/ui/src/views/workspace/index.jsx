@@ -24,7 +24,7 @@ const JoinWorkspace = () => {
         } else if (hostname === 'localhost') {
             determinedUrl = 'http://localhost:2000'
         } else {
-            determinedUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
         }
 
         setApiUrl(determinedUrl)

@@ -17,8 +17,8 @@ let redirectUri = 'http://localhost:8080/'
 
 if (hostname === 'app.thub.tech') {
     redirectUri = 'https://app.thub.tech/'
-} else if (hostname === 'demo.thub.tech') {
-    redirectUri = 'https://demo.thub.tech/'
+} else if (hostname === 'thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io') {
+    redirectUri = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/'
 }
 
 export const msalConfig = {
