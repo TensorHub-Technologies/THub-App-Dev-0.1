@@ -109,12 +109,15 @@ export const Top = () => {
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
     }
-    console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID, 'import.meta.env.VITE_GOOGLE_CLIENT_ID')
     return (
         <div>
             <Stack gap={2} sx={{ mt: 2 }} style={{ width: '450px' }}>
-                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ''}>
-                    {import.meta.env.VITE_GOOGLE_CLIENT_ID ? <GoogleCustomButton /> : <div>Google Sign-In not configured</div>}
+                <GoogleOAuthProvider
+                    clientId={
+                        import.meta.env.VITE_GOOGLE_CLIENT_ID || '378678297066-q6qeqtpfh0ih4e99lv887o1rgduehs9u.apps.googleusercontent.com'
+                    }
+                >
+                    <GoogleCustomButton />
                 </GoogleOAuthProvider>
                 <Button
                     variant='outlined'
