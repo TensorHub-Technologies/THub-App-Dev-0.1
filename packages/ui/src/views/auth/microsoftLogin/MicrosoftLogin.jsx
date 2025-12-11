@@ -49,7 +49,7 @@ export const MicrosoftLogin = () => {
 
                             const thubWebServerDevUrl =
                                 import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL ||
-                                'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                                'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
                             const thubWebServerProdUrl =
                                 import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL ||
                                 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
