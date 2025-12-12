@@ -66,12 +66,18 @@ const Header = () => {
         setUserImg('')
 
         setAnchorEl(null)
-
-        // 2️⃣ Handle login type specific logout
         if (loginType === 'azure_ad') {
-            instance.logoutPopup({
-                postLogoutRedirectUri: '/'
+            const currentHost = window.location.hostname
+
+            const redirectUri =
+                currentHost === 'localhost'
+                    ? 'http://localhost:8080/'
+                    : 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/'
+
+            instance.logoutRedirect({
+                postLogoutRedirectUri: redirectUri
             })
+
             return
         }
 
