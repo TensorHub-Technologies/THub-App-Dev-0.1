@@ -19,6 +19,8 @@ import { Top } from './Top'
 import axios from 'axios'
 import { setUserData, SET_DARKMODE } from '@/store/actions'
 import { useDispatch, useSelector } from 'react-redux'
+import Stack from '@mui/material/Stack'
+import LinearProgress from '@mui/material/LinearProgress'
 
 // images
 import darkImage from '../../assets/images/auth/screen-5.png'
@@ -130,217 +132,226 @@ const Login = () => {
     const passwordError = formik.touched.password && formik.errors.password
 
     return (
-        <Box sx={{ bgcolor: '#121212' }}>
-            <CssBaseline />
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', md: 'row' },
-                    minHeight: '100vh',
-                    backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
-                }}
-            >
+        <Stack sx={{ width: '100%', color: 'grey.500' }}>
+            {loading && <LinearProgress color='secondary' />}
+            <Box sx={{ bgcolor: '#121212' }}>
+                <CssBaseline />
                 <Box
                     sx={{
-                        flex: 1,
                         display: 'flex',
-                        mt: 6,
-                        justifyContent: 'center'
+                        flexDirection: { xs: 'column', md: 'row' },
+                        minHeight: '100vh',
+                        backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
                     }}
                 >
                     <Box
                         sx={{
-                            width: '90%',
-                            border: customization.isDarkMode ? '1px solid white' : '1px solid gray',
-                            p: 4,
-                            borderRadius: 2,
-                            textAlign: 'center',
-                            height: '90%'
+                            flex: 1,
+                            display: 'flex',
+                            mt: 6,
+                            justifyContent: 'center'
                         }}
                     >
-                        <Typography
-                            variant='h2'
-                            align='center'
+                        <Box
                             sx={{
-                                fontFamily: 'Cambria Math',
-                                fontWeight: 'bolder',
-                                color: customization.isDarkMode ? 'white' : 'black',
-                                fontSize: 32
+                                width: '90%',
+                                border: customization.isDarkMode ? '1px solid white' : '1px solid gray',
+                                p: 4,
+                                borderRadius: 2,
+                                textAlign: 'center',
+                                height: '90%'
                             }}
                         >
-                            Unlock the Power of
-                            <br />
-                            <span style={{ color: customization.isDarkMode ? '#E22A90' : '#3c5ba4' }}>THub</span> GenAI Builder Tool.
-                        </Typography>
+                            <Typography
+                                variant='h2'
+                                align='center'
+                                sx={{
+                                    fontFamily: 'Cambria Math',
+                                    fontWeight: 'bolder',
+                                    color: customization.isDarkMode ? 'white' : 'black',
+                                    fontSize: 32
+                                }}
+                            >
+                                Unlock the Power of
+                                <br />
+                                <span style={{ color: customization.isDarkMode ? '#E22A90' : '#3c5ba4' }}>THub</span> GenAI Builder Tool.
+                            </Typography>
+                            <Box
+                                component='img'
+                                src={customization.isDarkMode ? darkImage : lightImage}
+                                alt='illustration'
+                                sx={{ width: '100%', mt: 2 }}
+                            />
+                        </Box>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            width: { xs: '100%', md: '50%' },
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
+                            flexDirection: 'column'
+                        }}
+                    >
                         <Box
                             component='img'
-                            src={customization.isDarkMode ? darkImage : lightImage}
-                            alt='illustration'
-                            sx={{ width: '100%', mt: 2 }}
+                            src={thubLogo}
+                            alt='Thub image'
+                            sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px', cursor: 'pointer' }}
+                            onClick={() => window.location.reload()}
                         />
-                    </Box>
-                </Box>
+                        <Top setLoading={setLoading} />
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>
+                            <Divider sx={{ flexGrow: 0.25 }} />
+                            <Typography
+                                sx={{ mx: 2, whiteSpace: 'nowrap' }}
+                                variant='h5'
+                                color={customization.isDarkMode ? 'white' : 'black'}
+                            >
+                                Login with Email
+                            </Typography>
+                            <Divider sx={{ flexGrow: 0.25, color: customization.isDarkMode ? 'white' : 'black' }} />
+                        </Box>
 
-                <Box
-                    sx={{
-                        width: { xs: '100%', md: '50%' },
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
-                        flexDirection: 'column'
-                    }}
-                >
-                    <Box
-                        component='img'
-                        src={thubLogo}
-                        alt='Thub image'
-                        sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px', cursor: 'pointer' }}
-                        onClick={() => window.location.reload()}
-                    />
-                    <Top />
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>
-                        <Divider sx={{ flexGrow: 0.25 }} />
-                        <Typography sx={{ mx: 2, whiteSpace: 'nowrap' }} variant='h5' color={customization.isDarkMode ? 'white' : 'black'}>
-                            Login with Email
-                        </Typography>
-                        <Divider sx={{ flexGrow: 0.25, color: customization.isDarkMode ? 'white' : 'black' }} />
-                    </Box>
-
-                    <Box
-                        component='form'
-                        noValidate
-                        onSubmit={formik.handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '450px' }}
-                    >
-                        <FormControl fullWidth error={formik.touched.email && Boolean(formik.errors.email)}>
-                            <OutlinedInput
-                                id='email'
-                                name='email'
-                                type='email'
-                                placeholder='Email'
-                                value={formik.values.email}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                sx={{
-                                    bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
-                                    color: customization.isDarkMode ? 'white' : 'black',
-                                    boxShadow: customization.isDarkMode
-                                        ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
-                                        : '0px 5px 10px rgba(0, 0, 0, 0.1)',
-                                    '& input': {
+                        <Box
+                            component='form'
+                            noValidate
+                            onSubmit={formik.handleSubmit}
+                            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '450px' }}
+                        >
+                            <FormControl fullWidth error={formik.touched.email && Boolean(formik.errors.email)}>
+                                <OutlinedInput
+                                    id='email'
+                                    name='email'
+                                    type='email'
+                                    placeholder='Email'
+                                    value={formik.values.email}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    sx={{
+                                        bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
                                         color: customization.isDarkMode ? 'white' : 'black',
-                                        backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
-                                    },
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#bdbfd4'
-                                    },
-                                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#bdbfd4'
-                                    },
-                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#bdbfd4'
-                                    },
-                                    '& .MuiInputAdornment-root .mail-icon': {
-                                        color: '#bdbfd4'
-                                    }
-                                }}
-                            />
-                            <FormHelperText>{formik.touched.email && formik.errors.email ? formik.errors.email : '\u00A0'}</FormHelperText>
-                        </FormControl>
+                                        boxShadow: customization.isDarkMode
+                                            ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
+                                            : '0px 5px 10px rgba(0, 0, 0, 0.1)',
+                                        '& input': {
+                                            color: customization.isDarkMode ? 'white' : 'black',
+                                            backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
+                                        },
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '& .MuiInputAdornment-root .mail-icon': {
+                                            color: '#bdbfd4'
+                                        }
+                                    }}
+                                />
+                                <FormHelperText>
+                                    {formik.touched.email && formik.errors.email ? formik.errors.email : '\u00A0'}
+                                </FormHelperText>
+                            </FormControl>
 
-                        <FormControl fullWidth error={formik.touched.password && Boolean(formik.errors.password)} sx={{ mt: -1 }}>
-                            <OutlinedInput
-                                id='password'
-                                name='password'
-                                type={showPassword ? 'text' : 'password'}
-                                placeholder='Password'
-                                value={formik.values.password}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                endAdornment={
-                                    <InputAdornment position='end'>
-                                        <IconButton onClick={() => setShowPassword(!showPassword)}>
-                                            {showPassword ? (
-                                                <EyeCloseIcon color={customization.isDarkMode ? 'white' : 'black'} />
-                                            ) : (
-                                                <EyeOpenIcon size={20} />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                sx={{
-                                    bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
-                                    color: customization.isDarkMode ? 'white' : 'black',
-                                    boxShadow: customization.isDarkMode
-                                        ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
-                                        : '0px 5px 10px rgba(0, 0, 0, 0.1)',
-                                    '& input': {
+                            <FormControl fullWidth error={formik.touched.password && Boolean(formik.errors.password)} sx={{ mt: -1 }}>
+                                <OutlinedInput
+                                    id='password'
+                                    name='password'
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder='Password'
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    endAdornment={
+                                        <InputAdornment position='end'>
+                                            <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                                {showPassword ? (
+                                                    <EyeCloseIcon color={customization.isDarkMode ? 'white' : 'black'} />
+                                                ) : (
+                                                    <EyeOpenIcon size={20} />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    sx={{
+                                        bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
                                         color: customization.isDarkMode ? 'white' : 'black',
-                                        backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
-                                    },
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#bdbfd4'
-                                    },
-                                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#bdbfd4'
-                                    },
-                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#bdbfd4'
-                                    },
-                                    '& .MuiInputAdornment-root .lock-icon': {
-                                        color: '#bdbfd4'
-                                    }
+                                        boxShadow: customization.isDarkMode
+                                            ? '0px 5px 10px rgba(255, 255, 255, 0.1)'
+                                            : '0px 5px 10px rgba(0, 0, 0, 0.1)',
+                                        '& input': {
+                                            color: customization.isDarkMode ? 'white' : 'black',
+                                            backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff'
+                                        },
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#bdbfd4'
+                                        },
+                                        '& .MuiInputAdornment-root .lock-icon': {
+                                            color: '#bdbfd4'
+                                        }
+                                    }}
+                                />
+                                <FormHelperText>{passwordError || '\u00A0'}</FormHelperText>
+                            </FormControl>
+
+                            <Link
+                                to='/forgot-password'
+                                style={{
+                                    color: customization.isDarkMode ? '#E32A90' : '#3c5ba4',
+                                    textDecoration: 'underline',
+                                    alignSelf: 'flex-end',
+                                    fontSize: '0.875rem',
+                                    marginTop: '-26px'
                                 }}
-                            />
-                            <FormHelperText>{passwordError || '\u00A0'}</FormHelperText>
-                        </FormControl>
-
-                        <Link
-                            to='/forgot-password'
-                            style={{
-                                color: customization.isDarkMode ? '#E32A90' : '#3c5ba4',
-                                textDecoration: 'underline',
-                                alignSelf: 'flex-end',
-                                fontSize: '0.875rem',
-                                marginTop: '-26px'
-                            }}
-                        >
-                            Forgot password?
-                        </Link>
-
-                        <Button
-                            type='submit'
-                            variant='contained'
-                            fullWidth
-                            // disabled={loading}
-                            sx={{
-                                py: 1.5,
-                                bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4',
-                                '&:hover': { bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4' },
-                                mt: 2,
-                                color: 'black',
-                                fontFamily: 'cambira math',
-                                fontSize: '1rem'
-                            }}
-                        >
-                            {loading ? <CircularProgress size={28} color='inherit' /> : 'Sign In With THub'}
-                        </Button>
-                        <Typography
-                            variant='body2'
-                            color={customization.isDarkMode ? 'white' : 'black'}
-                            textAlign={'center'}
-                            sx={{ mb: 4, fontSize: '16px', fontFamily: 'cambria math' }}
-                        >
-                            Don&apos;t have an account?
-                            <Link to='/signup' style={{ color: customization.isDarkMode ? '#E32A90' : '#3c5ba4', marginLeft: '6px' }}>
-                                Sign up for free
+                            >
+                                Forgot password?
                             </Link>
-                        </Typography>
+
+                            <Button
+                                type='submit'
+                                variant='contained'
+                                fullWidth
+                                // disabled={loading}
+                                sx={{
+                                    py: 1.5,
+                                    bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4',
+                                    '&:hover': { bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4' },
+                                    mt: 2,
+                                    color: 'black',
+                                    fontFamily: 'cambira math',
+                                    fontSize: '1rem'
+                                }}
+                            >
+                                {loading ? <CircularProgress size={28} color='inherit' /> : 'Sign In With THub'}
+                            </Button>
+                            <Typography
+                                variant='body2'
+                                color={customization.isDarkMode ? 'white' : 'black'}
+                                textAlign={'center'}
+                                sx={{ mb: 4, fontSize: '16px', fontFamily: 'cambria math' }}
+                            >
+                                Don&apos;t have an account?
+                                <Link to='/signup' style={{ color: customization.isDarkMode ? '#E32A90' : '#3c5ba4', marginLeft: '6px' }}>
+                                    Sign up for free
+                                </Link>
+                            </Typography>
+                        </Box>
                     </Box>
                 </Box>
             </Box>
-        </Box>
+        </Stack>
     )
 }
 

@@ -704,8 +704,6 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             // When usedTools are received, check if there are matching calledTools to replace
             const lastMessage = allMessages[allMessages.length - 1]
             if (lastMessage.calledTools && lastMessage.calledTools.length > 0) {
-                console.log(lastMessage, 'lastmessage')
-
                 // Parse calledTools if it's a string
                 const parsedCalledTools =
                     typeof lastMessage?.calledTools === 'string' ? JSON.parse(lastMessage.calledTools) : lastMessage.calledTools || []

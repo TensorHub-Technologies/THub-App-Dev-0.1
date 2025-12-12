@@ -5,8 +5,9 @@ import { Button } from '@mui/material'
 import { useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
+import PropTypes from 'prop-types'
 
-const GoogleCustomButton = () => {
+const GoogleCustomButton = ({ setLoading }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const customization = useSelector((state) => state.customization)
@@ -29,6 +30,7 @@ const GoogleCustomButton = () => {
 
     const login = useGoogleLogin({
         onSuccess: async (response) => {
+            setLoading(true)
             try {
                 const { data } = await axios.post(`${apiUrl}/api/auth/google`, {
                     code: response.code
@@ -69,7 +71,10 @@ const GoogleCustomButton = () => {
 
                 window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
             } catch (error) {
+                alert('Login Failed')
                 console.error('Failed to exchange code:', error)
+            } finally {
+                setLoading(false)
             }
         },
 
@@ -97,6 +102,10 @@ const GoogleCustomButton = () => {
             </Button>
         </div>
     )
+}
+
+GoogleCustomButton.propTypes = {
+    setLoading: PropTypes.func.isRequired
 }
 
 export default GoogleCustomButton
