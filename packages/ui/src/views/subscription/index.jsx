@@ -138,6 +138,8 @@ const Subscription = () => {
         handleLoading(message)
         if (planTitle === 'Enterprise') {
             setShowForm(true)
+            setIsProcessingPayment(false)
+            return
         }
         let plan_Id = planId
         const uid = user.uid
@@ -160,6 +162,7 @@ const Subscription = () => {
 
             if (!response.ok) {
                 console.error('Failed to create subscription:', response.statusText)
+                setIsProcessingPayment(false)
                 return
             }
 
@@ -223,7 +226,10 @@ const Subscription = () => {
 
             rzp1.open()
         } catch (error) {
+            setIsProcessingPayment(false)
             console.error('Error in payment process:', error)
+        } finally {
+            setIsProcessingPayment(false)
         }
     }
 
