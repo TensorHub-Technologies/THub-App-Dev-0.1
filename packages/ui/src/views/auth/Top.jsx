@@ -2,22 +2,22 @@ import { Button, Stack } from '@mui/material'
 import { GitHubIcon } from './CustomIcons'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import GoogleCustomButton from './googleLogin/GoogleCustomButton'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { SET_USER_DATA } from '@/store/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
+import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router'
 import { MicrosoftLogin } from './microsoftLogin/MicrosoftLogin'
 
-export const Top = () => {
-    const [loading, setLoading] = useState(false)
-
+export const Top = ({ setLoading }) => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        handleGithubAuth()
+        setLoading(true)
+        handleGithubAuth().finally(() => setLoading(false))
     }, [])
 
     const thubWebServerDevUrl =
@@ -72,9 +72,12 @@ export const Top = () => {
                 }
             } catch (error) {
                 console.error('Error during GitHub OAuth flow:', error)
+            } finally {
+                setLoading(false)
             }
         } else if (accessToken) {
             await getUserData()
+            setLoading(false)
         }
     }
 
@@ -109,12 +112,15 @@ export const Top = () => {
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
     }
-    console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID, 'import.meta.env.VITE_GOOGLE_CLIENT_ID')
     return (
         <div>
             <Stack gap={2} sx={{ mt: 2 }} style={{ width: '450px' }}>
-                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ''}>
-                    {import.meta.env.VITE_GOOGLE_CLIENT_ID ? <GoogleCustomButton /> : <div>Google Sign-In not configured</div>}
+                <GoogleOAuthProvider
+                    clientId={
+                        import.meta.env.VITE_GOOGLE_CLIENT_ID || '378678297066-q6qeqtpfh0ih4e99lv887o1rgduehs9u.apps.googleusercontent.com'
+                    }
+                >
+                    <GoogleCustomButton setLoading={setLoading} />
                 </GoogleOAuthProvider>
                 <Button
                     variant='outlined'
@@ -135,4 +141,8 @@ export const Top = () => {
             </Stack>
         </div>
     )
+}
+
+Top.propTypes = {
+    setLoading: PropTypes.func.isRequired
 }
