@@ -5,6 +5,7 @@ import { Button } from '@mui/material'
 import { useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
+import PropTypes from 'prop-types'
 
 const GoogleCustomButton = ({ setLoading }) => {
     const navigate = useNavigate()
