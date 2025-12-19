@@ -194,39 +194,121 @@ const updateExecution = async (appDataSource: DataSource, executionId: string, d
         }
     }
 
-    bodyExecution.total_tokens = 0
-    bodyExecution.total_time = 0
+    // Define the type structure
+    type ModelToken = {
+        modelName: string
+        tokens: number
+    }
+
+    type AgentToken = {
+        agentModel: string
+        models: ModelToken[]
+    }
+
+    type ExecutedData = {
+        agentTokens: AgentToken[]
+        totalTokens: number
+        totalTime: number
+    }
+
+    // Correct initialization with type
+    var executedData: ExecutedData = {
+        agentTokens: [],
+        totalTokens: 0,
+        totalTime: 0
+    }
+
+    // Correct initialization with type
+    var agentTokens: AgentToken[] = []
 
     try {
         const exectutedDataList = JSON.parse(bodyExecution.executionData) as IAgentflowExecutedData[]
 
-        for (let executedData of exectutedDataList) {
-            if (
-                typeof executedData.data.output === 'object' &&
-                executedData.data.output !== null &&
-                'usageMetadata' in executedData.data.output &&
-                typeof executedData.data.output.usageMetadata === 'object' &&
-                executedData.data.output.usageMetadata.total_tokens
-            ) {
-                bodyExecution.total_tokens += executedData.data.output.usageMetadata.total_tokens
+        let totalTime = 0
+        let totalTokens = 0
+        for (let executed of exectutedDataList) {
+            const outputData = executed.data.output
+            const inputData = executed.data.input
+
+            let agentModel: string = ''
+            let modelName: string = ''
+
+            var tokensConsumed = Number(bodyExecution.totalTokens ?? bodyExecution.total_tokens ?? 0)
+
+            if (outputData && typeof outputData === 'object') {
+                if ('usageMetadata' in outputData && typeof outputData.usageMetadata === 'object') {
+                    const usageMetadata = outputData.usageMetadata
+                    if (usageMetadata) {
+                        if (usageMetadata.total_tokens) {
+                            tokensConsumed = usageMetadata.total_tokens
+                            totalTokens += tokensConsumed
+                        }
+                    }
+                }
+
+                if ('timeMetadata' in outputData && typeof outputData.timeMetadata === 'object') {
+                    const timeMetadata = outputData.timeMetadata
+                    if (timeMetadata) {
+                        if (timeMetadata.delta) {
+                            totalTime += timeMetadata.delta
+                        }
+                    }
+                }
             }
 
-            if (
-                typeof executedData.data.output === 'object' &&
-                executedData.data.output !== null &&
-                'timeMetadata' in executedData.data.output &&
-                typeof executedData.data.output.timeMetadata === 'object' &&
-                executedData.data.output.timeMetadata.delta
-            ) {
-                bodyExecution.total_time += executedData.data.output.timeMetadata.delta
+            if (inputData && typeof inputData === 'object') {
+                if ('agentModel' in inputData && typeof inputData.agentModel === 'string') {
+                    agentModel = inputData.agentModel
+                }
+
+                if ('agentModelConfig' in inputData && typeof inputData.agentModelConfig === 'object') {
+                    const agentModelConfig = inputData.agentModelConfig
+
+                    if (agentModelConfig) {
+                        if ('modelName' in agentModelConfig && typeof agentModelConfig.modelName === 'string') {
+                            modelName = agentModelConfig.modelName
+                        }
+                    }
+                }
+            }
+
+            // Add or update model tokens
+
+            if (agentModel && modelName && tokensConsumed > 0) {
+                let agentEntry = agentTokens.find((entry) => entry.agentModel === agentModel)
+
+                if (!agentEntry) {
+                    agentEntry = {
+                        agentModel,
+                        models: []
+                    }
+                    agentTokens.push(agentEntry)
+                }
+
+                let modelEntry = agentEntry.models.find((m) => m.modelName === modelName)
+
+                if (!modelEntry) {
+                    modelEntry = {
+                        modelName,
+                        tokens: 0
+                    }
+                    agentEntry.models.push(modelEntry)
+                }
+
+                modelEntry.tokens += tokensConsumed
             }
         }
+
+        executedData.totalTokens = totalTokens
+        executedData.totalTime = totalTime
+        executedData.agentTokens = agentTokens
     } catch (err) {
         logger.error(`Error parsing execution data for execution ${executionId}: ${getErrorMessage(err)}`)
     }
 
-    console.log('total tokens in update execution:', bodyExecution.total_tokens)
-    console.log('total times in update execution:', bodyExecution.total_time)
+    bodyExecution.agentTokens = executedData.agentTokens
+    bodyExecution.total_tokens = executedData.totalTokens
+    bodyExecution.total_time = executedData.totalTime
 
     Object.assign(updateExecution, bodyExecution)
 
