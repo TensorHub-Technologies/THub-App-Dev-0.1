@@ -1150,7 +1150,6 @@ class Agent_Agentflow implements INode {
                     {
                         role: returnRole,
                         content: finalResponse,
-                        name: nodeData?.label ? nodeData?.label.toLowerCase().replace(/\s/g, '_').trim() : nodeData?.id,
                         ...(((artifacts && artifacts.length > 0) ||
                             (fileAnnotations && fileAnnotations.length > 0) ||
                             (usedTools && usedTools.length > 0)) && {
