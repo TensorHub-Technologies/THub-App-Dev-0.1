@@ -48,6 +48,9 @@ export class Execution implements IExecution {
     @Column({ nullable: true })
     total_tokens?: number
 
+    @Column({ type: 'json', nullable: true })
+    agentTokens?: any
+
     @Column({ nullable: true })
     total_time?: number
 }
