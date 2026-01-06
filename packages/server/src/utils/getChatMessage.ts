@@ -50,27 +50,33 @@ export const utilGetChatMessage = async ({
     if (feedback) {
         const query = await appServer.AppDataSource.getRepository(ChatMessage).createQueryBuilder('chat_message')
 
-        // do the join with chat message feedback based on messageId for each chat message in the chatflow
+        // Force collation on the JOIN
         query
             .leftJoinAndSelect('chat_message.execution', 'execution')
-            .leftJoinAndMapOne('chat_message.feedback', ChatMessageFeedback, 'feedback', 'feedback.messageId = chat_message.id')
-            .where('chat_message.chatflowid = :chatflowid', { chatflowid })
+            .leftJoinAndMapOne(
+                'chat_message.feedback',
+                ChatMessageFeedback,
+                'feedback',
+                'CAST(feedback.messageId AS CHAR CHARACTER SET utf8mb4) COLLATE utf8mb4_unicode_ci = CAST(chat_message.id AS CHAR CHARACTER SET utf8mb4) COLLATE utf8mb4_unicode_ci'
+            )
+            .where('chat_message.chatflowid = :chatflowid COLLATE utf8mb4_unicode_ci', { chatflowid })
 
-        // based on which parameters are available add `andWhere` clauses to the query
+        // Force collation on all WHERE clauses
         if (chatTypes && chatTypes.length > 0) {
             query.andWhere('chat_message.chatType IN (:...chatTypes)', { chatTypes })
         }
         if (chatId) {
-            query.andWhere('chat_message.chatId = :chatId', { chatId })
+            query.andWhere('CAST(chat_message.chatId AS CHAR CHARACTER SET utf8mb4) COLLATE utf8mb4_unicode_ci = :chatId', { chatId })
         }
         if (memoryType) {
             query.andWhere('chat_message.memoryType = :memoryType', { memoryType })
         }
         if (sessionId) {
-            query.andWhere('chat_message.sessionId = :sessionId', { sessionId })
+            query.andWhere('CAST(chat_message.sessionId AS CHAR CHARACTER SET utf8mb4) COLLATE utf8mb4_unicode_ci = :sessionId', {
+                sessionId
+            })
         }
 
-        // set date range
         if (startDate) {
             query.andWhere('chat_message.createdDate >= :startDateTime', { startDateTime: startDate ? new Date(startDate) : aMonthAgo() })
         }
@@ -78,14 +84,11 @@ export const utilGetChatMessage = async ({
             query.andWhere('chat_message.createdDate <= :endDateTime', { endDateTime: endDate ? new Date(endDate) : new Date() })
         }
 
-        // sort
         query.orderBy('chat_message.createdDate', sortOrder === 'DESC' ? 'DESC' : 'ASC')
 
         const messages = (await query.getMany()) as Array<ChatMessage & { feedback: ChatMessageFeedback }>
 
         if (feedbackTypes && feedbackTypes.length > 0) {
-            // just applying a filter to the messages array will only return the messages that have feedback,
-            // but we also want the message before the feedback message which is the user message.
             const indicesToKeep = new Set()
 
             messages.forEach((message, index) => {
@@ -101,6 +104,7 @@ export const utilGetChatMessage = async ({
         return messages
     }
 
+    // ... rest of your code stays the same
     let createdDateQuery
     if (startDate || endDate) {
         if (startDate && endDate) {
