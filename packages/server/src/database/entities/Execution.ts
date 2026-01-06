@@ -7,50 +7,72 @@ export class Execution implements IExecution {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column({ type: 'longtext' })
+    /* ================= EXECUTION DATA (EMOJI SAFE) ================= */
+    @Column({
+        type: 'longtext',
+        charset: 'utf8mb4',
+        collation: 'utf8mb4_unicode_ci'
+    })
     executionData: string
 
-    @Column()
+    /* ================= STATUS ================= */
+    @Column({
+        type: 'varchar',
+        length: 50
+    })
     state: ExecutionState
 
+    /* ================= RELATIONS ================= */
     @Index()
     @Column({ type: 'uuid' })
     agentflowId: string
-
-    @Index()
-    @Column({ type: 'varchar' })
-    sessionId: string
-
-    @Column({ nullable: true, type: 'text' })
-    action?: string
-
-    @Column({ nullable: true })
-    isPublic?: boolean
-
-    @Column({ type: 'timestamp' })
-    @CreateDateColumn()
-    createdDate: Date
-
-    @Column({ type: 'timestamp' })
-    @UpdateDateColumn()
-    updatedDate: Date
-
-    @Column()
-    stoppedDate: Date
 
     @ManyToOne(() => ChatFlow)
     @JoinColumn({ name: 'agentflowId' })
     agentflow: ChatFlow
 
-    @Column({ nullable: true })
+    /* ================= SESSION ================= */
+    @Index()
+    @Column({
+        type: 'varchar',
+        length: 255,
+        charset: 'utf8mb4',
+        collation: 'utf8mb4_unicode_ci'
+    })
+    sessionId: string
+
+    /* ================= OPTIONAL METADATA ================= */
+    @Column({
+        type: 'text',
+        nullable: true,
+        charset: 'utf8mb4',
+        collation: 'utf8mb4_unicode_ci'
+    })
+    action?: string
+
+    @Column({ type: 'boolean', nullable: true })
+    isPublic?: boolean
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
     tenantId?: string
 
-    @Column({ nullable: true })
+    /* ================= TOKENS ================= */
+    @Column({ type: 'int', nullable: true })
     total_tokens?: number
 
     @Column({ type: 'json', nullable: true })
     agentTokens?: any
 
-    @Column({ nullable: true })
+    /* ================= TIMING ================= */
+    @Column({ type: 'int', nullable: true })
     total_time?: number
+
+    @CreateDateColumn({ type: 'timestamp' })
+    createdDate: Date
+
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedDate: Date
+
+    @Column({ type: 'timestamp', nullable: true })
+    stoppedDate: Date
 }
