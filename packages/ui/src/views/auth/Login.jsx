@@ -31,7 +31,6 @@ import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
-    const { uid } = useSelector((state) => state.user.userData)
     const [showPassword, setShowPassword] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()

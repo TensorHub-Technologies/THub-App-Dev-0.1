@@ -46,6 +46,11 @@ const Header = () => {
         navigate('/setting')
     }
 
+    const handleDashboardClick = () => {
+        navigate('/dashboard')
+        handleClose()
+    }
+
     const handleClose = () => {
         setAnchorEl(null)
     }
@@ -139,7 +144,8 @@ const Header = () => {
                 // Fetch user data by userId
                 const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
                 if (response.status === 200) {
-                    const userData = response.data[0]
+                    const userData = response.data
+
                     dispatch(setUserData(userData))
 
                     // Set user-specific info
@@ -285,6 +291,19 @@ const Header = () => {
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
+                    <MenuItem
+                        onClick={handleDashboardClick}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: customization.isDarkMode ? '#424242' : '#f5f5f5' // or any other visible color
+                            }
+                        }}
+                    >
+                        <ListItemIcon>
+                            <IconSettings color={customization.isDarkMode ? 'white' : '#616161'} />
+                        </ListItemIcon>
+                        Dashboard
+                    </MenuItem>
                     <MenuItem
                         onClick={handleSettingClick}
                         sx={{

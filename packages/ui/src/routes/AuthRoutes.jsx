@@ -3,6 +3,7 @@
 import { ForgotPassword } from '@/views/auth/ForgotPassword'
 import Login from '@/views/auth/Login'
 import SignUp from '@/views/auth/SignUp'
+import AcceptInvite from '@/views/dashboard/AcceptInvite'
 
 const AuthRoutes = {
     path: '/',
@@ -18,6 +19,10 @@ const AuthRoutes = {
         {
             path: 'forgot-password',
             element: <ForgotPassword />
+        },
+        {
+            path: 'accept-invite',
+            element: <AcceptInvite />
         }
     ]
 }
