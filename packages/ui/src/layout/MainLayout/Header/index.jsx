@@ -87,8 +87,8 @@ const Header = () => {
         }
 
         if (loginType === 'google') {
-            if (currentHost === 'demo.thub.tech') {
-                window.location.href = 'https://demo.thub.tech/'
+            if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             } else if (currentHost === 'localhost') {
                 window.location.href = 'http://localhost:8080/'
             } else {
@@ -98,8 +98,8 @@ const Header = () => {
         }
 
         // 3️⃣ Normal email/password login logout
-        if (currentHost === 'demo.thub.tech') {
-            window.location.href = 'https://demo.thub.tech/'
+        if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             return
         }
 
@@ -133,8 +133,8 @@ const Header = () => {
                 let apiUrl
                 const hostname = window.location.hostname
 
-                if (hostname === 'demo.thub.tech') {
-                    apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                    apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
                 } else if (hostname === 'localhost') {
                     apiUrl = 'http://localhost:2000'
                 } else {

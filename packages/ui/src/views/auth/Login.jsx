@@ -69,7 +69,7 @@ const Login = () => {
 
                 let apiUrl
 
-                if (window.location.hostname === 'demo.thub.tech') {
+                if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
                     apiUrl = thubWebServerDevUrl
                 } else if (window.location.hostname === 'localhost') {
                     apiUrl = thubWebServerLocalUrl
@@ -106,9 +106,9 @@ const Login = () => {
                     return
                 }
 
-                if (currentHost === 'demo.thub.tech') {
+                if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
                     workspace = 'demo'
-                    window.location.href = `https://demo.thub.tech/workflows?theme=dark&uid=${userId}`
+                    window.location.href = `https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${userId}`
                     return
                 }
 

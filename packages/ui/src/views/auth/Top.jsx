@@ -27,7 +27,7 @@ export const Top = ({ setLoading }) => {
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     let apiUrl
-    if (window.location.hostname === 'demo.thub.tech') {
+    if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
         apiUrl = thubWebServerDevUrl
     } else if (window.location.hostname === 'localhost') {
         apiUrl = thubWebServerLocalUrl
@@ -49,7 +49,7 @@ export const Top = ({ setLoading }) => {
 
         let apiUrl
 
-        if (window.location.hostname === 'demo.thub.tech') {
+        if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
             apiUrl = thubWebServerDevUrl
         } else if (window.location.hostname === 'localhost') {
             apiUrl = thubWebServerLocalUrl

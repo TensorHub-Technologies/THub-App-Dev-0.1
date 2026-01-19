@@ -29,8 +29,8 @@ function ImageUpload() {
     const handleImageChange = async (event) => {
         let apiUrl
 
-        if (window.location.hostname === 'demo.thub.tech') {
-            apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
         } else if (window.location.hostname === 'localhost') {
             apiUrl = 'http://localhost:2000'
         } else {

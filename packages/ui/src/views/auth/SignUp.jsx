@@ -68,7 +68,7 @@ const SignUp = () => {
 
     let apiUrl
 
-    if (window.location.hostname === 'demo.thub.tech') {
+    if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
         apiUrl = thubWebServerDevUrl
     } else if (window.location.hostname === 'localhost') {
         apiUrl = thubWebServerLocalUrl

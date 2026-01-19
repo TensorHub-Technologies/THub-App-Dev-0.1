@@ -19,8 +19,8 @@ const JoinWorkspace = () => {
 
         const hostname = window.location.hostname
 
-        if (hostname === 'demo.thub.tech') {
-            determinedUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
         } else if (hostname === 'localhost') {
             determinedUrl = 'http://localhost:2000'
         } else {

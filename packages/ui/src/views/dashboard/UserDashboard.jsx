@@ -41,11 +41,20 @@ const UserDashboard = () => {
 
     const [transferOpen, setTransferOpen] = useState(false)
     const [transferUser, setTransferUser] = useState(null)
+    const thubWebServerDevUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+
+    const thubWebServerProdUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
+
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     const API_BASE =
         window.location.hostname === 'localhost'
-            ? 'http://localhost:2000'
-            : 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
+            ? thubWebServerLocalUrl
+            : window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            ? thubWebServerDevUrl
+            : thubWebServerProdUrl
 
     // -------------------------------
     // Fetch users (safe for deleted workspace)
