@@ -29,6 +29,8 @@ const UserInfo = ({ setShowModal, forceOpen = false }) => {
     const API_BASE =
         window.location.hostname === 'localhost'
             ? 'http://localhost:2000'
+            : window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            ? 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
             : 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
 
     const enqueueSnackbar = (args) => dispatch(enqueueSnackbarAction(args))
