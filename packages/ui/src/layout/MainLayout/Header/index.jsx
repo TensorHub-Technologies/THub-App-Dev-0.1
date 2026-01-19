@@ -17,6 +17,7 @@ import IconUserPlus from '@/assets/custom-svg/IconUserPlus'
 import IconLogout from '@/assets/custom-svg/IconLogout'
 import { useMsal } from '@azure/msal-react'
 import { StyledFab } from '@/ui-component/button/StyledFab'
+import { IconLayoutDashboardFilled } from '@tabler/icons-react'
 
 const Header = () => {
     const [userName, setUserName] = useState('')
@@ -300,7 +301,7 @@ const Header = () => {
                         }}
                     >
                         <ListItemIcon>
-                            <IconSettings color={customization.isDarkMode ? 'white' : '#616161'} />
+                            <IconLayoutDashboardFilled stroke={2} color={customization.isDarkMode ? 'white' : '#616161'} />
                         </ListItemIcon>
                         Dashboard
                     </MenuItem>
