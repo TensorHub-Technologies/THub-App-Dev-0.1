@@ -46,6 +46,11 @@ const Header = () => {
         navigate('/setting')
     }
 
+    const handleDashboardClick = () => {
+        navigate('/dashboard')
+        handleClose()
+    }
+
     const handleClose = () => {
         setAnchorEl(null)
     }
@@ -82,8 +87,8 @@ const Header = () => {
         }
 
         if (loginType === 'google') {
-            if (currentHost === 'demo.thub.tech') {
-                window.location.href = 'https://demo.thub.tech/'
+            if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             } else if (currentHost === 'localhost') {
                 window.location.href = 'http://localhost:8080/'
             } else {
@@ -93,8 +98,8 @@ const Header = () => {
         }
 
         // 3️⃣ Normal email/password login logout
-        if (currentHost === 'demo.thub.tech') {
-            window.location.href = 'https://demo.thub.tech/'
+        if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             return
         }
 
@@ -128,8 +133,8 @@ const Header = () => {
                 let apiUrl
                 const hostname = window.location.hostname
 
-                if (hostname === 'demo.thub.tech') {
-                    apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                    apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
                 } else if (hostname === 'localhost') {
                     apiUrl = 'http://localhost:2000'
                 } else {
@@ -139,7 +144,8 @@ const Header = () => {
                 // Fetch user data by userId
                 const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
                 if (response.status === 200) {
-                    const userData = response.data[0]
+                    const userData = response.data
+
                     dispatch(setUserData(userData))
 
                     // Set user-specific info
@@ -285,6 +291,19 @@ const Header = () => {
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
+                    <MenuItem
+                        onClick={handleDashboardClick}
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: customization.isDarkMode ? '#424242' : '#f5f5f5' // or any other visible color
+                            }
+                        }}
+                    >
+                        <ListItemIcon>
+                            <IconSettings color={customization.isDarkMode ? 'white' : '#616161'} />
+                        </ListItemIcon>
+                        Dashboard
+                    </MenuItem>
                     <MenuItem
                         onClick={handleSettingClick}
                         sx={{

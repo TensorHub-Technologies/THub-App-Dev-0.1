@@ -79,34 +79,32 @@ const HomeSettings = () => {
                                     <ArrowRightOutlinedIcon style={{ backgroundColor: 'transparent' }} />
                                 </Button>
                             </ListItem>
-                            {user.role === 'admin' && (
-                                <ListItem>
-                                    <Button
-                                        fullWidth
-                                        onClick={() => setSelectedSection('Users')}
-                                        sx={{
-                                            justifyContent: 'flex-start',
-                                            textTransform: 'none'
+                            <ListItem>
+                                <Button
+                                    fullWidth
+                                    onClick={() => setSelectedSection('Users')}
+                                    sx={{
+                                        justifyContent: 'flex-start',
+                                        textTransform: 'none'
+                                    }}
+                                    className={`${customization.isDarkMode ? 'button_parent_dark' : 'button_parent_light'} ${
+                                        selectedSection === 'Users' ? 'active' : ''
+                                    }`}
+                                >
+                                    <SupervisedUserCircleIcon style={{ backgroundColor: 'transparent' }} />
+                                    <ListItemText
+                                        primary='Users'
+                                        primaryTypographyProps={{
+                                            fontSize: '20px',
+                                            width: '68px',
+                                            fontFamily: 'cambria math',
+                                            fontWeight: selectedSection === 'Users' ? 'bold' : 'normal',
+                                            color: selectedSection === 'Users' ? 'white' : 'pink'
                                         }}
-                                        className={`${customization.isDarkMode ? 'button_parent_dark' : 'button_parent_light'} ${
-                                            selectedSection === 'Users' ? 'active' : ''
-                                        }`}
-                                    >
-                                        <SupervisedUserCircleIcon style={{ backgroundColor: 'transparent' }} />
-                                        <ListItemText
-                                            primary='Users'
-                                            primaryTypographyProps={{
-                                                fontSize: '20px',
-                                                width: '68px',
-                                                fontFamily: 'cambria math',
-                                                fontWeight: selectedSection === 'Users' ? 'bold' : 'normal',
-                                                color: selectedSection === 'Users' ? 'white' : 'pink'
-                                            }}
-                                        />
-                                        <ArrowRightOutlinedIcon style={{ backgroundColor: 'transparent' }} />
-                                    </Button>
-                                </ListItem>
-                            )}
+                                    />
+                                    <ArrowRightOutlinedIcon style={{ backgroundColor: 'transparent' }} />
+                                </Button>
+                            </ListItem>
                             <ListItem>
                                 <Button
                                     fullWidth

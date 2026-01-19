@@ -3,264 +3,244 @@ import axios from 'axios'
 import PropTypes from 'prop-types'
 import userImage_light from '../../assets/images/userForm/userForm.svg'
 import userImage_dark from '../../assets/images/userForm/userForm_dark.svg'
-import { useEffect } from 'react'
 import { Box, Button, FormControl, Stack, TextField, Typography, IconButton } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
-import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
-import { useNavigate } from 'react-router'
+import { enqueueSnackbar as enqueueSnackbarAction, SET_USER_DATA } from '@/store/actions'
 import { IconX } from '@tabler/icons-react'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 
-const UserInfo = ({ setShowModal, showModal }) => {
-    const navigate = useNavigate()
-    const { uid } = useSelector((state) => state.user.userData)
-    const userData = useSelector((state) => state.user.userData)
-    const dispatch = useDispatch()
-    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
-    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+const UserInfo = ({ setShowModal, forceOpen = false }) => {
+    const user = useSelector((state) => state.user.userData)
     const isDarkMode = useSelector((state) => state.customization.isDarkMode)
-    const customization = useSelector((state) => state.customization)
-    const handleClose = () => setShowModal(false)
+    const dispatch = useDispatch()
 
-    const handleSkip = () => {
-        setShowModal(false)
-        sessionStorage.setItem('modalShown', 'true')
-        handleClose()
+    // 🔐 INVITE CONTEXT
+    const inviteContext = JSON.parse(sessionStorage.getItem('inviteContext') || 'null')
+
+    // ✅ INVITE FLOW ONLY IF USER HAS NO WORKSPACE
+    const isInviteFlow = Boolean(inviteContext) && !user?.workspace
+
+    // 🧹 CLEAR STALE INVITE CONTEXT
+    if (inviteContext && user?.workspace) {
+        sessionStorage.removeItem('inviteContext')
+    }
+
+    const API_BASE =
+        window.location.hostname === 'localhost'
+            ? 'http://localhost:2000'
+            : window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            ? 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            : 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
+
+    const enqueueSnackbar = (args) => dispatch(enqueueSnackbarAction(args))
+
+    // 🔄 Refresh user in redux
+    const refreshUserData = async () => {
+        const res = await axios.get(`${API_BASE}/userdata`, {
+            params: { userId: user.uid }
+        })
+
+        dispatch({
+            type: SET_USER_DATA,
+            payload: res.data[0]
+        })
     }
 
     const initialValues = {
         company: '',
         department: '',
-        role: '',
         designation: '',
-        workspace: ''
+        workspace: isInviteFlow ? inviteContext.workspace : ''
     }
 
-    const validationSchema = Yup.object().shape({
-        company: Yup.string().required('Company Name is required'),
+    const validationSchema = Yup.object({
+        company: Yup.string().required('Company is required'),
         department: Yup.string().required('Department is required'),
-        role: Yup.string().required('Role is required'),
         designation: Yup.string().required('Designation is required'),
         workspace: Yup.string()
-            .matches(/^[a-zA-Z0-9]*$/, 'Workspace name can only contain letters and numbers')
-            .required('Workspace Name is required')
+            .matches(/^[a-zA-Z0-9]*$/, 'Only letters & numbers allowed')
+            .required('Workspace is required')
     })
-    let workspace
-    useEffect(() => {
-        const hostName = window.location.hostname
-        if (hostName === 'localhost') {
-            workspace = 'app'
-        } else if (hostName === 'demo.thub.tech') {
-            workspace = 'demo'
-        } else {
-            workspace = 'app'
-        }
-    }, [])
 
-    const handleSubmit = async (values, { resetForm }) => {
-        const Url =
-            window.location.hostname === 'localhost'
-                ? 'http://localhost:2000/updateUser'
-                : `https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io/updateUser`
-
+    // -----------------------
+    // SUBMIT
+    // -----------------------
+    const handleSubmit = async (values, { setSubmitting }) => {
         try {
-            const response = await axios.post(Url, { ...values, uid, role: 'admin' })
-            if (response.status === 200) {
-                enqueueSnackbar({
-                    message: 'User data updated successfully',
-                    options: {
-                        key: new Date().getTime() + Math.random(),
-                        variant: 'success',
-                        action: (key) => (
-                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
-                                <IconX />
-                            </Button>
-                        )
-                    }
-                })
-                resetForm()
-                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${uid}`
-                handleClose()
+            const payload = {
+                uid: user.uid,
+                company: values.company,
+                department: values.department,
+                designation: values.designation,
+                workspace: values.workspace
             }
-        } catch (error) {
+
+            if (isInviteFlow) {
+                payload.invitedBy = inviteContext.invitedBy
+                payload.role = inviteContext.role
+            }
+
+            await axios.post(`${API_BASE}/updateUser`, payload)
+            await refreshUserData()
+
+            sessionStorage.removeItem('inviteContext')
+
             enqueueSnackbar({
-                message: 'Failed to update user data',
-                options: {
-                    key: new Date().getTime() + Math.random(),
-                    variant: 'error'
-                }
+                message: isInviteFlow ? 'Profile completed & joined workspace' : 'Workspace created successfully',
+                options: { variant: 'success' }
             })
-            console.error('Error:', error)
+
+            setShowModal(false)
+        } catch (err) {
+            enqueueSnackbar({
+                message: err.response?.data?.message || 'Something went wrong',
+                options: { variant: 'error' }
+            })
+        } finally {
+            setSubmitting(false)
+        }
+    }
+
+    // -----------------------
+    // SKIP
+    // -----------------------
+    const handleSkip = async () => {
+        try {
+            await axios.post(`${API_BASE}/updateUser`, {
+                uid: user.uid,
+                profileCompletedOnly: true
+            })
+
+            await refreshUserData()
+
+            enqueueSnackbar({
+                message: 'You can complete your profile later',
+                options: { variant: 'info' }
+            })
+
+            setShowModal(false)
+        } catch {
+            enqueueSnackbar({
+                message: 'Failed to skip',
+                options: { variant: 'error' }
+            })
         }
     }
 
     return (
-        <div>
+        <Box
+            sx={{
+                position: 'fixed',
+                inset: 0,
+                backdropFilter: 'blur(8px)',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 9999
+            }}
+        >
             <Box
                 sx={{
-                    position: 'fixed',
-                    inset: 0,
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    backdropFilter: 'blur(8px)',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
                     display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    zIndex: 99000
+                    width: 800,
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    backgroundColor: isDarkMode ? '#191B1F' : '#fff'
                 }}
             >
                 <Box
                     sx={{
-                        display: 'flex',
-                        width: '800px',
-                        boxShadow: 3,
-                        borderRadius: '8px',
-                        overflow: 'hidden',
-                        backgroundColor: isDarkMode ? '#191B1F' : 'white'
+                        width: '50%',
+                        backgroundImage: `url(${isDarkMode ? userImage_dark : userImage_light})`,
+                        backgroundSize: 'cover'
                     }}
-                >
-                    <Box
-                        sx={{
-                            width: '50%',
-                            backgroundImage: isDarkMode ? `url(${userImage_dark})` : `url(${userImage_light})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                        }}
-                    ></Box>
+                />
 
-                    <Box
-                        sx={{
-                            width: '50%',
-                            padding: '32px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            position: 'relative'
-                        }}
-                    >
-                        <IconButton
-                            sx={{ position: 'absolute', top: '2px', right: '4px', color: customization.isDarkMode ? '#e22a90' : '#3c5ba4' }}
-                            onClick={handleSkip}
-                        >
+                <Box sx={{ width: '50%', p: 4, position: 'relative' }}>
+                    {!forceOpen && (
+                        <IconButton sx={{ position: 'absolute', top: 8, right: 8 }} onClick={handleSkip}>
                             <IconX />
                         </IconButton>
-                        <Typography
-                            variant='h2'
-                            gutterBottom
-                            className={`typography-font ${isDarkMode ? 'user-form-heading-dark' : 'user-form-heading-light'}`}
-                        >
-                            User Details
-                        </Typography>
-                        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                            {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
-                                <form onSubmit={handleSubmit}>
-                                    <FormControl fullWidth>
-                                        <Stack spacing={2}>
-                                            <TextField
-                                                label='Company Name'
-                                                name='company'
-                                                variant='outlined'
-                                                value={values.company}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.company && !!errors.company}
-                                                helperText={touched.company && errors.company}
-                                                required
-                                            />
-                                            <TextField
-                                                label='Department'
-                                                name='department'
-                                                variant='outlined'
-                                                value={values.department}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.department && !!errors.department}
-                                                helperText={touched.department && errors.department}
-                                                required
-                                            />
-                                            <TextField
-                                                label='Role'
-                                                name='role'
-                                                variant='outlined'
-                                                value={values.role}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.role && !!errors.role}
-                                                helperText={touched.role && errors.role}
-                                                required
-                                            />
-                                            <TextField
-                                                label='Designation'
-                                                name='designation'
-                                                variant='outlined'
-                                                value={values.designation}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.designation && !!errors.designation}
-                                                helperText={touched.designation && errors.designation}
-                                                required
-                                            />
-                                            <TextField
-                                                label='Workspace Name'
-                                                name='workspace'
-                                                variant='outlined'
-                                                value={values.workspace}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                error={touched.workspace && !!errors.workspace}
-                                                helperText={touched.workspace && errors.workspace}
-                                                required
-                                            />
-                                        </Stack>
-                                    </FormControl>
+                    )}
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <Button
-                                            variant='contained'
-                                            sx={{
-                                                mt: 3,
-                                                width: '40%',
-                                                bgcolor: isDarkMode ? '#e22a90' : '#3c5ba4',
-                                                '&:hover': {
-                                                    bgcolor: isDarkMode ? '#c91d78' : '#2c4883'
-                                                }
-                                            }}
-                                            onClick={handleSkip}
-                                        >
-                                            Skip
-                                        </Button>
-                                        <Button
-                                            variant='contained'
-                                            sx={{
-                                                mt: 3,
-                                                width: '40%',
-                                                bgcolor: isDarkMode ? '#e22a90' : '#3c5ba4',
-                                                '&:hover': {
-                                                    bgcolor: isDarkMode ? '#c91d78' : '#2c4883'
-                                                }
-                                            }}
-                                            type='submit'
-                                        >
-                                            Submit
-                                        </Button>
-                                    </Box>
-                                </form>
-                            )}
-                        </Formik>
-                    </Box>
+                    <Typography variant='h4' mb={3}>
+                        {isInviteFlow ? 'Complete Your Profile' : 'Create Workspace'}
+                    </Typography>
+
+                    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                        {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+                            <form onSubmit={handleSubmit} noValidate>
+                                <FormControl fullWidth>
+                                    <Stack spacing={2}>
+                                        <TextField
+                                            label='Company'
+                                            name='company'
+                                            value={values.company}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.company && !!errors.company}
+                                            helperText={touched.company && errors.company}
+                                        />
+
+                                        <TextField
+                                            label='Department'
+                                            name='department'
+                                            value={values.department}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.department && !!errors.department}
+                                            helperText={touched.department && errors.department}
+                                        />
+
+                                        <TextField
+                                            label='Designation'
+                                            name='designation'
+                                            value={values.designation}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={touched.designation && !!errors.designation}
+                                            helperText={touched.designation && errors.designation}
+                                        />
+
+                                        {/* ✅ FIXED WORKSPACE FIELD */}
+                                        <TextField
+                                            label='Workspace'
+                                            name='workspace'
+                                            value={values.workspace}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            disabled={isInviteFlow}
+                                            error={touched.workspace && !!errors.workspace}
+                                            helperText={
+                                                isInviteFlow ? 'Workspace assigned by admin' : touched.workspace && errors.workspace
+                                            }
+                                        />
+                                    </Stack>
+                                </FormControl>
+
+                                <Button fullWidth sx={{ mt: 3 }} variant='contained' type='submit' disabled={isSubmitting}>
+                                    {isInviteFlow ? 'Join Workspace' : 'Create Workspace'}
+                                </Button>
+
+                                {!forceOpen && (
+                                    <Button fullWidth sx={{ mt: 1 }} variant='text' onClick={handleSkip}>
+                                        Skip for now
+                                    </Button>
+                                )}
+                            </form>
+                        )}
+                    </Formik>
                 </Box>
             </Box>
-        </div>
+        </Box>
     )
 }
 
 UserInfo.propTypes = {
     setShowModal: PropTypes.func.isRequired,
-    showModal: PropTypes.bool.isRequired
+    forceOpen: PropTypes.bool
 }
 
 export default UserInfo

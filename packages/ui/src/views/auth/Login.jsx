@@ -31,7 +31,6 @@ import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
-    const { uid } = useSelector((state) => state.user.userData)
     const [showPassword, setShowPassword] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -48,7 +47,7 @@ const Login = () => {
     }, [dispatch])
 
     const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
     const thubWebServerProdUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
@@ -70,7 +69,7 @@ const Login = () => {
 
                 let apiUrl
 
-                if (window.location.hostname === 'demo.thub.tech') {
+                if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
                     apiUrl = thubWebServerDevUrl
                 } else if (window.location.hostname === 'localhost') {
                     apiUrl = thubWebServerLocalUrl
@@ -107,9 +106,9 @@ const Login = () => {
                     return
                 }
 
-                if (currentHost === 'demo.thub.tech') {
+                if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
                     workspace = 'demo'
-                    window.location.href = `https://demo.thub.tech/workflows?theme=dark&uid=${userId}`
+                    window.location.href = `https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${userId}`
                     return
                 }
 
