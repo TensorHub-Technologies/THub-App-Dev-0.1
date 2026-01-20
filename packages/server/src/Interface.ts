@@ -95,6 +95,7 @@ export interface IChatFlow {
     apikeyid?: string
     analytic?: string
     speechToText?: string
+    textToSpeech?: string
     chatbotConfig?: string
     followUpPrompts?: string
     apiConfig?: string
@@ -435,6 +436,7 @@ export interface IExecuteFlowParams extends IPredictionQueueAppServer {
     parentExecutionId?: string
     iterationContext?: ICommonObject
     isTool?: boolean
+    tenantId?: string
 }
 export interface INodeOverrides {
     [key: string]: {
@@ -452,11 +454,14 @@ export interface IVariableOverride {
     enabled: boolean
 }
 
-// DocumentStore related
-export * from './Interface.DocumentStore'
-
 export enum UserPlan {
     STARTER = 'STARTER',
     PRO = 'PRO',
     FREE = 'FREE'
 }
+
+// DocumentStore related
+export * from './Interface.DocumentStore'
+
+// Evaluations related
+export * from './Interface.Evaluation'

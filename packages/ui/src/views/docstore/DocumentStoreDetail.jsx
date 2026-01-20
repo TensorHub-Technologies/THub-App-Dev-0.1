@@ -151,8 +151,6 @@ const DocumentStoreDetails = () => {
 
     const { storeId } = useParams()
 
-    console.log(storeId, 'storeId')
-
     const openPreviewSettings = (id) => {
         navigate('/document-stores/' + storeId + '/' + id)
     }

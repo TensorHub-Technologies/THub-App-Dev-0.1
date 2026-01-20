@@ -55,6 +55,7 @@ import { utilAddChatMessage } from './addChatMesage'
 import { CachePool } from '../CachePool'
 import { ChatMessage } from '../database/entities/ChatMessage'
 import { Telemetry } from './telemetry'
+import { generateTTSForResponseStream, shouldAutoPlayTTS } from './buildChatflow'
 
 interface IWaitingNode {
     nodeId: string
@@ -147,14 +148,16 @@ const addExecution = async (
     appDataSource: DataSource,
     agentflowId: string,
     agentFlowExecutedData: IAgentflowExecutedData[],
-    sessionId: string
+    sessionId: string,
+    tenantId?: string
 ) => {
     const newExecution = new Execution()
     const bodyExecution = {
         agentflowId,
         state: 'INPROGRESS',
         sessionId,
-        executionData: JSON.stringify(agentFlowExecutedData)
+        executionData: JSON.stringify(agentFlowExecutedData),
+        tenantId
     }
     Object.assign(newExecution, bodyExecution)
 
@@ -190,6 +193,122 @@ const updateExecution = async (appDataSource: DataSource, executionId: string, d
             bodyExecution.stoppedDate = new Date()
         }
     }
+
+    // Define the type structure
+    type ModelToken = {
+        modelName: string
+        tokens: number
+    }
+
+    type AgentToken = {
+        agentModel: string
+        models: ModelToken[]
+    }
+
+    type ExecutedData = {
+        agentTokens: AgentToken[]
+        totalTokens: number
+        totalTime: number
+    }
+
+    // Correct initialization with type
+    var executedData: ExecutedData = {
+        agentTokens: [],
+        totalTokens: 0,
+        totalTime: 0
+    }
+
+    // Correct initialization with type
+    var agentTokens: AgentToken[] = []
+
+    try {
+        const exectutedDataList = JSON.parse(bodyExecution.executionData) as IAgentflowExecutedData[]
+
+        let totalTime = 0
+        let totalTokens = 0
+        for (let executed of exectutedDataList) {
+            const outputData = executed.data.output
+            const inputData = executed.data.input
+
+            let agentModel: string = ''
+            let modelName: string = ''
+
+            var tokensConsumed = Number(bodyExecution.totalTokens ?? bodyExecution.total_tokens ?? 0)
+
+            if (outputData && typeof outputData === 'object') {
+                if ('usageMetadata' in outputData && typeof outputData.usageMetadata === 'object') {
+                    const usageMetadata = outputData.usageMetadata
+                    if (usageMetadata) {
+                        if (usageMetadata.total_tokens) {
+                            tokensConsumed = usageMetadata.total_tokens
+                            totalTokens += tokensConsumed
+                        }
+                    }
+                }
+
+                if ('timeMetadata' in outputData && typeof outputData.timeMetadata === 'object') {
+                    const timeMetadata = outputData.timeMetadata
+                    if (timeMetadata) {
+                        if (timeMetadata.delta) {
+                            totalTime += timeMetadata.delta
+                        }
+                    }
+                }
+            }
+
+            if (inputData && typeof inputData === 'object') {
+                if ('agentModel' in inputData && typeof inputData.agentModel === 'string') {
+                    agentModel = inputData.agentModel
+                }
+
+                if ('agentModelConfig' in inputData && typeof inputData.agentModelConfig === 'object') {
+                    const agentModelConfig = inputData.agentModelConfig
+
+                    if (agentModelConfig) {
+                        if ('modelName' in agentModelConfig && typeof agentModelConfig.modelName === 'string') {
+                            modelName = agentModelConfig.modelName
+                        }
+                    }
+                }
+            }
+
+            // Add or update model tokens
+
+            if (agentModel && modelName && tokensConsumed > 0) {
+                let agentEntry = agentTokens.find((entry) => entry.agentModel === agentModel)
+
+                if (!agentEntry) {
+                    agentEntry = {
+                        agentModel,
+                        models: []
+                    }
+                    agentTokens.push(agentEntry)
+                }
+
+                let modelEntry = agentEntry.models.find((m) => m.modelName === modelName)
+
+                if (!modelEntry) {
+                    modelEntry = {
+                        modelName,
+                        tokens: 0
+                    }
+                    agentEntry.models.push(modelEntry)
+                }
+
+                modelEntry.tokens += tokensConsumed
+            }
+        }
+
+        executedData.totalTokens = totalTokens
+        executedData.totalTime = totalTime
+        executedData.agentTokens = agentTokens
+    } catch (err) {
+        logger.error(`Error parsing execution data for execution ${executionId}: ${getErrorMessage(err)}`)
+    }
+
+    bodyExecution.agentTokens = executedData.agentTokens
+    bodyExecution.total_tokens = executedData.totalTokens
+    bodyExecution.total_time = executedData.totalTime
 
     Object.assign(updateExecution, bodyExecution)
 
@@ -1261,7 +1380,8 @@ export const executeAgentFlow = async ({
     isRecursive = false,
     parentExecutionId,
     iterationContext,
-    isTool = false
+    isTool = false,
+    tenantId
 }: IExecuteAgentFlowParams) => {
     logger.debug('\n🚀 Starting flow execution')
 
@@ -1537,7 +1657,7 @@ export const executeAgentFlow = async ({
             newExecution = parentExecution
         } else {
             console.warn(`   ⚠️ Parent execution ID ${parentExecutionId} not found, will create new execution`)
-            newExecution = await addExecution(appDataSource, chatflowid, agentFlowExecutedData, sessionId)
+            newExecution = await addExecution(appDataSource, chatflowid, agentFlowExecutedData, sessionId, tenantId)
             parentExecutionId = newExecution.id
         }
     } else {
@@ -1546,7 +1666,7 @@ export const executeAgentFlow = async ({
         checkForMultipleStartNodes(startingNodeIds, isRecursive, nodes)
 
         // Only create a new execution if this is not a recursive call
-        newExecution = await addExecution(appDataSource, chatflowid, agentFlowExecutedData, sessionId)
+        newExecution = await addExecution(appDataSource, chatflowid, agentFlowExecutedData, sessionId, tenantId)
         parentExecutionId = newExecution.id
     }
 
@@ -1998,6 +2118,27 @@ export const executeAgentFlow = async ({
     result.agentFlowExecutedData = agentFlowExecutedData
 
     if (sessionId) result.sessionId = sessionId
+
+    if (shouldAutoPlayTTS(chatflow.textToSpeech) && result.text) {
+        const options = {
+            chatflowid,
+            chatId,
+            appDataSource,
+            databaseEntities
+        }
+
+        if (sseStreamer) {
+            await generateTTSForResponseStream(
+                result.text,
+                chatflow.textToSpeech,
+                options,
+                chatId,
+                chatMessage?.id,
+                sseStreamer,
+                abortController
+            )
+        }
+    }
 
     return result
 }

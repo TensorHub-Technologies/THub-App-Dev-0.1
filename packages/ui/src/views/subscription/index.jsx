@@ -33,6 +33,7 @@ const Subscription = () => {
     const [showForm, setShowForm] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
     const [apiUrl, setApiUrl] = useState('')
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
     const [subscriptionDetails, setSubscriptionDetails] = useState({
         subscriptionType: user.subscription_type || '',
         subscriptionDuration: user.subscription_duration || '',
@@ -119,12 +120,12 @@ const Subscription = () => {
 
         const hostname = window.location.hostname
 
-        if (hostname === 'demo.thub.tech') {
-            determinedUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
         } else if (hostname === 'localhost') {
             determinedUrl = 'http://localhost:2000'
         } else {
-            determinedUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
         }
 
         setApiUrl(determinedUrl)
@@ -132,11 +133,13 @@ const Subscription = () => {
 
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
-        console.log(import.meta.env.VITE_RAZORPAY_API_TEST_KEY, 'REACT_APP_RAZORPAY_API_TEST_KEY')
-
+        if (isProcessingPayment) return
+        setIsProcessingPayment(true)
         handleLoading(message)
         if (planTitle === 'Enterprise') {
             setShowForm(true)
+            setIsProcessingPayment(false)
+            return
         }
         let plan_Id = planId
         const uid = user.uid
@@ -159,6 +162,7 @@ const Subscription = () => {
 
             if (!response.ok) {
                 console.error('Failed to create subscription:', response.statusText)
+                setIsProcessingPayment(false)
                 return
             }
 
@@ -170,7 +174,7 @@ const Subscription = () => {
                 return
             }
             var options = {
-                key: import.meta.env.VITE_RAZORPAY_API_TEST_KEY,
+                key: import.meta.env.VITE_RAZORPAY_API_LIVE_KEY,
                 subscription_id: subscription.id,
                 name: 'THub',
                 description: `${planTitle} Subscription`,
@@ -190,7 +194,6 @@ const Subscription = () => {
                             user_id: userId
                         })
                     })
-                    console.log(validateResponse, 'validateResponse')
                     const validateStatus = await validateResponse.json()
                     if (validateResponse.ok && validateStatus.msg === 'success') {
                         location.reload()
@@ -223,7 +226,10 @@ const Subscription = () => {
 
             rzp1.open()
         } catch (error) {
+            setIsProcessingPayment(false)
             console.error('Error in payment process:', error)
+        } finally {
+            setIsProcessingPayment(false)
         }
     }
 
@@ -428,6 +434,7 @@ const Subscription = () => {
                                             }}
                                             className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
                                             disabled={
+                                                isProcessingPayment ||
                                                 (user.subscription_type === 'premium' && plan.buttonInfo !== 'Get in Touch') ||
                                                 (user.subscription_type === 'free' && plan.title === 'Free') ||
                                                 (user.subscription_type === 'pro' &&
@@ -452,7 +459,7 @@ const Subscription = () => {
                                                     user.subscription_duration === selectedPlan)
                                             }
                                         >
-                                            {plan.buttonInfo}
+                                            {isProcessingPayment ? 'Processing...' : plan.buttonInfo}
                                         </Button>
                                     </div>
                                     <div>

@@ -499,13 +499,10 @@ type BuildFlowParams = {
     stopNodeId?: string
     uploads?: IFileUpload[]
     baseURL?: string
-    orgId?: string
-    workspaceId?: string
-    subscriptionId?: string
     usageCacheManager?: any
     uploadedFilesContent?: string
-    updateStorageUsage?: (orgId: string, workspaceId: string, totalSize: number, usageCacheManager?: any) => void
-    checkStorage?: (orgId: string, subscriptionId: string, usageCacheManager: any) => Promise<any>
+    updateStorageUsage?: (totalSize: number, usageCacheManager?: any) => void
+    checkStorage?: (usageCacheManager: any) => Promise<any>
 }
 
 /**
@@ -537,9 +534,6 @@ export const buildFlow = async ({
     stopNodeId,
     uploads,
     baseURL,
-    orgId,
-    workspaceId,
-    subscriptionId,
     usageCacheManager,
     updateStorageUsage,
     checkStorage

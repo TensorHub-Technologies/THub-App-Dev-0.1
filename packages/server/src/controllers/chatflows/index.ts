@@ -122,7 +122,6 @@ const importChatflows = async (req: Request, res: Response, next: NextFunction) 
 
 const updateChatflow = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(`chatflowsRouter.updateChatflow - req.params: ${JSON.stringify(req.params)}`)
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsRouter.updateChatflow - id not provided!`)
         }

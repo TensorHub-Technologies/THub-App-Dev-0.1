@@ -18,6 +18,7 @@ import InviteUsers from './InviteUsers'
 const HomeSettings = () => {
     const theme = useTheme()
     const user = useSelector((state) => state.user.userData)
+    console.log(user?.role, 'user')
     const customization = useSelector((state) => state.customization)
     const [selectedSection, setSelectedSection] = useState('Profile')
     const navigate = useNavigate()

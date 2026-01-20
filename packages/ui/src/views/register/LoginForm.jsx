@@ -46,14 +46,14 @@ const LoginForm = () => {
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
             const thubWebServerDevUrl =
-                import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+                import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
             const thubWebServerProdUrl =
-                import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+                import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
             const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
             let apiUrl
 
-            if (window.location.hostname === 'demo.thub.tech') {
+            if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
                 apiUrl = thubWebServerDevUrl
             } else if (window.location.hostname === 'localhost') {
                 apiUrl = thubWebServerLocalUrl
@@ -68,7 +68,8 @@ const LoginForm = () => {
             const response = await axios.post(`${apiUrl}/loginUser`, finalValues)
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
-                window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`
+                // window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`
+                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/?theme=lite&uid=${response.data.userId}`
             }
             resetForm()
         } catch (error) {

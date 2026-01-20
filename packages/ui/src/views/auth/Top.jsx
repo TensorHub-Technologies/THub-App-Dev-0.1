@@ -2,32 +2,32 @@ import { Button, Stack } from '@mui/material'
 import { GitHubIcon } from './CustomIcons'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import GoogleCustomButton from './googleLogin/GoogleCustomButton'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { SET_USER_DATA } from '@/store/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
+import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router'
 import { MicrosoftLogin } from './microsoftLogin/MicrosoftLogin'
 
-export const Top = () => {
-    const [loading, setLoading] = useState(false)
-
+export const Top = ({ setLoading }) => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        handleGithubAuth()
+        setLoading(true)
+        handleGithubAuth().finally(() => setLoading(false))
     }, [])
 
     const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
     const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     let apiUrl
-    if (window.location.hostname === 'demo.thub.tech') {
+    if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
         apiUrl = thubWebServerDevUrl
     } else if (window.location.hostname === 'localhost') {
         apiUrl = thubWebServerLocalUrl
@@ -42,14 +42,14 @@ export const Top = () => {
         const accessToken = localStorage.getItem('access_token')
 
         const thubWebServerDevUrl =
-            import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+            import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
         const thubWebServerProdUrl =
-            import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+            import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
         const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
         let apiUrl
 
-        if (window.location.hostname === 'demo.thub.tech') {
+        if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
             apiUrl = thubWebServerDevUrl
         } else if (window.location.hostname === 'localhost') {
             apiUrl = thubWebServerLocalUrl
@@ -73,9 +73,12 @@ export const Top = () => {
                 }
             } catch (error) {
                 console.error('Error during GitHub OAuth flow:', error)
+            } finally {
+                setLoading(false)
             }
         } else if (accessToken) {
             await getUserData()
+            setLoading(false)
         }
     }
 
@@ -107,16 +110,18 @@ export const Top = () => {
 
     const loginWithGithub = () => {
         const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID
-        console.log(clientId, 'clientId')
         const gitRedirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
         window.location.assign(gitRedirectUrl)
     }
-
     return (
         <div>
             <Stack gap={2} sx={{ mt: 2 }} style={{ width: '450px' }}>
-                <GoogleOAuthProvider clientId='378678297066-q6qeqtpfh0ih4e99lv887o1rgduehs9u.apps.googleusercontent.com'>
-                    <GoogleCustomButton />
+                <GoogleOAuthProvider
+                    clientId={
+                        import.meta.env.VITE_GOOGLE_CLIENT_ID || '378678297066-q6qeqtpfh0ih4e99lv887o1rgduehs9u.apps.googleusercontent.com'
+                    }
+                >
+                    <GoogleCustomButton setLoading={setLoading} />
                 </GoogleOAuthProvider>
                 <Button
                     variant='outlined'
@@ -137,4 +142,8 @@ export const Top = () => {
             </Stack>
         </div>
     )
+}
+
+Top.propTypes = {
+    setLoading: PropTypes.func.isRequired
 }

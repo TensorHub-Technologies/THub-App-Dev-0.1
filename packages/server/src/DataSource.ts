@@ -8,86 +8,172 @@ import { sqliteMigrations } from './database/migrations/sqlite'
 import { mysqlMigrations } from './database/migrations/mysql'
 import { mariadbMigrations } from './database/migrations/mariadb'
 import { postgresMigrations } from './database/migrations/postgres'
+import { Storage } from '@google-cloud/storage'
+import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
 
 let appDataSource: DataSource
 
-import { Storage } from '@google-cloud/storage'
-
-// Validate required environment variables
-const requiredEnvVars = [
-    'GOOGLE_CLOUD_TYPE',
-    'GOOGLE_CLOUD_PROJECT_ID',
-    'GOOGLE_CLOUD_PRIVATE_KEY_ID',
-    'GOOGLE_CLOUD_PRIVATE_KEY',
-    'GOOGLE_CLOUD_CLIENT_EMAIL',
-    'GOOGLE_CLOUD_CLIENT_ID'
-]
-
-const missingVars = requiredEnvVars.filter((varName) => !process.env[varName])
-if (missingVars.length > 0) {
-    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`)
+/**
+ * Get the storage type from environment
+ */
+const getStorageType = (): string => {
+    return process.env.STORAGE_TYPE ? process.env.STORAGE_TYPE : 'local'
 }
 
-const storageCredentials = {
-    type: process.env.GOOGLE_CLOUD_TYPE,
-    project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
-    private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
-    private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
-    client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
-    auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI || 'https://accounts.google.com/o/oauth2/auth',
-    token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI || 'https://oauth2.googleapis.com/token',
-    auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL || 'https://www.googleapis.com/oauth2/v1/certs',
-    client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
-    universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN || 'googleapis.com'
-}
-
-// Debug logging (consider removing in production)
-console.log('Private Key received (first 50 chars):', storageCredentials.private_key?.substring(0, 50) + '...')
-console.log('Private Key length:', storageCredentials.private_key ? storageCredentials.private_key.length : 'undefined')
-console.log(
-    'Private Key contains actual newlines:',
-    storageCredentials.private_key ? storageCredentials.private_key.includes('\n') : 'undefined'
-)
-console.log(
-    'Private Key starts with BEGIN:',
-    storageCredentials.private_key ? storageCredentials.private_key.startsWith('-----BEGIN') : 'undefined'
-)
-
-// Validate private key format
-if (!storageCredentials.private_key?.startsWith('-----BEGIN PRIVATE KEY-----')) {
-    throw new Error('Private key does not have the correct format')
-}
-
-const storage = new Storage({
-    credentials: storageCredentials
-})
-
+// Initialize Google Cloud Storage (only if storage type is GCS)
+let storage: Storage | null = null
 const bucketName = 'thub-files'
+
+if (getStorageType() === 'gcs' || (process.env.NODE_ENV === 'production' && getStorageType() !== 'azure' && getStorageType() !== 's3')) {
+    // Validate required environment variables for GCS
+    const requiredEnvVars = [
+        'GOOGLE_CLOUD_TYPE',
+        'GOOGLE_CLOUD_PROJECT_ID',
+        'GOOGLE_CLOUD_PRIVATE_KEY_ID',
+        'GOOGLE_CLOUD_PRIVATE_KEY',
+        'GOOGLE_CLOUD_CLIENT_EMAIL',
+        'GOOGLE_CLOUD_CLIENT_ID'
+    ]
+
+    const missingVars = requiredEnvVars.filter((varName) => !process.env[varName])
+    if (missingVars.length > 0) {
+        throw new Error(`Missing required environment variables for GCS: ${missingVars.join(', ')}`)
+    }
+
+    const storageCredentials = {
+        type: process.env.GOOGLE_CLOUD_TYPE,
+        project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
+        private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
+        private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
+        client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
+        auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI || 'https://accounts.google.com/o/oauth2/auth',
+        token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI || 'https://oauth2.googleapis.com/token',
+        auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL || 'https://www.googleapis.com/oauth2/v1/certs',
+        client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
+        universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN || 'googleapis.com'
+    }
+
+    // Validate private key format
+    if (!storageCredentials.private_key?.startsWith('-----BEGIN PRIVATE KEY-----')) {
+        throw new Error('Private key does not have the correct format')
+    }
+
+    storage = new Storage({
+        credentials: storageCredentials
+    })
+}
 
 // Function to create a folder in GCS
 async function createFolderInGCS(folderPath: string): Promise<void> {
+    if (!storage) {
+        throw new Error('Google Cloud Storage is not initialized')
+    }
     const file = storage.bucket(bucketName).file(`${folderPath}/`)
     await file.save('')
-    console.log(`Folder ${folderPath} created in bucket ${bucketName}`)
+    console.log(`Folder ${folderPath} created in GCS bucket ${bucketName}`)
+}
+
+// Function to get Azure Blob Storage configuration
+const getAzureConfig = () => {
+    const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME
+    const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY
+    const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'flowise-storage'
+    const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING
+
+    if (!accountName || (!accountKey && !connectionString)) {
+        throw new Error(
+            'Azure storage configuration is missing. Provide either AZURE_STORAGE_ACCOUNT_NAME + AZURE_STORAGE_ACCOUNT_KEY or AZURE_STORAGE_CONNECTION_STRING'
+        )
+    }
+
+    let blobServiceClient: BlobServiceClient
+
+    if (connectionString) {
+        blobServiceClient = BlobServiceClient.fromConnectionString(connectionString)
+    } else {
+        const sharedKeyCredential = new StorageSharedKeyCredential(accountName!, accountKey!)
+        blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`, sharedKeyCredential)
+    }
+
+    const containerClient = blobServiceClient.getContainerClient(containerName)
+
+    return { containerClient, containerName, blobServiceClient }
+}
+
+// Function to create a folder (blob prefix) in Azure Blob Storage
+async function createFolderInAzure(folderPath: string): Promise<void> {
+    const { containerClient, containerName } = getAzureConfig()
+
+    // Ensure container exists (null = private access)
+    await containerClient.createIfNotExists()
+
+    // Create a marker blob to represent the folder
+    const blobName = `${folderPath}/`
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName)
+
+    try {
+        await blockBlobClient.upload('', 0, {
+            blobHTTPHeaders: {
+                blobContentType: 'application/x-directory'
+            }
+        })
+        console.log(`Folder ${folderPath} created in Azure container ${containerName}`)
+    } catch (error: any) {
+        console.error(`Failed to create folder ${folderPath} in Azure:`, error.message)
+        throw error
+    }
+}
+
+// Function to create local folder
+function createLocalFolder(folderPath: string): void {
+    if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath, { recursive: true })
+        console.log(`Local folder created at ${folderPath}`)
+    } else {
+        console.log(`Local folder already exists at ${folderPath}`)
+    }
 }
 
 export const init = async (): Promise<void> => {
     let homePath
-    let flowisePath = path.join(getUserHome(), '.flowise')
+    const flowisePath = path.join(getUserHome(), '.flowise')
+    const storageType = getStorageType()
 
+    // Create local .flowise directory
     if (!fs.existsSync(flowisePath)) {
         fs.mkdirSync(flowisePath)
-        console.log(`.thub directory created at ${flowisePath}`)
+        console.log(`.flowise directory created at ${flowisePath}`)
     } else {
-        console.log(`.thub directory already exists at ${flowisePath}`)
+        console.log(`.flowise directory already exists at ${flowisePath}`)
     }
+
+    // Initialize storage based on type
     try {
-        await createFolderInGCS('.flowise')
-        await createFolderInGCS('.flowise/storage')
-    } catch (error) {
-        console.error('Error creating folder in GCS:', error)
+        if (storageType === 'azure') {
+            console.log('Initializing Azure Blob Storage...')
+            await createFolderInAzure('.flowise')
+            await createFolderInAzure('.flowise/storage')
+            console.log('Azure Blob Storage initialized successfully')
+        } else if (storageType === 'gcs' || (process.env.NODE_ENV === 'production' && storageType !== 's3')) {
+            console.log('Initializing Google Cloud Storage...')
+            await createFolderInGCS('.flowise')
+            await createFolderInGCS('.flowise/storage')
+            console.log('Google Cloud Storage initialized successfully')
+        } else if (storageType === 's3') {
+            console.log('Using S3 storage (no folder initialization needed)')
+            // S3 doesn't require folder creation - folders are virtual based on key prefixes
+        } else {
+            console.log('Using local storage')
+            const localStoragePath = path.join(flowisePath, 'storage')
+            createLocalFolder(localStoragePath)
+        }
+    } catch (error: any) {
+        console.error('Error initializing storage:', error.message)
+        // Don't throw - allow the app to continue with database initialization
     }
+
+    // Initialize database
     switch (process.env.DATABASE_TYPE) {
         case 'sqlite':
             homePath = process.env.DATABASE_PATH ?? flowisePath
@@ -113,7 +199,9 @@ export const init = async (): Promise<void> => {
                 migrationsRun: false,
                 entities: Object.values(entities),
                 migrations: mysqlMigrations,
-                ssl: getDatabaseSSLFromEnv()
+                ssl: {
+                    rejectUnauthorized: false
+                }
             })
             break
         case 'mariadb':
