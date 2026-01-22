@@ -83,7 +83,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const location = useLocation()
 
     const userData = useSelector((state) => state.user.userData)
-    const subscription = userData?.subscription_type
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
     const [isExpanded, setIsExpanded] = useState(true)
@@ -93,6 +92,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const [dialogProps, setDialogProps] = useState({})
 
     const isAgentCanvasV2 = window.location.pathname.includes('/v2/agentcanvas')
+    console.log(userData, 'userDataaaaaaa')
 
     const allowedPlan = subscriptionPlan.find((x) => Object.keys(x).includes(userData.subscription_type))
     userData.subscription_type === null || undefined ? (userData.subscription_type = 'free') : userData.subscription_type
