@@ -1546,7 +1546,7 @@
                         "label": "Repo Link",
                         "name": "repoLink",
                         "type": "string",
-                        "placeholder": "https://github.com/FlowiseAI/THub",
+                        "placeholder": "https://github.com/THub/THub",
                         "id": "github_0-input-repoLink-string"
                     },
                     {

@@ -17,4 +17,4 @@ Postgres Vector Store integration for THub
 
 ## License
 
-Source code in this repository is made available under the [Apache License Version 2.0](https://github.com/FlowiseAI/THub/blob/master/LICENSE.md).
+Source code in this repository is made available under the [Apache License Version 2.0](https://github.com/THub/THub/blob/master/LICENSE.md).
