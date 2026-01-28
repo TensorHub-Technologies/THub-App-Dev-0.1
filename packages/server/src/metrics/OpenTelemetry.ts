@@ -41,7 +41,7 @@ export class OpenTelemetry implements IMetricsProvider {
         const flowiseVersion = await getVersion()
 
         this.resource = new Resource({
-            [ATTR_SERVICE_NAME]: process.env.METRICS_SERVICE_NAME || 'FlowiseAI',
+            [ATTR_SERVICE_NAME]: process.env.METRICS_SERVICE_NAME || 'THub',
             [ATTR_SERVICE_VERSION]: flowiseVersion.version // Version as a label
         })
 
