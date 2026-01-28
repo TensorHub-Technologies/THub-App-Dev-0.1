@@ -47,6 +47,80 @@ export enum Platform {
  * Databases
  */
 
+export interface A2AAgentCard {
+    // Human-readable name for the Agent (e.g., "Recipe Agent")
+
+    name: string
+
+    // Human-readable description of the Agent's function
+
+    description: string
+
+    // URL address where the Agent is hosted
+
+    url: string
+
+    // Service provider information for the Agent
+
+    provider?: {
+        organization: string
+
+        url: string
+    }
+
+    // Version of the Agent (format defined by provider, e.g., "1.0.0")
+
+    version: string
+
+    // URL for the Agent's documentation
+
+    documentationUrl?: string
+
+    // Optional capabilities supported by the Agent
+
+    capabilities: {
+        streaming?: boolean // If the Agent supports SSE
+
+        pushNotifications?: boolean // If the Agent can push update notifications to the client
+
+        stateTransitionHistory?: boolean // If the Agent exposes task state change history
+    }
+
+    // Authentication requirements for the Agent (intended to match OpenAPI auth structure)
+
+    authentication?: {
+        schemes: string[] // e.g., Basic, Bearer
+
+        credentials?: string // Credentials for the client to use for private Cards
+    }
+
+    // Default interaction modes supported by the Agent across all skills
+
+    defaultInputModes: string[] // Supported input MIME types
+
+    defaultOutputModes: string[] // Supported output MIME types
+
+    // Collection of capability units the Agent can perform
+
+    skills: A2AAgentCardSkill[]
+}
+
+export interface A2AAgentCardSkill {
+    id: string // Unique identifier for the skill
+
+    name: string // Human-readable name for the skill
+
+    description: string // Skill description
+
+    tags: string[] // Tags describing the skill's capability category (e.g., "cooking", "customer support")
+
+    examples?: string[] // Example scenarios or prompts the skill can execute (e.g., "I need a recipe for bread")
+
+    inputModes?: string[] // Input MIME types supported by the skill (if different from default)
+
+    outputModes?: string[] // Output MIME types supported by the skill (if different from default)
+}
+
 export interface IAgentCards {
     id: number
     workflow_id: string

@@ -67,14 +67,14 @@ class A2AClientTool extends Tool {
 
                 forEach(getTaskResult.status?.message?.parts, (part) => {
                     if (part.kind === 'text' && part.text) {
-                        result_A2A += part.text
+                        result_A2A += part.text + '\n'
                     }
                 })
 
                 if (getTaskResult.status?.message?.parts) {
                     ;(getTaskResult.status.message.parts as Array<{ kind: string; text?: string }>).forEach((part) => {
                         if (part.kind === 'text' && part.text) {
-                            return part.text
+                            return part.text + '\n'
                         }
                     })
                 }
@@ -82,7 +82,7 @@ class A2AClientTool extends Tool {
                 const messageResult = result as Message
                 messageResult.parts.forEach((part) => {
                     if (part.kind === 'text') {
-                        console.log('Agent says:', part.text)
+                        console.log('Agent says:', part.text + '\n')
                     }
                 })
             }
@@ -95,7 +95,7 @@ class A2AClientTool extends Tool {
                 const getTaskResult = (getResponse as GetTaskSuccessResponse).result
                 forEach(getTaskResult.status?.message?.parts, (part) => {
                     if (part.kind === 'text' && part.text) {
-                        result_A2A += part.text
+                        result_A2A += part.text + '\n'
                     }
                 })
             }

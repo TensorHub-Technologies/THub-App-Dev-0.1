@@ -218,23 +218,28 @@ export class ToolExecutor implements AgentExecutor {
                 return
             }
 
-            const responseText = response.text // Access the text property using .text()
+            const responseText = response.text
             console.info(`[ToolAgentExecutor] Prompt response: ${responseText}`)
-            const lines = responseText.trim().split('\n')
-            const finalStateLine = lines.at(-1)?.trim().toUpperCase()
-            const agentReplyText = lines
-                .slice(0, lines.length - 1)
-                .join('\n')
-                .trim()
 
-            let finalA2AState: TaskState = 'unknown'
+            const lines = responseText
+                .split('\n')
+                .map((l) => l.trim())
+                .filter(Boolean)
 
-            if (finalStateLine === 'COMPLETED') {
-                finalA2AState = 'completed'
-            } else {
-                console.warn(`[ToolAgentExecutor] Unexpected final state line from prompt: ${finalStateLine}. Defaulting to 'completed'.`)
-                finalA2AState = 'completed' // Default if LLM deviates
+            let finalA2AState: TaskState = 'completed'
+            let agentReplyLines = lines
+
+            const lastLine = lines.at(-1)?.toUpperCase()
+
+            // ✅ Only treat EXPLICIT markers as state
+            if (lastLine && /^(STATE|FINAL|TASK_STATE)\s*:\s*\w+/.test(lastLine)) {
+                const [, state] = lastLine.split(':')
+                finalA2AState = (state?.toLowerCase() as TaskState) ?? 'completed'
+                agentReplyLines = lines.slice(0, -1)
             }
+
+            // ✅ Content remains intact
+            const agentReplyText = agentReplyLines.join('\n')
 
             // 5. Publish final task status update
             const agentMessage: Message = {

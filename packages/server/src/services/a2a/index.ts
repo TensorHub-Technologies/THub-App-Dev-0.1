@@ -10,6 +10,7 @@ import { AgentCards } from '../../database/entities/AgentCards'
 import { AgentCardSkills } from '../../database/entities/AgentCardSkills'
 import path from 'path'
 import fs from 'fs'
+import { registerAgentCard } from '../../a2a/registerAgentCard'
 
 const saveAgentCard = async (req: Request): Promise<any> => {
     console.log('service.saveAgentCard:', req.body)
@@ -106,6 +107,16 @@ const saveAgentCard = async (req: Request): Promise<any> => {
         })
         await appServer.AppDataSource.getRepository(AgentCardSkills).update({ agent_card_id: agentCard?.id }, agentCardSkills)
     }
+    //TODO: register after update
+
+    const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: req.body.workflow_id })
+    const apiHostName = process.env.API_HOST_NAME || 'http://localhost:8080'
+
+    await registerAgentCard({
+        agentCard,
+        apiHostName,
+        appDataSource: appServer.AppDataSource
+    })
 
     return { status: 'success' }
 }
@@ -134,6 +145,7 @@ const createPromptFile = async (workflowId: string): Promise<any> => {
             throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`)
         }
 
+        //TODO: change file creation to azure from gcs
         const storageCredentials = {
             type: process.env.GOOGLE_CLOUD_TYPE,
             project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
@@ -185,16 +197,25 @@ const createPromptFile = async (workflowId: string): Promise<any> => {
 }
 
 export const getAgentCard = async (workflowId: string) => {
-    const appServer = getRunningExpressApp()
-    const repo = appServer.AppDataSource.getRepository(AgentCards)
-    const skillRepo = appServer.AppDataSource.getRepository(AgentCardSkills)
+    let a2ARequestHandler = A2ARequestHandlers.getRequestHandler(workflowId)
+    if (!a2ARequestHandler) {
+        //throw new Error(`No A2A Request Handler found for workflowId: ${workflowId}`);
+        //TODO: call the function here
 
-    const agentCard = await repo.findOneBy({ workflow_id: workflowId })
-    if (!agentCard) return null
+        const appServer = getRunningExpressApp()
+        const agentCard = await appServer.AppDataSource.getRepository(AgentCards).findOneBy({ workflow_id: workflowId })
+        const apiHostName = process.env.API_HOST_NAME || 'http://localhost:8080'
 
-    const skill = await skillRepo.findOneBy({ agent_card_id: agentCard.id })
+        await registerAgentCard({
+            agentCard,
+            apiHostName,
+            appDataSource: appServer.AppDataSource
+        })
 
-    return { ...agentCard, skills: skill }
+        a2ARequestHandler = A2ARequestHandlers.getRequestHandler(workflowId)
+    }
+
+    return a2ARequestHandler?.getAgentCard()
 }
 
 const getAgentResponse = async (workflowId: string, req: Request, res: Response): Promise<any> => {
