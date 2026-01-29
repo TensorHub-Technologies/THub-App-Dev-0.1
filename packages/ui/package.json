@@ -79,8 +79,8 @@
         "tippy.js": "^6.3.7",
         "uuid": "^9.0.1",
         "yup": "^0.32.9",
-        "thub-embed": "^10.0.25",
-        "thub-embed-react": "3.0.13",
+        "thub-embed": "^10.0.26",
+        "thub-embed-react": "3.0.14",
         "thub-react-json-view": "1.21.11"
     },
     "scripts": {
