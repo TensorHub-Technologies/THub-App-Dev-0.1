@@ -60,21 +60,25 @@ const Header = () => {
     const handleLogout = () => {
         const currentHost = window.location.hostname
 
-        // 1️⃣ Clear all local/session storage
+        // ✅ Clear local & session storage
         localStorage.removeItem('userId')
         localStorage.removeItem('workspace')
         localStorage.removeItem('access_token')
-        sessionStorage.removeItem('modalShown')
 
-        // Reset Redux
+        sessionStorage.removeItem('modalShown')
+        sessionStorage.removeItem('profileSkipped')
+        sessionStorage.removeItem('inviteContext')
+
+        // ✅ Reset Redux & UI
         dispatch(setUserData(''))
         setUserName('')
         setUserImg('')
-
         setAnchorEl(null)
-        if (loginType === 'azure_ad') {
-            const currentHost = window.location.hostname
 
+        // --------------------------------
+        // 🔐 AZURE AD LOGOUT
+        // --------------------------------
+        if (loginType === 'azure_ad') {
             const redirectUri =
                 currentHost === 'localhost'
                     ? 'http://localhost:8080/'
@@ -83,33 +87,33 @@ const Header = () => {
             instance.logoutRedirect({
                 postLogoutRedirectUri: redirectUri
             })
-
             return
         }
 
+        // --------------------------------
+        // 🔐 GOOGLE LOGOUT
+        // --------------------------------
         if (loginType === 'google') {
-            if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-                window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
-            } else if (currentHost === 'localhost') {
+            if (currentHost === 'localhost') {
                 window.location.href = 'http://localhost:8080/'
+            } else if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             } else {
                 window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io'
             }
             return
         }
 
-        // 3️⃣ Normal email/password login logout
-        if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-            window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
-            return
-        }
-
+        // --------------------------------
+        // 🔐 EMAIL / PASSWORD LOGOUT
+        // --------------------------------
         if (currentHost === 'localhost') {
             window.location.href = 'http://localhost:8080/'
-            return
+        } else if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
+        } else {
+            window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io'
         }
-
-        window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io'
     }
 
     useEffect(() => {

@@ -102,15 +102,15 @@ const UserInfo = ({ setShowModal, forceOpen = false }) => {
         }
     }
 
-    // -----------------------
-    // SKIP
-    // -----------------------
     const handleSkip = async () => {
         try {
             await axios.post(`${API_BASE}/updateUser`, {
                 uid: user.uid,
                 profileCompletedOnly: true
             })
+
+            // ✅ SESSION-ONLY SKIP FLAG
+            sessionStorage.setItem('profileSkipped', 'true')
 
             await refreshUserData()
 

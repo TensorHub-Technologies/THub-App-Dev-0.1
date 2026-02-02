@@ -7,11 +7,17 @@ export const SignOutButton = () => {
     const { instance } = useMsal()
     const navigate = useNavigate()
 
-    const handleLogout = () => {
-        instance.logoutPopup({
-            postLogoutRedirectUri: '/' // optional
-        })
+    const handleLogout = async () => {
+        // ✅ Clear session-based flags
+        sessionStorage.removeItem('profileSkipped')
+        sessionStorage.removeItem('inviteContext')
+
         localStorage.removeItem('userId')
+
+        await instance.logoutPopup({
+            postLogoutRedirectUri: '/'
+        })
+
         navigate('/')
     }
 

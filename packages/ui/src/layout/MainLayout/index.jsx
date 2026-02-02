@@ -50,9 +50,6 @@ const MainLayout = () => {
         dispatch({ type: SET_MENU, opened: !matchDownMd })
     }, [matchDownMd, dispatch])
 
-    // ------------------------------------------------
-    // ✅ FINAL & CORRECT MODAL LOGIC
-    // ------------------------------------------------
     useEffect(() => {
         if (!userData?.uid) {
             setShowModal(false)
@@ -60,20 +57,22 @@ const MainLayout = () => {
         }
 
         const inviteContext = sessionStorage.getItem('inviteContext')
+        const profileSkipped = sessionStorage.getItem('profileSkipped')
 
+        // Accept invite route → no modal
         if (location.pathname.startsWith('/accept-invite')) {
             setShowModal(false)
             return
         }
 
-        // Invited user → must complete
+        // 🔒 Invite users must complete profile
         if (inviteContext && !userData.profile_completed) {
             setShowModal(true)
             return
         }
 
-        // Normal user → only once
-        if (!userData.profile_completed) {
+        // 🟡 Normal users
+        if (!userData.profile_completed && !profileSkipped) {
             setShowModal(true)
             return
         }
