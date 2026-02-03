@@ -64,7 +64,8 @@ const Header = () => {
         localStorage.removeItem('userId')
         localStorage.removeItem('workspace')
         localStorage.removeItem('access_token')
-        sessionStorage.removeItem('modalShown')
+        sessionStorage.removeItem('userInfoSkipped')
+        sessionStorage.removeItem('inviteContext')
 
         // Reset Redux
         dispatch(setUserData(''))
