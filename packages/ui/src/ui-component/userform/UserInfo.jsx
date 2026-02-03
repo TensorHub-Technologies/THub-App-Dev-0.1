@@ -43,7 +43,7 @@ const UserInfo = ({ setShowModal, forceOpen = false }) => {
 
         dispatch({
             type: SET_USER_DATA,
-            payload: res.data[0]
+            payload: res.data
         })
     }
 
@@ -76,18 +76,49 @@ const UserInfo = ({ setShowModal, forceOpen = false }) => {
                 workspace: values.workspace
             }
 
-            if (isInviteFlow) {
-                payload.invitedBy = inviteContext.invitedBy
-                payload.role = inviteContext.role
+            // ✅ ONLY for normal workspace creation
+            if (!isInviteFlow) {
+                await axios.post(`${API_BASE}/updateUser`, payload)
+                await refreshUserData()
+
+                enqueueSnackbar({
+                    message: 'Workspace created successfully',
+                    options: { variant: 'success' }
+                })
+
+                setShowModal(false)
+                return
             }
 
+            // ✅ INVITE FLOW: Call /invite/accept FIRST
+            try {
+                await axios.post(`${API_BASE}/invite/accept`, {
+                    token: inviteContext.token,
+                    uid: user.uid,
+                    email: user.email
+                })
+
+                console.log('✅ Invite accepted successfully')
+            } catch (acceptErr) {
+                console.error('Invite acceptance failed:', acceptErr)
+
+                enqueueSnackbar({
+                    message: acceptErr.response?.data?.message || 'Failed to join workspace',
+                    options: { variant: 'error' }
+                })
+
+                setSubmitting(false)
+                return
+            }
+
+            // ✅ THEN update profile
             await axios.post(`${API_BASE}/updateUser`, payload)
             await refreshUserData()
 
             sessionStorage.removeItem('inviteContext')
 
             enqueueSnackbar({
-                message: isInviteFlow ? 'Profile completed & joined workspace' : 'Workspace created successfully',
+                message: 'Profile completed & joined workspace',
                 options: { variant: 'success' }
             })
 
@@ -102,30 +133,15 @@ const UserInfo = ({ setShowModal, forceOpen = false }) => {
         }
     }
 
-    // -----------------------
-    // SKIP
-    // -----------------------
-    const handleSkip = async () => {
-        try {
-            await axios.post(`${API_BASE}/updateUser`, {
-                uid: user.uid,
-                profileCompletedOnly: true
-            })
+    const handleSkip = () => {
+        sessionStorage.setItem('userInfoSkipped', 'true')
 
-            await refreshUserData()
+        enqueueSnackbar({
+            message: 'You can complete your profile later',
+            options: { variant: 'info' }
+        })
 
-            enqueueSnackbar({
-                message: 'You can complete your profile later',
-                options: { variant: 'info' }
-            })
-
-            setShowModal(false)
-        } catch {
-            enqueueSnackbar({
-                message: 'Failed to skip',
-                options: { variant: 'error' }
-            })
-        }
+        setShowModal(false)
     }
 
     return (

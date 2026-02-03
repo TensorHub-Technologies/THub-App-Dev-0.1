@@ -76,6 +76,34 @@ const SignUp = () => {
         apiUrl = thubWebServerProdUrl
     }
 
+    // ✅ HELPER: Accept invite if context exists
+    const acceptInviteIfNeeded = async (userId, userEmail) => {
+        const inviteContext = sessionStorage.getItem('inviteContext')
+        if (!inviteContext) return
+
+        try {
+            const { token, email } = JSON.parse(inviteContext)
+
+            // Email must match
+            if (email !== userEmail) {
+                console.warn('Invite email mismatch')
+                sessionStorage.removeItem('inviteContext')
+                return
+            }
+
+            await axios.post(`${apiUrl}/invite/accept`, {
+                token,
+                uid: userId,
+                email: userEmail
+            })
+
+            console.log('✅ Invite accepted successfully')
+        } catch (err) {
+            console.error('Failed to accept invite:', err)
+            // Don't remove context here - let UserInfo handle it
+        }
+    }
+
     const checkEmail = async (email) => {
         try {
             const { data } = await axios.post(`${apiUrl}/check-email`, { email })
@@ -186,6 +214,10 @@ const SignUp = () => {
                 })
                 localStorage.setItem('userId', data.userId)
                 setShowModal(false)
+
+                // ✅ ACCEPT INVITE (if exists)
+                await acceptInviteIfNeeded(data.userId, tempUserData.email)
+
                 toast.success('Registration successful!', {
                     theme: 'colored',
                     style: { background: customization?.isDarkMode ? '#e22a90' : '#3c5ba4', color: 'white' }
@@ -455,7 +487,7 @@ const SignUp = () => {
                                         }}
                                     />
                                     <FormHelperText>
-                                        {formik.touched.password && formik.errors.password ? formik.errors.password : ' '}
+                                        {formik.touched.password && formik.errors.password ? formik.errors.password : ' '}
                                     </FormHelperText>
                                 </FormControl>
 
@@ -511,7 +543,7 @@ const SignUp = () => {
                                     <FormHelperText>
                                         {formik.touched.confirmPassword && formik.errors.confirmPassword
                                             ? formik.errors.confirmPassword
-                                            : ' '}
+                                            : ' '}
                                     </FormHelperText>
                                 </FormControl>
 

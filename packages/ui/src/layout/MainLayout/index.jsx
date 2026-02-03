@@ -50,30 +50,29 @@ const MainLayout = () => {
         dispatch({ type: SET_MENU, opened: !matchDownMd })
     }, [matchDownMd, dispatch])
 
-    // ------------------------------------------------
-    // ✅ FINAL & CORRECT MODAL LOGIC
-    // ------------------------------------------------
     useEffect(() => {
         if (!userData?.uid) {
             setShowModal(false)
             return
         }
 
-        const inviteContext = sessionStorage.getItem('inviteContext')
+        // reset skip when user logs in fresh
+        const skippedThisSession = sessionStorage.getItem('userInfoSkipped')
 
+        // invite accept route → never auto open
         if (location.pathname.startsWith('/accept-invite')) {
             setShowModal(false)
             return
         }
 
-        // Invited user → must complete
-        if (inviteContext && !userData.profile_completed) {
+        // invite flow → force open until completed
+        if (sessionStorage.getItem('inviteContext') && !userData.profile_completed) {
             setShowModal(true)
             return
         }
 
-        // Normal user → only once
-        if (!userData.profile_completed) {
+        // normal user
+        if (!userData.profile_completed && !skippedThisSession) {
             setShowModal(true)
             return
         }
