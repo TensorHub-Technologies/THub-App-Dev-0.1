@@ -1,20 +1,12 @@
 import { useState } from 'react'
 import {
-    Box,
     Card,
     CardContent,
     Typography,
     Tabs,
     Tab,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     Paper,
     Button,
-    IconButton,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -23,11 +15,8 @@ import {
     MenuItem,
     FormControl,
     InputLabel,
-    Alert,
-    Chip,
     Grid
 } from '@mui/material'
-import { IconKey, IconEdit, IconTrash, IconPlus, IconAlertTriangle } from '@tabler/icons-react'
 import MainCard from '@/ui-component/cards/MainCard'
 // API
 import useApi from '@/hooks/useApi'
@@ -156,63 +145,63 @@ const Dashboard = () => {
     )
 
     // Credentials Tab
-    const CredentialsTab = () => (
-        <Box>
-            <Alert severity='warning' icon={<IconAlertTriangle />} sx={{ mb: 3, backgroundColor: 'transparent' }}>
-                Organization-level credentials are shared across all workspaces. Handle with care.
-            </Alert>
-            <Card sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
-                <CardContent>
-                    <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
-                        <Typography variant='h6'>Credentials</Typography>
-                        <Button variant='contained' startIcon={<IconPlus size={18} />}>
-                            Add Credential
-                        </Button>
-                    </Box>
-                    <TableContainer sx={{ backgroundColor: 'transparent' }}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Type</TableCell>
-                                    <TableCell>Value</TableCell>
-                                    <TableCell>Last Used</TableCell>
-                                    <TableCell>Actions</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {credentials.map((cred) => (
-                                    <TableRow key={cred.id}>
-                                        <TableCell>{cred.name}</TableCell>
-                                        <TableCell>
-                                            <Chip label={cred.type} size='small' />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box display='flex' alignItems='center'>
-                                                <IconKey size={16} style={{ marginRight: 4 }} />
-                                                <Typography variant='body2' fontFamily='monospace'>
-                                                    {cred.value}
-                                                </Typography>
-                                            </Box>
-                                        </TableCell>
-                                        <TableCell>{cred.lastUsed}</TableCell>
-                                        <TableCell>
-                                            <IconButton size='small'>
-                                                <IconEdit size={18} />
-                                            </IconButton>
-                                            <IconButton size='small' color='error'>
-                                                <IconTrash size={18} />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </CardContent>
-            </Card>
-        </Box>
-    )
+    // const CredentialsTab = () => (
+    //     <Box>
+    //         <Alert severity='warning' icon={<IconAlertTriangle />} sx={{ mb: 3, backgroundColor: 'transparent' }}>
+    //             Organization-level credentials are shared across all workspaces. Handle with care.
+    //         </Alert>
+    //         <Card sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+    //             <CardContent>
+    //                 <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
+    //                     <Typography variant='h6'>Credentials</Typography>
+    //                     <Button variant='contained' startIcon={<IconPlus size={18} />}>
+    //                         Add Credential
+    //                     </Button>
+    //                 </Box>
+    //                 <TableContainer sx={{ backgroundColor: 'transparent' }}>
+    //                     <Table>
+    //                         <TableHead>
+    //                             <TableRow>
+    //                                 <TableCell>Name</TableCell>
+    //                                 <TableCell>Type</TableCell>
+    //                                 <TableCell>Value</TableCell>
+    //                                 <TableCell>Last Used</TableCell>
+    //                                 <TableCell>Actions</TableCell>
+    //                             </TableRow>
+    //                         </TableHead>
+    //                         <TableBody>
+    //                             {credentials.map((cred) => (
+    //                                 <TableRow key={cred.id}>
+    //                                     <TableCell>{cred.name}</TableCell>
+    //                                     <TableCell>
+    //                                         <Chip label={cred.type} size='small' />
+    //                                     </TableCell>
+    //                                     <TableCell>
+    //                                         <Box display='flex' alignItems='center'>
+    //                                             <IconKey size={16} style={{ marginRight: 4 }} />
+    //                                             <Typography variant='body2' fontFamily='monospace'>
+    //                                                 {cred.value}
+    //                                             </Typography>
+    //                                         </Box>
+    //                                     </TableCell>
+    //                                     <TableCell>{cred.lastUsed}</TableCell>
+    //                                     <TableCell>
+    //                                         <IconButton size='small'>
+    //                                             <IconEdit size={18} />
+    //                                         </IconButton>
+    //                                         <IconButton size='small' color='error'>
+    //                                             <IconTrash size={18} />
+    //                                         </IconButton>
+    //                                     </TableCell>
+    //                                 </TableRow>
+    //                             ))}
+    //                         </TableBody>
+    //                     </Table>
+    //                 </TableContainer>
+    //             </CardContent>
+    //         </Card>
+    //     </Box>
+    // )
 
     return (
         <>
@@ -295,7 +284,7 @@ const Dashboard = () => {
                                 }}
                             />
                         )}
-
+                        {/* 
                         <Tab
                             label='Credentials'
                             sx={{
@@ -311,7 +300,7 @@ const Dashboard = () => {
                                 padding: '0px',
                                 marginRight: 2
                             }}
-                        />
+                        /> */}
                     </Tabs>
                 </Paper>
 
@@ -322,9 +311,9 @@ const Dashboard = () => {
                 {userData?.role === 'superadmin' && activeTab === 2 && <WorkspacesTab />}
 
                 {/* Credentials index depends on role */}
-                {((userData?.role === 'superadmin' && activeTab === 3) || (userData?.role !== 'superadmin' && activeTab === 2)) && (
+                {/* {((userData?.role === 'superadmin' && activeTab === 3) || (userData?.role !== 'superadmin' && activeTab === 2)) && (
                     <CredentialsTab />
-                )}
+                )} */}
 
                 {/* Delete User Dialog */}
                 {/* Delete User Dialog */}

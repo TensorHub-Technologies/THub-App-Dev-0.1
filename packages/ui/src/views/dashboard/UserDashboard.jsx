@@ -17,14 +17,22 @@ import {
 import { IconPlus, IconTrash, IconCrown, IconX } from '@tabler/icons-react'
 
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 import { StyledButton } from '@/ui-component/button/StyledButton'
+import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
+import useNotifier from '@/utils/useNotifier'
 
 const UserDashboard = () => {
+    const dispatch = useDispatch()
     const customization = useSelector((state) => state.customization)
     const userData = useSelector((state) => state.user.userData)
     const isDark = customization.isDarkMode
+
+    useNotifier()
+
+    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
     const hasWorkspace = Boolean(userData?.workspace)
     const isAdmin = userData?.role === 'admin' && hasWorkspace
@@ -41,6 +49,7 @@ const UserDashboard = () => {
 
     const [transferOpen, setTransferOpen] = useState(false)
     const [transferUser, setTransferUser] = useState(null)
+
     const thubWebServerDevUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
 
@@ -97,7 +106,34 @@ const UserDashboard = () => {
             })
             setInviteOpen(false)
             setEmail('')
+            enqueueSnackbar({
+                message: `Invitation sent successfully to ${email}`,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'success',
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
             fetchUsers()
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to send invitation'
+            enqueueSnackbar({
+                message: errorMessage,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
         } finally {
             setLoading(false)
         }
@@ -107,24 +143,84 @@ const UserDashboard = () => {
     // Delete
     // -------------------------------
     const handleConfirmDelete = async () => {
-        await axios.delete(`${API_BASE}/workspaceUser`, {
-            data: { userId: selectedUser.uid, workspace: userData.workspace }
-        })
-        setConfirmOpen(false)
-        fetchUsers()
+        try {
+            await axios.delete(`${API_BASE}/workspaceUser`, {
+                data: { userId: selectedUser.uid, workspace: userData.workspace }
+            })
+            setConfirmOpen(false)
+            enqueueSnackbar({
+                message: `${selectedUser.name} has been removed successfully`,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'success',
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+            fetchUsers()
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to remove user'
+            enqueueSnackbar({
+                message: errorMessage,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+            setConfirmOpen(false)
+        }
     }
 
     // -------------------------------
     // Transfer admin
     // -------------------------------
     const handleTransferAdmin = async () => {
-        await axios.post(`${API_BASE}/workspaceUser/transfer-admin`, {
-            fromUserId: userData.uid,
-            toUserId: transferUser.uid,
-            workspace: userData.workspace
-        })
-        setTransferOpen(false)
-        fetchUsers()
+        try {
+            await axios.post(`${API_BASE}/workspaceUser/transfer-admin`, {
+                fromUserId: userData.uid,
+                toUserId: transferUser.uid,
+                workspace: userData.workspace
+            })
+            setTransferOpen(false)
+            enqueueSnackbar({
+                message: `Admin role transferred to ${transferUser.name} successfully`,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'success',
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+            fetchUsers()
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to transfer admin role'
+            enqueueSnackbar({
+                message: errorMessage,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+            setTransferOpen(false)
+        }
     }
 
     // -------------------------------
