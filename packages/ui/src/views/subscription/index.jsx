@@ -234,8 +234,8 @@ const Subscription = () => {
     }
 
     return (
-        <div>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
+        <>
+            <MainCard>
                 <Toaster position='top-right' reverseOrder={false} />
                 <Stack flexDirection='row'>
                     <Grid sx={{ mb: 1.25 }} container direction='row'>
@@ -558,7 +558,7 @@ const Subscription = () => {
                     )}
                 </Box>
             </Modal>
-        </div>
+        </>
     )
 }
 export default Subscription
