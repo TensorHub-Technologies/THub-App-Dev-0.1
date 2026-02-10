@@ -13,7 +13,7 @@ Here’s an overview of the process:
 
 ## Setting up Main Server:
 
-1. Follow [setup guide](https://github.com/FlowiseAI/THub/blob/main/docker/README.md)
+1. Follow [setup guide](https://github.com/THub/THub/blob/main/docker/README.md)
 2. In the `.env.example`, setup all the necessary env variables for `QUEUE CONFIGURATION`
 
 ## Setting up Worker:
