@@ -73,7 +73,7 @@ const NavGroup = ({ item }) => {
                                       
                                     >
                                         
-                                        <KeyboardArrowRightIcon stroke={1.5} size='1.3rem' sx={{ background: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
+                                        <KeyboardArrowRightIcon sx={{ width: 24, height: 24, background: customization.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
                                     </Avatar>
                                 </ButtonBase> */}
             {/* group divider */}
