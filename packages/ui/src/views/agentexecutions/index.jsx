@@ -267,6 +267,8 @@ const AgentExecutions = () => {
 
     const hasExecutions = executions && executions.length > 0
 
+    console.log('getAllExecutions', getAllExecutions)
+
     return (
         <MainCard>
             {error ? (

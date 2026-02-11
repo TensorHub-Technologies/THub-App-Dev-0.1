@@ -10,7 +10,8 @@ import {
     FormHelperText,
     Divider,
     IconButton,
-    InputAdornment
+    InputAdornment,
+    Alert
 } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
@@ -31,8 +32,8 @@ import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
-    const { uid } = useSelector((state) => state.user.userData)
     const [showPassword, setShowPassword] = useState(false)
+    const [requiredLoginMethod, setRequiredLoginMethod] = useState(null)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
@@ -45,13 +46,57 @@ const Login = () => {
             dispatch({ type: SET_DARKMODE, isDarkMode: isDark })
             localStorage.setItem('isDarkMode', isDark)
         }
+
+        // ✅ Check if specific login method is required (from invite)
+        const method = sessionStorage.getItem('requiredLoginMethod')
+        if (method) {
+            setRequiredLoginMethod(method)
+        }
     }, [dispatch])
 
     const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
     const thubWebServerProdUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+
+    const API_BASE =
+        window.location.hostname === 'localhost'
+            ? thubWebServerLocalUrl
+            : window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            ? thubWebServerDevUrl
+            : thubWebServerProdUrl
+
+    // ✅ HELPER: Accept invite if context exists
+    const acceptInviteIfNeeded = async (userId, userEmail) => {
+        const inviteContext = sessionStorage.getItem('inviteContext')
+        if (!inviteContext) return
+
+        try {
+            const { token, email } = JSON.parse(inviteContext)
+
+            // Email must match
+            if (email !== userEmail) {
+                console.warn('Invite email mismatch')
+                sessionStorage.removeItem('inviteContext')
+                return
+            }
+
+            await axios.post(`${API_BASE}/invite/accept`, {
+                token,
+                uid: userId,
+                email: userEmail
+            })
+
+            console.log('✅ Invite accepted successfully')
+
+            // Clear the required login method
+            sessionStorage.removeItem('requiredLoginMethod')
+        } catch (err) {
+            console.error('Failed to accept invite:', err)
+            // Don't remove context here - let UserInfo handle it
+        }
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -68,59 +113,38 @@ const Login = () => {
             try {
                 setLoading(true)
 
-                let apiUrl
-
-                if (window.location.hostname === 'demo.thub.tech') {
-                    apiUrl = thubWebServerDevUrl
-                } else if (window.location.hostname === 'localhost') {
-                    apiUrl = thubWebServerLocalUrl
-                } else {
-                    apiUrl = thubWebServerProdUrl
-                }
-
                 // 1️⃣ Login
-                const loginResponse = await axios.post(`${apiUrl}/loginUser`, {
+                const loginResponse = await axios.post(`${API_BASE}/loginUser`, {
                     email: values.email,
                     password: values.password
                 })
-                console.log(apiUrl)
+
                 const userId = loginResponse.data?.userId
                 if (!userId) throw new Error('User ID missing')
 
                 localStorage.setItem('userId', userId)
 
                 // 2️⃣ Fetch user full data
-                const userDataResponse = await axios.get(`${apiUrl}/userdata`, {
+                const userDataResponse = await axios.get(`${API_BASE}/userdata`, {
                     params: { userId }
                 })
 
-                const userData = userDataResponse.data[0]
+                const userData = userDataResponse.data
                 dispatch(setUserData(userData))
 
-                let workspace = userData?.workspace?.trim()
+                // 3️⃣ ✅ ACCEPT INVITE (if exists)
+                await acceptInviteIfNeeded(userId, userData.email)
 
+                // 4️⃣ Navigate to workflows
                 const currentHost = window.location.hostname
 
                 if (currentHost === 'localhost') {
-                    workspace = 'localhost'
                     window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${userId}`
-                    return
+                } else if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                    window.location.href = `https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${userId}`
+                } else {
+                    window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?uid=${userId}&theme=dark`
                 }
-
-                if (currentHost === 'demo.thub.tech') {
-                    workspace = 'demo'
-                    window.location.href = `https://demo.thub.tech/workflows?theme=dark&uid=${userId}`
-                    return
-                }
-
-                // if (!workspace) {
-                //     workspace = 'app'
-                // }
-
-                // 4️⃣ Redirect to correct workspace subdomain
-                // https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io
-                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?uid=${userId}&theme=dark`
-                return
             } catch (error) {
                 console.error('Login Error:', error)
                 alert(error.response?.data?.message || 'Login failed')
@@ -129,7 +153,22 @@ const Login = () => {
             }
         }
     })
+
     const passwordError = formik.touched.password && formik.errors.password
+
+    // ✅ Get login method display name
+    const getLoginMethodName = (method) => {
+        switch (method) {
+            case 'google':
+                return 'Google'
+            case 'github':
+                return 'GitHub'
+            case 'email':
+                return 'Email'
+            default:
+                return method
+        }
+    }
 
     return (
         <Stack sx={{ width: '100%', color: 'grey.500' }}>
@@ -202,6 +241,25 @@ const Login = () => {
                             sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px', cursor: 'pointer' }}
                             onClick={() => window.location.reload()}
                         />
+
+                        {/* ✅ ALERT: Required login method from invite */}
+                        {requiredLoginMethod && (
+                            <Box sx={{ width: '450px', mb: 2 }}>
+                                <Alert
+                                    severity='info'
+                                    onClose={() => {
+                                        sessionStorage.removeItem('requiredLoginMethod')
+                                        setRequiredLoginMethod(null)
+                                    }}
+                                >
+                                    <Typography variant='body2'>
+                                        <strong>Workspace Invitation:</strong> Please sign in using{' '}
+                                        <strong>{getLoginMethodName(requiredLoginMethod)}</strong> to accept your invitation.
+                                    </Typography>
+                                </Alert>
+                            </Box>
+                        )}
+
                         <Top setLoading={setLoading} />
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', my: 4 }}>
                             <Divider sx={{ flexGrow: 0.25 }} />
@@ -323,7 +381,6 @@ const Login = () => {
                                 type='submit'
                                 variant='contained'
                                 fullWidth
-                                // disabled={loading}
                                 sx={{
                                     py: 1.5,
                                     bgcolor: customization.isDarkMode ? '#E22A90' : '#3c5ba4',

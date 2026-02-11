@@ -13,7 +13,7 @@ import {
     IconButton,
     Divider
 } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useFormik } from 'formik'
 import { Top } from './Top'
 import { signUpValidationSchema } from './signUpValidationSchema'
@@ -36,6 +36,11 @@ const SignUp = () => {
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const location = useLocation()
+
+    // 🔑 INVITE REDIRECT
+    const redirectTo = location.state?.redirectTo
+    const inviteEmail = location.state?.inviteEmail
 
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
@@ -56,19 +61,47 @@ const SignUp = () => {
     }, [dispatch])
 
     const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
     const thubWebServerProdUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     let apiUrl
 
-    if (window.location.hostname === 'demo.thub.tech') {
+    if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
         apiUrl = thubWebServerDevUrl
     } else if (window.location.hostname === 'localhost') {
         apiUrl = thubWebServerLocalUrl
     } else {
         apiUrl = thubWebServerProdUrl
+    }
+
+    // ✅ HELPER: Accept invite if context exists
+    const acceptInviteIfNeeded = async (userId, userEmail) => {
+        const inviteContext = sessionStorage.getItem('inviteContext')
+        if (!inviteContext) return
+
+        try {
+            const { token, email } = JSON.parse(inviteContext)
+
+            // Email must match
+            if (email !== userEmail) {
+                console.warn('Invite email mismatch')
+                sessionStorage.removeItem('inviteContext')
+                return
+            }
+
+            await axios.post(`${apiUrl}/invite/accept`, {
+                token,
+                uid: userId,
+                email: userEmail
+            })
+
+            console.log('✅ Invite accepted successfully')
+        } catch (err) {
+            console.error('Failed to accept invite:', err)
+            // Don't remove context here - let UserInfo handle it
+        }
     }
 
     const checkEmail = async (email) => {
@@ -181,11 +214,21 @@ const SignUp = () => {
                 })
                 localStorage.setItem('userId', data.userId)
                 setShowModal(false)
+
+                // ✅ ACCEPT INVITE (if exists)
+                await acceptInviteIfNeeded(data.userId, tempUserData.email)
+
                 toast.success('Registration successful!', {
                     theme: 'colored',
                     style: { background: customization?.isDarkMode ? '#e22a90' : '#3c5ba4', color: 'white' }
                 })
-                navigate('/workflows')
+
+                // 🔑 IMPORTANT: respect invite redirect
+                if (redirectTo) {
+                    navigate(redirectTo, { replace: true })
+                } else {
+                    navigate('/workflows')
+                }
             } else {
                 toast.error('Registration failed', {
                     theme: 'colored',
@@ -205,7 +248,7 @@ const SignUp = () => {
 
     const formik = useFormik({
         initialValues: {
-            email: '',
+            email: inviteEmail || '',
             firstName: '',
             lastName: '',
             phone: '',
@@ -363,6 +406,7 @@ const SignUp = () => {
                                             value={formik.values[name]}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
+                                            disabled={name === 'email' && Boolean(inviteEmail)}
                                             sx={{
                                                 bgcolor: customization.isDarkMode ? '#000000' : '#ffffff',
                                                 color: customization.isDarkMode ? 'white' : 'black',
@@ -388,7 +432,11 @@ const SignUp = () => {
                                             }}
                                         />
                                         <FormHelperText>
-                                            {formik.touched[name] && formik.errors[name] ? formik.errors[name] : ' '}
+                                            {name === 'email' && inviteEmail
+                                                ? 'Email locked because this is an invite'
+                                                : formik.touched[name] && formik.errors[name]
+                                                ? formik.errors[name]
+                                                : ' '}
                                         </FormHelperText>
                                     </FormControl>
                                 ))}
@@ -439,7 +487,7 @@ const SignUp = () => {
                                         }}
                                     />
                                     <FormHelperText>
-                                        {formik.touched.password && formik.errors.password ? formik.errors.password : ' '}
+                                        {formik.touched.password && formik.errors.password ? formik.errors.password : ' '}
                                     </FormHelperText>
                                 </FormControl>
 
@@ -495,7 +543,7 @@ const SignUp = () => {
                                     <FormHelperText>
                                         {formik.touched.confirmPassword && formik.errors.confirmPassword
                                             ? formik.errors.confirmPassword
-                                            : ' '}
+                                            : ' '}
                                     </FormHelperText>
                                 </FormControl>
 

@@ -120,8 +120,8 @@ const Subscription = () => {
 
         const hostname = window.location.hostname
 
-        if (hostname === 'demo.thub.tech') {
-            determinedUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
         } else if (hostname === 'localhost') {
             determinedUrl = 'http://localhost:2000'
         } else {
@@ -234,8 +234,8 @@ const Subscription = () => {
     }
 
     return (
-        <div>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
+        <>
+            <MainCard>
                 <Toaster position='top-right' reverseOrder={false} />
                 <Stack flexDirection='row'>
                     <Grid sx={{ mb: 1.25 }} container direction='row'>
@@ -558,7 +558,7 @@ const Subscription = () => {
                     )}
                 </Box>
             </Modal>
-        </div>
+        </>
     )
 }
 export default Subscription

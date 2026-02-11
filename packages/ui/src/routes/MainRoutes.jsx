@@ -3,7 +3,8 @@ import { lazy } from 'react'
 // project imports
 import Loadable from '@/ui-component/loading/Loadable'
 // import PrivateRoute from '@/routes/PrivateRoute'
-import JoinWorkspace from '@/views/workspace'
+import Dashboard from '@/views/dashboard/Dashboard'
+import UserInfo from '@/ui-component/userform/UserInfo'
 
 // chatflows routing
 const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
@@ -42,6 +43,13 @@ const LoaderConfigPreviewChunks = Loadable(lazy(() => import('@/views/docstore/L
 const VectorStoreConfigure = Loadable(lazy(() => import('@/views/docstore/VectorStoreConfigure')))
 const VectorStoreQuery = Loadable(lazy(() => import('@/views/docstore/VectorStoreQuery')))
 
+// Evaluations routing
+const EvalEvaluation = Loadable(lazy(() => import('@/views/evaluations/index')))
+const EvaluationResult = Loadable(lazy(() => import('@/views/evaluations/EvaluationResult')))
+const EvalDatasetRows = Loadable(lazy(() => import('@/views/datasets/DatasetItems')))
+const EvalDatasets = Loadable(lazy(() => import('@/views/datasets')))
+const Evaluators = Loadable(lazy(() => import('@/views/evaluators')))
+
 // subscription routing
 const Subscription = Loadable(lazy(() => import('@/views/subscription')))
 
@@ -54,6 +62,10 @@ const MainRoutes = {
     path: '/',
     element: <MainLayout />,
     children: [
+        {
+            path: '/dashboard',
+            element: <Dashboard />
+        },
         {
             path: '/workflows',
             element: <Chatflows />
@@ -135,8 +147,28 @@ const MainRoutes = {
             element: <Settings />
         },
         {
-            path: '/join',
-            element: <JoinWorkspace />
+            path: '/user-info',
+            element: <UserInfo />
+        },
+        {
+            path: '/datasets',
+            element: <EvalDatasets />
+        },
+        {
+            path: '/dataset_rows/:id',
+            element: <EvalDatasetRows />
+        },
+        {
+            path: '/evaluations',
+            element: <EvalEvaluation />
+        },
+        {
+            path: '/evaluation_results/:id',
+            element: <EvaluationResult />
+        },
+        {
+            path: '/evaluators',
+            element: <Evaluators />
         }
     ]
 }
