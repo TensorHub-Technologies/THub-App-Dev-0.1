@@ -1146,11 +1146,11 @@ importers:
                 specifier: ^2.1.0
                 version: 2.1.0
             thub-embed:
-                specifier: ^11.0.2
-                version: 11.0.2
+                specifier: ^11.0.8
+                version: 11.0.8
             thub-embed-react:
-                specifier: 4.0.3
-                version: 4.0.3(@types/node@24.5.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.2)(terser@5.44.0)(thub-embed@11.0.2)(typescript@5.9.2)
+                specifier: 4.0.10
+                version: 4.0.10(@types/node@24.5.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.2)(terser@5.44.0)(thub-embed@11.0.8)(typescript@5.9.2)
             thub-react-json-view:
                 specifier: 1.21.11
                 version: 1.21.11(@types/react@18.3.24)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -16174,14 +16174,14 @@ packages:
     through@2.3.8:
         resolution: { integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg== }
 
-    thub-embed-react@4.0.3:
-        resolution: { integrity: sha512-ksYdYwahfc2aS5SaR4YJ/kfjS/xrw8JVv39UGfAcNhAJVDBP6jIkS9RngUtlQywQetdSTTuapWOATb5CAn5Arg== }
+    thub-embed-react@4.0.10:
+        resolution: { integrity: sha512-uHJ3YSxG6qsQ8pnO7TVbtdCliK/LthBvUwxBMGeiVQUOowdWM8srUIL5SNXvbH9O6UtksCZzU3ZWOGbvzBwVVA== }
         peerDependencies:
             react: 18.x
             thub-embed: '*'
 
-    thub-embed@11.0.2:
-        resolution: { integrity: sha512-8z19oKVYBKQ0kqivWfNOu+yFUH2k378+2zZ9bXvVYH4AAgt/T63Ki6iGzkQDdwrQ76J33pb+BXxn5oXxZQtumQ== }
+    thub-embed@11.0.8:
+        resolution: { integrity: sha512-YmerUbqg22n3RgW6h9s2I2o3bqJ2GCO1K2mpyVrSSftUK0R3xxD3kdbBifjz178iWSVphKNVqRy1EYEEtlcCrw== }
 
     thub-react-json-view@1.21.11:
         resolution: { integrity: sha512-w8x68KAaIESPxb3kbLKeFXJGSO+QmSzVMh+FlBxgD/Yc/z5vjKBe0NdfiXu4XhT0mFJigdFGvzvqmxTH20r2Qw== }
@@ -37377,11 +37377,11 @@ snapshots:
 
     through@2.3.8: {}
 
-    thub-embed-react@4.0.3(@types/node@24.5.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.2)(terser@5.44.0)(thub-embed@11.0.2)(typescript@5.9.2):
+    thub-embed-react@4.0.10(@types/node@24.5.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.2)(terser@5.44.0)(thub-embed@11.0.8)(typescript@5.9.2):
         dependencies:
             '@ladle/react': 2.5.1(@types/node@24.5.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.2)(terser@5.44.0)(typescript@5.9.2)
             react: 18.3.1
-            thub-embed: 11.0.2
+            thub-embed: 11.0.8
         transitivePeerDependencies:
             - '@types/node'
             - less
@@ -37394,7 +37394,7 @@ snapshots:
             - terser
             - typescript
 
-    thub-embed@11.0.2:
+    thub-embed@11.0.8:
         dependencies:
             '@babel/core': 7.28.4
             '@microsoft/fetch-event-source': 2.0.1
