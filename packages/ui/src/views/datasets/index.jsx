@@ -4,7 +4,7 @@ import moment from 'moment/moment'
 import { useNavigate } from 'react-router-dom'
 
 // material-ui
-import { Skeleton, Stack, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Button } from '@mui/material'
+import { Stack, IconButton, Button, Box, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
@@ -12,7 +12,6 @@ import MainCard from '@/ui-component/cards/MainCard'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import AddEditDatasetDialog from './AddEditDatasetDialog'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
-import { StyledTableCell, StyledTableRow } from '@/ui-component/table/TableStyles'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 
@@ -209,110 +208,179 @@ const EvalDatasets = () => {
                         </Stack>
                     ) : (
                         <>
-                            <TableContainer
-                                sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}
-                                component={Paper}
-                            >
-                                <Table sx={{ minWidth: 650 }}>
-                                    <TableHead
+                            {/* Glass Card List UI */}
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                                {datasets.filter(filterDatasets).map((ds, index) => (
+                                    <Box
+                                        key={ds.id}
                                         sx={{
-                                            backgroundColor: customization.isDarkMode
-                                                ? theme.palette.common.black
-                                                : theme.palette.grey[100],
-                                            height: 56
+                                            position: 'relative',
+                                            transition: 'all 0.4s ease-in-out',
+                                            animation: 'float 6s ease-in-out infinite',
+                                            animationDelay: `${index * 0.1}s`,
+                                            '@keyframes float': {
+                                                '0%,100%': { transform: 'translateY(0px)' },
+                                                '50%': { transform: 'translateY(-5px)' }
+                                            },
+                                            '&:hover': {
+                                                transform: 'translateY(-4px)'
+                                            }
                                         }}
                                     >
-                                        <TableRow>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Description</TableCell>
-                                            <TableCell>Rows</TableCell>
-                                            <TableCell>Last Updated</TableCell>
-                                            <TableCell> </TableCell>
-                                            <TableCell> </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {isLoading ? (
-                                            <>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                            </>
-                                        ) : (
-                                            <>
-                                                {datasets?.filter(filterDatasets).map((ds, index) => (
-                                                    <StyledTableRow
-                                                        hover
-                                                        key={index}
-                                                        sx={{ cursor: 'pointer', '&:last-child td, &:last-child th': { border: 0 } }}
+                                        <Box
+                                            sx={{
+                                                border: '1px solid',
+                                                borderColor: 'rgba(255,255,255,0.3)',
+                                                borderRadius: '12px',
+                                                backdropFilter: 'blur(16px)',
+                                                backgroundColor: customization.isDarkMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.1)',
+                                                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+                                                px: 3,
+                                                py: 2,
+                                                position: 'relative',
+                                                overflow: 'hidden',
+                                                '&:hover .glow-effect': {
+                                                    opacity: 1
+                                                }
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: '2fr 3fr 1fr 1.5fr 120px',
+                                                    gap: 3,
+                                                    alignItems: 'center'
+                                                }}
+                                            >
+                                                {/* NAME */}
+                                                <Box onClick={() => goToRows(ds)} sx={{ cursor: 'pointer' }}>
+                                                    <Typography
+                                                        variant='caption'
+                                                        sx={{ opacity: 0.6, textTransform: 'uppercase', fontSize: '0.75rem' }}
                                                     >
-                                                        <TableCell onClick={() => goToRows(ds)} component='th' scope='row'>
-                                                            {ds.name}
-                                                        </TableCell>
-                                                        <TableCell
-                                                            onClick={() => goToRows(ds)}
-                                                            style={{ wordWrap: 'break-word', flexWrap: 'wrap', width: '40%' }}
-                                                        >
-                                                            {truncateString(ds?.description, 200)}
-                                                        </TableCell>
-                                                        <TableCell onClick={() => goToRows(ds)}>{ds?.rowCount}</TableCell>
-                                                        <TableCell onClick={() => goToRows(ds)}>
-                                                            {moment(ds.updatedDate).format('MMMM Do YYYY, hh:mm A')}
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <IconButton title='Edit' color='primary' onClick={() => edit(ds)}>
-                                                                <IconEdit />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <IconButton title='Delete' color='error' onClick={() => deleteDataset(ds)}>
-                                                                <IconTrash />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </StyledTableRow>
-                                                ))}
-                                            </>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                                                        Name
+                                                    </Typography>
+                                                    <Typography
+                                                        variant='h6'
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            fontFamily: 'Cambria Math',
+                                                            color: customization.isDarkMode ? 'white' : 'black'
+                                                        }}
+                                                    >
+                                                        {ds.name}
+                                                    </Typography>
+                                                </Box>
+
+                                                {/* DESCRIPTION */}
+                                                <Box onClick={() => goToRows(ds)} sx={{ cursor: 'pointer' }}>
+                                                    <Typography
+                                                        variant='caption'
+                                                        sx={{ opacity: 0.6, textTransform: 'uppercase', fontSize: '0.75rem' }}
+                                                    >
+                                                        Description
+                                                    </Typography>
+                                                    <Typography
+                                                        variant='body2'
+                                                        sx={{
+                                                            color: customization.isDarkMode ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap'
+                                                        }}
+                                                    >
+                                                        {truncateString(ds?.description, 120)}
+                                                    </Typography>
+                                                </Box>
+
+                                                {/* ROWS */}
+                                                <Box>
+                                                    <Typography
+                                                        variant='caption'
+                                                        sx={{ opacity: 0.6, textTransform: 'uppercase', fontSize: '0.75rem' }}
+                                                    >
+                                                        Rows
+                                                    </Typography>
+                                                    <Typography
+                                                        variant='h6'
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                            color: customization.isDarkMode ? 'white' : 'black'
+                                                        }}
+                                                    >
+                                                        {ds.rowCount}
+                                                    </Typography>
+                                                </Box>
+
+                                                {/* LAST UPDATED */}
+                                                <Box>
+                                                    <Typography
+                                                        variant='caption'
+                                                        sx={{ opacity: 0.6, textTransform: 'uppercase', fontSize: '0.75rem' }}
+                                                    >
+                                                        Last Updated
+                                                    </Typography>
+                                                    <Typography
+                                                        variant='body2'
+                                                        sx={{
+                                                            color: customization.isDarkMode ? 'white' : 'black'
+                                                        }}
+                                                    >
+                                                        {moment(ds.updatedDate).format('MMM Do, YYYY')}
+                                                    </Typography>
+                                                </Box>
+
+                                                {/* ACTIONS */}
+                                                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                                                    <IconButton
+                                                        onClick={() => edit(ds)}
+                                                        sx={{
+                                                            color: customization.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                                            backgroundColor: customization.isDarkMode
+                                                                ? 'rgba(226,42,144,0.1)'
+                                                                : 'rgba(60,91,164,0.1)',
+                                                            '&:hover': {
+                                                                backgroundColor: customization.isDarkMode
+                                                                    ? 'rgba(226,42,144,0.2)'
+                                                                    : 'rgba(60,91,164,0.2)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <IconEdit size={18} />
+                                                    </IconButton>
+
+                                                    <IconButton
+                                                        onClick={() => deleteDataset(ds)}
+                                                        sx={{
+                                                            backgroundColor: 'rgba(211,47,47,0.1)',
+                                                            '&:hover': {
+                                                                backgroundColor: 'rgba(211,47,47,0.2)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <IconTrash size={18} color='#d32f2f' />
+                                                    </IconButton>
+                                                </Box>
+                                            </Box>
+
+                                            {/* Glow */}
+                                            <Box
+                                                className='glow-effect'
+                                                sx={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    borderRadius: '12px',
+                                                    background: 'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                                    opacity: 0,
+                                                    transition: 'opacity 0.3s ease-in-out',
+                                                    filter: 'blur(8px)',
+                                                    zIndex: -1
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                ))}
+                            </Box>
                             {/* Pagination and Page Size Controls */}
                             <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
                         </>
