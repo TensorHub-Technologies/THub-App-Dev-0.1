@@ -309,6 +309,8 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
 
     useEffect(() => {
         if (getAllEvaluatorsApi.data) {
+            console.log('All evaluators raw data:', getAllEvaluatorsApi.data)
+
             try {
                 const simpleEvaluators = []
                 const llmEvaluators = []
@@ -326,6 +328,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 }
                 setAvailableSimpleEvaluators(simpleEvaluators)
                 setAvailableLLMEvaluators(llmEvaluators)
+                console.log('LLM evaluators found:', llmEvaluators)
             } catch (e) {
                 console.error(e)
             }
@@ -711,7 +714,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             )}
                         </>
                     )}
-                    <Divider />
+                    {/* <Divider /> */}
                 </Stack>
             </DialogContent>
             <DialogActions style={{ justifyContent: 'space-between', marginBottom: 10 }}>
