@@ -28,13 +28,21 @@ export enum MODE {
 
 export enum ChatType {
     INTERNAL = 'INTERNAL',
-    EXTERNAL = 'EXTERNAL'
+    EXTERNAL = 'EXTERNAL',
+    EVALUATION = 'EVALUATION'
 }
 
 export enum ChatMessageRatingType {
     THUMBS_UP = 'THUMBS_UP',
     THUMBS_DOWN = 'THUMBS_DOWN'
 }
+
+export enum Platform {
+    OPEN_SOURCE = 'open source',
+    CLOUD = 'cloud',
+    ENTERPRISE = 'enterprise'
+}
+
 /**
  * Databases
  */
@@ -52,6 +60,7 @@ export interface IChatFlow {
     apikeyid?: string
     analytic?: string
     speechToText?: string
+    textToSpeech?: string
     chatbotConfig?: string
     followUpPrompts?: string
     apiConfig?: string
@@ -311,7 +320,7 @@ export interface IOverrideConfig {
     label: string
     name: string
     type: string
-    schema?: ICommonObject[]
+    schema?: ICommonObject[] | Record<string, string>
 }
 
 export type ICredentialDataDecrypted = ICommonObject
@@ -381,6 +390,8 @@ export interface IExecuteFlowParams extends IPredictionQueueAppServer {
     chatId: string
     baseURL: string
     isInternal: boolean
+    isEvaluation?: boolean
+    evaluationRunId?: string
     signal?: AbortController
     files?: Express.Multer.File[]
     fileUploads?: IFileUpload[]
@@ -390,8 +401,8 @@ export interface IExecuteFlowParams extends IPredictionQueueAppServer {
     parentExecutionId?: string
     iterationContext?: ICommonObject
     isTool?: boolean
+    tenantId?: string
 }
-
 export interface INodeOverrides {
     [key: string]: {
         label: string
@@ -408,5 +419,14 @@ export interface IVariableOverride {
     enabled: boolean
 }
 
+export enum UserPlan {
+    STARTER = 'STARTER',
+    PRO = 'PRO',
+    FREE = 'FREE'
+}
+
 // DocumentStore related
 export * from './Interface.DocumentStore'
+
+// Evaluations related
+export * from './Interface.Evaluation'

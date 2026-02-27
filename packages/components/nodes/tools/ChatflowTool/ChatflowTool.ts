@@ -121,31 +121,41 @@ class ChatflowTool_Tools implements INode {
 
             const appDataSource = options.appDataSource as DataSource
             const databaseEntities = options.databaseEntities as IDatabaseEntity
+
             if (appDataSource === undefined || !appDataSource) {
                 return returnData
             }
 
-            const searchOptions = options.searchOptions || {}
-            const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).findBy(searchOptions)
+            let tenantId = options.tenantId
 
-            for (let i = 0; i < chatflows.length; i += 1) {
-                let type = chatflows[i].type
-                if (type === 'AGENTFLOW') {
-                    type = 'AgentflowV2'
-                } else if (type === 'MULTIAGENT') {
-                    type = 'AgentflowV1'
-                } else if (type === 'ASSISTANT') {
-                    type = 'Custom Assistant'
-                } else {
-                    type = 'Workflow'
+            try {
+                // Fix: Use proper object syntax for findBy with tenantId
+                const whereClause = tenantId ? { tenantId: tenantId } : {}
+                const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).findBy(whereClause)
+
+                for (let i = 0; i < chatflows.length; i += 1) {
+                    let type = chatflows[i].type
+                    if (type === 'AGENTFLOW') {
+                        type = 'AgentflowV2'
+                    } else if (type === 'MULTIAGENT') {
+                        type = 'AgentflowV1'
+                    } else if (type === 'ASSISTANT') {
+                        type = 'Custom Assistant'
+                    } else {
+                        type = 'Workflow'
+                    }
+                    const data = {
+                        label: chatflows[i].name,
+                        name: chatflows[i].id,
+                        description: type
+                    } as INodeOptionsValue
+                    returnData.push(data)
                 }
-                const data = {
-                    label: chatflows[i].name,
-                    name: chatflows[i].id,
-                    description: type
-                } as INodeOptionsValue
-                returnData.push(data)
+            } catch (error) {
+                console.error('Error fetching chatflows by tenantId:', error)
+                // Return empty array on error to prevent breaking the UI
             }
+
             return returnData
         }
     }
@@ -165,13 +175,32 @@ class ChatflowTool_Tools implements INode {
                 : nodeData.inputs?.overrideConfig
 
         const startNewSession = nodeData.inputs?.startNewSession as boolean
-
         const baseURL = (nodeData.inputs?.baseURL as string) || (options.baseURL as string)
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const chatflowApiKey = getCredentialParam('chatflowApiKey', credentialData, nodeData)
 
         if (selectedChatflowId === options.chatflowid) throw new Error('Cannot call the same chatflow!')
+
+        // Additional security check: Verify the selected chatflow belongs to the same tenant
+        const appDataSource = options.appDataSource as DataSource
+        const databaseEntities = options.databaseEntities as IDatabaseEntity
+        const tenantId = options.tenantId
+
+        if (tenantId && appDataSource && databaseEntities) {
+            try {
+                const selectedChatflow = await appDataSource
+                    .getRepository(databaseEntities['ChatFlow'])
+                    .findOneBy({ id: selectedChatflowId, tenantId: tenantId })
+
+                if (!selectedChatflow) {
+                    throw new Error(`Chatflow ${selectedChatflowId} not found or access denied`)
+                }
+            } catch (error) {
+                console.error('Error verifying chatflow access:', error)
+                throw new Error('Access denied to the selected chatflow')
+            }
+        }
 
         let headers = {}
         if (chatflowApiKey) headers = { Authorization: `Bearer ${chatflowApiKey}` }

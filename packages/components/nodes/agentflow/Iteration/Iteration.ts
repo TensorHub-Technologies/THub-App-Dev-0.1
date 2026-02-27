@@ -19,7 +19,7 @@ class Iteration_Agentflow implements INode {
         this.name = 'iterationAgentflow'
         this.version = 1.0
         this.type = 'Iteration'
-        this.category = 'Agent Pipeline'
+        this.category = 'Agent Studio'
         this.description = 'Execute the nodes within the iteration block through N iterations'
         this.baseClasses = [this.type]
         this.color = '#9C89B8'
@@ -39,12 +39,17 @@ class Iteration_Agentflow implements INode {
         const iterationInput = nodeData.inputs?.iterationInput
 
         // Helper function to clean JSON strings with redundant backslashes
-        const cleanJsonString = (str: string): string => {
-            return str.replace(/\\(["'[\]{}])/g, '$1')
+        const safeParseJson = (str: string): string => {
+            try {
+                return JSON.parse(str)
+            } catch {
+                // Try parsing after cleaning
+                return JSON.parse(str.replace(/\\(["'[\]{}])/g, '$1'))
+            }
         }
 
         const iterationInputArray =
-            typeof iterationInput === 'string' && iterationInput !== '' ? JSON.parse(cleanJsonString(iterationInput)) : iterationInput
+            typeof iterationInput === 'string' && iterationInput !== '' ? safeParseJson(iterationInput) : iterationInput
 
         if (!iterationInputArray || !Array.isArray(iterationInputArray)) {
             throw new Error('Invalid input array')

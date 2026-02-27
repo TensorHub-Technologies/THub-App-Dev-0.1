@@ -5,7 +5,7 @@ import ConstructionOutlinedIcon from '@/assets/custom-svg/ConstructionOutlinedIc
 import HttpsOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
 import VpnKeyOutlinedIcon from '@/assets/custom-svg/VpnKeyOutlinedIcon'
 import IconMathIntegral from '@/assets/custom-svg/IconMathIntegral'
-import { IconUsersGroup, IconListCheck } from '@tabler/icons-react'
+import { IconUsersGroup, IconListCheck, IconFiles, IconDatabase, IconTestPipe, IconChartHistogram } from '@tabler/icons-react'
 
 const icons = {
     AppsOutlinedIcon,
@@ -15,7 +15,11 @@ const icons = {
     HttpsOutlinedIcon,
     VpnKeyOutlinedIcon,
     IconUsersGroup,
-    IconListCheck
+    IconListCheck,
+    IconFiles,
+    IconDatabase,
+    IconTestPipe,
+    IconChartHistogram
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -35,11 +39,20 @@ const dashboard = {
         },
         {
             id: 'agentflows',
-            title: 'Agent Pipeline',
+            title: 'Agent Studio',
             type: 'item',
             url: '/agentflows',
             icon: icons.IconUsersGroup,
             breadcrumbs: true
+        },
+        {
+            id: 'document-stores',
+            title: 'Document Stores',
+            type: 'item',
+            url: '/document-stores',
+            icon: icons.IconFiles,
+            breadcrumbs: true,
+            permission: 'documentStores:view'
         },
         {
             id: 'executions',
@@ -92,4 +105,38 @@ const dashboard = {
     ]
 }
 
+// Second group for evaluation-related items (appears after divider)
+const evaluation = {
+    id: 'evaluation',
+    title: '',
+    type: 'group',
+    children: [
+        {
+            id: 'datasets',
+            title: 'Datasets',
+            type: 'item',
+            url: '/datasets',
+            icon: icons.IconDatabase,
+            breadcrumbs: true
+        },
+        {
+            id: 'evaluators',
+            title: 'Evaluators',
+            type: 'item',
+            url: '/evaluators',
+            icon: icons.IconTestPipe,
+            breadcrumbs: true
+        },
+        {
+            id: 'evaluations',
+            title: 'Evaluations',
+            type: 'item',
+            url: '/evaluations',
+            icon: icons.IconChartHistogram,
+            breadcrumbs: true
+        }
+    ]
+}
+
 export default dashboard
+export { evaluation }

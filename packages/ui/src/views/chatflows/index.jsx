@@ -66,6 +66,7 @@ const Chatflows = () => {
     const [sortBy, setSortBy] = useState('updated')
     const [loginDialogOpen, setLoginDialogOpen] = useState(false)
     const [loginDialogProps, setLoginDialogProps] = useState({})
+    const [showModal, setShowModal] = useState(false)
     const [view, setView] = useState(localStorage.getItem('flowDisplayStyle') || 'card')
 
     // Process images for chatflows
@@ -225,15 +226,13 @@ const Chatflows = () => {
     // Reset and reload when search or sort changes
     useEffect(() => {
         if (search || sortBy !== 'updated') {
-            // For search and sort, we work with existing data
-            // No need to reload from server
             return
         }
     }, [search, sortBy])
 
     // Render loading skeletons
     const renderSkeletons = () => (
-        <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
+        <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
             {[...Array(12)].map((_, index) => (
                 <Skeleton key={index} variant='rounded' height={280} />
             ))}
@@ -267,137 +266,144 @@ const Chatflows = () => {
     )
 
     return (
-        <MainCard>
-            {error ? (
-                <ErrorBoundary error={error} />
-            ) : (
-                <Stack flexDirection='column' sx={{ gap: 3, flexGrow: 1 }}>
-                    <ViewHeader
-                        onSearchChange={onSearchChange}
-                        search={true}
-                        searchPlaceholder='Search Name or Category'
-                        title='AI Apps Workspace'
-                    >
-                        {/* Sort Dropdown */}
-                        <FormControl
-                            variant='standard'
-                            sx={{
-                                minWidth: 180,
-                                height: 40,
-                                marginRight: 4,
-                                marginLeft: 8,
-                                marginTop: '2px',
-                                '& .MuiInput-underline:before': {
-                                    borderBottomColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                },
-                                '& .MuiInput-underline:after': {
-                                    borderBottomColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
-                                }
-                            }}
+        <>
+            <MainCard>
+                {error ? (
+                    <ErrorBoundary error={error} />
+                ) : (
+                    <Stack flexDirection='column' sx={{ gap: 3, flexGrow: 1 }}>
+                        <ViewHeader
+                            onSearchChange={onSearchChange}
+                            search={true}
+                            searchPlaceholder='Search Name or Category'
+                            title='AI Apps Workspace'
                         >
-                            <Select
-                                labelId='standard'
-                                value={sortBy}
-                                label='Sort By'
-                                onChange={onSortChange}
+                            {/* Sort Dropdown */}
+                            <FormControl
+                                variant='standard'
                                 sx={{
+                                    minWidth: 180,
                                     height: 40,
-                                    borderRadius: 2,
-                                    color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                                    '& .MuiSvgIcon-root': {
-                                        color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                    marginRight: 4,
+                                    marginLeft: 8,
+                                    marginTop: '2px',
+                                    '& .MuiInput-underline:before': {
+                                        borderBottomColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                    },
+                                    '& .MuiInput-underline:after': {
+                                        borderBottomColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
                                     }
                                 }}
                             >
-                                <MenuItem value='name'>Sort By Name</MenuItem>
-                                <MenuItem value='created'>Sort By Created Date</MenuItem>
-                                <MenuItem value='updated'>Sort By Updated Date</MenuItem>
-                            </Select>
-                        </FormControl>
+                                <Select
+                                    labelId='standard'
+                                    value={sortBy}
+                                    label='Sort By'
+                                    onChange={onSortChange}
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: 2,
+                                        color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                                        '& .MuiSvgIcon-root': {
+                                            color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4'
+                                        }
+                                    }}
+                                >
+                                    <MenuItem value='name'>Sort By Name</MenuItem>
+                                    <MenuItem value='created'>Sort By Created Date</MenuItem>
+                                    <MenuItem value='updated'>Sort By Updated Date</MenuItem>
+                                </Select>
+                            </FormControl>
 
-                        <ToggleButtonGroup
-                            sx={{ borderRadius: 2, maxHeight: 40 }}
-                            value={view}
-                            color='primary'
-                            exclusive
-                            onChange={handleViewChange}
-                        >
-                            <ToggleButton
-                                sx={{
-                                    borderColor: theme.palette.grey[900] + 25,
-                                    borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
-                                }}
-                                variant='contained'
-                                value='card'
-                                title='Card View'
+                            <ToggleButtonGroup
+                                sx={{ borderRadius: 2, maxHeight: 40 }}
+                                value={view}
+                                color='primary'
+                                exclusive
+                                onChange={handleViewChange}
                             >
-                                <IconLayoutGrid style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
-                            </ToggleButton>
-                            <ToggleButton
-                                sx={{
-                                    borderColor: theme.palette.grey[900] + 25,
-                                    borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
-                                }}
+                                <ToggleButton
+                                    sx={{
+                                        borderColor: theme.palette.grey[900] + 25,
+                                        borderRadius: 2,
+                                        color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    }}
+                                    variant='contained'
+                                    value='card'
+                                    title='Card View'
+                                >
+                                    <IconLayoutGrid style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
+                                </ToggleButton>
+                                <ToggleButton
+                                    sx={{
+                                        borderColor: theme.palette.grey[900] + 25,
+                                        borderRadius: 2,
+                                        color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    }}
+                                    variant='contained'
+                                    value='list'
+                                    title='List View'
+                                >
+                                    <IconList style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                            <StyledButton
                                 variant='contained'
-                                value='list'
-                                title='List View'
+                                onClick={addNew}
+                                startIcon={<IconPlus />}
+                                sx={{ borderRadius: 2, height: 40 }}
                             >
-                                <IconList style={{ color: customization?.isDarkMode ? '#E22A90' : '#3C5BA4' }} />
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                        <StyledButton variant='contained' onClick={addNew} startIcon={<IconPlus />} sx={{ borderRadius: 2, height: 40 }}>
-                            Create Workflow
-                        </StyledButton>
-                    </ViewHeader>
+                                Create Workflow
+                            </StyledButton>
+                        </ViewHeader>
 
-                    {/* Card View */}
-                    {(!view || view === 'card') && (
-                        <>
-                            {isLoading ? (
-                                renderSkeletons()
-                            ) : processedData.length === 0 ? (
-                                renderEmptyState()
-                            ) : (
-                                <>
-                                    <Box display='grid' gridTemplateColumns='repeat(4, 1fr)' gap={gridSpacing}>
-                                        {processedData.map((data, index) => (
-                                            <div key={data.id} ref={index === processedData.length - 1 ? lastElementRef : null}>
-                                                <ItemCard
-                                                    onClick={() => goToCanvas(data)}
-                                                    data={data}
-                                                    images={images[data.id]}
-                                                    updateFlowsApi={{ request: () => loadChatflows(1, false) }}
-                                                />
-                                            </div>
-                                        ))}
-                                    </Box>
-                                    {isLoadingMore && renderLoadMoreIndicator()}
-                                </>
-                            )}
-                        </>
-                    )}
+                        {/* Card View */}
+                        {(!view || view === 'card') && (
+                            <>
+                                {isLoading ? (
+                                    renderSkeletons()
+                                ) : processedData.length === 0 ? (
+                                    renderEmptyState()
+                                ) : (
+                                    <>
+                                        <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
+                                            {processedData.map((data, index) => (
+                                                <div key={data.id} ref={index === processedData.length - 1 ? lastElementRef : null}>
+                                                    <ItemCard
+                                                        onClick={() => goToCanvas(data)}
+                                                        data={data}
+                                                        images={images[data.id]}
+                                                        updateFlowsApi={{ request: () => loadChatflows(1, false) }}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </Box>
+                                        {isLoadingMore && renderLoadMoreIndicator()}
+                                    </>
+                                )}
+                            </>
+                        )}
 
-                    {/* List View */}
-                    {view === 'list' && (
-                        <FlowListTable
-                            data={processedData}
-                            images={images}
-                            isLoading={isLoading}
-                            filterFunction={filterFlows}
-                            updateFlowsApi={{ request: () => loadChatflows(1, false) }}
-                            setError={setError}
-                            lastElementRef={lastElementRef}
-                            isLoadingMore={isLoadingMore}
-                            hasMore={hasMore}
-                        />
-                    )}
+                        {/* List View */}
+                        {view === 'list' && (
+                            <FlowListTable
+                                data={processedData}
+                                images={images}
+                                isLoading={isLoading}
+                                filterFunction={filterFlows}
+                                updateFlowsApi={{ request: () => loadChatflows(1, false) }}
+                                setError={setError}
+                                lastElementRef={lastElementRef}
+                                isLoadingMore={isLoadingMore}
+                                hasMore={hasMore}
+                            />
+                        )}
 
-                    <ConfirmDialog />
-                </Stack>
-            )}
-        </MainCard>
+                        <ConfirmDialog />
+                    </Stack>
+                )}
+            </MainCard>
+        </>
     )
 }
 

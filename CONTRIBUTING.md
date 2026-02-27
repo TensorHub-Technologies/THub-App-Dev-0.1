@@ -8,23 +8,23 @@ We appreciate any form of contributions.
 
 ## ⭐ Star
 
-Star and share the [Github Repo](https://github.com/FlowiseAI/THub).
+Star and share the [Github Repo](https://github.com/THub/THub).
 
 ## 🙋 Q&A
 
-Search up for any questions in [Q&A section](https://github.com/FlowiseAI/THub/discussions/categories/q-a), if you can't find one, don't hesitate to create one. It might helps others that have similar question.
+Search up for any questions in [Q&A section](https://github.com/THub/THub/discussions/categories/q-a), if you can't find one, don't hesitate to create one. It might helps others that have similar question.
 
 ## 🙌 Share Workflow
 
-Yes! Sharing how you use THub is a way of contribution. Export your chatflow as JSON, attach a screenshot and share it in [Show and Tell section](https://github.com/FlowiseAI/THub/discussions/categories/show-and-tell).
+Yes! Sharing how you use THub is a way of contribution. Export your chatflow as JSON, attach a screenshot and share it in [Show and Tell section](https://github.com/THub/THub/discussions/categories/show-and-tell).
 
 ## 💡 Ideas
 
-Ideas are welcome such as new feature, apps integration, and blockchain networks. Submit in [Ideas section](https://github.com/FlowiseAI/THub/discussions/categories/ideas).
+Ideas are welcome such as new feature, apps integration, and blockchain networks. Submit in [Ideas section](https://github.com/THub/THub/discussions/categories/ideas).
 
 ## 🐞 Report Bugs
 
-Found an issue? [Report it](https://github.com/FlowiseAI/THub/issues/new/choose).
+Found an issue? [Report it](https://github.com/THub/THub/issues/new/choose).
 
 ## 👨‍💻 Contribute to Code
 
@@ -51,7 +51,7 @@ THub has 3 different modules in a single mono repository.
 
 #### Step by step
 
-1. Fork the official [THub Github Repository](https://github.com/FlowiseAI/THub).
+1. Fork the official [THub Github Repository](https://github.com/THub/THub).
 
 2. Clone your forked repository.
 
@@ -114,7 +114,7 @@ THub has 3 different modules in a single mono repository.
 
     to make sure everything works fine in production.
 
-11. Commit code and submit Pull Request from forked branch pointing to [THub master](https://github.com/FlowiseAI/THub/tree/master).
+11. Commit code and submit Pull Request from forked branch pointing to [THub master](https://github.com/THub/THub/tree/master).
 
 ## 🌱 Env Variables
 
@@ -168,11 +168,11 @@ npx flowise start --PORT=3000 --DEBUG=true
 
 ## 📖 Contribute to Docs
 
-[THub Docs](https://github.com/FlowiseAI/FlowiseDocs)
+[THub Docs](https://github.com/THub/FlowiseDocs)
 
 ## 🏷️ Pull Request process
 
-A member of the FlowiseAI team will automatically be notified/assigned when you open a pull request. You can also reach out to us on [Discord](https://discord.gg/jbaHfsRVBW).
+A member of the THub team will automatically be notified/assigned when you open a pull request. You can also reach out to us on [Discord](https://discord.gg/jbaHfsRVBW).
 
 ## 📜 Code of Conduct
 

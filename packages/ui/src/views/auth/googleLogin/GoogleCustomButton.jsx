@@ -5,48 +5,87 @@ import { Button } from '@mui/material'
 import { useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
+import PropTypes from 'prop-types'
 
-const GoogleCustomButton = () => {
+const GoogleCustomButton = ({ setLoading }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const customization = useSelector((state) => state.customization)
 
     const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-web-server-demo-378678297066.us-central1.run.app'
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
     const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     let apiUrl
 
-    if (window.location.hostname === 'demo.thub.tech') {
-        apiUrl = thubWebServerDevUrl
-    } else if (window.location.hostname === 'localhost') {
+    if (window.location.hostname === 'localhost') {
         apiUrl = thubWebServerLocalUrl
+    } else if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+        apiUrl = thubWebServerDevUrl
+    } else if (window.location.hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+        apiUrl = thubWebServerQAUrl
     } else {
         apiUrl = thubWebServerProdUrl
     }
 
-    console.log('API URL Google:', apiUrl)
     const login = useGoogleLogin({
         onSuccess: async (response) => {
-            console.log('Authorization Code:', response)
-
+            setLoading(true)
             try {
                 const { data } = await axios.post(`${apiUrl}/api/auth/google`, {
                     code: response.code
                 })
-                console.log('Response Data:', data)
 
-                dispatch({
-                    type: SET_USER_DATA,
-                    payload: data.user
-                })
+                // Save Redux & Local
+                dispatch({ type: SET_USER_DATA, payload: data.user })
                 localStorage.setItem('id_token', data.id_token)
                 localStorage.setItem('userId', data.userId)
-                navigate('/workflows')
+
+                const hostname = window.location.hostname
+                let workspace = data?.workspace?.trim()
+                console.log(workspace, 'workspace')
+                // --------------------------------
+                // 1️⃣ LOCALHOST → no workspace logic
+                // --------------------------------
+                if (hostname === 'localhost') {
+                    workspace = 'local'
+                    window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${data.userId}`
+                    return
+                }
+
+                // --------------------------------
+                // 2️⃣ DEMO → always default workspace = demo
+                // --------------------------------
+                if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                    workspace = 'demo'
+                    window.location.href = `https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
+                    return
+                }
+
+                // --------------------------------
+                // 2️⃣ QA → always default workspace = qa
+                // --------------------------------
+                if (hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+                    workspace = 'qa'
+                    window.location.href = `https://thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
+                    return
+                }
+
+                // --------------------------------
+                // 3️⃣ PRODUCTION → use workspace OR default to app
+                // --------------------------------
+                // if (!workspace) {
+                //     workspace = 'app'
+                // }
+
+                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
             } catch (error) {
+                alert('Login Failed')
                 console.error('Failed to exchange code:', error)
+            } finally {
+                setLoading(false)
             }
         },
 
@@ -74,6 +113,10 @@ const GoogleCustomButton = () => {
             </Button>
         </div>
     )
+}
+
+GoogleCustomButton.propTypes = {
+    setLoading: PropTypes.func.isRequired
 }
 
 export default GoogleCustomButton

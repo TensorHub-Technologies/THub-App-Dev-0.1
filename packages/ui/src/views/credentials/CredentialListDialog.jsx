@@ -20,7 +20,7 @@ const CredentialListDialog = ({ show, dialogProps, onCancel, onCredentialSelecte
 
     const filterSearch = (value) => {
         setSearchValue(value)
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             if (value) {
                 const searchData = dialogProps.componentsCredentials.filter((crd) => crd.name.toLowerCase().includes(value.toLowerCase()))
                 setComponentsCredentials(searchData)
@@ -28,7 +28,7 @@ const CredentialListDialog = ({ show, dialogProps, onCancel, onCredentialSelecte
                 setComponentsCredentials(dialogProps.componentsCredentials)
             }
             // scrollTop()
-        }, 500)
+        })
     }
 
     useEffect(() => {

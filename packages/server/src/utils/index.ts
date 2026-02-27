@@ -5,6 +5,7 @@
 import path from 'path'
 import fs from 'fs'
 import logger from './logger'
+import { v4 as uuidv4 } from 'uuid'
 import {
     IChatFlow,
     IComponentCredentials,
@@ -68,6 +69,7 @@ export const QUESTION_VAR_PREFIX = 'question'
 export const FILE_ATTACHMENT_PREFIX = 'file_attachment'
 export const CHAT_HISTORY_VAR_PREFIX = 'chat_history'
 export const RUNTIME_MESSAGES_LENGTH_VAR_PREFIX = 'runtime_messages_length'
+export const CURRENT_DATE_TIME_VAR_PREFIX = 'current_date_time'
 export const REDACTED_CREDENTIAL_VALUE = '_FLOWISE_BLANK_07167752-1a71-43b1-bf8f-4f32252165db'
 
 let secretsManagerClient: SecretsManagerClient | null = null
@@ -204,6 +206,22 @@ export const constructGraphs = (
 }
 
 /**
+ * Get starting node and check if flow is valid
+ * @param {INodeDependencies} nodeDependencies
+ */
+export const getStartingNode = (nodeDependencies: INodeDependencies) => {
+    // Find starting node
+    const startingNodeIds = [] as string[]
+    Object.keys(nodeDependencies).forEach((nodeId) => {
+        if (nodeDependencies[nodeId] === 0) {
+            startingNodeIds.push(nodeId)
+        }
+    })
+
+    return { startingNodeIds }
+}
+
+/**
  * Get starting nodes and check if flow is valid
  * @param {INodeDependencies} graph
  * @param {string} endNodeId
@@ -237,22 +255,6 @@ export const getStartingNodes = (graph: INodeDirectedGraph, endNodeId: string) =
         .map(([id, _]) => id)
 
     return { startingNodeIds, depthQueue: depthQueueReversed }
-}
-
-/**
- * Get starting node and check if flow is valid
- * @param {INodeDependencies} nodeDependencies
- */
-export const getStartingNode = (nodeDependencies: INodeDependencies) => {
-    // Find starting node
-    const startingNodeIds = [] as string[]
-    Object.keys(nodeDependencies).forEach((nodeId) => {
-        if (nodeDependencies[nodeId] === 0) {
-            startingNodeIds.push(nodeId)
-        }
-    })
-
-    return { startingNodeIds }
 }
 
 /**
@@ -497,7 +499,10 @@ type BuildFlowParams = {
     stopNodeId?: string
     uploads?: IFileUpload[]
     baseURL?: string
+    usageCacheManager?: any
     uploadedFilesContent?: string
+    updateStorageUsage?: (totalSize: number, usageCacheManager?: any) => void
+    checkStorage?: (usageCacheManager: any) => Promise<any>
 }
 
 /**
@@ -528,7 +533,10 @@ export const buildFlow = async ({
     isUpsert,
     stopNodeId,
     uploads,
-    baseURL
+    baseURL,
+    usageCacheManager,
+    updateStorageUsage,
+    checkStorage
 }: BuildFlowParams) => {
     const flowNodes = cloneDeep(reactFlowNodes)
 
@@ -1081,12 +1089,13 @@ export const replaceInputsWithConfig = (
              * Several conditions:
              * 1. If config is 'analytics', always allow it
              * 2. If config is 'vars', check its object and filter out the variables that are not enabled for override
-             * 3. If typeof config's value is an object, check if the node id is in the overrideConfig object and if the parameter (systemMessagePrompt) is enabled
+             * 3. If typeof config's value is an array, check if the parameter is enabled and apply directly
+             * 4. If typeof config's value is an object, check if the node id is in the overrideConfig object and if the parameter (systemMessagePrompt) is enabled
              * Example:
              * "systemMessagePrompt": {
              *  "chatPromptTemplate_0": "You are an assistant"
              * }
-             * 4. If typeof config's value is a string, check if the parameter is enabled
+             * 5. If typeof config's value is a string, check if the parameter is enabled
              * Example:
              * "systemMessagePrompt": "You are an assistant"
              */
@@ -1107,12 +1116,50 @@ export const replaceInputsWithConfig = (
                     }
                     overrideConfig[config] = filteredVars
                 }
+            } else if (Array.isArray(overrideConfig[config])) {
+                // Handle arrays as direct parameter values
+                if (isParameterEnabled(flowNodeData.label, config)) {
+                    // If existing value is also an array, concatenate; otherwise replace
+                    const existingValue = inputsObj[config]
+                    if (Array.isArray(existingValue)) {
+                        inputsObj[config] = [...new Set([...existingValue, ...overrideConfig[config]])]
+                    } else {
+                        inputsObj[config] = overrideConfig[config]
+                    }
+                }
+                continue
             } else if (overrideConfig[config] && typeof overrideConfig[config] === 'object') {
                 const nodeIds = Object.keys(overrideConfig[config])
                 if (nodeIds.includes(flowNodeData.id)) {
                     // Check if this parameter is enabled
                     if (isParameterEnabled(flowNodeData.label, config)) {
-                        inputsObj[config] = overrideConfig[config][flowNodeData.id]
+                        const existingValue = inputsObj[config]
+                        const overrideValue = overrideConfig[config][flowNodeData.id]
+
+                        // Merge objects instead of completely overriding
+                        if (
+                            typeof existingValue === 'object' &&
+                            typeof overrideValue === 'object' &&
+                            !Array.isArray(existingValue) &&
+                            !Array.isArray(overrideValue) &&
+                            existingValue !== null &&
+                            overrideValue !== null
+                        ) {
+                            inputsObj[config] = Object.assign({}, existingValue, overrideValue)
+                        } else if (typeof existingValue === 'string' && existingValue.startsWith('{') && existingValue.endsWith('}')) {
+                            try {
+                                const parsedExisting = JSON.parse(existingValue)
+                                if (typeof overrideValue === 'object' && !Array.isArray(overrideValue)) {
+                                    inputsObj[config] = Object.assign({}, parsedExisting, overrideValue)
+                                } else {
+                                    inputsObj[config] = overrideValue
+                                }
+                            } catch (e) {
+                                inputsObj[config] = overrideValue
+                            }
+                        } else {
+                            inputsObj[config] = overrideValue
+                        }
                     }
                     continue
                 } else if (nodeIds.some((nodeId) => nodeId.includes(flowNodeData.name))) {
@@ -1137,24 +1184,36 @@ export const replaceInputsWithConfig = (
             const overrideConfigValue = overrideConfig[config]
             if (overrideConfigValue) {
                 if (typeof overrideConfigValue === 'object') {
-                    switch (typeof paramValue) {
-                        case 'string':
-                            if (paramValue.startsWith('{') && paramValue.endsWith('}')) {
-                                try {
-                                    paramValue = Object.assign({}, JSON.parse(paramValue), overrideConfigValue)
-                                    break
-                                } catch (e) {
-                                    // ignore
+                    // Handle arrays specifically - concatenate instead of replace
+                    if (Array.isArray(overrideConfigValue) && Array.isArray(paramValue)) {
+                        paramValue = [...new Set([...paramValue, ...overrideConfigValue])]
+                    } else if (Array.isArray(overrideConfigValue)) {
+                        paramValue = overrideConfigValue
+                    } else {
+                        switch (typeof paramValue) {
+                            case 'string':
+                                if (paramValue.startsWith('{') && paramValue.endsWith('}')) {
+                                    try {
+                                        paramValue = Object.assign({}, JSON.parse(paramValue), overrideConfigValue)
+                                        break
+                                    } catch (e) {
+                                        // ignore
+                                    }
                                 }
-                            }
-                            paramValue = overrideConfigValue
-                            break
-                        case 'object':
-                            paramValue = Object.assign({}, paramValue, overrideConfigValue)
-                            break
-                        default:
-                            paramValue = overrideConfigValue
-                            break
+                                paramValue = overrideConfigValue
+                                break
+                            case 'object':
+                                // Make sure we're not dealing with arrays here
+                                if (!Array.isArray(paramValue)) {
+                                    paramValue = Object.assign({}, paramValue, overrideConfigValue)
+                                } else {
+                                    paramValue = overrideConfigValue
+                                }
+                                break
+                            default:
+                                paramValue = overrideConfigValue
+                                break
+                        }
                     }
                 } else {
                     paramValue = overrideConfigValue
@@ -1262,7 +1321,6 @@ export const findAvailableConfigs = (reactFlowNodes: IReactFlowNode[], component
     for (const flowNode of reactFlowNodes) {
         for (const inputParam of flowNode.data.inputParams) {
             let obj: IOverrideConfig | undefined
-
             if (inputParam.type === 'file') {
                 obj = {
                     node: flowNode.data.label,
@@ -1304,11 +1362,10 @@ export const findAvailableConfigs = (reactFlowNodes: IReactFlowNode[], component
                 }
                 continue
             } else if (inputParam.type === 'array') {
-                // get array item schema
                 const arrayItem = inputParam.array
                 if (Array.isArray(arrayItem)) {
-                    const arraySchema = []
-                    // Each array item is a field definition
+                    const arrayItemSchema: Record<string, string> = {}
+                    // Build object schema representing the structure of each array item
                     for (const item of arrayItem) {
                         let itemType = item.type
                         if (itemType === 'options') {
@@ -1317,10 +1374,7 @@ export const findAvailableConfigs = (reactFlowNodes: IReactFlowNode[], component
                         } else if (itemType === 'file') {
                             itemType = item.fileType ?? item.type
                         }
-                        arraySchema.push({
-                            name: item.name,
-                            type: itemType
-                        })
+                        arrayItemSchema[item.name] = itemType
                     }
                     obj = {
                         node: flowNode.data.label,
@@ -1328,7 +1382,49 @@ export const findAvailableConfigs = (reactFlowNodes: IReactFlowNode[], component
                         label: inputParam.label,
                         name: inputParam.name,
                         type: inputParam.type,
-                        schema: arraySchema
+                        schema: arrayItemSchema
+                    }
+                }
+            } else if (inputParam.loadConfig) {
+                const configData = flowNode?.data?.inputs?.[`${inputParam.name}Config`]
+                if (configData) {
+                    // Parse config data to extract schema
+                    let parsedConfig: any = {}
+                    try {
+                        parsedConfig = typeof configData === 'string' ? JSON.parse(configData) : configData
+                    } catch (e) {
+                        // If parsing fails, treat as empty object
+                        parsedConfig = {}
+                    }
+
+                    // Generate schema from config structure
+                    const configSchema: Record<string, string> = {}
+                    parsedConfig = _removeCredentialId(parsedConfig)
+                    for (const key in parsedConfig) {
+                        if (key === inputParam.name) continue
+                        const value = parsedConfig[key]
+                        let fieldType = 'string' // default type
+
+                        if (typeof value === 'boolean') {
+                            fieldType = 'boolean'
+                        } else if (typeof value === 'number') {
+                            fieldType = 'number'
+                        } else if (Array.isArray(value)) {
+                            fieldType = 'array'
+                        } else if (typeof value === 'object' && value !== null) {
+                            fieldType = 'object'
+                        }
+
+                        configSchema[key] = fieldType
+                    }
+
+                    obj = {
+                        node: flowNode.data.label,
+                        nodeId: flowNode.data.id,
+                        label: `${inputParam.label} Config`,
+                        name: `${inputParam.name}Config`,
+                        type: `json`,
+                        schema: configSchema
                     }
                 }
             } else {
@@ -1378,6 +1474,7 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
             'chatTogetherAI',
             'chatTogetherAI_LlamaIndex',
             'chatFireworks',
+            'ChatSambanova',
             'chatBaiduWenxin'
         ],
         LLMs: ['azureOpenAI', 'openAI', 'ollama']
@@ -1501,7 +1598,6 @@ export const decryptCredentialData = async (
 
     if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
         try {
-            logger.info(`[server]: Reading AWS Secret: ${encryptedData}`)
             if (encryptedData.startsWith('FlowiseCredential_')) {
                 const command = new GetSecretValueCommand({ SecretId: encryptedData })
                 const response = await secretsManagerClient.send(command)
@@ -1817,14 +1913,8 @@ export const getUploadPath = (): string => {
         : path.join(getUserHome(), '.flowise', 'uploads')
 }
 
-const getOrgId = () => {
-    const settingsContent = fs.readFileSync(getUserSettingsFilePath(), 'utf8')
-    try {
-        const settings = JSON.parse(settingsContent)
-        return settings.instanceId
-    } catch (error) {
-        return ''
-    }
+export function generateId() {
+    return uuidv4()
 }
 
 export const getMulterStorage = () => {
@@ -1839,10 +1929,10 @@ export const getMulterStorage = () => {
                 s3: s3Client,
                 bucket: Bucket,
                 metadata: function (req, file, cb) {
-                    cb(null, { fieldName: file.fieldname, originalName: file.originalname, orgId: getOrgId() })
+                    cb(null, { fieldName: file.fieldname, originalName: file.originalname })
                 },
                 key: function (req, file, cb) {
-                    cb(null, `${getOrgId()}/${Date.now().toString()}`)
+                    cb(null, `${generateId()}`)
                 }
             })
         })
@@ -1854,7 +1944,7 @@ export const getMulterStorage = () => {
                 bucket: process.env.GOOGLE_CLOUD_STORAGE_BUCKET_NAME,
                 keyFilename: process.env.GOOGLE_CLOUD_STORAGE_CREDENTIAL,
                 uniformBucketLevelAccess: Boolean(process.env.GOOGLE_CLOUD_UNIFORM_BUCKET_ACCESS) ?? true,
-                destination: `uploads/${getOrgId()}`
+                destination: `uploads/${generateId()}`
             })
         })
     } else {
@@ -1927,4 +2017,49 @@ export const getAllNodesInPath = (startNode: string, graph: INodeDirectedGraph):
     }
 
     return Array.from(nodes)
+}
+
+export const _removeCredentialId = (obj: any): any => {
+    if (!obj || typeof obj !== 'object') return obj
+
+    if (Array.isArray(obj)) {
+        return obj.map((item) => _removeCredentialId(item))
+    }
+
+    const newObj: Record<string, any> = {}
+    for (const [key, value] of Object.entries(obj)) {
+        if (key === 'FLOWISE_CREDENTIAL_ID') continue
+        newObj[key] = _removeCredentialId(value)
+    }
+    return newObj
+}
+
+/**
+ * Validates that history items follow the expected schema
+ * @param {any[]} history - Array of history items to validate
+ * @returns {boolean} - True if all items are valid, false otherwise
+ */
+export const validateHistorySchema = (history: any[]): boolean => {
+    if (!Array.isArray(history)) {
+        return false
+    }
+
+    return history.every((item) => {
+        // Check if item is an object
+        if (typeof item !== 'object' || item === null) {
+            return false
+        }
+
+        // Check if role exists and is valid
+        if (typeof item.role !== 'string' || !['apiMessage', 'userMessage'].includes(item.role)) {
+            return false
+        }
+
+        // Check if content exists and is a string
+        if (typeof item.content !== 'string') {
+            return false
+        }
+
+        return true
+    })
 }

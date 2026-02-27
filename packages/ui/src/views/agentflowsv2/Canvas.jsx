@@ -18,6 +18,7 @@ import { omit, cloneDeep } from 'lodash'
 // material-ui
 import { Toolbar, Box, AppBar, Button, Fab } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import { IconMapPin2 } from '@tabler/icons-react'
 
 // project imports
 import CanvasNode from './AgentFlowNode'
@@ -54,10 +55,10 @@ import {
     isValidConnectionAgentflowV2
 } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
-import { usePrompt } from '@/utils/usePrompt'
 
 // const
 import { FLOWISE_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
+import { usePrompt } from '@/utils/usePrompt'
 
 const nodeTypes = { agentFlow: CanvasNode, stickyNote: StickyNote, iteration: IterationNode }
 const edgeTypes = { agentFlow: AgentFlowEdge }
@@ -92,7 +93,11 @@ const AgentflowCanvas = () => {
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
     // ==============================|| ReactFlow ||============================== //
+    const [showMinimap, setShowMinimap] = useState(false)
 
+    const handleToggleMinimap = () => {
+        setShowMinimap((prev) => !prev)
+    }
     const [nodes, setNodes, onNodesChange] = useNodesState()
     const [edges, setEdges, onEdgesChange] = useEdgesState()
 
@@ -206,8 +211,6 @@ const AgentflowCanvas = () => {
 
     const handleSaveFlow = async (chatflowName, chatflowDescription) => {
         try {
-            console.log('handleSaveFlow', chatflowName, chatflowDescription)
-
             // Validate required parameters
             if (!chatflowName) {
                 throw new Error('Workflow name and description are required')
@@ -733,9 +736,7 @@ const AgentflowCanvas = () => {
                     position='fixed'
                     color='inherit'
                     elevation={1}
-                    sx={{
-                        bgcolor: theme.palette.background.default
-                    }}
+                    className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
                 >
                     <Toolbar>
                         <CanvasHeader
@@ -750,7 +751,12 @@ const AgentflowCanvas = () => {
                 </AppBar>
                 <Box sx={{ pt: '70px', height: '100vh', width: '100%' }}>
                     <div className='reactflow-parent-wrapper'>
-                        <div className='reactflow-wrapper' ref={reactFlowWrapper}>
+                        <div
+                            className={`reactflow-wrapper ${
+                                customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'
+                            }`}
+                            ref={reactFlowWrapper}
+                        >
                             <ReactFlow
                                 nodes={nodes}
                                 edges={edges}
@@ -776,18 +782,45 @@ const AgentflowCanvas = () => {
                                         flexDirection: 'row',
                                         left: '50%',
                                         transform: 'translate(-50%, -50%)',
-                                        backgroundColor: customization.isDarkMode ? theme.palette.background.default : '#fff'
+                                        position: 'absolute',
+                                        margin: '0',
+                                        boxShadow: 'none'
                                     }}
-                                />
-                                <MiniMap
-                                    nodeStrokeWidth={3}
-                                    nodeColor={customization.isDarkMode ? '#2d2d2d' : '#e2e2e2'}
-                                    nodeStrokeColor={customization.isDarkMode ? '#525252' : '#fff'}
-                                    maskColor={customization.isDarkMode ? 'rgb(45, 45, 45, 0.6)' : 'rgb(240, 240, 240, 0.6)'}
-                                    style={{
-                                        backgroundColor: customization.isDarkMode ? theme.palette.background.default : '#fff'
-                                    }}
-                                />
+                                >
+                                    <Button
+                                        sx={{
+                                            backgroundColor: '#fefefe',
+                                            boxSizing: 'content-box',
+                                            height: '18px',
+                                            padding: '4.5px -0px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            borderRadius: 'inherit',
+                                            minWidth: '34px',
+                                            '&:hover': {
+                                                backgroundColor: '#f0f0f0'
+                                            }
+                                        }}
+                                        title='Minimap'
+                                        onClick={handleToggleMinimap}
+                                    >
+                                        <IconMapPin2 id='MapIcon' size={18} color='#000000' />
+                                    </Button>
+                                </Controls>
+
+                                {showMinimap && (
+                                    <MiniMap
+                                        nodeStrokeWidth={3}
+                                        nodeColor={customization.isDarkMode ? '#2d2d2d' : '#e2e2e2'}
+                                        nodeStrokeColor={customization.isDarkMode ? '#525252' : '#fff'}
+                                        maskColor={customization.isDarkMode ? 'rgb(45, 45, 45, 0.6)' : 'rgb(240, 240, 240, 0.6)'}
+                                        style={{
+                                            backgroundColor: customization.isDarkMode ? theme.palette.background.default : '#fff'
+                                        }}
+                                    />
+                                )}
+
                                 <Background color='#aaa' gap={16} />
                                 <AddNodes
                                     isAgentCanvas={true}

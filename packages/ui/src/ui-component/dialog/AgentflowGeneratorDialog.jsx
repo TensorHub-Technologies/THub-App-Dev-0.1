@@ -73,30 +73,38 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
 
     // Simulate progress for the fake progress bar
     useEffect(() => {
-        let timer
+        let animationId
         if (loading) {
             setProgress(0)
-            timer = setInterval(() => {
+            let startTime = Date.now()
+
+            const animate = () => {
+                const elapsed = Date.now() - startTime
                 setProgress((prevProgress) => {
-                    // Slowly increase to 95% to give the impression of work happening
-                    // Last 5% will complete when the actual work is done
                     if (prevProgress >= 95) {
-                        clearInterval(timer)
                         return 95
                     }
-                    // Speed up in the middle, slow at the beginning and end
                     const increment = prevProgress < 30 ? 3 : prevProgress < 60 ? 5 : prevProgress < 80 ? 2 : 0.5
                     return Math.min(prevProgress + increment, 95)
                 })
-            }, 500)
+
+                // Continue animation every ~500ms
+                if (elapsed < 500) {
+                    animationId = requestAnimationFrame(animate)
+                } else {
+                    startTime = Date.now()
+                    animationId = requestAnimationFrame(animate)
+                }
+            }
+
+            animationId = requestAnimationFrame(animate)
         } else {
-            // When loading is done, immediately set to 100%
             setProgress(100)
         }
 
         return () => {
-            if (timer) {
-                clearInterval(timer)
+            if (animationId) {
+                cancelAnimationFrame(animationId)
             }
         }
     }, [loading])
@@ -324,8 +332,8 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                                         onGenerate()
                                     }}
                                     sx={{
-                                        background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)',
-                                        '&:hover': { background: 'linear-gradient(45deg, #FF8E53 30%, #FF6B6B 90%)' }
+                                        background: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                        '&:hover': { background: customization.isDarkMode ? '#bc2377ff' : '#2d467fff' }
                                     }}
                                     startIcon={<IconSparkles size={20} />}
                                     disabled={

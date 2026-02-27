@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles'
@@ -13,49 +13,15 @@ import { drawerWidth } from '@/store/constant'
 import { SET_MENU } from '@/store/actions'
 import RegisterationForm from '../../views/register/RegisterationForm'
 import LoginForm from '@/views/register/LoginForm'
+import UserInfo from '@/ui-component/userform/UserInfo'
 
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
     ...theme.typography.mainContent,
-    ...(!open && {
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen
-        }),
-        [theme.breakpoints.up('md')]: {
-            marginLeft: -(drawerWidth - 20),
-            width: `calc(100% - ${drawerWidth}px)`
-        },
-        [theme.breakpoints.down('md')]: {
-            marginLeft: '20px',
-            width: `calc(100% - ${drawerWidth}px)`,
-            padding: '16px'
-        },
-        [theme.breakpoints.down('sm')]: {
-            marginLeft: '10px',
-            width: `calc(100% - ${drawerWidth}px)`,
-            padding: '16px',
-            marginRight: '10px'
-        }
-    }),
-    ...(open && {
-        transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen
-        }),
-
-        marginLeft: 0,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        width: `calc(100% - ${drawerWidth}px)`,
-        [theme.breakpoints.down('md')]: {
-            marginLeft: '20px'
-        },
-        [theme.breakpoints.down('sm')]: {
-            marginLeft: '10px'
-        }
+    marginLeft: open ? 0 : `-${drawerWidth - 20}px`,
+    transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen
     })
 }))
 
@@ -64,36 +30,78 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 const MainLayout = () => {
     const theme = useTheme()
     const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'))
-    // const customization = useSelector((state) => state.customization)
-    const user = useSelector((state) => state.user.userData)
+    const dispatch = useDispatch()
+    const location = useLocation()
+
+    const [showModal, setShowModal] = useState(false)
+
+    const userData = useSelector((state) => state.user.userData)
+    const customization = useSelector((state) => state.customization)
+    const leftDrawerOpened = useSelector((state) => state.customization.opened)
     const showRegisterModalState = useSelector((state) => state.modal.showRegisterModal)
     const showLoginModal = useSelector((state) => state.modal.showLoginModal)
 
-    // Handle left drawer
-    const leftDrawerOpened = useSelector((state) => state.customization.opened)
-    const dispatch = useDispatch()
     const handleLeftDrawerToggle = () => {
         dispatch({ type: SET_MENU, opened: !leftDrawerOpened })
     }
 
+    // Drawer auto toggle
     useEffect(() => {
-        setTimeout(() => dispatch({ type: SET_MENU, opened: !matchDownMd }), 0)
-    }, [matchDownMd])
+        dispatch({ type: SET_MENU, opened: !matchDownMd })
+    }, [matchDownMd, dispatch])
+
+    useEffect(() => {
+        if (!userData?.uid) {
+            setShowModal(false)
+            return
+        }
+
+        // reset skip when user logs in fresh
+        const skippedThisSession = sessionStorage.getItem('userInfoSkipped')
+
+        // invite accept route → never auto open
+        if (location.pathname.startsWith('/accept-invite')) {
+            setShowModal(false)
+            return
+        }
+
+        // invite flow → force open until completed
+        if (sessionStorage.getItem('inviteContext') && !userData.profile_completed) {
+            setShowModal(true)
+            return
+        }
+
+        // normal user
+        if (!userData.profile_completed && !skippedThisSession) {
+            setShowModal(true)
+            return
+        }
+
+        setShowModal(false)
+    }, [userData, location.pathname])
 
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            {/* header */}
+
+            {/* UserInfo Modal */}
+            {showModal && (
+                <UserInfo
+                    setShowModal={setShowModal}
+                    forceOpen={Boolean(sessionStorage.getItem('inviteContext') && !userData?.profile_completed)}
+                />
+            )}
+
+            {/* Header */}
             <AppBar
                 enableColorOnDark
                 position='fixed'
                 color='inherit'
                 elevation={0}
+                className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
                 sx={{
                     height: '80px',
-
-                    bgcolor: theme.palette.background.default,
-                    transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
+                    bgcolor: theme.palette.background.default
                 }}
             >
                 <Toolbar>
@@ -101,12 +109,14 @@ const MainLayout = () => {
                 </Toolbar>
             </AppBar>
 
+            {/* Sidebar */}
             <Sidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
+            {/* Auth Modals */}
             {showRegisterModalState && <RegisterationForm />}
-
             {showLoginModal && <LoginForm />}
 
+            {/* Main Content */}
             <Main theme={theme} open={leftDrawerOpened}>
                 <Outlet />
             </Main>

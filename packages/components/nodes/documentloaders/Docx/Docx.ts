@@ -101,6 +101,7 @@ class Docx_DocumentLoaders implements INode {
             for (const file of files) {
                 if (!file) continue
                 const fileData = await getFileFromStorage(file, chatflowid)
+                // @ts-ignore
                 const blob = new Blob([fileData])
                 const loader = new DocxLoader(blob)
 

@@ -1,31 +1,21 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-
 import { LogLevel } from '@azure/msal-browser'
-
-/**
- * Configuration object to be passed to MSAL instance on creation.
- * For a full list of MSAL.js configuration parameters, visit:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
- */
 
 const hostname = window.location.hostname
 
-let redirectUri = 'http://localhost:8080/'
-
-if (hostname === 'app.thub.tech') {
-    redirectUri = 'https://app.thub.tech/'
-} else if (hostname === 'demo.thub.tech') {
-    redirectUri = 'https://demo.thub.tech/'
+const REDIRECT_URI_MAP = {
+    localhost: 'http://localhost:8080/',
+    'thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io': 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/',
+    'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io': 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/',
+    'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io': 'https://thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
 }
+
+const redirectUri = REDIRECT_URI_MAP[hostname] || 'http://localhost:8080/'
 
 export const msalConfig = {
     auth: {
         clientId: 'bf29daca-eef6-438f-850f-8a746c246a14',
         authority: 'https://login.microsoftonline.com/common/18be12b6-e243-4a84-85f2-0be345a96956/',
-        redirectUri: redirectUri
+        redirectUri
     },
     cache: {
         cacheLocation: 'sessionStorage',
@@ -34,44 +24,33 @@ export const msalConfig = {
     system: {
         loggerOptions: {
             loggerCallback: (level, message, containsPii) => {
-                if (containsPii) {
-                    return
-                }
+                if (containsPii) return
+
                 switch (level) {
                     case LogLevel.Error:
                         console.error(message)
-                        return
+                        break
                     case LogLevel.Info:
                         console.info(message)
-                        return
+                        break
                     case LogLevel.Verbose:
                         console.debug(message)
-                        return
+                        break
                     case LogLevel.Warning:
                         console.warn(message)
-                        return
+                        break
                     default:
-                        return
+                        break
                 }
             }
         }
     }
 }
 
-/**
- * Scopes you add here will be prompted for user consent during sign-in.
- * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
- * For more information about OIDC scopes, visit:
- * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
- */
 export const loginRequest = {
     scopes: ['User.Read']
 }
 
-/**
- * Add here the scopes to request when obtaining an access token for MS Graph API. For more information, see:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
- */
 export const graphConfig = {
     graphMeEndpoint: 'https://graph.microsoft.com/v1.0/me'
 }

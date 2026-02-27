@@ -1,4 +1,5 @@
 import { CommonType, ICommonObject, ICondition, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import removeMarkdown from 'remove-markdown'
 
 class Condition_Agentflow implements INode {
     label: string
@@ -19,7 +20,7 @@ class Condition_Agentflow implements INode {
         this.name = 'conditionAgentflow'
         this.version = 1.0
         this.type = 'Condition'
-        this.category = 'Agent Pipeline'
+        this.category = 'Agent Studio'
         this.description = `Split flows based on If Else conditions`
         this.baseClasses = [this.type]
         this.color = '#FF9F1C'
@@ -300,8 +301,8 @@ class Condition_Agentflow implements INode {
                     value2 = parseFloat(_value2 as string) || 0
                     break
                 default: // string
-                    value1 = _value1 as string
-                    value2 = _value2 as string
+                    value1 = removeMarkdown((_value1 as string) || '')
+                    value2 = removeMarkdown((_value2 as string) || '')
             }
 
             const compareOperationResult = compareOperationFunctions[operation](value1, value2)

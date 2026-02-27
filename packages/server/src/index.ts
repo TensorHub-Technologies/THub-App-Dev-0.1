@@ -1,8 +1,8 @@
-import express from 'express'
-import { Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 import path from 'path'
 import cors from 'cors'
 import http from 'http'
+import cookieParser from 'cookie-parser'
 import basicAuth from 'express-basic-auth'
 import { DataSource } from 'typeorm'
 import { MODE } from './Interface'
@@ -27,6 +27,7 @@ import { OpenTelemetry } from './metrics/OpenTelemetry'
 import { QueueManager } from './queue/QueueManager'
 import { RedisEventSubscriber } from './queue/RedisEventSubscriber'
 import { WHITELIST_URLS } from './utils/constants'
+import { ExpressAdapter } from '@bull-board/express'
 import 'global-agent/bootstrap'
 
 declare global {
@@ -69,52 +70,66 @@ export class App {
         // Initialize database
         try {
             await this.AppDataSource.initialize()
-            logger.info('📦 [server]: Data Source is initializing...')
+            logger.info('📦 [server]: Data Source initialized successfully')
 
             // Run Migrations Scripts
             await this.AppDataSource.runMigrations({ transaction: 'each' })
+            logger.info('🔄 [server]: Database migrations completed successfully')
 
             // Initialize nodes pool
             this.nodesPool = new NodesPool()
             await this.nodesPool.initialize()
+            logger.info('🔧 [server]: Nodes pool initialized successfully')
 
             // Initialize abort controllers pool
             this.abortControllerPool = new AbortControllerPool()
+            logger.info('⏹️ [server]: Abort controllers pool initialized successfully')
 
             // Initialize API keys
             await getAPIKeys()
 
             // Initialize encryption key
             await getEncryptionKey()
+            logger.info('🔑 [server]: Encryption key initialized successfully')
 
             // Initialize Rate Limit
             this.rateLimiterManager = RateLimiterManager.getInstance()
             await this.rateLimiterManager.initializeRateLimiters(await getDataSource().getRepository(ChatFlow).find())
+            logger.info('🚦 [server]: Rate limiters initialized successfully')
 
             // Initialize cache pool
             this.cachePool = new CachePool()
+            logger.info('💾 [server]: Cache pool initialized successfully')
 
             // Initialize telemetry
             this.telemetry = new Telemetry()
+            logger.info('📈 [server]: Telemetry initialized successfully')
 
             // Initialize SSE Streamer
             this.sseStreamer = new SSEStreamer()
+            logger.info('🌊 [server]: SSE Streamer initialized successfully')
 
             // Init Queues
             if (process.env.MODE === MODE.QUEUE) {
                 this.queueManager = QueueManager.getInstance()
+                const serverAdapter = new ExpressAdapter()
+                serverAdapter.setBasePath('/admin/queues')
                 this.queueManager.setupAllQueues({
                     componentNodes: this.nodesPool.componentNodes,
                     telemetry: this.telemetry,
                     cachePool: this.cachePool,
                     appDataSource: this.AppDataSource,
-                    abortControllerPool: this.abortControllerPool
+                    abortControllerPool: this.abortControllerPool,
+                    serverAdapter
                 })
+                logger.info('✅ [Queue]: All queues setup successfully')
+
                 this.redisSubscriber = new RedisEventSubscriber(this.sseStreamer)
                 await this.redisSubscriber.connect()
+                logger.info('🔗 [server]: Redis event subscriber connected successfully')
             }
 
-            logger.info('📦 [server]: Data Source has been initialized!')
+            logger.info('🎉 [server]: All initialization steps completed successfully!')
         } catch (error) {
             logger.error('❌ [server]: Error during Data Source initialization:', error)
         }
@@ -122,14 +137,18 @@ export class App {
 
     async config() {
         // Limit is needed to allow sending/receiving base64 encoded string
-        const flowise_file_size_limit = process.env.FLOWISE_FILE_SIZE_LIMIT || '50mb'
+        const flowise_file_size_limit = process.env.FLOWISE_FILE_SIZE_LIMIT || '100mb'
         this.app.use(express.json({ limit: flowise_file_size_limit }))
         this.app.use(express.urlencoded({ limit: flowise_file_size_limit, extended: true }))
-        if (process.env.NUMBER_OF_PROXIES && parseInt(process.env.NUMBER_OF_PROXIES) > 0)
-            this.app.set('trust proxy', parseInt(process.env.NUMBER_OF_PROXIES))
+
+        // Enhanced trust proxy settings for load balancer
+        this.app.set('trust proxy', true) // Trust all proxies
 
         // Allow access from specified domains
         this.app.use(cors(getCorsOptions()))
+
+        // Parse cookies
+        this.app.use(cookieParser() as any)
 
         // Allow embedding from specified domains.
         this.app.use((req, res, next) => {
@@ -152,7 +171,13 @@ export class App {
         // Add the sanitizeMiddleware to guard against XSS
         this.app.use(sanitizeMiddleware)
 
-        const whitelistURLs = WHITELIST_URLS
+        this.app.use((req, res, next) => {
+            res.header('Access-Control-Allow-Credentials', 'true') // Allow credentials (cookies, etc.)
+            if (next) next()
+        })
+
+        const denylistURLs = process.env.DENYLIST_URLS ? process.env.DENYLIST_URLS.split(',') : []
+        const whitelistURLs = WHITELIST_URLS.filter((url) => !denylistURLs.includes(url))
         const URL_CASE_INSENSITIVE_REGEX: RegExp = /\/api\/v1\//i
         const URL_CASE_SENSITIVE_REGEX: RegExp = /\/api\/v1\//
 

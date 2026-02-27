@@ -2,7 +2,9 @@ import { lazy } from 'react'
 
 // project imports
 import Loadable from '@/ui-component/loading/Loadable'
-import PrivateRoute from '@/routes/PrivateRoute' // Import the PrivateRoute component
+// import PrivateRoute from '@/routes/PrivateRoute'
+import Dashboard from '@/views/dashboard/Dashboard'
+import UserInfo from '@/ui-component/userform/UserInfo'
 
 // chatflows routing
 const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
@@ -38,6 +40,15 @@ const Documents = Loadable(lazy(() => import('@/views/docstore')))
 const DocumentStoreDetail = Loadable(lazy(() => import('@/views/docstore/DocumentStoreDetail')))
 const ShowStoredChunks = Loadable(lazy(() => import('@/views/docstore/ShowStoredChunks')))
 const LoaderConfigPreviewChunks = Loadable(lazy(() => import('@/views/docstore/LoaderConfigPreviewChunks')))
+const VectorStoreConfigure = Loadable(lazy(() => import('@/views/docstore/VectorStoreConfigure')))
+const VectorStoreQuery = Loadable(lazy(() => import('@/views/docstore/VectorStoreQuery')))
+
+// Evaluations routing
+const EvalEvaluation = Loadable(lazy(() => import('@/views/evaluations/index')))
+const EvaluationResult = Loadable(lazy(() => import('@/views/evaluations/EvaluationResult')))
+const EvalDatasetRows = Loadable(lazy(() => import('@/views/datasets/DatasetItems')))
+const EvalDatasets = Loadable(lazy(() => import('@/views/datasets')))
+const Evaluators = Loadable(lazy(() => import('@/views/evaluators')))
 
 // subscription routing
 const Subscription = Loadable(lazy(() => import('@/views/subscription')))
@@ -49,147 +60,115 @@ const Settings = Loadable(lazy(() => import('@/views/homesettings')))
 
 const MainRoutes = {
     path: '/',
-    element: (
-        <PrivateRoute>
-            <MainLayout />
-        </PrivateRoute>
-    ),
+    element: <MainLayout />,
     children: [
         {
+            path: '/dashboard',
+            element: <Dashboard />
+        },
+        {
             path: '/workflows',
-            element: (
-                <PrivateRoute>
-                    <Chatflows />
-                </PrivateRoute>
-            )
+            element: <Chatflows />
         },
         {
             path: '/templates',
-            element: (
-                <PrivateRoute>
-                    <Marketplaces />
-                </PrivateRoute>
-            )
+            element: <Marketplaces />
         },
         {
             path: 'agentflows',
-            element: (
-                <PrivateRoute>
-                    <Agentflows />
-                </PrivateRoute>
-            )
+            element: <Agentflows />
         },
         {
             path: 'executions',
-            element: (
-                <PrivateRoute>
-                    <Executions />
-                </PrivateRoute>
-            )
+            element: <Executions />
         },
         {
             path: '/apikey',
-            element: (
-                <PrivateRoute>
-                    <APIKey />
-                </PrivateRoute>
-            )
+            element: <APIKey />
         },
         {
             path: '/tools',
-            element: (
-                <PrivateRoute>
-                    <Tools />
-                </PrivateRoute>
-            )
+            element: <Tools />
         },
         {
             path: '/assistants',
-            element: (
-                <PrivateRoute>
-                    <Assistants />
-                </PrivateRoute>
-            )
+            element: <Assistants />
         },
         {
             path: '/credentials',
-            element: (
-                <PrivateRoute>
-                    <Credentials />
-                </PrivateRoute>
-            )
+            element: <Credentials />
         },
         {
             path: '/variables',
-            element: (
-                <PrivateRoute>
-                    <Variables />
-                </PrivateRoute>
-            )
+            element: <Variables />
         },
         {
             path: '/document-stores',
-            element: (
-                <PrivateRoute>
-                    <Documents />
-                </PrivateRoute>
-            )
+            element: <Documents />
         },
         {
-            path: '/document-stores/:id',
-            element: (
-                <PrivateRoute>
-                    <DocumentStoreDetail />
-                </PrivateRoute>
-            )
+            path: '/document-stores/:storeId',
+            element: <DocumentStoreDetail />
         },
         {
-            path: '/document-stores/chunks/:id/:id',
-            element: (
-                <PrivateRoute>
-                    <ShowStoredChunks />
-                </PrivateRoute>
-            )
+            path: '/document-stores/chunks/:storeId/:fileId',
+            element: <ShowStoredChunks />
         },
         {
-            path: '/document-stores/:id/:name',
-            element: (
-                <PrivateRoute>
-                    <LoaderConfigPreviewChunks />
-                </PrivateRoute>
-            )
+            path: '/document-stores/:storeId/:name',
+            element: <LoaderConfigPreviewChunks />
+        },
+        {
+            path: '/document-stores/vector/:storeId',
+            element: <VectorStoreConfigure />
+        },
+        {
+            path: '/document-stores/vector/:storeId/:docId',
+            element: <VectorStoreConfigure />
+        },
+        {
+            path: '/document-stores/query/:storeId',
+            element: <VectorStoreQuery />
         },
         {
             path: '/subscription',
-            element: (
-                <PrivateRoute>
-                    <Subscription />
-                </PrivateRoute>
-            )
+            element: <Subscription />
         },
         {
             path: '/subscription/api/payments/payment-success',
-            element: (
-                <PrivateRoute>
-                    <Subscription />
-                </PrivateRoute>
-            )
+            element: <Subscription />
         },
         {
             path: '/subscription/api/payments/payment-failure',
-            element: (
-                <PrivateRoute>
-                    <Subscription />
-                </PrivateRoute>
-            )
+            element: <Subscription />
         },
         {
             path: '/setting',
-            element: (
-                <PrivateRoute>
-                    <Settings />
-                </PrivateRoute>
-            )
+            element: <Settings />
+        },
+        {
+            path: '/user-info',
+            element: <UserInfo />
+        },
+        {
+            path: '/datasets',
+            element: <EvalDatasets />
+        },
+        {
+            path: '/dataset_rows/:id',
+            element: <EvalDatasetRows />
+        },
+        {
+            path: '/evaluations',
+            element: <EvalEvaluation />
+        },
+        {
+            path: '/evaluation_results/:id',
+            element: <EvaluationResult />
+        },
+        {
+            path: '/evaluators',
+            element: <Evaluators />
         }
     ]
 }

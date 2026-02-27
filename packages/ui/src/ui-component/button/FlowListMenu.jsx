@@ -44,23 +44,28 @@ const StyledMenu = styled((props) => (
         elevation={0}
         anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'right'
+            horizontal: 'left'
         }}
         transformOrigin={{
             vertical: 'top',
-            horizontal: 'right'
+            horizontal: 'left'
         }}
         {...props}
+        // This ensures the menu stays within viewport bounds
+        disableAutoFocusItem={false}
+        disableRestoreFocus={false}
+        marginThreshold={16}
     />
 ))(({ theme }) => ({
     '& .MuiPaper-root': {
         borderRadius: 6,
         marginTop: theme.spacing(1),
         minWidth: 180,
+        maxWidth: '90vw', // Ensure it never exceeds viewport width
         boxShadow:
             'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
         '& .MuiMenu-list': {
-            padding: '4px 0'
+            padding: '0'
         },
         '& .MuiMenuItem-root': {
             '& .MuiSvgIcon-root': {
@@ -109,20 +114,32 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
 
     const tenantId = userData?.uid || localStorage.getItem('userId')
 
+    // Prevent event bubbling to parent card
     const handleClick = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(event.currentTarget)
     }
 
-    const handleClose = () => {
+    const handleClose = (event) => {
+        if (event) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
         setAnchorEl(null)
     }
 
-    const handleFlowRename = () => {
+    // Add stopPropagation to all menu item handlers
+    const handleFlowRename = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         setFlowDialogOpen(true)
     }
 
-    const handleFlowStarterPrompts = () => {
+    const handleFlowStarterPrompts = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         setConversationStartersDialogProps({
             title: 'Starter Prompts - ' + chatflow.name,
@@ -131,7 +148,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         setConversationStartersDialogOpen(true)
     }
 
-    const handleExportTemplate = () => {
+    const handleExportTemplate = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         setExportTemplateDialogProps({
             chatflow: chatflow
@@ -139,7 +158,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         setExportTemplateDialogOpen(true)
     }
 
-    const handleFlowChatFeedback = () => {
+    const handleFlowChatFeedback = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         setChatFeedbackDialogProps({
             title: 'Chat Feedback - ' + chatflow.name,
@@ -148,7 +169,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         setChatFeedbackDialogOpen(true)
     }
 
-    const handleAllowedDomains = () => {
+    const handleAllowedDomains = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         setAllowedDomainsDialogProps({
             title: 'Allowed Domains - ' + chatflow.name,
@@ -157,7 +180,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         setAllowedDomainsDialogOpen(true)
     }
 
-    const handleSpeechToText = () => {
+    const handleSpeechToText = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         setSpeechToTextDialogProps({
             title: 'Speech To Text - ' + chatflow.name,
@@ -199,7 +224,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         }
     }
 
-    const handleFlowCategory = () => {
+    const handleFlowCategory = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         if (chatflow.category) {
             setCategoryDialogProps({
@@ -239,7 +266,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         }
     }
 
-    const handleDelete = async () => {
+    const handleDelete = async (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         const confirmPayload = {
             title: `Delete`,
@@ -276,7 +305,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         }
     }
 
-    const handleDuplicate = () => {
+    const handleDuplicate = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         try {
             localStorage.setItem('duplicatedFlowData', chatflow.flowData)
@@ -292,7 +323,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         }
     }
 
-    const handleExport = () => {
+    const handleExport = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         setAnchorEl(null)
         try {
             const flowData = JSON.parse(chatflow.flowData)
@@ -313,23 +346,37 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
     }
 
     return (
-        <div>
-            <button
-                style={{
-                    position: 'absolute',
-                    top: 1,
-                    right: 5,
-                    zIndex: 1,
-                    background: 'transparent',
-                    outline: 'none',
-                    border: 'none',
-                    cursor: 'pointer'
-                }}
-                id='demo-customized-button'
-                onClick={handleClick}
-            >
-                <IconDotsVertical color={customization.isDarkMode ? 'white' : 'black'} />
-            </button>
+        <div
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation()
+                }
+            }}
+            role='button'
+            tabIndex={0}
+            aria-label='Menu container'
+        >
+            {view !== 'list' && (
+                <Button
+                    style={{
+                        marginRight: '-14px',
+                        marginTop: '4px'
+                    }}
+                    id='demo-customized-button'
+                    onClick={handleClick}
+                    onMouseEnter={(e) => {
+                        // e.target.style.background = 'rgba(255, 255, 255, 0.2)'
+                        e.target.style.transform = 'scale(1.05)'
+                    }}
+                    onMouseLeave={(e) => {
+                        // e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                        e.target.style.transform = 'scale(1)'
+                    }}
+                >
+                    <IconDotsVertical size={20} color={customization.isDarkMode ? 'white' : 'black'} />
+                </Button>
+            )}
             {view !== 'card' && (
                 <Button
                     id='demo-customized-button'
@@ -350,49 +397,60 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: anchorEl?.getAttribute('data-menu-position') === 'right' ? 'right' : 'left'
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: anchorEl?.getAttribute('data-menu-position') === 'right' ? 'right' : 'left'
+                }}
+                onClick={(e) => e.stopPropagation()}
             >
-                <MenuItem onClick={handleFlowRename} disableRipple>
-                    <EditIcon />
-                    Rename
-                </MenuItem>
-                <MenuItem onClick={handleDuplicate} disableRipple>
-                    <FileCopyIcon />
-                    Duplicate
-                </MenuItem>
-                <MenuItem onClick={handleExport} disableRipple>
-                    <FileDownloadIcon />
-                    Export
-                </MenuItem>
-                <MenuItem onClick={handleExportTemplate} disableRipple>
-                    <ExportTemplateOutlinedIcon />
-                    Save As Template
-                </MenuItem>
-                <Divider sx={{ my: 0.5 }} />
-                <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
-                    <PictureInPictureAltIcon />
-                    Starter Prompts
-                </MenuItem>
-                <MenuItem onClick={handleFlowChatFeedback} disableRipple>
-                    <ThumbsUpDownOutlinedIcon />
-                    Chat Feedback
-                </MenuItem>
-                <MenuItem onClick={handleAllowedDomains} disableRipple>
-                    <VpnLockOutlinedIcon />
-                    Allowed Domains
-                </MenuItem>
-                <MenuItem onClick={handleSpeechToText} disableRipple>
-                    <MicNoneOutlinedIcon />
-                    Speech To Text
-                </MenuItem>
-                <MenuItem onClick={handleFlowCategory} disableRipple>
-                    <FileCategoryIcon />
-                    Update Category
-                </MenuItem>
-                <Divider sx={{ my: 0.5 }} />
-                <MenuItem onClick={handleDelete} disableRipple>
-                    <FileDeleteIcon />
-                    Delete
-                </MenuItem>
+                <div className={`${customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}`}>
+                    <MenuItem onClick={handleFlowRename} disableRipple>
+                        <EditIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Rename
+                    </MenuItem>
+                    <MenuItem onClick={handleDuplicate} disableRipple>
+                        <FileCopyIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Duplicate
+                    </MenuItem>
+                    <MenuItem onClick={handleExport} disableRipple>
+                        <FileDownloadIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Export
+                    </MenuItem>
+                    <MenuItem onClick={handleExportTemplate} disableRipple>
+                        <ExportTemplateOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Save As Template
+                    </MenuItem>
+                    <Divider sx={{ my: 0.5 }} />
+                    <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
+                        <PictureInPictureAltIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Starter Prompts
+                    </MenuItem>
+                    <MenuItem onClick={handleFlowChatFeedback} disableRipple>
+                        <ThumbsUpDownOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Chat Feedback
+                    </MenuItem>
+                    <MenuItem onClick={handleAllowedDomains} disableRipple>
+                        <VpnLockOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Allowed Domains
+                    </MenuItem>
+                    <MenuItem onClick={handleSpeechToText} disableRipple>
+                        <MicNoneOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Speech To Text
+                    </MenuItem>
+                    <MenuItem onClick={handleFlowCategory} disableRipple>
+                        <FileCategoryIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Update Category
+                    </MenuItem>
+                    <Divider sx={{ my: 0.5 }} />
+                    <MenuItem onClick={handleDelete} disableRipple>
+                        <FileDeleteIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Delete
+                    </MenuItem>
+                </div>
             </StyledMenu>
             <SaveChatflowDialog
                 show={flowDialogOpen}

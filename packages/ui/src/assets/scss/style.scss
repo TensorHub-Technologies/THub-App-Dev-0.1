@@ -1,5 +1,6 @@
 // color variants
-@import 'themes-vars.module.scss';
+// @import 'themes-vars.module.scss';
+@use 'themes-vars.module' as vars;
 
 // third-party
 @import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -16,12 +17,12 @@
         &:hover > .ps__thumb-y,
         &:focus > .ps__thumb-y,
         &.ps--clicking .ps__thumb-y {
-            background-color: $grey500;
+            background-color: vars.$grey500;
             width: 5px;
         }
     }
     .ps__thumb-y {
-        background-color: $grey500;
+        background-color: vars.$grey500;
         border-radius: 6px;
         width: 5px;
         right: 0;
@@ -118,5 +119,31 @@
     }
     75% {
         transform: translateX(10px);
+    }
+}
+
+.tiptap {
+    .variable {
+        background-color: #b3f0b8;
+        border-radius: 0.4rem;
+        box-decoration-break: clone;
+        color: #0d7115;
+        padding: 0.1rem 0.3rem;
+        &::after {
+            content: '\200B';
+        }
+    }
+}
+
+.spin-animation {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
     }
 }

@@ -3,6 +3,7 @@ import { convertSchemaToZod, getBaseClasses, getVars } from '../../../src/utils'
 import { DynamicStructuredTool } from './core'
 import { z } from 'zod'
 import { DataSource } from 'typeorm'
+import { SecureZodSchemaParser } from '../../../src/secureZodParser'
 
 class CustomTool_Tools implements INode {
     label: string
@@ -78,16 +79,26 @@ class CustomTool_Tools implements INode {
             }
 
             const searchOptions = options.searchOptions || {}
-            const tools = await appDataSource.getRepository(databaseEntities['Tool']).findBy(searchOptions)
+            let tenantId = options.tenantId
 
-            for (let i = 0; i < tools.length; i += 1) {
-                const data = {
-                    label: tools[i].name,
-                    name: tools[i].id,
-                    description: tools[i].description
-                } as INodeOptionsValue
-                returnData.push(data)
+            try {
+                // Fix: Use proper object syntax for findBy with tenantId
+                const whereClause = tenantId ? { tenantId: tenantId } : {}
+                const tools = await appDataSource.getRepository(databaseEntities['Tool']).findBy(whereClause)
+
+                for (let i = 0; i < tools.length; i += 1) {
+                    const data = {
+                        label: tools[i].name,
+                        name: tools[i].id,
+                        description: tools[i].description
+                    } as INodeOptionsValue
+                    returnData.push(data)
+                }
+            } catch (error) {
+                console.error('Error fetching tools by tenantId:', error)
+                // Return empty array on error to prevent breaking the UI
             }
+
             return returnData
         }
     }
@@ -104,9 +115,16 @@ class CustomTool_Tools implements INode {
         const databaseEntities = options.databaseEntities as IDatabaseEntity
 
         try {
-            const tool = await appDataSource.getRepository(databaseEntities['Tool']).findOneBy({
-                id: selectedToolId
-            })
+            // Also fix the tool fetching in init method to include tenantId if needed
+            const tenantId = options.tenantId
+            const whereClause: any = { id: selectedToolId }
+
+            // If tenantId exists, add it to the where clause for additional security
+            if (tenantId) {
+                whereClause.tenantId = tenantId
+            }
+
+            const tool = await appDataSource.getRepository(databaseEntities['Tool']).findOneBy(whereClause)
 
             if (!tool) throw new Error(`Tool ${selectedToolId} not found`)
             const obj = {
@@ -119,8 +137,7 @@ class CustomTool_Tools implements INode {
             if (customToolName) obj.name = customToolName
             if (customToolDesc) obj.description = customToolDesc
             if (customToolSchema) {
-                const zodSchemaFunction = new Function('z', `return ${customToolSchema}`)
-                obj.schema = zodSchemaFunction(z)
+                obj.schema = SecureZodSchemaParser.parseZodSchema(customToolSchema) as z.ZodObject<ICommonObject, 'strip', z.ZodTypeAny>
             }
 
             const variables = await getVars(appDataSource, databaseEntities, nodeData, options)

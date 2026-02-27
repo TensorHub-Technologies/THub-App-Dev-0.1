@@ -1,140 +1,173 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { Table, TableBody, TableCell, TableContainer, TableRow, Paper, Tooltip, Button } from '@mui/material'
 import { IconEdit } from '@tabler/icons-react'
-import './UserDetailsTable.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { updateUserField } from '@/store/actions'
-
 import toast, { Toaster } from 'react-hot-toast'
+import MainCard from '@/ui-component/cards/MainCard'
+import { updateUserField, SET_USER_DATA } from '@/store/actions'
+import './UserDetailsTable.css'
 
 const UserDetailsTable = () => {
+    const dispatch = useDispatch()
     const user = useSelector((state) => state.user.userData)
     const customization = useSelector((state) => state.customization)
+
     const [editField, setEditField] = useState(null)
     const [editValue, setEditValue] = useState('')
-    const dispatch = useDispatch()
 
-    let apiUrl
+    // -----------------------
+    // API BASE
+    // -----------------------
+    const apiUrl =
+        window.location.hostname === 'localhost'
+            ? 'http://localhost:2000'
+            : window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            ? 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            : window.location.hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+            ? 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+            : 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
 
-    if (window.location.hostname === 'demo.thub.tech') {
-        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-    } else if (window.location.hostname === 'localhost') {
-        apiUrl = 'http://localhost:2000'
-    } else {
-        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-    }
+    // -----------------------
+    // 🔥 HYDRATE USER FROM /workspaceUsers
+    // -----------------------
+    useEffect(() => {
+        if (!user?.uid || !user?.workspace) return
 
+        const hydrateUser = async () => {
+            try {
+                const res = await axios.get(`${apiUrl}/workspaceUsers`, {
+                    params: { workspace: user.workspace }
+                })
+
+                const fullUser = res.data.find((u) => u.uid === user.uid)
+
+                if (fullUser) {
+                    dispatch({
+                        type: SET_USER_DATA,
+                        payload: {
+                            ...user,
+                            ...fullUser
+                        }
+                    })
+                }
+            } catch (err) {
+                console.error('Failed to hydrate user from workspaceUsers', err)
+            }
+        }
+
+        hydrateUser()
+    }, [user?.uid, user?.workspace])
+
+    // -----------------------
+    // FIELD CONFIG
+    // -----------------------
     const userFields = [
-        { label: 'Name', value: user.name },
-        { label: 'Email', value: user.email },
-        { label: 'Company', value: user.company },
-        { label: 'Workspace', value: user.workspace },
-        { label: 'Department', value: user.department }
+        { label: 'Name', key: 'name' },
+        { label: 'Email', key: 'email' },
+        { label: 'Company', key: 'company' },
+        { label: 'Workspace', key: 'workspace' },
+        { label: 'Department', key: 'department' }
     ]
 
+    // -----------------------
+    // EDIT
+    // -----------------------
     const handleEditClick = (field) => {
-        setEditField(field)
-        setEditValue(user[field.toLowerCase()])
+        setEditField(field.key)
+        setEditValue(user?.[field.key] || '')
     }
 
+    // -----------------------
+    // SAVE
+    // -----------------------
     const handleSave = async () => {
         const payload = {
-            field: editField.toLowerCase(),
+            field: editField,
             value: editValue,
             userId: user.uid
         }
 
-        const updateRequest = axios.post(`${apiUrl}/api/users/update`, payload)
+        const request = axios.post(`${apiUrl}/api/users/update`, payload)
 
-        toast.promise(
-            updateRequest
-                .then((response) => {
-                    if (response.status === 200) {
-                        dispatch(updateUserField({ field: editField.toLowerCase(), value: editValue }))
-                        return 'Saved successfully!'
-                    } else {
-                        throw new Error('Error saving.')
-                    }
-                })
-                .catch((error) => {
-                    throw new Error(error.response?.data?.message || 'Unknown error')
-                }),
-            {
-                loading: 'Saving...',
-                success: (message) => message,
-                error: (err) => `Error saving: ${err.message || 'Unknown error'}`
-            }
-        )
+        toast.promise(request, {
+            loading: 'Saving...',
+            success: 'Saved successfully!',
+            error: (err) => err.response?.data?.message || 'Failed to save'
+        })
 
         try {
-            await updateRequest
+            await request
+
+            dispatch(updateUserField({ field: editField, value: editValue }))
+
             setEditField(null)
             setEditValue('')
-        } catch (error) {
-            console.error('Error updating field:', error)
+        } catch (err) {
+            console.error(err)
         }
     }
 
     return (
-        <>
-            <Toaster position='top-right' reverseOrder={false} />
+        <MainCard>
+            <Toaster position='top-right' />
             <TableContainer
                 component={Paper}
-                className={customization.isDarkMode ? 'table-dark-mode' : 'table-light-mode'}
-                sx={{ marginTop: '16px', padding: '16px', maxHeight: '600px', border: '1px solid gray' }}
+                className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
+                sx={{ mt: 2, p: 2, border: '1px solid gray' }}
             >
-                <Table stickyHeader>
+                <Table>
                     <TableBody>
-                        {userFields.map((field, index) => (
-                            <TableRow key={index}>
-                                <TableCell sx={{ fontFamily: 'Cambria Math', padding: '16px 16px 0px 16px', fontSize: '18px' }}>
-                                    {field.label}
-                                </TableCell>
-                                <TableCell sx={{ fontFamily: 'Cambria Math', padding: '16px 16px 0px 16px', fontSize: '18px' }}>
-                                    {editField === field.label ? (
-                                        <input
-                                            type='text'
-                                            value={editValue}
-                                            onChange={(e) => setEditValue(e.target.value)}
-                                            style={{ width: '100%' }}
-                                        />
-                                    ) : (
-                                        field.value || 'N/A'
-                                    )}
-                                </TableCell>
-                                <TableCell sx={{ padding: '16px 16px 0px 16px', fontSize: '18px' }}>
-                                    <Tooltip title={editField === field.label ? 'Save' : 'Edit'}>
-                                        {(field.label === 'Name' || field.label === 'Department') &&
-                                            (editField === field.label ? (
-                                                <Button
-                                                    variant='contained'
-                                                    sx={{
-                                                        textTransform: 'none',
-                                                        fontFamily: 'Cambria, serif',
-                                                        backgroundColor: '#E22A90',
-                                                        padding: '0px',
-                                                        marginBottom: '4px'
-                                                    }}
-                                                    className={customization.isDarkMode ? 'button-upgrade-dark' : 'button-upgrade-light'}
-                                                    onClick={handleSave}
-                                                >
-                                                    Save11
-                                                </Button>
-                                            ) : (
-                                                <IconEdit
-                                                    onClick={() => handleEditClick(field.label)}
-                                                    className={customization.isDarkMode ? 'edit-dark' : 'edit-light'}
-                                                />
-                                            ))}
-                                    </Tooltip>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {userFields.map((field) => {
+                            const isEditable = field.key === 'name' || field.key === 'department'
+
+                            return (
+                                <TableRow key={field.key}>
+                                    <TableCell sx={{ fontFamily: 'Cambria Math', fontSize: 18 }}>{field.label}</TableCell>
+
+                                    <TableCell sx={{ fontFamily: 'Cambria Math', fontSize: 18 }}>
+                                        {editField === field.key ? (
+                                            <input
+                                                value={editValue}
+                                                onChange={(e) => setEditValue(e.target.value)}
+                                                style={{ width: '100%' }}
+                                            />
+                                        ) : (
+                                            user?.[field.key] ?? 'N/A'
+                                        )}
+                                    </TableCell>
+
+                                    <TableCell>
+                                        {isEditable && (
+                                            <Tooltip title={editField === field.key ? 'Save' : 'Edit'}>
+                                                {editField === field.key ? (
+                                                    <Button
+                                                        variant='contained'
+                                                        size='small'
+                                                        onClick={handleSave}
+                                                        sx={{
+                                                            textTransform: 'none',
+                                                            backgroundColor: '#E22A90'
+                                                        }}
+                                                    >
+                                                        Save
+                                                    </Button>
+                                                ) : (
+                                                    <IconEdit
+                                                        className={customization.isDarkMode ? 'edit-dark' : 'edit-light'}
+                                                        onClick={() => handleEditClick(field)}
+                                                    />
+                                                )}
+                                            </Tooltip>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>
-        </>
+        </MainCard>
     )
 }
 

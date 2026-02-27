@@ -41,7 +41,7 @@ export class OpenTelemetry implements IMetricsProvider {
         const flowiseVersion = await getVersion()
 
         this.resource = new Resource({
-            [ATTR_SERVICE_NAME]: process.env.METRICS_SERVICE_NAME || 'FlowiseAI',
+            [ATTR_SERVICE_NAME]: process.env.METRICS_SERVICE_NAME || 'THub',
             [ATTR_SERVICE_VERSION]: flowiseVersion.version // Version as a label
         })
 
@@ -74,7 +74,7 @@ export class OpenTelemetry implements IMetricsProvider {
         // for each counter in the enum, create a new promClient.Counter and add it to the registry
         const enumEntries = Object.entries(FLOWISE_METRIC_COUNTERS)
         enumEntries.forEach(([name, value]) => {
-            // derive proper counter name from the enum value (chatflow_created = Workflow Created)
+            // derive proper counter name from the enum value (chatflow_created = Chatflow Created)
             const properCounterName: string = name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
             this.counters.set(
                 value,
@@ -87,7 +87,7 @@ export class OpenTelemetry implements IMetricsProvider {
         // in addition to the enum counters, add a few more custom counters
 
         const versionGuage = meter.createGauge('flowise_version', {
-            description: 'THub version'
+            description: 'Flowise version'
         })
         // remove the last dot from the version string, e.g. 2.1.3 -> 2.13 (guage needs a number - float)
         const formattedVersion = flowiseVersion.version.replace(/\.(\d+)$/, '$1')

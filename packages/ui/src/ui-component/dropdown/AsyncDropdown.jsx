@@ -5,7 +5,7 @@ import axios from 'axios'
 
 // Material
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete'
-import { Popper, CircularProgress, TextField, Box, Typography } from '@mui/material'
+import { Popper, CircularProgress, TextField, Box, Typography, Tooltip } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
 // API
@@ -31,17 +31,25 @@ const StyledPopper = styled(Popper)({
 const fetchList = async ({ tenantId, name, nodeData, previousNodes, currentNode }) => {
     const selectedParam = nodeData.inputParams.find((param) => param.name === name)
     const loadMethod = selectedParam?.loadMethod
-    const username = localStorage.getItem('username')
-    const password = localStorage.getItem('password')
+
+    let credentialId = nodeData.credential
+    if (!credentialId && (nodeData.inputs?.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID'])) {
+        credentialId = nodeData.inputs.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID']
+    }
+
+    let config = {
+        headers: {
+            'x-request-from': 'internal',
+            'Content-type': 'application/json'
+        },
+        withCredentials: true
+    }
 
     let lists = await axios
         .post(
             `${baseURL}/api/v1/node-load-method/${nodeData.name}`,
-            { ...nodeData, loadMethod, previousNodes, currentNode },
-            {
-                auth: username && password ? { username, password } : undefined,
-                headers: { 'Content-type': 'application/json', 'x-request-from': 'internal' }
-            }
+            { ...nodeData, loadMethod, previousNodes, currentNode, credential: credentialId, tenantId },
+            config
         )
         .then(async function (response) {
             return response.data
@@ -63,7 +71,8 @@ export const AsyncDropdown = ({
     disabled = false,
     freeSolo = false,
     disableClearable = false,
-    multiple = false
+    multiple = false,
+    fullWidth = false
 }) => {
     const customization = useSelector((state) => state.customization)
     const userData = useSelector((state) => state.user.userData)
@@ -72,6 +81,7 @@ export const AsyncDropdown = ({
     const [open, setOpen] = useState(false)
     const [options, setOptions] = useState([])
     const [loading, setLoading] = useState(false)
+
     const findMatchingOptions = (options = [], value) => {
         if (multiple) {
             let values = []
@@ -84,6 +94,7 @@ export const AsyncDropdown = ({
         }
         return options.find((option) => option.name === value)
     }
+
     const getDefaultOptionValue = () => (multiple ? [] : '')
     const addNewOption = [{ label: '- Create New -', name: '-create-' }]
     let [internalValue, setInternalValue] = useState(value ?? 'choose an option')
@@ -158,8 +169,31 @@ export const AsyncDropdown = ({
                         response[j].imageSrc = imageSrc
                     }
                 }
-                if (isCreateNewOption) setOptions([...response, ...addNewOption])
-                else setOptions([...response])
+
+                let finalOptions = []
+                if (isCreateNewOption) {
+                    finalOptions = [...response, ...addNewOption]
+                } else {
+                    finalOptions = [...response]
+                }
+
+                setOptions(finalOptions)
+
+                // Auto-select first option if no value is set and options are available
+                if ((!value || value === 'choose an option') && response.length > 0) {
+                    if (multiple) {
+                        // For multiple selection, select the first option as an array
+                        const firstOptionValue = JSON.stringify([response[0].name])
+                        setInternalValue(firstOptionValue)
+                        onSelect(firstOptionValue)
+                    } else {
+                        // For single selection, select the first option
+                        const firstOptionValue = response[0].name
+                        setInternalValue(firstOptionValue)
+                        onSelect(firstOptionValue)
+                    }
+                }
+
                 setLoading(false)
             }
             fetchData()
@@ -213,12 +247,22 @@ export const AsyncDropdown = ({
                     const matchingOptions = multiple
                         ? findMatchingOptions(options, internalValue)
                         : [findMatchingOptions(options, internalValue)].filter(Boolean)
-                    return (
+
+                    const textField = (
                         <TextField
                             id='standard-basic'
                             variant='standard'
                             {...params}
                             value={internalValue}
+                            sx={{
+                                height: '100%',
+                                '& .MuiInputBase-root': {
+                                    height: '100%'
+                                    // '& fieldset': {
+                                    //     borderColor: theme.palette.grey[900] + 25
+                                    // }
+                                }
+                            }}
                             InputProps={{
                                 ...params.InputProps,
                                 disableUnderline: true,
@@ -257,6 +301,20 @@ export const AsyncDropdown = ({
                                 }
                             }}
                         />
+                    )
+
+                    return !multiple ? (
+                        textField
+                    ) : (
+                        <Tooltip
+                            title={
+                                typeof internalValue === 'string' ? internalValue.replace(/[[\]"]/g, '').replace(/,/g, ', ') : internalValue
+                            }
+                            placement='top'
+                            arrow
+                        >
+                            {textField}
+                        </Tooltip>
                     )
                 }}
                 renderOption={(props, option) => (
@@ -297,5 +355,6 @@ AsyncDropdown.propTypes = {
     credentialNames: PropTypes.array,
     disableClearable: PropTypes.bool,
     isCreateNewOption: PropTypes.bool,
-    multiple: PropTypes.bool
+    multiple: PropTypes.bool,
+    fullWidth: PropTypes.bool
 }

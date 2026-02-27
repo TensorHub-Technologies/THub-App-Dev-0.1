@@ -93,12 +93,12 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<IUploadC
         'seqStart'
     ]
 
-    const isAgentflow = nodes.some((node) => node.data.category === 'Agent Pipeline')
+    const isAgentflow = nodes.some((node) => node.data.category === 'Agent Studio')
 
     if (isAgentflow) {
         // check through all the nodes and check if any of the nodes data inputs agentModelConfig or llmModelConfig or conditionAgentModelConfig has allowImageUploads
         nodes.forEach((node) => {
-            if (node.data.category === 'Agent Pipeline') {
+            if (node.data.category === 'Agent Studio') {
                 if (
                     node.data.inputs?.agentModelConfig?.allowImageUploads ||
                     node.data.inputs?.llmModelConfig?.allowImageUploads ||

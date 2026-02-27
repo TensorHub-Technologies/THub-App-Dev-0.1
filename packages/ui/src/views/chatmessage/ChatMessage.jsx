@@ -38,7 +38,8 @@ import {
     IconSquareFilled,
     IconCheck,
     IconPaperclip,
-    IconSparkles
+    IconSparkles,
+    IconVolume
 } from '@tabler/icons-react'
 import robotPNG from '@/assets/images/THub_icon_colorful_logo.png'
 import PersonIcon from '@mui/icons-material/Person'
@@ -49,6 +50,7 @@ import audioUploadSVG from '@/assets/images/wave-sound.jpg'
 // project import
 import NodeInputHandler from '@/views/canvas/NodeInputHandler'
 import { MemoizedReactMarkdown } from '@/ui-component/markdown/MemoizedReactMarkdown'
+import { SafeHTML } from '@/ui-component/safe/SafeHTML'
 import SourceDocDialog from '@/ui-component/dialog/SourceDocDialog'
 import ChatFeedbackContentDialog from '@/ui-component/dialog/ChatFeedbackContentDialog'
 import StarterPromptsCard from '@/ui-component/cards/StarterPromptsCard'
@@ -72,6 +74,7 @@ import attachmentsApi from '@/api/attachments'
 import chatmessagefeedbackApi from '@/api/chatmessagefeedback'
 import leadsApi from '@/api/lead'
 import executionsApi from '@/api/executions'
+import ttsApi from '@/api/tts'
 
 // Hooks
 import useApi from '@/hooks/useApi'
@@ -174,6 +177,9 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const dispatch = useDispatch()
     const { onAgentflowNodeStatusUpdate, clearAgentflowNodeStatus } = useContext(flowContext)
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
+
     useNotifier()
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
@@ -258,6 +264,27 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const [formInputParams, setFormInputParams] = useState([])
 
     const [isConfigLoading, setIsConfigLoading] = useState(true)
+
+    // TTS state
+    const [isTTSLoading, setIsTTSLoading] = useState({})
+    const [isTTSPlaying, setIsTTSPlaying] = useState({})
+    const [ttsAudio, setTtsAudio] = useState({})
+    const [isTTSEnabled, setIsTTSEnabled] = useState(false)
+
+    // TTS streaming state
+    const [ttsStreamingState, setTtsStreamingState] = useState({
+        mediaSource: null,
+        sourceBuffer: null,
+        audio: null,
+        chunkQueue: [],
+        isBuffering: false,
+        audioFormat: null,
+        abortController: null
+    })
+
+    // Ref to prevent auto-scroll during TTS actions (using ref to avoid re-renders)
+    const isTTSActionRef = useRef(false)
+    const ttsTimeoutRef = useRef(null)
 
     const isFileAllowedForUpload = (file) => {
         const constraints = getAllowChatFlowUploads.data
@@ -471,7 +498,12 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const handleAbort = async () => {
         setIsMessageStopping(true)
         try {
+            // Stop all TTS streams first
+            await handleTTSAbortAll()
+            stopAllTTS()
+
             await chatmessageApi.abortMessage(chatflowid, chatId)
+            setIsMessageStopping(false)
         } catch (error) {
             setIsMessageStopping(false)
             enqueueSnackbar({
@@ -524,8 +556,6 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         setRecordingNotSupported(false)
     }
 
-    console.log('rec', rec)
-
     const onRecordingStopped = async () => {
         setRec(true)
         setIsLoadingRecording(true)
@@ -544,6 +574,22 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const scrollToBottom = () => {
         if (ps.current) {
             ps.current.scrollTo({ top: maxScroll })
+        }
+    }
+
+    // Helper function to manage TTS action flag
+    const setTTSAction = (isActive) => {
+        isTTSActionRef.current = isActive
+        if (ttsTimeoutRef.current) {
+            clearTimeout(ttsTimeoutRef.current)
+            ttsTimeoutRef.current = null
+        }
+        if (isActive) {
+            // Reset the flag after a longer delay to ensure all state changes are complete
+            ttsTimeoutRef.current = setTimeout(() => {
+                isTTSActionRef.current = false
+                ttsTimeoutRef.current = null
+            }, 300)
         }
     }
 
@@ -654,7 +700,56 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         setMessages((prevMessages) => {
             let allMessages = [...cloneDeep(prevMessages)]
             if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+
+            // When usedTools are received, check if there are matching calledTools to replace
+            const lastMessage = allMessages[allMessages.length - 1]
+            if (lastMessage.calledTools && lastMessage.calledTools.length > 0) {
+                // Parse calledTools if it's a string
+                const parsedCalledTools =
+                    typeof lastMessage?.calledTools === 'string' ? JSON.parse(lastMessage.calledTools) : lastMessage.calledTools || []
+
+                const updatedCalledTools = parsedCalledTools.map((calledTool) => {
+                    const matchingUsedTool = usedTools.find((usedTool) => usedTool.tool === calledTool.name)
+                    return matchingUsedTool || calledTool
+                })
+
+                // Remove calledTools that have been replaced by usedTools
+                const remainingCalledTools = updatedCalledTools.filter(
+                    (calledTool) => !usedTools.some((usedTool) => usedTool.tool === calledTool.name)
+                )
+
+                allMessages[allMessages.length - 1].calledTools = remainingCalledTools.length > 0 ? remainingCalledTools : undefined
+            }
+
             allMessages[allMessages.length - 1].usedTools = usedTools
+            return allMessages
+        })
+    }
+
+    const updateLastMessageCalledTools = (calledTools) => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            allMessages[allMessages.length - 1].calledTools = calledTools
+            return allMessages
+        })
+    }
+
+    const cleanupCalledTools = () => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+
+            // Remove any remaining calledTools when the stream ends
+            const lastMessage = allMessages[allMessages.length - 1]
+            if (lastMessage && lastMessage.calledTools && lastMessage.calledTools.length > 0) {
+                // Only remove if there are still calledTools and no matching usedTools
+                const hasUsedTools = lastMessage.usedTools && lastMessage.usedTools.length > 0
+                if (!hasUsedTools) {
+                    allMessages[allMessages.length - 1].calledTools = undefined
+                }
+            }
+
             return allMessages
         })
     }
@@ -677,6 +772,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             if (lastAgentReasoning && lastAgentReasoning.length > 0) {
                 allMessages[allMessages.length - 1].agentReasoning = lastAgentReasoning.filter((reasoning) => !reasoning.nextAgent)
             }
+            allMessages[allMessages.length - 1].calledTools = undefined
             return allMessages
         })
         setTimeout(() => {
@@ -908,12 +1004,12 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
 
         clearPreviews()
         setMessages((prevMessages) => [...prevMessages, { message: input, type: 'userMessage', fileUploads: uploads }])
-
         // Send user question to Prediction Internal API
         try {
             const params = {
                 question: input,
-                chatId
+                chatId,
+                tenantId
             }
             if (typeof selectedInput === 'object') {
                 params.form = selectedInput
@@ -975,8 +1071,6 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const fetchResponseFromEventStream = async (chatflowid, params) => {
         const chatId = params.chatId
         const input = params.question
-        const username = localStorage.getItem('username')
-        const password = localStorage.getItem('password')
         params.streaming = true
         await fetchEventSource(`${baseURL}/api/v1/internal-prediction/${chatflowid}`, {
             openWhenHidden: true,
@@ -984,7 +1078,6 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             body: JSON.stringify(params),
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: username && password ? `Basic ${btoa(`${username}:${password}`)}` : undefined,
                 'x-request-from': 'internal'
             },
             async onopen(response) {
@@ -1006,6 +1099,9 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                         break
                     case 'usedTools':
                         updateLastMessageUsedTools(payload.data)
+                        break
+                    case 'calledTools':
+                        updateLastMessageCalledTools(payload.data)
                         break
                     case 'fileAnnotations':
                         updateLastMessageFileAnnotations(payload.data)
@@ -1041,13 +1137,27 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                         abortMessage(payload.data)
                         closeResponse()
                         break
+                    case 'tts_start':
+                        handleTTSStart(payload.data)
+                        break
+                    case 'tts_data':
+                        handleTTSDataChunk(payload.data.audioChunk)
+                        break
+                    case 'tts_end':
+                        handleTTSEnd()
+                        break
+                    case 'tts_abort':
+                        handleTTSAbort(payload.data)
+                        break
                     case 'end':
+                        cleanupCalledTools()
                         setLocalStorageChatflow(chatflowid, chatId)
                         closeResponse()
                         break
                 }
             },
             async onclose() {
+                cleanupCalledTools()
                 closeResponse()
             },
             async onerror(err) {
@@ -1059,6 +1169,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     }
 
     const closeResponse = () => {
+        cleanupCalledTools()
         setLoading(false)
         setUserInput('')
         setUploadedFiles([])
@@ -1159,6 +1270,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 }
                 if (message.sourceDocuments) obj.sourceDocuments = message.sourceDocuments
                 if (message.usedTools) obj.usedTools = message.usedTools
+                if (message.calledTools) obj.calledTools = message.calledTools
                 if (message.fileAnnotations) obj.fileAnnotations = message.fileAnnotations
                 if (message.agentReasoning) obj.agentReasoning = message.agentReasoning
                 if (message.action) obj.action = message.action
@@ -1307,6 +1419,30 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 }
             }
         }
+
+        // Check if TTS is configured
+        if (getChatflowConfig.data && getChatflowConfig.data.textToSpeech) {
+            try {
+                const ttsConfig =
+                    typeof getChatflowConfig.data.textToSpeech === 'string'
+                        ? JSON.parse(getChatflowConfig.data.textToSpeech)
+                        : getChatflowConfig.data.textToSpeech
+
+                let isEnabled = false
+                if (ttsConfig) {
+                    Object.keys(ttsConfig).forEach((provider) => {
+                        if (provider !== 'none' && ttsConfig?.[provider]?.status) {
+                            isEnabled = true
+                        }
+                    })
+                }
+                setIsTTSEnabled(isEnabled)
+            } catch (error) {
+                setIsTTSEnabled(false)
+            }
+        } else {
+            setIsTTSEnabled(false)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getChatflowConfig.data])
 
@@ -1327,9 +1463,11 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         }
     }, [isChatFlowAvailableForRAGFileUploads, fullFileUpload])
 
-    // Auto scroll chat to bottom
+    // Auto scroll chat to bottom (but not during TTS actions)
     useEffect(() => {
-        scrollToBottom()
+        if (!isTTSActionRef.current) {
+            scrollToBottom()
+        }
     }, [messages])
 
     useEffect(() => {
@@ -1511,8 +1649,450 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 return allMessages
             })
         }
+
         setIsLeadSaving(false)
     }
+
+    const cleanupTTSForMessage = (messageId) => {
+        if (ttsAudio[messageId]) {
+            ttsAudio[messageId].pause()
+            ttsAudio[messageId].currentTime = 0
+            setTtsAudio((prev) => {
+                const newState = { ...prev }
+                delete newState[messageId]
+                return newState
+            })
+        }
+
+        if (ttsStreamingState.audio) {
+            ttsStreamingState.audio.pause()
+            cleanupTTSStreaming()
+        }
+
+        setIsTTSPlaying((prev) => {
+            const newState = { ...prev }
+            delete newState[messageId]
+            return newState
+        })
+
+        setIsTTSLoading((prev) => {
+            const newState = { ...prev }
+            delete newState[messageId]
+            return newState
+        })
+    }
+
+    const handleTTSStop = async (messageId) => {
+        setTTSAction(true)
+        await ttsApi.abortTTS({ chatflowId: chatflowid, chatId, chatMessageId: messageId })
+        cleanupTTSForMessage(messageId)
+        setIsMessageStopping(false)
+    }
+
+    const stopAllTTS = () => {
+        Object.keys(ttsAudio).forEach((messageId) => {
+            if (ttsAudio[messageId]) {
+                ttsAudio[messageId].pause()
+                ttsAudio[messageId].currentTime = 0
+            }
+        })
+        setTtsAudio({})
+
+        if (ttsStreamingState.abortController) {
+            ttsStreamingState.abortController.abort()
+        }
+
+        if (ttsStreamingState.audio) {
+            ttsStreamingState.audio.pause()
+            cleanupTTSStreaming()
+        }
+
+        setIsTTSPlaying({})
+        setIsTTSLoading({})
+    }
+
+    const handleTTSClick = async (messageId, messageText) => {
+        if (isTTSLoading[messageId]) return
+
+        if (isTTSPlaying[messageId] || ttsAudio[messageId]) {
+            handleTTSStop(messageId)
+            return
+        }
+
+        setTTSAction(true)
+
+        // abort all ongoing streams and clear audio sources
+        await handleTTSAbortAll()
+        stopAllTTS()
+
+        handleTTSStart({ chatMessageId: messageId, format: 'mp3' })
+        try {
+            const abortController = new AbortController()
+            setTtsStreamingState((prev) => ({ ...prev, abortController }))
+
+            const response = await fetch('/api/v1/text-to-speech/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-request-from': 'internal'
+                },
+                credentials: 'include',
+                signal: abortController.signal,
+                body: JSON.stringify({
+                    chatflowId: chatflowid,
+                    chatId: chatId,
+                    chatMessageId: messageId,
+                    text: messageText
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error(`TTS request failed: ${response.status}`)
+            }
+
+            const reader = response.body.getReader()
+            const decoder = new TextDecoder()
+            let buffer = ''
+
+            let done = false
+            while (!done) {
+                if (abortController.signal.aborted) {
+                    break
+                }
+
+                const result = await reader.read()
+                done = result.done
+                if (done) {
+                    break
+                }
+                const value = result.value
+                const chunk = decoder.decode(value, { stream: true })
+                buffer += chunk
+
+                const lines = buffer.split('\n\n')
+                buffer = lines.pop() || ''
+
+                for (const eventBlock of lines) {
+                    if (eventBlock.trim()) {
+                        const event = parseSSEEvent(eventBlock)
+                        if (event) {
+                            switch (event.event) {
+                                case 'tts_start':
+                                    break
+                                case 'tts_data':
+                                    if (!abortController.signal.aborted) {
+                                        handleTTSDataChunk(event.data.audioChunk)
+                                    }
+                                    break
+                                case 'tts_end':
+                                    if (!abortController.signal.aborted) {
+                                        handleTTSEnd()
+                                    }
+                                    break
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.error('TTS request was aborted')
+            } else {
+                console.error('Error with TTS:', error)
+                enqueueSnackbar({
+                    message: `TTS failed: ${error.message}`,
+                    options: { variant: 'error' }
+                })
+            }
+        } finally {
+            setIsTTSLoading((prev) => {
+                const newState = { ...prev }
+                delete newState[messageId]
+                return newState
+            })
+        }
+    }
+
+    const parseSSEEvent = (eventBlock) => {
+        const lines = eventBlock.split('\n')
+        const event = {}
+
+        for (const line of lines) {
+            if (line.startsWith('event:')) {
+                event.event = line.substring(6).trim()
+            } else if (line.startsWith('data:')) {
+                const dataStr = line.substring(5).trim()
+                try {
+                    const parsed = JSON.parse(dataStr)
+                    if (parsed.data) {
+                        event.data = parsed.data
+                    }
+                } catch (e) {
+                    console.error('Error parsing SSE data:', e, 'Raw data:', dataStr)
+                }
+            }
+        }
+
+        return event.event ? event : null
+    }
+
+    const initializeTTSStreaming = (data) => {
+        try {
+            const mediaSource = new MediaSource()
+            const audio = new Audio()
+            audio.src = URL.createObjectURL(mediaSource)
+
+            mediaSource.addEventListener('sourceopen', () => {
+                try {
+                    const mimeType = data.format === 'mp3' ? 'audio/mpeg' : 'audio/mpeg'
+                    const sourceBuffer = mediaSource.addSourceBuffer(mimeType)
+
+                    setTtsStreamingState((prevState) => ({
+                        ...prevState,
+                        mediaSource,
+                        sourceBuffer,
+                        audio
+                    }))
+
+                    audio.play().catch((playError) => {
+                        console.error('Error starting audio playback:', playError)
+                    })
+                } catch (error) {
+                    console.error('Error setting up source buffer:', error)
+                    console.error('MediaSource readyState:', mediaSource.readyState)
+                    console.error('Requested MIME type:', mimeType)
+                }
+            })
+
+            audio.addEventListener('playing', () => {
+                setIsTTSLoading((prevState) => {
+                    const newState = { ...prevState }
+                    delete newState[data.chatMessageId]
+                    return newState
+                })
+                setIsTTSPlaying((prevState) => ({
+                    ...prevState,
+                    [data.chatMessageId]: true
+                }))
+            })
+
+            audio.addEventListener('ended', () => {
+                setIsTTSPlaying((prevState) => {
+                    const newState = { ...prevState }
+                    delete newState[data.chatMessageId]
+                    return newState
+                })
+                cleanupTTSStreaming()
+            })
+        } catch (error) {
+            console.error('Error initializing TTS streaming:', error)
+        }
+    }
+
+    const cleanupTTSStreaming = () => {
+        setTtsStreamingState((prevState) => {
+            if (prevState.abortController) {
+                prevState.abortController.abort()
+            }
+
+            if (prevState.audio) {
+                prevState.audio.pause()
+                prevState.audio.removeAttribute('src')
+                if (prevState.audio.src) {
+                    URL.revokeObjectURL(prevState.audio.src)
+                }
+            }
+
+            if (prevState.mediaSource) {
+                if (prevState.mediaSource.readyState === 'open') {
+                    try {
+                        prevState.mediaSource.endOfStream()
+                    } catch (e) {
+                        // Ignore errors during cleanup
+                    }
+                }
+                prevState.mediaSource.removeEventListener('sourceopen', () => {})
+            }
+
+            return {
+                mediaSource: null,
+                sourceBuffer: null,
+                audio: null,
+                chunkQueue: [],
+                isBuffering: false,
+                audioFormat: null,
+                abortController: null
+            }
+        })
+    }
+
+    const processChunkQueue = () => {
+        setTtsStreamingState((prevState) => {
+            if (!prevState.sourceBuffer || prevState.sourceBuffer.updating || prevState.chunkQueue.length === 0) {
+                return prevState
+            }
+
+            const chunk = prevState.chunkQueue.shift()
+
+            try {
+                prevState.sourceBuffer.appendBuffer(chunk)
+                return {
+                    ...prevState,
+                    chunkQueue: [...prevState.chunkQueue],
+                    isBuffering: true
+                }
+            } catch (error) {
+                console.error('Error appending chunk to buffer:', error)
+                return prevState
+            }
+        })
+    }
+
+    const handleTTSStart = (data) => {
+        setTTSAction(true)
+
+        // Stop all existing TTS audio before starting new stream
+        stopAllTTS()
+
+        setIsTTSLoading((prevState) => ({
+            ...prevState,
+            [data.chatMessageId]: true
+        }))
+        setMessages((prevMessages) => {
+            const allMessages = [...cloneDeep(prevMessages)]
+            const lastMessage = allMessages[allMessages.length - 1]
+            if (lastMessage.type === 'userMessage') return allMessages
+            if (lastMessage.id) return allMessages
+            allMessages[allMessages.length - 1].id = data.chatMessageId
+            return allMessages
+        })
+        setTtsStreamingState({
+            mediaSource: null,
+            sourceBuffer: null,
+            audio: null,
+            chunkQueue: [],
+            isBuffering: false,
+            audioFormat: data.format,
+            abortController: null
+        })
+
+        setTimeout(() => initializeTTSStreaming(data), 0)
+    }
+
+    const handleTTSDataChunk = (base64Data) => {
+        try {
+            const audioBuffer = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0))
+
+            setTtsStreamingState((prevState) => {
+                const newState = {
+                    ...prevState,
+                    chunkQueue: [...prevState.chunkQueue, audioBuffer]
+                }
+
+                if (prevState.sourceBuffer && !prevState.sourceBuffer.updating) {
+                    setTimeout(() => processChunkQueue(), 0)
+                }
+
+                return newState
+            })
+        } catch (error) {
+            console.error('Error handling TTS data chunk:', error)
+        }
+    }
+
+    const handleTTSEnd = () => {
+        setTtsStreamingState((prevState) => {
+            if (prevState.mediaSource && prevState.mediaSource.readyState === 'open') {
+                try {
+                    if (prevState.sourceBuffer && prevState.chunkQueue.length > 0 && !prevState.sourceBuffer.updating) {
+                        const remainingChunks = [...prevState.chunkQueue]
+                        remainingChunks.forEach((chunk, index) => {
+                            setTimeout(() => {
+                                if (prevState.sourceBuffer && !prevState.sourceBuffer.updating) {
+                                    try {
+                                        prevState.sourceBuffer.appendBuffer(chunk)
+                                        if (index === remainingChunks.length - 1) {
+                                            setTimeout(() => {
+                                                if (prevState.mediaSource && prevState.mediaSource.readyState === 'open') {
+                                                    prevState.mediaSource.endOfStream()
+                                                }
+                                            }, 100)
+                                        }
+                                    } catch (error) {
+                                        console.error('Error appending remaining chunk:', error)
+                                    }
+                                }
+                            }, index * 50)
+                        })
+                        return {
+                            ...prevState,
+                            chunkQueue: []
+                        }
+                    }
+
+                    if (prevState.sourceBuffer && !prevState.sourceBuffer.updating) {
+                        prevState.mediaSource.endOfStream()
+                    } else if (prevState.sourceBuffer) {
+                        prevState.sourceBuffer.addEventListener(
+                            'updateend',
+                            () => {
+                                if (prevState.mediaSource && prevState.mediaSource.readyState === 'open') {
+                                    prevState.mediaSource.endOfStream()
+                                }
+                            },
+                            { once: true }
+                        )
+                    }
+                } catch (error) {
+                    console.error('Error ending TTS stream:', error)
+                }
+            }
+            return prevState
+        })
+    }
+
+    const handleTTSAbort = (data) => {
+        const messageId = data.chatMessageId
+        cleanupTTSForMessage(messageId)
+    }
+
+    const handleTTSAbortAll = async () => {
+        const activeTTSMessages = Object.keys(isTTSLoading).concat(Object.keys(isTTSPlaying))
+        for (const messageId of activeTTSMessages) {
+            await ttsApi.abortTTS({ chatflowId: chatflowid, chatId, chatMessageId: messageId })
+        }
+    }
+
+    useEffect(() => {
+        if (ttsStreamingState.sourceBuffer) {
+            const sourceBuffer = ttsStreamingState.sourceBuffer
+
+            const handleUpdateEnd = () => {
+                setTtsStreamingState((prevState) => ({
+                    ...prevState,
+                    isBuffering: false
+                }))
+                setTimeout(() => processChunkQueue(), 0)
+            }
+
+            sourceBuffer.addEventListener('updateend', handleUpdateEnd)
+
+            return () => {
+                sourceBuffer.removeEventListener('updateend', handleUpdateEnd)
+            }
+        }
+    }, [ttsStreamingState.sourceBuffer])
+
+    useEffect(() => {
+        return () => {
+            cleanupTTSStreaming()
+            // Cleanup TTS timeout on unmount
+            if (ttsTimeoutRef.current) {
+                clearTimeout(ttsTimeoutRef.current)
+                ttsTimeoutRef.current = null
+            }
+        }
+    }, [])
 
     const getInputDisabled = () => {
         return (
@@ -1674,7 +2254,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         } else if (item.type === 'html') {
             return (
                 <div style={{ marginTop: '20px' }}>
-                    <div dangerouslySetInnerHTML={{ __html: item.data }}></div>
+                    <SafeHTML html={item.data} />
                 </div>
             )
         } else {
@@ -1730,9 +2310,11 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 clearPreviews()
                 setMessages((prevMessages) => [...prevMessages, { message: transcript, type: 'userMessage' }])
 
+                const tenantId = userData?.uid || localStorage.getItem('userId')
                 const params = {
                     question: transcript,
-                    chatId: chatflowid
+                    chatId: chatflowid,
+                    tenantId: tenantId
                 }
                 questions.current += 1
                 const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
@@ -2039,6 +2621,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                         removeDuplicateURL={removeDuplicateURL}
                                                         isValidURL={isValidURL}
                                                         onURLClick={onURLClick}
+                                                        getLabel={getLabel}
                                                     />
                                                 ))}
                                             </div>
@@ -2053,6 +2636,57 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                     sessionId={chatId}
                                                 />
                                             )}
+                                        {message.calledTools && (
+                                            <div
+                                                style={{
+                                                    display: 'block',
+                                                    flexDirection: 'row',
+                                                    width: '100%'
+                                                }}
+                                            >
+                                                {(() => {
+                                                    try {
+                                                        const calledTools =
+                                                            typeof message?.calledTools === 'string'
+                                                                ? JSON.parse(message.calledTools)
+                                                                : message?.calledTools || []
+
+                                                        return (
+                                                            Array.isArray(calledTools) &&
+                                                            calledTools.map((tool, index) => {
+                                                                return tool ? (
+                                                                    <Chip
+                                                                        size='small'
+                                                                        key={`called-${index}`}
+                                                                        label={tool.name} // Note: it's 'name' not 'tool' based on your response
+                                                                        component='a'
+                                                                        sx={{
+                                                                            mr: 1,
+                                                                            mt: 1,
+                                                                            borderColor: 'primary.main',
+                                                                            color: 'primary.main',
+                                                                            backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                                                                            opacity: 0.9,
+                                                                            '&:hover': {
+                                                                                backgroundColor: 'rgba(25, 118, 210, 0.2)',
+                                                                                opacity: 1
+                                                                            }
+                                                                        }}
+                                                                        variant='outlined'
+                                                                        clickable
+                                                                        icon={<CircularProgress size={15} color='primary' />}
+                                                                        onClick={() => onSourceDialogClick(tool, 'Called Tools')}
+                                                                    />
+                                                                ) : null
+                                                            })
+                                                        )
+                                                    } catch (error) {
+                                                        console.error('Error parsing calledTools:', error)
+                                                        return null
+                                                    }
+                                                })()}
+                                            </div>
+                                        )}
                                         {message.usedTools && (
                                             <div
                                                 style={{
@@ -2065,7 +2699,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                     return tool ? (
                                                         <Chip
                                                             size='small'
-                                                            key={index}
+                                                            key={`used-${index}`}
                                                             label={tool.tool}
                                                             component='a'
                                                             sx={{
@@ -2310,7 +2944,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                 })}
                                             </div>
                                         )}
-                                        {message.type === 'apiMessage' && message.id && chatFeedbackStatus ? (
+                                        {message.type === 'apiMessage' && message.id ? (
                                             <>
                                                 <Box
                                                     sx={{
@@ -2320,25 +2954,62 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                         gap: 1
                                                     }}
                                                 >
-                                                    <CopyToClipboardButton onClick={() => copyMessageToClipboard(message.message)} />
-                                                    {!message.feedback ||
-                                                    message.feedback.rating === '' ||
-                                                    message.feedback.rating === 'THUMBS_UP' ? (
-                                                        <ThumbsUpButton
-                                                            isDisabled={message.feedback && message.feedback.rating === 'THUMBS_UP'}
-                                                            rating={message.feedback ? message.feedback.rating : ''}
-                                                            onClick={() => onThumbsUpClick(message.id)}
-                                                        />
-                                                    ) : null}
-                                                    {!message.feedback ||
-                                                    message.feedback.rating === '' ||
-                                                    message.feedback.rating === 'THUMBS_DOWN' ? (
-                                                        <ThumbsDownButton
-                                                            isDisabled={message.feedback && message.feedback.rating === 'THUMBS_DOWN'}
-                                                            rating={message.feedback ? message.feedback.rating : ''}
-                                                            onClick={() => onThumbsDownClick(message.id)}
-                                                        />
-                                                    ) : null}
+                                                    {isTTSEnabled && (
+                                                        <IconButton
+                                                            size='small'
+                                                            onClick={() =>
+                                                                isTTSPlaying[message.id]
+                                                                    ? handleTTSStop(message.id)
+                                                                    : handleTTSClick(message.id, message.message)
+                                                            }
+                                                            disabled={isTTSLoading[message.id]}
+                                                            sx={{
+                                                                backgroundColor: ttsAudio[message.id] ? 'primary.main' : 'transparent',
+                                                                color: ttsAudio[message.id] ? 'white' : 'inherit',
+                                                                '&:hover': {
+                                                                    backgroundColor: ttsAudio[message.id] ? 'primary.dark' : 'action.hover'
+                                                                }
+                                                            }}
+                                                        >
+                                                            {isTTSLoading[message.id] ? (
+                                                                <CircularProgress size={16} />
+                                                            ) : isTTSPlaying[message.id] ? (
+                                                                <IconCircleDot style={{ width: '20px', height: '20px' }} color={'red'} />
+                                                            ) : (
+                                                                <IconVolume
+                                                                    style={{ width: '20px', height: '20px' }}
+                                                                    color={customization.isDarkMode ? 'white' : '#1e88e5'}
+                                                                />
+                                                            )}
+                                                        </IconButton>
+                                                    )}
+                                                    {chatFeedbackStatus && (
+                                                        <>
+                                                            <CopyToClipboardButton
+                                                                onClick={() => copyMessageToClipboard(message.message)}
+                                                            />
+                                                            {!message.feedback ||
+                                                            message.feedback.rating === '' ||
+                                                            message.feedback.rating === 'THUMBS_UP' ? (
+                                                                <ThumbsUpButton
+                                                                    isDisabled={message.feedback && message.feedback.rating === 'THUMBS_UP'}
+                                                                    rating={message.feedback ? message.feedback.rating : ''}
+                                                                    onClick={() => onThumbsUpClick(message.id)}
+                                                                />
+                                                            ) : null}
+                                                            {!message.feedback ||
+                                                            message.feedback.rating === '' ||
+                                                            message.feedback.rating === 'THUMBS_DOWN' ? (
+                                                                <ThumbsDownButton
+                                                                    isDisabled={
+                                                                        message.feedback && message.feedback.rating === 'THUMBS_DOWN'
+                                                                    }
+                                                                    rating={message.feedback ? message.feedback.rating : ''}
+                                                                    onClick={() => onThumbsDownClick(message.id)}
+                                                                />
+                                                            ) : null}
+                                                        </>
+                                                    )}
                                                 </Box>
                                             </>
                                         ) : null}
@@ -2489,7 +3160,6 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                             </IconButton>
                                         </InputAdornment>
                                     )}
-
                                     {!isChatFlowAvailableForImageUploads && isChatFlowAvailableForFileUploads && (
                                         <InputAdornment position='start' sx={{ ml: 2 }}>
                                             <IconButton
@@ -2600,17 +3270,16 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                         <CircularProgress color='inherit' size={20} />
                                                     </div>
                                                 ) : (
-                                                    // !isListening && (
+                                                    // Send icon SVG in input field
                                                     <IconSend
                                                         color={
-                                                            loading || !chatflowid
+                                                            getInputDisabled()
                                                                 ? '#9e9e9e'
                                                                 : customization.isDarkMode
                                                                 ? '#A93B97'
                                                                 : '#1e88e5'
                                                         }
                                                     />
-                                                    // )
                                                 )}
                                             </IconButton>
                                         </InputAdornment>

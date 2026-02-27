@@ -61,13 +61,13 @@ const getSingleNodeAsyncOptions = async (req: Request, res: Response, next: Next
                 `Error: nodesController.getSingleNodeAsyncOptions - body not provided!`
             )
         }
-        if (typeof req.params === 'undefined' || !req.params.name) {
+        if (typeof req.params === 'undefined' || !req.params.name || !req.body.tenantId) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: nodesController.getSingleNodeAsyncOptions - name not provided!`
             )
         }
-        const apiResponse = await nodesService.getSingleNodeAsyncOptions(req.params.name, req.body)
+        const apiResponse = await nodesService.getSingleNodeAsyncOptions(req.params.name, req.body, req.body.tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

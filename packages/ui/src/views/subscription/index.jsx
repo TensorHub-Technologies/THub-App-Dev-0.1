@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import axios from 'axios'
 
 // project-imports
 import MainCard from '@/ui-component/cards/MainCard'
@@ -21,7 +20,7 @@ import { IconInfoCircle } from '@tabler/icons-react'
 import EnterpriceForm from './Enterprice_Form'
 
 // toastify
-import { ToastContainer, toast } from 'react-toastify'
+import toast, { Toaster } from 'react-hot-toast'
 
 // project import
 const Subscription = () => {
@@ -30,9 +29,11 @@ const Subscription = () => {
     const user = useSelector((state) => state.user.userData)
     const [selectedPlan, setSelectedPlan] = useState('monthly')
     const [sdkLoaded, setSdkLoaded] = useState(false)
-    const [currency, setCurrency] = useState('INR')
+    const [currency, setCurrency] = useState('USD')
     const [showForm, setShowForm] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
+    const [apiUrl, setApiUrl] = useState('')
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
     const [subscriptionDetails, setSubscriptionDetails] = useState({
         subscriptionType: user.subscription_type || '',
         subscriptionDuration: user.subscription_duration || '',
@@ -41,35 +42,29 @@ const Subscription = () => {
         isActive: true
     })
 
-    let apiUrl
-
-    if (window.location.hostname === 'demo.thub.tech') {
-        apiUrl = 'https://thub-web-server-demo-378678297066.us-central1.run.app'
-    } else if (window.location.hostname === 'localhost') {
-        apiUrl = 'http://localhost:2000'
-    } else {
-        apiUrl = 'https://thub-web-server-2-0-378678297066.us-central1.run.app'
-    }
-
     function generateReceiptId() {
         const timestamp = Date.now()
         const randomNum = Math.floor(Math.random() * 10000)
         return `R-${timestamp}-${randomNum}`
     }
     const getPrice = (plan) => {
-        return plan.prices[currency] || plan.prices['INR']
-    }
-
-    const getIncreasePrice = (plan) => {
-        if (plan.extraPrice) {
-            return plan.extraPrice[currency] || plan.extraPrice['INR']
-        }
-        return null
+        return plan.prices[currency] || plan.prices['USD']
     }
 
     const handleCurrencyChange = (selectedCurrency) => setCurrency(selectedCurrency)
 
     const receiptId = generateReceiptId()
+
+    useEffect(() => {
+        const loadRazorpayScript = () => {
+            const script = document.createElement('script')
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+            script.onload = () => setSdkLoaded(true)
+            script.onerror = () => console.error('Failed to load Razorpay SDK')
+            document.body.appendChild(script)
+        }
+        loadRazorpayScript()
+    }, [])
 
     const handleMonthly = () => {
         setSelectedPlan('monthly')
@@ -120,64 +115,130 @@ const Subscription = () => {
         })
     }, [user])
 
+    useEffect(() => {
+        let determinedUrl = ''
+
+        const hostname = window.location.hostname
+
+        if (hostname === 'localhost') {
+            determinedUrl = 'http://localhost:2000'
+        } else if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+        } else if (hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+            determinedUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+        } else {
+            determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
+        }
+
+        setApiUrl(determinedUrl)
+    }, [])
+
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()
-        console.log(planTitle, 'plan title')
+        if (isProcessingPayment) return
+        setIsProcessingPayment(true)
+        handleLoading(message)
         if (planTitle === 'Enterprise') {
             setShowForm(true)
+            setIsProcessingPayment(false)
             return
         }
-        handleLoading(message)
         let plan_Id = planId
         const uid = user.uid
 
-        const handleSubscribe = async (plan) => {
-            const requestData = {
-                txnid: 'TXN' + new Date().getTime(),
-                amount: plan.prices.INR.replace(/[^0-9.]/g, ''),
-                firstname: user.name,
-                user_id: user.uid,
-                email: user.email,
-                phone: user.phone || '',
-                productinfo: plan.title,
-                planId: plan.planId,
-                duration: plan.duration
-            }
+        const url = `${apiUrl}/create-subscription`
 
-            try {
-                const response = await axios.post(`${apiUrl}/api/payments/create-subscription`, requestData)
-                console.log(response, 'response from create-subscription')
-                const paymentData = response.data
-                // Create a form dynamically to post the paymentData to PayU's payment gateway
-                const form = document.createElement('form')
-                form.method = 'POST'
-                form.action = paymentData.action
-                Object.keys(paymentData).forEach((key) => {
-                    const input = document.createElement('input')
-                    input.type = 'hidden'
-                    input.name = key
-                    input.value = paymentData[key]
-                    form.appendChild(input)
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    planId: plan_Id,
+                    duration: duration,
+                    customerEmail: user.email,
+                    user_id: uid
                 })
+            })
 
-                document.body.appendChild(form)
-                form.submit()
-            } catch (error) {
-                console.error('Error initiating subscription:', error)
+            if (!response.ok) {
+                console.error('Failed to create subscription:', response.statusText)
+                setIsProcessingPayment(false)
+                return
             }
-        }
 
-        // Call handleSubscribe with the appropriate plan details
-        const selectedPlanDetails = pricingData[selectedPlan].find((plan) => plan.planId === planId)
-        if (selectedPlanDetails) {
-            await handleSubscribe(selectedPlanDetails)
+            const subscription = await response.json()
+            const userId = localStorage.getItem('userId') || user.uid
+
+            if (!window.Razorpay) {
+                alert('Razorpay SDK not loaded.')
+                return
+            }
+            var options = {
+                key: import.meta.env.VITE_RAZORPAY_API_LIVE_KEY,
+                subscription_id: subscription.id,
+                name: 'THub',
+                description: `${planTitle} Subscription`,
+                image: user.picture,
+                handler: async function (response) {
+                    const validateUrl = `${apiUrl}/validate-subscription`
+                    const validateResponse = await fetch(validateUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_subscription_id: response.razorpay_subscription_id,
+                            razorpay_signature: response.razorpay_signature,
+                            planId: plan_Id,
+                            user_id: userId
+                        })
+                    })
+                    const validateStatus = await validateResponse.json()
+                    if (validateResponse.ok && validateStatus.msg === 'success') {
+                        location.reload()
+                        setSubscriptionDetails({
+                            subscriptionType: validateStatus.subscriptionType,
+                            subscriptionDuration: validateStatus.subscriptionDuration,
+                            startDate: validateStatus.startDate,
+                            expiryDate: validateStatus.expiryDate,
+                            isActive: true
+                        })
+                    } else {
+                        alert('Payment validation failed. Please contact support.')
+                    }
+                },
+                prefill: {
+                    name: 'THub',
+                    email: user.email,
+                    contact: user.phone ? user.phone : '9000090000'
+                },
+                theme: {
+                    color: '#3399ff'
+                }
+            }
+
+            var rzp1 = new window.Razorpay(options)
+            rzp1.on('payment.failed', function (response) {
+                console.error('Payment Failed:', response)
+                alert(`Payment failed: ${response.error.description}`)
+            })
+
+            rzp1.open()
+        } catch (error) {
+            setIsProcessingPayment(false)
+            console.error('Error in payment process:', error)
+        } finally {
+            setIsProcessingPayment(false)
         }
     }
 
     return (
-        <div>
-            <MainCard sx={{ background: customization.isDarkMode ? theme.palette.common.black : '#f5faff' }}>
-                <ToastContainer />
+        <>
+            <MainCard>
+                <Toaster position='top-right' reverseOrder={false} />
                 <Stack flexDirection='row'>
                     <Grid sx={{ mb: 1.25 }} container direction='row'>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
@@ -203,7 +264,6 @@ const Subscription = () => {
                                 {subscriptionDetails?.subscriptionType.toUpperCase()}
                             </button>
                         </div>
-
                         <Box sx={{ flexGrow: 1 }} />
                         <Grid container>
                             <Box sx={{ flexGrow: 1 }} />
@@ -216,7 +276,6 @@ const Subscription = () => {
                                             name='subscription'
                                             className={subStyle.radio}
                                             checked={selectedPlan === 'monthly'}
-                                            onChange={() => {}}
                                         />
                                         <label
                                             htmlFor='monthly'
@@ -240,7 +299,6 @@ const Subscription = () => {
                                             name='subscription'
                                             className={subStyle.radio}
                                             checked={selectedPlan === 'yearly'}
-                                            onChange={() => {}}
                                         />
                                         <label
                                             htmlFor='yearly'
@@ -279,7 +337,14 @@ const Subscription = () => {
                             className={customization.isDarkMode ? subStyle.card_selection_dark : subStyle.card_selection_light}
                         >
                             <Card
-                                sx={{ maxWidth: 345 }}
+                                sx={{
+                                    maxWidth: 345,
+                                    '&:hover': {
+                                        '& .glow-effect': {
+                                            opacity: 1
+                                        }
+                                    }
+                                }}
                                 className={customization.isDarkMode ? subStyle.card_content_dark : subStyle.card_content_light}
                             >
                                 {plan.title === 'Free' && user.subscription_type === 'free' ? (
@@ -338,17 +403,6 @@ const Subscription = () => {
                                             className={customization.isDarkMode ? subStyle.price_amount_dark : subStyle.price_amount_light}
                                         >
                                             {getPrice(plan)}
-                                            <span
-                                                style={{
-                                                    fontSize: '16px',
-                                                    verticalAlign: 'super',
-                                                    marginLeft: '4px',
-                                                    fontWeight: 'bolder',
-                                                    color: customization.isDarkMode ? 'white' : 'black'
-                                                }}
-                                            >
-                                                /agent
-                                            </span>
                                         </Typography>
                                     ) : (
                                         <Typography
@@ -382,6 +436,7 @@ const Subscription = () => {
                                             }}
                                             className={customization.isDarkMode ? subStyle.button_click_dark : subStyle.button_click_light}
                                             disabled={
+                                                isProcessingPayment ||
                                                 (user.subscription_type === 'premium' && plan.buttonInfo !== 'Get in Touch') ||
                                                 (user.subscription_type === 'free' && plan.title === 'Free') ||
                                                 (user.subscription_type === 'pro' &&
@@ -406,7 +461,7 @@ const Subscription = () => {
                                                     user.subscription_duration === selectedPlan)
                                             }
                                         >
-                                            {plan.buttonInfo}
+                                            {isProcessingPayment ? 'Processing...' : plan.buttonInfo}
                                         </Button>
                                     </div>
                                     <div>
@@ -420,13 +475,24 @@ const Subscription = () => {
                                                     }
                                                     key={index}
                                                 >
-                                                    {feature.includes('₹ 17,999/per Additional Agents') && plan.title === 'Pro'
-                                                        ? `${getIncreasePrice(plan)}/Per Additional Agents`
-                                                        : feature}
+                                                    {feature}
                                                 </li>
                                             ))}
                                         </ul>
                                     </div>
+                                    <Box
+                                        className='glow-effect'
+                                        sx={{
+                                            position: 'absolute',
+                                            inset: 0,
+                                            borderRadius: '12px',
+                                            background: 'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease-in-out',
+                                            filter: 'blur(8px)',
+                                            zIndex: -1
+                                        }}
+                                    />
                                 </CardContent>
                             </Card>
                         </Grid>
@@ -494,7 +560,7 @@ const Subscription = () => {
                     )}
                 </Box>
             </Modal>
-        </div>
+        </>
     )
 }
 export default Subscription

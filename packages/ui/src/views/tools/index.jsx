@@ -148,7 +148,7 @@ const Tools = () => {
                     {!getAllToolsApi.loading &&
                         getAllToolsApi.data &&
                         getAllToolsApi.data.map((data, index) => (
-                            <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
+                            <Grid key={index} item lg={4} md={4} sm={6} xs={12}>
                                 <ItemCard data={data} onClick={() => edit(data)} />
                             </Grid>
                         ))}

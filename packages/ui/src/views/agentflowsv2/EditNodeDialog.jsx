@@ -18,8 +18,19 @@ import TabPanel from '@mui/lab/TabPanel'
 const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange }) => {
     const customization = useSelector((state) => state.customization)
 
-    // Helper function to check if a tab should be displayed
+    // Helper function to check if a tab should be displayedd
     const shouldShowTab = (tabType, inputParams) => {
+        // For tools tab, check all params including those with display: false
+        if (tabType === 'tools') {
+            return inputParams.some(
+                (param) =>
+                    param.name.includes('Tools') ||
+                    param.name.includes('Tool') ||
+                    param.loadMethod === 'listTools' ||
+                    param.name === 'agentToolsBuiltInOpenAI' // Include OpenAI built-in tools regardless of display
+            )
+        }
+
         const visibleParams = inputParams.filter((param) => param.display !== false)
 
         switch (tabType) {
@@ -35,11 +46,6 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                         param.name.includes('UserMessage') ||
                         param.name.includes('Input') ||
                         (param.type === 'array' && param.name.toLowerCase().includes('message'))
-                )
-
-            case 'tools':
-                return visibleParams.some(
-                    (param) => param.name.includes('Tools') || param.name.includes('Tool') || param.loadMethod === 'listTools'
                 )
 
             case 'knowledge':
@@ -63,6 +69,11 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                     (param) => param.name.includes('form') || param.name.includes('Form') || param.name === 'startInputType'
                 )
 
+            case 'loop':
+                return visibleParams.some(
+                    (param) => param.name.includes('Loop') || param.name.includes('loop') || param.loadMethod === 'listPreviousNodes'
+                )
+
             case 'additional': {
                 const excludedParams = [
                     'Model',
@@ -79,9 +90,19 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                     'UpdateState',
                     'form',
                     'Form',
-                    'startInputType'
+                    'startInputType',
+                    'Loop',
+                    'loop'
                 ]
-                return visibleParams.some((param) => !excludedParams.some((excluded) => param.name.includes(excluded)))
+                const excludedLoadMethods = ['listModels', 'listTools', 'listStores', 'listVectorStores', 'listPreviousNodes']
+                const excludedSpecificNames = ['agentToolsBuiltInOpenAI'] // Exclude OpenAI built-in tools from additional tab
+
+                return visibleParams.some((param) => {
+                    const hasExcludedName = excludedParams.some((excluded) => param.name.includes(excluded))
+                    const hasExcludedLoadMethod = param.loadMethod && excludedLoadMethods.includes(param.loadMethod)
+                    const hasExcludedSpecificName = excludedSpecificNames.includes(param.name)
+                    return !hasExcludedName && !hasExcludedLoadMethod && !hasExcludedSpecificName
+                })
             }
 
             default:
@@ -92,7 +113,14 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
     // Get filtered parameters for each tab
     const getTabParameters = (tabType, inputParams) => {
         return inputParams
-            .filter((param) => param.display !== false)
+            .filter((param) => {
+                // For tools tab, include OpenAI built-in tools even if display is false
+                if (tabType === 'tools' && param.name === 'agentToolsBuiltInOpenAI') {
+                    return true
+                }
+                // For other parameters, respect the display property
+                return param.display !== false
+            })
             .filter((param) => {
                 switch (tabType) {
                     case 'model':
@@ -107,7 +135,12 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                         )
 
                     case 'tools':
-                        return param.name.includes('Tools') || param.name.includes('Tool') || param.loadMethod === 'listTools'
+                        return (
+                            param.name.includes('Tools') ||
+                            param.name.includes('Tool') ||
+                            param.loadMethod === 'listTools' ||
+                            param.name === 'agentToolsBuiltInOpenAI' // Include OpenAI built-in tools
+                        )
 
                     case 'knowledge':
                         return (
@@ -127,6 +160,9 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                     case 'form':
                         return param.name.includes('form') || param.name.includes('Form') || param.name === 'startInputType'
 
+                    case 'loop':
+                        return param.name.includes('Loop') || param.name.includes('loop') || param.loadMethod === 'listPreviousNodes'
+
                     case 'additional': {
                         const excludedParams = [
                             'Model',
@@ -143,9 +179,17 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
                             'UpdateState',
                             'form',
                             'Form',
-                            'startInputType'
+                            'startInputType',
+                            'Loop',
+                            'loop'
                         ]
-                        return !excludedParams.some((excluded) => param.name.includes(excluded))
+                        const excludedLoadMethods = ['listModels', 'listTools', 'listStores', 'listVectorStores', 'listPreviousNodes']
+                        const excludedSpecificNames = ['agentToolsBuiltInOpenAI'] // Exclude OpenAI built-in tools from additional tab
+
+                        const hasExcludedName = excludedParams.some((excluded) => param.name.includes(excluded))
+                        const hasExcludedLoadMethod = param.loadMethod && excludedLoadMethods.includes(param.loadMethod)
+                        const hasExcludedSpecificName = excludedSpecificNames.includes(param.name)
+                        return !hasExcludedName && !hasExcludedLoadMethod && !hasExcludedSpecificName
                     }
 
                     default:
@@ -163,7 +207,8 @@ const DynamicNodeTabView = ({ inputParams, dialogProps, data, onCustomDataChange
         { key: 'memory', label: 'Memory', value: '5' },
         { key: 'state', label: 'State', value: '6' },
         { key: 'form', label: 'Form', value: '7' },
-        { key: 'additional', label: 'Additional', value: '8' }
+        { key: 'loop', label: 'Loop', value: '8' },
+        { key: 'additional', label: 'Additional', value: '9' }
     ]
 
     // Filter tabs based on available parameters
@@ -267,6 +312,15 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
     const [isEditingNodeName, setEditingNodeName] = useState(null)
     const [nodeName, setNodeName] = useState('')
 
+    // Draggable state - center the dialog initially
+    const [position, setPosition] = useState(() => ({
+        x: Math.max(0, (window.innerWidth - 650) / 2),
+        y: Math.max(0, (window.innerHeight - window.innerHeight * 0.8) / 2)
+    }))
+    const [isDragging, setIsDragging] = useState(false)
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+    const dialogRef = useRef(null)
+
     console.log(inputParams, 'inputParams')
 
     const onNodeLabelChange = () => {
@@ -321,6 +375,70 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
         )
     }
 
+    // Draggable handlers
+    const handleMouseDown = (e) => {
+        // Only allow dragging from the header, not from buttons, inputs, or svg elements
+        const isInteractiveElement =
+            e.target.closest('button') ||
+            e.target.closest('input') ||
+            e.target.closest('svg') ||
+            e.target.tagName === 'BUTTON' ||
+            e.target.tagName === 'INPUT' ||
+            e.target.tagName === 'SVG' ||
+            e.target.tagName === 'path'
+
+        if (e.target.closest('.drag-handle') && !isInteractiveElement) {
+            setIsDragging(true)
+            const rect = dialogRef.current.getBoundingClientRect()
+            setDragOffset({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            })
+            e.preventDefault() // Prevent text selection
+        }
+    }
+
+    const handleMouseMove = (e) => {
+        if (isDragging && dialogRef.current) {
+            const newX = e.clientX - dragOffset.x
+            const newY = e.clientY - dragOffset.y
+
+            const dialogWidth = dialogRef.current.offsetWidth
+            const dialogHeight = dialogRef.current.offsetHeight
+
+            const boundedX = Math.max(0, Math.min(newX, window.innerWidth - dialogWidth))
+            const boundedY = Math.max(0, Math.min(newY, window.innerHeight - dialogHeight))
+
+            setPosition({ x: boundedX, y: boundedY })
+        }
+    }
+
+    const handleMouseUp = () => {
+        setIsDragging(false)
+    }
+
+    useEffect(() => {
+        if (isDragging) {
+            document.addEventListener('mousemove', handleMouseMove)
+            document.addEventListener('mouseup', handleMouseUp)
+            document.body.style.userSelect = 'none'
+            document.body.style.cursor = 'grabbing'
+        } else {
+            document.removeEventListener('mousemove', handleMouseMove)
+            document.removeEventListener('mouseup', handleMouseUp)
+            document.body.style.userSelect = ''
+            document.body.style.cursor = ''
+        }
+
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove)
+            document.removeEventListener('mouseup', handleMouseUp)
+            document.body.style.userSelect = ''
+            document.body.style.cursor = ''
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isDragging])
+
     useEffect(() => {
         if (dialogProps.inputParams) {
             setInputParams(dialogProps.inputParams)
@@ -342,32 +460,85 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
         return () => dispatch({ type: HIDE_CANVAS_DIALOG })
     }, [show, dispatch])
 
+    // Reset position when dialog opens
+    useEffect(() => {
+        if (show) {
+            setPosition({
+                x: Math.max(0, (window.innerWidth - 650) / 2),
+                y: Math.max(0, (window.innerHeight - window.innerHeight * 0.8) / 2)
+            })
+        }
+    }, [show])
+
     const component = show ? (
         <Dialog
             onClose={onCancel}
             open={show}
             fullWidth
-            maxWidth='sm'
+            maxWidth='lg'
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
-            PaperProps={{
+            hideBackdrop={false}
+            disableEnforceFocus
+            disableAutoFocus
+            BackdropProps={{
+                onClick: onCancel,
                 sx: {
-                    width: '600px',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    pointerEvents: 'auto'
+                }
+            }}
+            PaperProps={{
+                ref: dialogRef,
+                onMouseDown: (e) => e.stopPropagation(),
+                sx: {
+                    width: '650px',
                     height: '80vh',
                     maxHeight: '90vh',
-                    overflowY: 'auto'
+                    overflowY: 'hidden',
+                    position: 'fixed !important',
+                    left: `${position.x}px !important`,
+                    top: `${position.y}px !important`,
+                    margin: '0 !important',
+                    maxWidth: 'none !important',
+                    transform: 'none !important',
+                    cursor: isDragging ? 'grabbing' : 'default',
+                    pointerEvents: 'auto'
+                }
+            }}
+            sx={{
+                pointerEvents: 'none',
+                '& .MuiBackdrop-root': {
+                    pointerEvents: 'auto'
                 }
             }}
         >
-            <DialogContent sx={{ padding: '0px' }}>
+            <DialogContent
+                className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
+                sx={{
+                    padding: '0px',
+                    height: '100%',
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}
+            >
                 {data && data.name && (
                     <Box
+                        className='drag-handle'
+                        onMouseDown={handleMouseDown}
                         sx={{
                             width: '100%',
                             backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
                             height: '56px',
                             display: 'flex',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            cursor: isDragging ? 'grabbing' : 'grab',
+                            userSelect: 'none',
+                            WebkitUserSelect: 'none',
+                            MozUserSelect: 'none',
+                            msUserSelect: 'none',
+                            flexShrink: 0
                         }}
                     >
                         {!isEditingNodeName ? (
@@ -553,12 +724,20 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                         </Typography>
                     </Stack>
                 )}
-                <DynamicNodeTabView
-                    inputParams={inputParams}
-                    dialogProps={dialogProps}
-                    data={data}
-                    onCustomDataChange={onCustomDataChange}
-                />
+                <Box
+                    sx={{
+                        flex: 1,
+                        overflowY: 'auto',
+                        overflowX: 'hidden'
+                    }}
+                >
+                    <DynamicNodeTabView
+                        inputParams={inputParams}
+                        dialogProps={dialogProps}
+                        data={data}
+                        onCustomDataChange={onCustomDataChange}
+                    />
+                </Box>
             </DialogContent>
         </Dialog>
     ) : null

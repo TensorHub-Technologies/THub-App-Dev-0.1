@@ -13,6 +13,8 @@ import { useTheme } from '@mui/material/styles'
 import MarketplaceCanvasNode from './MarketplaceCanvasNode'
 import MarketplaceCanvasHeader from './MarketplaceCanvasHeader'
 import StickyNote from '../canvas/StickyNote'
+import { useSelector } from 'react-redux'
+import '../../ui-component/cards/card.css'
 
 const nodeTypes = { customNode: MarketplaceCanvasNode, stickyNote: StickyNote }
 const edgeTypes = { buttonedge: '' }
@@ -30,6 +32,7 @@ const MarketplaceCanvas = () => {
 
     const [nodes, setNodes, onNodesChange] = useNodesState()
     const [edges, setEdges, onEdgesChange] = useEdgesState()
+    const customization = useSelector((state) => state.customization)
 
     const reactFlowWrapper = useRef(null)
 
@@ -62,7 +65,7 @@ const MarketplaceCanvas = () => {
                     color='inherit'
                     elevation={1}
                     sx={{
-                        bgcolor: theme.palette.background.default
+                        bgcolor: 'transparent'
                     }}
                 >
                     <Toolbar>
@@ -75,7 +78,12 @@ const MarketplaceCanvas = () => {
                 </AppBar>
                 <Box sx={{ pt: '70px', height: '100vh', width: '100%' }}>
                     <div className='reactflow-parent-wrapper'>
-                        <div className='reactflow-wrapper' ref={reactFlowWrapper}>
+                        <div
+                            className={`reactflow-wrapper ${
+                                customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'
+                            }`}
+                            ref={reactFlowWrapper}
+                        >
                             <ReactFlow
                                 nodes={nodes}
                                 edges={edges}

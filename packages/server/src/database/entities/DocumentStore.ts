@@ -6,6 +6,9 @@ export class DocumentStore implements IDocumentStore {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
+    @Column()
+    tenantId: string
+
     @Column({ nullable: false, type: 'text' })
     name: string
 

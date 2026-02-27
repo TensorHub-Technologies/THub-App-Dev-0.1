@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, memo } from 'react'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 import { IconDatabaseImport, IconX } from '@tabler/icons-react'
 
 // project imports
@@ -13,6 +14,7 @@ const VectorStorePopUp = ({ chatflowid, isUpsertButtonEnabled }) => {
     const [expandDialogProps, setExpandDialogProps] = useState({})
     const [showUpsertResultDialog, setShowUpsertResultDialog] = useState(false)
     const [upsertResultDialogProps, setUpsertResultDialogProps] = useState({})
+    const customization = useSelector((state) => state.customization)
 
     const anchorRef = useRef(null)
     const prevOpen = useRef(open)
@@ -36,34 +38,16 @@ const VectorStorePopUp = ({ chatflowid, isUpsertButtonEnabled }) => {
         prevOpen.current = open
     }, [open, chatflowid])
 
-    const fabStyles = {
-        height: '34px',
-        width: '34px',
-        minHeight: '0px',
-        marginRight: '16px',
-        borderRadius: '8px',
-        background: isUpsertButtonEnabled ? undefined : 'red',
-        color: '#fff',
-        cursor: isUpsertButtonEnabled ? 'pointer' : 'not-allowed',
-        '&:hover': {
-            background: isUpsertButtonEnabled ? 'linear-gradient(to right, #3C5BA4 0%, #E22A90 100%)' : 'red',
-            color: '#fff'
-        }
-    }
-
     return (
         <>
             <StyledFab
-                sx={fabStyles}
                 ref={anchorRef}
-                size='small'
-                color='teal'
                 aria-label='upsert'
                 title='Upsert Vector Database'
                 onClick={handleToggle}
                 disabled={!isUpsertButtonEnabled}
             >
-                {open ? <IconX style={{ width: '21px' }} /> : <IconDatabaseImport style={{ width: '21px' }} />}
+                {open ? <IconX size={24} /> : <IconDatabaseImport size={24} />}
             </StyledFab>
 
             <VectorStoreDialog

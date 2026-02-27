@@ -30,9 +30,9 @@ class ExecuteFlow_Agentflow implements INode {
     constructor() {
         this.label = 'Execute Flow'
         this.name = 'executeFlowAgentflow'
-        this.version = 1.0
+        this.version = 1.1
         this.type = 'ExecuteFlow'
-        this.category = 'Agent Pipeline'
+        this.category = 'Agent Studio'
         this.description = 'Execute another flow'
         this.baseClasses = [this.type]
         this.color = '#F0F0F5'
@@ -62,7 +62,8 @@ class ExecuteFlow_Agentflow implements INode {
                 name: 'executeFlowOverrideConfig',
                 description: 'Override the config passed to the flow',
                 type: 'json',
-                optional: true
+                optional: true,
+                acceptVariable: true
             },
             {
                 label: 'Base URL',
@@ -127,21 +128,30 @@ class ExecuteFlow_Agentflow implements INode {
                 return returnData
             }
 
-            const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).find()
+            let tenantId = options.tenantId
 
-            for (let i = 0; i < chatflows.length; i += 1) {
-                let cfType = 'Workflow'
-                if (chatflows[i].type === 'AGENTFLOW') {
-                    cfType = 'Agentflow V2'
-                } else if (chatflows[i].type === 'MULTIAGENT') {
-                    cfType = 'Agentflow V1'
+            try {
+                // Fix: Use proper object syntax for findBy with tenantId
+                const whereClause = tenantId ? { tenantId: tenantId } : {}
+                const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).findBy(whereClause)
+
+                for (let i = 0; i < chatflows.length; i += 1) {
+                    let cfType = 'Workflow'
+                    if (chatflows[i].type === 'AGENTFLOW') {
+                        cfType = 'Agentflow V2'
+                    } else if (chatflows[i].type === 'MULTIAGENT') {
+                        cfType = 'Agentflow V1'
+                    }
+                    const data = {
+                        label: chatflows[i].name,
+                        name: chatflows[i].id,
+                        description: cfType
+                    } as INodeOptionsValue
+                    returnData.push(data)
                 }
-                const data = {
-                    label: chatflows[i].name,
-                    name: chatflows[i].id,
-                    description: cfType
-                } as INodeOptionsValue
-                returnData.push(data)
+            } catch (error) {
+                console.error('Error fetching flows by tenantId:', error)
+                // Return empty array on error to prevent breaking the UI
             }
 
             // order by label
@@ -161,12 +171,17 @@ class ExecuteFlow_Agentflow implements INode {
         const flowInput = nodeData.inputs?.executeFlowInput as string
         const returnResponseAs = nodeData.inputs?.executeFlowReturnResponseAs as string
         const _executeFlowUpdateState = nodeData.inputs?.executeFlowUpdateState
-        const overrideConfig =
-            typeof nodeData.inputs?.executeFlowOverrideConfig === 'string' &&
-            nodeData.inputs.executeFlowOverrideConfig.startsWith('{') &&
-            nodeData.inputs.executeFlowOverrideConfig.endsWith('}')
-                ? JSON.parse(nodeData.inputs.executeFlowOverrideConfig)
-                : nodeData.inputs?.executeFlowOverrideConfig
+
+        let overrideConfig = nodeData.inputs?.executeFlowOverrideConfig
+        if (typeof overrideConfig === 'string' && overrideConfig.startsWith('{') && overrideConfig.endsWith('}')) {
+            try {
+                // Handle escaped square brackets and other common escape sequences
+                const unescapedConfig = overrideConfig.replace(/\\(\[|\])/g, '$1')
+                overrideConfig = JSON.parse(unescapedConfig)
+            } catch (parseError) {
+                throw new Error(`Invalid JSON in executeFlowOverrideConfig: ${parseError.message}`)
+            }
+        }
 
         const state = options.agentflowRuntime?.state as ICommonObject
         const runtimeChatHistory = (options.agentflowRuntime?.chatHistory as BaseMessageLike[]) ?? []
@@ -179,8 +194,29 @@ class ExecuteFlow_Agentflow implements INode {
 
             if (selectedFlowId === options.chatflowid) throw new Error('Cannot call the same agentflow!')
 
+            // Additional security check: Verify the selected flow belongs to the same tenant
+            const appDataSource = options.appDataSource as DataSource
+            const databaseEntities = options.databaseEntities as IDatabaseEntity
+            const tenantId = options.tenantId
+
+            if (tenantId && appDataSource && databaseEntities) {
+                try {
+                    const selectedFlow = await appDataSource
+                        .getRepository(databaseEntities['ChatFlow'])
+                        .findOneBy({ id: selectedFlowId, tenantId: tenantId })
+
+                    if (!selectedFlow) {
+                        throw new Error(`Flow ${selectedFlowId} not found or access denied`)
+                    }
+                } catch (error) {
+                    console.error('Error verifying flow access:', error)
+                    throw new Error('Access denied to the selected flow')
+                }
+            }
+
             let headers: Record<string, string> = {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'flowise-tool': 'true'
             }
             if (chatflowApiKey) headers = { ...headers, Authorization: `Bearer ${chatflowApiKey}` }
 
@@ -217,7 +253,7 @@ class ExecuteFlow_Agentflow implements INode {
             if (newState && Object.keys(newState).length > 0) {
                 for (const key in newState) {
                     if (newState[key].toString().includes('{{ output }}')) {
-                        newState[key] = resultText
+                        newState[key] = newState[key].replaceAll('{{ output }}', resultText)
                     }
                 }
             }

@@ -40,7 +40,7 @@ function a11yProps(index) {
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.5/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@11.0.8/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -64,7 +64,7 @@ const App = () => {
 const embedFullpageHtmlCode = (chatflowid) => {
     return `<thub-fullchatbot></thub-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.5/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@11.0.8/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -193,7 +193,7 @@ const customStringify = (obj) => {
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.5/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@11.0.8/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -246,7 +246,7 @@ const getFullPageThemeConfig = () => {
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
     return `<thub-fullchatbot></thub-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@9.4.5/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/thub-embed@11.0.8/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",

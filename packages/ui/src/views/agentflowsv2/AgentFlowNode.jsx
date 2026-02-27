@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
-import { useContext, memo, useRef, useState, useEffect } from 'react'
+import React, { useContext, memo, useRef, useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Handle, Position, useUpdateNodeInternals, NodeToolbar } from 'reactflow'
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles'
-import { ButtonGroup, Avatar, Box, Typography, IconButton, Tooltip } from '@mui/material'
+import { ButtonGroup, Avatar, Box, Typography, IconButton, Tooltip, Card } from '@mui/material'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
@@ -20,7 +20,11 @@ import {
     IconCopy,
     IconTrash,
     IconInfoCircle,
-    IconLoader
+    IconLoader,
+    IconAlertCircleFilled,
+    IconCode,
+    IconWorldWww,
+    IconPhoto
 } from '@tabler/icons-react'
 import StopCircleIcon from '@mui/icons-material/StopCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
@@ -51,11 +55,13 @@ const StyledNodeToolbar = styled(NodeToolbar)(({ theme }) => ({
 const AgentFlowNode = ({ data }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const canvas = useSelector((state) => state.canvas)
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     // eslint-disable-next-line
     const [position, setPosition] = useState(0)
     const [isHovered, setIsHovered] = useState(false)
+    const [warningMessage, setWarningMessage] = useState('')
     const { deleteNode, duplicateNode } = useContext(flowContext)
     const [showInfoDialog, setShowInfoDialog] = useState(false)
     const [infoDialogProps, setInfoDialogProps] = useState({})
@@ -77,12 +83,6 @@ const AgentFlowNode = ({ data }) => {
         }
 
         return position
-    }
-
-    const getMinimumHeight = () => {
-        const outputCount = getOutputAnchors().length
-        // Use exactly 60px as minimum height
-        return Math.max(60, outputCount * 20 + 40)
     }
 
     const getStatusBackgroundColor = (status) => {
@@ -119,6 +119,195 @@ const AgentFlowNode = ({ data }) => {
         )
     }
 
+    const getBuiltInOpenAIToolIcon = (toolName) => {
+        switch (toolName) {
+            case 'web_search_preview':
+                return <IconWorldWww size={14} color={'white'} />
+            case 'code_interpreter':
+                return <IconCode size={14} color={'white'} />
+            case 'image_generation':
+                return <IconPhoto size={14} color={'white'} />
+            default:
+                return null
+        }
+    }
+
+    // Function to render all icons in a single line with max 5 display
+    const renderSingleLineIcons = () => {
+        // Collect all icons in a single array
+        const allIcons = []
+
+        // Array of model configs to check and collect
+        const modelConfigs = [
+            { model: data.inputs?.llmModel, config: data.inputs?.llmModelConfig },
+            { model: data.inputs?.agentModel, config: data.inputs?.agentModelConfig },
+            { model: data.inputs?.conditionAgentModel, config: data.inputs?.conditionAgentModelConfig }
+        ]
+
+        // Add model icons
+        modelConfigs
+            .filter((item) => item.model && item.config)
+            .forEach((item, index) => {
+                allIcons.push({
+                    type: 'model',
+                    key: `model-${index}`,
+                    element: (
+                        <img
+                            style={{ width: 10, height: 10, objectFit: 'contain' }}
+                            src={`${baseURL}/api/v1/node-icon/${item.model}`}
+                            alt={item.model}
+                        />
+                    )
+                })
+            })
+
+        // Array of tool configurations to check and collect
+        const toolConfigs = [
+            { tools: data.inputs?.llmTools, toolProperty: 'llmSelectedTool' },
+            { tools: data.inputs?.agentTools, toolProperty: 'agentSelectedTool' },
+            {
+                tools:
+                    data.inputs?.selectedTool ?? data.inputs?.toolAgentflowSelectedTool
+                        ? [{ selectedTool: data.inputs?.selectedTool ?? data.inputs?.toolAgentflowSelectedTool }]
+                        : [],
+                toolProperty: ['selectedTool', 'toolAgentflowSelectedTool']
+            },
+            { tools: data.inputs?.agentKnowledgeVSEmbeddings, toolProperty: ['vectorStore', 'embeddingModel'] },
+            {
+                tools: data.inputs?.agentToolsBuiltInOpenAI
+                    ? (typeof data.inputs.agentToolsBuiltInOpenAI === 'string'
+                          ? JSON.parse(data.inputs.agentToolsBuiltInOpenAI)
+                          : data.inputs.agentToolsBuiltInOpenAI
+                      ).map((tool) => ({ builtInTool: tool }))
+                    : [],
+                toolProperty: 'builtInTool',
+                isBuiltInOpenAI: true
+            }
+        ]
+
+        // Add tool icons
+        toolConfigs
+            .filter((config) => config.tools && config.tools.length > 0)
+            .forEach((config, configIndex) => {
+                config.tools.forEach((tool, toolIndex) => {
+                    if (Array.isArray(config.toolProperty)) {
+                        config.toolProperty
+                            .filter((prop) => tool[prop])
+                            .forEach((prop, propIndex) => {
+                                const toolName = tool[prop]
+                                allIcons.push({
+                                    type: 'tool',
+                                    key: `tool-${configIndex}-${toolIndex}-${propIndex}`,
+                                    element: (
+                                        <Box
+                                            component='img'
+                                            src={`${baseURL}/api/v1/node-icon/${toolName}`}
+                                            alt={toolName}
+                                            sx={{
+                                                width: 10,
+                                                height: 10,
+                                                objectFit: 'contain'
+                                            }}
+                                        />
+                                    )
+                                })
+                            })
+                    } else {
+                        const toolName = tool[config.toolProperty]
+                        if (toolName) {
+                            // Handle built-in OpenAI tools with icons
+                            if (config.isBuiltInOpenAI) {
+                                const icon = getBuiltInOpenAIToolIcon(toolName)
+                                if (icon) {
+                                    allIcons.push({
+                                        type: 'builtInTool',
+                                        key: `tool-${configIndex}-${toolIndex}`,
+                                        element: (
+                                            <Box
+                                                sx={{
+                                                    width: 10,
+                                                    height: 10,
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}
+                                            >
+                                                {React.cloneElement(icon, { size: 10 })}
+                                            </Box>
+                                        )
+                                    })
+                                }
+                            } else {
+                                allIcons.push({
+                                    type: 'tool',
+                                    key: `tool-${configIndex}-${toolIndex}`,
+                                    element: (
+                                        <Box
+                                            component='img'
+                                            src={`${baseURL}/api/v1/node-icon/${toolName}`}
+                                            alt={toolName}
+                                            sx={{
+                                                width: 10,
+                                                height: 10,
+                                                objectFit: 'contain'
+                                            }}
+                                        />
+                                    )
+                                })
+                            }
+                        }
+                    }
+                })
+            })
+
+        // Display maximum 5 icons in a single line
+        const maxIcons = 5
+        const visibleIcons = allIcons.slice(0, maxIcons)
+        const hiddenCount = Math.max(0, allIcons.length - maxIcons)
+
+        // Only render if there are icons to show
+        if (allIcons.length === 0) return null
+
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.8,
+                    marginLeft: '12px',
+                    justifyContent: 'flex-start',
+                    minHeight: '12px'
+                }}
+            >
+                {visibleIcons.map((icon) => (
+                    <Box
+                        key={icon.key}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexShrink: 0
+                        }}
+                    >
+                        {icon.element}
+                    </Box>
+                ))}
+                {hiddenCount > 0 && (
+                    <Typography
+                        sx={{
+                            fontSize: '0.35rem',
+                            color: customization.isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+                            fontWeight: 500,
+                            marginLeft: 0.3,
+                            flexShrink: 0
+                        }}
+                    >
+                        +{hiddenCount}
+                    </Typography>
+                )}
+            </Box>
+        )
+    }
+
     useEffect(() => {
         if (ref.current) {
             setTimeout(() => {
@@ -127,6 +316,28 @@ const AgentFlowNode = ({ data }) => {
             }, 10)
         }
     }, [data, ref, updateNodeInternals])
+
+    useEffect(() => {
+        const nodeOutdatedMessage = (oldVersion, newVersion) =>
+            `Node version ${oldVersion} outdated\nUpdate to latest version ${newVersion}`
+        const nodeVersionEmptyMessage = (newVersion) => `Node outdated\nUpdate to latest version ${newVersion}`
+
+        const componentNode = canvas.componentNodes.find((nd) => nd.name === data.name)
+        if (componentNode) {
+            if (!data.version) {
+                setWarningMessage(nodeVersionEmptyMessage(componentNode.version))
+            } else if (data.version && componentNode.version > data.version) {
+                setWarningMessage(nodeOutdatedMessage(data.version, componentNode.version))
+            } else if (componentNode.badge === 'DEPRECATING') {
+                setWarningMessage(
+                    componentNode?.deprecateMessage ??
+                        'This node will be deprecated in the next release. Change to a new node tagged with NEW'
+                )
+            } else {
+                setWarningMessage('')
+            }
+        }
+    }, [canvas.componentNodes, data.name, data.version])
 
     return (
         <div ref={ref} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
@@ -182,14 +393,15 @@ const AgentFlowNode = ({ data }) => {
                     </IconButton>
                 </ButtonGroup>
             </StyledNodeToolbar>
-            <CardWrapper
+            <Card
                 content={false}
                 sx={{
-                    borderColor: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
+                    borderColor: nodeColor,
                     borderWidth: '1px',
-                    // minHeight: getMinimumHeight(),
-                    height: '70px',
-                    width: '100px',
+                    borderStyle: 'solid',
+                    borderRadius: data.id == 'startAgentflow_0' ? '50px' : '',
+                    height: data.id == 'startAgentflow_0' ? '80px' : '70px',
+                    width: data.id == 'startAgentflow_0' ? '80px' : '100px',
                     backgroundColor: customization.isDarkMode ? 'black' : 'white',
                     display: 'flex',
                     alignItems: 'center',
@@ -228,6 +440,24 @@ const AgentFlowNode = ({ data }) => {
                             ) : (
                                 <IconCheck />
                             )}
+                        </Avatar>
+                    </Tooltip>
+                )}
+
+                {warningMessage && (
+                    <Tooltip placement='right-start' title={<span style={{ whiteSpace: 'pre-line' }}>{warningMessage}</span>}>
+                        <Avatar
+                            variant='rounded'
+                            sx={{
+                                ...theme.typography.smallAvatar,
+                                borderRadius: '50%',
+                                background: 'white',
+                                position: 'absolute',
+                                top: -10,
+                                left: -10
+                            }}
+                        >
+                            <IconAlertCircleFilled color='orange' />
                         </Avatar>
                     </Tooltip>
                 )}
@@ -297,18 +527,20 @@ const AgentFlowNode = ({ data }) => {
                                 </div>
                             )}
                         </Box>
-                        <Box>
+                        <Box sx={{ flex: 1, paddingLeft: 0.5 }}>
                             <Typography
                                 sx={{
                                     fontSize: '0.45rem',
                                     fontWeight: 200,
-                                    color: customization.isDarkMode ? 'white' : 'black'
+                                    color: customization.isDarkMode ? 'white' : 'black',
+                                    lineHeight: 1.2
                                 }}
                             >
                                 {data.label}
                             </Typography>
                         </Box>
                     </div>
+                    {renderSingleLineIcons()}
                     {getOutputAnchors().map((outputAnchor, index) => {
                         return (
                             <Handle
@@ -351,7 +583,7 @@ const AgentFlowNode = ({ data }) => {
                         )
                     })}
                 </Box>
-            </CardWrapper>
+            </Card>
             <NodeInfoDialog show={showInfoDialog} dialogProps={infoDialogProps} onCancel={() => setShowInfoDialog(false)}></NodeInfoDialog>
         </div>
     )

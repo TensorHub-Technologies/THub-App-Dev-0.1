@@ -36,14 +36,14 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 // project imports
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import AgentflowGeneratorDialog from '@/ui-component/dialog/AgentflowGeneratorDialog'
-
+import '../../ui-component/cards/card.css'
 // icons
 import { IconSearch, IconX, IconSparkles } from '@tabler/icons-react'
 import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import LangChainPNG from '@/assets/images/langchain.png'
 import agentPipelinePNG from '@/assets/images/agentpipeline.png'
 import { getCategoryIcon } from './CategoryIcon'
-import subscriptionPlan from './subscriptionPlan'
+import subscriptionPlan from './subscriptionPlan.json'
 
 // const
 import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
@@ -84,15 +84,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
     const userData = useSelector((state) => state.user.userData)
     const subscription = userData?.subscription_type
-    console.log(subscription, 'subscription')
-
     const [searchValue, setSearchValue] = useState('')
     const [nodes, setNodes] = useState({})
     const [isExpanded, setIsExpanded] = useState(true)
     const [categoryExpanded, setCategoryExpanded] = useState({})
-
     const [hoveredNode, setHoveredNode] = useState(null)
-
     const [openDialog, setOpenDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
 
@@ -104,26 +100,14 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         userData.subscription_type = localStorage.getItem('subscription_type')
     }
     const allowedMenu = allowedPlan[userData?.subscription_type]
-    const allowedMenuItemKeys = Object.keys(allowedMenu)
     const [tab, setTab] = useState(['LangChain', 'LlamaIndex'])
     const [tabValue, setTabValue] = useState(0)
 
-    useEffect(() => {
-        if (userData.subscription_type !== 'free') {
-            setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
-        }
-    }, [])
-
     for (let nodeKey in nodes) {
-        if (Object.prototype.hasOwnProperty.call(nodes, nodeKey) && !allowedMenuItemKeys.includes(nodeKey)) {
-            delete nodes[nodeKey]
-        } else {
-            const allowedSubMenuItems = allowedMenu[nodeKey]
-            const subMenuItemToCheck = nodes[nodeKey]
-
-            const updatedSubMenuItems = subMenuItemToCheck.filter((val) => allowedSubMenuItems.includes(val.label))
-            nodes[nodeKey] = updatedSubMenuItems
-        }
+        const allowedSubMenuItems = allowedMenu[nodeKey]
+        const subMenuItemToCheck = nodes[nodeKey]
+        const updatedSubMenuItems = subMenuItemToCheck.filter((val) => allowedSubMenuItems?.includes(val.label))
+        nodes[nodeKey] = updatedSubMenuItems
     }
 
     const ps = useRef()
@@ -137,21 +121,16 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
     useEffect(() => {
         const pathname = location.pathname
-
         const hasCanvasId = pathname.startsWith('/canvas/') && pathname !== '/canvas'
         const hasAgentCanvasId = pathname.startsWith('/v2/agentcanvas/') && pathname !== '/v2/agentcanvas'
 
         if (hasCanvasId) {
             setTab(['LangChain', 'LlamaIndex'])
         } else if (hasAgentCanvasId) {
-            setTab(['Agent Pipeline'])
+            setTab(['Agent Studio'])
             setTabValue(0)
         } else if (pathname === '/canvas' || pathname === '/v2/agentcanvas') {
-            if (userData.subscription_type !== 'free') {
-                setTab(['LangChain', 'LlamaIndex', 'Agent Pipeline'])
-            } else {
-                setTab(['LangChain', 'LlamaIndex'])
-            }
+            setTab(['LangChain', 'LlamaIndex', 'Agent Studio'])
         }
     }, [location.pathname, userData.subscription_type])
 
@@ -172,7 +151,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         filterSearch(searchValue, newValue)
         const selectedTab = tab[newValue]
 
-        if (selectedTab === 'Agent Pipeline') {
+        if (selectedTab === 'Agent Studio') {
             if (location.pathname.startsWith('/v2/agentcanvas/')) {
                 return
             }
@@ -264,11 +243,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             const filteredResult = {}
             for (const category in result) {
                 if (isAgentCanvasV2) {
-                    if (category !== 'Agent Pipeline') {
+                    if (category !== 'Agent Studio') {
                         continue
                     }
                 } else {
-                    if (category === 'Agent Pipeline') {
+                    if (category === 'Agent Studio') {
                         continue
                     }
                 }
@@ -290,7 +269,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             accordianCategories['Multi Agents'] = true
             accordianCategories['Sequential Agents'] = true
             accordianCategories['Memory'] = true
-            accordianCategories['Agent Pipeline'] = true
+            accordianCategories['Agent Studio'] = true
             setCategoryExpanded(accordianCategories)
         } else {
             const taggedNodes = groupByTags(nodes, newTabValue)
@@ -304,7 +283,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
 
             const filteredResult = {}
             for (const category in result) {
-                if (category === 'Agent Pipeline') {
+                if (category === 'Agent Studio') {
                     continue
                 }
                 if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
@@ -335,7 +314,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             return LangChainPNG
         } else if (tab === 'LlamaIndex') {
             return LlamaindexPNG
-        } else if (tab === 'Agent Pipeline') {
+        } else if (tab === 'Agent Studio') {
             return agentPipelinePNG
         }
     }
@@ -394,12 +373,12 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                         <div
                             style={{
                                 borderRadius: '10%',
-                                backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
+                                // backgroundColor: customization.isDarkMode ? '#f0f0f0' : '#fff',
                                 display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                width: '48px',
-                                height: '48px'
+                                width: '32px',
+                                height: '32px'
                             }}
                         >
                             {renderIcon(node)}
@@ -462,16 +441,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                         position: 'fixed',
                         // left: 1240,
                         right: 140,
-                        top: 89,
-                        background: customization?.isDarkMode ? '#E22A90' : '#3C5BA4',
-                        '&:hover': {
-                            background: 'linear-gradient(to left, #E22A90, #3C5BA4)',
-                            color: 'white'
-                        },
-                        transition: theme.transitions.create(['left'], {
-                            easing: theme.transitions.easing.sharp,
-                            duration: theme.transitions.duration.leavingScreen
-                        }),
+                        top: 40,
+
                         zIndex: theme.zIndex.drawer + 2
                     }}
                     onClick={handleOpenDialog}
@@ -494,6 +465,9 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             {/* Mini/Full Drawer */}
             <Drawer
                 variant='permanent'
+                classes={{
+                    paper: customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'
+                }}
                 sx={{
                     width: isExpanded ? DRAWER_WIDTH : MINI_DRAWER_WIDTH,
                     flexShrink: 0,
@@ -505,7 +479,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                             duration: theme.transitions.duration.enteringScreen
                         }),
                         overflowX: 'hidden',
-                        backgroundColor: theme.palette.background.paper,
+                        // backgroundColor: theme.palette.background.paper,
                         borderRight: `1px solid ${theme.palette.divider}`
                     }
                 }}
@@ -644,6 +618,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                             <List
                                 sx={{
                                     width: '100%',
+                                    // border:"2px solid red",
                                     maxWidth: 350,
                                     py: 0,
                                     borderRadius: '10px',
@@ -664,7 +639,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                 {Object.keys(nodes)
                                     .sort()
                                     .map((category) => {
-                                        const isAgentPipeline = category.replace(';NEW', '') === 'Agent Pipeline'
+                                        const isAgentPipeline = category.replace(';NEW', '') === 'Agent Studio'
 
                                         return (
                                             <Accordion
@@ -674,6 +649,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                 disableGutters
                                                 sx={{
                                                     boxShadow: 'none',
+                                                    background: 'transparent',
                                                     '&:before': { display: 'none' }
                                                 }}
                                             >
@@ -771,10 +747,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                     backgroundColor: theme.palette.background.default,
                                                                                     borderRadius: `${customization.borderRadius}px`
                                                                                 }
-                                                                                // '& > .MuiListItem-root .MuiListItemAvatar-root': {
-                                                                                //     background:
-                                                                                //         'linear-gradient(to left, #3C5BA4, #E22A90) !important'
-                                                                                // }
                                                                             }
                                                                         }}
                                                                     >

@@ -143,6 +143,7 @@ class VectaraUpload_VectorStores implements INode {
 
             for (const file of files) {
                 const fileData = await getFileFromStorage(file, chatflowid)
+                // @ts-ignore
                 const blob = new Blob([fileData])
                 vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
             }
