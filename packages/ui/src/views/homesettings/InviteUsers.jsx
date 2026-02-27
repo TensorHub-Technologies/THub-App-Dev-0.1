@@ -31,10 +31,12 @@ function InviteUsers() {
         try {
             let apiUrl
 
-            if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-                apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-            } else if (window.location.hostname === 'localhost') {
+            if (window.location.hostname === 'localhost') {
                 apiUrl = 'http://localhost:2000'
+            } else if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            } else if (window.location.hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+                apiUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
             } else {
                 apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
             }

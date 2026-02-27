@@ -20,10 +20,12 @@ const GoogleCustomButton = ({ setLoading }) => {
 
     let apiUrl
 
-    if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-        apiUrl = thubWebServerDevUrl
-    } else if (window.location.hostname === 'localhost') {
+    if (window.location.hostname === 'localhost') {
         apiUrl = thubWebServerLocalUrl
+    } else if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+        apiUrl = thubWebServerDevUrl
+    } else if (window.location.hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+        apiUrl = thubWebServerQAUrl
     } else {
         apiUrl = thubWebServerProdUrl
     }
@@ -59,6 +61,15 @@ const GoogleCustomButton = ({ setLoading }) => {
                 if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
                     workspace = 'demo'
                     window.location.href = `https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
+                    return
+                }
+
+                // --------------------------------
+                // 2️⃣ QA → always default workspace = qa
+                // --------------------------------
+                if (hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+                    workspace = 'qa'
+                    window.location.href = `https://thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
                     return
                 }
 

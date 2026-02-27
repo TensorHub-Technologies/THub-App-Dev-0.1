@@ -31,6 +31,8 @@ const UserInfo = ({ setShowModal, forceOpen = false }) => {
             ? 'http://localhost:2000'
             : window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
             ? 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            : window.location.hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+            ? 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
             : 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
 
     const enqueueSnackbar = (args) => dispatch(enqueueSnackbarAction(args))

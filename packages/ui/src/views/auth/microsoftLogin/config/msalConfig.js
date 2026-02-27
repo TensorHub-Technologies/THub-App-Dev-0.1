@@ -5,7 +5,8 @@ const hostname = window.location.hostname
 const REDIRECT_URI_MAP = {
     localhost: 'http://localhost:8080/',
     'thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io': 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/',
-    'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io': 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
+    'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io': 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/',
+    'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io': 'https://thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
 }
 
 const redirectUri = REDIRECT_URI_MAP[hostname] || 'http://localhost:8080/'
