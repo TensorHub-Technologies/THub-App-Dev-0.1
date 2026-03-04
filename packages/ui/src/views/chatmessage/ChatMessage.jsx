@@ -1480,21 +1480,21 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
 
     useEffect(() => {
         if (open && chatflowid) {
-            // API request
+            // ✅ Compute fresh name NOW, not in stale cleanup closure
+            const freshName = chatflow?.name?.replace(/[^a-zA-Z\s]/g, '') || ''
+            const freshWelcome = `Hi, I'm ${freshName}. How can I help you today?`
+            setMessages([{ message: freshWelcome, type: 'apiMessage' }])
+
             getChatmessageApi.request(chatflowid)
             getIsChatflowStreamingApi.request(chatflowid)
             getAllowChatFlowUploads.request(chatflowid)
             getChatflowConfig.request(chatflowid)
 
-            // Add a small delay to ensure content is rendered before scrolling
-            setTimeout(() => {
-                scrollToBottom()
-            }, 100)
+            setTimeout(() => scrollToBottom(), 100)
 
             setIsRecording(false)
             setIsConfigLoading(true)
 
-            // leads
             const savedLead = getLocalStorageChatflow(chatflowid)?.lead
             if (savedLead) {
                 setIsLeadSaved(!!savedLead)
@@ -1506,16 +1506,11 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             setUserInput('')
             setUploadedFiles([])
             setLoading(false)
-            setMessages([
-                {
-                    message: welcomeMessage,
-                    type: 'apiMessage'
-                }
-            ])
+            // ✅ Removed stale welcomeMessage reset from here
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open, chatflowid])
+    }, [open, chatflowid, chatflow?.name])
 
     useEffect(() => {
         // wait for audio recording to load and then send
@@ -2378,11 +2373,11 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 console.log('Resumed listening...')
             })
 
-            // If this is the first resume, speak the greeting
             if (!greetingSpokenOnResume.current) {
                 greetingSpokenOnResume.current = true
-                const cleanName = chatflow.name.replace(/[^a-zA-Z\s]/g, '')
-                const welcomeMessage = `Hi, I'm ${cleanName}. How can I help you today?`
+                // ✅ Recompute fresh name here too (same fix pattern)
+                const freshName = chatflow?.name?.replace(/[^a-zA-Z\s]/g, '') || ''
+                const welcomeMessage = `Hi, I'm ${freshName}. How can I help you today?`
                 player.current = new sdk.SpeakerAudioDestination()
                 audioConfigForSynthesizer.current = sdk.AudioConfig.fromSpeakerOutput(player.current)
                 synthesizer.current = new sdk.SpeechSynthesizer(speechConfig.current, audioConfigForSynthesizer.current)
