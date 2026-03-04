@@ -1,247 +1,208 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import { styled } from '@mui/material/styles'
-import {
-    Box,
-    Paper,
-    Skeleton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TableSortLabel,
-    useTheme,
-    Typography
-} from '@mui/material'
-import { tableCellClasses } from '@mui/material/TableCell'
+import { Box, Typography, Skeleton, useTheme } from '@mui/material'
 import DocumentStoreStatus from '@/views/docstore/DocumentStoreStatus'
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    borderColor: theme.palette.grey[900] + 25,
-
-    [`&.${tableCellClasses.head}`]: {
-        color: theme.palette.grey[900]
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        height: 64
-    }
-}))
-
-const StyledTableRow = styled(TableRow)(() => ({
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0
-    }
-}))
 
 export const DocumentStoreTable = ({ data, isLoading, onRowClick, images }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
-
-    const localStorageKeyOrder = 'doc_store_order'
-    const localStorageKeyOrderBy = 'doc_store_orderBy'
-
-    const [order, setOrder] = useState(localStorage.getItem(localStorageKeyOrder) || 'desc')
-    const [orderBy, setOrderBy] = useState(localStorage.getItem(localStorageKeyOrderBy) || 'name')
-
-    const handleRequestSort = (property) => {
-        const isAsc = orderBy === property && order === 'asc'
-        const newOrder = isAsc ? 'desc' : 'asc'
-        setOrder(newOrder)
-        setOrderBy(property)
-        localStorage.setItem(localStorageKeyOrder, newOrder)
-        localStorage.setItem(localStorageKeyOrderBy, property)
-    }
-
-    const sortedData = data
-        ? [...data].sort((a, b) => {
-              if (orderBy === 'name') {
-                  return order === 'asc' ? (a.name || '').localeCompare(b.name || '') : (b.name || '').localeCompare(a.name || '')
-              }
-              return 0
-          })
-        : []
+    const isDark = customization.isDarkMode
 
     return (
-        <>
-            <TableContainer sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }} component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small' aria-label='document_store_table'>
-                    <TableHead
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+            {/* HEADER CARD */}
+            <Box
+                sx={{
+                    border: '1px solid',
+                    borderColor: 'rgba(255,255,255,0.3)',
+                    borderRadius: '12px',
+                    backdropFilter: 'blur(16px)',
+                    backgroundColor: isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.2)',
+                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
+                }}
+            >
+                <Box sx={{ px: 3, py: 2 }}>
+                    <Box
                         sx={{
-                            backgroundColor: customization.isDarkMode ? theme.palette.common.black : theme.palette.grey[100],
-                            height: 56
+                            display: 'grid',
+                            gridTemplateColumns: '80px 1.5fr 1.5fr 120px 150px 120px 160px',
+                            gap: 3,
+                            alignItems: 'center'
                         }}
                     >
-                        <TableRow>
-                            <StyledTableCell>&nbsp;</StyledTableCell>
-                            <StyledTableCell>
-                                <TableSortLabel active={orderBy === 'name'} direction={order} onClick={() => handleRequestSort('name')}>
-                                    Name
-                                </TableSortLabel>
-                            </StyledTableCell>
-                            <StyledTableCell>Description</StyledTableCell>
-                            <StyledTableCell>Connected flows</StyledTableCell>
-                            <StyledTableCell>Total characters</StyledTableCell>
-                            <StyledTableCell>Total chunks</StyledTableCell>
-                            <StyledTableCell>Loader Types</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {isLoading ? (
-                            <>
-                                <StyledTableRow>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                                <StyledTableRow>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Skeleton variant='text' />
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                            </>
-                        ) : (
-                            <>
-                                {sortedData.map((row, index) => {
-                                    return (
-                                        <StyledTableRow
-                                            onClick={() => onRowClick(row)}
-                                            hover
-                                            key={index}
-                                            sx={{ cursor: 'pointer', '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <StyledTableCell>
-                                                <DocumentStoreStatus isTableView={true} status={row.status} />
-                                            </StyledTableCell>
-                                            <StyledTableCell>
-                                                <Typography
-                                                    sx={{
-                                                        display: '-webkit-box',
-                                                        WebkitLineClamp: 5,
-                                                        WebkitBoxOrient: 'vertical',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden'
-                                                    }}
-                                                >
-                                                    {row.name}
-                                                </Typography>
-                                            </StyledTableCell>
-                                            <StyledTableCell>
-                                                <Typography
-                                                    sx={{
-                                                        display: '-webkit-box',
-                                                        WebkitLineClamp: 5,
-                                                        WebkitBoxOrient: 'vertical',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden'
-                                                    }}
-                                                >
-                                                    {row?.description}
-                                                </Typography>
-                                            </StyledTableCell>
-                                            <StyledTableCell>{row.whereUsed?.length ?? 0}</StyledTableCell>
-                                            <StyledTableCell>{row.totalChars}</StyledTableCell>
-                                            <StyledTableCell>{row.totalChunks}</StyledTableCell>
-                                            <StyledTableCell>
-                                                {images && images[row.id] && (
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'start',
-                                                            gap: 1
-                                                        }}
-                                                    >
-                                                        {images[row.id]
-                                                            .slice(0, images[row.id].length > 3 ? 3 : images[row.id].length)
-                                                            .map((img) => (
-                                                                <Box
-                                                                    key={img}
-                                                                    sx={{
-                                                                        width: 30,
-                                                                        height: 30,
-                                                                        borderRadius: '50%',
-                                                                        backgroundColor: customization.isDarkMode
-                                                                            ? theme.palette.common.white
-                                                                            : theme.palette.grey[300] + 75
-                                                                    }}
-                                                                >
-                                                                    <img
-                                                                        style={{
-                                                                            width: '100%',
-                                                                            height: '100%',
-                                                                            padding: 5,
-                                                                            objectFit: 'contain'
-                                                                        }}
-                                                                        alt=''
-                                                                        src={img}
-                                                                    />
-                                                                </Box>
-                                                            ))}
-                                                        {images?.length > 3 && (
-                                                            <Typography
-                                                                sx={{
-                                                                    alignItems: 'center',
-                                                                    display: 'flex',
-                                                                    fontSize: '.9rem',
-                                                                    fontWeight: 200
-                                                                }}
-                                                            >
-                                                                + {images.length - 3} More
-                                                            </Typography>
-                                                        )}
-                                                    </Box>
-                                                )}
-                                            </StyledTableCell>
-                                        </StyledTableRow>
-                                    )
-                                })}
-                            </>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </>
+                        <Typography fontWeight={600}>Status</Typography>
+                        <Typography fontWeight={600}>Name</Typography>
+                        <Typography fontWeight={600}>Description</Typography>
+                        <Typography fontWeight={600} textAlign='center'>
+                            Flows
+                        </Typography>
+                        <Typography fontWeight={600} textAlign='center'>
+                            Characters
+                        </Typography>
+                        <Typography fontWeight={600} textAlign='center'>
+                            Chunks
+                        </Typography>
+                        <Typography fontWeight={600} textAlign='center'>
+                            Loader Types
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
+
+            {/* LOADING */}
+            {isLoading
+                ? [...Array(6)].map((_, index) => (
+                      <Skeleton
+                          key={index}
+                          variant='rounded'
+                          height={96}
+                          sx={{
+                              borderRadius: 3,
+                              backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
+                          }}
+                      />
+                  ))
+                : data.map((store, index) => (
+                      <Box
+                          key={store.id}
+                          sx={{
+                              position: 'relative',
+                              animation: 'float 6s ease-in-out infinite',
+                              animationDelay: `${index * 0.1}s`,
+                              '@keyframes float': {
+                                  '0%,100%': {
+                                      transform: 'translateY(0px)'
+                                  },
+                                  '50%': {
+                                      transform: 'translateY(-5px)'
+                                  }
+                              }
+                          }}
+                      >
+                          {/* GLASS ROW */}
+                          <Box
+                              onClick={() => onRowClick(store)}
+                              sx={{
+                                  position: 'relative',
+                                  border: '1px solid',
+                                  borderColor: 'rgba(255,255,255,0.3)',
+                                  borderRadius: '12px',
+                                  backdropFilter: 'blur(16px)',
+                                  backgroundColor: isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.1)',
+                                  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+                                  height: '6rem',
+                                  px: 3,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  transition: 'all 0.3s ease-in-out',
+                                  cursor: 'pointer',
+                                  '&:hover': {
+                                      transform: 'translateY(-3px)'
+                                  },
+                                  '&:hover .glow-effect': {
+                                      opacity: 1
+                                  }
+                              }}
+                          >
+                              <Box
+                                  sx={{
+                                      display: 'grid',
+                                      gridTemplateColumns: '80px 1.5fr 1.5fr 120px 150px 120px 160px',
+                                      gap: 3,
+                                      alignItems: 'center',
+                                      width: '100%'
+                                  }}
+                              >
+                                  {/* STATUS */}
+                                  <DocumentStoreStatus isTableView status={store.status} />
+
+                                  {/* NAME */}
+                                  <Typography
+                                      sx={{
+                                          fontWeight: 600,
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap'
+                                      }}
+                                  >
+                                      {store.name}
+                                  </Typography>
+
+                                  {/* DESCRIPTION */}
+                                  <Typography
+                                      variant='body2'
+                                      sx={{
+                                          opacity: 0.8,
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap'
+                                      }}
+                                  >
+                                      {store.description}
+                                  </Typography>
+
+                                  {/* FLOWS */}
+                                  <Typography textAlign='center'>{store.whereUsed?.length ?? 0}</Typography>
+
+                                  {/* CHARACTERS */}
+                                  <Typography textAlign='center'>{store.totalChars}</Typography>
+
+                                  {/* CHUNKS */}
+                                  <Typography textAlign='center'>{store.totalChunks}</Typography>
+
+                                  {/* LOADER TYPES */}
+                                  <Box
+                                      sx={{
+                                          display: 'flex',
+                                          justifyContent: 'center',
+                                          gap: 1
+                                      }}
+                                  >
+                                      {images?.[store.id]?.slice(0, 3).map((img) => (
+                                          <Box
+                                              key={img}
+                                              sx={{
+                                                  width: 30,
+                                                  height: 30,
+                                                  borderRadius: '50%',
+                                                  backgroundColor: 'rgba(255,255,255,0.2)',
+                                                  display: 'flex',
+                                                  alignItems: 'center',
+                                                  justifyContent: 'center'
+                                              }}
+                                          >
+                                              <img
+                                                  src={img}
+                                                  alt=''
+                                                  style={{
+                                                      width: '70%',
+                                                      height: '70%',
+                                                      objectFit: 'contain'
+                                                  }}
+                                              />
+                                          </Box>
+                                      ))}
+                                  </Box>
+                              </Box>
+
+                              {/* GLOW EFFECT */}
+                              <Box
+                                  className='glow-effect'
+                                  sx={{
+                                      position: 'absolute',
+                                      inset: 0,
+                                      borderRadius: '12px',
+                                      background: 'linear-gradient(to right, rgba(60,91,164,0.3), rgba(226,42,144,0.3))',
+                                      opacity: 0,
+                                      transition: 'opacity 0.3s ease-in-out',
+                                      filter: 'blur(8px)',
+                                      zIndex: -1
+                                  }}
+                              />
+                          </Box>
+                      </Box>
+                  ))}
+        </Box>
     )
 }
 

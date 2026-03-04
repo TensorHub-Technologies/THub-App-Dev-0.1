@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import * as PropTypes from 'prop-types'
 import moment from 'moment/moment'
 import { useNavigate } from 'react-router-dom'
@@ -8,22 +8,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
     Checkbox,
     Skeleton,
-    TableCell,
     Box,
     Button,
     Chip,
     Collapse,
     IconButton,
-    Paper,
     Stack,
-    Table,
-    TableBody,
-    TableContainer,
-    TableHead,
-    TableRow,
-    ToggleButton
+    ToggleButton,
+    Typography,
+    Tooltip,
+    useTheme
 } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
 import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction } from '@/store/actions'
 
 // API
@@ -39,7 +34,6 @@ import MainCard from '@/ui-component/cards/MainCard'
 import { BackdropLoader } from '@/ui-component/loading/BackdropLoader'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
-import { StyledTableCell, StyledTableRow } from '@/ui-component/table/TableStyles'
 import CreateEvaluationDialog from '@/views/evaluations/CreateEvaluationDialog'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
@@ -58,9 +52,517 @@ import {
     IconPlayerPause
 } from '@tabler/icons-react'
 
+// ─── Column layout ─────────────────────────────────────────────────────────────
+// Matches screenshot: Checkbox | Status | Name | Version | Metrics | Date | Dataset | Flow | Actions
+const GRID_COLS = '48px 56px 160px 80px 1fr 200px 180px 160px 56px'
+const CHILD_GRID_COLS = '48px 80px 200px 1fr 120px 56px'
+
+// ─── Shared style helpers ──────────────────────────────────────────────────────
+
+const glassCard = (isDark, extra = {}) => ({
+    position: 'relative',
+    border: '1px solid',
+    borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+    borderRadius: '12px',
+    backdropFilter: 'blur(16px)',
+    backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.85)',
+    boxShadow: isDark ? '0 4px 24px -4px rgba(0,0,0,0.5)' : '0 4px 24px -4px rgba(0,0,0,0.08)',
+    overflow: 'hidden',
+    ...extra
+})
+
+const headerCard = (isDark) => ({
+    ...glassCard(isDark),
+    backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(248,250,252,0.95)',
+    borderColor: isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.12)'
+})
+
+const colHeader = (isDark) => ({
+    color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.45)',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    fontFamily: 'Cambria Math'
+})
+
+const bodyText = (isDark) => ({
+    color: isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.75)',
+    fontSize: '0.875rem',
+    fontWeight: 500
+})
+
+const subtleText = (isDark) => ({
+    color: isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.4)',
+    fontSize: '0.75rem'
+})
+
+const checkboxSx = (isDark) => ({
+    color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)',
+    '&.Mui-checked': { color: isDark ? '#90CAF9' : '#1976D2' },
+    padding: '4px'
+})
+
+// ─── Status dot ───────────────────────────────────────────────────────────────
+
+const STATUS_DOT_COLOR = {
+    completed: '#52b69a',
+    error: '#f44336',
+    pending: '#ffc107',
+    default: '#bcbcbc'
+}
+
+const StatusDot = ({ status, title }) => (
+    <Tooltip title={title || status} placement='top' arrow>
+        <Box
+            sx={{
+                width: 14,
+                height: 14,
+                borderRadius: '50%',
+                backgroundColor: STATUS_DOT_COLOR[status] ?? STATUS_DOT_COLOR.default,
+                flexShrink: 0,
+                boxShadow: `0 0 6px 1px ${STATUS_DOT_COLOR[status] ?? STATUS_DOT_COLOR.default}55`
+            }}
+        />
+    </Tooltip>
+)
+StatusDot.propTypes = { status: PropTypes.string, title: PropTypes.string }
+
+const getPassRateColor = (p) => (p > 90 ? '#52b69a' : p >= 50 ? '#f48c06' : '#f44336')
+
+// ─── Skeleton row ──────────────────────────────────────────────────────────────
+
+const SkeletonRow = ({ isDark }) => (
+    <Box sx={{ ...glassCard(isDark), minHeight: '64px', display: 'flex', alignItems: 'center', px: 3, py: 2 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: GRID_COLS, gap: 2, alignItems: 'center', width: '100%' }}>
+            <Skeleton variant='rectangular' width={18} height={18} sx={{ borderRadius: '4px' }} />
+            <Skeleton variant='circular' width={14} height={14} />
+            <Skeleton variant='text' width={110} height={20} />
+            <Skeleton variant='text' width={30} height={20} />
+            <Stack direction='row' gap={1}>
+                <Skeleton variant='rectangular' width={110} height={24} sx={{ borderRadius: '16px' }} />
+                <Skeleton variant='rectangular' width={130} height={24} sx={{ borderRadius: '16px' }} />
+            </Stack>
+            <Skeleton variant='text' width={160} height={20} />
+            <Skeleton variant='rectangular' width={140} height={28} sx={{ borderRadius: '25px' }} />
+            <Skeleton variant='text' width={80} height={20} />
+            <Skeleton variant='circular' width={28} height={28} />
+        </Box>
+    </Box>
+)
+SkeletonRow.propTypes = { isDark: PropTypes.bool }
+
+// ─── EvaluationRunRow ──────────────────────────────────────────────────────────
+
+function EvaluationRunRow({ rows, item, selected, customization, onRefresh, handleSelect }) {
+    const dispatch = useDispatch()
+    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
+
+    const [open, setOpen] = useState(false)
+    const [childSelected, setChildSelected] = useState([])
+
+    const navigate = useNavigate()
+    const { confirm } = useConfirm()
+    const isDark = customization.isDarkMode
+
+    const showResults = (row) => navigate(`/evaluation_results/${row.id}`)
+    const goToDataset = (id) => window.open(`/dataset_rows/${id}`, '_blank')
+
+    const onSelectAllChildClick = (event) => {
+        setChildSelected(event.target.checked ? (rows || []).map((n) => n.id) : [])
+    }
+
+    const handleSelectChild = (event, id) => {
+        const idx = childSelected.indexOf(id)
+        let next = []
+        if (idx === -1) next = [...childSelected, id]
+        else if (idx === 0) next = childSelected.slice(1)
+        else if (idx === childSelected.length - 1) next = childSelected.slice(0, -1)
+        else next = [...childSelected.slice(0, idx), ...childSelected.slice(idx + 1)]
+        setChildSelected(next)
+    }
+
+    const deleteChildEvaluations = async () => {
+        const isConfirmed = await confirm({
+            title: 'Delete',
+            description: `Delete ${childSelected.length} ${childSelected.length > 1 ? 'evaluations' : 'evaluation'}?`,
+            confirmButtonName: 'Delete',
+            cancelButtonName: 'Cancel'
+        })
+        if (!isConfirmed) return
+        try {
+            const res = await evaluationApi.deleteEvaluations(childSelected)
+            if (res.data) {
+                enqueueSnackbar({
+                    message: `${childSelected.length} evaluations deleted.`,
+                    options: {
+                        key: Date.now() + Math.random(),
+                        variant: 'success',
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+                setChildSelected([])
+                onRefresh()
+            }
+        } catch (error) {
+            enqueueSnackbar({
+                message: `Failed to delete: ${
+                    typeof error.response?.data === 'object' ? error.response.data.message : error.response?.data
+                }`,
+                options: {
+                    key: Date.now() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+        }
+    }
+
+    const isItemSelected = selected.indexOf(item.id) !== -1
+    const hasVersions = item.version > 0
+
+    return (
+        <>
+            {/* ── Parent row card ───────────────────────────────────────── */}
+            <Box
+                sx={{
+                    ...glassCard(isDark),
+                    minHeight: '64px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    transition: 'all 0.25s ease',
+                    animation: 'evalFloat 7s ease-in-out infinite',
+                    '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: isDark ? '0 12px 36px -8px rgba(0,0,0,0.7)' : '0 12px 36px -8px rgba(0,0,0,0.15)',
+                        borderColor: isDark ? 'rgba(255,255,255,0.22)' : 'rgba(0,0,0,0.15)',
+                        '& .row-glow': { opacity: 1 }
+                    }
+                }}
+            >
+                {/* Hover glow */}
+                <Box
+                    className='row-glow'
+                    sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: '12px',
+                        zIndex: 0,
+                        background: 'linear-gradient(135deg, rgba(60,91,164,0.15), rgba(226,42,144,0.15))',
+                        opacity: 0,
+                        transition: 'opacity 0.3s ease',
+                        pointerEvents: 'none'
+                    }}
+                />
+
+                <Box sx={{ position: 'relative', zIndex: 1, px: 3, py: 2, width: '100%' }}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: GRID_COLS, gap: 2, alignItems: 'center' }}>
+                        {/* Checkbox */}
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <Checkbox
+                                color='primary'
+                                checked={isItemSelected}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleSelect(e, item.id)
+                                }}
+                                sx={checkboxSx(isDark)}
+                            />
+                        </Box>
+
+                        {/* Status dot */}
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <StatusDot status={item.status} title={item.status === 'error' ? item.average_metrics?.error : item.status} />
+                        </Box>
+
+                        {/* Name */}
+                        <Tooltip title={item.name} placement='top' arrow>
+                            <Typography
+                                sx={{
+                                    ...bodyText(isDark),
+                                    fontWeight: 600,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                }}
+                            >
+                                {item.name}
+                            </Typography>
+                        </Tooltip>
+
+                        {/* Version + expand */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Typography sx={bodyText(isDark)}>{item.version}</Typography>
+                            {hasVersions && (
+                                <IconButton
+                                    size='small'
+                                    onClick={() => setOpen(!open)}
+                                    sx={{ color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)', padding: '2px' }}
+                                >
+                                    {open ? <IconChevronsUp size={16} /> : <IconChevronsDown size={16} />}
+                                </IconButton>
+                            )}
+                        </Box>
+
+                        {/* Metrics chips */}
+                        <Stack direction='row' sx={{ gap: 0.75, flexWrap: 'wrap', alignItems: 'center' }}>
+                            <Chip
+                                variant='outlined'
+                                size='small'
+                                color='info'
+                                label={
+                                    item.average_metrics?.totalRuns != null
+                                        ? `Total Runs: ${item.average_metrics.totalRuns}`
+                                        : 'Total Runs: N/A'
+                                }
+                            />
+                            {item.average_metrics?.averageCost && (
+                                <Chip variant='outlined' size='small' color='info' label={item.average_metrics.averageCost} />
+                            )}
+                            <Chip
+                                variant='outlined'
+                                size='small'
+                                color='info'
+                                label={
+                                    item.average_metrics?.averageLatency != null
+                                        ? `Avg Latency: ${item.average_metrics.averageLatency}ms`
+                                        : 'Avg Latency: N/A'
+                                }
+                            />
+                            {item.average_metrics?.passPcnt >= 0 && (
+                                <Chip
+                                    size='small'
+                                    sx={{ color: 'white', backgroundColor: getPassRateColor(item.average_metrics.passPcnt) }}
+                                    label={
+                                        item.average_metrics.passPcnt != null
+                                            ? `Pass Rate: ${item.average_metrics.passPcnt}%`
+                                            : 'Pass Rate: N/A'
+                                    }
+                                />
+                            )}
+                        </Stack>
+
+                        {/* Last Evaluated date */}
+                        <Typography sx={bodyText(isDark)}>{moment(item.runDate).format('DD-MMM-YYYY, hh:mm:ss A')}</Typography>
+
+                        {/* Dataset */}
+                        <Box>
+                            <Chip
+                                clickable
+                                size='small'
+                                variant='outlined'
+                                label={item.datasetName}
+                                onClick={() => goToDataset(item.datasetId)}
+                                sx={{
+                                    borderRadius: '25px',
+                                    maxWidth: '100%',
+                                    boxShadow: isDark ? '0 2px 8px rgba(0,0,0,0.4)' : '0 2px 8px rgba(32,40,45,0.1)'
+                                }}
+                            />
+                        </Box>
+
+                        {/* Flow(s) */}
+                        <Box sx={{ overflow: 'hidden' }}>
+                            {(item.usedFlows || []).map((flow, i) => (
+                                <Typography
+                                    key={i}
+                                    sx={{ ...bodyText(isDark), whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                >
+                                    {flow}
+                                </Typography>
+                            ))}
+                        </Box>
+
+                        {/* View results */}
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <Tooltip title={item.status === 'pending' ? 'Results not ready yet' : 'View Results'} placement='top' arrow>
+                                <span>
+                                    <IconButton
+                                        color='primary'
+                                        size='small'
+                                        disabled={item.status === 'pending'}
+                                        onClick={() => showResults(item)}
+                                    >
+                                        <IconChartHistogram size={18} />
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                        </Box>
+                    </Box>
+                </Box>
+            </Box>
+
+            {/* ── Child version rows (collapsible) ─────────────────────── */}
+            <Collapse in={open} timeout='auto' unmountOnExit>
+                <Box sx={{ pl: 3, display: 'flex', flexDirection: 'column', gap: 1.5, mt: 1, mb: 0.5 }}>
+                    {/* Child bulk delete */}
+                    {childSelected.length > 0 && (
+                        <Box>
+                            <StyledButton
+                                sx={{ width: 'max-content' }}
+                                variant='outlined'
+                                onClick={deleteChildEvaluations}
+                                color='error'
+                                startIcon={<IconTrash />}
+                            >
+                                Delete {childSelected.length} {childSelected.length === 1 ? 'evaluation' : 'evaluations'}
+                            </StyledButton>
+                        </Box>
+                    )}
+
+                    {/* Child header */}
+                    <Box sx={{ ...headerCard(isDark), px: 3, py: 1.5 }}>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: CHILD_GRID_COLS, gap: 2, alignItems: 'center' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <Checkbox
+                                    color='primary'
+                                    size='small'
+                                    indeterminate={childSelected.length > 0 && childSelected.length < (rows || []).length}
+                                    checked={(rows || []).length > 0 && childSelected.length === (rows || []).length}
+                                    onChange={onSelectAllChildClick}
+                                    sx={checkboxSx(isDark)}
+                                />
+                            </Box>
+                            {['Version', 'Last Run', 'Metrics', 'Status', ''].map((h) => (
+                                <Typography key={h} sx={colHeader(isDark)}>
+                                    {h}
+                                </Typography>
+                            ))}
+                        </Box>
+                    </Box>
+
+                    {/* Child data rows */}
+                    {(rows || []).map((child, ci) => (
+                        <Box
+                            key={ci}
+                            sx={{
+                                ...glassCard(isDark),
+                                px: 3,
+                                py: 1.5,
+                                display: 'flex',
+                                alignItems: 'center',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: isDark ? '0 8px 24px -6px rgba(0,0,0,0.6)' : '0 8px 24px -6px rgba(0,0,0,0.12)'
+                                }
+                            }}
+                        >
+                            <Box
+                                sx={{ display: 'grid', gridTemplateColumns: CHILD_GRID_COLS, gap: 2, alignItems: 'center', width: '100%' }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Checkbox
+                                        color='primary'
+                                        size='small'
+                                        checked={childSelected.indexOf(child.id) !== -1}
+                                        onChange={(e) => handleSelectChild(e, child.id)}
+                                        sx={checkboxSx(isDark)}
+                                    />
+                                </Box>
+                                <Typography sx={bodyText(isDark)}>v{child.version}</Typography>
+                                <Typography sx={{ ...subtleText(isDark), fontSize: '0.8rem' }}>
+                                    {moment(child.runDate).format('DD-MMM-YYYY, hh:mm A')}
+                                </Typography>
+                                <Stack direction='row' sx={{ gap: 0.75, flexWrap: 'wrap' }}>
+                                    <Chip
+                                        variant='outlined'
+                                        size='small'
+                                        color='info'
+                                        label={
+                                            child.average_metrics?.totalRuns != null
+                                                ? `Total Runs: ${child.average_metrics.totalRuns}`
+                                                : 'Total Runs: N/A'
+                                        }
+                                    />
+                                    {child.average_metrics?.averageCost && (
+                                        <Chip variant='outlined' size='small' color='info' label={child.average_metrics.averageCost} />
+                                    )}
+                                    <Chip
+                                        variant='outlined'
+                                        size='small'
+                                        color='info'
+                                        label={
+                                            child.average_metrics?.averageLatency != null
+                                                ? `Avg Latency: ${child.average_metrics.averageLatency}ms`
+                                                : 'Avg Latency: N/A'
+                                        }
+                                    />
+                                    {child.average_metrics?.passPcnt >= 0 && (
+                                        <Chip
+                                            size='small'
+                                            sx={{ color: 'white', backgroundColor: getPassRateColor(child.average_metrics.passPcnt) }}
+                                            label={
+                                                child.average_metrics.passPcnt != null
+                                                    ? `Pass Rate: ${child.average_metrics.passPcnt}%`
+                                                    : 'Pass Rate: N/A'
+                                            }
+                                        />
+                                    )}
+                                </Stack>
+                                <Tooltip title={child.status === 'error' ? child.average_metrics?.error || '' : ''} placement='top' arrow>
+                                    <Chip
+                                        size='small'
+                                        variant='outlined'
+                                        label={child.status}
+                                        sx={{
+                                            borderRadius: '25px',
+                                            fontSize: '0.72rem',
+                                            fontWeight: 600,
+                                            width: 'fit-content',
+                                            color: STATUS_DOT_COLOR[child.status] ?? STATUS_DOT_COLOR.default,
+                                            borderColor: STATUS_DOT_COLOR[child.status] ?? STATUS_DOT_COLOR.default
+                                        }}
+                                    />
+                                </Tooltip>
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Tooltip title='View Results' placement='top' arrow>
+                                        <span>
+                                            <IconButton
+                                                size='small'
+                                                color='primary'
+                                                disabled={child.status === 'pending'}
+                                                onClick={() => showResults(child)}
+                                            >
+                                                <IconChartBar size={16} />
+                                            </IconButton>
+                                        </span>
+                                    </Tooltip>
+                                </Box>
+                            </Box>
+                        </Box>
+                    ))}
+                </Box>
+            </Collapse>
+        </>
+    )
+}
+
+EvaluationRunRow.propTypes = {
+    item: PropTypes.object,
+    selected: PropTypes.array,
+    rows: PropTypes.arrayOf(PropTypes.object),
+    customization: PropTypes.object,
+    onRefresh: PropTypes.func,
+    handleSelect: PropTypes.func
+}
+
+// ─── EvalsEvaluation (main page) ──────────────────────────────────────────────
+
 const EvalsEvaluation = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const isDark = customization.isDarkMode
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     useNotifier()
@@ -78,100 +580,57 @@ const EvalsEvaluation = () => {
     const [isTableLoading, setTableLoading] = useState(false)
     const [selected, setSelected] = useState([])
     const [autoRefresh, setAutoRefresh] = useState(false)
-
-    /* Table Pagination */
     const [currentPage, setCurrentPage] = useState(1)
     const [pageLimit, setPageLimit] = useState(DEFAULT_ITEMS_PER_PAGE)
     const [total, setTotal] = useState(0)
-    const onChange = (page, pageLimit) => {
+
+    const onChange = (page, limit) => {
         setCurrentPage(page)
-        setPageLimit(pageLimit)
-        refresh(page, pageLimit)
+        setPageLimit(limit)
+        refresh(page, limit)
     }
 
     const refresh = (page, limit) => {
-        const params = {
-            page: page || currentPage,
-            limit: limit || pageLimit
-        }
-        getAllEvaluations.request(params)
+        getAllEvaluations.request({ page: page || currentPage, limit: limit || pageLimit })
     }
 
+    const latestRows = rows.filter((item) => item?.latestEval)
+
     const onSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelected = rows.filter((item) => item?.latestEval).map((n) => n.id)
-            setSelected(newSelected)
-            return
-        }
-        setSelected([])
+        setSelected(event.target.checked ? latestRows.map((n) => n.id) : [])
     }
 
     const handleSelect = (event, id) => {
-        const selectedIndex = selected.indexOf(id)
-        let newSelected = []
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id)
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1))
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1))
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
-        }
-        setSelected(newSelected)
+        const idx = selected.indexOf(id)
+        let next = []
+        if (idx === -1) next = [...selected, id]
+        else if (idx === 0) next = selected.slice(1)
+        else if (idx === selected.length - 1) next = selected.slice(0, -1)
+        else next = [...selected.slice(0, idx), ...selected.slice(idx + 1)]
+        setSelected(next)
     }
 
     const createEvaluation = () => {
-        const dialogProp = {
-            type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Start New Evaluation',
-            data: {}
-        }
-        setDialogProps(dialogProp)
+        setDialogProps({ type: 'ADD', cancelButtonName: 'Cancel', confirmButtonName: 'Start New Evaluation', data: {} })
         setShowNewEvaluationDialog(true)
     }
 
     const deleteEvaluationsAllVersions = async () => {
-        const confirmPayload = {
-            title: `Delete`,
-            description: `Delete ${selected.length} ${
-                selected.length > 1 ? 'evaluations' : 'evaluation'
-            }? This will delete all versions of the evaluation.`,
+        const isConfirmed = await confirm({
+            title: 'Delete',
+            description: `Delete ${selected.length} ${selected.length > 1 ? 'evaluations' : 'evaluation'}? This will delete all versions.`,
             confirmButtonName: 'Delete',
             cancelButtonName: 'Cancel'
-        }
-        const isConfirmed = await confirm(confirmPayload)
-
-        if (isConfirmed) {
-            try {
-                const isDeleteAllVersion = true
-                const deleteResp = await evaluationApi.deleteEvaluations(selected, isDeleteAllVersion)
-                if (deleteResp.data) {
-                    enqueueSnackbar({
-                        message: `${selected.length} ${selected.length > 1 ? 'evaluations' : 'evaluation'} deleted`,
-                        options: {
-                            key: new Date().getTime() + Math.random(),
-                            variant: 'success',
-                            action: (key) => (
-                                <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
-                                    <IconX />
-                                </Button>
-                            )
-                        }
-                    })
-                    onRefresh()
-                }
-            } catch (error) {
+        })
+        if (!isConfirmed) return
+        try {
+            const res = await evaluationApi.deleteEvaluations(selected, true)
+            if (res.data) {
                 enqueueSnackbar({
-                    message: `Failed to delete ${selected.length > 1 ? 'evaluations' : 'evaluation'}: ${
-                        typeof error.response.data === 'object' ? error.response.data.message : error.response.data
-                    }`,
+                    message: `${selected.length} ${selected.length > 1 ? 'evaluations' : 'evaluation'} deleted`,
                     options: {
-                        key: new Date().getTime() + Math.random(),
-                        variant: 'error',
-                        persist: true,
+                        key: Date.now() + Math.random(),
+                        variant: 'success',
                         action: (key) => (
                             <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
                                 <IconX />
@@ -179,10 +638,36 @@ const EvalsEvaluation = () => {
                         )
                     }
                 })
+                onRefresh()
             }
-            setSelected([])
+        } catch (error) {
+            enqueueSnackbar({
+                message: `Failed to delete: ${
+                    typeof error.response?.data === 'object' ? error.response.data.message : error.response?.data
+                }`,
+                options: {
+                    key: Date.now() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
         }
+        setSelected([])
     }
+
+    const processEvalRows = (evalRows) =>
+        evalRows.map((evalRow) => ({
+            ...evalRow,
+            average_metrics:
+                typeof evalRow.average_metrics === 'object' ? evalRow.average_metrics : JSON.parse(evalRow.average_metrics || '{}'),
+            usedFlows: typeof evalRow.chatflowName === 'object' ? evalRow.chatflowName : JSON.parse(evalRow.chatflowName || '[]'),
+            chatIds: typeof evalRow.chatflowId === 'object' ? evalRow.chatflowId : JSON.parse(evalRow.chatflowId || '[]')
+        }))
 
     useEffect(() => {
         refresh(currentPage, pageLimit)
@@ -191,38 +676,15 @@ const EvalsEvaluation = () => {
 
     useEffect(() => {
         if (getAllEvaluations.data) {
-            const evalRows = getAllEvaluations.data.data
             setTotal(getAllEvaluations.data.total)
-            if (evalRows) {
-                // Prepare the data for the table
-                for (let i = 0; i < evalRows.length; i++) {
-                    const evalRow = evalRows[i]
-                    evalRows[i].runDate = moment(evalRow.runDate).format('DD-MMM-YYYY, hh:mm:ss A')
-                    evalRows[i].average_metrics =
-                        typeof evalRow.average_metrics === 'object' ? evalRow.average_metrics : JSON.parse(evalRow.average_metrics)
-                    evalRows[i].usedFlows =
-                        typeof evalRow.chatflowName === 'object' ? evalRow.chatflowName : JSON.parse(evalRow.chatflowName)
-                    evalRows[i].chatIds = typeof evalRow.chatflowId === 'object' ? evalRow.chatflowId : JSON.parse(evalRow.chatflowId)
-                }
-                setRows(evalRows)
-            }
+            const evalRows = getAllEvaluations.data.data
+            if (evalRows) setRows(processEvalRows(evalRows))
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getAllEvaluations.data])
 
     useEffect(() => {
-        if (createNewEvaluation.data) {
-            const evalRows = createNewEvaluation.data
-            for (let i = 0; i < evalRows.length; i++) {
-                const evalRow = evalRows[i]
-                evalRows[i].runDate = moment(evalRow.runDate).format('DD-MMM-YYYY, hh:mm:ss A')
-                evalRows[i].average_metrics =
-                    typeof evalRow.average_metrics === 'object' ? evalRow.average_metrics : JSON.parse(evalRow.average_metrics)
-                evalRows[i].usedFlows = typeof evalRow.chatflowName === 'object' ? evalRow.chatflowName : JSON.parse(evalRow.chatflowName)
-                evalRows[i].chatIds = typeof evalRow.chatflowId === 'object' ? evalRow.chatflowId : JSON.parse(evalRow.chatflowId)
-            }
-            setRows(evalRows)
-        }
+        if (createNewEvaluation.data) setRows(processEvalRows(createNewEvaluation.data))
         setLoading(false)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [createNewEvaluation.data])
@@ -235,15 +697,14 @@ const EvalsEvaluation = () => {
 
     useEffect(() => {
         if (createNewEvaluation.error) {
-            // Change to Notifstack
             enqueueSnackbar({
-                message: `Failed to create new evaluation: ${
+                message: `Failed to create evaluation: ${
                     typeof createNewEvaluation.error.response?.data === 'object'
                         ? createNewEvaluation.error.response.data.message
                         : createNewEvaluation.error.response?.data || createNewEvaluation.error.message || 'Unknown error'
                 }`,
                 options: {
-                    key: new Date().getTime() + Math.random(),
+                    key: Date.now() + Math.random(),
                     variant: 'error',
                     persist: true,
                     action: (key) => (
@@ -268,78 +729,50 @@ const EvalsEvaluation = () => {
     }, [getAllEvaluations.loading])
 
     useEffect(() => {
-        let intervalId = null
-
-        if (autoRefresh) {
-            intervalId = setInterval(() => {
-                onRefresh()
-            }, 5000)
-        }
-
+        let id = null
+        if (autoRefresh) id = setInterval(onRefresh, 5000)
         return () => {
-            if (intervalId) {
-                clearInterval(intervalId)
-            }
+            if (id) clearInterval(id)
         }
     }, [autoRefresh, onRefresh])
-
-    const toggleAutoRefresh = () => {
-        setAutoRefresh(!autoRefresh)
-    }
 
     return (
         <>
             <MainCard>
                 <Stack flexDirection='column' sx={{ gap: 3 }}>
-                    <ViewHeader isBackButton={false} isEditButton={false} search={false} title={'Evaluations'} description=''>
+                    <ViewHeader isBackButton={false} isEditButton={false} search={false} title='Evaluations' description=''>
                         <ToggleButton
                             value='auto-refresh'
                             selected={autoRefresh}
-                            onChange={toggleAutoRefresh}
+                            onChange={() => setAutoRefresh(!autoRefresh)}
                             size='small'
+                            title={autoRefresh ? 'Disable auto-refresh' : 'Enable auto-refresh (every 5s)'}
                             sx={{
                                 borderRadius: 2,
                                 height: '100%',
                                 backgroundColor: 'transparent',
                                 color: autoRefresh ? '#ff9800' : '#4caf50',
                                 border: '1px solid transparent',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                    color: autoRefresh ? '#f57c00' : '#388e3c',
-                                    border: '1px solid transparent'
-                                },
-                                '&.Mui-selected': {
-                                    backgroundColor: 'transparent',
-                                    color: '#ff9800',
-                                    border: '1px solid transparent',
-                                    '&:hover': {
-                                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                        color: '#f57c00',
-                                        border: '1px solid transparent'
-                                    }
-                                }
+                                '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)', border: '1px solid transparent' },
+                                '&.Mui-selected': { backgroundColor: 'transparent', color: '#ff9800', border: '1px solid transparent' }
                             }}
-                            title={autoRefresh ? 'Disable auto-refresh' : 'Enable auto-refresh (every 5s)'}
                         >
                             {autoRefresh ? <IconPlayerPause /> : <IconPlayerPlay />}
                         </ToggleButton>
                         <IconButton
+                            onClick={onRefresh}
+                            title='Refresh'
                             sx={{
                                 borderRadius: 2,
                                 height: '100%',
                                 color: theme.palette.secondary.main,
-                                '&:hover': {
-                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                    color: theme.palette.secondary.dark
-                                }
+                                '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)', color: theme.palette.secondary.dark }
                             }}
-                            onClick={onRefresh}
-                            title='Refresh'
                         >
                             <IconRefresh />
                         </IconButton>
                         <StyledButton
-                            permissionId={'evaluations:create'}
+                            permissionId='evaluations:create'
                             sx={{ borderRadius: 2, height: '100%' }}
                             onClick={createEvaluation}
                             startIcon={<IconPlus />}
@@ -347,10 +780,11 @@ const EvalsEvaluation = () => {
                             New Evaluation
                         </StyledButton>
                     </ViewHeader>
+
                     {selected.length > 0 && (
                         <StyledButton
-                            permissionId={'evaluations:delete'}
-                            sx={{ mt: 1, mb: 2, width: 'max-content' }}
+                            permissionId='evaluations:delete'
+                            sx={{ mt: 1, mb: 1, width: 'max-content' }}
                             variant='outlined'
                             onClick={deleteEvaluationsAllVersions}
                             color='error'
@@ -359,541 +793,79 @@ const EvalsEvaluation = () => {
                             Delete {selected.length} {selected.length === 1 ? 'evaluation' : 'evaluations'}
                         </StyledButton>
                     )}
-                    {!isTableLoading && rows.length <= 0 ? (
-                        <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
-                            <Box sx={{ p: 2, height: 'auto' }}>
-                                {/* <img
-                                    style={{ objectFit: 'cover', height: '20vh', width: 'auto' }}
-                                    src={empty_evalSVG}
-                                    alt='empty_evalSVG'
-                                /> */}
-                            </Box>
-                            <div>No Evaluations Yet</div>
+
+                    {!isTableLoading && latestRows.length === 0 ? (
+                        <Stack sx={{ alignItems: 'center', justifyContent: 'center', py: 8 }}>
+                            <Typography sx={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.35)', fontSize: '0.95rem' }}>
+                                No Evaluations Yet
+                            </Typography>
                         </Stack>
                     ) : (
                         <>
-                            <TableContainer
-                                sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}
-                                component={Paper}
-                            >
-                                <Table sx={{ minWidth: 650 }}>
-                                    <TableHead
-                                        sx={{
-                                            backgroundColor: customization.isDarkMode
-                                                ? theme.palette.common.black
-                                                : theme.palette.grey[100],
-                                            height: 56
-                                        }}
-                                    >
-                                        <TableRow>
-                                            <TableCell padding='checkbox'>
-                                                <Checkbox
-                                                    color='primary'
-                                                    checked={selected.length === (rows.filter((item) => item?.latestEval) || []).length}
-                                                    onChange={onSelectAllClick}
-                                                    inputProps={{
-                                                        'aria-label': 'select all'
-                                                    }}
-                                                />
-                                            </TableCell>
-                                            <TableCell width={10}> </TableCell>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Latest Version</TableCell>
-                                            <TableCell>Average Metrics</TableCell>
-                                            <TableCell>Last Evaluated</TableCell>
-                                            <TableCell>Flow(s)</TableCell>
-                                            <TableCell>Dataset</TableCell>
-                                            <TableCell> </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {isTableLoading ? (
-                                            <>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                                <StyledTableRow>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                </StyledTableRow>
-                                            </>
-                                        ) : (
-                                            <>
-                                                {rows
-                                                    .filter((item) => item?.latestEval)
-                                                    .map((item, index) => (
-                                                        <EvaluationRunRow
-                                                            rows={rows.filter((row) => row.name === item.name)}
-                                                            item={item}
-                                                            key={index}
-                                                            theme={theme}
-                                                            selected={selected}
-                                                            customization={customization}
-                                                            onRefresh={onRefresh}
-                                                            handleSelect={handleSelect}
-                                                        />
-                                                    ))}
-                                            </>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                                {/* ── Header ──────────────────────────────────── */}
+                                <Box sx={{ ...headerCard(isDark), px: 3, py: 2 }}>
+                                    <Box sx={{ display: 'grid', gridTemplateColumns: GRID_COLS, gap: 2, alignItems: 'center' }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                            <Checkbox
+                                                color='primary'
+                                                indeterminate={selected.length > 0 && selected.length < latestRows.length}
+                                                checked={latestRows.length > 0 && selected.length === latestRows.length}
+                                                onChange={onSelectAllClick}
+                                                sx={checkboxSx(isDark)}
+                                            />
+                                        </Box>
+                                        {['Status', 'Name', 'Ver.', 'Average Metrics', 'Last Evaluated', 'Dataset', 'Flow(s)', ''].map(
+                                            (h) => (
+                                                <Typography key={h} sx={colHeader(isDark)}>
+                                                    {h}
+                                                </Typography>
+                                            )
                                         )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            {/* Pagination and Page Size Controls */}
+                                    </Box>
+                                </Box>
+
+                                {/* ── Rows ────────────────────────────────────── */}
+                                {isTableLoading
+                                    ? [...Array(4)].map((_, i) => <SkeletonRow key={i} isDark={isDark} />)
+                                    : latestRows.map((item, index) => (
+                                          <EvaluationRunRow
+                                              key={index}
+                                              rows={rows.filter((row) => row.name === item.name)}
+                                              item={item}
+                                              selected={selected}
+                                              customization={customization}
+                                              onRefresh={onRefresh}
+                                              handleSelect={handleSelect}
+                                          />
+                                      ))}
+                            </Box>
+
                             <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
                         </>
                     )}
                 </Stack>
             </MainCard>
+
             {showNewEvaluationDialog && (
                 <CreateEvaluationDialog
                     show={showNewEvaluationDialog}
                     dialogProps={dialogProps}
                     onCancel={() => setShowNewEvaluationDialog(false)}
                     onConfirm={onConfirm}
-                ></CreateEvaluationDialog>
+                />
             )}
             <ConfirmDialog />
             {loading && <BackdropLoader open={loading} />}
+
+            <style>{`
+                @keyframes evalFloat {
+                    0%, 100% { transform: translateY(0px); }
+                    50%       { transform: translateY(-3px); }
+                }
+            `}</style>
         </>
     )
 }
 
-function EvaluationRunRow(props) {
-    const dispatch = useDispatch()
-    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
-    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
-
-    const [open, setOpen] = useState(false)
-    const [childSelected, setChildSelected] = useState([])
-
-    const theme = useTheme()
-    const navigate = useNavigate()
-    const { confirm } = useConfirm()
-
-    const showResults = (item) => {
-        navigate(`/evaluation_results/${item.id}`)
-    }
-
-    const goToDataset = (id) => {
-        window.open(`/dataset_rows/${id}`, '_blank')
-    }
-
-    const onSelectAllChildClick = (event) => {
-        if (event.target.checked) {
-            const newSelected = (props?.rows || []).map((n) => n.id)
-            setChildSelected(newSelected)
-            return
-        }
-        setChildSelected([])
-    }
-
-    const handleSelectChild = (event, id) => {
-        const selectedIndex = childSelected.indexOf(id)
-        let newSelected = []
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(childSelected, id)
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(childSelected.slice(1))
-        } else if (selectedIndex === childSelected.length - 1) {
-            newSelected = newSelected.concat(childSelected.slice(0, -1))
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(childSelected.slice(0, selectedIndex), childSelected.slice(selectedIndex + 1))
-        }
-        setChildSelected(newSelected)
-    }
-
-    const deleteChildEvaluations = async () => {
-        const confirmPayload = {
-            title: `Delete`,
-            description: `Delete ${childSelected.length} ${childSelected.length > 1 ? 'evaluations' : 'evaluation'}?`,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
-        }
-        const isConfirmed = await confirm(confirmPayload)
-
-        if (isConfirmed) {
-            try {
-                const deleteResp = await evaluationApi.deleteEvaluations(childSelected)
-                if (deleteResp.data) {
-                    enqueueSnackbar({
-                        message: `${childSelected.length} evaluations deleted.`,
-                        options: {
-                            key: new Date().getTime() + Math.random(),
-                            variant: 'success',
-                            action: (key) => (
-                                <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
-                                    <IconX />
-                                </Button>
-                            )
-                        }
-                    })
-                    props.onRefresh()
-                }
-            } catch (error) {
-                enqueueSnackbar({
-                    message: `Failed to delete Evaluation: ${
-                        typeof error.response.data === 'object' ? error.response.data.message : error.response.data
-                    }`,
-                    options: {
-                        key: new Date().getTime() + Math.random(),
-                        variant: 'error',
-                        persist: true,
-                        action: (key) => (
-                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
-                                <IconX />
-                            </Button>
-                        )
-                    }
-                })
-            }
-        }
-    }
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'pending':
-                return '#ffc107'
-            case 'completed':
-                return '#52b69a'
-            case 'error':
-                return '#f44336'
-            default:
-                return '#bcbcbc'
-        }
-    }
-
-    const getPassRateColor = (passPcnt) => {
-        if (passPcnt > 90) {
-            return '#52b69a'
-        } else if (passPcnt >= 50) {
-            return '#f48c06'
-        } else {
-            return '#f44336'
-        }
-    }
-
-    return (
-        <React.Fragment>
-            <StyledTableRow>
-                <StyledTableCell padding='checkbox'>
-                    <Checkbox
-                        color='primary'
-                        checked={props.selected.indexOf(props.item.id) !== -1}
-                        onChange={(event) => props.handleSelect(event, props.item.id)}
-                    />
-                </StyledTableCell>
-                <StyledTableCell>
-                    <div
-                        style={{
-                            display: 'flex',
-                            width: '20px',
-                            height: '20px',
-                            backgroundColor: getStatusColor(props.item.status),
-                            borderRadius: '50%'
-                        }}
-                        title={props.item?.status === 'error' ? props.item?.average_metrics?.error : ''}
-                    ></div>
-                </StyledTableCell>
-                <StyledTableCell>{props.item.name}</StyledTableCell>
-                <StyledTableCell>
-                    {props.item.version}{' '}
-                    {props.item.version > 0 && (
-                        <IconButton aria-label='expand row' size='small' color='inherit' onClick={() => setOpen(!open)}>
-                            {props.item.version > 0 && open ? <IconChevronsUp /> : <IconChevronsDown />}
-                        </IconButton>
-                    )}
-                </StyledTableCell>
-                <StyledTableCell>
-                    <Stack flexDirection='row' sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-                        <Chip
-                            variant='outlined'
-                            size='small'
-                            color='info'
-                            label={
-                                props.item.average_metrics?.totalRuns
-                                    ? 'Total Runs: ' + props.item.average_metrics?.totalRuns
-                                    : 'Total Runs: N/A'
-                            }
-                        />
-                        {props.item.average_metrics?.averageCost && (
-                            <Chip variant='outlined' size='small' color='info' label={props.item.average_metrics?.averageCost} />
-                        )}
-                        <Chip
-                            variant='outlined'
-                            size='small'
-                            color='info'
-                            label={
-                                props.item.average_metrics?.averageLatency
-                                    ? 'Avg Latency: ' + props.item.average_metrics?.averageLatency + 'ms'
-                                    : 'Avg Latency: N/A'
-                            }
-                        />
-                        {props.item.average_metrics?.passPcnt >= 0 && (
-                            <Chip
-                                variant='raised'
-                                size='small'
-                                sx={{
-                                    color: 'white',
-                                    backgroundColor: getPassRateColor(props.item.average_metrics?.passPcnt)
-                                }}
-                                label={
-                                    props.item.average_metrics?.passPcnt
-                                        ? 'Pass Rate: ' + props.item.average_metrics.passPcnt + '%'
-                                        : 'Pass Rate: N/A'
-                                }
-                            />
-                        )}
-                    </Stack>
-                </StyledTableCell>
-                <StyledTableCell>{moment(props.item.runDate).format('DD-MMM-YYYY, hh:mm:ss A')}</StyledTableCell>
-                <StyledTableCell>
-                    <Stack flexDirection='row' sx={{ gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-                        {props.item?.usedFlows?.map((usedFlow, index) => (
-                            <Chip
-                                key={index}
-                                style={{
-                                    width: 'max-content',
-                                    borderRadius: '25px'
-                                }}
-                                label={usedFlow}
-                            ></Chip>
-                        ))}
-                    </Stack>
-                </StyledTableCell>
-                <StyledTableCell>
-                    <Chip
-                        clickable
-                        style={{
-                            border: 'none',
-                            width: 'max-content',
-                            borderRadius: '25px',
-                            boxShadow: props.customization.isDarkMode
-                                ? '0 2px 14px 0 rgb(255 255 255 / 10%)'
-                                : '0 2px 14px 0 rgb(32 40 45 / 10%)'
-                        }}
-                        variant='outlined'
-                        label={props.item.datasetName}
-                        onClick={() => goToDataset(props.item.datasetId)}
-                    ></Chip>
-                </StyledTableCell>
-                <TableCell>
-                    <IconButton
-                        title='View Results'
-                        color='primary'
-                        disabled={props.item.status === 'pending'}
-                        onClick={() => showResults(props.item)}
-                    >
-                        <IconChartHistogram />
-                    </IconButton>
-                </TableCell>
-            </StyledTableRow>
-            {open && childSelected.length > 0 && (
-                <TableRow sx={{ '& td': { border: 0 } }}>
-                    <StyledTableCell colSpan={12}>
-                        <Button
-                            sx={{ mt: 2, width: 'max-content' }}
-                            variant='outlined'
-                            onClick={deleteChildEvaluations}
-                            color='error'
-                            startIcon={<IconTrash />}
-                        >
-                            Delete {childSelected.length} {childSelected.length === 1 ? 'evaluation' : 'evaluations'}
-                        </Button>
-                    </StyledTableCell>
-                </TableRow>
-            )}
-            {open && (
-                <>
-                    <TableRow sx={{ '& td': { border: 0 } }}>
-                        <StyledTableCell colSpan={12} sx={{ p: 2 }}>
-                            <Collapse in={open} timeout='auto' unmountOnExit>
-                                <Box sx={{ borderRadius: 2, border: 1, borderColor: theme.palette.grey[900] + 25, overflow: 'hidden' }}>
-                                    <Table aria-label='chatflow table'>
-                                        <TableHead style={{ height: 10 }}>
-                                            <TableRow>
-                                                <TableCell padding='checkbox'>
-                                                    <Checkbox
-                                                        color='primary'
-                                                        checked={childSelected.length === (props.rows || []).length}
-                                                        onChange={onSelectAllChildClick}
-                                                    />
-                                                </TableCell>
-                                                <TableCell>Version</TableCell>
-                                                <TableCell>Last Run</TableCell>
-                                                <TableCell>Average Metrics</TableCell>
-                                                <TableCell>Status</TableCell>
-                                                <TableCell> </TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {props.rows.length > 0 &&
-                                                props.rows.map((childItem, childIndex) => (
-                                                    <React.Fragment key={childIndex}>
-                                                        <TableRow sx={{ '& td': { border: 0 } }}>
-                                                            <StyledTableCell padding='checkbox'>
-                                                                <Checkbox
-                                                                    color='primary'
-                                                                    checked={childSelected.indexOf(childItem.id) !== -1}
-                                                                    onChange={(event) => handleSelectChild(event, childItem.id)}
-                                                                />
-                                                            </StyledTableCell>
-                                                            <StyledTableCell>{childItem.version}</StyledTableCell>
-                                                            <StyledTableCell>
-                                                                {moment(childItem.runDate).format('DD-MMM-YYYY, hh:mm:ss A')}
-                                                            </StyledTableCell>
-                                                            <StyledTableCell>
-                                                                <Stack
-                                                                    flexDirection='row'
-                                                                    sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }}
-                                                                >
-                                                                    <Chip
-                                                                        variant='outlined'
-                                                                        size='small'
-                                                                        color='info'
-                                                                        label={
-                                                                            childItem.average_metrics?.totalRuns
-                                                                                ? 'Total Runs: ' + childItem.average_metrics?.totalRuns
-                                                                                : 'Total Runs: N/A'
-                                                                        }
-                                                                    />
-                                                                    {childItem.average_metrics?.averageCost && (
-                                                                        <Chip
-                                                                            variant='outlined'
-                                                                            size='small'
-                                                                            color='info'
-                                                                            label={childItem.average_metrics?.averageCost}
-                                                                        />
-                                                                    )}
-                                                                    <Chip
-                                                                        variant='outlined'
-                                                                        size='small'
-                                                                        color='info'
-                                                                        label={
-                                                                            childItem.average_metrics?.averageLatency
-                                                                                ? 'Avg Latency: ' +
-                                                                                  childItem.average_metrics?.averageLatency +
-                                                                                  'ms'
-                                                                                : 'Avg Latency: N/A'
-                                                                        }
-                                                                    />
-                                                                    {childItem.average_metrics?.passPcnt >= 0 && (
-                                                                        <Chip
-                                                                            variant='raised'
-                                                                            size='small'
-                                                                            sx={{
-                                                                                color: 'white',
-                                                                                backgroundColor: getPassRateColor(
-                                                                                    childItem.average_metrics?.passPcnt
-                                                                                )
-                                                                            }}
-                                                                            label={
-                                                                                childItem.average_metrics?.passPcnt
-                                                                                    ? 'Pass rate: ' +
-                                                                                      childItem.average_metrics.passPcnt +
-                                                                                      '%'
-                                                                                    : 'Pass rate: N/A'
-                                                                            }
-                                                                        />
-                                                                    )}
-                                                                </Stack>
-                                                            </StyledTableCell>
-                                                            <StyledTableCell>
-                                                                <Chip
-                                                                    variant='contained'
-                                                                    size='small'
-                                                                    sx={{
-                                                                        color: 'white',
-                                                                        backgroundColor: getStatusColor(childItem.status)
-                                                                    }}
-                                                                    label={childItem.status}
-                                                                    title={
-                                                                        childItem.status === 'error' ? childItem.average_metrics.error : ''
-                                                                    }
-                                                                />
-                                                            </StyledTableCell>
-                                                            <StyledTableCell>
-                                                                <IconButton
-                                                                    title='View Results'
-                                                                    color='primary'
-                                                                    disabled={childItem.status === 'pending'}
-                                                                    onClick={() => showResults(childItem)}
-                                                                >
-                                                                    <IconChartBar />
-                                                                </IconButton>
-                                                            </StyledTableCell>
-                                                        </TableRow>
-                                                    </React.Fragment>
-                                                ))}
-                                        </TableBody>
-                                    </Table>
-                                </Box>
-                            </Collapse>
-                        </StyledTableCell>
-                    </TableRow>
-                </>
-            )}
-        </React.Fragment>
-    )
-}
-EvaluationRunRow.propTypes = {
-    item: PropTypes.object,
-    selected: PropTypes.array,
-    rows: PropTypes.arrayOf(PropTypes.object),
-    theme: PropTypes.any,
-    customization: PropTypes.object,
-    onRefresh: PropTypes.func,
-    handleSelect: PropTypes.func
-}
 export default EvalsEvaluation

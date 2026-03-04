@@ -1,6 +1,6 @@
 import { ICommonObject, removeFolderFromStorage } from 'thub-components'
 import { StatusCodes } from 'http-status-codes'
-import { QueryRunner } from 'typeorm'
+import { In, QueryRunner } from 'typeorm'
 import { ChatflowType, IReactFlowObject } from '../../Interface'
 import { FLOWISE_COUNTER_STATUS, FLOWISE_METRIC_COUNTERS } from '../../Interface.Metrics'
 import { ChatFlow } from '../../database/entities/ChatFlow'
@@ -139,19 +139,26 @@ const getAllChatflows = async (
         const appServer = getRunningExpressApp()
         const repository = appServer.AppDataSource.getRepository(ChatFlow)
 
-        // Calculate offset for pagination
         const offset = (page - 1) * limit
 
-        // Build query conditions
+        // ✅ Build type condition HERE, not after fetching
         const whereConditions: any = {}
+
         if (tenantId) {
             whereConditions.tenantId = tenantId
         }
 
-        // Get total count for pagination info
+        if (type === 'MULTIAGENT' || type === 'AGENTFLOW' || type === 'ASSISTANT') {
+            whereConditions.type = type
+        } else if (type === 'CHATFLOW') {
+            // CHATFLOW includes records where type is 'CHATFLOW' OR null/undefined
+            whereConditions.type = In(['CHATFLOW', null]) // use TypeORM's In operator
+        }
+
+        // ✅ Now count only matching records
         const totalCount = await repository.count({ where: whereConditions })
 
-        // Get paginated data with sorting by updatedDate (newest first)
+        // ✅ Now fetch only matching records with pagination
         const dbResponse = await repository.find({
             where: whereConditions,
             order: { updatedDate: 'DESC' },
@@ -159,31 +166,16 @@ const getAllChatflows = async (
             take: limit
         })
 
-        // Filter by type if specified
-        let filteredData = dbResponse
-        if (type === 'MULTIAGENT') {
-            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'MULTIAGENT')
-        } else if (type === 'AGENTFLOW') {
-            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'AGENTFLOW')
-        } else if (type === 'ASSISTANT') {
-            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'ASSISTANT')
-        } else if (type === 'CHATFLOW') {
-            filteredData = dbResponse.filter((chatflow) => chatflow.type === 'CHATFLOW' || !chatflow.type)
-        }
-
-        // Calculate pagination metadata
         const totalPages = Math.ceil(totalCount / limit)
-        const hasNextPage = page < totalPages
-        const hasPrevPage = page > 1
 
         return {
-            data: filteredData,
+            data: dbResponse,
             total: totalCount,
             page,
             limit,
             totalPages,
-            hasNextPage,
-            hasPrevPage
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1
         }
     } catch (error) {
         throw new InternalFlowiseError(
