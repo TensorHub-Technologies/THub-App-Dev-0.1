@@ -89,19 +89,27 @@ const Header = () => {
         }
 
         if (loginType === 'google') {
-            if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-                window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
-            } else if (currentHost === 'localhost') {
+            if (currentHost === 'localhost') {
                 window.location.href = 'http://localhost:8080/'
+            } else if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
+            } else if (currentHost === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+                window.location.href = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
             } else {
-                window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io'
+                window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/'
             }
+
             return
         }
 
         // 3️⃣ Normal email/password login logout
         if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
             window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
+            return
+        }
+
+        if (currentHost === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+            window.location.href = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
             return
         }
 
@@ -135,10 +143,12 @@ const Header = () => {
                 let apiUrl
                 const hostname = window.location.hostname
 
-                if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-                    apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-                } else if (hostname === 'localhost') {
+                if (hostname === 'localhost') {
                     apiUrl = 'http://localhost:2000'
+                } else if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                    apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+                } else if (hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+                    apiUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
                 } else {
                     apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
                 }
