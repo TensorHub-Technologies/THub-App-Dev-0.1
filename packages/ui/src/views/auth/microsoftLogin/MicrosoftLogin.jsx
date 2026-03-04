@@ -54,6 +54,9 @@ export const MicrosoftLogin = () => {
                                 import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL ||
                                 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
                             const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+                            const thubWebServerQAUrl =
+                                import.meta.env.VITE_THUB_WEB_SERVER_QA_URL ||
+                                'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
                             let apiUrl
 
                             if (window.location.hostname === 'localhost') {
