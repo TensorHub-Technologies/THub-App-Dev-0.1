@@ -94,7 +94,7 @@ const Header = () => {
             } else if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
                 window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             } else if (currentHost === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
-                window.location.href = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
+                window.location.href = 'https://thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
             } else {
                 window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/'
             }
