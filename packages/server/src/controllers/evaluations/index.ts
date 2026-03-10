@@ -106,7 +106,6 @@ const patchDeleteEvaluations = async (req: Request, res: Response, next: NextFun
     try {
         const ids = req.body.ids ?? []
         const isDeleteAllVersion = req.body.isDeleteAllVersion ?? false
-
         const apiResponse = await evaluationsService.patchDeleteEvaluations(ids, isDeleteAllVersion)
         return res.json(apiResponse)
     } catch (error) {

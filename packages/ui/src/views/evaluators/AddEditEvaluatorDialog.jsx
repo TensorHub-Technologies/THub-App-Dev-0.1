@@ -551,7 +551,6 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             <DialogActions>
                 <Button onClick={() => onCancel()}>{dialogProps.cancelButtonName}</Button>
                 <StyledButton
-                    permissionId={'evaluators:create,evaluators:update'}
                     disabled={disableButton()}
                     variant='contained'
                     onClick={() => (dialogProps.type === 'ADD' ? addEvaluator() : updateEvaluator())}
