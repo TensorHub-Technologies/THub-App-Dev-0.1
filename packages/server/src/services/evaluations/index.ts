@@ -417,8 +417,7 @@ const deleteEvaluation = async (id: string) => {
         const appServer = getRunningExpressApp()
         await appServer.AppDataSource.getRepository(Evaluation).delete({ id: id })
         await appServer.AppDataSource.getRepository(EvaluationRun).delete({ evaluationId: id })
-        const results = await appServer.AppDataSource.getRepository(Evaluation)
-        return results
+        return { id, deleted: true }
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
@@ -592,10 +591,9 @@ const patchDeleteEvaluations = async (ids: string[] = [], isDeleteAllVersion?: b
     try {
         const appServer = getRunningExpressApp()
         const evalsToBeDeleted = await appServer.AppDataSource.getRepository(Evaluation).find({
-            where: {
-                id: In(ids)
-            }
+            where: { id: In(ids) }
         })
+
         await appServer.AppDataSource.getRepository(Evaluation).delete(ids)
         for (const evaluation of evalsToBeDeleted) {
             await appServer.AppDataSource.getRepository(EvaluationRun).delete({ evaluationId: evaluation.id })
@@ -604,14 +602,10 @@ const patchDeleteEvaluations = async (ids: string[] = [], isDeleteAllVersion?: b
         if (isDeleteAllVersion) {
             for (const evaluation of evalsToBeDeleted) {
                 const otherVersionEvals = await appServer.AppDataSource.getRepository(Evaluation).find({
-                    where: {
-                        name: evaluation.name
-                    }
+                    where: { name: evaluation.name }
                 })
                 if (otherVersionEvals.length > 0) {
-                    await appServer.AppDataSource.getRepository(Evaluation).delete(
-                        [...otherVersionEvals].map((evaluation) => evaluation.id)
-                    )
+                    await appServer.AppDataSource.getRepository(Evaluation).delete(otherVersionEvals.map((e) => e.id))
                     for (const otherVersionEval of otherVersionEvals) {
                         await appServer.AppDataSource.getRepository(EvaluationRun).delete({ evaluationId: otherVersionEval.id })
                     }
@@ -619,8 +613,8 @@ const patchDeleteEvaluations = async (ids: string[] = [], isDeleteAllVersion?: b
             }
         }
 
-        const results = await appServer.AppDataSource.getRepository(Evaluation)
-        return results
+        // ✅ Return plain data, not a TypeORM entity/repository
+        return { deleted: true, count: ids.length }
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
