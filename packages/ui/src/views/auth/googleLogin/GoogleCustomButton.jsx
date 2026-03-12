@@ -62,7 +62,7 @@ const GoogleCustomButton = ({ setLoading }) => {
                 // --------------------------------
                 if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
                     workspace = 'demo'
-                    window.location.href = `https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
+                    window.location.href = `https://dev.thub.tech/workflows?theme=dark&uid=${data.userId}`
                     return
                 }
 
@@ -71,7 +71,7 @@ const GoogleCustomButton = ({ setLoading }) => {
                 // --------------------------------
                 if (hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
                     workspace = 'qa'
-                    window.location.href = `https://thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
+                    window.location.href = `https://qa.thub.tech/workflows?theme=dark&uid=${data.userId}`
                     return
                 }
 
@@ -82,7 +82,7 @@ const GoogleCustomButton = ({ setLoading }) => {
                 //     workspace = 'app'
                 // }
 
-                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
+                window.location.href = `https://app.thub.tech/workflows?theme=dark&uid=${data.userId}`
             } catch (error) {
                 alert('Login Failed')
                 console.error('Failed to exchange code:', error)
