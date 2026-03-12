@@ -122,9 +122,9 @@ const Subscription = () => {
 
         if (hostname === 'localhost') {
             determinedUrl = 'http://localhost:2000'
-        } else if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+        } else if (hostname === 'dev.thub.tech') {
             determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-        } else if (hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+        } else if (hostname === 'qa.thub.tech') {
             determinedUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
         } else {
             determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'

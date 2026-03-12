@@ -30,9 +30,9 @@ const AcceptInvite = () => {
     const API_BASE =
         window.location.hostname === 'localhost'
             ? thubWebServerLocalUrl
-            : window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            : window.location.hostname === 'dev.thub.tech'
             ? thubWebServerDevUrl
-            : window.location.hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+            : window.location.hostname === 'qa.thub.tech'
             ? thubWebServerQAUrl
             : thubWebServerProdUrl
 
