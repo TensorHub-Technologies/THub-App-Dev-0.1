@@ -360,7 +360,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         setSelectedLLM(llm)
         setSelectedModel('')
         setCredentialId('')
-        if (llm !== 'no_grading') getModelsApi.request(llm, { loadMethod: 'listModels' })
+        if (llm !== 'no_grading') getModelsApi.request(llm, { loadMethod: 'listModels', tenantId })
     }
 
     const onChangeFlowType = (flowType) => {

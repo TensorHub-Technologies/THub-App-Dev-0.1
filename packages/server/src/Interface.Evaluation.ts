@@ -7,7 +7,6 @@ export interface IDataset {
     description: string
     createdDate: Date
     updatedDate: Date
-    workspaceId?: string
 }
 export interface IDatasetRow {
     id: string
@@ -36,7 +35,6 @@ export interface IEvaluation {
     average_metrics: string //json
     status: string
     runDate: Date
-    workspaceId?: string
 }
 
 export interface IEvaluationResult extends IEvaluation {
@@ -64,7 +62,6 @@ export interface IEvaluator {
     config: string // JSON
     updatedDate: Date
     createdDate: Date
-    workspaceId?: string
 }
 
 export class EvaluatorDTO {

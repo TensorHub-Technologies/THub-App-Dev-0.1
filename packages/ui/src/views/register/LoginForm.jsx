@@ -76,7 +76,7 @@ const LoginForm = () => {
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
                 // window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`
-                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/?theme=lite&uid=${response.data.userId}`
+                window.location.href = `https://app.thub.tech/?theme=lite&uid=${response.data.userId}`
             }
             resetForm()
         } catch (error) {

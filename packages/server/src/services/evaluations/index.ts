@@ -20,6 +20,43 @@ import evaluatorsService from '../evaluator'
 import { LLMEvaluationRunner } from './LLMEvaluationRunner'
 import { Assistant } from '../../database/entities/Assistant'
 
+const DEFAULT_EVALUATION_RUN_TIMEOUT_MS = 15 * 60 * 1000
+const DEFAULT_LLM_EVALUATION_TIMEOUT_MS = 5 * 60 * 1000
+
+const getTimeoutMs = (value: unknown, fallback: number) => {
+    const parsed = Number(value)
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
+}
+
+const parseStringArray = (value: unknown): string[] => {
+    if (!value) return []
+    if (Array.isArray(value)) return value.filter((item): item is string => typeof item === 'string')
+    if (typeof value === 'string') {
+        try {
+            const parsed = JSON.parse(value)
+            if (Array.isArray(parsed)) return parsed.filter((item): item is string => typeof item === 'string')
+            return []
+        } catch (error) {
+            return []
+        }
+    }
+    return []
+}
+
+const withTimeout = async <T>(promise: Promise<T>, timeoutMs: number, timeoutErrorMessage: string): Promise<T> => {
+    let timeoutRef: ReturnType<typeof setTimeout> | undefined
+    try {
+        return await Promise.race([
+            promise,
+            new Promise<T>((_, reject) => {
+                timeoutRef = setTimeout(() => reject(new Error(timeoutErrorMessage)), timeoutMs)
+            })
+        ])
+    } finally {
+        if (timeoutRef) clearTimeout(timeoutRef)
+    }
+}
+
 const runAgain = async (id: string, baseURL: string) => {
     try {
         const appServer = getRunningExpressApp()
@@ -68,15 +105,17 @@ const createEvaluation = async (body: ICommonObject, baseURL: string) => {
 
         const row = appServer.AppDataSource.getRepository(Evaluation).create(newEval)
         row.average_metrics = JSON.stringify({})
+        const selectedSimpleEvaluators = parseStringArray(body.selectedSimpleEvaluators)
+        const selectedLLMEvaluators = parseStringArray(body.selectedLLMEvaluators)
 
         const additionalConfig: ICommonObject = {
             chatflowTypes: body.chatflowType ? JSON.parse(body.chatflowType) : [],
             datasetAsOneConversation: body.datasetAsOneConversation,
-            simpleEvaluators: body.selectedSimpleEvaluators.length > 0 ? JSON.parse(body.selectedSimpleEvaluators) : []
+            simpleEvaluators: selectedSimpleEvaluators
         }
 
         if (body.evaluationType === 'llm') {
-            additionalConfig.lLMEvaluators = body.selectedLLMEvaluators.length > 0 ? JSON.parse(body.selectedLLMEvaluators) : []
+            additionalConfig.lLMEvaluators = selectedLLMEvaluators
             additionalConfig.llmConfig = {
                 credentialId: body.credentialId,
                 llm: body.llm,
@@ -146,182 +185,177 @@ const createEvaluation = async (body: ICommonObject, baseURL: string) => {
             if (!credential) throw new Error(`Credential ${body.credentialId} not found`)
         }
 
-        let evalMetrics = { passCount: 0, failCount: 0, errorCount: 0 }
-        evalRunner
-            .runEvaluations(data)
-            .then(async (result) => {
+        const evaluationRunTimeoutMs = getTimeoutMs(process.env.EVALUATION_RUN_TIMEOUT_MS, DEFAULT_EVALUATION_RUN_TIMEOUT_MS)
+        const llmEvaluationTimeoutMs = getTimeoutMs(process.env.LLM_EVALUATION_TIMEOUT_MS, DEFAULT_LLM_EVALUATION_TIMEOUT_MS)
+        const evaluationRepo = appServer.AppDataSource.getRepository(Evaluation)
+
+        const updateEvaluation = async (status: string, averageMetrics?: ICommonObject) => {
+            const evaluation = await evaluationRepo.findOneBy({ id: newEvaluation.id })
+            if (!evaluation) return
+            evaluation.status = status
+            if (averageMetrics !== undefined) {
+                evaluation.average_metrics = JSON.stringify(averageMetrics)
+            }
+            await evaluationRepo.save(evaluation)
+        }
+
+        console.info(`[evaluations] started id=${newEvaluation.id} rows=${(dataset as any).rows?.length ?? 0} flows=${chatflowIds.length}`)
+
+        void (async () => {
+            let evalMetrics = { passCount: 0, failCount: 0, errorCount: 0 }
+            try {
+                const result = await withTimeout(
+                    evalRunner.runEvaluations(data),
+                    evaluationRunTimeoutMs,
+                    `Evaluation run timed out after ${evaluationRunTimeoutMs}ms`
+                )
                 let totalTime = 0
-                // let us assume that the eval is successful
                 let allRowsSuccessful = true
-                try {
-                    const llmEvaluationRunner = new LLMEvaluationRunner()
-                    for (const resultRow of result.rows) {
-                        const metricsArray: ICommonObject[] = []
-                        const actualOutputArray: string[] = []
-                        const errorArray: string[] = []
-                        for (const evaluationRow of resultRow.evaluations) {
-                            if (evaluationRow.status === 'error') {
-                                // if a row failed, mark the entire run as failed (error)
-                                allRowsSuccessful = false
-                            }
-                            actualOutputArray.push(evaluationRow.actualOutput)
-                            totalTime += parseFloat(evaluationRow.latency)
-                            let metricsObjFromRun: ICommonObject = {}
-
-                            let nested_metrics = evaluationRow.nested_metrics
-
-                            let promptTokens = 0,
-                                completionTokens = 0,
-                                totalTokens = 0
-                            let inputCost = 0,
-                                outputCost = 0,
-                                totalCost = 0
-                            if (nested_metrics && nested_metrics.length > 0) {
-                                for (let i = 0; i < nested_metrics.length; i++) {
-                                    const nested_metric = nested_metrics[i]
-                                    if (nested_metric.model && nested_metric.promptTokens > 0) {
-                                        promptTokens += nested_metric.promptTokens
-                                        completionTokens += nested_metric.completionTokens
-                                        totalTokens += nested_metric.totalTokens
-
-                                        inputCost += nested_metric.cost_values.input_cost
-                                        outputCost += nested_metric.cost_values.output_cost
-                                        totalCost += nested_metric.cost_values.total_cost
-
-                                        nested_metric['totalCost'] = formatCost(nested_metric.cost_values.total_cost)
-                                        nested_metric['promptCost'] = formatCost(nested_metric.cost_values.input_cost)
-                                        nested_metric['completionCost'] = formatCost(nested_metric.cost_values.output_cost)
-                                    }
-                                }
-                                nested_metrics = nested_metrics.filter((metric: any) => {
-                                    return metric.model && metric.provider
-                                })
-                            }
-                            const metrics = evaluationRow.metrics
-                            if (metrics) {
-                                if (nested_metrics && nested_metrics.length > 0) {
-                                    metrics.push({
-                                        promptTokens: promptTokens,
-                                        completionTokens: completionTokens,
-                                        totalTokens: totalTokens,
-                                        totalCost: formatCost(totalCost),
-                                        promptCost: formatCost(inputCost),
-                                        completionCost: formatCost(outputCost)
-                                    })
-                                    metricsObjFromRun.nested_metrics = nested_metrics
-                                }
-                                metrics.map((metric: any) => {
-                                    if (metric) {
-                                        const json = typeof metric === 'object' ? metric : JSON.parse(metric)
-                                        Object.getOwnPropertyNames(json).map((key) => {
-                                            metricsObjFromRun[key] = json[key]
-                                        })
-                                    }
-                                })
-                                metricsArray.push(metricsObjFromRun)
-                            }
-                            errorArray.push(evaluationRow.error)
+                const llmEvaluationRunner = new LLMEvaluationRunner()
+                for (const resultRow of result.rows) {
+                    const metricsArray: ICommonObject[] = []
+                    const actualOutputArray: string[] = []
+                    const errorArray: string[] = []
+                    for (const evaluationRow of resultRow.evaluations) {
+                        if (evaluationRow.status === 'error') {
+                            allRowsSuccessful = false
                         }
+                        actualOutputArray.push(evaluationRow.actualOutput)
+                        totalTime += parseFloat(evaluationRow.latency || '0')
+                        let metricsObjFromRun: ICommonObject = {}
 
-                        const newRun = new EvaluationRun()
-                        newRun.evaluationId = newEvaluation.id
-                        newRun.runDate = new Date()
-                        newRun.input = resultRow.input
-                        newRun.expectedOutput = resultRow.expectedOutput
-                        newRun.actualOutput = JSON.stringify(actualOutputArray)
-                        newRun.errors = JSON.stringify(errorArray)
-                        calculateCost(metricsArray)
-                        newRun.metrics = JSON.stringify(metricsArray)
+                        let nested_metrics = evaluationRow.nested_metrics
 
-                        const { results, evaluatorMetrics } = await runAdditionalEvaluators(
-                            metricsArray,
-                            actualOutputArray,
-                            errorArray,
-                            body.selectedSimpleEvaluators.length > 0 ? JSON.parse(body.selectedSimpleEvaluators) : []
-                        )
+                        let promptTokens = 0,
+                            completionTokens = 0,
+                            totalTokens = 0
+                        let inputCost = 0,
+                            outputCost = 0,
+                            totalCost = 0
+                        if (nested_metrics && nested_metrics.length > 0) {
+                            for (let i = 0; i < nested_metrics.length; i++) {
+                                const nested_metric = nested_metrics[i]
+                                if (nested_metric.model && nested_metric.promptTokens > 0) {
+                                    promptTokens += nested_metric.promptTokens
+                                    completionTokens += nested_metric.completionTokens
+                                    totalTokens += nested_metric.totalTokens
 
-                        newRun.evaluators = JSON.stringify(results)
-                        evalMetrics.passCount += evaluatorMetrics.passCount
-                        evalMetrics.failCount += evaluatorMetrics.failCount
-                        evalMetrics.errorCount += evaluatorMetrics.errorCount
+                                    inputCost += nested_metric.cost_values.input_cost
+                                    outputCost += nested_metric.cost_values.output_cost
+                                    totalCost += nested_metric.cost_values.total_cost
 
-                        if (body.evaluationType === 'llm') {
-                            resultRow.llmConfig = additionalConfig.llmConfig
-                            resultRow.LLMEvaluators = body.selectedLLMEvaluators.length > 0 ? JSON.parse(body.selectedLLMEvaluators) : []
-                            const llmEvaluatorMap: { evaluatorId: string; evaluator: any }[] = []
-                            for (let i = 0; i < resultRow.LLMEvaluators.length; i++) {
-                                const evaluatorId = resultRow.LLMEvaluators[i]
-                                const evaluator = await evaluatorsService.getEvaluator(evaluatorId)
-                                llmEvaluatorMap.push({
-                                    evaluatorId: evaluatorId,
-                                    evaluator: evaluator
-                                })
+                                    nested_metric['totalCost'] = formatCost(nested_metric.cost_values.total_cost)
+                                    nested_metric['promptCost'] = formatCost(nested_metric.cost_values.input_cost)
+                                    nested_metric['completionCost'] = formatCost(nested_metric.cost_values.output_cost)
+                                }
                             }
-                            // iterate over the actualOutputArray and add the actualOutput to the evaluationLineItem object
-                            const resultArray = await llmEvaluationRunner.runLLMEvaluators(
-                                resultRow,
-                                actualOutputArray,
-                                errorArray,
-                                llmEvaluatorMap
-                            )
-                            newRun.llmEvaluators = JSON.stringify(resultArray)
-                            const row = appServer.AppDataSource.getRepository(EvaluationRun).create(newRun)
-                            await appServer.AppDataSource.getRepository(EvaluationRun).save(row)
-                        } else {
-                            const row = appServer.AppDataSource.getRepository(EvaluationRun).create(newRun)
-                            await appServer.AppDataSource.getRepository(EvaluationRun).save(row)
-                        }
-                    }
-                    //update the evaluation with status as completed
-                    let passPercent = -1
-                    if (evalMetrics.passCount + evalMetrics.failCount + evalMetrics.errorCount > 0) {
-                        passPercent =
-                            (evalMetrics.passCount / (evalMetrics.passCount + evalMetrics.failCount + evalMetrics.errorCount)) * 100
-                    }
-                    appServer.AppDataSource.getRepository(Evaluation)
-                        .findOneBy({ id: newEvaluation.id })
-                        .then((evaluation) => {
-                            if (evaluation) {
-                                evaluation.status = allRowsSuccessful ? EvaluationStatus.COMPLETED : EvaluationStatus.ERROR
-                                evaluation.average_metrics = JSON.stringify({
-                                    averageLatency: (totalTime / result.rows.length).toFixed(3),
-                                    totalRuns: result.rows.length,
-                                    ...evalMetrics,
-                                    passPcnt: passPercent.toFixed(2)
-                                })
-                                appServer.AppDataSource.getRepository(Evaluation).save(evaluation)
-                            }
-                        })
-                } catch (error) {
-                    //update the evaluation with status as error
-                    appServer.AppDataSource.getRepository(Evaluation)
-                        .findOneBy({ id: newEvaluation.id })
-                        .then((evaluation) => {
-                            if (evaluation) {
-                                evaluation.status = EvaluationStatus.ERROR
-                                appServer.AppDataSource.getRepository(Evaluation).save(evaluation)
-                            }
-                        })
-                }
-            })
-            .catch((error) => {
-                // Handle errors from runEvaluations
-                console.error('Error running evaluations:', getErrorMessage(error))
-                appServer.AppDataSource.getRepository(Evaluation)
-                    .findOneBy({ id: newEvaluation.id })
-                    .then((evaluation) => {
-                        if (evaluation) {
-                            evaluation.status = EvaluationStatus.ERROR
-                            evaluation.average_metrics = JSON.stringify({
-                                error: getErrorMessage(error)
+                            nested_metrics = nested_metrics.filter((metric: any) => {
+                                return metric.model && metric.provider
                             })
-                            appServer.AppDataSource.getRepository(Evaluation).save(evaluation)
                         }
+                        const metrics = evaluationRow.metrics
+                        if (metrics) {
+                            if (nested_metrics && nested_metrics.length > 0) {
+                                metrics.push({
+                                    promptTokens: promptTokens,
+                                    completionTokens: completionTokens,
+                                    totalTokens: totalTokens,
+                                    totalCost: formatCost(totalCost),
+                                    promptCost: formatCost(inputCost),
+                                    completionCost: formatCost(outputCost)
+                                })
+                                metricsObjFromRun.nested_metrics = nested_metrics
+                            }
+                            metrics.map((metric: any) => {
+                                if (metric) {
+                                    const json = typeof metric === 'object' ? metric : JSON.parse(metric)
+                                    Object.getOwnPropertyNames(json).map((key) => {
+                                        metricsObjFromRun[key] = json[key]
+                                    })
+                                }
+                            })
+                            metricsArray.push(metricsObjFromRun)
+                        }
+                        errorArray.push(evaluationRow.error)
+                    }
+
+                    const newRun = new EvaluationRun()
+                    newRun.evaluationId = newEvaluation.id
+                    newRun.runDate = new Date()
+                    newRun.input = resultRow.input
+                    newRun.expectedOutput = resultRow.expectedOutput
+                    newRun.actualOutput = JSON.stringify(actualOutputArray)
+                    newRun.errors = JSON.stringify(errorArray)
+                    calculateCost(metricsArray)
+                    newRun.metrics = JSON.stringify(metricsArray)
+
+                    const { results, evaluatorMetrics } = await runAdditionalEvaluators(
+                        metricsArray,
+                        actualOutputArray,
+                        errorArray,
+                        selectedSimpleEvaluators
+                    )
+
+                    newRun.evaluators = JSON.stringify(results)
+                    evalMetrics.passCount += evaluatorMetrics.passCount
+                    evalMetrics.failCount += evaluatorMetrics.failCount
+                    evalMetrics.errorCount += evaluatorMetrics.errorCount
+
+                    if (body.evaluationType === 'llm') {
+                        resultRow.llmConfig = additionalConfig.llmConfig
+                        resultRow.LLMEvaluators = selectedLLMEvaluators
+                        const llmEvaluatorMap: { evaluatorId: string; evaluator: any }[] = []
+                        for (let i = 0; i < resultRow.LLMEvaluators.length; i++) {
+                            const evaluatorId = resultRow.LLMEvaluators[i]
+                            const evaluator = await evaluatorsService.getEvaluator(evaluatorId)
+                            llmEvaluatorMap.push({
+                                evaluatorId: evaluatorId,
+                                evaluator: evaluator
+                            })
+                        }
+                        const resultArray = await withTimeout(
+                            llmEvaluationRunner.runLLMEvaluators(resultRow, actualOutputArray, errorArray, llmEvaluatorMap),
+                            llmEvaluationTimeoutMs,
+                            `LLM evaluation timed out after ${llmEvaluationTimeoutMs}ms`
+                        )
+                        newRun.llmEvaluators = JSON.stringify(resultArray)
+                        const row = appServer.AppDataSource.getRepository(EvaluationRun).create(newRun)
+                        await appServer.AppDataSource.getRepository(EvaluationRun).save(row)
+                    } else {
+                        const row = appServer.AppDataSource.getRepository(EvaluationRun).create(newRun)
+                        await appServer.AppDataSource.getRepository(EvaluationRun).save(row)
+                    }
+                }
+
+                let passPercent = -1
+                if (evalMetrics.passCount + evalMetrics.failCount + evalMetrics.errorCount > 0) {
+                    passPercent = (evalMetrics.passCount / (evalMetrics.passCount + evalMetrics.failCount + evalMetrics.errorCount)) * 100
+                }
+
+                await updateEvaluation(allRowsSuccessful ? EvaluationStatus.COMPLETED : EvaluationStatus.ERROR, {
+                    averageLatency: result.rows.length > 0 ? (totalTime / result.rows.length).toFixed(3) : '0.000',
+                    totalRuns: result.rows.length,
+                    ...evalMetrics,
+                    passPcnt: passPercent.toFixed(2)
+                })
+
+                console.info(
+                    `[evaluations] finished id=${newEvaluation.id} status=${
+                        allRowsSuccessful ? EvaluationStatus.COMPLETED : EvaluationStatus.ERROR
+                    } runs=${result.rows.length}`
+                )
+            } catch (error) {
+                const errorMsg = getErrorMessage(error)
+                console.error(`[evaluations] failed id=${newEvaluation.id}: ${errorMsg}`)
+                try {
+                    await updateEvaluation(EvaluationStatus.ERROR, {
+                        error: errorMsg
                     })
-                    .catch((dbError) => {
-                        console.error('Error updating evaluation status:', getErrorMessage(dbError))
-                    })
-            })
+                } catch (dbError) {
+                    console.error(`[evaluations] failed to persist status id=${newEvaluation.id}: ${getErrorMessage(dbError)}`)
+                }
+            }
+        })()
 
         return getAllEvaluations()
     } catch (error) {

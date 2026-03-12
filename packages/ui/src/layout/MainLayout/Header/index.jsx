@@ -76,10 +76,7 @@ const Header = () => {
         if (loginType === 'azure_ad') {
             const currentHost = window.location.hostname
 
-            const redirectUri =
-                currentHost === 'localhost'
-                    ? 'http://localhost:8080/'
-                    : 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/'
+            const redirectUri = currentHost === 'localhost' ? 'http://localhost:8080/' : 'https://app.thub.tech/'
 
             instance.logoutRedirect({
                 postLogoutRedirectUri: redirectUri
@@ -92,11 +89,11 @@ const Header = () => {
             if (currentHost === 'localhost') {
                 window.location.href = 'http://localhost:8080/'
             } else if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-                window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
+                window.location.href = 'https://dev.thub.tech/'
             } else if (currentHost === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
                 window.location.href = 'https://thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
             } else {
-                window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/'
+                window.location.href = 'https://app.thub.tech/'
             }
 
             return
@@ -104,7 +101,7 @@ const Header = () => {
 
         // 3️⃣ Normal email/password login logout
         if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-            window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
+            window.location.href = 'https://dev.thub.tech/'
             return
         }
 
@@ -118,7 +115,7 @@ const Header = () => {
             return
         }
 
-        window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io'
+        window.location.href = 'https://app.thub.tech'
     }
 
     useEffect(() => {
