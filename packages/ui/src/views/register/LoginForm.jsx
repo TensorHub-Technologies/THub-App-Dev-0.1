@@ -58,9 +58,9 @@ const LoginForm = () => {
 
             let apiUrl
 
-            if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            if (window.location.hostname === 'dev.thub.tech') {
                 apiUrl = thubWebServerDevUrl
-            } else if (window.location.hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+            } else if (window.location.hostname === 'qa.thub.tech') {
                 apiUrl = thubWebServerQaUrl
             } else if (window.location.hostname === 'localhost') {
                 apiUrl = thubWebServerLocalUrl
@@ -76,7 +76,7 @@ const LoginForm = () => {
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
                 // window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`
-                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/?theme=lite&uid=${response.data.userId}`
+                window.location.href = `https://app.thub.tech/?theme=lite&uid=${response.data.userId}`
             }
             resetForm()
         } catch (error) {

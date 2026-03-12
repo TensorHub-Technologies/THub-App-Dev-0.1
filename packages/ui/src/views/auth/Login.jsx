@@ -65,9 +65,9 @@ const Login = () => {
     const API_BASE =
         window.location.hostname === 'localhost'
             ? thubWebServerLocalUrl
-            : window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            : window.location.hostname === 'dev.thub.tech'
             ? thubWebServerDevUrl
-            : window.location.hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+            : window.location.hostname === 'qa.thub.tech'
             ? thubWebServerQAUrl
             : thubWebServerProdUrl
 
@@ -144,12 +144,12 @@ const Login = () => {
 
                 if (currentHost === 'localhost') {
                     window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${userId}`
-                } else if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-                    window.location.href = `https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${userId}`
-                } else if (currentHost === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
-                    window.location.href = `https://thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${userId}`
+                } else if (currentHost === 'dev.thub.tech') {
+                    window.location.href = `https://dev.thub.tech/workflows?theme=dark&uid=${userId}`
+                } else if (currentHost === 'qa.thub.tech') {
+                    window.location.href = `https://qa.thub.tech/workflows?theme=dark&uid=${userId}`
                 } else {
-                    window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${userId}`
+                    window.location.href = `https://app.thub.tech/workflows?theme=dark&uid=${userId}`
                 }
             } catch (error) {
                 console.error('Login Error:', error)

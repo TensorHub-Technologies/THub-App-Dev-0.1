@@ -76,10 +76,7 @@ const Header = () => {
         if (loginType === 'azure_ad') {
             const currentHost = window.location.hostname
 
-            const redirectUri =
-                currentHost === 'localhost'
-                    ? 'http://localhost:8080/'
-                    : 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/'
+            const redirectUri = currentHost === 'localhost' ? 'http://localhost:8080/' : 'https://app.thub.tech/'
 
             instance.logoutRedirect({
                 postLogoutRedirectUri: redirectUri
@@ -91,24 +88,24 @@ const Header = () => {
         if (loginType === 'google') {
             if (currentHost === 'localhost') {
                 window.location.href = 'http://localhost:8080/'
-            } else if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-                window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
-            } else if (currentHost === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+            } else if (currentHost === 'dev.thub.tech') {
+                window.location.href = 'https://dev.thub.tech/'
+            } else if (currentHost === 'qa.thub.tech') {
                 window.location.href = 'https://thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
             } else {
-                window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/'
+                window.location.href = 'https://app.thub.tech/'
             }
 
             return
         }
 
         // 3️⃣ Normal email/password login logout
-        if (currentHost === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-            window.location.href = 'https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
+        if (currentHost === 'dev.thub.tech') {
+            window.location.href = 'https://dev.thub.tech/'
             return
         }
 
-        if (currentHost === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+        if (currentHost === 'qa.thub.tech') {
             window.location.href = 'https://thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
             return
         }
@@ -118,7 +115,7 @@ const Header = () => {
             return
         }
 
-        window.location.href = 'https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io'
+        window.location.href = 'https://app.thub.tech'
     }
 
     useEffect(() => {
@@ -145,9 +142,9 @@ const Header = () => {
 
                 if (hostname === 'localhost') {
                     apiUrl = 'http://localhost:2000'
-                } else if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                } else if (hostname === 'dev.thub.tech') {
                     apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-                } else if (hostname === 'thub-app.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
+                } else if (hostname === 'qa.thub.tech') {
                     apiUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
                 } else {
                     apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
