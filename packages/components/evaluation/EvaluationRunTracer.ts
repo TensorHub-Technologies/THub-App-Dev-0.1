@@ -5,7 +5,7 @@ import { encoding_for_model, get_encoding } from '@dqbd/tiktoken'
 
 export class EvaluationRunTracer extends RunCollectorCallbackHandler {
     evaluationRunId: string
-    model: string
+    model: string | undefined
 
     constructor(id: string) {
         super()

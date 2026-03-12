@@ -6,6 +6,7 @@ import { getModelConfigByModelName, MODEL_TYPE } from '../src/modelLoader'
 
 export class EvaluationRunner {
     static metrics = new Map<string, string[]>()
+    private readonly predictionTimeoutMs: number
 
     static getCostMetrics = async (selectedProvider: string, selectedModel: string) => {
         let modelConfig = await getModelConfigByModelName(MODEL_TYPE.CHAT, selectedProvider, selectedModel)
@@ -80,6 +81,8 @@ export class EvaluationRunner {
 
     constructor(baseURL: string) {
         this.baseURL = baseURL
+        const timeoutFromEnv = Number(process.env.EVALUATION_PREDICTION_TIMEOUT_MS)
+        this.predictionTimeoutMs = Number.isFinite(timeoutFromEnv) && timeoutFromEnv > 0 ? timeoutFromEnv : 120000
     }
 
     getChatflowApiKey(chatflowId: string, apiKeys: { chatflowId: string; apiKey: string }[] = []) {
@@ -121,7 +124,8 @@ export class EvaluationRunner {
                 headers['Authorization'] = `Bearer ${apiKey}`
             }
             let axiosConfig = {
-                headers: headers
+                headers: headers,
+                timeout: this.predictionTimeoutMs
             }
             let startTime = performance.now()
             const runData: any = {}
@@ -196,11 +200,15 @@ export class EvaluationRunner {
             } catch (error: any) {
                 runData.status = 'error'
                 runData.actualOutput = ''
-                runData.error = error?.response?.data?.message
-                    ? error.response.data.message
-                    : error?.message
-                    ? error.message
-                    : 'Unknown error'
+                if (error?.code === 'ECONNABORTED') {
+                    runData.error = `Error: Evaluation request timed out after ${this.predictionTimeoutMs}ms`
+                } else {
+                    runData.error = error?.response?.data?.message
+                        ? error.response.data.message
+                        : error?.message
+                        ? error.message
+                        : 'Unknown error'
+                }
                 try {
                     if (runData.error.indexOf('-') > -1) {
                         // if there is a dash, remove all content before
