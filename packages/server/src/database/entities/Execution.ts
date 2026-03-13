@@ -3,6 +3,7 @@ import { IExecution, ExecutionState } from '../../Interface'
 import { ChatFlow } from './ChatFlow'
 
 @Entity()
+@Index('IDX_EXECUTION_SESSION_AGENTFLOW', ['sessionId', 'agentflowId', 'createdDate'])
 export class Execution implements IExecution {
     @PrimaryGeneratedColumn('uuid')
     id: string

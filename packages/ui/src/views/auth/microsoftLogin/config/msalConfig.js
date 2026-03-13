@@ -4,7 +4,7 @@ const hostname = window.location.hostname
 
 const REDIRECT_URI_MAP = {
     localhost: 'http://localhost:8080/',
-    'thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io': 'https://app.thub.tech/',
+    'app.thub.tech': 'https://app.thub.tech/',
     'dev.thub.tech': 'https://dev.thub.tech/',
     'qa.thub.tech': 'https://qa.thub.tech/'
 }
