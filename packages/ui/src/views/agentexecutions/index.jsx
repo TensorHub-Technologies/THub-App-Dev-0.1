@@ -35,7 +35,6 @@ import executionsApi from '@/api/executions'
 import { useSelector } from 'react-redux'
 
 // icons
-import execution_empty from '@/assets/images/executions_empty.svg'
 import { IconTrash } from '@tabler/icons-react'
 
 // const
@@ -553,11 +552,11 @@ const AgentExecutions = () => {
                     {!isLoading && !hasExecutions && (
                         <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                             <Box sx={{ p: 2, height: 'auto' }}>
-                                <img
+                                {/* <img
                                     style={{ objectFit: 'cover', height: '20vh', width: 'auto' }}
                                     src={execution_empty}
                                     alt='execution_empty'
-                                />
+                                /> */}
                             </Box>
                             <div>No Executions Yet</div>
                         </Stack>

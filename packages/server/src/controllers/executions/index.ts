@@ -44,7 +44,8 @@ const getAllExecutions = async (req: Request, res: Response, next: NextFunction)
         if (req.query.agentflowId) filters.agentflowId = req.query.agentflowId as string
         if (req.query.agentflowName) filters.agentflowName = req.query.agentflowName as string
         if (req.query.sessionId) filters.sessionId = req.query.sessionId as string
-        filters.tenantId = 'a707a73a-5973-4001-8776-1c75c3cfbb7b'
+        if (req.query.tenantId) filters.tenantId = req.query.tenantId as string
+        else throw new Error('tenantId is required')
 
         // State filter
         if (req.query.state) {
