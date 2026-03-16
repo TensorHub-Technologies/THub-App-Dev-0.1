@@ -25,7 +25,6 @@ import useNotifier from '@/utils/useNotifier'
 
 // Icons
 import { IconTrash, IconEdit, IconX, IconPlus } from '@tabler/icons-react'
-import CredentialEmptySVG from '@/assets/images/credential_empty.svg'
 import keySVG from '@/assets/images/key.svg'
 
 // const
@@ -219,11 +218,11 @@ const Credentials = () => {
                         {!isLoading && credentials.length <= 0 ? (
                             <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                                 <Box sx={{ p: 2, height: 'auto' }}>
-                                    <img
+                                    {/* <img
                                         style={{ objectFit: 'cover', height: '16vh', width: 'auto' }}
                                         src={CredentialEmptySVG}
                                         alt='CredentialEmptySVG'
-                                    />
+                                    /> */}
                                 </Box>
                                 <div>No Credentials Yet</div>
                             </Stack>

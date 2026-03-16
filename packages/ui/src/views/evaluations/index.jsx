@@ -36,7 +36,7 @@ import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import CreateEvaluationDialog from '@/views/evaluations/CreateEvaluationDialog'
 import { StyledButton } from '@/ui-component/button/StyledButton'
-import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
+import { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 
 // icons
 import {
@@ -51,6 +51,7 @@ import {
     IconPlayerPlay,
     IconPlayerPause
 } from '@tabler/icons-react'
+import InfiniteScrollTable from '@/ui-component/pagination/InfiniteScrollTable'
 
 // ─── Column layout ─────────────────────────────────────────────────────────────
 // Matches screenshot: Checkbox | Status | Name | Version | Metrics | Date | Dataset | Flow | Actions
@@ -585,13 +586,19 @@ const EvalsEvaluation = () => {
     const [total, setTotal] = useState(0)
 
     const onChange = (page, limit) => {
+        if (isTableLoading) return
+        if (rows.length >= total) return
+
         setCurrentPage(page)
         setPageLimit(limit)
         refresh(page, limit)
     }
 
     const refresh = (page, limit) => {
-        getAllEvaluations.request({ page: page || currentPage, limit: limit || pageLimit })
+        getAllEvaluations.request({
+            page: page ?? currentPage,
+            limit: limit ?? pageLimit
+        })
     }
 
     const latestRows = rows.filter((item) => item?.latestEval)
@@ -676,11 +683,22 @@ const EvalsEvaluation = () => {
 
     useEffect(() => {
         if (getAllEvaluations.data) {
-            setTotal(getAllEvaluations.data.total)
-            const evalRows = getAllEvaluations.data.data
-            if (evalRows) setRows(processEvalRows(evalRows))
+            const newData = getAllEvaluations.data
+            const evalRows = newData.data
+
+            setTotal(newData.total)
+
+            if (evalRows) {
+                const processed = processEvalRows(evalRows)
+
+                setRows((prev) => {
+                    if (currentPage === 1) {
+                        return processed
+                    }
+                    return [...prev, ...processed]
+                })
+            }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getAllEvaluations.data])
 
     useEffect(() => {
@@ -840,8 +858,7 @@ const EvalsEvaluation = () => {
                                           />
                                       ))}
                             </Box>
-
-                            <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
+                            <InfiniteScrollTable limit={pageLimit} total={total} onLoadMore={onChange} />{' '}
                         </>
                     )}
                 </Stack>

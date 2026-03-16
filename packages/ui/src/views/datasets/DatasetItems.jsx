@@ -14,7 +14,7 @@ import AddEditDatasetRowDialog from './AddEditDatasetRowDialog'
 import UploadCSVFileDialog from '@/views/datasets/UploadCSVFileDialog'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import AddEditDatasetDialog from '@/views/datasets/AddEditDatasetDialog'
-import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
+import { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 
 // API
 import datasetsApi from '@/api/dataset'
@@ -29,6 +29,7 @@ import useConfirm from '@/hooks/useConfirm'
 import empty_datasetSVG from '@/assets/images/empty_datasets.svg'
 import { IconTrash, IconPlus, IconX, IconUpload, IconArrowsDownUp } from '@tabler/icons-react'
 import { StyledButton } from '@/ui-component/button/StyledButton'
+import InfiniteScrollTable from '@/ui-component/pagination/InfiniteScrollTable'
 
 // ─── Column layout ─────────────────────────────────────────────────────────────
 // Checkbox | Input | Expected Output | Drag
@@ -136,6 +137,9 @@ const EvalDatasetRows = () => {
     const [total, setTotal] = useState(0)
 
     const onChange = (page, pageLimit) => {
+        if (isLoading) return
+        if (page * pageLimit > total) return
+
         setCurrentPage(page)
         setPageLimit(pageLimit)
         refresh(page, pageLimit)
@@ -143,7 +147,11 @@ const EvalDatasetRows = () => {
 
     const refresh = (page, limit) => {
         setLoading(true)
-        getDatasetRows.request(datasetId, { page: page || currentPage, limit: limit || pageLimit })
+
+        getDatasetRows.request(datasetId, {
+            page: page ?? currentPage,
+            limit: limit ?? pageLimit
+        })
     }
 
     // ── Drag handlers ────────────────────────────────────────────────────────
@@ -281,12 +289,31 @@ const EvalDatasetRows = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    // useEffect(() => {
+    //     if (getDatasetRows.data) {
+    //         setDataset(getDatasetRows.data)
+    //         setTotal(getDatasetRows.data.total)
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [getDatasetRows.data])
+
     useEffect(() => {
         if (getDatasetRows.data) {
-            setDataset(getDatasetRows.data)
-            setTotal(getDatasetRows.data.total)
+            const newData = getDatasetRows.data
+
+            setDataset((prev) => {
+                if (currentPage === 1) {
+                    return newData
+                }
+
+                return {
+                    ...newData,
+                    rows: [...(prev?.rows || []), ...(newData?.rows || [])]
+                }
+            })
+
+            setTotal(newData.total)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getDatasetRows.data])
 
     useEffect(() => {
@@ -507,12 +534,10 @@ const EvalDatasetRows = () => {
                                           </Box>
                                       ))}
                             </Box>
-
                             <Typography sx={{ color: isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.4)', mt: -1 }} variant='subtitle2'>
                                 <i>Use the drag icon at the right to reorder dataset items</i>
                             </Typography>
-
-                            <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
+                            <InfiniteScrollTable limit={pageLimit} total={total} onLoadMore={onChange} />{' '}
                         </React.Fragment>
                     )}
                 </Stack>
