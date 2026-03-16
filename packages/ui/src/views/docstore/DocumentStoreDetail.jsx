@@ -432,18 +432,11 @@ const DocumentStoreDetails = () => {
                             onEdit={() => onEditClicked()}
                         >
                             {(documentStore?.status === 'STALE' || documentStore?.status === 'UPSERTING') && (
-                                <Button
-                                    permissionId={'documentStores:view'}
-                                    onClick={onConfirm}
-                                    size='small'
-                                    color='primary'
-                                    title='Refresh Document Store'
-                                >
+                                <Button onClick={onConfirm} size='small' color='primary' title='Refresh Document Store'>
                                     <IconRefresh />
                                 </Button>
                             )}
                             <StyledButton
-                                permissionId={'documentStores:add-loader'}
                                 variant='contained'
                                 sx={{ ml: 2, minWidth: 200, borderRadius: 2, height: '100%', color: 'white' }}
                                 startIcon={<IconPlus />}

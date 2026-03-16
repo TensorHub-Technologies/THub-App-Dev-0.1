@@ -17,13 +17,17 @@ const GoogleCustomButton = ({ setLoading }) => {
     const thubWebServerProdUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+    const thubWebServerQAUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
 
     let apiUrl
 
-    if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-        apiUrl = thubWebServerDevUrl
-    } else if (window.location.hostname === 'localhost') {
+    if (window.location.hostname === 'localhost') {
         apiUrl = thubWebServerLocalUrl
+    } else if (window.location.hostname === 'dev.thub.tech') {
+        apiUrl = thubWebServerDevUrl
+    } else if (window.location.hostname === 'qa.thub.tech') {
+        apiUrl = thubWebServerQAUrl
     } else {
         apiUrl = thubWebServerProdUrl
     }
@@ -56,9 +60,18 @@ const GoogleCustomButton = ({ setLoading }) => {
                 // --------------------------------
                 // 2️⃣ DEMO → always default workspace = demo
                 // --------------------------------
-                if (hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+                if (hostname === 'dev.thub.tech') {
                     workspace = 'demo'
-                    window.location.href = `https://thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
+                    window.location.href = `https://dev.thub.tech/workflows?theme=dark&uid=${data.userId}`
+                    return
+                }
+
+                // --------------------------------
+                // 2️⃣ QA → always default workspace = qa
+                // --------------------------------
+                if (hostname === 'qa.thub.tech') {
+                    workspace = 'qa'
+                    window.location.href = `https://qa.thub.tech/workflows?theme=dark&uid=${data.userId}`
                     return
                 }
 
@@ -69,7 +82,7 @@ const GoogleCustomButton = ({ setLoading }) => {
                 //     workspace = 'app'
                 // }
 
-                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/workflows?theme=dark&uid=${data.userId}`
+                window.location.href = `https://app.thub.tech/workflows?theme=dark&uid=${data.userId}`
             } catch (error) {
                 alert('Login Failed')
                 console.error('Failed to exchange code:', error)

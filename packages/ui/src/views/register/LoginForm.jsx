@@ -46,15 +46,22 @@ const LoginForm = () => {
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
             const thubWebServerDevUrl =
-                import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+                import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+
+            const thubWebServerQaUrl =
+                import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+
             const thubWebServerProdUrl =
                 import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
+
             const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
             let apiUrl
 
-            if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
+            if (window.location.hostname === 'dev.thub.tech') {
                 apiUrl = thubWebServerDevUrl
+            } else if (window.location.hostname === 'qa.thub.tech') {
+                apiUrl = thubWebServerQaUrl
             } else if (window.location.hostname === 'localhost') {
                 apiUrl = thubWebServerLocalUrl
             } else {
@@ -69,7 +76,7 @@ const LoginForm = () => {
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
                 // window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`
-                window.location.href = `https://thub-app.wittysand-a4a5c89d.westus2.azurecontainerapps.io/?theme=lite&uid=${response.data.userId}`
+                window.location.href = `https://app.thub.tech/?theme=lite&uid=${response.data.userId}`
             }
             resetForm()
         } catch (error) {

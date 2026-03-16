@@ -4,6 +4,7 @@ import { IChatMessage, MessageType } from '../../Interface'
 import { Execution } from './Execution'
 
 @Entity()
+@Index('IDX_CHATMESSAGE_SESSION_CHATFLOW', ['sessionId', 'chatflowid', 'createdDate'])
 export class ChatMessage implements IChatMessage {
     @PrimaryGeneratedColumn('uuid')
     id: string

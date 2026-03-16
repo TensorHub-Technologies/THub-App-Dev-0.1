@@ -23,19 +23,24 @@ const ScheduleSettings = () => {
 
     const thubWebServerDevUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+    const thubWebServerQAUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
     const thubWebServerProdUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
     const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
 
     let apiUrl
 
-    if (window.location.hostname === 'thub-app.calmisland-c4dd80be.westus2.azurecontainerapps.io') {
-        apiUrl = thubWebServerDevUrl
-    } else if (window.location.hostname === 'localhost') {
+    if (window.location.hostname === 'localhost') {
         apiUrl = thubWebServerLocalUrl
+    } else if (window.location.hostname === 'dev.thub.tech') {
+        apiUrl = thubWebServerDevUrl
+    } else if (window.location.hostname === 'qa.thub.tech') {
+        apiUrl = thubWebServerQAUrl
     } else {
         apiUrl = thubWebServerProdUrl
     }
+
     const handleScheduleChange = (e) => {
         setSelectedSchedule(e.target.value)
         setFollowUpPromptsConfig({})
