@@ -1,5 +1,4 @@
-import { Button, Stack } from '@mui/material'
-import { GitHubIcon } from './CustomIcons'
+import { Stack } from '@mui/material'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import GoogleCustomButton from './googleLogin/GoogleCustomButton'
 import { useEffect } from 'react'
@@ -131,7 +130,7 @@ export const Top = ({ setLoading }) => {
                 >
                     <GoogleCustomButton setLoading={setLoading} />
                 </GoogleOAuthProvider>
-                <Button
+                {/* <Button
                     variant='outlined'
                     fullWidth
                     onClick={loginWithGithub}
@@ -145,7 +144,7 @@ export const Top = ({ setLoading }) => {
                     startIcon={<GitHubIcon color={customization.isDarkMode ? 'white' : 'black'} />}
                 >
                     Continue With Github
-                </Button>
+                </Button> */}
                 <MicrosoftLogin />
             </Stack>
         </div>
