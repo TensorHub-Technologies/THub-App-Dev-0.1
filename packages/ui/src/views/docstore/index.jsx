@@ -207,7 +207,8 @@ const Documents = () => {
                 <Stack flexDirection='column' sx={{ gap: 3 }}>
                     <ViewHeader
                         onSearchChange={onSearchChange}
-                        search={hasDocStores}
+                        //hasDocStores became False after search so changes to true (was not showing anything in search bar)
+                        search={true}
                         searchPlaceholder='Search Name'
                         title='Document Store'
                         description='Store and upsert documents for LLM retrieval (RAG)'

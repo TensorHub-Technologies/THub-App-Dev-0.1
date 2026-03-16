@@ -74,13 +74,13 @@ const Header = () => {
 
         setAnchorEl(null)
         if (loginType === 'azure_ad') {
-            let redirectUri = 'https://thub-web.happytree-73f6fdda.westus2.azurecontainerapps.io/'
+            let redirectUri = 'https://app.thub.tech/'
             if (currentHost === 'localhost') {
                 redirectUri = 'http://localhost:8080/'
             } else if (currentHost === 'dev.thub.tech') {
-                redirectUri = 'https://thub-web.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
+                redirectUri = 'https://dev.thub.tech/'
             } else if (currentHost === 'qa.thub.tech') {
-                redirectUri = 'https://thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
+                redirectUri = 'https://qa.thub.tech/'
             }
 
             instance.logoutRedirect({
