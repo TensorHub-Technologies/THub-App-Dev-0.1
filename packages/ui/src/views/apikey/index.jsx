@@ -26,8 +26,6 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 import APIKeyDialog from './APIKeyDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import ErrorBoundary from '@/ErrorBoundary'
-import emptyImage from '../../assets/images/glass.svg'
-import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 // API
 import apiKeyApi from '@/api/apikey'
@@ -292,11 +290,11 @@ const APIKey = () => {
                         {apiKeys.length === 0 && !isLoading && (
                             <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                                 <Box sx={{ p: 2, height: 'auto' }}>
-                                    <img
+                                    {/* <img
                                         style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
                                         src={customization.isDarkMode ? emptyImage : emptyImagelite}
                                         alt='APIKeysEmptySVG'
-                                    />
+                                    /> */}
                                 </Box>
                                 <div>No API Keys Yet</div>
                             </Stack>
