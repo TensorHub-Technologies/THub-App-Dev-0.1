@@ -54,6 +54,8 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const [dataset, setDataset] = useState({})
     const [firstRowHeaders, setFirstRowHeaders] = useState(false)
     const [selectedFile, setSelectedFile] = useState()
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     useEffect(() => {
         if (dialogProps.type === 'EDIT' && dialogProps.data) {
@@ -86,7 +88,8 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         try {
             const obj = {
                 name: datasetName,
-                description: datasetDescription
+                description: datasetDescription,
+                tenantId: tenantId
             }
             if (selectedFile) {
                 obj.firstRowHeaders = firstRowHeaders
@@ -132,7 +135,8 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         try {
             const saveObj = {
                 name: datasetName,
-                description: datasetDescription
+                description: datasetDescription,
+                tenantId
             }
 
             const saveResp = await datasetApi.updateDataset(dataset.id, saveObj)

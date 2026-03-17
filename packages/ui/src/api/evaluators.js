@@ -4,9 +4,9 @@ const getAllEvaluators = (params) => client.get('/evaluators', { params })
 
 //evaluators
 const createEvaluator = (body) => client.post(`/evaluators`, body)
-const getEvaluator = (id) => client.get(`/evaluators/${id}`)
+const getEvaluator = (id, params) => client.get(`/evaluators/${id}`, { params })
 const updateEvaluator = (id, body) => client.put(`/evaluators/${id}`, body)
-const deleteEvaluator = (id) => client.delete(`/evaluators/${id}`)
+const deleteEvaluator = (id, tenantId) => client.delete(`/evaluators/${id}`, { params: { tenantId } })
 
 export default {
     getAllEvaluators,
