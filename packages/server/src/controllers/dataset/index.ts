@@ -7,8 +7,9 @@ import { getPageAndLimitParams } from '../../utils/pagination'
 const getAllDatasets = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { page, limit } = getPageAndLimitParams(req)
+        const tenantId = req.query.tenantId as string
 
-        const apiResponse = await datasetService.getAllDatasets(page, limit)
+        const apiResponse = await datasetService.getAllDatasets(page, limit, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -21,8 +22,9 @@ const getDataset = async (req: Request, res: Response, next: NextFunction) => {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.getDataset - id not provided!`)
         }
         const { page, limit } = getPageAndLimitParams(req)
+        const tenantId = req.query.tenantId as string
 
-        const apiResponse = await datasetService.getDataset(req.params.id, page, limit)
+        const apiResponse = await datasetService.getDataset(req.params.id, page, limit, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -34,9 +36,8 @@ const createDataset = async (req: Request, res: Response, next: NextFunction) =>
         if (!req.body) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.createDataset - body not provided!`)
         }
-        const body = req.body
-
-        const apiResponse = await datasetService.createDataset(body)
+        // tenantId arrives via req.body from the frontend
+        const apiResponse = await datasetService.createDataset(req.body)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -51,7 +52,6 @@ const updateDataset = async (req: Request, res: Response, next: NextFunction) =>
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.updateDataset - id not provided!`)
         }
-
         const apiResponse = await datasetService.updateDataset(req.params.id, req.body)
         return res.json(apiResponse)
     } catch (error) {
@@ -64,8 +64,9 @@ const deleteDataset = async (req: Request, res: Response, next: NextFunction) =>
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.deleteDataset - id not provided!`)
         }
+        const tenantId = req.query.tenantId as string
 
-        const apiResponse = await datasetService.deleteDataset(req.params.id)
+        const apiResponse = await datasetService.deleteDataset(req.params.id, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -80,7 +81,7 @@ const addDatasetRow = async (req: Request, res: Response, next: NextFunction) =>
         if (!req.body.datasetId) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.addDatasetRow - datasetId not provided!`)
         }
-
+        // tenantId arrives via req.body from the frontend
         const apiResponse = await datasetService.addDatasetRow(req.body)
         return res.json(apiResponse)
     } catch (error) {
@@ -108,7 +109,6 @@ const deleteDatasetRow = async (req: Request, res: Response, next: NextFunction)
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.deleteDatasetRow - id not provided!`)
         }
-
         const apiResponse = await datasetService.deleteDatasetRow(req.params.id)
         return res.json(apiResponse)
     } catch (error) {
@@ -119,8 +119,9 @@ const deleteDatasetRow = async (req: Request, res: Response, next: NextFunction)
 const patchDeleteRows = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const ids = req.body.ids ?? []
+        const tenantId = req.body.tenantId as string
 
-        const apiResponse = await datasetService.patchDeleteRows(ids)
+        const apiResponse = await datasetService.patchDeleteRows(ids, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -132,13 +133,13 @@ const reorderDatasetRow = async (req: Request, res: Response, next: NextFunction
         if (!req.body) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.reorderDatasetRow - body not provided!`)
         }
-
         const apiResponse = await datasetService.reorderDatasetRow(req.body.datasetId, req.body.rows)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
     }
 }
+
 export default {
     getAllDatasets,
     getDataset,

@@ -38,6 +38,8 @@ const EvalDatasets = () => {
     const theme = useTheme()
     const { confirm } = useConfirm()
 
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     const customization = useSelector((state) => state.customization)
 
     useNotifier()
@@ -66,11 +68,17 @@ const EvalDatasets = () => {
     }
 
     const refresh = (page, limit) => {
+        if (!tenantId) {
+            setLoading(false)
+            return
+        }
+
         setLoading(true)
 
         const params = {
             page: page ?? currentPage,
-            limit: limit ?? pageLimit
+            limit: limit ?? pageLimit,
+            tenantId
         }
 
         getAllDatasets.request(params)
@@ -116,7 +124,7 @@ const EvalDatasets = () => {
 
         if (isConfirmed) {
             try {
-                const deleteResp = await datasetsApi.deleteDataset(dataset.id)
+                const deleteResp = await datasetsApi.deleteDataset(dataset.id, tenantId)
                 if (deleteResp.data) {
                     enqueueSnackbar({
                         message: 'Dataset deleted',
@@ -162,9 +170,9 @@ const EvalDatasets = () => {
     }
 
     useEffect(() => {
-        refresh(currentPage, pageLimit)
+        if (tenantId) refresh(currentPage, pageLimit)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [tenantId])
 
     useEffect(() => {
         if (getAllDatasets.data) {

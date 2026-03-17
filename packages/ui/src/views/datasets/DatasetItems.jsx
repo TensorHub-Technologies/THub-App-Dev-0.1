@@ -98,6 +98,8 @@ SkeletonRow.propTypes = {
 // ─── EvalDatasetRows ───────────────────────────────────────────────────────────
 
 const EvalDatasetRows = () => {
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     const customization = useSelector((state) => state.customization)
     const isDark = customization.isDarkMode
     const dispatch = useDispatch()
@@ -146,11 +148,17 @@ const EvalDatasetRows = () => {
     }
 
     const refresh = (page, limit) => {
+        if (!tenantId) {
+            setLoading(false)
+            return
+        }
+
         setLoading(true)
 
         getDatasetRows.request(datasetId, {
             page: page ?? currentPage,
-            limit: limit ?? pageLimit
+            limit: limit ?? pageLimit,
+            tenantId
         })
     }
 
@@ -176,7 +184,7 @@ const EvalDatasetRows = () => {
         setDragOverIndex(-1)
         e.preventDefault()
         const updatedRows = dataset.rows.map((item, index) => ({ id: item.id, sequenceNo: index }))
-        reorderDatasetRowApi.request({ datasetId, rows: updatedRows })
+        reorderDatasetRowApi.request({ datasetId, rows: updatedRows, tenantId })
     }
 
     // ── Selection ────────────────────────────────────────────────────────────
@@ -202,7 +210,7 @@ const EvalDatasetRows = () => {
             type: 'ADD',
             cancelButtonName: 'Cancel',
             confirmButtonName: 'Add',
-            data: { datasetId, datasetName: dataset.name }
+            data: { datasetId, datasetName: dataset.name, tenantId }
         })
         setShowRowDialog(true)
     }
@@ -212,7 +220,7 @@ const EvalDatasetRows = () => {
             type: 'ADD',
             cancelButtonName: 'Cancel',
             confirmButtonName: 'Upload',
-            data: { datasetId, datasetName: dataset.name }
+            data: { datasetId, datasetName: dataset.name, tenantId }
         })
         setShowUploadDialog(true)
     }
@@ -241,7 +249,7 @@ const EvalDatasetRows = () => {
         })
         if (!isConfirmed) return
         try {
-            const deleteResp = await datasetsApi.deleteDatasetItems(selected)
+            const deleteResp = await datasetsApi.deleteDatasetItems(selected, tenantId)
             if (deleteResp.data) {
                 enqueueSnackbar({
                     message: 'Dataset Items deleted',
@@ -285,9 +293,9 @@ const EvalDatasetRows = () => {
     }
 
     useEffect(() => {
-        refresh(currentPage, pageLimit)
+        if (tenantId) refresh(currentPage, pageLimit)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [tenantId])
 
     // useEffect(() => {
     //     if (getDatasetRows.data) {

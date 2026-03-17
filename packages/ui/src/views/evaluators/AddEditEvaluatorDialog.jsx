@@ -47,6 +47,8 @@ import { evaluators, evaluatorTypes, numericOperators } from './evaluatorConstan
 const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const portalElement = document.getElementById('portal')
     const customization = useSelector((state) => state.customization)
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
 
     const dispatch = useDispatch()
 
@@ -244,7 +246,8 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const prepareData = () => {
         const data = {
             name: name,
-            type: evaluatorType
+            type: evaluatorType,
+            tenantId
         }
         if (evaluatorType === 'numeric') {
             data.operator = selectedMetricOperator

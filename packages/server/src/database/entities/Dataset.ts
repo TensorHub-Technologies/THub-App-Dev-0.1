@@ -1,11 +1,14 @@
 /* eslint-disable */
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
-import { IAssistant, IDataset } from '../../Interface'
+import { IDataset } from '../../Interface'
 
 @Entity()
 export class Dataset implements IDataset {
     @PrimaryGeneratedColumn('uuid')
     id: string
+
+    @Column({ nullable: true })
+    tenantId?: string
 
     @Column({ type: 'text' })
     name: string

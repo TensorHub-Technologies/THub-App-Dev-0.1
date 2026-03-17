@@ -72,6 +72,8 @@ const EvalEvaluationRows = () => {
     const navigate = useNavigate()
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     useNotifier()
@@ -131,7 +133,8 @@ const EvalEvaluationRows = () => {
 
     const openVersionsDrawer = () => {
         setVersionDrawerDialogProps({
-            id: evaluation?.id
+            id: evaluation?.id,
+            tenantId
         })
         setShowVersionSideDrawer(true)
     }
@@ -185,7 +188,7 @@ const EvalEvaluationRows = () => {
         const isConfirmed = await confirm(confirmPayload)
 
         if (isConfirmed) {
-            runAgainApi.request(evaluation?.id)
+            runAgainApi.request(evaluation?.id, { tenantId })
             enqueueSnackbar({
                 message: "Evaluation '" + evaluation.name + "' is running. Redirecting to evaluations page.",
                 options: {
@@ -217,9 +220,9 @@ const EvalEvaluationRows = () => {
     }
 
     useEffect(() => {
-        getEvaluation.request(evalId)
+        if (tenantId) getEvaluation.request(evalId, { tenantId })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [tenantId])
 
     useEffect(() => {
         setTableLoading(getEvaluation.loading)
@@ -238,7 +241,7 @@ const EvalEvaluationRows = () => {
         if (getEvaluation.data) {
             const data = getEvaluation.data
             setSelectedEvaluationName(data.name)
-            getIsOutdatedApi.request(data.id)
+            getIsOutdatedApi.request(data.id, { tenantId })
             if (data.additionalConfig) {
                 setAdditionalConfig(JSON.parse(data.additionalConfig))
             }

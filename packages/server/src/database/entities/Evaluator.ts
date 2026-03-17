@@ -8,6 +8,9 @@ export class Evaluator implements IEvaluator {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
+    @Column({ nullable: true })
+    tenantId?: string
+
     @Column()
     name: string
 
