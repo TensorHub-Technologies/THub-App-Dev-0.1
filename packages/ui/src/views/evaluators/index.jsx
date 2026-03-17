@@ -34,6 +34,8 @@ import InfiniteScrollTable from '@/ui-component/pagination/InfiniteScrollTable'
 
 const Evaluators = () => {
     const theme = useTheme()
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const { confirm } = useConfirm()
@@ -63,9 +65,15 @@ const Evaluators = () => {
         refresh(page, pageLimit)
     }
     const refresh = (page, limit) => {
+        if (!tenantId) {
+            setLoading(false)
+            return
+        }
+
         const params = {
             page: page ?? currentPage,
-            limit: limit ?? pageLimit
+            limit: limit ?? pageLimit,
+            tenantId
         }
 
         getAllEvaluators.request(params)
@@ -108,7 +116,7 @@ const Evaluators = () => {
 
         if (isConfirmed) {
             try {
-                const deleteResp = await evaluatorsApi.deleteEvaluator(item.id)
+                const deleteResp = await evaluatorsApi.deleteEvaluator(item.id, tenantId)
                 if (deleteResp.data) {
                     enqueueSnackbar({
                         message: 'Evaluator deleted',
@@ -154,9 +162,9 @@ const Evaluators = () => {
     }
 
     useEffect(() => {
-        refresh(currentPage, pageLimit)
+        if (tenantId) refresh(currentPage, pageLimit)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [tenantId])
 
     useEffect(() => {
         if (getAllEvaluators.data) {

@@ -7,7 +7,8 @@ import { getPageAndLimitParams } from '../../utils/pagination'
 const getAllEvaluators = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { page, limit } = getPageAndLimitParams(req)
-        const apiResponse = await evaluatorService.getAllEvaluators(page, limit)
+        const tenantId: string | undefined = typeof req.query.tenantId === 'string' ? req.query.tenantId : undefined
+        const apiResponse = await evaluatorService.getAllEvaluators(page, limit, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -20,7 +21,8 @@ const getEvaluator = async (req: Request, res: Response, next: NextFunction) => 
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluatorService.getEvaluator - id not provided!`)
         }
 
-        const apiResponse = await evaluatorService.getEvaluator(req.params.id)
+        const tenantId: string | undefined = typeof req.query.tenantId === 'string' ? req.query.tenantId : undefined
+        const apiResponse = await evaluatorService.getEvaluator(req.params.id, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -33,6 +35,9 @@ const createEvaluator = async (req: Request, res: Response, next: NextFunction) 
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluatorService.createEvaluator - body not provided!`)
         }
         const body = req.body
+        if (typeof req.body.tenantId === 'undefined' && typeof req.query.tenantId === 'string') {
+            body.tenantId = req.query.tenantId
+        }
         const apiResponse = await evaluatorService.createEvaluator(body)
         return res.json(apiResponse)
     } catch (error) {
@@ -49,7 +54,11 @@ const updateEvaluator = async (req: Request, res: Response, next: NextFunction) 
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluatorService.updateEvaluator - id not provided!`)
         }
 
-        const apiResponse = await evaluatorService.updateEvaluator(req.params.id, req.body)
+        const body = req.body
+        if (typeof req.body.tenantId === 'undefined' && typeof req.query.tenantId === 'string') {
+            body.tenantId = req.query.tenantId
+        }
+        const apiResponse = await evaluatorService.updateEvaluator(req.params.id, body)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -62,7 +71,8 @@ const deleteEvaluator = async (req: Request, res: Response, next: NextFunction) 
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluatorService.deleteEvaluator - id not provided!`)
         }
 
-        const apiResponse = await evaluatorService.deleteEvaluator(req.params.id)
+        const tenantId: string | undefined = typeof req.query.tenantId === 'string' ? req.query.tenantId : undefined
+        const apiResponse = await evaluatorService.deleteEvaluator(req.params.id, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

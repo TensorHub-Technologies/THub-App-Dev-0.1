@@ -42,6 +42,8 @@ import { ModifyChatflowType1755066758601 } from './1755066758601-ModifyChatflowT
 import { AddTextToSpeechToChatFlow1759419216034 } from './1759419216034-AddTextToSpeechToChatFlow'
 import { AddChatFlowNameIndex1759424828558 } from './1759424828558-AddChatFlowNameIndex'
 import { AddCompoundIndices1760000000000 } from './1760000000000-AddCompoundIndices'
+import { AddTenantIdToEvaluatorAndEvaluation1761000000000 } from './1761000000000-AddTenantIdToEvaluatorAndEvaluation'
+import { AddTenantIdToDataset1761100000000 } from './1761100000000-AddTenantIdToDataset'
 
 export const mysqlMigrations = [
     Init1693840429259,
@@ -89,5 +91,7 @@ export const mysqlMigrations = [
     ModifyChatflowType1755066758601,
     AddTextToSpeechToChatFlow1759419216034,
     AddChatFlowNameIndex1759424828558,
-    AddCompoundIndices1760000000000
+    AddCompoundIndices1760000000000,
+    AddTenantIdToEvaluatorAndEvaluation1761000000000,
+    AddTenantIdToDataset1761100000000
 ]
