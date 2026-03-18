@@ -30,7 +30,25 @@ const getExecutionById = async (executionId: string, workspaceId?: string): Prom
         // Add workspace filtering if provided
         if (workspaceId) query.workspaceId = workspaceId
 
-        const res = await executionRepository.findOne({ where: query })
+        const res = await executionRepository.findOne({
+            where: query,
+            select: {
+                id: true,
+                executionData: true,
+                state: true,
+                agentflowId: true,
+                sessionId: true,
+                action: true,
+                isPublic: true,
+                tenantId: true,
+                total_tokens: true,
+                agentTokens: true,
+                total_time: true,
+                createdDate: true,
+                updatedDate: true,
+                stoppedDate: true
+            }
+        })
         if (!res) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Execution ${executionId} not found`)
         }
@@ -47,7 +65,25 @@ const getPublicExecutionById = async (executionId: string): Promise<Execution | 
     try {
         const appServer = getRunningExpressApp()
         const executionRepository = appServer.AppDataSource.getRepository(Execution)
-        const res = await executionRepository.findOne({ where: { id: executionId, isPublic: true } })
+        const res = await executionRepository.findOne({
+            where: { id: executionId, isPublic: true },
+            select: {
+                id: true,
+                executionData: true,
+                state: true,
+                agentflowId: true,
+                sessionId: true,
+                action: true,
+                isPublic: true,
+                tenantId: true,
+                total_tokens: true,
+                agentTokens: true,
+                total_time: true,
+                createdDate: true,
+                updatedDate: true,
+                stoppedDate: true
+            }
+        })
         if (!res) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Execution ${executionId} not found`)
         }
