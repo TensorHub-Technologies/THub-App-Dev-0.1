@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // material-ui
-import { Box, Stack, ToggleButton, ToggleButtonGroup, CircularProgress } from '@mui/material'
+import { Box, Stack, ToggleButton, ToggleButtonGroup, CircularProgress, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
@@ -49,7 +49,6 @@ const Documents = () => {
     const [view, setView] = useState(localStorage.getItem('docStoreDisplayStyle') || 'card')
     const [currentPage, setCurrentPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
-    const [total, setTotal] = useState(0)
 
     const handleChange = (event, nextView) => {
         if (nextView === null) return
@@ -57,19 +56,18 @@ const Documents = () => {
         setView(nextView)
     }
 
-    function filterDocStores(data) {
-        return (
-            data.name.toLowerCase().indexOf(search.toLowerCase()) > -1 || data.description.toLowerCase().indexOf(search.toLowerCase()) > -1
-        )
-    }
+    const filterDocStores = useCallback(
+        (data) => {
+            const searchLower = search.toLowerCase()
+            return data.name.toLowerCase().includes(searchLower) || data.description.toLowerCase().includes(searchLower)
+        },
+        [search]
+    )
+
+    const filteredDocStores = useMemo(() => docStores?.filter(filterDocStores) || [], [docStores, filterDocStores])
 
     const onSearchChange = (event) => {
         setSearch(event.target.value)
-        // Reset pagination when search changes
-        setCurrentPage(1)
-        setDocStores([])
-        setHasMore(true)
-        applyFilters(1, ITEMS_PER_PAGE, true)
     }
 
     const goToDocumentStore = (id) => {
@@ -96,20 +94,23 @@ const Documents = () => {
         applyFilters(1, ITEMS_PER_PAGE, true)
     }
 
-    const applyFilters = (page, limit, isNewSearch = false) => {
-        if (page === 1 || isNewSearch) {
-            setLoading(true)
-        } else {
-            setLoadingMore(true)
-        }
+    const applyFilters = useCallback(
+        (page, limit, isNewSearch = false) => {
+            if (page === 1 || isNewSearch) {
+                setLoading(true)
+            } else {
+                setLoadingMore(true)
+            }
 
-        const params = {
-            tenantId,
-            page,
-            limit
-        }
-        getAllDocumentStores.request(params)
-    }
+            const params = {
+                tenantId,
+                page,
+                limit
+            }
+            getAllDocumentStores.request(params)
+        },
+        [tenantId, getAllDocumentStores]
+    )
 
     const loadMore = useCallback(() => {
         if (!isLoading && !isLoadingMore && hasMore) {
@@ -117,7 +118,7 @@ const Documents = () => {
             setCurrentPage(nextPage)
             applyFilters(nextPage, ITEMS_PER_PAGE)
         }
-    }, [currentPage, hasMore, isLoading, isLoadingMore])
+    }, [currentPage, hasMore, isLoading, isLoadingMore, applyFilters])
 
     // Infinite scroll handler
     const handleScroll = useCallback(() => {
@@ -172,7 +173,6 @@ const Documents = () => {
                     setDocStores((prevStores) => [...prevStores, ...data])
                 }
 
-                setTotal(totalCount)
                 setImages(loaderImages)
 
                 // Check if there are more items to load
@@ -182,6 +182,7 @@ const Documents = () => {
                 console.error(e)
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getAllDocumentStores.data, currentPage])
 
     useEffect(() => {
@@ -196,7 +197,6 @@ const Documents = () => {
         setError(getAllDocumentStores.error)
     }, [getAllDocumentStores.error])
 
-    const filteredDocStores = docStores?.filter(filterDocStores) || []
     const hasDocStores = docStores && docStores.length > 0
 
     return (
@@ -271,24 +271,34 @@ const Documents = () => {
                         </Stack>
                     ) : (
                         <React.Fragment>
-                            {!view || view === 'card' ? (
-                                <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                    {filteredDocStores.map((data, index) => (
-                                        <DocumentStoreCard
-                                            key={`${data.id}-${index}`}
-                                            images={images[data.id]}
-                                            data={data}
-                                            onClick={() => goToDocumentStore(data.id)}
-                                        />
-                                    ))}
-                                </Box>
+                            {filteredDocStores.length === 0 && search ? (
+                                <Stack sx={{ alignItems: 'center', justifyContent: 'center', py: 10 }} flexDirection='column'>
+                                    <Typography variant='h4' color='text.secondary'>
+                                        No matches found for &quot;{search}&quot;
+                                    </Typography>
+                                </Stack>
                             ) : (
-                                <DocumentStoreTable
-                                    isLoading={isLoading}
-                                    data={filteredDocStores}
-                                    images={images}
-                                    onRowClick={(row) => goToDocumentStore(row.id)}
-                                />
+                                <React.Fragment>
+                                    {!view || view === 'card' ? (
+                                        <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
+                                            {filteredDocStores.map((data, index) => (
+                                                <DocumentStoreCard
+                                                    key={`${data.id}-${index}`}
+                                                    images={images[data.id]}
+                                                    data={data}
+                                                    onClick={() => goToDocumentStore(data.id)}
+                                                />
+                                            ))}
+                                        </Box>
+                                    ) : (
+                                        <DocumentStoreTable
+                                            isLoading={isLoading}
+                                            data={filteredDocStores}
+                                            images={images}
+                                            onRowClick={(row) => goToDocumentStore(row.id)}
+                                        />
+                                    )}
+                                </React.Fragment>
                             )}
 
                             {/* Loading indicators */}
@@ -304,7 +314,7 @@ const Documents = () => {
                                 </Box>
                             )}
 
-                            {!hasMore && hasDocStores && (
+                            {!hasMore && hasDocStores && !search && (
                                 <Box display='flex' justifyContent='center' sx={{ mt: 2, color: 'text.secondary' }}>
                                     No more items to load
                                 </Box>
