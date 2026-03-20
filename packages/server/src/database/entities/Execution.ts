@@ -12,7 +12,9 @@ export class Execution implements IExecution {
     @Column({
         type: 'longtext',
         charset: 'utf8mb4',
-        collation: 'utf8mb4_unicode_ci'
+        collation: 'utf8mb4_unicode_ci',
+        //doing falsi because it was downloading the files before making chat history loding time long
+        select: false
     })
     executionData: string
 

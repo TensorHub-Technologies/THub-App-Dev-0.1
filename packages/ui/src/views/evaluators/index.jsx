@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // material-ui
-import { Chip, Skeleton, Box, Stack, Button, Typography } from '@mui/material'
+import { Chip, Skeleton, Box, Stack, Button, Typography, IconButton } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
@@ -11,7 +11,7 @@ import MainCard from '@/ui-component/cards/MainCard'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import AddEditEvaluatorDialog from '@/views/evaluators/AddEditEvaluatorDialog'
-import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
+import { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 import { truncateString } from '@/utils/genericHelper'
 
 // API
@@ -28,11 +28,14 @@ import { IconTrash, IconPlus, IconJson, IconX, IconNumber123, IconAbc, IconAugme
 
 // const
 import { StyledButton } from '@/ui-component/button/StyledButton'
+import InfiniteScrollTable from '@/ui-component/pagination/InfiniteScrollTable'
 
 // ==============================|| Evaluators ||============================== //
 
 const Evaluators = () => {
     const theme = useTheme()
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
     const { confirm } = useConfirm()
@@ -54,16 +57,25 @@ const Evaluators = () => {
     const [pageLimit, setPageLimit] = useState(DEFAULT_ITEMS_PER_PAGE)
     const [total, setTotal] = useState(0)
     const onChange = (page, pageLimit) => {
+        if (isLoading) return
+        if (evaluators.length >= total) return
+
         setCurrentPage(page)
         setPageLimit(pageLimit)
         refresh(page, pageLimit)
     }
-
     const refresh = (page, limit) => {
-        const params = {
-            page: page || currentPage,
-            limit: limit || pageLimit
+        if (!tenantId) {
+            setLoading(false)
+            return
         }
+
+        const params = {
+            page: page ?? currentPage,
+            limit: limit ?? pageLimit,
+            tenantId
+        }
+
         getAllEvaluators.request(params)
     }
 
@@ -104,7 +116,7 @@ const Evaluators = () => {
 
         if (isConfirmed) {
             try {
-                const deleteResp = await evaluatorsApi.deleteEvaluator(item.id)
+                const deleteResp = await evaluatorsApi.deleteEvaluator(item.id, tenantId)
                 if (deleteResp.data) {
                     enqueueSnackbar({
                         message: 'Evaluator deleted',
@@ -150,16 +162,24 @@ const Evaluators = () => {
     }
 
     useEffect(() => {
-        refresh(currentPage, pageLimit)
+        if (tenantId) refresh(currentPage, pageLimit)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [tenantId])
 
     useEffect(() => {
         if (getAllEvaluators.data) {
-            setEvaluators(getAllEvaluators.data.data)
-            setTotal(getAllEvaluators.data.total)
+            const newData = getAllEvaluators.data
+
+            setEvaluators((prev) => {
+                if (currentPage === 1) {
+                    return newData.data
+                }
+
+                return [...prev, ...(newData.data || [])]
+            })
+
+            setTotal(newData.total)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getAllEvaluators.data])
 
     useEffect(() => {
@@ -337,13 +357,18 @@ const Evaluators = () => {
 
                                                       {/* DELETE */}
                                                       <Box textAlign='center'>
-                                                          <StyledButton
-                                                              permissionId={'evaluators:delete'}
+                                                          <IconButton
                                                               color='error'
                                                               onClick={() => deleteEvaluator(ds)}
+                                                              sx={{
+                                                                  backgroundColor: 'rgba(211,47,47,0.1)',
+                                                                  '&:hover': {
+                                                                      backgroundColor: 'rgba(211,47,47,0.2)'
+                                                                  }
+                                                              }}
                                                           >
-                                                              <IconTrash size={18} />
-                                                          </StyledButton>
+                                                              <IconTrash size={18} color='#d32f2f' />
+                                                          </IconButton>
                                                       </Box>
                                                   </Box>
 
@@ -367,7 +392,7 @@ const Evaluators = () => {
                                       ))}
                             </Box>
                             {/* Pagination and Page Size Controls */}
-                            <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
+                            <InfiniteScrollTable limit={pageLimit} total={total} onLoadMore={onChange} />{' '}
                         </>
                     )}
                 </Stack>

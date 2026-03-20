@@ -14,7 +14,7 @@ import AddEditDatasetRowDialog from './AddEditDatasetRowDialog'
 import UploadCSVFileDialog from '@/views/datasets/UploadCSVFileDialog'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import AddEditDatasetDialog from '@/views/datasets/AddEditDatasetDialog'
-import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
+import { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 
 // API
 import datasetsApi from '@/api/dataset'
@@ -29,6 +29,7 @@ import useConfirm from '@/hooks/useConfirm'
 import empty_datasetSVG from '@/assets/images/empty_datasets.svg'
 import { IconTrash, IconPlus, IconX, IconUpload, IconArrowsDownUp } from '@tabler/icons-react'
 import { StyledButton } from '@/ui-component/button/StyledButton'
+import InfiniteScrollTable from '@/ui-component/pagination/InfiniteScrollTable'
 
 // ─── Column layout ─────────────────────────────────────────────────────────────
 // Checkbox | Input | Expected Output | Drag
@@ -97,6 +98,8 @@ SkeletonRow.propTypes = {
 // ─── EvalDatasetRows ───────────────────────────────────────────────────────────
 
 const EvalDatasetRows = () => {
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     const customization = useSelector((state) => state.customization)
     const isDark = customization.isDarkMode
     const dispatch = useDispatch()
@@ -136,14 +139,27 @@ const EvalDatasetRows = () => {
     const [total, setTotal] = useState(0)
 
     const onChange = (page, pageLimit) => {
+        if (isLoading) return
+        if (page * pageLimit > total) return
+
         setCurrentPage(page)
         setPageLimit(pageLimit)
         refresh(page, pageLimit)
     }
 
     const refresh = (page, limit) => {
+        if (!tenantId) {
+            setLoading(false)
+            return
+        }
+
         setLoading(true)
-        getDatasetRows.request(datasetId, { page: page || currentPage, limit: limit || pageLimit })
+
+        getDatasetRows.request(datasetId, {
+            page: page ?? currentPage,
+            limit: limit ?? pageLimit,
+            tenantId
+        })
     }
 
     // ── Drag handlers ────────────────────────────────────────────────────────
@@ -168,7 +184,7 @@ const EvalDatasetRows = () => {
         setDragOverIndex(-1)
         e.preventDefault()
         const updatedRows = dataset.rows.map((item, index) => ({ id: item.id, sequenceNo: index }))
-        reorderDatasetRowApi.request({ datasetId, rows: updatedRows })
+        reorderDatasetRowApi.request({ datasetId, rows: updatedRows, tenantId })
     }
 
     // ── Selection ────────────────────────────────────────────────────────────
@@ -194,7 +210,7 @@ const EvalDatasetRows = () => {
             type: 'ADD',
             cancelButtonName: 'Cancel',
             confirmButtonName: 'Add',
-            data: { datasetId, datasetName: dataset.name }
+            data: { datasetId, datasetName: dataset.name, tenantId }
         })
         setShowRowDialog(true)
     }
@@ -204,7 +220,7 @@ const EvalDatasetRows = () => {
             type: 'ADD',
             cancelButtonName: 'Cancel',
             confirmButtonName: 'Upload',
-            data: { datasetId, datasetName: dataset.name }
+            data: { datasetId, datasetName: dataset.name, tenantId }
         })
         setShowUploadDialog(true)
     }
@@ -233,7 +249,7 @@ const EvalDatasetRows = () => {
         })
         if (!isConfirmed) return
         try {
-            const deleteResp = await datasetsApi.deleteDatasetItems(selected)
+            const deleteResp = await datasetsApi.deleteDatasetItems(selected, tenantId)
             if (deleteResp.data) {
                 enqueueSnackbar({
                     message: 'Dataset Items deleted',
@@ -277,16 +293,35 @@ const EvalDatasetRows = () => {
     }
 
     useEffect(() => {
-        refresh(currentPage, pageLimit)
+        if (tenantId) refresh(currentPage, pageLimit)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [tenantId])
+
+    // useEffect(() => {
+    //     if (getDatasetRows.data) {
+    //         setDataset(getDatasetRows.data)
+    //         setTotal(getDatasetRows.data.total)
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [getDatasetRows.data])
 
     useEffect(() => {
         if (getDatasetRows.data) {
-            setDataset(getDatasetRows.data)
-            setTotal(getDatasetRows.data.total)
+            const newData = getDatasetRows.data
+
+            setDataset((prev) => {
+                if (currentPage === 1) {
+                    return newData
+                }
+
+                return {
+                    ...newData,
+                    rows: [...(prev?.rows || []), ...(newData?.rows || [])]
+                }
+            })
+
+            setTotal(newData.total)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getDatasetRows.data])
 
     useEffect(() => {
@@ -507,12 +542,10 @@ const EvalDatasetRows = () => {
                                           </Box>
                                       ))}
                             </Box>
-
                             <Typography sx={{ color: isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.4)', mt: -1 }} variant='subtitle2'>
                                 <i>Use the drag icon at the right to reorder dataset items</i>
                             </Typography>
-
-                            <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
+                            <InfiniteScrollTable limit={pageLimit} total={total} onLoadMore={onChange} />{' '}
                         </React.Fragment>
                     )}
                 </Stack>

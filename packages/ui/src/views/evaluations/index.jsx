@@ -36,7 +36,7 @@ import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import CreateEvaluationDialog from '@/views/evaluations/CreateEvaluationDialog'
 import { StyledButton } from '@/ui-component/button/StyledButton'
-import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
+import { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 
 // icons
 import {
@@ -51,6 +51,7 @@ import {
     IconPlayerPlay,
     IconPlayerPause
 } from '@tabler/icons-react'
+import InfiniteScrollTable from '@/ui-component/pagination/InfiniteScrollTable'
 
 // ─── Column layout ─────────────────────────────────────────────────────────────
 // Matches screenshot: Checkbox | Status | Name | Version | Metrics | Date | Dataset | Flow | Actions
@@ -154,7 +155,7 @@ SkeletonRow.propTypes = { isDark: PropTypes.bool }
 
 // ─── EvaluationRunRow ──────────────────────────────────────────────────────────
 
-function EvaluationRunRow({ rows, item, selected, customization, onRefresh, handleSelect }) {
+function EvaluationRunRow({ rows, item, selected, customization, onRefresh, handleSelect, tenantId }) {
     const dispatch = useDispatch()
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
@@ -192,7 +193,7 @@ function EvaluationRunRow({ rows, item, selected, customization, onRefresh, hand
         })
         if (!isConfirmed) return
         try {
-            const res = await evaluationApi.deleteEvaluations(childSelected)
+            const res = await evaluationApi.deleteEvaluations(childSelected, false, tenantId)
             if (res.data) {
                 enqueueSnackbar({
                     message: `${childSelected.length} evaluations deleted.`,
@@ -554,13 +555,16 @@ EvaluationRunRow.propTypes = {
     rows: PropTypes.arrayOf(PropTypes.object),
     customization: PropTypes.object,
     onRefresh: PropTypes.func,
-    handleSelect: PropTypes.func
+    handleSelect: PropTypes.func,
+    tenantId: PropTypes.string
 }
 
 // ─── EvalsEvaluation (main page) ──────────────────────────────────────────────
 
 const EvalsEvaluation = () => {
     const theme = useTheme()
+    const userData = useSelector((state) => state.user.userData)
+    const tenantId = userData?.uid || localStorage.getItem('userId')
     const customization = useSelector((state) => state.customization)
     const isDark = customization.isDarkMode
     const { confirm } = useConfirm()
@@ -585,13 +589,21 @@ const EvalsEvaluation = () => {
     const [total, setTotal] = useState(0)
 
     const onChange = (page, limit) => {
+        if (isTableLoading) return
+        if (rows.length >= total) return
+
         setCurrentPage(page)
         setPageLimit(limit)
         refresh(page, limit)
     }
 
     const refresh = (page, limit) => {
-        getAllEvaluations.request({ page: page || currentPage, limit: limit || pageLimit })
+        if (!tenantId) return
+        getAllEvaluations.request({
+            page: page ?? currentPage,
+            limit: limit ?? pageLimit,
+            tenantId
+        })
     }
 
     const latestRows = rows.filter((item) => item?.latestEval)
@@ -624,7 +636,7 @@ const EvalsEvaluation = () => {
         })
         if (!isConfirmed) return
         try {
-            const res = await evaluationApi.deleteEvaluations(selected, true)
+            const res = await evaluationApi.deleteEvaluations(selected, true, tenantId)
             if (res.data) {
                 enqueueSnackbar({
                     message: `${selected.length} ${selected.length > 1 ? 'evaluations' : 'evaluation'} deleted`,
@@ -670,17 +682,28 @@ const EvalsEvaluation = () => {
         }))
 
     useEffect(() => {
-        refresh(currentPage, pageLimit)
+        if (tenantId) refresh(currentPage, pageLimit)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [tenantId])
 
     useEffect(() => {
         if (getAllEvaluations.data) {
-            setTotal(getAllEvaluations.data.total)
-            const evalRows = getAllEvaluations.data.data
-            if (evalRows) setRows(processEvalRows(evalRows))
+            const newData = getAllEvaluations.data
+            const evalRows = newData.data
+
+            setTotal(newData.total)
+
+            if (evalRows) {
+                const processed = processEvalRows(evalRows)
+
+                setRows((prev) => {
+                    if (currentPage === 1) {
+                        return processed
+                    }
+                    return [...prev, ...processed]
+                })
+            }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getAllEvaluations.data])
 
     useEffect(() => {
@@ -721,8 +744,7 @@ const EvalsEvaluation = () => {
 
     const onRefresh = useCallback(() => {
         refresh(currentPage, pageLimit)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [getAllEvaluations])
+    }, [currentPage, pageLimit, tenantId])
 
     useEffect(() => {
         setTableLoading(getAllEvaluations.loading)
@@ -837,11 +859,11 @@ const EvalsEvaluation = () => {
                                               customization={customization}
                                               onRefresh={onRefresh}
                                               handleSelect={handleSelect}
+                                              tenantId={tenantId}
                                           />
                                       ))}
                             </Box>
-
-                            <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
+                            <InfiniteScrollTable limit={pageLimit} total={total} onLoadMore={onChange} />{' '}
                         </>
                     )}
                 </Stack>

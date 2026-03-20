@@ -1473,6 +1473,22 @@ export const executeAgentFlow = async ({
             },
             order: {
                 createdDate: 'DESC'
+            },
+            select: {
+                id: true,
+                executionData: true,
+                state: true,
+                sessionId: true,
+                agentflowId: true,
+                createdDate: true,
+                updatedDate: true,
+                stoppedDate: true,
+                action: true,
+                isPublic: true,
+                tenantId: true,
+                total_tokens: true,
+                agentTokens: true,
+                total_time: true
             }
         })
 
@@ -1649,7 +1665,23 @@ export const executeAgentFlow = async ({
         // For recursive calls with a valid parent execution ID, don't create a new execution
         // Instead, fetch the parent execution to use it
         const parentExecution = await appDataSource.getRepository(Execution).findOne({
-            where: { id: parentExecutionId }
+            where: { id: parentExecutionId },
+            select: {
+                id: true,
+                executionData: true,
+                state: true,
+                sessionId: true,
+                agentflowId: true,
+                createdDate: true,
+                updatedDate: true,
+                stoppedDate: true,
+                action: true,
+                isPublic: true,
+                tenantId: true,
+                total_tokens: true,
+                agentTokens: true,
+                total_time: true
+            }
         })
 
         if (parentExecution) {

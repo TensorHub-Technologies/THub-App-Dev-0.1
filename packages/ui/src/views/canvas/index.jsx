@@ -129,6 +129,8 @@ const Canvas = () => {
     const [isUpsertButtonEnabled, setIsUpsertButtonEnabled] = useState(false)
     const [isSyncNodesButtonEnabled, setIsSyncNodesButtonEnabled] = useState(false)
     const [deletedNode, setDeletedNodes] = useState([])
+    const [past, setPast] = useState([])
+    const [future, setFuture] = useState([])
 
     const reactFlowWrapper = useRef(null)
 
@@ -217,61 +219,45 @@ const Canvas = () => {
         [nodes, edges, setNodes]
     )
 
-    // =================// undo // =====================
-    const [redoStack, setRedoStack] = useState([])
+    // =================// History (Undo/Redo) // =====================
 
-    const handleUndo = () => {
-        if (deletedNode.length > 0) {
-            const lastDeletedNode = deletedNode[deletedNode.length - 1]
-            setRedoStack((prevRedoStack) => [...prevRedoStack, lastDeletedNode])
-            setDeletedNodes(deletedNode.slice(0, -1))
-            setNodes((nds) =>
-                nds.concat(lastDeletedNode).map((node) => {
-                    if (node.id === lastDeletedNode.id) {
-                        node.data = {
-                            ...node.data,
-                            selected: true
-                        }
-                    } else {
-                        node.data = {
-                            ...node.data,
-                            selected: false
-                        }
-                    }
-                    return node
-                })
-            )
-        }
-    }
+    const takeSnapshot = useCallback(() => {
+        setPast((p) => [...p, { nodes: cloneDeep(nodes), edges: cloneDeep(edges) }])
+        setFuture([])
+    }, [nodes, edges])
 
-    // =================// Redo // =====================
-    const handleRedo = () => {
-        if (redoStack.length > 0) {
-            const lastRedoNode = redoStack[redoStack.length - 1]
-            setRedoStack(redoStack.slice(0, -1))
-            setDeletedNodes((prevDeletedNodes) => [...prevDeletedNodes, lastRedoNode])
-            setNodes((nds) =>
-                nds.concat(lastRedoNode).map((node) => {
-                    if (node.id === lastRedoNode.id) {
-                        node.data = {
-                            ...node.data,
-                            selected: true
-                        }
-                    } else {
-                        node.data = {
-                            ...node.data,
-                            selected: false
-                        }
-                    }
-                    return node
-                })
-            )
-        }
-    }
+    const handleUndo = useCallback(() => {
+        if (past.length === 0) return
+
+        const previousState = past[past.length - 1]
+        const newPast = past.slice(0, past.length - 1)
+
+        setPast(newPast)
+        setFuture((f) => [{ nodes: cloneDeep(nodes), edges: cloneDeep(edges) }, ...f])
+
+        setNodes(previousState.nodes)
+        setEdges(previousState.edges)
+        setTimeout(() => setDirty(), 0)
+    }, [past, nodes, edges, setNodes, setEdges])
+
+    const handleRedo = useCallback(() => {
+        if (future.length === 0) return
+
+        const nextState = future[0]
+        const newFuture = future.slice(1)
+
+        setFuture(newFuture)
+        setPast((p) => [...p, { nodes: cloneDeep(nodes), edges: cloneDeep(edges) }])
+
+        setNodes(nextState.nodes)
+        setEdges(nextState.edges)
+        setTimeout(() => setDirty(), 0)
+    }, [future, nodes, edges, setNodes, setEdges])
 
     // ==============================|| Events & Actions ||============================== //
 
     const onConnect = (params) => {
+        takeSnapshot()
         const newEdge = {
             ...params,
             type: 'buttonedge',
@@ -407,7 +393,6 @@ const Canvas = () => {
 
     // eslint-disable-next-line
     const onNodeClick = useCallback((event, clickedNode) => {
-        setDeletedNodes((prevDeletedNodes) => [...prevDeletedNodes, clickedNode])
         setSelectedNode(clickedNode)
         setNodes((nds) =>
             nds.map((node) => {
@@ -436,6 +421,7 @@ const Canvas = () => {
     const onDrop = useCallback(
         (event) => {
             event.preventDefault()
+            takeSnapshot()
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
             let nodeData = event.dataTransfer.getData('application/reactflow')
 
@@ -782,6 +768,7 @@ const Canvas = () => {
         }
     }
     const addStickyNote = () => {
+        takeSnapshot()
         const newNodeId = `node-${nodes.length + 1}`
         const newNode = {
             id: newNodeId,
@@ -857,11 +844,23 @@ const Canvas = () => {
                                 <ReactFlow
                                     nodes={nodes}
                                     edges={edges}
-                                    onNodesChange={onNodesChange}
+                                    onNodesChange={(changes) => {
+                                        // Take snapshot on drag start or removal
+                                        const hasImportantChange = changes.some(
+                                            (c) => c.type === 'remove' || (c.type === 'position' && !c.dragging && c.position)
+                                        )
+                                        if (hasImportantChange) takeSnapshot()
+                                        onNodesChange(changes)
+                                    }}
                                     onNodeClick={onNodeClick}
-                                    onEdgesChange={onEdgesChange}
+                                    onEdgesChange={(changes) => {
+                                        const hasImportantChange = changes.some((c) => c.type === 'remove')
+                                        if (hasImportantChange) takeSnapshot()
+                                        onEdgesChange(changes)
+                                    }}
                                     onDrop={onDrop}
                                     onDragOver={onDragOver}
+                                    onNodeDragStart={takeSnapshot}
                                     onNodeDragStop={setDirty}
                                     nodeTypes={nodeTypes}
                                     edgeTypes={edgeTypes}

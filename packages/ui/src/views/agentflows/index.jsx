@@ -10,7 +10,6 @@ import { Toaster } from 'react-hot-toast'
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
-import AgentsEmptySVG from '@/assets/images/agents_empty.svg'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { FlowListTable } from '@/ui-component/table/FlowListTable'
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -239,7 +238,7 @@ const Agentflows = () => {
     const renderEmptyState = () => (
         <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
             <Box sx={{ p: 2, height: 'auto' }}>
-                <img style={{ objectFit: 'cover', height: '12vh', width: 'auto' }} src={AgentsEmptySVG} alt='AgentsEmptySVG' />
+                {/* <img style={{ objectFit: 'cover', height: '12vh', width: 'auto' }} src={AgentsEmptySVG} alt='AgentsEmptySVG' /> */}
             </Box>
             <Typography variant='body1'>{search ? 'No agents found matching your search.' : 'No Agents Yet'}</Typography>
         </Stack>

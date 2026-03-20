@@ -5,10 +5,13 @@ import { getErrorMessage } from '../../errors/utils'
 import { Evaluator } from '../../database/entities/Evaluator'
 import { EvaluatorDTO } from '../../Interface.Evaluation'
 
-const getAllEvaluators = async (page: number = -1, limit: number = -1) => {
+const getAllEvaluators = async (page: number = -1, limit: number = -1, tenantId?: string) => {
     try {
         const appServer = getRunningExpressApp()
         const queryBuilder = appServer.AppDataSource.getRepository(Evaluator).createQueryBuilder('ev').orderBy('ev.updatedDate', 'DESC')
+        if (tenantId) {
+            queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
+        }
         if (page > 0 && limit > 0) {
             queryBuilder.skip((page - 1) * limit)
             queryBuilder.take(limit)
@@ -30,12 +33,14 @@ const getAllEvaluators = async (page: number = -1, limit: number = -1) => {
     }
 }
 
-const getEvaluator = async (id: string) => {
+const getEvaluator = async (id: string, tenantId?: string) => {
     try {
         const appServer = getRunningExpressApp()
-        const evaluator = await appServer.AppDataSource.getRepository(Evaluator).findOneBy({
-            id: id
-        })
+        const queryBuilder = appServer.AppDataSource.getRepository(Evaluator).createQueryBuilder('ev').where('ev.id = :id', { id })
+        if (tenantId) {
+            queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
+        }
+        const evaluator = await queryBuilder.getOne()
         if (!evaluator) throw new Error(`Evaluator ${id} not found`)
         return EvaluatorDTO.fromEntity(evaluator)
     } catch (error) {
@@ -51,6 +56,9 @@ const createEvaluator = async (body: any) => {
     try {
         const appServer = getRunningExpressApp()
         const newDs = EvaluatorDTO.toEntity(body)
+        if (body.tenantId) {
+            newDs.tenantId = body.tenantId
+        }
 
         const evaluator = appServer.AppDataSource.getRepository(Evaluator).create(newDs)
         const result = await appServer.AppDataSource.getRepository(Evaluator).save(evaluator)
@@ -67,14 +75,19 @@ const createEvaluator = async (body: any) => {
 const updateEvaluator = async (id: string, body: any) => {
     try {
         const appServer = getRunningExpressApp()
-        const evaluator = await appServer.AppDataSource.getRepository(Evaluator).findOneBy({
-            id: id
-        })
+        const queryBuilder = appServer.AppDataSource.getRepository(Evaluator).createQueryBuilder('ev').where('ev.id = :id', { id })
+        if (body.tenantId) {
+            queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId: body.tenantId })
+        }
+        const evaluator = await queryBuilder.getOne()
 
         if (!evaluator) throw new Error(`Evaluator ${id} not found`)
 
         const updateEvaluator = EvaluatorDTO.toEntity(body)
         updateEvaluator.id = id
+        if (body.tenantId) {
+            updateEvaluator.tenantId = body.tenantId
+        }
         appServer.AppDataSource.getRepository(Evaluator).merge(evaluator, updateEvaluator)
         const result = await appServer.AppDataSource.getRepository(Evaluator).save(evaluator)
         return EvaluatorDTO.fromEntity(result)
@@ -87,9 +100,17 @@ const updateEvaluator = async (id: string, body: any) => {
 }
 
 // Delete Evaluator via id
-const deleteEvaluator = async (id: string) => {
+const deleteEvaluator = async (id: string, tenantId?: string) => {
     try {
         const appServer = getRunningExpressApp()
+        if (tenantId) {
+            const evaluator = await appServer.AppDataSource.getRepository(Evaluator)
+                .createQueryBuilder('ev')
+                .where('ev.id = :id', { id })
+                .andWhere('ev.tenantId = :tenantId', { tenantId })
+                .getOne()
+            if (!evaluator) throw new Error(`Evaluator ${id} not found`)
+        }
         return await appServer.AppDataSource.getRepository(Evaluator).delete({ id: id })
     } catch (error) {
         throw new InternalFlowiseError(

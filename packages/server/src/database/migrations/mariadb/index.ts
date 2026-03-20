@@ -40,6 +40,8 @@ import { AddTextToSpeechToChatFlow1754986457485 } from './1754986457485-AddTextT
 import { ModifyChatflowType1755066758601 } from './1755066758601-ModifyChatflowType'
 import { AddTextToSpeechToChatFlow1759419231100 } from './1759419231100-AddTextToSpeechToChatFlow'
 import { AddChatFlowNameIndex1759424809984 } from './1759424809984-AddChatFlowNameIndex'
+import { AddTenantIdToEvaluatorAndEvaluation1761000000000 } from './1761000000000-AddTenantIdToEvaluatorAndEvaluation'
+import { AddTenantIdToDataset1761100000000 } from './1761100000000-AddTenantIdToDataset'
 
 export const mariadbMigrations = [
     Init1693840429259,
@@ -85,5 +87,7 @@ export const mariadbMigrations = [
     AddTextToSpeechToChatFlow1754986457485,
     ModifyChatflowType1755066758601,
     AddTextToSpeechToChatFlow1759419231100,
-    AddChatFlowNameIndex1759424809984
+    AddChatFlowNameIndex1759424809984,
+    AddTenantIdToEvaluatorAndEvaluation1761000000000,
+    AddTenantIdToDataset1761100000000
 ]
