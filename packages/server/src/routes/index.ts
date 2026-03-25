@@ -51,6 +51,7 @@ import executionsRouter from './executions'
 import validationRouter from './validation'
 import agentflowv2GeneratorRouter from './agentflowv2-generator'
 import textToSpeechRouter from './text-to-speech'
+import authRouter from './auth'
 
 const router = express.Router()
 
@@ -107,5 +108,6 @@ router.use('/executions', executionsRouter)
 router.use('/validation', validationRouter)
 router.use('/agentflowv2-generator', agentflowv2GeneratorRouter)
 router.use('/text-to-speech', textToSpeechRouter)
+router.use('/auth', authRouter)
 
 export default router

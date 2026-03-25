@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import authApi from '@/api/auth'
 import { Box, Button, Typography, CircularProgress, Alert, Paper } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { IconBrandGoogle, IconMail, IconBrandGithub } from '@tabler/icons-react'
+import { apiBaseUrl } from '@/utils/apiBaseUrl'
 
 const AcceptInvite = () => {
     const [params] = useSearchParams()
@@ -15,26 +17,6 @@ const AcceptInvite = () => {
     const [loading, setLoading] = useState(true)
     const [existingUser, setExistingUser] = useState(null)
     const [checkingUser, setCheckingUser] = useState(true)
-
-    const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-
-    const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-
-    const thubWebServerQAUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-
-    const API_BASE =
-        window.location.hostname === 'localhost'
-            ? thubWebServerLocalUrl
-            : window.location.hostname === 'dev.thub.tech'
-            ? thubWebServerDevUrl
-            : window.location.hostname === 'qa.thub.tech'
-            ? thubWebServerQAUrl
-            : thubWebServerProdUrl
 
     // ----------------------------------
     // Validate invite & check if user exists
@@ -48,7 +30,7 @@ const AcceptInvite = () => {
         const validateAndCheckUser = async () => {
             try {
                 // 1️⃣ Validate invite
-                const inviteRes = await axios.get(`${API_BASE}/invite/validate`, { params: { token } })
+                const inviteRes = await axios.get(`${apiBaseUrl}/invite/validate`, { params: { token } })
                 const inviteData = inviteRes.data
 
                 setInvite(inviteData)
@@ -66,7 +48,7 @@ const AcceptInvite = () => {
 
                 // 2️⃣ Check if user with this email already exists
                 try {
-                    const userCheckRes = await axios.post(`${API_BASE}/check-email`, {
+                    const userCheckRes = await authApi.checkEmail({
                         email: inviteData.email
                     })
 
@@ -92,7 +74,7 @@ const AcceptInvite = () => {
         }
 
         validateAndCheckUser()
-    }, [token, navigate, API_BASE])
+    }, [token, navigate])
 
     // ----------------------------------
     // Handle continue based on user state

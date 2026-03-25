@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import { Box, IconButton, Toolbar, Tooltip, Avatar, Menu, MenuItem, ListItemIcon } from '@mui/material'
 import { SET_DARKMODE, setUserData } from '@/store/actions'
+import authApi from '@/api/auth'
 import ProfileSection from './ProfileSection'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
@@ -76,7 +76,7 @@ const Header = () => {
         if (loginType === 'azure_ad') {
             let redirectUri = 'https://app.thub.tech/'
             if (currentHost === 'localhost') {
-                redirectUri = 'http://localhost:8080/'
+                redirectUri = `${window.location.origin}/`
             } else if (currentHost === 'dev.thub.tech') {
                 redirectUri = 'https://dev.thub.tech/'
             } else if (currentHost === 'qa.thub.tech') {
@@ -92,7 +92,7 @@ const Header = () => {
 
         if (loginType === 'google') {
             if (currentHost === 'localhost') {
-                window.location.href = 'http://localhost:8080/'
+                window.location.href = `${window.location.origin}/`
             } else if (currentHost === 'dev.thub.tech') {
                 window.location.href = 'https://thub-web.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             } else if (currentHost === 'qa.thub.tech') {
@@ -116,7 +116,7 @@ const Header = () => {
         }
 
         if (currentHost === 'localhost') {
-            window.location.href = 'http://localhost:8080/'
+            window.location.href = `${window.location.origin}/`
             return
         }
 
@@ -141,22 +141,8 @@ const Header = () => {
                     return
                 }
 
-                // Determine correct backend base URL
-                let apiUrl
-                const hostname = window.location.hostname
-
-                if (hostname === 'localhost') {
-                    apiUrl = 'http://localhost:2000'
-                } else if (hostname === 'dev.thub.tech') {
-                    apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-                } else if (hostname === 'qa.thub.tech') {
-                    apiUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-                } else {
-                    apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-                }
-
-                // Fetch user data by userId
-                const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
+                // Fetch user data using shared API client (/api/v1/auth/userdata)
+                const response = await authApi.getUserData(userId)
                 if (response.status === 200) {
                     const userData = response.data
 

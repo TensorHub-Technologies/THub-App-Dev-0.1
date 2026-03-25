@@ -1,42 +1,20 @@
 import { GoogleIcon } from '../CustomIcons'
 import { useGoogleLogin } from '@react-oauth/google'
-import axios from 'axios'
+import authApi from '@/api/auth'
 import { Button } from '@mui/material'
-import { useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
 import PropTypes from 'prop-types'
 
 const GoogleCustomButton = ({ setLoading }) => {
-    const navigate = useNavigate()
     const dispatch = useDispatch()
     const customization = useSelector((state) => state.customization)
-
-    const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-    const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-    const thubWebServerQAUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-
-    let apiUrl
-
-    if (window.location.hostname === 'localhost') {
-        apiUrl = thubWebServerLocalUrl
-    } else if (window.location.hostname === 'dev.thub.tech') {
-        apiUrl = thubWebServerDevUrl
-    } else if (window.location.hostname === 'qa.thub.tech') {
-        apiUrl = thubWebServerQAUrl
-    } else {
-        apiUrl = thubWebServerProdUrl
-    }
 
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             setLoading(true)
             try {
-                const { data } = await axios.post(`${apiUrl}/api/auth/google`, {
+                const { data } = await authApi.googleLogin({
                     code: response.code
                 })
 
@@ -53,7 +31,7 @@ const GoogleCustomButton = ({ setLoading }) => {
                 // --------------------------------
                 if (hostname === 'localhost') {
                     workspace = 'local'
-                    window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${data.userId}`
+                    window.location.href = `${window.location.origin}/workflows?theme=dark&uid=${data.userId}`
                     return
                 }
 

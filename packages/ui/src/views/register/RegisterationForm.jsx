@@ -25,7 +25,7 @@ const RegistrationForm = () => {
     const thubWebServerProdUrl =
         import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
 
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:3000'
 
     let apiUrl
 
@@ -87,7 +87,7 @@ const RegistrationForm = () => {
 
     const checkEmail = async (email) => {
         try {
-            const response = await axios.post(`${apiUrl}/check-email`, { email })
+            const response = await axios.post(`${apiUrl}/api/v1/auth/check-email`, { email })
             return response.data.exists
         } catch (error) {
             console.error('Error checking email:', error)
@@ -109,7 +109,7 @@ const RegistrationForm = () => {
                 workspace
             }
 
-            const response = await axios.post(`${apiUrl}/user/invite/register`, finalValues)
+            const response = await axios.post(`${apiUrl}/api/v1/auth/register`, finalValues)
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
                 window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`

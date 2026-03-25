@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import authApi from '@/api/auth'
 import {
     Box,
     Button,
@@ -24,6 +25,7 @@ import { SET_USER_DATA, SET_DARKMODE } from '@/store/actions'
 import { useNavigate } from 'react-router-dom'
 import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
+import { apiBaseUrl } from '@/utils/apiBaseUrl'
 
 // images
 import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
@@ -60,29 +62,6 @@ const SignUp = () => {
         }
     }, [dispatch])
 
-    const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-
-    const thubWebServerQAUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-
-    const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-
-    let apiUrl
-
-    if (window.location.hostname === 'localhost') {
-        apiUrl = thubWebServerLocalUrl
-    } else if (window.location.hostname === 'dev.thub.tech') {
-        apiUrl = thubWebServerDevUrl
-    } else if (window.location.hostname === 'thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io') {
-        apiUrl = thubWebServerQAUrl
-    } else {
-        apiUrl = thubWebServerProdUrl
-    }
-
     // ✅ HELPER: Accept invite if context exists
     const acceptInviteIfNeeded = async (userId, userEmail) => {
         const inviteContext = sessionStorage.getItem('inviteContext')
@@ -98,7 +77,7 @@ const SignUp = () => {
                 return
             }
 
-            await axios.post(`${apiUrl}/invite/accept`, {
+            await axios.post(`${apiBaseUrl}/invite/accept`, {
                 token,
                 uid: userId,
                 email: userEmail
@@ -113,7 +92,7 @@ const SignUp = () => {
 
     const checkEmail = async (email) => {
         try {
-            const { data } = await axios.post(`${apiUrl}/check-email`, { email })
+            const { data } = await authApi.checkEmail({ email })
             return data.exists
         } catch (err) {
             console.error('Error checking email:', err)
@@ -124,7 +103,7 @@ const SignUp = () => {
     // Verify the OTP
     const verifyOtp = async (otp) => {
         try {
-            const response = await axios.post(`${apiUrl}/verify-otp`, { email, otp })
+            const response = await authApi.verifyOtp({ email, otp })
             if (response.status === 200) {
                 toast.success('OTP Verification Successful', {
                     theme: 'colored',
@@ -159,7 +138,7 @@ const SignUp = () => {
     const sendOtp = async (email) => {
         setLoading(true)
         try {
-            const response = await axios.post(`${apiUrl}/send-otp`, { email })
+            const response = await authApi.sendOtp({ email })
             if (response.status === 200) {
                 toast.success('OTP sent successfully', {
                     theme: 'colored',
@@ -212,18 +191,20 @@ const SignUp = () => {
                 subscription_duration: null,
                 subscription_date: new Date().toISOString().split('T')[0]
             }
-            const response = await axios.post(`${apiUrl}/user/register`, payload)
+            const response = await authApi.register(payload)
             if (response.status === 200) {
                 const data = response.data
+                const savedUser = data?.user || data
+                const userId = data?.userId || savedUser?.uid
                 dispatch({
                     type: SET_USER_DATA,
-                    payload: data.user
+                    payload: savedUser
                 })
-                localStorage.setItem('userId', data.userId)
+                if (userId) localStorage.setItem('userId', userId)
                 setShowModal(false)
 
                 // ✅ ACCEPT INVITE (if exists)
-                await acceptInviteIfNeeded(data.userId, tempUserData.email)
+                await acceptInviteIfNeeded(userId, tempUserData.email)
 
                 toast.success('Registration successful!', {
                     theme: 'colored',

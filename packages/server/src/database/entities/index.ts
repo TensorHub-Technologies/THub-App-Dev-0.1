@@ -17,6 +17,7 @@ import { Evaluator } from './Evaluator'
 import { ApiKey } from './ApiKey'
 import { CustomTemplate } from './CustomTemplate'
 import { Execution } from './Execution'
+import { User } from './User'
 
 export const entities = {
     ChatFlow,
@@ -36,6 +37,7 @@ export const entities = {
     EvaluationRun,
     Evaluator,
     ApiKey,
+    User,
 
     CustomTemplate,
     Execution

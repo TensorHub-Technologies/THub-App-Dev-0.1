@@ -13,15 +13,17 @@ import {
     InputAdornment,
     Alert
 } from '@mui/material'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Top } from './Top'
 import axios from 'axios'
+import authApi from '@/api/auth'
 import { setUserData, SET_DARKMODE } from '@/store/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
+import { apiBaseUrl } from '@/utils/apiBaseUrl'
 
 // images
 import darkImage from '../../assets/images/auth/screen-5.png'
@@ -35,7 +37,6 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [requiredLoginMethod, setRequiredLoginMethod] = useState(null)
     const dispatch = useDispatch()
-    const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
 
     useEffect(() => {
@@ -54,23 +55,6 @@ const Login = () => {
         }
     }, [dispatch])
 
-    const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-    const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-    const thubWebServerQAUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-
-    const API_BASE =
-        window.location.hostname === 'localhost'
-            ? thubWebServerLocalUrl
-            : window.location.hostname === 'dev.thub.tech'
-            ? thubWebServerDevUrl
-            : window.location.hostname === 'qa.thub.tech'
-            ? thubWebServerQAUrl
-            : thubWebServerProdUrl
-
     // ✅ HELPER: Accept invite if context exists
     const acceptInviteIfNeeded = async (userId, userEmail) => {
         const inviteContext = sessionStorage.getItem('inviteContext')
@@ -86,7 +70,7 @@ const Login = () => {
                 return
             }
 
-            await axios.post(`${API_BASE}/invite/accept`, {
+            await axios.post(`${apiBaseUrl}/invite/accept`, {
                 token,
                 uid: userId,
                 email: userEmail
@@ -118,7 +102,7 @@ const Login = () => {
                 setLoading(true)
 
                 // 1️⃣ Login
-                const loginResponse = await axios.post(`${API_BASE}/loginUser`, {
+                const loginResponse = await authApi.login({
                     email: values.email,
                     password: values.password
                 })
@@ -129,9 +113,7 @@ const Login = () => {
                 localStorage.setItem('userId', userId)
 
                 // 2️⃣ Fetch user full data
-                const userDataResponse = await axios.get(`${API_BASE}/userdata`, {
-                    params: { userId }
-                })
+                const userDataResponse = await authApi.getUserData(userId)
 
                 const userData = userDataResponse.data
                 dispatch(setUserData(userData))
@@ -143,7 +125,7 @@ const Login = () => {
                 const currentHost = window.location.hostname
 
                 if (currentHost === 'localhost') {
-                    window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${userId}`
+                    window.location.href = `${window.location.origin}/workflows?theme=dark&uid=${userId}`
                 } else if (currentHost === 'dev.thub.tech') {
                     window.location.href = `https://dev.thub.tech/workflows?theme=dark&uid=${userId}`
                 } else if (currentHost === 'qa.thub.tech') {

@@ -121,7 +121,7 @@ const Subscription = () => {
         const hostname = window.location.hostname
 
         if (hostname === 'localhost') {
-            determinedUrl = 'http://localhost:2000'
+            determinedUrl = 'http://localhost:3000'
         } else if (hostname === 'dev.thub.tech') {
             determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
         } else if (hostname === 'qa.thub.tech') {

@@ -42,6 +42,7 @@ import { AddTextToSpeechToChatFlow1759419194331 } from './1759419194331-AddTextT
 import { AddChatFlowNameIndex1759424903973 } from './1759424903973-AddChatFlowNameIndex'
 import { AddTenantIdToEvaluatorAndEvaluation1761000000000 } from './1761000000000-AddTenantIdToEvaluatorAndEvaluation'
 import { AddTenantIdToDataset1761100000000 } from './1761100000000-AddTenantIdToDataset'
+import { AddAuthUser1761312000000 } from './1761312000000-AddAuthUser'
 
 export const postgresMigrations = [
     Init1693891895163,
@@ -89,5 +90,6 @@ export const postgresMigrations = [
     AddTextToSpeechToChatFlow1759419194331,
     AddChatFlowNameIndex1759424903973,
     AddTenantIdToEvaluatorAndEvaluation1761000000000,
-    AddTenantIdToDataset1761100000000
+    AddTenantIdToDataset1761100000000,
+    AddAuthUser1761312000000
 ]
