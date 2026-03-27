@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import authApi from '@/api/auth'
 import { Box, Button, Typography, CircularProgress, Alert, Paper } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { IconBrandGoogle, IconMail, IconBrandGithub } from '@tabler/icons-react'
-import { apiBaseUrl } from '@/utils/apiBaseUrl'
 
 const AcceptInvite = () => {
     const [params] = useSearchParams()
@@ -30,7 +28,7 @@ const AcceptInvite = () => {
         const validateAndCheckUser = async () => {
             try {
                 // 1️⃣ Validate invite
-                const inviteRes = await axios.get(`${apiBaseUrl}/invite/validate`, { params: { token } })
+                const inviteRes = await authApi.validateInvite(token)
                 const inviteData = inviteRes.data
 
                 setInvite(inviteData)

@@ -141,6 +141,130 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
+// ================= WORKSPACE / INVITES =================
+const inviteUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.body?.email || !req.body?.workspace || !req.body?.invitedBy) {
+            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.inviteUser - missing fields!`)
+        }
+        const apiResponse = await authService.inviteUser(req.body)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const validateInvite = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.query?.token) {
+            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.validateInvite - token not provided!`)
+        }
+        const apiResponse = await authService.validateInvite(req.query.token as string)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const acceptInvite = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.body?.token || !req.body?.uid || !req.body?.email) {
+            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.acceptInvite - missing fields!`)
+        }
+        const apiResponse = await authService.acceptInvite(req.body)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getWorkspaceUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.query?.workspace) {
+            throw new InternalFlowiseError(
+                StatusCodes.PRECONDITION_FAILED,
+                `Error: authController.getWorkspaceUsers - workspace not provided!`
+            )
+        }
+        const apiResponse = await authService.getWorkspaceUsers(req.query.workspace as string)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const deleteWorkspaceUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.body?.userId || !req.body?.workspace) {
+            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.deleteWorkspaceUser - missing fields!`)
+        }
+        const apiResponse = await authService.deleteWorkspaceUser(req.body)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const updateWorkspaceUserRole = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.body?.userId || !req.body?.role || !req.body?.workspace) {
+            throw new InternalFlowiseError(
+                StatusCodes.PRECONDITION_FAILED,
+                `Error: authController.updateWorkspaceUserRole - missing fields!`
+            )
+        }
+        const apiResponse = await authService.updateWorkspaceUserRole(req.body)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const transferWorkspaceAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.body?.fromUserId || !req.body?.toUserId || !req.body?.workspace) {
+            throw new InternalFlowiseError(
+                StatusCodes.PRECONDITION_FAILED,
+                `Error: authController.transferWorkspaceAdmin - missing fields!`
+            )
+        }
+        const apiResponse = await authService.transferWorkspaceAdmin(req.body)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getSuperadminWorkspaces = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.query?.uid) {
+            throw new InternalFlowiseError(
+                StatusCodes.PRECONDITION_FAILED,
+                `Error: authController.getSuperadminWorkspaces - uid not provided!`
+            )
+        }
+        const apiResponse = await authService.getSuperadminWorkspaces(req.query.uid as string)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const deleteSuperadminWorkspace = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.body?.uid || !req.body?.workspaceId) {
+            throw new InternalFlowiseError(
+                StatusCodes.PRECONDITION_FAILED,
+                `Error: authController.deleteSuperadminWorkspace - missing fields!`
+            )
+        }
+        const apiResponse = await authService.deleteSuperadminWorkspace(req.body)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
 export default {
     register,
     login,
@@ -151,6 +275,15 @@ export default {
     checkEmail,
     forgotPassword,
     resetPassword,
+    inviteUser,
+    validateInvite,
+    acceptInvite,
+    getWorkspaceUsers,
+    deleteWorkspaceUser,
+    updateWorkspaceUserRole,
+    transferWorkspaceAdmin,
+    getSuperadminWorkspaces,
+    deleteSuperadminWorkspace,
     getUserData,
     updateUser
 }

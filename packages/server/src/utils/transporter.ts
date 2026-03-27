@@ -1,18 +1,26 @@
 import nodemailer, { SendMailOptions, Transporter } from 'nodemailer'
 import dotenv from 'dotenv'
+import path from 'path'
 
 dotenv.config()
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env'), override: false })
 
-const EMAIL_USER = process.env.NO_REPLY_EMAIL || 'no-reply@thub.tech'
-const EMAIL_PASS = process.env.NO_REPLY_MAIL_PASSWORD
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.office365.com'
+const SMTP_PORT = Number(process.env.SMTP_PORT || 587)
+const SMTP_SECURE = String(process.env.SMTP_SECURE || 'false').toLowerCase() === 'true'
+const EMAIL_USER =
+    process.env.NO_REPLY_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER || process.env.MAIL_USER || 'no-reply@thub.tech'
+const EMAIL_PASS =
+    process.env.NO_REPLY_MAIL_PASSWORD || process.env.SMTP_PASSWORD || process.env.EMAIL_PASSWORD || process.env.MAIL_PASSWORD
+const EMAIL_FROM = process.env.NO_REPLY_EMAIL || process.env.MAIL_FROM || process.env.SMTP_FROM || process.env.EMAIL_FROM || EMAIL_USER
 
 let transporter: Transporter | null = null
 
 if (EMAIL_PASS) {
     transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
+        host: SMTP_HOST,
+        port: SMTP_PORT,
+        secure: SMTP_SECURE,
         auth: {
             user: EMAIL_USER,
             pass: EMAIL_PASS
@@ -30,7 +38,7 @@ if (EMAIL_PASS) {
         }
     })
 } else {
-    console.warn('NO_REPLY_MAIL_PASSWORD is not set. Auth emails will be skipped.')
+    console.warn('Mail credentials are not configured. Auth emails will be skipped.')
 }
 
 const sendMail = async (options: SendMailOptions) => {
@@ -40,9 +48,11 @@ const sendMail = async (options: SendMailOptions) => {
     }
 
     return transporter.sendMail({
-        from: options.from || EMAIL_USER,
+        from: options.from || EMAIL_FROM,
         ...options
     })
 }
 
-export default { sendMail }
+const isConfigured = () => Boolean(transporter)
+
+export default { sendMail, isConfigured }

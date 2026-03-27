@@ -32,6 +32,9 @@ export class User {
     @Column({ nullable: true })
     reset_token: string
 
+    @Column({ nullable: true, type: 'timestamp' })
+    reset_token_expires_at: Date
+
     @Column({ nullable: true })
     company: string
 
@@ -40,4 +43,16 @@ export class User {
 
     @Column({ nullable: true })
     designation: string
+
+    @Column({ nullable: true })
+    role: string
+
+    @Column({ nullable: true })
+    workspaceUid: string
+
+    @Column({ default: false })
+    profile_completed: boolean
+
+    @Column({ default: false })
+    profile_skipped: boolean
 }

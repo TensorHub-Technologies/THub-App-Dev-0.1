@@ -15,7 +15,7 @@ import {
 import { IconTrash } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import axios from 'axios'
+import authApi from '@/api/auth'
 
 const WorkspacesDashboard = () => {
     const customization = useSelector((state) => state.customization)
@@ -28,35 +28,13 @@ const WorkspacesDashboard = () => {
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [selected, setSelected] = useState(null)
 
-    const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-
-    const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:3000'
-
-    const thubWebServerQAUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-
-    const API_BASE =
-        window.location.hostname === 'localhost'
-            ? thubWebServerLocalUrl
-            : window.location.hostname === 'dev.thub.tech'
-            ? thubWebServerDevUrl
-            : window.location.hostname === 'qa.thub.tech'
-            ? thubWebServerQAUrl
-            : thubWebServerProdUrl
-
     // ---------------------------------
     // Fetch workspaces
     // ---------------------------------
     const fetchWorkspaces = async () => {
         setLoading(true)
         try {
-            const res = await axios.get(`${API_BASE}/superadmin/workspaces`, {
-                params: { uid: user.uid }
-            })
+            const res = await authApi.getSuperadminWorkspaces(user.uid)
             setWorkspaces(res.data)
         } finally {
             setLoading(false)
@@ -71,11 +49,9 @@ const WorkspacesDashboard = () => {
     // Delete workspace
     // ---------------------------------
     const handleDelete = async () => {
-        await axios.delete(`${API_BASE}/superadmin/workspace`, {
-            data: {
-                uid: user.uid,
-                workspaceId: selected.workspaceId
-            }
+        await authApi.deleteSuperadminWorkspace({
+            uid: user.uid,
+            workspaceId: selected.workspaceId
         })
         setConfirmOpen(false)
         fetchWorkspaces()

@@ -2,6 +2,9 @@ import { StatusCodes } from 'http-status-codes'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { User } from '../../database/entities/User'
+import { Workspace } from '../../database/entities/Workspace'
+import { WorkspaceUser } from '../../database/entities/WorkspaceUser'
+import { WorkspaceInvite } from '../../database/entities/WorkspaceInvite'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import axios from 'axios'
@@ -11,6 +14,8 @@ import transporter from '../../utils/transporter'
 const otpStore = new Map<string, { otp: string; expiresAt: number }>()
 
 const OTP_TTL_MS = 10 * 60 * 1000
+const RESET_TOKEN_TTL_MS = 60 * 60 * 1000
+const INVITE_TTL_MS = 24 * 60 * 60 * 1000
 const RETRYABLE_DB_ERROR_CODES = new Set([
     'ECONNRESET',
     'PROTOCOL_CONNECTION_LOST',
@@ -33,6 +38,37 @@ const handleAuthError = (error: unknown, context: string): never => {
 }
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase()
+const normalizeWorkspaceName = (workspace: string) => workspace.trim().toLowerCase()
+const hashToken = (token: string) => crypto.createHash('sha256').update(token).digest('hex')
+
+const buildUiBaseUrl = () => {
+    return (
+        process.env.RESET_PASSWORD_URL ||
+        process.env.INVITE_BASE_URL ||
+        process.env.APP_URL ||
+        process.env.UI_BASE_URL ||
+        process.env.VITE_UI_BASE_URL ||
+        'http://localhost:3000'
+    ).replace(/\/+$/, '')
+}
+
+const buildResetPasswordLink = (token: string) => `${buildUiBaseUrl()}/reset-password/${token}`
+const buildInviteLink = (token: string) => `${buildUiBaseUrl()}/accept-invite?token=${token}`
+
+const ensureMailDeliveryConfigured = (action: string) => {
+    if (!transporter.isConfigured()) {
+        throw new InternalFlowiseError(
+            StatusCodes.SERVICE_UNAVAILABLE,
+            `Unable to ${action} because email delivery is not configured on the server`
+        )
+    }
+}
+
+const ensureAllowedWorkspaceRole = (role: string) => {
+    if (!['admin', 'member'].includes(role)) {
+        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid workspace role')
+    }
+}
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -111,7 +147,11 @@ const sanitizeUser = (user: User) => {
         phone: user.phone,
         company: user.company,
         department: user.department,
-        designation: user.designation
+        designation: user.designation,
+        role: user.role,
+        workspaceUid: user.workspaceUid,
+        profile_completed: Boolean(user.profile_completed),
+        profile_skipped: Boolean(user.profile_skipped)
     }
 }
 
@@ -148,7 +188,11 @@ const register = async (body: any) => {
             phone: body.phone?.trim() || '',
             password_hash: hash,
             login_type: 'email',
-            workspace: body.workspace?.trim() || ''
+            workspace: body.workspace?.trim() || '',
+            role: null as any,
+            workspaceUid: null as any,
+            profile_completed: false,
+            profile_skipped: false
         })
 
         const savedUser = await userRepo.save(user)
@@ -319,7 +363,9 @@ const googleLogin = async (body: any) => {
                 login_type: 'google',
                 access_token: accessToken,
                 workspace: body.workspace?.trim() || '',
-                phone: ''
+                phone: '',
+                profile_completed: false,
+                profile_skipped: false
             })
 
             user = await withRetry(() => userRepo.save(createdUser), isRetryableDbError, 1)
@@ -361,6 +407,8 @@ const sendOtp = async (body: any) => {
         if (!email) {
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Email is required')
         }
+
+        ensureMailDeliveryConfigured('send OTP email')
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString()
         otpStore.set(email, { otp, expiresAt: Date.now() + OTP_TTL_MS })
@@ -434,6 +482,8 @@ const updateUser = async (body: any) => {
     try {
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceRepo = appServer.AppDataSource.getRepository(Workspace)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
 
         const uid = body.uid
 
@@ -449,6 +499,50 @@ const updateUser = async (body: any) => {
         if (typeof body.picture === 'string') user.picture = body.picture
         if (typeof body.name === 'string') user.name = body.name
         if (typeof body.phone === 'string') user.phone = body.phone
+
+        const requestedWorkspace = typeof body.workspace === 'string' ? normalizeWorkspaceName(body.workspace) : ''
+
+        if (requestedWorkspace) {
+            if (user.workspaceUid && normalizeWorkspaceName(user.workspace || '') !== requestedWorkspace) {
+                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Workspace cannot be changed from profile update')
+            }
+
+            if (!user.workspaceUid) {
+                const existingWorkspace = await workspaceRepo.findOneBy({ name: requestedWorkspace })
+
+                if (existingWorkspace) {
+                    throw new InternalFlowiseError(StatusCodes.CONFLICT, 'Workspace already exists')
+                }
+
+                const workspace = workspaceRepo.create({
+                    id: crypto.randomUUID(),
+                    name: requestedWorkspace,
+                    created_by: uid,
+                    created_at: new Date()
+                })
+
+                await workspaceRepo.save(workspace)
+
+                const adminMembership = workspaceUserRepo.create({
+                    workspace_id: workspace.id,
+                    user_id: uid,
+                    role: 'admin'
+                })
+
+                await workspaceUserRepo.save(adminMembership)
+
+                user.workspace = workspace.name
+                user.workspaceUid = workspace.id
+                user.role = 'admin'
+            }
+        }
+
+        if (typeof body.profile_skipped === 'boolean') {
+            user.profile_skipped = body.profile_skipped
+        }
+
+        user.profile_completed = true
+        user.profile_skipped = false
 
         const savedUser = await userRepo.save(user)
         return {
@@ -514,7 +608,9 @@ const microsoftLogin = async (body: any) => {
                 name,
                 phone,
                 login_type: loginType,
-                workspace: body.workspace?.trim() || ''
+                workspace: body.workspace?.trim() || '',
+                profile_completed: false,
+                profile_skipped: false
             })
             user = await withRetry(() => userRepo.save(user as User), isRetryableDbError, 1)
 
@@ -566,21 +662,32 @@ const forgotPassword = async (body: any) => {
             return genericResponse
         }
 
+        ensureMailDeliveryConfigured('send password reset email')
+
         const token = crypto.randomBytes(32).toString('hex')
-        user.reset_token = token
+        user.reset_token = hashToken(token)
+        user.reset_token_expires_at = new Date(Date.now() + RESET_TOKEN_TTL_MS)
         await userRepo.save(user)
 
-        const resetLink = `${process.env.RESET_PASSWORD_URL || 'http://localhost:8080'}/reset-password/${token}`
+        const resetLink = buildResetPasswordLink(token)
 
         await transporter.sendMail({
             to: email,
             subject: 'Reset your THub password',
-            html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`
+            text: `Reset your THub password using this link: ${resetLink}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #111827;">
+                    <p>Hi ${user.name || 'there'},</p>
+                    <p>We received a request to reset your THub password.</p>
+                    <p><a href="${resetLink}">Reset your password</a></p>
+                    <p>This link will expire in 1 hour.</p>
+                </div>
+            `
         })
 
         return {
             ...genericResponse,
-            ...(isDebugSecretMode() ? { resetToken: token } : {})
+            ...(isDebugSecretMode() ? { resetToken: token, resetLink } : {})
         }
     } catch (error) {
         handleAuthError(error, 'forgotPassword')
@@ -604,20 +711,510 @@ const resetPassword = async (token: string, body: any) => {
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Password must be at least 6 characters')
         }
 
-        const user = await userRepo.findOneBy({ reset_token: token })
+        const hashedToken = hashToken(token)
+        const user = await userRepo.findOneBy({ reset_token: hashedToken })
 
         if (!user) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid or expired reset token')
+        }
+
+        if (!user.reset_token_expires_at || new Date(user.reset_token_expires_at).getTime() < Date.now()) {
+            user.reset_token = null as any
+            user.reset_token_expires_at = null as any
+            await userRepo.save(user)
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid or expired reset token')
         }
 
         const hash = await bcrypt.hash(password, 10)
         user.password_hash = hash
         user.reset_token = null as any
+        user.reset_token_expires_at = null as any
         await userRepo.save(user)
 
         return { message: 'Password has been reset successfully' }
     } catch (error) {
         handleAuthError(error, 'resetPassword')
+    }
+}
+
+const inviteUser = async (body: any) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceRepo = appServer.AppDataSource.getRepository(Workspace)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
+        const workspaceInviteRepo = appServer.AppDataSource.getRepository(WorkspaceInvite)
+
+        const email = normalizeEmail(body.email)
+        const workspaceName = normalizeWorkspaceName(body.workspace || '')
+        const invitedBy = String(body.invitedBy || '').trim()
+        const role = String(body.role || 'member')
+            .trim()
+            .toLowerCase()
+
+        if (!email || !workspaceName || !invitedBy) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
+        }
+
+        ensureAllowedWorkspaceRole(role)
+        ensureMailDeliveryConfigured('send workspace invitation email')
+
+        const workspace = await workspaceRepo.findOneBy({ name: workspaceName })
+        if (!workspace) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+        }
+
+        const inviterMembership = await workspaceUserRepo.findOneBy({
+            workspace_id: workspace.id,
+            user_id: invitedBy
+        })
+        const inviter = await userRepo.findOneBy({ uid: invitedBy })
+
+        if (inviter?.role !== 'superadmin' && inviterMembership?.role !== 'admin') {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Only admin can invite users')
+        }
+
+        const existingInvite = await workspaceInviteRepo.findOneBy({
+            email,
+            workspace_id: workspace.id,
+            used: false
+        })
+        if (existingInvite && new Date(existingInvite.expires_at).getTime() > Date.now()) {
+            throw new InternalFlowiseError(StatusCodes.CONFLICT, 'Invite already sent')
+        }
+
+        const existingUser = await userRepo.findOneBy({ email })
+        if (existingUser?.workspaceUid === workspace.id) {
+            throw new InternalFlowiseError(StatusCodes.CONFLICT, 'User already in workspace')
+        }
+
+        const token = crypto.randomBytes(32).toString('hex')
+        const invite = workspaceInviteRepo.create({
+            id: crypto.randomUUID(),
+            email,
+            workspace_id: workspace.id,
+            workspace_name: workspace.name,
+            role,
+            token,
+            invited_by: invitedBy,
+            expires_at: new Date(Date.now() + INVITE_TTL_MS),
+            used: false
+        })
+
+        await workspaceInviteRepo.save(invite)
+
+        try {
+            await transporter.sendMail({
+                to: email,
+                subject: `You're invited to join ${workspace.name} on THub`,
+                text: `Accept your THub invite here: ${buildInviteLink(token)}`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; color: #111827;">
+                        <p>You have been invited to join <strong>${workspace.name}</strong> on THub.</p>
+                        <p>Role: <strong>${role}</strong></p>
+                        <p><a href="${buildInviteLink(token)}">Accept invite</a></p>
+                        <p>This invite will expire in 24 hours.</p>
+                    </div>
+                `
+            })
+        } catch (mailError) {
+            await workspaceInviteRepo.delete({ id: invite.id })
+            throw mailError
+        }
+
+        return { message: 'Invite sent successfully' }
+    } catch (error) {
+        handleAuthError(error, 'inviteUser')
+    }
+}
+
+const validateInvite = async (token: string) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceInviteRepo = appServer.AppDataSource.getRepository(WorkspaceInvite)
+
+        const invite = await workspaceInviteRepo.findOneBy({ token: String(token || '').trim() })
+        if (!invite) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Invite not found')
+        }
+
+        if (invite.used || new Date(invite.expires_at).getTime() < Date.now()) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invite is invalid or expired')
+        }
+
+        const inviter = await userRepo.findOneBy({ uid: invite.invited_by })
+
+        return {
+            valid: true,
+            email: invite.email,
+            workspace: invite.workspace_name,
+            role: invite.role,
+            invitedBy: inviter?.name || inviter?.email || 'Admin'
+        }
+    } catch (error) {
+        handleAuthError(error, 'validateInvite')
+    }
+}
+
+const acceptInvite = async (body: any) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
+        const workspaceInviteRepo = appServer.AppDataSource.getRepository(WorkspaceInvite)
+
+        const token = String(body.token || '').trim()
+        const uid = String(body.uid || '').trim()
+        const email = normalizeEmail(body.email || '')
+
+        if (!token || !uid || !email) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
+        }
+
+        const invite = await workspaceInviteRepo.findOneBy({ token })
+        if (!invite || new Date(invite.expires_at).getTime() < Date.now()) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid invite')
+        }
+
+        if (invite.used) {
+            return { message: 'Already joined' }
+        }
+
+        if (invite.email !== email) {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Email mismatch')
+        }
+
+        const user = await userRepo.findOneBy({ uid })
+        if (!user || normalizeEmail(user.email) !== email) {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Email mismatch')
+        }
+
+        const existingMembership = await workspaceUserRepo.findOneBy({
+            workspace_id: invite.workspace_id,
+            user_id: uid
+        })
+
+        if (!existingMembership) {
+            await workspaceUserRepo.save(
+                workspaceUserRepo.create({
+                    workspace_id: invite.workspace_id,
+                    user_id: uid,
+                    role: invite.role
+                })
+            )
+        }
+
+        user.workspaceUid = invite.workspace_id
+        user.workspace = invite.workspace_name
+        user.role = invite.role
+        user.profile_skipped = false
+        await userRepo.save(user)
+
+        invite.used = true
+        await workspaceInviteRepo.save(invite)
+
+        return { message: 'Joined workspace successfully' }
+    } catch (error) {
+        handleAuthError(error, 'acceptInvite')
+    }
+}
+
+const getWorkspaceUsers = async (workspace: string) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceRepo = appServer.AppDataSource.getRepository(Workspace)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
+
+        const workspaceName = normalizeWorkspaceName(workspace || '')
+        if (!workspaceName) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Workspace required')
+        }
+
+        const existingWorkspace = await workspaceRepo.findOneBy({ name: workspaceName })
+        if (!existingWorkspace) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+        }
+
+        const memberships = await workspaceUserRepo.findBy({ workspace_id: existingWorkspace.id })
+        const users = memberships.length ? await userRepo.findBy(memberships.map((membership) => ({ uid: membership.user_id }))) : []
+        const userMap = new Map(users.map((user) => [user.uid, user]))
+
+        return memberships
+            .map((membership) => {
+                const user = userMap.get(membership.user_id)
+                return user
+                    ? {
+                          uid: user.uid,
+                          name: user.name,
+                          company: user.company,
+                          department: user.department,
+                          designation: user.designation,
+                          role: membership.role
+                      }
+                    : null
+            })
+            .filter(Boolean)
+            .sort((left: any, right: any) => {
+                if (left.role === right.role) return String(left.name || '').localeCompare(String(right.name || ''))
+                return left.role === 'admin' ? -1 : 1
+            })
+    } catch (error) {
+        handleAuthError(error, 'getWorkspaceUsers')
+    }
+}
+
+const deleteWorkspaceUser = async (body: any) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceRepo = appServer.AppDataSource.getRepository(Workspace)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
+
+        const userId = String(body.userId || '').trim()
+        const workspaceName = normalizeWorkspaceName(body.workspace || '')
+
+        if (!userId || !workspaceName) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid request')
+        }
+
+        const workspace = await workspaceRepo.findOneBy({ name: workspaceName })
+        if (!workspace) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+        }
+
+        const membership = await workspaceUserRepo.findOneBy({
+            workspace_id: workspace.id,
+            user_id: userId
+        })
+        if (!membership) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not in workspace')
+        }
+
+        if (membership.role === 'admin') {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Admin cannot be removed')
+        }
+
+        await workspaceUserRepo.delete({ id: membership.id })
+
+        const user = await userRepo.findOneBy({ uid: userId })
+        if (user) {
+            user.company = null as any
+            user.department = null as any
+            user.designation = null as any
+            user.workspace = null as any
+            user.workspaceUid = null as any
+            user.role = null as any
+            user.profile_completed = false
+            user.profile_skipped = false
+            await userRepo.save(user)
+        }
+
+        return { message: 'User removed and reset successfully' }
+    } catch (error) {
+        handleAuthError(error, 'deleteWorkspaceUser')
+    }
+}
+
+const updateWorkspaceUserRole = async (body: any) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceRepo = appServer.AppDataSource.getRepository(Workspace)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
+
+        const userId = String(body.userId || '').trim()
+        const role = String(body.role || '')
+            .trim()
+            .toLowerCase()
+        const workspaceName = normalizeWorkspaceName(body.workspace || '')
+
+        if (!userId || !role || !workspaceName) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
+        }
+
+        ensureAllowedWorkspaceRole(role)
+
+        const workspace = await workspaceRepo.findOneBy({ name: workspaceName })
+        if (!workspace) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+        }
+
+        const currentAdmin = await workspaceUserRepo.findOneBy({
+            workspace_id: workspace.id,
+            role: 'admin'
+        })
+        if (currentAdmin?.user_id === userId && role !== 'admin') {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Admin cannot change his own role')
+        }
+
+        const membership = await workspaceUserRepo.findOneBy({
+            workspace_id: workspace.id,
+            user_id: userId
+        })
+        if (!membership) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not in workspace')
+        }
+
+        membership.role = role
+        await workspaceUserRepo.save(membership)
+
+        const user = await userRepo.findOneBy({ uid: userId })
+        if (user) {
+            user.role = role
+            await userRepo.save(user)
+        }
+
+        return { message: 'User role updated successfully' }
+    } catch (error) {
+        handleAuthError(error, 'updateWorkspaceUserRole')
+    }
+}
+
+const transferWorkspaceAdmin = async (body: any) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceRepo = appServer.AppDataSource.getRepository(Workspace)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
+
+        const fromUserId = String(body.fromUserId || '').trim()
+        const toUserId = String(body.toUserId || '').trim()
+        const workspaceName = normalizeWorkspaceName(body.workspace || '')
+
+        if (!fromUserId || !toUserId || !workspaceName) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing fields')
+        }
+
+        const workspace = await workspaceRepo.findOneBy({ name: workspaceName })
+        if (!workspace) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+        }
+
+        const fromMembership = await workspaceUserRepo.findOneBy({
+            workspace_id: workspace.id,
+            user_id: fromUserId
+        })
+        const toMembership = await workspaceUserRepo.findOneBy({
+            workspace_id: workspace.id,
+            user_id: toUserId
+        })
+
+        if (!fromMembership || fromMembership.role !== 'admin') {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Only admin can transfer ownership')
+        }
+
+        if (!toMembership) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Target user not found in workspace')
+        }
+
+        fromMembership.role = 'member'
+        toMembership.role = 'admin'
+        await workspaceUserRepo.save([fromMembership, toMembership])
+
+        const fromUser = await userRepo.findOneBy({ uid: fromUserId })
+        if (fromUser) {
+            fromUser.role = 'member'
+            await userRepo.save(fromUser)
+        }
+
+        const toUser = await userRepo.findOneBy({ uid: toUserId })
+        if (toUser) {
+            toUser.role = 'admin'
+            await userRepo.save(toUser)
+        }
+
+        return { message: 'Admin transferred successfully' }
+    } catch (error) {
+        handleAuthError(error, 'transferWorkspaceAdmin')
+    }
+}
+
+const getSuperadminWorkspaces = async (uid: string) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceRepo = appServer.AppDataSource.getRepository(Workspace)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
+
+        const user = await userRepo.findOneBy({ uid })
+        if (!user || user.role !== 'superadmin') {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Not allowed')
+        }
+
+        const workspaces = await workspaceRepo.find()
+        const adminMemberships = await workspaceUserRepo.findBy({ role: 'admin' })
+        const adminIds = [...new Set(adminMemberships.map((membership) => membership.user_id))]
+        const admins = adminIds.length ? await userRepo.findBy(adminIds.map((id) => ({ uid: id }))) : []
+        const adminMap = new Map(admins.map((admin) => [admin.uid, admin]))
+        const adminByWorkspace = new Map(adminMemberships.map((membership) => [membership.workspace_id, membership]))
+
+        return workspaces
+            .map((workspace) => {
+                const membership = adminByWorkspace.get(workspace.id)
+                const admin = membership ? adminMap.get(membership.user_id) : null
+                return {
+                    workspaceId: workspace.id,
+                    workspace: workspace.name,
+                    adminEmail: admin?.email || '',
+                    adminName: admin?.name || '',
+                    created_at: workspace.created_at
+                }
+            })
+            .sort((left, right) => new Date(right.created_at).getTime() - new Date(left.created_at).getTime())
+    } catch (error) {
+        handleAuthError(error, 'getSuperadminWorkspaces')
+    }
+}
+
+const deleteSuperadminWorkspace = async (body: any) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const workspaceRepo = appServer.AppDataSource.getRepository(Workspace)
+        const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
+        const workspaceInviteRepo = appServer.AppDataSource.getRepository(WorkspaceInvite)
+
+        const uid = String(body.uid || '').trim()
+        const workspaceId = String(body.workspaceId || '').trim()
+
+        if (!uid || !workspaceId) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
+        }
+
+        const user = await userRepo.findOneBy({ uid })
+        if (!user || user.role !== 'superadmin') {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Not allowed')
+        }
+
+        const workspace = await workspaceRepo.findOneBy({ id: workspaceId })
+        if (!workspace) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+        }
+
+        const memberships = await workspaceUserRepo.findBy({ workspace_id: workspaceId })
+        for (const membership of memberships) {
+            const workspaceUser = await userRepo.findOneBy({ uid: membership.user_id })
+            if (workspaceUser && workspaceUser.role !== 'superadmin') {
+                workspaceUser.workspace = null as any
+                workspaceUser.workspaceUid = null as any
+                workspaceUser.role = null as any
+                workspaceUser.profile_completed = false
+                workspaceUser.profile_skipped = false
+                await userRepo.save(workspaceUser)
+            }
+        }
+
+        await workspaceInviteRepo.delete({ workspace_id: workspaceId })
+        for (const membership of memberships) {
+            await workspaceUserRepo.delete({ id: membership.id })
+        }
+        await workspaceRepo.delete({ id: workspaceId })
+
+        return { message: 'Workspace deleted' }
+    } catch (error) {
+        handleAuthError(error, 'deleteSuperadminWorkspace')
     }
 }
 
@@ -631,6 +1228,15 @@ export default {
     checkEmail,
     forgotPassword,
     resetPassword,
+    inviteUser,
+    validateInvite,
+    acceptInvite,
+    getWorkspaceUsers,
+    deleteWorkspaceUser,
+    updateWorkspaceUserRole,
+    transferWorkspaceAdmin,
+    getSuperadminWorkspaces,
+    deleteSuperadminWorkspace,
     getUserData,
     updateUser
 }

@@ -17,13 +17,11 @@ import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Top } from './Top'
-import axios from 'axios'
 import authApi from '@/api/auth'
 import { setUserData, SET_DARKMODE } from '@/store/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
-import { apiBaseUrl } from '@/utils/apiBaseUrl'
 
 // images
 import darkImage from '../../assets/images/auth/screen-5.png'
@@ -70,7 +68,7 @@ const Login = () => {
                 return
             }
 
-            await axios.post(`${apiBaseUrl}/invite/accept`, {
+            await authApi.acceptInvite({
                 token,
                 uid: userId,
                 email: userEmail

@@ -1,5 +1,4 @@
 import './UserInfo.css'
-import axios from 'axios'
 import authApi from '@/api/auth'
 import PropTypes from 'prop-types'
 import userImage_light from '../../assets/images/userForm/userForm.svg'
@@ -10,7 +9,6 @@ import { enqueueSnackbar as enqueueSnackbarAction, SET_USER_DATA } from '@/store
 import { IconX } from '@tabler/icons-react'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
-import { apiBaseUrl } from '@/utils/apiBaseUrl'
 
 const UserInfo = ({ setShowModal = () => {}, forceOpen = false }) => {
     const user = useSelector((state) => state.user.userData)
@@ -85,7 +83,7 @@ const UserInfo = ({ setShowModal = () => {}, forceOpen = false }) => {
 
             // ✅ INVITE FLOW: Call /invite/accept FIRST
             try {
-                await axios.post(`${apiBaseUrl}/invite/accept`, {
+                await authApi.acceptInvite({
                     token: inviteContext.token,
                     uid: user.uid,
                     email: user.email

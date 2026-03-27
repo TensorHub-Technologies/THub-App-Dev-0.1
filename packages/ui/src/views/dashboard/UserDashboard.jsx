@@ -18,7 +18,7 @@ import { IconPlus, IconTrash, IconCrown, IconX } from '@tabler/icons-react'
 
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import axios from 'axios'
+import authApi from '@/api/auth'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import useNotifier from '@/utils/useNotifier'
@@ -50,26 +50,6 @@ const UserDashboard = () => {
     const [transferOpen, setTransferOpen] = useState(false)
     const [transferUser, setTransferUser] = useState(null)
 
-    const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-
-    const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:3000'
-
-    const thubWebServerQAUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-
-    const API_BASE =
-        window.location.hostname === 'localhost'
-            ? thubWebServerLocalUrl
-            : window.location.hostname === 'dev.thub.tech'
-            ? thubWebServerDevUrl
-            : window.location.hostname === 'qa.thub.tech'
-            ? thubWebServerQAUrl
-            : thubWebServerProdUrl
-
     // -------------------------------
     // Fetch users (safe for deleted workspace)
     // -------------------------------
@@ -81,9 +61,7 @@ const UserDashboard = () => {
                 return
             }
 
-            const res = await axios.get(`${API_BASE}/workspaceUsers`, {
-                params: { workspace: userData.workspace }
-            })
+            const res = await authApi.getWorkspaceUsers(userData.workspace)
 
             setUsers(res.data)
         } catch {
@@ -103,7 +81,7 @@ const UserDashboard = () => {
     const handleInvite = async () => {
         setLoading(true)
         try {
-            await axios.post(`${API_BASE}/inviteUser`, {
+            await authApi.inviteUser({
                 email,
                 workspace: userData.workspace,
                 invitedBy: userData.uid,
@@ -149,9 +127,7 @@ const UserDashboard = () => {
     // -------------------------------
     const handleConfirmDelete = async () => {
         try {
-            await axios.delete(`${API_BASE}/workspaceUser`, {
-                data: { userId: selectedUser.uid, workspace: userData.workspace }
-            })
+            await authApi.deleteWorkspaceUser({ userId: selectedUser.uid, workspace: userData.workspace })
             setConfirmOpen(false)
             enqueueSnackbar({
                 message: `${selectedUser.name} has been removed successfully`,
@@ -190,7 +166,7 @@ const UserDashboard = () => {
     // -------------------------------
     const handleTransferAdmin = async () => {
         try {
-            await axios.post(`${API_BASE}/workspaceUser/transfer-admin`, {
+            await authApi.transferWorkspaceAdmin({
                 fromUserId: userData.uid,
                 toUserId: transferUser.uid,
                 workspace: userData.workspace

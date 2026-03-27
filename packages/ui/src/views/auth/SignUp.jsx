@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import authApi from '@/api/auth'
 import {
     Box,
@@ -25,7 +24,6 @@ import { SET_USER_DATA, SET_DARKMODE } from '@/store/actions'
 import { useNavigate } from 'react-router-dom'
 import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
-import { apiBaseUrl } from '@/utils/apiBaseUrl'
 
 // images
 import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
@@ -77,7 +75,7 @@ const SignUp = () => {
                 return
             }
 
-            await axios.post(`${apiBaseUrl}/invite/accept`, {
+            await authApi.acceptInvite({
                 token,
                 uid: userId,
                 email: userEmail

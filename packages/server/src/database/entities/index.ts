@@ -18,6 +18,9 @@ import { ApiKey } from './ApiKey'
 import { CustomTemplate } from './CustomTemplate'
 import { Execution } from './Execution'
 import { User } from './User'
+import { Workspace } from './Workspace'
+import { WorkspaceUser } from './WorkspaceUser'
+import { WorkspaceInvite } from './WorkspaceInvite'
 
 export const entities = {
     ChatFlow,
@@ -38,6 +41,9 @@ export const entities = {
     Evaluator,
     ApiKey,
     User,
+    Workspace,
+    WorkspaceUser,
+    WorkspaceInvite,
 
     CustomTemplate,
     Execution
