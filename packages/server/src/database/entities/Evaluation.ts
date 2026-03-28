@@ -6,6 +6,9 @@ export class Evaluation implements IEvaluation {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
+    @Column({ nullable: true })
+    tenantId?: string
+
     @Column({ type: 'text' })
     average_metrics: string
 

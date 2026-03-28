@@ -74,9 +74,14 @@ const Header = () => {
 
         setAnchorEl(null)
         if (loginType === 'azure_ad') {
-            const currentHost = window.location.hostname
-
-            const redirectUri = currentHost === 'localhost' ? 'http://localhost:8080/' : 'https://app.thub.tech/'
+            let redirectUri = 'https://app.thub.tech/'
+            if (currentHost === 'localhost') {
+                redirectUri = 'http://localhost:8080/'
+            } else if (currentHost === 'dev.thub.tech') {
+                redirectUri = 'https://dev.thub.tech/'
+            } else if (currentHost === 'qa.thub.tech') {
+                redirectUri = 'https://qa.thub.tech/'
+            }
 
             instance.logoutRedirect({
                 postLogoutRedirectUri: redirectUri
@@ -89,11 +94,11 @@ const Header = () => {
             if (currentHost === 'localhost') {
                 window.location.href = 'http://localhost:8080/'
             } else if (currentHost === 'dev.thub.tech') {
-                window.location.href = 'https://dev.thub.tech/'
+                window.location.href = 'https://thub-web.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             } else if (currentHost === 'qa.thub.tech') {
                 window.location.href = 'https://thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
             } else {
-                window.location.href = 'https://app.thub.tech/'
+                window.location.href = 'https://thub-web.happytree-73f6fdda.westus2.azurecontainerapps.io/'
             }
 
             return
@@ -101,7 +106,7 @@ const Header = () => {
 
         // 3️⃣ Normal email/password login logout
         if (currentHost === 'dev.thub.tech') {
-            window.location.href = 'https://dev.thub.tech/'
+            window.location.href = 'https://thub-web.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             return
         }
 
@@ -115,7 +120,7 @@ const Header = () => {
             return
         }
 
-        window.location.href = 'https://app.thub.tech'
+        window.location.href = 'https://thub-web.happytree-73f6fdda.westus2.azurecontainerapps.io/'
     }
 
     useEffect(() => {

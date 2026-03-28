@@ -26,8 +26,6 @@ import { FlowListTable } from '@/ui-component/table/FlowListTable'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
-import emptyImage from '../../assets/images/glass.svg'
-import emptyImagelite from '../../assets/images/glass-lite.svg'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -243,11 +241,11 @@ const Chatflows = () => {
     const renderEmptyState = () => (
         <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
             <Box sx={{ p: 2, height: 'auto' }}>
-                <img
+                {/* <img
                     style={{ objectFit: 'cover', height: '30vh', width: 'auto' }}
                     src={customization.isDarkMode ? emptyImage : emptyImagelite}
                     alt='WorkflowEmptySVG'
-                />
+                /> */}
             </Box>
             <Typography variant='body1'>
                 {search ? 'No chatflows found matching your search.' : 'No AI Apps workspaces have been created yet.'}

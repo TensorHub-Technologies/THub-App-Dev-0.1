@@ -3,6 +3,7 @@ import { Evaluator } from './database/entities/Evaluator'
 
 export interface IDataset {
     id: string
+    tenantId?: string
     name: string
     description: string
     createdDate: Date
@@ -25,6 +26,7 @@ export enum EvaluationStatus {
 
 export interface IEvaluation {
     id: string
+    tenantId?: string
     name: string
     chatflowId: string
     chatflowName: string
@@ -57,6 +59,7 @@ export interface IEvaluationRun {
 
 export interface IEvaluator {
     id: string
+    tenantId?: string
     name: string
     type: string
     config: string // JSON
@@ -66,6 +69,7 @@ export interface IEvaluator {
 
 export class EvaluatorDTO {
     id: string
+    tenantId?: string
     name: string
     type: string
     measure?: string

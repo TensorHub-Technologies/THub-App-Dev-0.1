@@ -184,6 +184,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         const obj = {
             name: evaluationName,
             evaluationType: credentialId ? 'llm' : 'benchmarking',
+            tenantId,
             credentialId: credentialId,
             datasetId: dataset,
             datasetName: datasetName,
@@ -236,10 +237,10 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             getAssistantsApi.request('CUSTOM', tenantId)
             getAllAgentflowsApi.request('AGENTFLOW', tenantId)
         }
-        if (datasets.length === 0) {
-            getAllDatasetsApi.request()
+        if (datasets.length === 0 && tenantId) {
+            getAllDatasetsApi.request({ tenantId })
         }
-        getAllEvaluatorsApi.request()
+        if (tenantId) getAllEvaluatorsApi.request({ tenantId })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

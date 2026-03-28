@@ -25,7 +25,7 @@ const EvaluationResultVersionsSideDrawer = ({ show, dialogProps, onClickFunction
     const getVersionsApi = useApi(evaluationApi.getVersions)
 
     useEffect(() => {
-        getVersionsApi.request(dialogProps.id)
+        getVersionsApi.request(dialogProps.id, { tenantId: dialogProps.tenantId })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dialogProps])
 

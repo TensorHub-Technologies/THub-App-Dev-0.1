@@ -10,7 +10,7 @@ import { IconX } from '@tabler/icons-react'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 
-const UserInfo = ({ setShowModal, forceOpen = false }) => {
+const UserInfo = ({ setShowModal = () => {}, forceOpen = false }) => {
     const user = useSelector((state) => state.user.userData)
     const isDarkMode = useSelector((state) => state.customization.isDarkMode)
     const dispatch = useDispatch()
@@ -136,11 +136,20 @@ const UserInfo = ({ setShowModal, forceOpen = false }) => {
     }
 
     const handleSkip = () => {
+        if (sessionStorage.getItem('userInfoSkipped') === 'true') {
+            setShowModal(false)
+            return
+        }
+
         sessionStorage.setItem('userInfoSkipped', 'true')
 
         enqueueSnackbar({
             message: 'You can complete your profile later',
-            options: { variant: 'info' }
+            options: {
+                key: 'skip-profile-msg',
+                variant: 'info',
+                preventDuplicate: true
+            }
         })
 
         setShowModal(false)
