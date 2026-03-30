@@ -140,15 +140,21 @@ class ChatAnthropic_ChatModels implements INode {
         const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
 
         const obj: Partial<AnthropicInput> & BaseLLMParams & { anthropicApiKey?: string } = {
-            temperature: parseFloat(temperature),
             modelName,
             anthropicApiKey,
             streaming: streaming ?? true
         }
 
+        const parsedTemperature = parseFloat(temperature)
+        if (!isNaN(parsedTemperature) && parsedTemperature >= 0) obj.temperature = parsedTemperature
+
         if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)
-        if (topP) obj.topP = parseFloat(topP)
-        if (topK) obj.topK = parseFloat(topK)
+
+        const parsedTopP = parseFloat(topP)
+        if (!isNaN(parsedTopP) && parsedTopP >= 0 && parsedTopP <= 1) obj.topP = parsedTopP
+
+        const parsedTopK = parseFloat(topK)
+        if (!isNaN(parsedTopK) && parsedTopK >= 0) obj.topK = parsedTopK
         if (cache) obj.cache = cache
         if (extendedThinking) {
             obj.thinking = {

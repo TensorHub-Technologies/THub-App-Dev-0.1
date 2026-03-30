@@ -150,4 +150,5 @@ class ChatMistral_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatMistral_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatMistral_ChatModels }

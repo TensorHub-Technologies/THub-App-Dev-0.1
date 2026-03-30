@@ -14,8 +14,10 @@ class ChatOpenAICustom_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatOpenAI Custom'
         this.name = 'chatOpenAICustom'
         this.version = 4.0
@@ -170,4 +172,5 @@ class ChatOpenAICustom_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatOpenAICustom_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatOpenAICustom_ChatModels }
