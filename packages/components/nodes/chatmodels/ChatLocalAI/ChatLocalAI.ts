@@ -14,8 +14,10 @@ class ChatLocalAI_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatLocalAI'
         this.name = 'chatLocalAI'
         this.version = 3.0
@@ -131,4 +133,5 @@ class ChatLocalAI_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatLocalAI_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatLocalAI_ChatModels }
