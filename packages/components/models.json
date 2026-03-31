@@ -316,28 +316,67 @@
             "name": "azureChatOpenAI",
             "models": [
                 {
-                    "label": "gpt-5.1",
-                    "name": "gpt-5.1",
-                    "input_cost": 0.00000125,
-                    "output_cost": 0.00001
+                    "label": "gpt-5.4-pro",
+                    "name": "gpt-5.4-pro",
+                    "description": "GPT-5.4 Pro — Max performance for complex, compute-intensive tasks via Azure (Responses API)",
+                    "input_cost": 0.00005,
+                    "output_cost": 0.00015
                 },
                 {
-                    "label": "gpt-5",
-                    "name": "gpt-5",
-                    "input_cost": 0.00000125,
-                    "output_cost": 0.00001
+                    "label": "gpt-5.4",
+                    "name": "gpt-5.4",
+                    "description": "GPT-5.4 — Flagship model, 1M token context, agentic workflows (Responses API)",
+                    "input_cost": 0.000015,
+                    "output_cost": 0.00006
                 },
                 {
-                    "label": "gpt-5-mini",
-                    "name": "gpt-5-mini",
+                    "label": "gpt-5.4-mini",
+                    "name": "gpt-5.4-mini",
+                    "description": "GPT-5.4 Mini — Fast and cost-efficient (Responses API)",
+                    "input_cost": 0.00000125,
+                    "output_cost": 0.000005
+                },
+                {
+                    "label": "gpt-5.4-nano",
+                    "name": "gpt-5.4-nano",
+                    "description": "GPT-5.4 Nano — Most affordable, high-volume tasks (Responses API)",
                     "input_cost": 0.00000025,
-                    "output_cost": 0.000002
+                    "output_cost": 0.000001
                 },
                 {
-                    "label": "gpt-5-nano",
-                    "name": "gpt-5-nano",
-                    "input_cost": 0.00000005,
-                    "output_cost": 0.0000004
+                    "label": "o4-mini",
+                    "name": "o4-mini",
+                    "description": "Fast and affordable reasoning model",
+                    "input_cost": 1.1e-6,
+                    "output_cost": 4.4e-6
+                },
+                {
+                    "label": "o3",
+                    "name": "o3",
+                    "description": "Most capable reasoning model",
+                    "input_cost": 0.00001,
+                    "output_cost": 0.00004
+                },
+                {
+                    "label": "o3-mini",
+                    "name": "o3-mini",
+                    "description": "Smaller, faster reasoning model",
+                    "input_cost": 1.1e-6,
+                    "output_cost": 4.4e-6
+                },
+                {
+                    "label": "o1",
+                    "name": "o1",
+                    "description": "Reasoning model for complex tasks",
+                    "input_cost": 0.000015,
+                    "output_cost": 0.00006
+                },
+                {
+                    "label": "o1-mini",
+                    "name": "o1-mini",
+                    "description": "Faster, affordable reasoning model",
+                    "input_cost": 3e-6,
+                    "output_cost": 0.000012
                 },
                 {
                     "label": "gpt-4.1",
@@ -346,34 +385,16 @@
                     "output_cost": 8e-6
                 },
                 {
-                    "label": "o3-mini",
-                    "name": "o3-mini",
-                    "input_cost": 1.1e-6,
-                    "output_cost": 4.4e-6
+                    "label": "gpt-4.1-mini",
+                    "name": "gpt-4.1-mini",
+                    "input_cost": 4e-7,
+                    "output_cost": 1.6e-6
                 },
                 {
-                    "label": "o1",
-                    "name": "o1",
-                    "input_cost": 0.000015,
-                    "output_cost": 0.00006
-                },
-                {
-                    "label": "o1-preview",
-                    "name": "o1-preview",
-                    "input_cost": 0.000015,
-                    "output_cost": 0.00006
-                },
-                {
-                    "label": "o1-mini",
-                    "name": "o1-mini",
-                    "input_cost": 3e-6,
-                    "output_cost": 0.000012
-                },
-                {
-                    "label": "gpt-4o-mini",
-                    "name": "gpt-4o-mini",
-                    "input_cost": 1.5e-7,
-                    "output_cost": 6e-7
+                    "label": "gpt-4.1-nano",
+                    "name": "gpt-4.1-nano",
+                    "input_cost": 1e-7,
+                    "output_cost": 4e-7
                 },
                 {
                     "label": "gpt-4o",
@@ -382,52 +403,22 @@
                     "output_cost": 0.00001
                 },
                 {
+                    "label": "gpt-4o-mini",
+                    "name": "gpt-4o-mini",
+                    "input_cost": 1.5e-7,
+                    "output_cost": 6e-7
+                },
+                {
                     "label": "gpt-4",
                     "name": "gpt-4",
                     "input_cost": 0.00003,
                     "output_cost": 0.00006
                 },
                 {
-                    "label": "gpt-4-32k",
-                    "name": "gpt-4-32k",
-                    "input_cost": 0.00006,
-                    "output_cost": 0.00012
-                },
-                {
                     "label": "gpt-35-turbo",
                     "name": "gpt-35-turbo",
                     "input_cost": 1.5e-6,
                     "output_cost": 2e-6
-                },
-                {
-                    "label": "gpt-35-turbo-16k",
-                    "name": "gpt-35-turbo-16k",
-                    "input_cost": 3e-6,
-                    "output_cost": 4e-6
-                },
-                {
-                    "label": "gpt-4-vision-preview",
-                    "name": "gpt-4-vision-preview",
-                    "input_cost": 0.00001,
-                    "output_cost": 0.00003
-                },
-                {
-                    "label": "gpt-4.5-preview",
-                    "name": "gpt-4.5-preview",
-                    "input_cost": 0.000075,
-                    "output_cost": 0.00015
-                },
-                {
-                    "label": "gpt-4.1-mini",
-                    "name": "gpt-4.1-mini",
-                    "input_cost": 0.0000004,
-                    "output_cost": 0.0000016
-                },
-                {
-                    "label": "gpt-5-chat-latest",
-                    "name": "gpt-5-chat-latest",
-                    "input_cost": 0.00000125,
-                    "output_cost": 0.00001
                 }
             ]
         },
@@ -435,10 +426,72 @@
             "name": "azureChatOpenAI_LlamaIndex",
             "models": [
                 {
-                    "label": "gpt-4o-mini",
-                    "name": "gpt-4o-mini",
-                    "input_cost": 1.5e-7,
-                    "output_cost": 6e-7
+                    "label": "gpt-5.4-pro",
+                    "name": "gpt-5.4-pro",
+                    "description": "GPT-5.4 Pro — Max performance via Azure",
+                    "input_cost": 0.00005,
+                    "output_cost": 0.00015
+                },
+                {
+                    "label": "gpt-5.4",
+                    "name": "gpt-5.4",
+                    "description": "GPT-5.4 — Flagship model, 1M token context",
+                    "input_cost": 0.000015,
+                    "output_cost": 0.00006
+                },
+                {
+                    "label": "gpt-5.4-mini",
+                    "name": "gpt-5.4-mini",
+                    "description": "GPT-5.4 Mini — Fast and cost-efficient",
+                    "input_cost": 0.00000125,
+                    "output_cost": 0.000005
+                },
+                {
+                    "label": "gpt-5.4-nano",
+                    "name": "gpt-5.4-nano",
+                    "description": "GPT-5.4 Nano — Most affordable",
+                    "input_cost": 0.00000025,
+                    "output_cost": 0.000001
+                },
+                {
+                    "label": "o4-mini",
+                    "name": "o4-mini",
+                    "description": "Fast and affordable reasoning model",
+                    "input_cost": 1.1e-6,
+                    "output_cost": 4.4e-6
+                },
+                {
+                    "label": "o3",
+                    "name": "o3",
+                    "description": "Most capable reasoning model",
+                    "input_cost": 0.00001,
+                    "output_cost": 0.00004
+                },
+                {
+                    "label": "o3-mini",
+                    "name": "o3-mini",
+                    "description": "Smaller, faster reasoning model",
+                    "input_cost": 1.1e-6,
+                    "output_cost": 4.4e-6
+                },
+                {
+                    "label": "o1",
+                    "name": "o1",
+                    "description": "Reasoning model for complex tasks",
+                    "input_cost": 0.000015,
+                    "output_cost": 0.00006
+                },
+                {
+                    "label": "gpt-4.1",
+                    "name": "gpt-4.1",
+                    "input_cost": 2e-6,
+                    "output_cost": 8e-6
+                },
+                {
+                    "label": "gpt-4.1-mini",
+                    "name": "gpt-4.1-mini",
+                    "input_cost": 4e-7,
+                    "output_cost": 1.6e-6
                 },
                 {
                     "label": "gpt-4o",
@@ -447,58 +500,10 @@
                     "output_cost": 0.00001
                 },
                 {
-                    "label": "gpt-4",
-                    "name": "gpt-4",
-                    "input_cost": 0.00003,
-                    "output_cost": 0.00006
-                },
-                {
-                    "label": "gpt-4-turbo",
-                    "name": "gpt-4-turbo",
-                    "input_cost": 0.00001,
-                    "output_cost": 0.00003
-                },
-                {
-                    "label": "gpt-4-32k",
-                    "name": "gpt-4-32k",
-                    "input_cost": 0.00006,
-                    "output_cost": 0.00012
-                },
-                {
-                    "label": "gpt-35-turbo",
-                    "name": "gpt-35-turbo",
-                    "input_cost": 1.5e-6,
-                    "output_cost": 2e-6
-                },
-                {
-                    "label": "gpt-35-turbo-16k",
-                    "name": "gpt-35-turbo-16k",
-                    "input_cost": 5e-7,
-                    "output_cost": 0.0000015
-                },
-                {
-                    "label": "gpt-4-vision-preview",
-                    "name": "gpt-4-vision-preview",
-                    "input_cost": 0.00001,
-                    "output_cost": 0.00003
-                },
-                {
-                    "label": "gpt-4-1106-preview",
-                    "name": "gpt-4-1106-preview",
-                    "input_cost": 0.00001,
-                    "output_cost": 0.00003
-                },
-                {
-                    "label": "gpt-4.1-mini",
-                    "name": "gpt-4.1-mini",
-                    "input_cost": 0.0000004,
-                    "output_cost": 0.0000016
-                },
-                {
-                    "label": "gpt-5-chat-latest",
-                    "name": "gpt-5-chat-latest",
-                    "input_cost": 0.00000125,
-                    "output_cost": 0.00001
+                    "label": "gpt-4o-mini",
+                    "name": "gpt-4o-mini",
+                    "input_cost": 1.5e-7,
+                    "output_cost": 6e-7
                 }
             ]
         },
@@ -1155,44 +1160,30 @@
                 {
                     "label": "gpt-5.4-pro",
                     "name": "gpt-5.4-pro",
-                    "description": "Premium model for highest precision, complex reasoning and professional agentic workflows",
+                    "description": "GPT-5.4 Pro — Max performance for complex, professional agentic workflows (Responses API)",
                     "input_cost": 0.00005,
                     "output_cost": 0.00015
                 },
                 {
                     "label": "gpt-5.4",
                     "name": "gpt-5.4",
-                    "description": "OpenAI flagship model for complex reasoning, coding, and agentic workflows (1M token context)",
+                    "description": "GPT-5.4 — Flagship model, 1M token context, coding, agentic workflows (Responses API)",
                     "input_cost": 0.000015,
                     "output_cost": 0.00006
                 },
                 {
                     "label": "gpt-5.4-mini",
                     "name": "gpt-5.4-mini",
-                    "description": "Fast and cost-efficient GPT-5.4 variant, optimized for coding and sub-agents",
+                    "description": "GPT-5.4 Mini — Fast, cost-efficient for coding and sub-agents (Responses API)",
                     "input_cost": 0.00000125,
                     "output_cost": 0.000005
                 },
                 {
                     "label": "gpt-5.4-nano",
                     "name": "gpt-5.4-nano",
-                    "description": "Most affordable GPT-5.4 variant for high-volume lightweight tasks",
+                    "description": "GPT-5.4 Nano — Most affordable for high-volume lightweight tasks (Responses API)",
                     "input_cost": 0.00000025,
                     "output_cost": 0.000001
-                },
-                {
-                    "label": "gpt-5.1-codex",
-                    "name": "gpt-5.1-codex",
-                    "description": "Flagship agentic coding model — optimized for software engineering, terminal proficiency and long-horizon agentic workflows (400k context)",
-                    "input_cost": 0.000015,
-                    "output_cost": 0.00006
-                },
-                {
-                    "label": "gpt-5.1-codex-mini",
-                    "name": "gpt-5.1-codex-mini",
-                    "description": "Smaller, cost-efficient Codex variant — fast coding tasks and sub-agents (400k context)",
-                    "input_cost": 0.0000015,
-                    "output_cost": 0.000006
                 },
                 {
                     "label": "o4-mini",
@@ -1230,28 +1221,104 @@
                     "output_cost": 0.000012
                 },
                 {
-                    "label": "gpt-5.1",
-                    "name": "gpt-5.1",
-                    "input_cost": 0.00000125,
+                    "label": "gpt-4.1",
+                    "name": "gpt-4.1",
+                    "description": "GPT-4.1 — Available via API (retired from ChatGPT Feb 2026)",
+                    "input_cost": 2e-6,
+                    "output_cost": 8e-6
+                },
+                {
+                    "label": "gpt-4.1-mini",
+                    "name": "gpt-4.1-mini",
+                    "description": "GPT-4.1 Mini — Available via API",
+                    "input_cost": 4e-7,
+                    "output_cost": 1.6e-6
+                },
+                {
+                    "label": "gpt-4.1-nano",
+                    "name": "gpt-4.1-nano",
+                    "description": "GPT-4.1 Nano — Available via API",
+                    "input_cost": 1e-7,
+                    "output_cost": 4e-7
+                },
+                {
+                    "label": "gpt-4o (latest)",
+                    "name": "gpt-4o",
+                    "input_cost": 2.5e-6,
                     "output_cost": 0.00001
                 },
                 {
-                    "label": "gpt-5",
-                    "name": "gpt-5",
-                    "input_cost": 0.00000125,
-                    "output_cost": 0.00001
+                    "label": "gpt-4o-mini (latest)",
+                    "name": "gpt-4o-mini",
+                    "input_cost": 1.5e-7,
+                    "output_cost": 6e-7
                 },
                 {
-                    "label": "gpt-5-mini",
-                    "name": "gpt-5-mini",
+                    "label": "gpt-4o-2024-11-20",
+                    "name": "gpt-4o-2024-11-20",
+                    "input_cost": 2.5e-6,
+                    "output_cost": 0.00001
+                }
+            ]
+        },
+        {
+            "name": "chatOpenAI_LlamaIndex",
+            "models": [
+                {
+                    "label": "gpt-5.4-pro",
+                    "name": "gpt-5.4-pro",
+                    "description": "GPT-5.4 Pro — Max performance (Responses API)",
+                    "input_cost": 0.00005,
+                    "output_cost": 0.00015
+                },
+                {
+                    "label": "gpt-5.4",
+                    "name": "gpt-5.4",
+                    "description": "GPT-5.4 — Flagship, 1M token context (Responses API)",
+                    "input_cost": 0.000015,
+                    "output_cost": 0.00006
+                },
+                {
+                    "label": "gpt-5.4-mini",
+                    "name": "gpt-5.4-mini",
+                    "description": "GPT-5.4 Mini — Fast and cost-efficient (Responses API)",
+                    "input_cost": 0.00000125,
+                    "output_cost": 0.000005
+                },
+                {
+                    "label": "gpt-5.4-nano",
+                    "name": "gpt-5.4-nano",
+                    "description": "GPT-5.4 Nano — Most affordable (Responses API)",
                     "input_cost": 0.00000025,
-                    "output_cost": 0.000002
+                    "output_cost": 0.000001
                 },
                 {
-                    "label": "gpt-5-nano",
-                    "name": "gpt-5-nano",
-                    "input_cost": 0.00000005,
-                    "output_cost": 0.0000004
+                    "label": "o4-mini",
+                    "name": "o4-mini",
+                    "description": "Fast and affordable reasoning model",
+                    "input_cost": 1.1e-6,
+                    "output_cost": 4.4e-6
+                },
+                {
+                    "label": "o3",
+                    "name": "o3",
+                    "description": "OpenAI most capable reasoning model",
+                    "input_cost": 0.00001,
+                    "output_cost": 0.00004
+                },
+                {
+                    "label": "o3-mini",
+                    "name": "o3-mini",
+                    "description": "Smaller, faster reasoning model",
+                    "input_cost": 1.1e-6,
+                    "output_cost": 4.4e-6
+                },
+                {
+                    "label": "o1",
+                    "name": "o1",
+                    "description": "Reasoning model for complex tasks",
+                    "input_cost": 0.000015,
+                    "output_cost": 0.00006
                 },
                 {
                     "label": "gpt-4.1",
@@ -1266,128 +1333,6 @@
                     "output_cost": 1.6e-6
                 },
                 {
-                    "label": "gpt-4.1-nano",
-                    "name": "gpt-4.1-nano",
-                    "input_cost": 1e-7,
-                    "output_cost": 4e-7
-                },
-                {
-                    "label": "gpt-4.5-preview",
-                    "name": "gpt-4.5-preview",
-                    "input_cost": 0.000075,
-                    "output_cost": 0.00015
-                },
-                {
-                    "label": "gpt-4o-mini (latest)",
-                    "name": "gpt-4o-mini",
-                    "input_cost": 1.5e-7,
-                    "output_cost": 6e-7
-                },
-                {
-                    "label": "gpt-4o (latest)",
-                    "name": "gpt-4o",
-                    "input_cost": 2.5e-6,
-                    "output_cost": 0.00001
-                },
-                {
-                    "label": "gpt-4o-2024-11-20",
-                    "name": "gpt-4o-2024-11-20",
-                    "input_cost": 2.5e-6,
-                    "output_cost": 0.00001
-                },
-                {
-                    "label": "gpt-4o-2024-08-06",
-                    "name": "gpt-4o-2024-08-06",
-                    "input_cost": 2.5e-6,
-                    "output_cost": 0.00001
-                }
-            ]
-        },
-        {
-            "name": "chatOpenAI_LlamaIndex",
-            "models": [
-                {
-                    "label": "gpt-5.4-pro",
-                    "name": "gpt-5.4-pro",
-                    "description": "Premium model for highest precision, complex reasoning and professional agentic workflows",
-                    "input_cost": 0.00005,
-                    "output_cost": 0.00015
-                },
-                {
-                    "label": "gpt-5.4",
-                    "name": "gpt-5.4",
-                    "description": "OpenAI flagship model for complex reasoning, coding, and agentic workflows (1M token context)",
-                    "input_cost": 0.000015,
-                    "output_cost": 0.00006
-                },
-                {
-                    "label": "gpt-5.4-mini",
-                    "name": "gpt-5.4-mini",
-                    "description": "Fast and cost-efficient GPT-5.4 variant, optimized for coding and sub-agents",
-                    "input_cost": 0.00000125,
-                    "output_cost": 0.000005
-                },
-                {
-                    "label": "gpt-5.4-nano",
-                    "name": "gpt-5.4-nano",
-                    "description": "Most affordable GPT-5.4 variant for high-volume lightweight tasks",
-                    "input_cost": 0.00000025,
-                    "output_cost": 0.000001
-                },
-                {
-                    "label": "o4-mini",
-                    "name": "o4-mini",
-                    "description": "Fast and affordable reasoning model",
-                    "input_cost": 1.1e-6,
-                    "output_cost": 4.4e-6
-                },
-                {
-                    "label": "o3",
-                    "name": "o3",
-                    "description": "OpenAI most capable reasoning model",
-                    "input_cost": 0.00001,
-                    "output_cost": 0.00004
-                },
-                {
-                    "label": "o3-mini",
-                    "name": "o3-mini",
-                    "description": "Smaller, faster reasoning model",
-                    "input_cost": 1.1e-6,
-                    "output_cost": 4.4e-6
-                },
-                {
-                    "label": "o1",
-                    "name": "o1",
-                    "description": "Reasoning model for complex tasks",
-                    "input_cost": 0.000015,
-                    "output_cost": 0.00006
-                },
-                {
-                    "label": "o1-mini",
-                    "name": "o1-mini",
-                    "description": "Faster, affordable reasoning model",
-                    "input_cost": 3e-6,
-                    "output_cost": 0.000012
-                },
-                {
-                    "label": "gpt-4.5-preview",
-                    "name": "gpt-4.5-preview",
-                    "input_cost": 0.000075,
-                    "output_cost": 0.00015
-                },
-                {
-                    "label": "gpt-4.1",
-                    "name": "gpt-4.1",
-                    "input_cost": 2e-6,
-                    "output_cost": 8e-6
-                },
-                {
-                    "label": "gpt-4.1-mini",
-                    "name": "gpt-4.1-mini",
-                    "input_cost": 0.0000004,
-                    "output_cost": 0.0000016
-                },
-                {
                     "label": "gpt-4o",
                     "name": "gpt-4o",
                     "input_cost": 2.5e-6,
@@ -1398,12 +1343,6 @@
                     "name": "gpt-4o-mini",
                     "input_cost": 1.5e-7,
                     "output_cost": 6e-7
-                },
-                {
-                    "label": "gpt-4-turbo",
-                    "name": "gpt-4-turbo",
-                    "input_cost": 0.00001,
-                    "output_cost": 0.00003
                 }
             ]
         },

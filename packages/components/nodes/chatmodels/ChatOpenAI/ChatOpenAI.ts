@@ -7,6 +7,9 @@ import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { OpenAI as OpenAIClient } from 'openai'
 
+// Models using the OpenAI Responses API (/v1/responses) instead of Chat Completions (/v1/chat/completions)
+const isResponsesApiModel = (modelName: string): boolean => /^(gpt-5(?:[.-]|$)|o\d(?:[.-]|$)|codex(?:[.-]|$))/i.test(modelName)
+
 class ChatOpenAI_ChatModels implements INode {
     label: string
     name: string
@@ -272,7 +275,7 @@ class ChatOpenAI_ChatModels implements INode {
 
         const cache = nodeData.inputs?.cache as BaseCache
 
-        const obj: ChatOpenAIFields = {
+        const obj: ChatOpenAIFields & { useResponsesApi?: boolean } = {
             temperature: parseFloat(temperature),
             modelName,
             openAIApiKey,
@@ -292,7 +295,21 @@ class ChatOpenAI_ChatModels implements INode {
         }
         if (strictToolCalling) obj.supportsStrictToolCalling = strictToolCalling
 
-        if (modelName.includes('o1') || modelName.includes('o3') || modelName.includes('gpt-5')) {
+        // GPT-5.x and o-series models use the Responses API, not Chat Completions
+        if (isResponsesApiModel(modelName)) {
+            obj.useResponsesApi = true
+            delete obj.temperature
+            delete obj.stop
+            const reasoning: OpenAIClient.Reasoning = {}
+            if (reasoningEffort) {
+                reasoning.effort = reasoningEffort
+            }
+            if (reasoningSummary) {
+                reasoning.summary = reasoningSummary
+            }
+            obj.reasoning = reasoning
+        } else if (modelName.includes('o1') || modelName.includes('o3')) {
+            // Legacy o1/o3 reasoning models — no Responses API but still no temperature/stop
             delete obj.temperature
             delete obj.stop
             const reasoning: OpenAIClient.Reasoning = {}
