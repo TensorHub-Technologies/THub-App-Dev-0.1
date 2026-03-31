@@ -29,6 +29,10 @@ import { RedisEventSubscriber } from './queue/RedisEventSubscriber'
 import { WHITELIST_URLS } from './utils/constants'
 import { ExpressAdapter } from '@bull-board/express'
 import 'global-agent/bootstrap'
+//error handling for unhandled rejection
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection at:', promise, 'reason:', reason)
+})
 
 declare global {
     namespace Express {
