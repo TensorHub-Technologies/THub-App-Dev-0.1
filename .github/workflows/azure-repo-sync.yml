@@ -1,0 +1,13 @@
+- script: |
+    set -x
+
+    git clone --mirror https://$(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)@github.com/TensorHub-Technologies/THub-App-Dev-0.1.git
+
+    cd THub-App-Dev-0.1.git
+
+    git remote -v
+    git show-ref   # 🔥 IMPORTANT: shows what refs exist
+
+    git push --mirror https://$(4VAqbHsBQLKYdgv29mPGXEtL6BiYWe0UqwyGcKffmxpWzTj5UQEmJQQJ99CCACAAAAA7z7qKAAASAZDO2b0Q)@dev.azure.com/thub-tech/thub-app/_git/thub-app
+
+  displayName: Debug Mirror Push

@@ -14,8 +14,10 @@ class ChatTogetherAI_ChatModels implements INode {
     baseClasses: string[]
     inputs: INodeParams[]
     credential: INodeParams
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatTogetherAI'
         this.name = 'chatTogetherAI'
         this.version = 2.0
@@ -84,4 +86,5 @@ class ChatTogetherAI_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatTogetherAI_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatTogetherAI_ChatModels }

@@ -14,8 +14,10 @@ class ChatFireworks_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatFireworks'
         this.name = 'chatFireworks'
         this.version = 2.0
@@ -84,4 +86,5 @@ class ChatFireworks_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatFireworks_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatFireworks_ChatModels }

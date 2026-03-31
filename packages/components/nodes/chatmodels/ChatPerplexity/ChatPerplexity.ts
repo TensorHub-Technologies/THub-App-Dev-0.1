@@ -16,8 +16,10 @@ class ChatPerplexity_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatPerplexity'
         this.name = 'chatPerplexity'
         this.version = 0.1
@@ -234,4 +236,5 @@ class ChatPerplexity_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatPerplexity_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatPerplexity_ChatModels }
