@@ -220,6 +220,7 @@ const SignUp = () => {
                     payload: data.user
                 })
                 localStorage.setItem('userId', data.userId)
+                if (data.token) localStorage.setItem('authToken', data.token)
                 setShowModal(false)
 
                 // ✅ ACCEPT INVITE (if exists)

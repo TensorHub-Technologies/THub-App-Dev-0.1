@@ -12,6 +12,9 @@ export const SignOutButton = () => {
             postLogoutRedirectUri: '/' // optional
         })
         localStorage.removeItem('userId')
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('username')
+        localStorage.removeItem('password')
         navigate('/')
     }
 

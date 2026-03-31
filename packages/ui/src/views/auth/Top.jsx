@@ -107,6 +107,7 @@ export const Top = ({ setLoading }) => {
                     payload: data
                 })
                 localStorage.setItem('userId', data.uid)
+                localStorage.setItem('authToken', data.token)
                 navigate('/workflows')
             }
         } catch (error) {

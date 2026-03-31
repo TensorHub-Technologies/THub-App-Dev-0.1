@@ -62,6 +62,9 @@ const Header = () => {
 
         // 1️⃣ Clear all local/session storage
         localStorage.removeItem('userId')
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('username')
+        localStorage.removeItem('password')
         localStorage.removeItem('workspace')
         localStorage.removeItem('access_token')
         sessionStorage.removeItem('userInfoSkipped')

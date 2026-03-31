@@ -54,22 +54,7 @@ const Login = () => {
         }
     }, [dispatch])
 
-    const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-    const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-    const thubWebServerQAUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-
-    const API_BASE =
-        window.location.hostname === 'localhost'
-            ? thubWebServerLocalUrl
-            : window.location.hostname === 'dev.thub.tech'
-            ? thubWebServerDevUrl
-            : window.location.hostname === 'qa.thub.tech'
-            ? thubWebServerQAUrl
-            : thubWebServerProdUrl
+    const API_BASE = import.meta.env.VITE_AUTH_SERVER_URL
 
     // ✅ HELPER: Accept invite if context exists
     const acceptInviteIfNeeded = async (userId, userEmail) => {
@@ -124,9 +109,12 @@ const Login = () => {
                 })
 
                 const userId = loginResponse.data?.userId
+                const token = loginResponse.data?.token
                 if (!userId) throw new Error('User ID missing')
+                if (!token) throw new Error('Token missing')
 
                 localStorage.setItem('userId', userId)
+                localStorage.setItem('authToken', token)
 
                 // 2️⃣ Fetch user full data
                 const userDataResponse = await axios.get(`${API_BASE}/userdata`, {

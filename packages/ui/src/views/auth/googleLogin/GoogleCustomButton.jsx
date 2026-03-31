@@ -44,6 +44,7 @@ const GoogleCustomButton = ({ setLoading }) => {
                 dispatch({ type: SET_USER_DATA, payload: data.user })
                 localStorage.setItem('id_token', data.id_token)
                 localStorage.setItem('userId', data.userId)
+                localStorage.setItem('authToken', data.token)
 
                 const hostname = window.location.hostname
                 let workspace = data?.workspace?.trim()
