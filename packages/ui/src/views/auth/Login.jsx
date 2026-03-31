@@ -29,6 +29,7 @@ import lightImage from '../../assets/images/auth/screen-8.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
 import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
+import { redirectAfterAuth } from '@/utils/authRedirect'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
@@ -54,7 +55,7 @@ const Login = () => {
     }, [dispatch])
 
     // ✅ HELPER: Accept invite if context exists
-    const acceptInviteIfNeeded = async (userId, userEmail) => {
+    const acceptInviteIfNeeded = async (userEmail) => {
         const inviteContext = sessionStorage.getItem('inviteContext')
         if (!inviteContext) return
 
@@ -68,11 +69,7 @@ const Login = () => {
                 return
             }
 
-            await authApi.acceptInvite({
-                token,
-                uid: userId,
-                email: userEmail
-            })
+            await authApi.acceptInvite({ token })
 
             console.log('✅ Invite accepted successfully')
 
@@ -108,29 +105,21 @@ const Login = () => {
                 const userId = loginResponse.data?.userId
                 if (!userId) throw new Error('User ID missing')
 
-                localStorage.setItem('userId', userId)
+                authApi.storeAuthSession(loginResponse.data)
 
                 // 2️⃣ Fetch user full data
-                const userDataResponse = await authApi.getUserData(userId)
+                const inviteEmail = loginResponse.data?.user?.email || values.email
+                await acceptInviteIfNeeded(inviteEmail)
+
+                const userDataResponse = await authApi.getCurrentUser()
 
                 const userData = userDataResponse.data
                 dispatch(setUserData(userData))
 
                 // 3️⃣ ✅ ACCEPT INVITE (if exists)
-                await acceptInviteIfNeeded(userId, userData.email)
 
                 // 4️⃣ Navigate to workflows
-                const currentHost = window.location.hostname
-
-                if (currentHost === 'localhost') {
-                    window.location.href = `${window.location.origin}/workflows?theme=dark&uid=${userId}`
-                } else if (currentHost === 'dev.thub.tech') {
-                    window.location.href = `https://dev.thub.tech/workflows?theme=dark&uid=${userId}`
-                } else if (currentHost === 'qa.thub.tech') {
-                    window.location.href = `https://qa.thub.tech/workflows?theme=dark&uid=${userId}`
-                } else {
-                    window.location.href = `https://app.thub.tech/workflows?theme=dark&uid=${userId}`
-                }
+                redirectAfterAuth()
             } catch (error) {
                 console.error('Login Error:', error)
                 alert(error.response?.data?.message || 'Login failed')

@@ -10,6 +10,7 @@ import crypto from 'crypto'
 import axios from 'axios'
 import { OAuth2Client } from 'google-auth-library'
 import transporter from '../../utils/transporter'
+import { signAuthToken } from '../../utils/jwt'
 
 const otpStore = new Map<string, { otp: string; expiresAt: number }>()
 
@@ -37,8 +38,16 @@ const handleAuthError = (error: unknown, context: string): never => {
     throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: authService.${context} - ${message}`)
 }
 
-const normalizeEmail = (email: string) => email.trim().toLowerCase()
-const normalizeWorkspaceName = (workspace: string) => workspace.trim().toLowerCase()
+const BCRYPT_SALT_ROUNDS = 10
+
+const normalizeEmail = (email?: string) =>
+    String(email || '')
+        .trim()
+        .toLowerCase()
+const normalizeWorkspaceName = (workspace?: string) =>
+    String(workspace || '')
+        .trim()
+        .toLowerCase()
 const hashToken = (token: string) => crypto.createHash('sha256').update(token).digest('hex')
 
 const buildUiBaseUrl = () => {
@@ -155,6 +164,39 @@ const sanitizeUser = (user: User) => {
     }
 }
 
+const buildAuthResponse = (user: User, message?: string) => ({
+    ...(message ? { message } : {}),
+    tokenType: 'Bearer',
+    token: signAuthToken({
+        uid: user.uid,
+        email: user.email,
+        login_type: user.login_type || 'email'
+    }),
+    userId: user.uid,
+    workspace: user.workspace || '',
+    user: sanitizeUser(user)
+})
+
+const ensureWorkspacePermission = async (
+    userRepo: any,
+    workspaceUserRepo: any,
+    workspaceId: string,
+    requesterUid: string,
+    allowedRoles: string[] = ['admin']
+) => {
+    const requester = await userRepo.findOneBy({ uid: requesterUid })
+    if (requester?.role === 'superadmin') return
+
+    const membership = await workspaceUserRepo.findOneBy({
+        workspace_id: workspaceId,
+        user_id: requesterUid
+    })
+
+    if (!membership || !allowedRoles.includes(membership.role)) {
+        throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'You are not allowed to access this workspace')
+    }
+}
+
 // ==========================
 // REGISTER
 // ==========================
@@ -173,13 +215,17 @@ const register = async (body: any) => {
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Email and password are required')
         }
 
+        if (password.length < 6) {
+            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Password must be at least 6 characters')
+        }
+
         const existingUser = await userRepo.findOneBy({ email })
         if (existingUser) {
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, `Email already registered using ${existingUser.login_type}`)
         }
 
         const uid = crypto.randomUUID()
-        const hash = await bcrypt.hash(password, 10)
+        const hash = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
 
         const user = userRepo.create({
             uid,
@@ -197,11 +243,7 @@ const register = async (body: any) => {
 
         const savedUser = await userRepo.save(user)
 
-        return {
-            message: 'Registration successful',
-            userId: savedUser.uid,
-            user: sanitizeUser(savedUser)
-        }
+        return buildAuthResponse(savedUser, 'Registration successful')
     } catch (error) {
         handleAuthError(error, 'register')
     }
@@ -257,18 +299,14 @@ const login = async (body: any) => {
 
         if (needsHashUpgrade) {
             try {
-                user.password_hash = await bcrypt.hash(password, 10)
+                user.password_hash = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
                 await withRetry(() => userRepo.save(user), isRetryableDbError, 1)
             } catch (upgradeError) {
                 console.error('Password hash upgrade failed:', getErrorMessage(upgradeError))
             }
         }
 
-        return {
-            userId: user.uid,
-            workspace: user.workspace || '',
-            user: sanitizeUser(user)
-        }
+        return buildAuthResponse(user)
     } catch (error) {
         handleAuthError(error, 'login')
     }
@@ -387,11 +425,7 @@ const googleLogin = async (body: any) => {
             user = await withRetry(() => userRepo.save(existingUser), isRetryableDbError, 1)
         }
 
-        return {
-            userId: user.uid,
-            workspace: user.workspace || '',
-            user: sanitizeUser(user)
-        }
+        return buildAuthResponse(user)
     } catch (error) {
         handleAuthError(error, 'googleLogin')
     }
@@ -632,11 +666,7 @@ const microsoftLogin = async (body: any) => {
             user = await withRetry(() => userRepo.save(user as User), isRetryableDbError, 1)
         }
 
-        return {
-            userId: user.uid,
-            workspace: user.workspace || '',
-            user: sanitizeUser(user)
-        }
+        return buildAuthResponse(user)
     } catch (error) {
         handleAuthError(error, 'microsoftLogin')
     }
@@ -725,7 +755,7 @@ const resetPassword = async (token: string, body: any) => {
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid or expired reset token')
         }
 
-        const hash = await bcrypt.hash(password, 10)
+        const hash = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
         user.password_hash = hash
         user.reset_token = null as any
         user.reset_token_expires_at = null as any
@@ -920,7 +950,7 @@ const acceptInvite = async (body: any) => {
     }
 }
 
-const getWorkspaceUsers = async (workspace: string) => {
+const getWorkspaceUsers = async (workspace: string, requestedBy: string) => {
     try {
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
@@ -936,6 +966,8 @@ const getWorkspaceUsers = async (workspace: string) => {
         if (!existingWorkspace) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
+
+        await ensureWorkspacePermission(userRepo, workspaceUserRepo, existingWorkspace.id, requestedBy, ['admin', 'member'])
 
         const memberships = await workspaceUserRepo.findBy({ workspace_id: existingWorkspace.id })
         const users = memberships.length ? await userRepo.findBy(memberships.map((membership) => ({ uid: membership.user_id }))) : []
@@ -974,8 +1006,9 @@ const deleteWorkspaceUser = async (body: any) => {
 
         const userId = String(body.userId || '').trim()
         const workspaceName = normalizeWorkspaceName(body.workspace || '')
+        const requestedBy = String(body.requestedBy || '').trim()
 
-        if (!userId || !workspaceName) {
+        if (!userId || !workspaceName || !requestedBy) {
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid request')
         }
 
@@ -983,6 +1016,8 @@ const deleteWorkspaceUser = async (body: any) => {
         if (!workspace) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
+
+        await ensureWorkspacePermission(userRepo, workspaceUserRepo, workspace.id, requestedBy, ['admin'])
 
         const membership = await workspaceUserRepo.findOneBy({
             workspace_id: workspace.id,
@@ -1025,12 +1060,13 @@ const updateWorkspaceUserRole = async (body: any) => {
         const workspaceUserRepo = appServer.AppDataSource.getRepository(WorkspaceUser)
 
         const userId = String(body.userId || '').trim()
+        const requestedBy = String(body.requestedBy || '').trim()
         const role = String(body.role || '')
             .trim()
             .toLowerCase()
         const workspaceName = normalizeWorkspaceName(body.workspace || '')
 
-        if (!userId || !role || !workspaceName) {
+        if (!userId || !role || !workspaceName || !requestedBy) {
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
         }
 
@@ -1040,6 +1076,8 @@ const updateWorkspaceUserRole = async (body: any) => {
         if (!workspace) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
+
+        await ensureWorkspacePermission(userRepo, workspaceUserRepo, workspace.id, requestedBy, ['admin'])
 
         const currentAdmin = await workspaceUserRepo.findOneBy({
             workspace_id: workspace.id,

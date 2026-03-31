@@ -1,5 +1,6 @@
 import express from 'express'
 import authController from '../../controllers/auth'
+import requireAuth from '../../middlewares/auth'
 
 const router = express.Router()
 
@@ -21,18 +22,20 @@ router.post('/forgot-password', authController.forgotPassword)
 router.post('/reset-password/:token', authController.resetPassword)
 
 // WORKSPACE / INVITES
-router.post('/invite-user', authController.inviteUser)
+router.post('/invite-user', requireAuth, authController.inviteUser)
 router.get('/invite/validate', authController.validateInvite)
-router.post('/invite/accept', authController.acceptInvite)
-router.get('/workspace-users', authController.getWorkspaceUsers)
-router.delete('/workspace-user', authController.deleteWorkspaceUser)
-router.patch('/workspace-user/role', authController.updateWorkspaceUserRole)
-router.post('/workspace-user/transfer-admin', authController.transferWorkspaceAdmin)
-router.get('/superadmin/workspaces', authController.getSuperadminWorkspaces)
-router.delete('/superadmin/workspace', authController.deleteSuperadminWorkspace)
+router.post('/invite/accept', requireAuth, authController.acceptInvite)
+router.get('/workspace-users', requireAuth, authController.getWorkspaceUsers)
+router.delete('/workspace-user', requireAuth, authController.deleteWorkspaceUser)
+router.patch('/workspace-user/role', requireAuth, authController.updateWorkspaceUserRole)
+router.post('/workspace-user/transfer-admin', requireAuth, authController.transferWorkspaceAdmin)
+router.get('/superadmin/workspaces', requireAuth, authController.getSuperadminWorkspaces)
+router.delete('/superadmin/workspace', requireAuth, authController.deleteSuperadminWorkspace)
 
 // USER
-router.get('/userdata', authController.getUserData)
-router.post('/update-user', authController.updateUser)
+router.get('/me', requireAuth, authController.getCurrentUser)
+router.get('/protected', requireAuth, authController.getProtectedExample)
+router.get('/userdata', requireAuth, authController.getUserData)
+router.post('/update-user', requireAuth, authController.updateUser)
 
 export default router

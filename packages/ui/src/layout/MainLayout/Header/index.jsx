@@ -18,6 +18,7 @@ import IconLogout from '@/assets/custom-svg/IconLogout'
 import { useMsal } from '@azure/msal-react'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import { IconLayoutDashboardFilled } from '@tabler/icons-react'
+import { clearAuthSession, getAuthToken } from '@/utils/authStorage'
 
 const Header = () => {
     const [userName, setUserName] = useState('')
@@ -56,14 +57,14 @@ const Header = () => {
         setAnchorEl(null)
     }
 
-    const userId = localStorage.getItem('userId')
     const handleLogout = () => {
         const currentHost = window.location.hostname
 
         // 1️⃣ Clear all local/session storage
-        localStorage.removeItem('userId')
+        clearAuthSession()
         localStorage.removeItem('workspace')
         localStorage.removeItem('access_token')
+        localStorage.removeItem('id_token')
         sessionStorage.removeItem('userInfoSkipped')
         sessionStorage.removeItem('inviteContext')
 
@@ -135,16 +136,15 @@ const Header = () => {
                     localStorage.setItem('workspace', subdomain)
                 }
 
-                const userId = localStorage.getItem('userId')
-                if (!userId) {
-                    console.warn('UID parameter is missing in the URL')
+                if (!getAuthToken()) {
+                    console.warn('JWT token is missing')
                     return
                 }
 
-                // Fetch user data using shared API client (/api/v1/auth/userdata)
-                const response = await authApi.getUserData(userId)
+                const response = await authApi.getCurrentUser()
                 if (response.status === 200) {
                     const userData = response.data
+                    localStorage.setItem('userId', userData.uid)
 
                     dispatch(setUserData(userData))
 
@@ -176,7 +176,7 @@ const Header = () => {
             }
         }
         getUserData()
-    }, [dispatch])
+    }, [dispatch, location.search])
 
     const changeDarkMode = () => {
         const newTheme = !customization.isDarkMode

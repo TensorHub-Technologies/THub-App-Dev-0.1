@@ -2,6 +2,7 @@ import { useMsal } from '@azure/msal-react'
 import { Button } from '@mui/material'
 import { Logout } from '@mui/icons-material'
 import { useNavigate } from 'react-router'
+import { clearAuthSession } from '@/utils/authStorage'
 
 export const SignOutButton = () => {
     const { instance } = useMsal()
@@ -11,7 +12,7 @@ export const SignOutButton = () => {
         instance.logoutPopup({
             postLogoutRedirectUri: '/' // optional
         })
-        localStorage.removeItem('userId')
+        clearAuthSession()
         navigate('/')
     }
 

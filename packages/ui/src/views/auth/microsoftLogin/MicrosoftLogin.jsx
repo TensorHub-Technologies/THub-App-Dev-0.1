@@ -6,13 +6,12 @@ import { MicrosoftIcon } from '../CustomIcons'
 import { Button } from '@mui/material'
 import { toast } from 'react-toastify'
 import { loginRequest } from './config/msalConfig'
-import { useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
+import { redirectAfterAuth } from '@/utils/authRedirect'
 
 export const MicrosoftLogin = () => {
     const { instance, accounts } = useMsal()
-    const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
@@ -49,12 +48,12 @@ export const MicrosoftLogin = () => {
                                 .microsoftLogin(payload)
                                 .then((response) => {
                                     const data = response.data
+                                    authApi.storeAuthSession(data)
                                     dispatch({
                                         type: SET_USER_DATA,
                                         payload: data.user
                                     })
-                                    localStorage.setItem('userId', data.user.uid)
-                                    navigate('/workflows')
+                                    redirectAfterAuth()
                                 })
                                 .catch((error) => {
                                     console.error('Error storing data:', error)

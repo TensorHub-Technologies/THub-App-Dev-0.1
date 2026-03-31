@@ -1,4 +1,5 @@
 import client from './client'
+import { clearAuthSession, getAuthToken, isAuthenticated, storeAuthSession } from '@/utils/authStorage'
 
 // ==========================
 // EMAIL AUTH
@@ -60,6 +61,10 @@ const deleteSuperadminWorkspace = (body) => client.delete('/auth/superadmin/work
 // ==========================
 // USER DATA
 // ==========================
+const getCurrentUser = () => client.get('/auth/me')
+
+const getProtectedExample = () => client.get('/auth/protected')
+
 const getUserData = (userId) => client.get(`/auth/userdata?userId=${userId}`)
 
 const updateUser = (body) => client.post('/auth/update-user', body)
@@ -86,6 +91,12 @@ export default {
     transferWorkspaceAdmin,
     getSuperadminWorkspaces,
     deleteSuperadminWorkspace,
+    getCurrentUser,
+    getProtectedExample,
     getUserData,
-    updateUser
+    updateUser,
+    storeAuthSession,
+    clearAuthSession,
+    getAuthToken,
+    isAuthenticated
 }

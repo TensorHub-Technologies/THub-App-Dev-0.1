@@ -28,16 +28,12 @@ const createDocumentStore = async (req: Request, res: Response, next: NextFuncti
 const getAllDocumentStores = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { page, limit } = getPageAndLimitParams(req)
-        const { tenantId } = req.query
-
-        // Validate tenantId
+        const tenantId = req.user?.id
         if (!tenantId) {
-            return res.status(400).json({
-                error: 'TenantId is required'
-            })
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
 
-        const apiResponse: any = await documentStoreService.getAllDocumentStores(page, limit, tenantId as string)
+        const apiResponse: any = await documentStoreService.getAllDocumentStores(page, limit, tenantId)
 
         if (apiResponse?.total >= 0) {
             return res.json({

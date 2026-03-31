@@ -5,6 +5,7 @@ import { Button } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
 import PropTypes from 'prop-types'
+import { redirectAfterAuth } from '@/utils/authRedirect'
 
 const GoogleCustomButton = ({ setLoading }) => {
     const dispatch = useDispatch()
@@ -18,49 +19,9 @@ const GoogleCustomButton = ({ setLoading }) => {
                     code: response.code
                 })
 
-                // Save Redux & Local
+                authApi.storeAuthSession(data)
                 dispatch({ type: SET_USER_DATA, payload: data.user })
-                localStorage.setItem('id_token', data.id_token)
-                localStorage.setItem('userId', data.userId)
-
-                const hostname = window.location.hostname
-                let workspace = data?.workspace?.trim()
-                console.log(workspace, 'workspace')
-                // --------------------------------
-                // 1️⃣ LOCALHOST → no workspace logic
-                // --------------------------------
-                if (hostname === 'localhost') {
-                    workspace = 'local'
-                    window.location.href = `${window.location.origin}/workflows?theme=dark&uid=${data.userId}`
-                    return
-                }
-
-                // --------------------------------
-                // 2️⃣ DEMO → always default workspace = demo
-                // --------------------------------
-                if (hostname === 'dev.thub.tech') {
-                    workspace = 'demo'
-                    window.location.href = `https://dev.thub.tech/workflows?theme=dark&uid=${data.userId}`
-                    return
-                }
-
-                // --------------------------------
-                // 2️⃣ QA → always default workspace = qa
-                // --------------------------------
-                if (hostname === 'qa.thub.tech') {
-                    workspace = 'qa'
-                    window.location.href = `https://qa.thub.tech/workflows?theme=dark&uid=${data.userId}`
-                    return
-                }
-
-                // --------------------------------
-                // 3️⃣ PRODUCTION → use workspace OR default to app
-                // --------------------------------
-                // if (!workspace) {
-                //     workspace = 'app'
-                // }
-
-                window.location.href = `https://app.thub.tech/workflows?theme=dark&uid=${data.userId}`
+                redirectAfterAuth()
             } catch (error) {
                 alert('Login Failed')
                 console.error('Failed to exchange code:', error)
@@ -68,7 +29,6 @@ const GoogleCustomButton = ({ setLoading }) => {
                 setLoading(false)
             }
         },
-
         scope: 'openid profile email',
         flow: 'auth-code',
         access_type: 'offline'

@@ -24,6 +24,7 @@ import { SET_USER_DATA, SET_DARKMODE } from '@/store/actions'
 import { useNavigate } from 'react-router-dom'
 import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
+import { redirectAfterAuth } from '@/utils/authRedirect'
 
 // images
 import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
@@ -61,7 +62,7 @@ const SignUp = () => {
     }, [dispatch])
 
     // ✅ HELPER: Accept invite if context exists
-    const acceptInviteIfNeeded = async (userId, userEmail) => {
+    const acceptInviteIfNeeded = async (userEmail) => {
         const inviteContext = sessionStorage.getItem('inviteContext')
         if (!inviteContext) return
 
@@ -75,11 +76,7 @@ const SignUp = () => {
                 return
             }
 
-            await authApi.acceptInvite({
-                token,
-                uid: userId,
-                email: userEmail
-            })
+            await authApi.acceptInvite({ token })
 
             console.log('✅ Invite accepted successfully')
         } catch (err) {
@@ -192,17 +189,18 @@ const SignUp = () => {
             const response = await authApi.register(payload)
             if (response.status === 200) {
                 const data = response.data
-                const savedUser = data?.user || data
-                const userId = data?.userId || savedUser?.uid
+                authApi.storeAuthSession(data)
+                await acceptInviteIfNeeded(tempUserData.email)
+
+                const userDataResponse = await authApi.getCurrentUser()
+                const savedUser = userDataResponse.data
                 dispatch({
                     type: SET_USER_DATA,
                     payload: savedUser
                 })
-                if (userId) localStorage.setItem('userId', userId)
                 setShowModal(false)
 
                 // ✅ ACCEPT INVITE (if exists)
-                await acceptInviteIfNeeded(userId, tempUserData.email)
 
                 toast.success('Registration successful!', {
                     theme: 'colored',
@@ -213,7 +211,7 @@ const SignUp = () => {
                 if (redirectTo) {
                     navigate(redirectTo, { replace: true })
                 } else {
-                    navigate('/workflows')
+                    redirectAfterAuth()
                 }
             } else {
                 toast.error('Registration failed', {

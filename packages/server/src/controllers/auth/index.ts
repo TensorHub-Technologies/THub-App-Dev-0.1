@@ -3,6 +3,14 @@ import authService from '../../services/auth'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 
+const getAuthenticatedUser = (req: Request) => {
+    if (!req.authUser) {
+        throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+    }
+
+    return req.authUser
+}
+
 // ================= CREATE =================
 const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -81,10 +89,14 @@ const verifyOtp = async (req: Request, res: Response, next: NextFunction) => {
 // ================= READ =================
 const getUserData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!req.query?.userId) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.getUserData - userId not provided!`)
+        const authUser = getAuthenticatedUser(req)
+        const requestedUserId = typeof req.query?.userId === 'string' ? req.query.userId : authUser.uid
+
+        if (requestedUserId !== authUser.uid && authUser.role !== 'superadmin') {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'You can only access your own user data')
         }
-        const apiResponse = await authService.getUserData(req.query.userId as string)
+
+        const apiResponse = await authService.getUserData(requestedUserId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -106,10 +118,17 @@ const checkEmail = async (req: Request, res: Response, next: NextFunction) => {
 // ================= UPDATE =================
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!req.body?.uid) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.updateUser - uid not provided!`)
+        const authUser = getAuthenticatedUser(req)
+        const requestedUid = typeof req.body?.uid === 'string' ? req.body.uid : authUser.uid
+
+        if (requestedUid !== authUser.uid && authUser.role !== 'superadmin') {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'You can only update your own profile')
         }
-        const apiResponse = await authService.updateUser(req.body)
+
+        const apiResponse = await authService.updateUser({
+            ...req.body,
+            uid: requestedUid
+        })
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -144,10 +163,16 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
 // ================= WORKSPACE / INVITES =================
 const inviteUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!req.body?.email || !req.body?.workspace || !req.body?.invitedBy) {
+        const authUser = getAuthenticatedUser(req)
+
+        if (!req.body?.email || !req.body?.workspace) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.inviteUser - missing fields!`)
         }
-        const apiResponse = await authService.inviteUser(req.body)
+
+        const apiResponse = await authService.inviteUser({
+            ...req.body,
+            invitedBy: authUser.uid
+        })
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -168,10 +193,17 @@ const validateInvite = async (req: Request, res: Response, next: NextFunction) =
 
 const acceptInvite = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!req.body?.token || !req.body?.uid || !req.body?.email) {
+        const authUser = getAuthenticatedUser(req)
+
+        if (!req.body?.token) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.acceptInvite - missing fields!`)
         }
-        const apiResponse = await authService.acceptInvite(req.body)
+
+        const apiResponse = await authService.acceptInvite({
+            ...req.body,
+            uid: authUser.uid,
+            email: authUser.email
+        })
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -180,13 +212,15 @@ const acceptInvite = async (req: Request, res: Response, next: NextFunction) => 
 
 const getWorkspaceUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const authUser = getAuthenticatedUser(req)
+
         if (!req.query?.workspace) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: authController.getWorkspaceUsers - workspace not provided!`
             )
         }
-        const apiResponse = await authService.getWorkspaceUsers(req.query.workspace as string)
+        const apiResponse = await authService.getWorkspaceUsers(req.query.workspace as string, authUser.uid)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -195,10 +229,15 @@ const getWorkspaceUsers = async (req: Request, res: Response, next: NextFunction
 
 const deleteWorkspaceUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const authUser = getAuthenticatedUser(req)
+
         if (!req.body?.userId || !req.body?.workspace) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.deleteWorkspaceUser - missing fields!`)
         }
-        const apiResponse = await authService.deleteWorkspaceUser(req.body)
+        const apiResponse = await authService.deleteWorkspaceUser({
+            ...req.body,
+            requestedBy: authUser.uid
+        })
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -207,13 +246,18 @@ const deleteWorkspaceUser = async (req: Request, res: Response, next: NextFuncti
 
 const updateWorkspaceUserRole = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const authUser = getAuthenticatedUser(req)
+
         if (!req.body?.userId || !req.body?.role || !req.body?.workspace) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: authController.updateWorkspaceUserRole - missing fields!`
             )
         }
-        const apiResponse = await authService.updateWorkspaceUserRole(req.body)
+        const apiResponse = await authService.updateWorkspaceUserRole({
+            ...req.body,
+            requestedBy: authUser.uid
+        })
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -222,13 +266,19 @@ const updateWorkspaceUserRole = async (req: Request, res: Response, next: NextFu
 
 const transferWorkspaceAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!req.body?.fromUserId || !req.body?.toUserId || !req.body?.workspace) {
+        const authUser = getAuthenticatedUser(req)
+
+        if (!req.body?.toUserId || !req.body?.workspace) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: authController.transferWorkspaceAdmin - missing fields!`
             )
         }
-        const apiResponse = await authService.transferWorkspaceAdmin(req.body)
+
+        const apiResponse = await authService.transferWorkspaceAdmin({
+            ...req.body,
+            fromUserId: authUser.uid
+        })
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -237,13 +287,8 @@ const transferWorkspaceAdmin = async (req: Request, res: Response, next: NextFun
 
 const getSuperadminWorkspaces = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!req.query?.uid) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: authController.getSuperadminWorkspaces - uid not provided!`
-            )
-        }
-        const apiResponse = await authService.getSuperadminWorkspaces(req.query.uid as string)
+        const authUser = getAuthenticatedUser(req)
+        const apiResponse = await authService.getSuperadminWorkspaces(authUser.uid)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -252,14 +297,42 @@ const getSuperadminWorkspaces = async (req: Request, res: Response, next: NextFu
 
 const deleteSuperadminWorkspace = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!req.body?.uid || !req.body?.workspaceId) {
+        const authUser = getAuthenticatedUser(req)
+
+        if (!req.body?.workspaceId) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: authController.deleteSuperadminWorkspace - missing fields!`
             )
         }
-        const apiResponse = await authService.deleteSuperadminWorkspace(req.body)
+        const apiResponse = await authService.deleteSuperadminWorkspace({
+            ...req.body,
+            uid: authUser.uid
+        })
         return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authUser = getAuthenticatedUser(req)
+        const apiResponse = await authService.getUserData(authUser.uid)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getProtectedExample = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authUser = getAuthenticatedUser(req)
+        const apiResponse = await authService.getUserData(authUser.uid)
+        return res.json({
+            message: 'Protected route accessed successfully',
+            user: apiResponse
+        })
     } catch (error) {
         next(error)
     }
@@ -284,6 +357,8 @@ export default {
     transferWorkspaceAdmin,
     getSuperadminWorkspaces,
     deleteSuperadminWorkspace,
+    getCurrentUser,
+    getProtectedExample,
     getUserData,
     updateUser
 }
