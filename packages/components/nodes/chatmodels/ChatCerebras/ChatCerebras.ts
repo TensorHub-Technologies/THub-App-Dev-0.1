@@ -14,8 +14,10 @@ class ChatCerebras_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatCerebras'
         this.name = 'chatCerebras'
         this.version = 2.0
@@ -171,4 +173,5 @@ class ChatCerebras_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatCerebras_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatCerebras_ChatModels }
