@@ -19,7 +19,7 @@ class ChatPerplexity_ChatModels implements INode {
     badge: string
 
     constructor() {
-        this.badge = 'DEPRECATING'
+        this.badge = ''
         this.label = 'ChatPerplexity'
         this.name = 'chatPerplexity'
         this.version = 0.1
@@ -236,5 +236,4 @@ class ChatPerplexity_ChatModels implements INode {
     }
 }
 
-// DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatPerplexity_ChatModels }
+module.exports = { nodeClass: ChatPerplexity_ChatModels }

@@ -1375,7 +1375,7 @@
                 },
                 {
                     "label": "sonar-deep-research",
-                    "name": "sonar",
+                    "name": "sonar-deep-research",
                     "input_cost": 2e-6,
                     "output_cost": 8e-6
                 },
