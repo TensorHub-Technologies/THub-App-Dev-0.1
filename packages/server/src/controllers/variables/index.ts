@@ -36,7 +36,13 @@ const deleteVariable = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllVariables = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let tenantId = req.params.id
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        if (req.params.id && req.params.id !== tenantId) {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Forbidden')
+        }
         const apiResponse = await variablesService.getAllVariables(tenantId)
         return res.json(apiResponse)
     } catch (error) {

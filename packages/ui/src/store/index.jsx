@@ -7,7 +7,8 @@ import reducer from './reducer'
 
 const persistConfig = {
     key: 'root', // Key for storage
-    storage // Use localStorage (default)
+    storage, // Use localStorage (default)
+    blacklist: ['notifier']
 }
 
 const persistedReducer = persistReducer(persistConfig, reducer)

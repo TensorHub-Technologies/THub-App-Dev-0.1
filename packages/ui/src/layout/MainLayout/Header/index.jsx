@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
 import { Box, IconButton, Toolbar, Tooltip, Avatar, Menu, MenuItem, ListItemIcon } from '@mui/material'
 import { SET_DARKMODE, setUserData } from '@/store/actions'
+import authApi from '@/api/auth'
 import ProfileSection from './ProfileSection'
 import ColorfulLogo from '@/assets/images/THub_icon_colorful_logo.png'
 import logo from '@/assets/images/THub_Logo_resize.png'
@@ -18,6 +18,7 @@ import IconLogout from '@/assets/custom-svg/IconLogout'
 import { useMsal } from '@azure/msal-react'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import { IconLayoutDashboardFilled } from '@tabler/icons-react'
+import { clearAuthSession, getAuthToken } from '@/utils/authStorage'
 
 const Header = () => {
     const [userName, setUserName] = useState('')
@@ -56,14 +57,14 @@ const Header = () => {
         setAnchorEl(null)
     }
 
-    const userId = localStorage.getItem('userId')
     const handleLogout = () => {
         const currentHost = window.location.hostname
 
         // 1️⃣ Clear all local/session storage
-        localStorage.removeItem('userId')
+        clearAuthSession()
         localStorage.removeItem('workspace')
         localStorage.removeItem('access_token')
+        localStorage.removeItem('id_token')
         sessionStorage.removeItem('userInfoSkipped')
         sessionStorage.removeItem('inviteContext')
 
@@ -76,7 +77,7 @@ const Header = () => {
         if (loginType === 'azure_ad') {
             let redirectUri = 'https://app.thub.tech/'
             if (currentHost === 'localhost') {
-                redirectUri = 'http://localhost:8080/'
+                redirectUri = `${window.location.origin}/`
             } else if (currentHost === 'dev.thub.tech') {
                 redirectUri = 'https://dev.thub.tech/'
             } else if (currentHost === 'qa.thub.tech') {
@@ -92,7 +93,7 @@ const Header = () => {
 
         if (loginType === 'google') {
             if (currentHost === 'localhost') {
-                window.location.href = 'http://localhost:8080/'
+                window.location.href = `${window.location.origin}/`
             } else if (currentHost === 'dev.thub.tech') {
                 window.location.href = 'https://thub-web.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
             } else if (currentHost === 'qa.thub.tech') {
@@ -116,7 +117,7 @@ const Header = () => {
         }
 
         if (currentHost === 'localhost') {
-            window.location.href = 'http://localhost:8080/'
+            window.location.href = `${window.location.origin}/`
             return
         }
 
@@ -135,30 +136,15 @@ const Header = () => {
                     localStorage.setItem('workspace', subdomain)
                 }
 
-                const userId = localStorage.getItem('userId')
-                if (!userId) {
-                    console.warn('UID parameter is missing in the URL')
+                if (!getAuthToken()) {
+                    console.warn('JWT token is missing')
                     return
                 }
 
-                // Determine correct backend base URL
-                let apiUrl
-                const hostname = window.location.hostname
-
-                if (hostname === 'localhost') {
-                    apiUrl = 'http://localhost:2000'
-                } else if (hostname === 'dev.thub.tech') {
-                    apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-                } else if (hostname === 'qa.thub.tech') {
-                    apiUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-                } else {
-                    apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-                }
-
-                // Fetch user data by userId
-                const response = await axios.get(`${apiUrl}/userdata`, { params: { userId } })
+                const response = await authApi.getCurrentUser()
                 if (response.status === 200) {
                     const userData = response.data
+                    localStorage.setItem('userId', userData.uid)
 
                     dispatch(setUserData(userData))
 
@@ -190,7 +176,7 @@ const Header = () => {
             }
         }
         getUserData()
-    }, [dispatch])
+    }, [dispatch, location.search])
 
     const changeDarkMode = () => {
         const newTheme = !customization.isDarkMode

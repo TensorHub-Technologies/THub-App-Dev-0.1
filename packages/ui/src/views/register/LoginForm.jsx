@@ -54,7 +54,7 @@ const LoginForm = () => {
             const thubWebServerProdUrl =
                 import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
 
-            const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+            const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:3000'
 
             let apiUrl
 
@@ -72,7 +72,7 @@ const LoginForm = () => {
                 ...values,
                 workspace
             }
-            const response = await axios.post(`${apiUrl}/loginUser`, finalValues)
+            const response = await axios.post(`${apiUrl}/api/v1/auth/login`, finalValues)
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
                 // window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`
