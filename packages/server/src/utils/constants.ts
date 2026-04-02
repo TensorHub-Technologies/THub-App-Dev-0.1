@@ -58,7 +58,11 @@ export const WHITELIST_URLS = [
     '/api/v1/oauth2-credential/callback',
     '/api/v1/oauth2-credential/refresh',
     '/api/v1/text-to-speech/generate',
-    '/api/v1/text-to-speech/abort'
+    '/api/v1/text-to-speech/abort',
+    '/api/v1/subscription/create',
+    '/api/v1/subscription/validate',
+    '/api/v1/subscription/activate-free',
+    '/api/v1/subscription/enterprise-mail'
 ]
 
 export const enum GeneralErrorMessage {

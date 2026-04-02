@@ -50,6 +50,24 @@ export class User {
     @Column({ nullable: true })
     workspaceUid: string
 
+    @Column({ nullable: true })
+    subscription_type: string
+
+    @Column({ nullable: true })
+    subscription_duration: string
+
+    @Column({ nullable: true, type: 'date' })
+    subscription_date: Date
+
+    @Column({ nullable: true, type: 'date' })
+    expiry_date: Date
+
+    @Column({ nullable: true })
+    subscription_status: string
+
+    @Column({ nullable: true })
+    razorpay_subscription_id: string
+
     @Column({ default: false })
     profile_completed: boolean
 

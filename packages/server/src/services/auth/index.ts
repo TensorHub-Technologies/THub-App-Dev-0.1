@@ -49,6 +49,12 @@ const normalizeWorkspaceName = (workspace?: string) =>
         .trim()
         .toLowerCase()
 const hashToken = (token: string) => crypto.createHash('sha256').update(token).digest('hex')
+const formatOptionalDate = (value?: Date | string | null) => {
+    if (!value) return null
+    const date = value instanceof Date ? value : new Date(value)
+    if (Number.isNaN(date.getTime())) return null
+    return date.toISOString().split('T')[0]
+}
 
 const buildUiBaseUrl = () => {
     return (
@@ -159,6 +165,12 @@ const sanitizeUser = (user: User) => {
         designation: user.designation,
         role: user.role,
         workspaceUid: user.workspaceUid,
+        subscription_type: user.subscription_type,
+        subscription_duration: user.subscription_duration,
+        subscription_date: formatOptionalDate(user.subscription_date),
+        expiry_date: formatOptionalDate(user.expiry_date),
+        subscription_status: user.subscription_status,
+        razorpay_subscription_id: user.razorpay_subscription_id,
         profile_completed: Boolean(user.profile_completed),
         profile_skipped: Boolean(user.profile_skipped)
     }

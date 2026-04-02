@@ -137,7 +137,7 @@ const Subscription = () => {
         if (e) e.preventDefault()
         if (isProcessingPayment) return
         setIsProcessingPayment(true)
-        handleLoading(message)
+        handleLoading(message || 'Processing your request')
         if (planTitle === 'Enterprise') {
             setShowForm(true)
             setIsProcessingPayment(false)
@@ -145,6 +145,37 @@ const Subscription = () => {
         }
         let plan_Id = planId
         const uid = user.uid
+
+        if (planTitle === 'Free') {
+            const freePlanUrl = `${apiUrl}/activate-free-subscription`
+            try {
+                const response = await fetch(freePlanUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerEmail: user.email,
+                        user_id: uid
+                    })
+                })
+
+                const payload = await response.json()
+                if (!response.ok) {
+                    handleError(payload?.message || 'Failed to activate free plan')
+                    return
+                }
+
+                handleLoading('Free plan activated successfully')
+                location.reload()
+            } catch (error) {
+                console.error('Error activating free plan:', error)
+                handleError('Failed to activate free plan')
+            } finally {
+                setIsProcessingPayment(false)
+            }
+            return
+        }
 
         const url = `${apiUrl}/create-subscription`
 
