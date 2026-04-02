@@ -24,7 +24,7 @@ const JoinWorkspace = () => {
         } else if (hostname === 'thub-app.wittycoast-8619cdd6.westus2.azurecontainerapps.io') {
             determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
         } else if (hostname === 'localhost') {
-            determinedUrl = 'http://localhost:3000'
+            determinedUrl = 'http://localhost:2000'
         } else {
             determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
         }

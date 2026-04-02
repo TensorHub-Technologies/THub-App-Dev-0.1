@@ -21,7 +21,7 @@ const UserDetailsTable = () => {
     // -----------------------
     const apiUrl =
         window.location.hostname === 'localhost'
-            ? 'http://localhost:3000'
+            ? 'http://localhost:2000'
             : window.location.hostname === 'dev.thub.tech'
             ? 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
             : window.location.hostname === 'qa.thub.tech'

@@ -199,12 +199,6 @@ export const init = async (): Promise<void> => {
                 migrationsRun: false,
                 entities: Object.values(entities),
                 migrations: mysqlMigrations,
-                extra: {
-                    enableKeepAlive: true,
-                    keepAliveInitialDelay: 0,
-                    connectTimeout: parseInt(process.env.DATABASE_CONNECT_TIMEOUT || '10000', 10),
-                    acquireTimeout: parseInt(process.env.DATABASE_ACQUIRE_TIMEOUT || '10000', 10)
-                },
                 ssl: {
                     rejectUnauthorized: false
                 }

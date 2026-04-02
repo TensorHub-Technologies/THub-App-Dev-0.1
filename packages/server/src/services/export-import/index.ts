@@ -87,40 +87,28 @@ const convertExportInput = (body: any): ExportInput => {
 const FileDefaultName = 'ExportData.json'
 const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{ FileDefaultName: string } & ExportData> => {
     try {
+        // Extract .data from paginated responses
         let AgentFlow: ChatFlow[] =
-            exportInput.agentflow === true ? (await chatflowService.getAllChatflows('MULTIAGENT', tenantId, 1, 100000)).data : []
+            exportInput.agentflow === true ? (await chatflowService.getAllChatflows('MULTIAGENT', tenantId)).data : []
 
         let AgentFlowV2: ChatFlow[] =
-            exportInput.agentflowv2 === true ? (await chatflowService.getAllChatflows('AGENTFLOW', tenantId, 1, 100000)).data : []
+            exportInput.agentflowv2 === true ? (await chatflowService.getAllChatflows('AGENTFLOW', tenantId)).data : []
 
-        let AssistantCustom: Assistant[] =
-            exportInput.assistantCustom === true ? await assistantService.getAllAssistants('CUSTOM', tenantId) : []
+        let AssistantCustom: Assistant[] = exportInput.assistantCustom === true ? await assistantService.getAllAssistants('CUSTOM') : []
 
         let AssistantFlow: ChatFlow[] =
-            exportInput.assistantCustom === true ? (await chatflowService.getAllChatflows('ASSISTANT', tenantId, 1, 100000)).data : []
+            exportInput.assistantCustom === true ? (await chatflowService.getAllChatflows('ASSISTANT', tenantId)).data : []
 
-        let AssistantOpenAI: Assistant[] =
-            exportInput.assistantOpenAI === true ? await assistantService.getAllAssistants('OPENAI', tenantId) : []
+        let AssistantOpenAI: Assistant[] = exportInput.assistantOpenAI === true ? await assistantService.getAllAssistants('OPENAI') : []
 
-        let AssistantAzure: Assistant[] =
-            exportInput.assistantAzure === true ? await assistantService.getAllAssistants('AZURE', tenantId) : []
+        let AssistantAzure: Assistant[] = exportInput.assistantAzure === true ? await assistantService.getAllAssistants('AZURE') : []
 
-        let ChatFlow: ChatFlow[] =
-            exportInput.chatflow === true ? (await chatflowService.getAllChatflows('CHATFLOW', tenantId, 1, 100000)).data : []
+        let ChatFlow: ChatFlow[] = exportInput.chatflow === true ? (await chatflowService.getAllChatflows('CHATFLOW', tenantId)).data : []
 
-        const ownedChatflowIds = new Set(
-            [...AgentFlow, ...AgentFlowV2, ...AssistantFlow, ...ChatFlow].map((chatflow) => chatflow.id).filter(Boolean)
-        )
-
-        let ChatMessage: ChatMessage[] =
-            exportInput.chat_message === true
-                ? (await chatMessagesService.getAllMessages()).filter((message) => ownedChatflowIds.has(message.chatflowid))
-                : []
+        let ChatMessage: ChatMessage[] = exportInput.chat_message === true ? await chatMessagesService.getAllMessages() : []
 
         let ChatMessageFeedback: ChatMessageFeedback[] =
-            exportInput.chat_feedback === true
-                ? (await chatMessagesService.getAllMessagesFeedback()).filter((feedback) => ownedChatflowIds.has(feedback.chatflowid))
-                : []
+            exportInput.chat_feedback === true ? await chatMessagesService.getAllMessagesFeedback() : []
 
         let CustomTemplate: CustomTemplate[] = exportInput.custom_template === true ? await marketplacesService.getAllCustomTemplates() : []
         CustomTemplate = CustomTemplate.map((customTemplate) => ({
@@ -129,7 +117,7 @@ const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{
         }))
 
         let DocumentStore: DocumentStore[] | { data: DocumentStore[]; total: number } =
-            exportInput.document_store === true ? await documenStoreService.getAllDocumentStores(-1, -1, tenantId) : []
+            exportInput.document_store === true ? await documenStoreService.getAllDocumentStores() : []
         DocumentStore = 'data' in DocumentStore ? DocumentStore.data : DocumentStore
 
         const documentStoreIds = DocumentStore.map((documentStore) => documentStore.id)
@@ -139,8 +127,7 @@ const exportData = async (exportInput: ExportInput, tenantId: string): Promise<{
                 ? await documenStoreService.getAllDocumentFileChunksByDocumentStoreIds(documentStoreIds)
                 : []
 
-        const { data: totalExecutions } =
-            exportInput.execution === true ? await executionService.getAllExecutions({ tenantId, page: 1, limit: 100000 }) : { data: [] }
+        const { data: totalExecutions } = exportInput.execution === true ? await executionService.getAllExecutions() : { data: [] }
         let Execution: Execution[] = exportInput.execution === true ? totalExecutions : []
 
         let Tool: Tool[] = exportInput.tool === true ? await toolsService.getAllTools(tenantId) : []

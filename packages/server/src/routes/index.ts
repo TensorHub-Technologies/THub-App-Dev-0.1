@@ -4,7 +4,6 @@ import assistantsRouter from './assistants'
 import attachmentsRouter from './attachments'
 import chatMessageRouter from './chat-messages'
 import chatflowsRouter from './chatflows'
-import chatflowsApiKeyRouter from './chatflows-apikey'
 import chatflowsStreamingRouter from './chatflows-streaming'
 import chatflowsUploadsRouter from './chatflows-uploads'
 import componentsCredentialsRouter from './components-credentials'
@@ -52,30 +51,25 @@ import executionsRouter from './executions'
 import validationRouter from './validation'
 import agentflowv2GeneratorRouter from './agentflowv2-generator'
 import textToSpeechRouter from './text-to-speech'
-import authRouter from './auth'
-import subscriptionRouter from './subscription'
-import authMiddleware from '../middlewares/authMiddleware'
-import { bindAuthenticatedTenant } from '../middlewares/tenantScope'
 
 const router = express.Router()
 
 router.use('/ping', pingRouter)
-router.use('/apikey', authMiddleware, bindAuthenticatedTenant, apikeyRouter)
-router.use('/assistants', authMiddleware, bindAuthenticatedTenant, assistantsRouter)
+router.use('/apikey', apikeyRouter)
+router.use('/assistants', assistantsRouter)
 router.use('/attachments', attachmentsRouter)
-router.use('/chatflows/apikey', chatflowsApiKeyRouter)
-router.use('/chatflows', authMiddleware, bindAuthenticatedTenant, chatflowsRouter)
-router.use('/chatflows-streaming', authMiddleware, bindAuthenticatedTenant, chatflowsStreamingRouter)
+router.use('/chatflows', chatflowsRouter)
+router.use('/chatflows-streaming', chatflowsStreamingRouter)
 router.use('/chatmessage', chatMessageRouter)
-router.use('/chatflows-uploads', authMiddleware, bindAuthenticatedTenant, chatflowsUploadsRouter)
+router.use('/chatflows-uploads', chatflowsUploadsRouter)
 router.use('/components-credentials', componentsCredentialsRouter)
 router.use('/components-credentials-icon', componentsCredentialsIconRouter)
-router.use('/credentials', authMiddleware, bindAuthenticatedTenant, credentialsRouter)
-router.use('/datasets', authMiddleware, bindAuthenticatedTenant, datasetRouter)
-router.use('/document-store', authMiddleware, bindAuthenticatedTenant, documentStoreRouter)
-router.use('/evaluations', authMiddleware, bindAuthenticatedTenant, evaluationsRouter)
-router.use('/evaluators', authMiddleware, bindAuthenticatedTenant, evaluatorsRouter)
-router.use('/export-import', authMiddleware, bindAuthenticatedTenant, exportImportRouter)
+router.use('/credentials', credentialsRouter)
+router.use('/datasets', datasetRouter)
+router.use('/document-store', documentStoreRouter)
+router.use('/evaluations', evaluationsRouter)
+router.use('/evaluators', evaluatorsRouter)
+router.use('/export-import', exportImportRouter)
 router.use('/feedback', feedbackRouter)
 router.use('/fetch-links', fetchLinksRouter)
 router.use('/flow-config', flowConfigRouter)
@@ -101,19 +95,17 @@ router.use('/public-chatbotConfig', publicChatbotRouter)
 router.use('/public-chatflows', publicChatflowsRouter)
 router.use('/public-executions', publicExecutionsRouter)
 router.use('/stats', statsRouter)
-router.use('/tools', authMiddleware, bindAuthenticatedTenant, toolsRouter)
-router.use('/variables', authMiddleware, bindAuthenticatedTenant, variablesRouter)
+router.use('/tools', toolsRouter)
+router.use('/variables', variablesRouter)
 router.use('/vector', vectorRouter)
 router.use('/verify', verifyRouter)
 router.use('/version', versionRouter)
 router.use('/upsert-history', upsertHistoryRouter)
 
 router.use('/nvidia-nim', nvidiaNimRouter)
-router.use('/executions', authMiddleware, bindAuthenticatedTenant, executionsRouter)
+router.use('/executions', executionsRouter)
 router.use('/validation', validationRouter)
 router.use('/agentflowv2-generator', agentflowv2GeneratorRouter)
 router.use('/text-to-speech', textToSpeechRouter)
-router.use('/auth', authRouter)
-router.use('/subscription', subscriptionRouter)
 
 export default router

@@ -6,29 +6,17 @@ export const initialState = {
 
 const notifierReducer = (state = initialState, action) => {
     switch (action.type) {
-        case ENQUEUE_SNACKBAR: {
-            const incomingNotification = action.notification
-            const shouldPreventDuplicate = incomingNotification?.options?.preventDuplicate !== false
-            const duplicateExists = state.notifications.some(
-                (notification) =>
-                    !notification.dismissed &&
-                    (notification.key === incomingNotification.key || notification.dedupeKey === incomingNotification.dedupeKey)
-            )
-
-            if (shouldPreventDuplicate && duplicateExists) {
-                return state
-            }
-
+        case ENQUEUE_SNACKBAR:
             return {
                 ...state,
                 notifications: [
                     ...state.notifications,
                     {
-                        ...incomingNotification
+                        key: action.key,
+                        ...action.notification
                     }
                 ]
             }
-        }
 
         case CLOSE_SNACKBAR:
             return {

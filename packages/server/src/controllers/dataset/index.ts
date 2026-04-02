@@ -7,10 +7,7 @@ import { getPageAndLimitParams } from '../../utils/pagination'
 const getAllDatasets = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { page, limit } = getPageAndLimitParams(req)
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
+        const tenantId = req.query.tenantId as string
 
         const apiResponse = await datasetService.getAllDatasets(page, limit, tenantId)
         return res.json(apiResponse)
@@ -25,10 +22,7 @@ const getDataset = async (req: Request, res: Response, next: NextFunction) => {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.getDataset - id not provided!`)
         }
         const { page, limit } = getPageAndLimitParams(req)
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
+        const tenantId = req.query.tenantId as string
 
         const apiResponse = await datasetService.getDataset(req.params.id, page, limit, tenantId)
         return res.json(apiResponse)
@@ -42,7 +36,7 @@ const createDataset = async (req: Request, res: Response, next: NextFunction) =>
         if (!req.body) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.createDataset - body not provided!`)
         }
-        req.body.tenantId = req.user?.id
+        // tenantId arrives via req.body from the frontend
         const apiResponse = await datasetService.createDataset(req.body)
         return res.json(apiResponse)
     } catch (error) {
@@ -70,10 +64,7 @@ const deleteDataset = async (req: Request, res: Response, next: NextFunction) =>
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.deleteDataset - id not provided!`)
         }
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
+        const tenantId = req.query.tenantId as string
 
         const apiResponse = await datasetService.deleteDataset(req.params.id, tenantId)
         return res.json(apiResponse)
@@ -90,7 +81,7 @@ const addDatasetRow = async (req: Request, res: Response, next: NextFunction) =>
         if (!req.body.datasetId) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: datasetService.addDatasetRow - datasetId not provided!`)
         }
-        req.body.tenantId = req.user?.id
+        // tenantId arrives via req.body from the frontend
         const apiResponse = await datasetService.addDatasetRow(req.body)
         return res.json(apiResponse)
     } catch (error) {
@@ -128,10 +119,7 @@ const deleteDatasetRow = async (req: Request, res: Response, next: NextFunction)
 const patchDeleteRows = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const ids = req.body.ids ?? []
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
+        const tenantId = req.body.tenantId as string
 
         const apiResponse = await datasetService.patchDeleteRows(ids, tenantId)
         return res.json(apiResponse)

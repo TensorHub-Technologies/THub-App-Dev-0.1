@@ -2,7 +2,7 @@ import { lazy } from 'react'
 
 // project imports
 import Loadable from '@/ui-component/loading/Loadable'
-import PrivateRoute from '@/routes/PrivateRoute'
+// import PrivateRoute from '@/routes/PrivateRoute'
 import Dashboard from '@/views/dashboard/Dashboard'
 import UserInfo from '@/ui-component/userform/UserInfo'
 
@@ -60,11 +60,7 @@ const Settings = Loadable(lazy(() => import('@/views/homesettings')))
 
 const MainRoutes = {
     path: '/',
-    element: (
-        <PrivateRoute>
-            <MainLayout />
-        </PrivateRoute>
-    ),
+    element: <MainLayout />,
     children: [
         {
             path: '/dashboard',

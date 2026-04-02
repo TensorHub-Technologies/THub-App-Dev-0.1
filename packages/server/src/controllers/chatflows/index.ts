@@ -50,15 +50,12 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
 }
 
 const getAllChatflows = async (req: Request, res: Response, next: NextFunction) => {
+    const tenantId: string | undefined = typeof req.query.tenantId === 'string' ? req.query.tenantId : undefined
     const page: number = parseInt(req.query.page as string) || 1
     const limit: number = parseInt(req.query.limit as string) || 12
     const type: ChatflowType = req.query.type as ChatflowType
 
     try {
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
         const apiResponse = await chatflowsService.getAllChatflows(type, tenantId, page, limit)
         return res.json(apiResponse)
     } catch (error) {
@@ -91,7 +88,7 @@ const getChatflowById = async (req: Request, res: Response, next: NextFunction) 
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsRouter.getChatflowById - id not provided!`)
         }
-        const apiResponse = (req.authorizedResource as ChatFlow | undefined) || (await chatflowsService.getChatflowById(req.params.id))
+        const apiResponse = await chatflowsService.getChatflowById(req.params.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -103,13 +100,9 @@ const saveChatflow = async (req: Request, res: Response, next: NextFunction) => 
         if (!req.body) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsRouter.saveChatflow - body not provided!`)
         }
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
         const body = req.body
         const newChatFlow = new ChatFlow()
-        Object.assign(newChatFlow, { ...body, tenantId })
+        Object.assign(newChatFlow, body)
         const apiResponse = await chatflowsService.saveChatflow(newChatFlow)
         return res.json(apiResponse)
     } catch (error) {
@@ -119,14 +112,7 @@ const saveChatflow = async (req: Request, res: Response, next: NextFunction) => 
 
 const importChatflows = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
-        const chatflows: Partial<ChatFlow>[] = (req.body.Chatflows || []).map((chatflow: Partial<ChatFlow>) => ({
-            ...chatflow,
-            tenantId
-        }))
+        const chatflows: Partial<ChatFlow>[] = req.body.Chatflows
         const apiResponse = await chatflowsService.importChatflows(chatflows)
         return res.json(apiResponse)
     } catch (error) {
@@ -139,14 +125,14 @@ const updateChatflow = async (req: Request, res: Response, next: NextFunction) =
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsRouter.updateChatflow - id not provided!`)
         }
-        const chatflow = (req.authorizedResource as ChatFlow | undefined) || (await chatflowsService.getChatflowById(req.params.id))
+        const chatflow = await chatflowsService.getChatflowById(req.params.id)
         if (!chatflow) {
             return res.status(404).send(`Workflow ${req.params.id} not found`)
         }
 
         const body = req.body
         const updateChatFlow = new ChatFlow()
-        Object.assign(updateChatFlow, { ...body, tenantId: chatflow.tenantId })
+        Object.assign(updateChatFlow, body)
 
         updateChatFlow.id = chatflow.id
         const rateLimiterManager = RateLimiterManager.getInstance()

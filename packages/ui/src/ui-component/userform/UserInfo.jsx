@@ -1,5 +1,5 @@
 import './UserInfo.css'
-import authApi from '@/api/auth'
+import axios from 'axios'
 import PropTypes from 'prop-types'
 import userImage_light from '../../assets/images/userForm/userForm.svg'
 import userImage_dark from '../../assets/images/userForm/userForm_dark.svg'
@@ -26,11 +26,22 @@ const UserInfo = ({ setShowModal = () => {}, forceOpen = false }) => {
         sessionStorage.removeItem('inviteContext')
     }
 
+    const API_BASE =
+        window.location.hostname === 'localhost'
+            ? 'http://localhost:2000'
+            : window.location.hostname === 'dev.thub.tech'
+            ? 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+            : window.location.hostname === 'qa.thub.tech'
+            ? 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+            : 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
+
     const enqueueSnackbar = (args) => dispatch(enqueueSnackbarAction(args))
 
     // 🔄 Refresh user in redux
     const refreshUserData = async () => {
-        const res = await authApi.getUserData(user.uid)
+        const res = await axios.get(`${API_BASE}/userdata`, {
+            params: { userId: user.uid }
+        })
 
         dispatch({
             type: SET_USER_DATA,
@@ -69,7 +80,7 @@ const UserInfo = ({ setShowModal = () => {}, forceOpen = false }) => {
 
             // ✅ ONLY for normal workspace creation
             if (!isInviteFlow) {
-                await authApi.updateUser(payload)
+                await axios.post(`${API_BASE}/updateUser`, payload)
                 await refreshUserData()
 
                 enqueueSnackbar({
@@ -83,7 +94,7 @@ const UserInfo = ({ setShowModal = () => {}, forceOpen = false }) => {
 
             // ✅ INVITE FLOW: Call /invite/accept FIRST
             try {
-                await authApi.acceptInvite({
+                await axios.post(`${API_BASE}/invite/accept`, {
                     token: inviteContext.token,
                     uid: user.uid,
                     email: user.email
@@ -103,7 +114,7 @@ const UserInfo = ({ setShowModal = () => {}, forceOpen = false }) => {
             }
 
             // ✅ THEN update profile
-            await authApi.updateUser(payload)
+            await axios.post(`${API_BASE}/updateUser`, payload)
             await refreshUserData()
 
             sessionStorage.removeItem('inviteContext')

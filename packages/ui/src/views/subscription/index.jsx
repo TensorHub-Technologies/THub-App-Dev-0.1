@@ -121,7 +121,7 @@ const Subscription = () => {
         const hostname = window.location.hostname
 
         if (hostname === 'localhost') {
-            determinedUrl = 'http://localhost:3000'
+            determinedUrl = 'http://localhost:2000'
         } else if (hostname === 'dev.thub.tech') {
             determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
         } else if (hostname === 'qa.thub.tech') {
@@ -137,7 +137,7 @@ const Subscription = () => {
         if (e) e.preventDefault()
         if (isProcessingPayment) return
         setIsProcessingPayment(true)
-        handleLoading(message || 'Processing your request')
+        handleLoading(message)
         if (planTitle === 'Enterprise') {
             setShowForm(true)
             setIsProcessingPayment(false)
@@ -145,37 +145,6 @@ const Subscription = () => {
         }
         let plan_Id = planId
         const uid = user.uid
-
-        if (planTitle === 'Free') {
-            const freePlanUrl = `${apiUrl}/activate-free-subscription`
-            try {
-                const response = await fetch(freePlanUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        customerEmail: user.email,
-                        user_id: uid
-                    })
-                })
-
-                const payload = await response.json()
-                if (!response.ok) {
-                    handleError(payload?.message || 'Failed to activate free plan')
-                    return
-                }
-
-                handleLoading('Free plan activated successfully')
-                location.reload()
-            } catch (error) {
-                console.error('Error activating free plan:', error)
-                handleError('Failed to activate free plan')
-            } finally {
-                setIsProcessingPayment(false)
-            }
-            return
-        }
 
         const url = `${apiUrl}/create-subscription`
 

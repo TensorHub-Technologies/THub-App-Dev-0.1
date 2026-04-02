@@ -3,9 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useSnackbar } from 'notistack'
 import { removeSnackbar } from '@/store/actions'
 
-let displayed = new Set()
-let activeNotifierId = null
-let notifierInstanceCounter = 0
+let displayed = []
 
 const useNotifier = () => {
     const dispatch = useDispatch()
@@ -13,50 +11,27 @@ const useNotifier = () => {
     const { notifications } = notifier
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-    const instanceIdRef = React.useRef(0)
-
-    if (!instanceIdRef.current) {
-        notifierInstanceCounter += 1
-        instanceIdRef.current = notifierInstanceCounter
-    }
 
     const storeDisplayed = (id) => {
-        displayed.add(id)
+        displayed = [...displayed, id]
     }
 
     const removeDisplayed = (id) => {
-        displayed.delete(id)
+        displayed = [...displayed.filter((key) => id !== key)]
     }
 
     React.useEffect(() => {
-        if (activeNotifierId === null) {
-            activeNotifierId = instanceIdRef.current
-        }
-
-        return () => {
-            if (activeNotifierId === instanceIdRef.current) {
-                activeNotifierId = null
-            }
-        }
-    }, [])
-
-    React.useEffect(() => {
-        if (activeNotifierId !== instanceIdRef.current) {
-            return
-        }
-
         notifications.forEach(({ key, message, options = {}, dismissed = false }) => {
             if (dismissed) {
-                if (displayed.has(key)) {
-                    closeSnackbar(key)
-                } else {
-                    dispatch(removeSnackbar(key))
-                }
+                // dismiss snackbar using notistack
+                closeSnackbar(key)
                 return
             }
 
-            if (displayed.has(key)) return
+            // do nothing if snackbar is already displayed
+            if (displayed.includes(key)) return
 
+            // display snackbar using notistack
             enqueueSnackbar(message, {
                 key,
                 ...options,
@@ -72,6 +47,7 @@ const useNotifier = () => {
                 }
             })
 
+            // keep track of snackbars that we've displayed
             storeDisplayed(key)
         })
     }, [notifications, closeSnackbar, enqueueSnackbar, dispatch])

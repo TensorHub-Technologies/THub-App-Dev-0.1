@@ -28,8 +28,6 @@ import { QueueManager } from './queue/QueueManager'
 import { RedisEventSubscriber } from './queue/RedisEventSubscriber'
 import { WHITELIST_URLS } from './utils/constants'
 import { ExpressAdapter } from '@bull-board/express'
-import subscriptionLegacyRouter from './routes/subscription-legacy'
-import { ensureUserSubscriptionColumns } from './database/utils/ensureUserSubscriptionColumns'
 import 'global-agent/bootstrap'
 
 declare global {
@@ -76,7 +74,6 @@ export class App {
 
             // Run Migrations Scripts
             await this.AppDataSource.runMigrations({ transaction: 'each' })
-            await ensureUserSubscriptionColumns(this.AppDataSource)
             logger.info('🔄 [server]: Database migrations completed successfully')
 
             // Initialize nodes pool
@@ -267,7 +264,6 @@ export class App {
             }
         }
 
-        this.app.use('/', subscriptionLegacyRouter)
         this.app.use('/api/v1', flowiseApiV1Router)
 
         // ----------------------------------------

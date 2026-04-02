@@ -67,8 +67,7 @@ export const getAPIKeys = async (): Promise<ICommonObject[]> => {
                 apiKey,
                 apiSecret,
                 createdAt: moment().format('DD-MMM-YY'),
-                id: randomBytes(16).toString('hex'),
-                tenantId: 'system'
+                id: randomBytes(16).toString('hex')
             }
         ]
         await fs.promises.writeFile(getAPIKeyPath(), JSON.stringify(content), 'utf8')
@@ -81,7 +80,7 @@ export const getAPIKeys = async (): Promise<ICommonObject[]> => {
  * @param {string} keyName
  * @returns {Promise<ICommonObject[]>}
  */
-export const addAPIKey = async (keyName: string, tenantId?: string): Promise<ICommonObject[]> => {
+export const addAPIKey = async (keyName: string): Promise<ICommonObject[]> => {
     const existingAPIKeys = await getAPIKeys()
     const apiKey = generateAPIKey()
     const apiSecret = generateSecretHash(apiKey)
@@ -92,8 +91,7 @@ export const addAPIKey = async (keyName: string, tenantId?: string): Promise<ICo
             apiKey,
             apiSecret,
             createdAt: moment().format('DD-MMM-YY'),
-            id: randomBytes(16).toString('hex'),
-            tenantId
+            id: randomBytes(16).toString('hex')
         }
     ]
     await fs.promises.writeFile(getAPIKeyPath(), JSON.stringify(content), 'utf8')
@@ -159,9 +157,9 @@ export const getApiKey = async (apiKey: string) => {
  * @param {string} newKeyName
  * @returns {Promise<ICommonObject[]>}
  */
-export const updateAPIKey = async (keyIdToUpdate: string, newKeyName: string, tenantId?: string): Promise<ICommonObject[]> => {
+export const updateAPIKey = async (keyIdToUpdate: string, newKeyName: string): Promise<ICommonObject[]> => {
     const existingAPIKeys = await getAPIKeys()
-    const keyIndex = existingAPIKeys.findIndex((key) => key.id === keyIdToUpdate && (!tenantId || key.tenantId === tenantId))
+    const keyIndex = existingAPIKeys.findIndex((key) => key.id === keyIdToUpdate)
     if (keyIndex < 0) return []
     existingAPIKeys[keyIndex].keyName = newKeyName
     await fs.promises.writeFile(getAPIKeyPath(), JSON.stringify(existingAPIKeys), 'utf8')
@@ -173,9 +171,9 @@ export const updateAPIKey = async (keyIdToUpdate: string, newKeyName: string, te
  * @param {string} keyIdToDelete
  * @returns {Promise<ICommonObject[]>}
  */
-export const deleteAPIKey = async (keyIdToDelete: string, tenantId?: string): Promise<ICommonObject[]> => {
+export const deleteAPIKey = async (keyIdToDelete: string): Promise<ICommonObject[]> => {
     const existingAPIKeys = await getAPIKeys()
-    const result = existingAPIKeys.filter((key) => key.id !== keyIdToDelete || (tenantId && key.tenantId !== tenantId))
+    const result = existingAPIKeys.filter((key) => key.id !== keyIdToDelete)
     await fs.promises.writeFile(getAPIKeyPath(), JSON.stringify(result), 'utf8')
     return result
 }

@@ -25,7 +25,6 @@ import { useSelector } from 'react-redux'
 import TokenConsumptionCard from './TokenConsumptionCard'
 import UserDashboard from './UserDashboard'
 import WorkspacesDashboard from './WorkspacesDashboard'
-import ProtectedRouteExampleCard from './ProtectedRouteExampleCard'
 
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState(0)
@@ -125,9 +124,6 @@ const Dashboard = () => {
     const OverviewTab = () => (
         <Grid container spacing={3}>
             <TokenConsumptionCard tenantId={tenantId} executionsApi={executionsApi} useApi={useApi} />
-            <Grid item xs={12} md={6}>
-                <ProtectedRouteExampleCard />
-            </Grid>
         </Grid>
     )
     // Users Tab

@@ -37,14 +37,7 @@ const deleteAssistant = async (req: Request, res: Response, next: NextFunction) 
 const getAllAssistants = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const type = req.query.type as AssistantType
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
-        if (req.params.id && req.params.id !== tenantId) {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Forbidden')
-        }
-        const apiResponse = await assistantsService.getAllAssistants(type, tenantId)
+        const apiResponse = await assistantsService.getAllAssistants(type)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -98,11 +91,7 @@ const getChatModels = async (req: Request, res: Response, next: NextFunction) =>
 
 const getDocumentStores = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const tenantId = req.user?.id
-        if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
-        }
-        const apiResponse = await assistantsService.getDocumentStores(tenantId)
+        const apiResponse = await assistantsService.getDocumentStores()
         return res.json(apiResponse)
     } catch (error) {
         next(error)

@@ -13,11 +13,11 @@ import {
     InputAdornment,
     Alert
 } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Top } from './Top'
-import authApi from '@/api/auth'
+import axios from 'axios'
 import { setUserData, SET_DARKMODE } from '@/store/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import Stack from '@mui/material/Stack'
@@ -29,13 +29,13 @@ import lightImage from '../../assets/images/auth/screen-8.png'
 import thubLogo from '../../assets/images/THub_Logo_Icon.png'
 import EyeCloseIcon from '@/assets/custom-svg/EyeCloseIcon'
 import EyeOpenIcon from '@/assets/custom-svg/EyeOpenIcon'
-import { redirectAfterAuth } from '@/utils/authRedirect'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [requiredLoginMethod, setRequiredLoginMethod] = useState(null)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
 
     useEffect(() => {
@@ -54,8 +54,25 @@ const Login = () => {
         }
     }, [dispatch])
 
+    const thubWebServerDevUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+    const thubWebServerProdUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
+    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
+    const thubWebServerQAUrl =
+        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+
+    const API_BASE =
+        window.location.hostname === 'localhost'
+            ? thubWebServerLocalUrl
+            : window.location.hostname === 'dev.thub.tech'
+            ? thubWebServerDevUrl
+            : window.location.hostname === 'qa.thub.tech'
+            ? thubWebServerQAUrl
+            : thubWebServerProdUrl
+
     // ✅ HELPER: Accept invite if context exists
-    const acceptInviteIfNeeded = async (userEmail) => {
+    const acceptInviteIfNeeded = async (userId, userEmail) => {
         const inviteContext = sessionStorage.getItem('inviteContext')
         if (!inviteContext) return
 
@@ -69,7 +86,11 @@ const Login = () => {
                 return
             }
 
-            await authApi.acceptInvite({ token })
+            await axios.post(`${API_BASE}/invite/accept`, {
+                token,
+                uid: userId,
+                email: userEmail
+            })
 
             console.log('✅ Invite accepted successfully')
 
@@ -97,7 +118,7 @@ const Login = () => {
                 setLoading(true)
 
                 // 1️⃣ Login
-                const loginResponse = await authApi.login({
+                const loginResponse = await axios.post(`${API_BASE}/loginUser`, {
                     email: values.email,
                     password: values.password
                 })
@@ -105,21 +126,31 @@ const Login = () => {
                 const userId = loginResponse.data?.userId
                 if (!userId) throw new Error('User ID missing')
 
-                authApi.storeAuthSession(loginResponse.data)
+                localStorage.setItem('userId', userId)
 
                 // 2️⃣ Fetch user full data
-                const inviteEmail = loginResponse.data?.user?.email || values.email
-                await acceptInviteIfNeeded(inviteEmail)
-
-                const userDataResponse = await authApi.getCurrentUser()
+                const userDataResponse = await axios.get(`${API_BASE}/userdata`, {
+                    params: { userId }
+                })
 
                 const userData = userDataResponse.data
                 dispatch(setUserData(userData))
 
                 // 3️⃣ ✅ ACCEPT INVITE (if exists)
+                await acceptInviteIfNeeded(userId, userData.email)
 
                 // 4️⃣ Navigate to workflows
-                redirectAfterAuth()
+                const currentHost = window.location.hostname
+
+                if (currentHost === 'localhost') {
+                    window.location.href = `http://localhost:8080/workflows?theme=dark&uid=${userId}`
+                } else if (currentHost === 'dev.thub.tech') {
+                    window.location.href = `https://dev.thub.tech/workflows?theme=dark&uid=${userId}`
+                } else if (currentHost === 'qa.thub.tech') {
+                    window.location.href = `https://qa.thub.tech/workflows?theme=dark&uid=${userId}`
+                } else {
+                    window.location.href = `https://app.thub.tech/workflows?theme=dark&uid=${userId}`
+                }
             } catch (error) {
                 console.error('Login Error:', error)
                 alert(error.response?.data?.message || 'Login failed')

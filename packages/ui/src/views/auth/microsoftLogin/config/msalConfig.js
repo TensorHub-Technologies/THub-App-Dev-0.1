@@ -1,17 +1,15 @@
 import { LogLevel } from '@azure/msal-browser'
 
 const hostname = window.location.hostname
-const localOrigin = window.location.origin
 
 const REDIRECT_URI_MAP = {
-    localhost: `${localOrigin}/`,
-    '127.0.0.1': `${localOrigin}/`,
+    localhost: 'http://localhost:8080/',
     'app.thub.tech': 'https://app.thub.tech/',
     'dev.thub.tech': 'https://dev.thub.tech/',
     'qa.thub.tech': 'https://qa.thub.tech/'
 }
 
-const redirectUri = REDIRECT_URI_MAP[hostname] || `${localOrigin}/`
+const redirectUri = REDIRECT_URI_MAP[hostname] || 'http://localhost:8080/'
 
 export const msalConfig = {
     auth: {

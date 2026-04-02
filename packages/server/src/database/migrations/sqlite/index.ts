@@ -40,8 +40,6 @@ import { AddTextToSpeechToChatFlow1759419136055 } from './1759419136055-AddTextT
 import { AddChatFlowNameIndex1759424923093 } from './1759424923093-AddChatFlowNameIndex'
 import { AddTenantIdToEvaluatorAndEvaluation1761000000000 } from './1761000000000-AddTenantIdToEvaluatorAndEvaluation'
 import { AddTenantIdToDataset1761100000000 } from './1761100000000-AddTenantIdToDataset'
-import { AddAuthUser1761312000000 } from './1761312000000-AddAuthUser'
-import { AddWorkspaceInviteSupport1761500000000 } from './1761500000000-AddWorkspaceInviteSupport'
 
 export const sqliteMigrations = [
     Init1693835579790,
@@ -87,7 +85,5 @@ export const sqliteMigrations = [
     AddTextToSpeechToChatFlow1759419136055,
     AddChatFlowNameIndex1759424923093,
     AddTenantIdToEvaluatorAndEvaluation1761000000000,
-    AddTenantIdToDataset1761100000000,
-    AddAuthUser1761312000000,
-    AddWorkspaceInviteSupport1761500000000
+    AddTenantIdToDataset1761100000000
 ]

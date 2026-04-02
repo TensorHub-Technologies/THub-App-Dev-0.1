@@ -55,7 +55,7 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
             let apiUrl
 
             if (window.location.hostname === 'localhost') {
-                apiUrl = 'http://localhost:3000'
+                apiUrl = 'http://localhost:2000'
             } else if (window.location.hostname === 'dev.thub.tech') {
                 apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
             } else if (window.location.hostname === 'qa.thub.tech') {
