@@ -4,8 +4,6 @@ import { RunnableSequence } from '@langchain/core/runnables'
 import { PromptTemplate } from '@langchain/core/prompts'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { databaseEntities } from '../../utils'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { StatusCodes } from 'http-status-codes'
 
 export class LLMEvaluationRunner {
     private llm: any
@@ -67,7 +65,7 @@ export class LLMEvaluationRunner {
             }
             return await newNodeInstance.init(nodeData, undefined, options)
         } catch (error) {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, 'Error creating LLM')
+            throw new Error('Error creating LLM')
         }
     }
 }

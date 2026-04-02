@@ -65,7 +65,7 @@ const runAgain = async (id: string, baseURL: string, tenantId?: string) => {
             queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
         }
         const evaluation = await queryBuilder.getOne()
-        if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+        if (!evaluation) throw new Error(`Evaluation ${id} not found`)
         const additionalConfig = evaluation.additionalConfig ? JSON.parse(evaluation.additionalConfig) : {}
         const data: ICommonObject = {
             chatflowId: evaluation.chatflowId,
@@ -145,7 +145,7 @@ const createEvaluation = async (body: ICommonObject, baseURL: string) => {
             datasetQueryBuilder.andWhere('ds.tenantId = :tenantId', { tenantId })
         }
         const dataset = await datasetQueryBuilder.getOne()
-        if (!dataset) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Dataset ${body.datasetId} not found`)
+        if (!dataset) throw new Error(`Dataset ${body.datasetId} not found`)
 
         const items = await appServer.AppDataSource.getRepository(DatasetRow).find({
             where: { datasetId: dataset.id },
@@ -197,7 +197,7 @@ const createEvaluation = async (body: ICommonObject, baseURL: string) => {
                 ...(tenantId ? { tenantId } : {})
             })
 
-            if (!credential) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Credential ${body.credentialId} not found`)
+            if (!credential) throw new Error(`Credential ${body.credentialId} not found`)
         }
 
         const evaluationRunTimeoutMs = getTimeoutMs(process.env.EVALUATION_RUN_TIMEOUT_MS, DEFAULT_EVALUATION_RUN_TIMEOUT_MS)
@@ -479,7 +479,7 @@ const deleteEvaluation = async (id: string, tenantId?: string) => {
                 .where('ev.id = :id', { id })
                 .andWhere('ev.tenantId = :tenantId', { tenantId })
                 .getOne()
-            if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+            if (!evaluation) throw new Error(`Evaluation ${id} not found`)
         }
         await appServer.AppDataSource.getRepository(Evaluation).delete({ id: id })
         await appServer.AppDataSource.getRepository(EvaluationRun).delete({ evaluationId: id })
@@ -501,7 +501,7 @@ const isOutdated = async (id: string, tenantId?: string) => {
             queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
         }
         const evaluation = await queryBuilder.getOne()
-        if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+        if (!evaluation) throw new Error(`Evaluation ${id} not found`)
         const evaluationRunDate = evaluation.runDate.getTime()
         let isOutdated = false
         const returnObj: ICommonObject = {
@@ -608,7 +608,7 @@ const getEvaluation = async (id: string, tenantId?: string) => {
             queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
         }
         const evaluation = await queryBuilder.getOne()
-        if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+        if (!evaluation) throw new Error(`Evaluation ${id} not found`)
         const versionCount = await appServer.AppDataSource.getRepository(Evaluation).countBy({
             name: evaluation.name,
             ...(tenantId ? { tenantId } : {})
@@ -637,7 +637,7 @@ const getVersions = async (id: string, tenantId?: string) => {
             queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
         }
         const evaluation = await queryBuilder.getOne()
-        if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+        if (!evaluation) throw new Error(`Evaluation ${id} not found`)
         const versions = await appServer.AppDataSource.getRepository(Evaluation).find({
             where: {
                 name: evaluation.name,
