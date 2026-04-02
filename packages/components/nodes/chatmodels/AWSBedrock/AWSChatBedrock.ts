@@ -19,8 +19,10 @@ class AWSChatBedrock_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'AWS ChatBedrock'
         this.name = 'awsChatBedrock'
         this.version = 6.1
@@ -181,4 +183,5 @@ class AWSChatBedrock_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: AWSChatBedrock_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: AWSChatBedrock_ChatModels }

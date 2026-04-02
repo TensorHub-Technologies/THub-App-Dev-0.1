@@ -14,8 +14,10 @@ class ChatSambanova_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatSambanova'
         this.name = 'chatSambanova'
         this.version = 1.0
@@ -120,4 +122,5 @@ class ChatSambanova_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatSambanova_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatSambanova_ChatModels }
