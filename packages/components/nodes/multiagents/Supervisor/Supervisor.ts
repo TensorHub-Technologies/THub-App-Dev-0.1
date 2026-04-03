@@ -152,7 +152,7 @@ class Supervisor_MultiAgents implements INode {
             let supervisor
 
             if (llm instanceof ChatMistralAI) {
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
@@ -199,7 +199,7 @@ class Supervisor_MultiAgents implements INode {
                     ', '
                 )}. Use the ${routerToolName} tool in your response.`
 
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
@@ -243,7 +243,7 @@ class Supervisor_MultiAgents implements INode {
                         }
                     })
             } else if (llm instanceof ChatOpenAI) {
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
@@ -293,13 +293,13 @@ class Supervisor_MultiAgents implements INode {
                  * Gemini doesn't have system message and messages have to be alternate between model and user
                  * So we have to place the system + human prompt at last
                  */
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
                 ])
 
-                const messages = await processImageMessage(2, llm, prompt, nodeData, options)
+                const messages = await processImageMessage(2, llm as BaseChatModel, prompt, nodeData, options)
                 prompt = messages.prompt
                 multiModalMessageContent = messages.multiModalMessageContent
 
@@ -336,7 +336,7 @@ class Supervisor_MultiAgents implements INode {
                         }
                     })
             } else {
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
@@ -405,7 +405,7 @@ class Supervisor_MultiAgents implements INode {
             let supervisor
 
             if (llm instanceof ChatMistralAI) {
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
@@ -454,7 +454,7 @@ class Supervisor_MultiAgents implements INode {
                     ', '
                 )}. Remember to give reasonings, instructions and summarization. Use the ${routerToolName} tool in your response.`
 
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
@@ -501,7 +501,7 @@ class Supervisor_MultiAgents implements INode {
                         }
                     })
             } else if (llm instanceof ChatOpenAI) {
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
@@ -554,13 +554,13 @@ class Supervisor_MultiAgents implements INode {
                  * Gemini doesn't have system message and messages have to be alternate between model and user
                  * So we have to place the system + human prompt at last
                  */
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
                 ])
 
-                const messages = await processImageMessage(2, llm, prompt, nodeData, options)
+                const messages = await processImageMessage(2, llm as BaseChatModel, prompt, nodeData, options)
                 prompt = messages.prompt
                 multiModalMessageContent = messages.multiModalMessageContent
 
@@ -600,7 +600,7 @@ class Supervisor_MultiAgents implements INode {
                         }
                     })
             } else {
-                let prompt = ChatPromptTemplate.fromMessages([
+                let prompt: ChatPromptTemplate = ChatPromptTemplate.fromMessages([
                     ['system', systemPrompt],
                     new MessagesPlaceholder('messages'),
                     ['human', userPrompt]
