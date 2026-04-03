@@ -3,42 +3,20 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import GoogleCustomButton from './googleLogin/GoogleCustomButton'
 import { useEffect } from 'react'
 import { SET_USER_DATA } from '@/store/actions'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router'
 import { MicrosoftLogin } from './microsoftLogin/MicrosoftLogin'
+import { apiBaseUrl } from '@/utils/apiBaseUrl'
 
 export const Top = ({ setLoading }) => {
     const navigate = useNavigate()
-    const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
-
     useEffect(() => {
         setLoading(true)
         handleGithubAuth().finally(() => setLoading(false))
     }, [])
-
-    const thubWebServerDevUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-    const thubWebServerProdUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-    const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-
-    const thubWebServerQAUrl =
-        import.meta.env.VITE_THUB_WEB_SERVER_QA_URL || 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-
-    let apiUrl
-
-    if (window.location.hostname === 'localhost') {
-        apiUrl = thubWebServerLocalUrl
-    } else if (window.location.hostname === 'dev.thub.tech') {
-        apiUrl = thubWebServerDevUrl
-    } else if (window.location.hostname === 'qa.thub.tech') {
-        apiUrl = thubWebServerQAUrl
-    } else {
-        apiUrl = thubWebServerProdUrl
-    }
 
     const handleGithubAuth = async () => {
         const query = window.location.search
@@ -46,27 +24,9 @@ export const Top = ({ setLoading }) => {
         const code = urlParams.get('code')
         const accessToken = localStorage.getItem('access_token')
 
-        const thubWebServerDevUrl =
-            import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL || 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-        const thubWebServerProdUrl =
-            import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL || 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-        const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-
-        let apiUrl
-
-        if (window.location.hostname === 'localhost') {
-            apiUrl = thubWebServerLocalUrl
-        } else if (window.location.hostname === 'dev.thub.tech') {
-            apiUrl = thubWebServerDevUrl
-        } else if (window.location.hostname === 'qa.thub.tech') {
-            apiUrl = thubWebServerQAUrl
-        } else {
-            apiUrl = thubWebServerProdUrl
-        }
-
         if (code && !accessToken) {
             try {
-                const response = await axios.get(`${apiUrl}/getAccessToken`, {
+                const response = await axios.get(`${apiBaseUrl}/getAccessToken`, {
                     params: { code }
                 })
 
@@ -91,7 +51,7 @@ export const Top = ({ setLoading }) => {
 
     const getUserData = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/getuserData`, {
+            const response = await axios.get(`${apiBaseUrl}/getuserData`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('access_token')}`
                 }

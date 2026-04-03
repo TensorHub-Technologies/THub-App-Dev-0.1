@@ -799,6 +799,9 @@ importers:
             rate-limit-redis:
                 specifier: ^4.2.0
                 version: 4.2.2(express-rate-limit@6.11.2(express@4.21.2))
+            razorpay:
+                specifier: ^2.9.6
+                version: 2.9.6
             reflect-metadata:
                 specifier: ^0.1.13
                 version: 0.1.14
@@ -14611,6 +14614,9 @@ packages:
     raw-body@3.0.1:
         resolution: { integrity: sha512-9G8cA+tuMS75+6G/TzW8OtLzmBDMo8p1JRxN5AZ+LAp8uxGA8V8GZm4GQ4/N5QNQEnLmg6SS7wyuSmbKepiKqA== }
         engines: { node: '>= 0.10' }
+
+    razorpay@2.9.6:
+        resolution: { integrity: sha512-zsHAQzd6e1Cc6BNoCNZQaf65ElL6O6yw0wulxmoG5VQDr363fZC90Mp1V5EktVzG45yPyNomNXWlf4cQ3622gQ== }
 
     rc@1.2.8:
         resolution: { integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw== }
@@ -35287,6 +35293,12 @@ snapshots:
             http-errors: 2.0.0
             iconv-lite: 0.7.0
             unpipe: 1.0.0
+
+    razorpay@2.9.6:
+        dependencies:
+            axios: 1.12.0(debug@4.4.3)
+        transitivePeerDependencies:
+            - debug
 
     rc@1.2.8:
         dependencies:
