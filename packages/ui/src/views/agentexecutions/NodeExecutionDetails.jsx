@@ -758,6 +758,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                                                     return (
                                                         <Box
                                                             key={`artifact-${artifactIndex}`}
+                                                            className='chat-artifact-html'
                                                             sx={{
                                                                 mt: 1,
                                                                 border: 1,
