@@ -136,17 +136,34 @@ const withRetry = async <T>(operation: () => Promise<T>, shouldRetry: (error: un
     throw lastError
 }
 
+const getFirstNonEmptyEnv = (...keys: string[]): string | undefined => {
+    for (const key of keys) {
+        const raw = process.env[key]
+        if (typeof raw !== 'string') continue
+
+        const normalized = raw.trim().replace(/^['"]|['"]$/g, '')
+        if (normalized) return normalized
+    }
+    return undefined
+}
+
 const resolveGoogleOAuthConfig = () => {
-    const clientId =
-        process.env.GOOGLE_CLIENT_ID ||
-        process.env.AUTH_GOOGLE_CLIENT_ID ||
-        process.env.AZURE_GOOGLE_CLIENT_ID ||
-        process.env.VITE_GOOGLE_CLIENT_ID
-    const clientSecret =
-        process.env.GOOGLE_CLIENT_SECRET ||
-        process.env.AUTH_GOOGLE_CLIENT_SECRET ||
-        process.env.AZURE_GOOGLE_CLIENT_SECRET ||
-        process.env.VITE_GOOGLE_CLIENT_SECRET
+    const clientId = getFirstNonEmptyEnv(
+        'GOOGLE_CLIENT_ID',
+        'AUTH_GOOGLE_CLIENT_ID',
+        'AZURE_GOOGLE_CLIENT_ID',
+        'GOOGLE_OAUTH_CLIENT_ID',
+        'GOOGLE_AUTH_CLIENT_ID',
+        'VITE_GOOGLE_CLIENT_ID'
+    )
+    const clientSecret = getFirstNonEmptyEnv(
+        'GOOGLE_CLIENT_SECRET',
+        'AUTH_GOOGLE_CLIENT_SECRET',
+        'AZURE_GOOGLE_CLIENT_SECRET',
+        'GOOGLE_OAUTH_CLIENT_SECRET',
+        'GOOGLE_AUTH_CLIENT_SECRET',
+        'VITE_GOOGLE_CLIENT_SECRET'
+    )
 
     return { clientId, clientSecret }
 }
@@ -340,7 +357,7 @@ const googleLogin = async (body: any) => {
         if (!clientId || !clientSecret) {
             throw new InternalFlowiseError(
                 StatusCodes.BAD_REQUEST,
-                'Google auth is not configured on the server. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in packages/server/.env'
+                'Google auth is not configured on the server. Set GOOGLE_CLIENT_ID or AZURE_GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET or AZURE_GOOGLE_CLIENT_SECRET.'
             )
         }
 
