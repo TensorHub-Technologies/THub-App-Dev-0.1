@@ -58,9 +58,11 @@ const Header = () => {
     }
 
     const handleLogout = () => {
-        const currentHost = window.location.hostname
+        const redirectUri = `${window.location.origin}/`
+        const normalizedLoginType = String(loginType || '')
+            .trim()
+            .toLowerCase()
 
-        // 1️⃣ Clear all local/session storage
         clearAuthSession()
         localStorage.removeItem('workspace')
         localStorage.removeItem('access_token')
@@ -68,62 +70,25 @@ const Header = () => {
         sessionStorage.removeItem('userInfoSkipped')
         sessionStorage.removeItem('inviteContext')
 
-        // Reset Redux
         dispatch(setUserData(''))
         setUserName('')
         setUserImg('')
-
         setAnchorEl(null)
-        if (loginType === 'azure_ad') {
-            let redirectUri = 'https://app.thub.tech/'
-            if (currentHost === 'localhost') {
-                redirectUri = `${window.location.origin}/`
-            } else if (currentHost === 'dev.thub.tech') {
-                redirectUri = 'https://dev.thub.tech/'
-            } else if (currentHost === 'qa.thub.tech') {
-                redirectUri = 'https://qa.thub.tech/'
-            }
 
-            instance.logoutRedirect({
-                postLogoutRedirectUri: redirectUri
-            })
-
+        if (normalizedLoginType === 'azure_ad' || normalizedLoginType === 'microsoft') {
+            instance
+                .logoutRedirect({
+                    postLogoutRedirectUri: redirectUri
+                })
+                .catch((error) => {
+                    console.error('Microsoft logout failed, redirecting locally:', error)
+                    window.location.assign(redirectUri)
+                })
             return
         }
 
-        if (loginType === 'google') {
-            if (currentHost === 'localhost') {
-                window.location.href = `${window.location.origin}/`
-            } else if (currentHost === 'dev.thub.tech') {
-                window.location.href = 'https://thub-web.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
-            } else if (currentHost === 'qa.thub.tech') {
-                window.location.href = 'https://thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
-            } else {
-                window.location.href = 'https://thub-web.happytree-73f6fdda.westus2.azurecontainerapps.io/'
-            }
-
-            return
-        }
-
-        // 3️⃣ Normal email/password login logout
-        if (currentHost === 'dev.thub.tech') {
-            window.location.href = 'https://thub-web.calmisland-c4dd80be.westus2.azurecontainerapps.io/'
-            return
-        }
-
-        if (currentHost === 'qa.thub.tech') {
-            window.location.href = 'https://thub-web.lemonpond-e68ea8b7.westus2.azurecontainerapps.io/'
-            return
-        }
-
-        if (currentHost === 'localhost') {
-            window.location.href = `${window.location.origin}/`
-            return
-        }
-
-        window.location.href = 'https://thub-web.happytree-73f6fdda.westus2.azurecontainerapps.io/'
+        window.location.assign(redirectUri)
     }
-
     useEffect(() => {
         const getUserData = async () => {
             try {
