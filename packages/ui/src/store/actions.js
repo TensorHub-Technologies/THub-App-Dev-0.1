@@ -39,14 +39,30 @@ export const SHOW_LOGIN_MODAL = 'SHOW_LOGIN_MODAL'
 
 export const HIDE_LOGIN_MODAL = 'HIDE_LOGIN_MODAL'
 
+const createSnackbarKey = () => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID()
+    }
+
+    return `${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
+
 export const enqueueSnackbar = (notification) => {
-    const key = notification.options && notification.options.key
+    const options = {
+        preventDuplicate: true,
+        ...(notification.options || {})
+    }
+    const key = options.key
+    const dedupeKey =
+        notification.dedupeKey || `${options.variant || 'default'}::${notification.message || ''}`.trim() || createSnackbarKey()
 
     return {
         type: ENQUEUE_SNACKBAR,
         notification: {
             ...notification,
-            key: key || new Date().getTime() + Math.random()
+            options,
+            key: key || createSnackbarKey(),
+            dedupeKey
         }
     }
 }

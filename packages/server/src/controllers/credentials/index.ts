@@ -35,7 +35,11 @@ const deleteCredentials = async (req: Request, res: Response, next: NextFunction
 
 const getAllCredentials = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName, req.query.tenantId)
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName, tenantId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

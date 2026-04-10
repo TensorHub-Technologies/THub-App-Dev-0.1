@@ -5,7 +5,11 @@ import { ExecutionState } from '../../Interface'
 const getExecutionById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const executionId = req.params.id
-        const execution = await executionsService.getExecutionById(executionId)
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            return res.status(401).json({ message: 'Authentication required' })
+        }
+        const execution = (req.authorizedResource as any) || (await executionsService.getExecutionById(executionId, tenantId))
         return res.json(execution)
     } catch (error) {
         next(error)
@@ -25,7 +29,11 @@ const getPublicExecutionById = async (req: Request, res: Response, next: NextFun
 const updateExecution = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const executionId = req.params.id
-        const execution = await executionsService.updateExecution(executionId, req.body)
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            return res.status(401).json({ message: 'Authentication required' })
+        }
+        const execution = await executionsService.updateExecution(executionId, req.body, tenantId)
         return res.json(execution)
     } catch (error) {
         next(error)
@@ -44,8 +52,8 @@ const getAllExecutions = async (req: Request, res: Response, next: NextFunction)
         if (req.query.agentflowId) filters.agentflowId = req.query.agentflowId as string
         if (req.query.agentflowName) filters.agentflowName = req.query.agentflowName as string
         if (req.query.sessionId) filters.sessionId = req.query.sessionId as string
-        if (req.query.tenantId) filters.tenantId = req.query.tenantId as string
-        else throw new Error('tenantId is required')
+        if (req.user?.id) filters.tenantId = req.user.id
+        else return res.status(401).json({ message: 'Authentication required' })
 
         // State filter
         if (req.query.state) {
@@ -101,7 +109,12 @@ const deleteExecutions = async (req: Request, res: Response, next: NextFunction)
             return res.status(400).json({ success: false, message: 'No execution IDs provided' })
         }
 
-        const result = await executionsService.deleteExecutions(executionIds)
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            return res.status(401).json({ success: false, message: 'Authentication required' })
+        }
+
+        const result = await executionsService.deleteExecutions(executionIds, tenantId)
         return res.json(result)
     } catch (error) {
         next(error)

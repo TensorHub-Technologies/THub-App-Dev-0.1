@@ -12,6 +12,7 @@ import { Provider } from 'react-redux'
 import { SnackbarProvider } from 'notistack'
 import ConfirmContextProvider from '@/store/context/ConfirmContextProvider'
 import { ReactFlowContext } from '@/store/context/ReactFlowContext'
+import Notifier from '@/ui-component/Notifier'
 
 // MSAL Imports
 import { PublicClientApplication } from '@azure/msal-browser'
@@ -29,7 +30,8 @@ root.render(
         <MsalProvider instance={msalInstance}>
             <Provider store={store}>
                 <BrowserRouter>
-                    <SnackbarProvider>
+                    <SnackbarProvider maxSnack={4} preventDuplicate autoHideDuration={5000}>
+                        <Notifier />
                         <ConfirmContextProvider>
                             <ReactFlowContext>
                                 <App />

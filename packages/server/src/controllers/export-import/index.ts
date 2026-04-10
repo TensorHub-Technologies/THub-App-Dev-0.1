@@ -1,13 +1,37 @@
 import { NextFunction, Request, Response } from 'express'
 import exportImportService from '../../services/export-import'
 
+const assignTenantOwnership = (payload: Record<string, any>, tenantId: string) => {
+    const tenantScopedCollections = [
+        'AgentFlow',
+        'AgentFlowV2',
+        'AssistantCustom',
+        'AssistantFlow',
+        'AssistantOpenAI',
+        'AssistantAzure',
+        'ChatFlow',
+        'DocumentStore',
+        'Execution',
+        'Tool',
+        'Variable'
+    ]
+
+    for (const key of tenantScopedCollections) {
+        if (!Array.isArray(payload[key])) continue
+        payload[key] = payload[key].map((item: Record<string, any>) => ({
+            ...item,
+            tenantId
+        }))
+    }
+
+    return payload
+}
+
 const exportData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // Extract tenantId from headers or adjust based on your setup (e.g., from req.body or req.params)
-        const tenantId = req.body.tenantId
-
+        const tenantId = req.user?.id
         if (!tenantId) {
-            return res.status(400).json({ message: 'Tenant ID is required' })
+            return res.status(401).json({ message: 'Authentication required' })
         }
 
         const exportInput = exportImportService.convertExportInput(req.body)
@@ -20,8 +44,13 @@ const exportData = async (req: Request, res: Response, next: NextFunction) => {
 
 const importData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const importData = req.body
-        await exportImportService.importData(importData)
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            return res.status(401).json({ message: 'Authentication required' })
+        }
+
+        const importData = assignTenantOwnership({ ...req.body }, tenantId)
+        await exportImportService.importData(importData as any)
         return res.json({ message: 'success' })
     } catch (error) {
         next(error)

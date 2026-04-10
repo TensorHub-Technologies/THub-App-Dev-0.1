@@ -47,6 +47,70 @@ import { maxScroll } from '@/store/constant'
 
 const assistantAvailableModels = [
     {
+        label: 'gpt-5.4-pro',
+        name: 'gpt-5.4-pro'
+    },
+    {
+        label: 'gpt-5.4',
+        name: 'gpt-5.4'
+    },
+    {
+        label: 'gpt-5.4-mini',
+        name: 'gpt-5.4-mini'
+    },
+    {
+        label: 'gpt-5.4-nano',
+        name: 'gpt-5.4-nano'
+    },
+    {
+        label: 'gpt-5.1-codex',
+        name: 'gpt-5.1-codex'
+    },
+    {
+        label: 'gpt-5.1-codex-mini',
+        name: 'gpt-5.1-codex-mini'
+    },
+    {
+        label: 'o4-mini',
+        name: 'o4-mini'
+    },
+    {
+        label: 'o3',
+        name: 'o3'
+    },
+    {
+        label: 'o3-mini',
+        name: 'o3-mini'
+    },
+    {
+        label: 'o1',
+        name: 'o1'
+    },
+    {
+        label: 'o1-mini',
+        name: 'o1-mini'
+    },
+    {
+        label: 'gpt-5.1',
+        name: 'gpt-5.1'
+    },
+    {
+        label: 'gpt-5',
+        name: 'gpt-5'
+    },
+    {
+        label: 'gpt-5-mini',
+        name: 'gpt-5-mini'
+    },
+    {
+        label: 'gpt-5-nano',
+        name: 'gpt-5-nano'
+    },
+    {
+        label: 'gpt-4.5-preview',
+        name: 'gpt-4.5-preview'
+    },
+    {
         label: 'gpt-4.1',
         name: 'gpt-4.1'
     },
@@ -59,60 +123,16 @@ const assistantAvailableModels = [
         name: 'gpt-4.1-nano'
     },
     {
-        label: 'gpt-4.5-preview',
-        name: 'gpt-4.5-preview'
+        label: 'gpt-4o',
+        name: 'gpt-4o'
     },
     {
         label: 'gpt-4o-mini',
         name: 'gpt-4o-mini'
     },
     {
-        label: 'gpt-4o',
-        name: 'gpt-4o'
-    },
-    {
         label: 'gpt-4-turbo',
         name: 'gpt-4-turbo'
-    },
-    {
-        label: 'gpt-4-turbo-preview',
-        name: 'gpt-4-turbo-preview'
-    },
-    {
-        label: 'gpt-4-1106-preview',
-        name: 'gpt-4-1106-preview'
-    },
-    {
-        label: 'gpt-4-0613',
-        name: 'gpt-4-0613'
-    },
-    {
-        label: 'gpt-4',
-        name: 'gpt-4'
-    },
-    {
-        label: 'gpt-3.5-turbo',
-        name: 'gpt-3.5-turbo'
-    },
-    {
-        label: 'gpt-3.5-turbo-0125',
-        name: 'gpt-3.5-turbo-0125'
-    },
-    {
-        label: 'gpt-3.5-turbo-1106',
-        name: 'gpt-3.5-turbo-1106'
-    },
-    {
-        label: 'gpt-3.5-turbo-0613',
-        name: 'gpt-3.5-turbo-0613'
-    },
-    {
-        label: 'gpt-3.5-turbo-16k',
-        name: 'gpt-3.5-turbo-16k'
-    },
-    {
-        label: 'gpt-3.5-turbo-16k-0613',
-        name: 'gpt-3.5-turbo-16k-0613'
     }
 ]
 
