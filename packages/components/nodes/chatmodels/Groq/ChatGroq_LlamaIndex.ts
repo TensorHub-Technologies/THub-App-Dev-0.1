@@ -15,8 +15,10 @@ class ChatGroq_LlamaIndex_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatGroq'
         this.name = 'chatGroq_LlamaIndex'
         this.version = 1.0
@@ -85,4 +87,5 @@ class ChatGroq_LlamaIndex_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatGroq_LlamaIndex_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatGroq_LlamaIndex_ChatModels }

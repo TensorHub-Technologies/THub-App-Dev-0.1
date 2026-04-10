@@ -193,16 +193,15 @@ const deleteAssistant = async (assistantId: string, isDeleteBoth: any): Promise<
     }
 }
 
-const getAllAssistants = async (type?: AssistantType): Promise<Assistant[]> => {
+const getAllAssistants = async (type?: AssistantType, tenantId?: string): Promise<Assistant[]> => {
     try {
         const appServer = getRunningExpressApp()
-        if (type) {
-            const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findBy({
-                type
-            })
-            return dbResponse
+        const where = {
+            ...(type ? { type } : {}),
+            ...(tenantId ? { tenantId } : {})
         }
-        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).find()
+
+        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findBy(where)
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -406,10 +405,10 @@ const getChatModels = async (): Promise<any> => {
     }
 }
 
-const getDocumentStores = async (): Promise<any> => {
+const getDocumentStores = async (tenantId?: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const stores = await appServer.AppDataSource.getRepository(DocumentStore).find()
+        const stores = await appServer.AppDataSource.getRepository(DocumentStore).findBy(tenantId ? { tenantId } : {})
         const returnData = []
         for (const store of stores) {
             if (store.status === 'UPSERTED') {

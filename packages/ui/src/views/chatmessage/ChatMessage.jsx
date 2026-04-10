@@ -2248,7 +2248,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             )
         } else if (item.type === 'html') {
             return (
-                <div style={{ marginTop: '20px' }}>
+                <div className='chat-artifact-html' style={{ marginTop: '20px' }}>
                     <SafeHTML html={item.data} />
                 </div>
             )

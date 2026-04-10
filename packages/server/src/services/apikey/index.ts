@@ -31,7 +31,8 @@ const getAllApiKeys = async (tenantId?: string) => {
     try {
         if (_apikeysStoredInJson()) {
             const keys = await getAPIKeys_json()
-            return await addChatflowsCount(keys)
+            const filteredKeys = tenantId ? keys.filter((key) => key.tenantId === tenantId) : keys
+            return await addChatflowsCount(filteredKeys)
         } else if (_apikeysStoredInDb()) {
             const appServer = getRunningExpressApp()
             const apiKeyRepository = appServer.AppDataSource.getRepository(ApiKey)
@@ -77,8 +78,8 @@ const getApiKey = async (apiKey: string) => {
 const createApiKey = async (keyName: string, tenantId: string) => {
     try {
         if (_apikeysStoredInJson()) {
-            const keys = await addAPIKey_json(keyName)
-            return await addChatflowsCount(keys)
+            const keys = await addAPIKey_json(keyName, tenantId)
+            return await addChatflowsCount(keys.filter((key) => key.tenantId === tenantId))
         } else if (_apikeysStoredInDb()) {
             const apiKey = generateAPIKey()
             const apiSecret = generateSecretHash(apiKey)
@@ -102,11 +103,11 @@ const createApiKey = async (keyName: string, tenantId: string) => {
 }
 
 // Update api key
-const updateApiKey = async (id: string, keyName: string) => {
+const updateApiKey = async (id: string, keyName: string, tenantId?: string) => {
     try {
         if (_apikeysStoredInJson()) {
-            const keys = await updateAPIKey_json(id, keyName)
-            return await addChatflowsCount(keys)
+            const keys = await updateAPIKey_json(id, keyName, tenantId)
+            return await addChatflowsCount(tenantId ? keys.filter((key) => key.tenantId === tenantId) : keys)
         } else if (_apikeysStoredInDb()) {
             const appServer = getRunningExpressApp()
             const currentKey = await appServer.AppDataSource.getRepository(ApiKey).findOneBy({
@@ -115,9 +116,12 @@ const updateApiKey = async (id: string, keyName: string) => {
             if (!currentKey) {
                 throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `ApiKey ${currentKey} not found`)
             }
+            if (tenantId && currentKey.tenantId !== tenantId) {
+                throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Forbidden')
+            }
             currentKey.keyName = keyName
             await appServer.AppDataSource.getRepository(ApiKey).save(currentKey)
-            return getAllApiKeys()
+            return getAllApiKeys(currentKey.tenantId)
         } else {
             throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
@@ -126,18 +130,25 @@ const updateApiKey = async (id: string, keyName: string) => {
     }
 }
 
-const deleteApiKey = async (id: string) => {
+const deleteApiKey = async (id: string, tenantId?: string) => {
     try {
         if (_apikeysStoredInJson()) {
-            const keys = await deleteAPIKey_json(id)
-            return await addChatflowsCount(keys)
+            const keys = await deleteAPIKey_json(id, tenantId)
+            return await addChatflowsCount(tenantId ? keys.filter((key) => key.tenantId === tenantId) : keys)
         } else if (_apikeysStoredInDb()) {
             const appServer = getRunningExpressApp()
+            const existingKey = await appServer.AppDataSource.getRepository(ApiKey).findOneBy({ id })
+            if (!existingKey) {
+                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `ApiKey ${id} not found`)
+            }
+            if (tenantId && existingKey.tenantId !== tenantId) {
+                throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Forbidden')
+            }
             const dbResponse = await appServer.AppDataSource.getRepository(ApiKey).delete({ id: id })
             if (!dbResponse) {
                 throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `ApiKey ${id} not found`)
             }
-            return getAllApiKeys()
+            return getAllApiKeys(existingKey.tenantId)
         } else {
             throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
@@ -157,12 +168,16 @@ const importKeys = async (body: any) => {
         const plain = bf.toString('utf8')
         const keys = JSON.parse(plain)
         if (_apikeysStoredInJson()) {
+            const keysToImport = keys.map((key: any) => ({
+                ...key,
+                tenantId: body.tenantId
+            }))
             if (body.importMode === 'replaceAll') {
-                await replaceAllAPIKeys_json(keys)
+                await replaceAllAPIKeys_json(keysToImport)
             } else {
-                await importKeys_json(keys, body.importMode)
+                await importKeys_json(keysToImport, body.importMode)
             }
-            return await addChatflowsCount(keys)
+            return await addChatflowsCount(keysToImport)
         } else if (_apikeysStoredInDb()) {
             const appServer = getRunningExpressApp()
             const allApiKeys = await appServer.AppDataSource.getRepository(ApiKey).find()
@@ -212,11 +227,12 @@ const importKeys = async (body: any) => {
                     newKey.apiKey = key.apiKey
                     newKey.apiSecret = key.apiSecret
                     newKey.keyName = key.keyName
+                    newKey.tenantId = body.tenantId
                     const newKeyEntity = appServer.AppDataSource.getRepository(ApiKey).create(newKey)
                     await appServer.AppDataSource.getRepository(ApiKey).save(newKeyEntity)
                 }
             }
-            return getAllApiKeys()
+            return getAllApiKeys(body.tenantId)
         } else {
             throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }

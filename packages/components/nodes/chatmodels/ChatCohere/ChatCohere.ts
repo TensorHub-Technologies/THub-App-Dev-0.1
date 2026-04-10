@@ -15,8 +15,10 @@ class ChatCohere_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatCohere'
         this.name = 'chatCohere'
         this.version = 2.0
@@ -91,4 +93,5 @@ class ChatCohere_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatCohere_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatCohere_ChatModels }

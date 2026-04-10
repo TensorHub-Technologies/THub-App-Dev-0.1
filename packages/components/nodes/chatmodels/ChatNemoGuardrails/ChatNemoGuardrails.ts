@@ -118,4 +118,5 @@ class ChatNemoGuardrailsChatModel implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatNemoGuardrailsChatModel }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatNemoGuardrailsChatModel }

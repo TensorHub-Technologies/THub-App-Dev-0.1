@@ -76,7 +76,7 @@ class ChatAnthropic_LlamaIndex_ChatModels implements INode {
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const temperature = nodeData.inputs?.temperature as string
-        const modelName = nodeData.inputs?.modelName as 'claude-3-opus' | 'claude-3-sonnet' | 'claude-2.1' | 'claude-instant-1.2'
+        const modelName = nodeData.inputs?.modelName as string
         const maxTokensToSample = nodeData.inputs?.maxTokensToSample as string
         const topP = nodeData.inputs?.topP as string
 
@@ -84,13 +84,17 @@ class ChatAnthropic_LlamaIndex_ChatModels implements INode {
         const anthropicApiKey = getCredentialParam('anthropicApiKey', credentialData, nodeData)
 
         const obj: Partial<Anthropic> = {
-            temperature: parseFloat(temperature),
-            model: modelName,
+            model: modelName as any,
             apiKey: anthropicApiKey
         }
 
+        const parsedTemperature = parseFloat(temperature)
+        if (!isNaN(parsedTemperature) && parsedTemperature >= 0) obj.temperature = parsedTemperature
+
         if (maxTokensToSample) obj.maxTokens = parseInt(maxTokensToSample, 10)
-        if (topP) obj.topP = parseFloat(topP)
+
+        const parsedTopP = parseFloat(topP)
+        if (!isNaN(parsedTopP) && parsedTopP >= 0 && parsedTopP <= 1) obj.topP = parsedTopP
 
         const model = new Anthropic(obj)
         return model

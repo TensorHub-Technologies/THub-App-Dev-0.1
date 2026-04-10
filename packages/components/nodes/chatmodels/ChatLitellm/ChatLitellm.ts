@@ -15,8 +15,10 @@ class ChatLitellm_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
+        this.badge = 'DEPRECATING'
         this.label = 'ChatLitellm'
         this.name = 'chatLitellm'
         this.version = 1.0
@@ -135,4 +137,5 @@ class ChatLitellm_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatLitellm_ChatModels }
+// DISABLED - hidden from UI node palette
+// module.exports = { nodeClass: ChatLitellm_ChatModels }

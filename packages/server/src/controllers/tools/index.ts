@@ -29,10 +29,12 @@ const deleteTool = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllTools = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const tenantId = req.params.id
-
-        if (typeof tenantId !== 'string') {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid tenantId')
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        if (req.params.id && req.params.id !== tenantId) {
+            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Forbidden')
         }
 
         const apiResponse = await toolsService.getAllTools(tenantId)

@@ -1,19 +1,17 @@
 import { useMsal } from '@azure/msal-react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { callMsGraph } from './graph'
-import axios from 'axios'
+import authApi from '@/api/auth'
 import { MicrosoftIcon } from '../CustomIcons'
 import { Button } from '@mui/material'
 import { toast } from 'react-toastify'
 import { loginRequest } from './config/msalConfig'
-import { useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
+import { redirectAfterAuth } from '@/utils/authRedirect'
 
 export const MicrosoftLogin = () => {
     const { instance, accounts } = useMsal()
-    const [loading, setLoading] = useState(false)
-    const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
 
@@ -27,7 +25,6 @@ export const MicrosoftLogin = () => {
 
     useEffect(() => {
         if (accounts && accounts.length > 0) {
-            setLoading(true)
             instance
                 .acquireTokenSilent({
                     ...loginRequest,
@@ -47,39 +44,16 @@ export const MicrosoftLogin = () => {
                                 workspace: ''
                             }
 
-                            const thubWebServerDevUrl =
-                                import.meta.env.VITE_THUB_WEB_SERVER_DEMO_URL ||
-                                'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-                            const thubWebServerProdUrl =
-                                import.meta.env.VITE_THUB_WEB_SERVER_PROD_URL ||
-                                'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-                            const thubWebServerLocalUrl = import.meta.env.VITE_THUB_WEB_SERVER_LOCAL_URL || 'http://localhost:2000'
-                            const thubWebServerQAUrl =
-                                import.meta.env.VITE_THUB_WEB_SERVER_QA_URL ||
-                                'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-                            let apiUrl
-
-                            if (window.location.hostname === 'localhost') {
-                                apiUrl = thubWebServerLocalUrl
-                            } else if (window.location.hostname === 'dev.thub.tech') {
-                                apiUrl = thubWebServerDevUrl
-                            } else if (window.location.hostname === 'qa.thub.tech') {
-                                apiUrl = thubWebServerQAUrl
-                            } else {
-                                apiUrl = thubWebServerProdUrl
-                            }
-
-                            axios
-                                .post(`${apiUrl}/microuser`, payload)
+                            authApi
+                                .microsoftLogin(payload)
                                 .then((response) => {
                                     const data = response.data
-                                    const finalWorkspace = data.user?.workspace || 'app'
+                                    authApi.storeAuthSession(data)
                                     dispatch({
                                         type: SET_USER_DATA,
                                         payload: data.user
                                     })
-                                    localStorage.setItem('userId', data.user.uid)
-                                    navigate('/workflows')
+                                    redirectAfterAuth()
                                 })
                                 .catch((error) => {
                                     console.error('Error storing data:', error)
