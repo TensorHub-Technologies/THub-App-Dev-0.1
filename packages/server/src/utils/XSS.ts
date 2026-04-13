@@ -24,16 +24,26 @@ export function getAllowedCorsOrigins(): string {
     return process.env.CORS_ORIGINS ?? '*'
 }
 
+const parseAllowedCorsOrigins = (origins: string): string[] => {
+    return origins
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean)
+}
+
 export function getCorsOptions(): any {
+    const allowedOrigins = getAllowedCorsOrigins()
+    const allowedOriginList = parseAllowedCorsOrigins(allowedOrigins)
+
     const corsOptions = {
         origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-            const allowedOrigins = getAllowedCorsOrigins()
-            if (!origin || allowedOrigins == '*' || allowedOrigins.indexOf(origin) !== -1) {
+            if (!origin || allowedOrigins === '*' || allowedOriginList.includes(origin)) {
                 callback(null, true)
             } else {
                 callback(null, false)
             }
-        }
+        },
+        credentials: true
     }
     return corsOptions
 }
