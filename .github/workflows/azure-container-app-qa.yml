@@ -1,24 +1,32 @@
----
 trigger:
   - qa
+ 
 variables:
-  azureSubscription: ARM-SC-QA
-  dockerRegistryServiceConnection: DR-SC-QA
+  # Azure Resource Manager service connection (used by AzureCLI@2)
+  azureSubscription: ARM-SC-QA   # <-- ARM service connection name
+ 
+  # Docker Registry service connection (used by Docker@2)
+  dockerRegistryServiceConnection: DR-SC-QA    # <-- Docker Registry service connection name
+ 
   resourceGroup: thub-qa
-  acrName: thubqa
+  acrName: thubqa            # ACR name (not FQDN)
   containerAppName: thub-app
   imageName: thub-app
   tag: $(Build.BuildId)
+ 
 pool:
   vmImage: ubuntu-latest
+ 
 stages:
   - stage: BuildAndDeploy
-    displayName: Build and Deploy to Azure Container Apps (QA)
+    displayName: Build and Deploy to Azure Container Apps (Dev)
     jobs:
       - job: Build
         displayName: Build & Deploy
         steps:
           - checkout: self
+ 
+          # Azure login (ARM service connection)
           - task: AzureCLI@2
             displayName: Azure Login
             inputs:
@@ -27,46 +35,30 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 az account show
+ 
+          # Build & push via Docker task using Docker Registry service connection
           - task: Docker@2
             displayName: Build and Push Image
             inputs:
               command: buildAndPush
               repository: $(imageName)
               dockerfile: Dockerfile
-              containerRegistry: $(dockerRegistryServiceConnection)
+              containerRegistry: $(dockerRegistryServiceConnection)  # <-- service connection NAME
               tags: |
                 $(tag)
+ 
+          # Deploy the newly pushed image to Container Apps using ARM service connection
           - task: AzureCLI@2
-            displayName: Deploy to Azure Container App
+            displayName: Deploy to Container App
             inputs:
               azureSubscription: $(azureSubscription)
               scriptType: bash
               scriptLocation: inlineScript
-              inlineScript: >
+              inlineScript: |
                 set -e
-
-
-                echo "Installing containerapp extension..."
-
-                az extension add --name containerapp --upgrade -y
-
-
-                echo "Registering Microsoft.App provider..."
-
-                az provider register --namespace Microsoft.App
-
-
-                echo "Validating Container App exists..."
-
-                az containerapp show \
-                  --name $(containerAppName) \
-                  --resource-group $(resourceGroup)
-
                 IMAGE="$(acrName).azurecr.io/$(imageName):$(tag)"
-
                 echo "Deploying image: ${IMAGE}"
-
-
+ 
                 az containerapp update \
                   --name $(containerAppName) \
                   --resource-group $(resourceGroup) \
@@ -82,3 +74,4 @@ stages:
                     AZURE_GITHUB_CLIENT_SECRET_LOCAL=$(AZURE_GITHUB_CLIENT_SECRET_LOCAL) \
                     AZURE_GITHUB_VITE_GOOGLE_CLIENT_ID=$(AZURE_GITHUB_VITE_GOOGLE_CLIENT_ID) \
                     AZURE_VITE_GITHUB_CLIENT_ID=$(AZURE_VITE_GITHUB_CLIENT_ID)
+ 
