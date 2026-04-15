@@ -1,7 +1,7 @@
 import { Redis, RedisOptions } from 'ioredis'
 import { BufferMemory, BufferMemoryInput } from 'langchain/memory'
 import { mapStoredMessageToChatMessage, BaseMessage, AIMessage, HumanMessage } from '@langchain/core/messages'
-import { INode, INodeData, INodeParams, ICommonObject, MessageType, IMessage, MemoryMethods, FlowiseMemory } from '../../../src/Interface'
+import { INode, INodeData, INodeParams, ICommonObject, MessageType, IMessage, MemoryMethods, THubMemory } from '../../../src/Interface'
 import {
     convertBaseMessagetoIMessage,
     getBaseClasses,
@@ -116,7 +116,7 @@ interface BufferMemoryExtendedInput {
     redisOptions: RedisOptions | string
 }
 
-class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
+class BufferMemoryExtended extends THubMemory implements MemoryMethods {
     sessionId = ''
     windowSize?: number
     sessionTTL?: number

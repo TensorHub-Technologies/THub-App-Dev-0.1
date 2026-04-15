@@ -1,19 +1,19 @@
 import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import subscriptionService from '../../services/subscription'
 
 const createSubscription = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 'Error: subscriptionController.createSubscription - body not provided!'
             )
         }
 
         if (!req.body.customerEmail) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 'Error: subscriptionController.createSubscription - customerEmail is required!'
             )
@@ -29,7 +29,7 @@ const createSubscription = async (req: Request, res: Response, next: NextFunctio
 const validateSubscription = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 'Error: subscriptionController.validateSubscription - body not provided!'
             )
@@ -38,7 +38,7 @@ const validateSubscription = async (req: Request, res: Response, next: NextFunct
         const requiredFields = ['razorpay_subscription_id', 'razorpay_payment_id', 'razorpay_signature', 'planId', 'user_id']
         const missingField = requiredFields.find((field) => !String(req.body[field] || '').trim())
         if (missingField) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: subscriptionController.validateSubscription - ${missingField} is required!`
             )
@@ -54,14 +54,14 @@ const validateSubscription = async (req: Request, res: Response, next: NextFunct
 const activateFreeSubscription = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 'Error: subscriptionController.activateFreeSubscription - body not provided!'
             )
         }
 
         if (!req.body.customerEmail || !req.body.user_id) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 'Error: subscriptionController.activateFreeSubscription - customerEmail and user_id are required!'
             )
@@ -77,7 +77,7 @@ const activateFreeSubscription = async (req: Request, res: Response, next: NextF
 const submitEnterpriseMail = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 'Error: subscriptionController.submitEnterpriseMail - body not provided!'
             )
@@ -86,7 +86,7 @@ const submitEnterpriseMail = async (req: Request, res: Response, next: NextFunct
         const requiredFields = ['firstName', 'lastName', 'companyName', 'designation', 'email', 'contactNumber', 'description']
         const missingField = requiredFields.find((field) => !String(req.body[field] || '').trim())
         if (missingField) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: subscriptionController.submitEnterpriseMail - ${missingField} is required!`
             )

@@ -125,9 +125,9 @@ THub support different environment variables to configure your instance. You can
 | PORT                         | The HTTP port THub runs on                                                       | Number                                           | 3000                                |
 | CORS_ORIGINS                 | The allowed origins for all cross-origin HTTP calls                              | String                                           |                                     |
 | IFRAME_ORIGINS               | The allowed origins for iframe src embedding                                     | String                                           |                                     |
-| FLOWISE_USERNAME             | Username to login                                                                | String                                           |                                     |
-| FLOWISE_PASSWORD             | Password to login                                                                | String                                           |                                     |
-| FLOWISE_FILE_SIZE_LIMIT      | Upload File Size Limit                                                           | String                                           | 50mb                                |
+| THUB_USERNAME                | Username to login                                                                | String                                           |                                     |
+| THUB_PASSWORD                | Password to login                                                                | String                                           |                                     |
+| THUB_FILE_SIZE_LIMIT         | Upload File Size Limit                                                           | String                                           | 50mb                                |
 | DEBUG                        | Print logs from components                                                       | Boolean                                          |                                     |
 | LOG_PATH                     | Location where log files are stored                                              | String                                           | `your-path/THub/logs`               |
 | LOG_LEVEL                    | Different levels of logs                                                         | Enum String: `error`, `info`, `verbose`, `debug` | `info`                              |
@@ -136,8 +136,8 @@ THub support different environment variables to configure your instance. You can
 | APIKEY_PATH                  | Location where api keys are saved when `APIKEY_STORAGE_TYPE` is `json`           | String                                           | `your-path/THub/packages/server`    |
 | TOOL_FUNCTION_BUILTIN_DEP    | NodeJS built-in modules to be used for Tool Function                             | String                                           |                                     |
 | TOOL_FUNCTION_EXTERNAL_DEP   | External modules to be used for Tool Function                                    | String                                           |                                     |
-| DATABASE_TYPE                | Type of database to store the flowise data                                       | Enum String: `sqlite`, `mysql`, `postgres`       | `sqlite`                            |
-| DATABASE_PATH                | Location where database is saved (When DATABASE_TYPE is sqlite)                  | String                                           | `your-home-dir/.flowise`            |
+| DATABASE_TYPE                | Type of database to store the thub data                                          | Enum String: `sqlite`, `mysql`, `postgres`       | `sqlite`                            |
+| DATABASE_PATH                | Location where database is saved (When DATABASE_TYPE is sqlite)                  | String                                           | `your-home-dir/.thub`               |
 | DATABASE_HOST                | Host URL or IP address (When DATABASE_TYPE is not sqlite)                        | String                                           |                                     |
 | DATABASE_PORT                | Database port (When DATABASE_TYPE is not sqlite)                                 | String                                           |                                     |
 | DATABASE_USER                | Database username (When DATABASE_TYPE is not sqlite)                             | String                                           |                                     |
@@ -146,11 +146,11 @@ THub support different environment variables to configure your instance. You can
 | DATABASE_SSL_KEY_BASE64      | Database SSL client cert in base64 (takes priority over DATABASE_SSL)            | Boolean                                          | false                               |
 | DATABASE_SSL                 | Database connection overssl (When DATABASE_TYPE is postgre)                      | Boolean                                          | false                               |
 | SECRETKEY_PATH               | Location where encryption key (used to encrypt/decrypt credentials) is saved     | String                                           | `your-path/THub/packages/server`    |
-| FLOWISE_SECRETKEY_OVERWRITE  | Encryption key to be used instead of the key stored in SECRETKEY_PATH            | String                                           |                                     |
-| DISABLE_FLOWISE_TELEMETRY    | Turn off telemetry                                                               | Boolean                                          |                                     |
+| THUB_SECRETKEY_OVERWRITE     | Encryption key to be used instead of the key stored in SECRETKEY_PATH            | String                                           |                                     |
+| DISABLE_THUB_TELEMETRY       | Turn off telemetry                                                               | Boolean                                          |                                     |
 | MODEL_LIST_CONFIG_JSON       | File path to load list of models from your local config file                     | String                                           | `/your_model_list_config_file_path` |
 | STORAGE_TYPE                 | Type of storage for uploaded files. default is `local`                           | Enum String: `s3`, `local`                       | `local`                             |
-| BLOB_STORAGE_PATH            | Local folder path where uploaded files are stored when `STORAGE_TYPE` is `local` | String                                           | `your-home-dir/.flowise/storage`    |
+| BLOB_STORAGE_PATH            | Local folder path where uploaded files are stored when `STORAGE_TYPE` is `local` | String                                           | `your-home-dir/.thub/storage`       |
 | S3_STORAGE_BUCKET_NAME       | Bucket name to hold the uploaded files when `STORAGE_TYPE` is `s3`               | String                                           |                                     |
 | S3_STORAGE_ACCESS_KEY_ID     | AWS Access Key                                                                   | String                                           |                                     |
 | S3_STORAGE_SECRET_ACCESS_KEY | AWS Secret Key                                                                   | String                                           |                                     |
@@ -163,12 +163,12 @@ THub support different environment variables to configure your instance. You can
 You can also specify the env variables when using `npx`. For example:
 
 ```
-npx flowise start --PORT=3000 --DEBUG=true
+npx thub start --PORT=3000 --DEBUG=true
 ```
 
 ## 📖 Contribute to Docs
 
-[THub Docs](https://github.com/THub/FlowiseDocs)
+[THub Docs](https://github.com/THub/THubDocs)
 
 ## 🏷️ Pull Request process
 
@@ -176,4 +176,4 @@ A member of the THub team will automatically be notified/assigned when you open 
 
 ## 📜 Code of Conduct
 
-This project and everyone participating in it are governed by the Code of Conduct which can be found in the [file](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to hello@flowiseai.com.
+This project and everyone participating in it are governed by the Code of Conduct which can be found in the [file](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to hello@thubai.com.

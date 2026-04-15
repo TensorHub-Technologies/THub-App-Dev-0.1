@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 
 const assertMatchingTenant = (incomingTenantId: unknown, authenticatedTenantId: string, source: string) => {
     if (typeof incomingTenantId !== 'string') return
 
     const normalizedTenantId = incomingTenantId.trim()
     if (normalizedTenantId && normalizedTenantId !== authenticatedTenantId) {
-        throw new InternalFlowiseError(StatusCodes.FORBIDDEN, `Forbidden: invalid ${source}`)
+        throw new InternalTHubError(StatusCodes.FORBIDDEN, `Forbidden: invalid ${source}`)
     }
 }
 
@@ -15,7 +15,7 @@ export const bindAuthenticatedTenant = (req: Request, _res: Response, next: Next
     try {
         const authenticatedTenantId = req.user?.id
         if (!authenticatedTenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
 
         assertMatchingTenant(req.query?.tenantId, authenticatedTenantId, 'tenantId query')

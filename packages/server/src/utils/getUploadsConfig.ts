@@ -3,7 +3,7 @@ import { INodeParams } from 'thub-components'
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { getRunningExpressApp } from '../utils/getRunningExpressApp'
 import { IUploadFileSizeAndTypes, IReactFlowNode, IReactFlowEdge } from '../Interface'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 
 type IUploadConfig = {
     isSpeechToTextEnabled: boolean
@@ -23,7 +23,7 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<IUploadC
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
+        throw new InternalTHubError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
     }
 
     const flowObj = JSON.parse(chatflow.flowData)

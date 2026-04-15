@@ -1,7 +1,7 @@
 {
-    "name": "flowise-worker-healthcheck",
+    "name": "thub-worker-healthcheck",
     "version": "1.0.0",
-    "description": "Simple healthcheck server for Flowise worker",
+    "description": "Simple healthcheck server for THub worker",
     "main": "healthcheck.js",
     "private": true,
     "scripts": {

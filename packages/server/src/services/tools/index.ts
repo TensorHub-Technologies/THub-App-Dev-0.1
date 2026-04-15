@@ -1,10 +1,10 @@
 import { StatusCodes } from 'http-status-codes'
 import { Tool } from '../../database/entities/Tool'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { getErrorMessage } from '../../errors/utils'
 import { getAppVersion } from '../../utils'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { FLOWISE_METRIC_COUNTERS, FLOWISE_COUNTER_STATUS } from '../../Interface.Metrics'
+import { THUB_METRIC_COUNTERS, THUB_COUNTER_STATUS } from '../../Interface.Metrics'
 import { QueryRunner } from 'typeorm'
 import { validate } from 'uuid'
 
@@ -20,10 +20,10 @@ const createTool = async (requestBody: any): Promise<any> => {
             toolId: dbResponse.id,
             toolName: dbResponse.name
         })
-        appServer.metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.TOOL_CREATED, { status: FLOWISE_COUNTER_STATUS.SUCCESS })
+        appServer.metricsProvider?.incrementCounter(THUB_METRIC_COUNTERS.TOOL_CREATED, { status: THUB_COUNTER_STATUS.SUCCESS })
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.createTool - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.createTool - ${getErrorMessage(error)}`)
     }
 }
 
@@ -35,7 +35,7 @@ const deleteTool = async (toolId: string): Promise<any> => {
         })
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.deleteTool - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.deleteTool - ${getErrorMessage(error)}`)
     }
 }
 
@@ -45,7 +45,7 @@ const getAllTools = async (tenantId: any): Promise<Tool[]> => {
         const dbResponse = await appServer.AppDataSource.getRepository(Tool).findBy({ tenantId })
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.getAllTools - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.getAllTools - ${getErrorMessage(error)}`)
     }
 }
 
@@ -56,11 +56,11 @@ const getToolById = async (toolId: string): Promise<any> => {
             id: toolId
         })
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Tool ${toolId} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Tool ${toolId} not found`)
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.getToolById - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.getToolById - ${getErrorMessage(error)}`)
     }
 }
 
@@ -71,7 +71,7 @@ const updateTool = async (toolId: string, toolBody: any): Promise<any> => {
             id: toolId
         })
         if (!tool) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Tool ${toolId} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Tool ${toolId} not found`)
         }
         const updateTool = new Tool()
         Object.assign(updateTool, toolBody)
@@ -79,7 +79,7 @@ const updateTool = async (toolId: string, toolBody: any): Promise<any> => {
         const dbResponse = await appServer.AppDataSource.getRepository(Tool).save(tool)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.updateTool - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.updateTool - ${getErrorMessage(error)}`)
     }
 }
 
@@ -87,7 +87,7 @@ const importTools = async (newTools: Partial<Tool>[], queryRunner?: QueryRunner)
     try {
         for (const data of newTools) {
             if (data.id && !validate(data.id)) {
-                throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: importTools - invalid id!`)
+                throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: importTools - invalid id!`)
             }
         }
 
@@ -129,7 +129,7 @@ const importTools = async (newTools: Partial<Tool>[], queryRunner?: QueryRunner)
 
         return insertResponse
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.importTools - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: toolsService.importTools - ${getErrorMessage(error)}`)
     }
 }
 

@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { User } from '../../database/entities/User'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { getErrorMessage } from '../../errors/utils'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { getRazorpayClient, verifyRazorpaySubscriptionSignature } from '../../utils/razorpay'
@@ -85,7 +85,7 @@ const getPlanConfigs = (): Record<string, PlanConfig> => {
 const resolvePlanConfig = (planId: string): PlanConfig => {
     const planConfig = getPlanConfigs()[planId]
     if (!planConfig) {
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid plan ID')
+        throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid plan ID')
     }
     return planConfig
 }
@@ -117,16 +117,16 @@ const activateFreeSubscription = async (body: ActivateFreeSubscriptionInput) => 
         const userId = String(body.user_id || '').trim()
 
         if (!customerEmail || !userId) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'customerEmail and user_id are required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'customerEmail and user_id are required')
         }
 
         const user = await userRepo.findOneBy({ uid: userId })
         if (!user) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'User not found')
         }
 
         if (normalizeEmail(user.email) !== customerEmail) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'customerEmail does not match user account email')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'customerEmail does not match user account email')
         }
 
         const today = new Date()
@@ -146,8 +146,8 @@ const activateFreeSubscription = async (body: ActivateFreeSubscriptionInput) => 
             expiryDate: null
         }
     } catch (error) {
-        if (error instanceof InternalFlowiseError) throw error
-        throw new InternalFlowiseError(
+        if (error instanceof InternalTHubError) throw error
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: subscriptionService.activateFreeSubscription - ${getErrorMessage(error)}`
         )
@@ -165,12 +165,12 @@ const submitEnterpriseMail = async (body: EnterpriseMailInput) => {
         const description = String(body.description || '').trim()
 
         if (!firstName || !lastName || !companyName || !designation || !email || !contactNumber || !description) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'All enterprise inquiry fields are required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'All enterprise inquiry fields are required')
         }
 
         const recipient = getEnterpriseInquiryRecipient()
         if (!recipient) {
-            throw new InternalFlowiseError(StatusCodes.SERVICE_UNAVAILABLE, 'Enterprise inquiry recipient email is not configured')
+            throw new InternalTHubError(StatusCodes.SERVICE_UNAVAILABLE, 'Enterprise inquiry recipient email is not configured')
         }
 
         await transporter.sendMail({
@@ -204,8 +204,8 @@ const submitEnterpriseMail = async (body: EnterpriseMailInput) => {
             message: "We'll reach out shortly!"
         }
     } catch (error) {
-        if (error instanceof InternalFlowiseError) throw error
-        throw new InternalFlowiseError(
+        if (error instanceof InternalTHubError) throw error
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: subscriptionService.submitEnterpriseMail - ${getErrorMessage(error)}`
         )
@@ -222,7 +222,7 @@ const createSubscription = async (body: CreateSubscriptionInput) => {
         const userId = String(body.user_id || '').trim()
 
         if (!customerEmail) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'customerEmail is required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'customerEmail is required')
         }
 
         if (!planId) {
@@ -238,10 +238,10 @@ const createSubscription = async (body: CreateSubscriptionInput) => {
         if (userId) {
             const user = await userRepo.findOneBy({ uid: userId })
             if (!user) {
-                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not found')
+                throw new InternalTHubError(StatusCodes.NOT_FOUND, 'User not found')
             }
             if (normalizeEmail(user.email) !== customerEmail) {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'customerEmail does not match user account email')
+                throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'customerEmail does not match user account email')
             }
         }
 
@@ -259,7 +259,7 @@ const createSubscription = async (body: CreateSubscriptionInput) => {
         })) as { id?: string; status?: string }
 
         if (!subscription?.id) {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, 'Razorpay did not return a subscription ID')
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, 'Razorpay did not return a subscription ID')
         }
 
         return {
@@ -272,8 +272,8 @@ const createSubscription = async (body: CreateSubscriptionInput) => {
             expiry_date: dates.expiry_date
         }
     } catch (error) {
-        if (error instanceof InternalFlowiseError) throw error
-        throw new InternalFlowiseError(
+        if (error instanceof InternalTHubError) throw error
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: subscriptionService.createSubscription - ${getErrorMessage(error)}`
         )
@@ -293,7 +293,7 @@ const validateSubscription = async (body: ValidateSubscriptionInput) => {
         const userId = String(body.user_id || '').trim()
 
         if (!subscriptionId || !paymentId || !signature || !planId || !userId) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.BAD_REQUEST,
                 'razorpay_subscription_id, razorpay_payment_id, razorpay_signature, planId and user_id are required'
             )
@@ -302,7 +302,7 @@ const validateSubscription = async (body: ValidateSubscriptionInput) => {
         const planConfig = resolvePlanConfig(planId)
         const signatureIsValid = verifyRazorpaySubscriptionSignature(subscriptionId, paymentId, signature)
         if (!signatureIsValid) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Payment validation failed')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Payment validation failed')
         }
 
         const razorpaySubscription = (await razorpay.subscriptions.fetch(subscriptionId)) as {
@@ -311,17 +311,17 @@ const validateSubscription = async (body: ValidateSubscriptionInput) => {
         }
 
         if (razorpaySubscription?.plan_id && razorpaySubscription.plan_id !== planId) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Plan mismatch for subscription')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Plan mismatch for subscription')
         }
 
         const noteUserId = String(razorpaySubscription?.notes?.user_id || '').trim()
         if (noteUserId && noteUserId !== userId) {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Subscription does not belong to the provided user')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Subscription does not belong to the provided user')
         }
 
         const user = await userRepo.findOneBy({ uid: userId })
         if (!user) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'User not found')
         }
 
         const dates = getSubscriptionDates(planConfig.duration)
@@ -345,8 +345,8 @@ const validateSubscription = async (body: ValidateSubscriptionInput) => {
             expiry_date: dates.expiry_date
         }
     } catch (error) {
-        if (error instanceof InternalFlowiseError) throw error
-        throw new InternalFlowiseError(
+        if (error instanceof InternalTHubError) throw error
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: subscriptionService.validateSubscription - ${getErrorMessage(error)}`
         )

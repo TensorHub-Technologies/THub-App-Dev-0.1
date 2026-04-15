@@ -1,12 +1,12 @@
 import crypto from 'crypto'
 import { StatusCodes } from 'http-status-codes'
 import Razorpay from 'razorpay'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 
 const getRequiredEnv = (envKey: 'RAZORPAY_KEY_ID' | 'RAZORPAY_SECRET') => {
     const value = String(process.env[envKey] || '').trim()
     if (!value) {
-        throw new InternalFlowiseError(StatusCodes.SERVICE_UNAVAILABLE, `${envKey} is not configured`)
+        throw new InternalTHubError(StatusCodes.SERVICE_UNAVAILABLE, `${envKey} is not configured`)
     }
     return value
 }

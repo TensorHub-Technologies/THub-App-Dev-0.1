@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -27,24 +27,24 @@ const authorizeResource = <T>(fetchResource: ResourceFetcher<T>, options: Author
         try {
             const requesterId = req.user?.id
             if (!requesterId) {
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+                throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
             }
 
             const resource = await fetchResource(req)
             if (!resource) {
-                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, options.notFoundMessage || 'Resource not found')
+                throw new InternalTHubError(StatusCodes.NOT_FOUND, options.notFoundMessage || 'Resource not found')
             }
 
             const ownerId = options.getOwnerId ? options.getOwnerId(resource) : getDefaultOwnerId(resource)
             if (!ownerId) {
-                throw new InternalFlowiseError(
+                throw new InternalTHubError(
                     StatusCodes.INTERNAL_SERVER_ERROR,
                     'Authorization misconfiguration: resource owner could not be determined'
                 )
             }
 
             if (ownerId !== requesterId && req.authUser?.role !== 'superadmin') {
-                throw new InternalFlowiseError(StatusCodes.FORBIDDEN, options.forbiddenMessage || 'Forbidden')
+                throw new InternalTHubError(StatusCodes.FORBIDDEN, options.forbiddenMessage || 'Forbidden')
             }
 
             req.authorizedResource = resource

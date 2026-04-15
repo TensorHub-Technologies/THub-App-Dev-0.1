@@ -2,7 +2,7 @@ import { Redis } from '@upstash/redis'
 import { BufferMemory, BufferMemoryInput } from 'langchain/memory'
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis'
 import { mapStoredMessageToChatMessage, AIMessage, HumanMessage, StoredMessage, BaseMessage } from '@langchain/core/messages'
-import { FlowiseMemory, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
+import { THubMemory, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
 import {
     convertBaseMessagetoIMessage,
     getBaseClasses,
@@ -117,7 +117,7 @@ interface BufferMemoryExtendedInput {
     sessionTTL?: number
 }
 
-class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
+class BufferMemoryExtended extends THubMemory implements MemoryMethods {
     sessionId = ''
     redisClient: Redis
     sessionTTL?: number

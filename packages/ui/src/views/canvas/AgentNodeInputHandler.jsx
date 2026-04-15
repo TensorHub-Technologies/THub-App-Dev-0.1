@@ -75,7 +75,7 @@ import {
 import useNotifier from '@/utils/useNotifier'
 
 // const
-import { baseURL, FLOWISE_CREDENTIAL_ID } from '@/store/constant'
+import { baseURL, THUB_CREDENTIAL_ID } from '@/store/constant'
 import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction } from '@/store/actions'
 import NodeInputHandler from './NodeInputHandler'
 
@@ -973,7 +973,7 @@ const AgentNodeInputHandler = ({
                                 inputParam={inputParam}
                                 onSelect={(newValue) => {
                                     data.credential = newValue
-                                    data.inputs[FLOWISE_CREDENTIAL_ID] = newValue // in case data.credential is not updated
+                                    data.inputs[THUB_CREDENTIAL_ID] = newValue // in case data.credential is not updated
                                 }}
                             />
                         )}

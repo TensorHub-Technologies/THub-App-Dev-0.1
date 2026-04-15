@@ -17,7 +17,7 @@ import { RateLimiterManager } from './utils/rateLimit'
 import { getAPIKeys } from './utils/apiKey'
 import { sanitizeMiddleware, getCorsOptions, getAllowedIframeOrigins } from './utils/XSS'
 import { Telemetry } from './utils/telemetry'
-import flowiseApiV1Router from './routes'
+import thubApiV1Router from './routes'
 import errorHandlerMiddleware from './middlewares/errors'
 import { SSEStreamer } from './utils/SSEStreamer'
 import { validateAPIKey } from './utils/validateKey'
@@ -141,9 +141,9 @@ export class App {
 
     async config() {
         // Limit is needed to allow sending/receiving base64 encoded string
-        const flowise_file_size_limit = process.env.FLOWISE_FILE_SIZE_LIMIT || '100mb'
-        this.app.use(express.json({ limit: flowise_file_size_limit }))
-        this.app.use(express.urlencoded({ limit: flowise_file_size_limit, extended: true }))
+        const thub_file_size_limit = process.env.THUB_FILE_SIZE_LIMIT || '100mb'
+        this.app.use(express.json({ limit: thub_file_size_limit }))
+        this.app.use(express.urlencoded({ limit: thub_file_size_limit, extended: true }))
 
         // Enhanced trust proxy settings for load balancer
         this.app.set('trust proxy', true) // Trust all proxies
@@ -185,9 +185,9 @@ export class App {
         const URL_CASE_INSENSITIVE_REGEX: RegExp = /\/api\/v1\//i
         const URL_CASE_SENSITIVE_REGEX: RegExp = /\/api\/v1\//
 
-        if (process.env.FLOWISE_USERNAME && process.env.FLOWISE_PASSWORD) {
-            const username = process.env.FLOWISE_USERNAME
-            const password = process.env.FLOWISE_PASSWORD
+        if (process.env.THUB_USERNAME && process.env.THUB_PASSWORD) {
+            const username = process.env.THUB_USERNAME
+            const password = process.env.THUB_PASSWORD
             const basicAuthMiddleware = basicAuth({
                 users: { [username]: password }
             })
@@ -269,7 +269,7 @@ export class App {
         }
 
         this.app.use('/', subscriptionLegacyRouter)
-        this.app.use('/api/v1', flowiseApiV1Router)
+        this.app.use('/api/v1', thubApiV1Router)
 
         // ----------------------------------------
         // Configure number of proxies in Host Environment

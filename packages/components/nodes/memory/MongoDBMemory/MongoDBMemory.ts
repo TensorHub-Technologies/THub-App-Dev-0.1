@@ -9,7 +9,7 @@ import {
     getVersion,
     mapChatMessageToBaseMessage
 } from '../../../src/utils'
-import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
+import { THubMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
 
 // TODO: Add ability to specify env variable and use singleton pattern (i.e initialize MongoDB on server and pass to component)
 
@@ -109,7 +109,7 @@ interface BufferMemoryExtendedInput {
     }
 }
 
-class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
+class BufferMemoryExtended extends THubMemory implements MemoryMethods {
     sessionId = ''
     mongoConnection: {
         databaseName: string

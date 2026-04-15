@@ -1,6 +1,6 @@
-# Flowise Docker Hub Image
+# THub Docker Hub Image
 
-Starts Flowise from [DockerHub Image](https://hub.docker.com/r/flowiseai/flowise)
+Starts THub from [DockerHub Image](https://hub.docker.com/r/thubai/thub)
 
 ## Usage
 
@@ -13,12 +13,12 @@ Starts Flowise from [DockerHub Image](https://hub.docker.com/r/flowiseai/flowise
 
 If you like to persist your data (flows, logs, credentials, storage), set these variables in the `.env` file inside `docker` folder:
 
--   DATABASE_PATH=/root/.flowise
--   LOG_PATH=/root/.flowise/logs
--   SECRETKEY_PATH=/root/.flowise
--   BLOB_STORAGE_PATH=/root/.flowise/storage
+-   DATABASE_PATH=/root/.thub
+-   LOG_PATH=/root/.thub/logs
+-   SECRETKEY_PATH=/root/.thub
+-   BLOB_STORAGE_PATH=/root/.thub/storage
 
-Flowise also support different environment variables to configure your instance. Read [more](https://docs.flowiseai.com/configuration/environment-variables)
+THub also support different environment variables to configure your instance. Read [more](https://docs.thubai.com/configuration/environment-variables)
 
 ## Queue Mode:
 

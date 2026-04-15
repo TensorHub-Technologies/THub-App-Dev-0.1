@@ -26,9 +26,9 @@ import { formatLogToString } from 'langchain/agents/format_scratchpad/log'
 import { IUsedTool } from './Interface'
 import { getErrorMessage } from './error'
 
-export const SOURCE_DOCUMENTS_PREFIX = '\n\n----FLOWISE_SOURCE_DOCUMENTS----\n\n'
-export const ARTIFACTS_PREFIX = '\n\n----FLOWISE_ARTIFACTS----\n\n'
-export const TOOL_ARGS_PREFIX = '\n\n----FLOWISE_TOOL_ARGS----\n\n'
+export const SOURCE_DOCUMENTS_PREFIX = '\n\n----THUB_SOURCE_DOCUMENTS----\n\n'
+export const ARTIFACTS_PREFIX = '\n\n----THUB_ARTIFACTS----\n\n'
+export const TOOL_ARGS_PREFIX = '\n\n----THUB_TOOL_ARGS----\n\n'
 
 /**
  * Utility function to format tool error messages with parameters for debugging

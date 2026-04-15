@@ -8,9 +8,9 @@ services:
             - PORT=${PORT}
             - CORS_ORIGINS=${CORS_ORIGINS}
             - IFRAME_ORIGINS=${IFRAME_ORIGINS}
-            - FLOWISE_USERNAME=${FLOWISE_USERNAME}
-            - FLOWISE_PASSWORD=${FLOWISE_PASSWORD}
-            - FLOWISE_FILE_SIZE_LIMIT=${FLOWISE_FILE_SIZE_LIMIT}
+            - THUB_USERNAME=${THUB_USERNAME}
+            - THUB_PASSWORD=${THUB_PASSWORD}
+            - THUB_FILE_SIZE_LIMIT=${THUB_FILE_SIZE_LIMIT}
             - DEBUG=${DEBUG}
             - DATABASE_PATH=${DATABASE_PATH}
             - DATABASE_TYPE=${DATABASE_TYPE}
@@ -23,14 +23,14 @@ services:
             - DATABASE_SSL_KEY_BASE64=${DATABASE_SSL_KEY_BASE64}
             - APIKEY_PATH=${APIKEY_PATH}
             - SECRETKEY_PATH=${SECRETKEY_PATH}
-            - FLOWISE_SECRETKEY_OVERWRITE=${FLOWISE_SECRETKEY_OVERWRITE}
+            - THUB_SECRETKEY_OVERWRITE=${THUB_SECRETKEY_OVERWRITE}
             - LOG_LEVEL=${LOG_LEVEL}
             - LOG_PATH=${LOG_PATH}
             - BLOB_STORAGE_PATH=${BLOB_STORAGE_PATH}
-            - DISABLE_FLOWISE_TELEMETRY=${DISABLE_FLOWISE_TELEMETRY}
+            - DISABLE_THUB_TELEMETRY=${DISABLE_THUB_TELEMETRY}
             - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
         ports:
             - '${PORT}:${PORT}'
         volumes:
-            - ~/.flowise:/root/.flowise
+            - ~/.thub:/root/.thub
         entrypoint: /bin/sh -c "sleep 3; pnpm start"
