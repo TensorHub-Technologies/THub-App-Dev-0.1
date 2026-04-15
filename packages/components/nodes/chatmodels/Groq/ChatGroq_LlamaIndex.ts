@@ -1,6 +1,6 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { MODEL_TYPE, getModels } from '../../../src/modelLoader.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { Groq, OpenAI } from 'llamaindex'
 
 class ChatGroq_LlamaIndex_ChatModels implements INode {
@@ -88,4 +88,4 @@ class ChatGroq_LlamaIndex_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatGroq_LlamaIndex_ChatModels }
+export const nodeClass = ChatGroq_LlamaIndex_ChatModels

@@ -1,6 +1,6 @@
 import { IServerSideEventStreamer } from 'thub-components'
 import { createClient } from 'redis'
-import logger from '../utils/logger'
+import logger from '../utils/logger.js'
 
 export class RedisEventPublisher implements IServerSideEventStreamer {
     private redisPublisher: ReturnType<typeof createClient>

@@ -12,10 +12,10 @@ import { StringOutputParser } from '@langchain/core/output_parsers'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { HumanMessage } from '@langchain/core/messages'
 import { ConsoleCallbackHandler as LCConsoleCallbackHandler } from '@langchain/core/tracers/console'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
-import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
-import { ChatOpenAI } from '../../chatmodels/ChatOpenAI/FlowiseChatOpenAI'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
+import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils.js'
+import { ChatOpenAI } from '../../chatmodels/ChatOpenAI/FlowiseChatOpenAI.js'
 import {
     IVisionChatModal,
     FlowiseMemory,
@@ -25,9 +25,9 @@ import {
     INodeParams,
     MessageContentImageUrl,
     IServerSideEventStreamer
-} from '../../../src/Interface'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { getBaseClasses, handleEscapeCharacters, transformBracesWithColon } from '../../../src/utils'
+} from '../../../src/Interface.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { getBaseClasses, handleEscapeCharacters, transformBracesWithColon } from '../../../src/utils.js'
 
 let systemMessage = `The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.`
 const inputKey = 'input'
@@ -274,4 +274,4 @@ const prepareChain = async (nodeData: INodeData, options: ICommonObject, session
     return conversationChain
 }
 
-module.exports = { nodeClass: ConversationChain_Chains }
+export const nodeClass = ConversationChain_Chains

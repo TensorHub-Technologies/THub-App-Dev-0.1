@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class FireworksApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class FireworksApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: FireworksApi }
+export const credClass = FireworksApi

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class PhoenixApi implements INodeCredential {
     label: string
@@ -30,4 +30,4 @@ class PhoenixApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: PhoenixApi }
+export const credClass = PhoenixApi

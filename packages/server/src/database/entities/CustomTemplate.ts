@@ -1,4 +1,4 @@
-import { ICustomTemplate } from '../../Interface'
+import { ICustomTemplate } from '../../Interface.js'
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('custom_template')

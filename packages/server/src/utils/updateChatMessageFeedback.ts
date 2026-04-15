@@ -1,7 +1,7 @@
-import { IChatMessageFeedback } from '../Interface'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
-import { ChatMessageFeedback } from '../database/entities/ChatMessageFeedback'
-import { ChatFlow } from '../database/entities/ChatFlow'
+import { IChatMessageFeedback } from '../Interface.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
+import { ChatMessageFeedback } from '../database/entities/ChatMessageFeedback.js'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
 import lunary from 'lunary'
 
 /**

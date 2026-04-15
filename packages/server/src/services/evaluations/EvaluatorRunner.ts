@@ -1,4 +1,4 @@
-import evaluatorsService from '../evaluator'
+import evaluatorsService from '../evaluator.js'
 import { ICommonObject } from 'thub-components'
 
 interface EvaluatorReturnType {

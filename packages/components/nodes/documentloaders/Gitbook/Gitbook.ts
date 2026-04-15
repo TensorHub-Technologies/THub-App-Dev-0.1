@@ -1,8 +1,8 @@
 import { omit } from 'lodash'
-import { IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { GitbookLoader } from '@langchain/community/document_loaders/web/gitbook'
-import { handleEscapeCharacters } from '../../../src/utils'
+import { handleEscapeCharacters } from '../../../src/utils.js'
 
 class Gitbook_DocumentLoaders implements INode {
     label: string
@@ -149,6 +149,4 @@ class Gitbook_DocumentLoaders implements INode {
     }
 }
 
-module.exports = {
-    nodeClass: Gitbook_DocumentLoaders
-}
+export const nodeClass = Gitbook_DocumentLoaders

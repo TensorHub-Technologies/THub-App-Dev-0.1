@@ -2,15 +2,15 @@ import { Redis } from '@upstash/redis'
 import { BufferMemory, BufferMemoryInput } from 'langchain/memory'
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis'
 import { mapStoredMessageToChatMessage, AIMessage, HumanMessage, StoredMessage, BaseMessage } from '@langchain/core/messages'
-import { FlowiseMemory, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
+import { FlowiseMemory, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface.js'
 import {
     convertBaseMessagetoIMessage,
     getBaseClasses,
     getCredentialData,
     getCredentialParam,
     mapChatMessageToBaseMessage
-} from '../../../src/utils'
-import { ICommonObject } from '../../../src/Interface'
+} from '../../../src/utils.js'
+import { ICommonObject } from '../../../src/Interface.js'
 
 class UpstashRedisBackedChatMemory_Memory implements INode {
     label: string
@@ -178,4 +178,4 @@ class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
     }
 }
 
-module.exports = { nodeClass: UpstashRedisBackedChatMemory_Memory }
+export const nodeClass = UpstashRedisBackedChatMemory_Memory

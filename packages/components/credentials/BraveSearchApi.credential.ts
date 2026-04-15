@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class BraveSearchApi implements INodeCredential {
     label: string
@@ -21,4 +21,4 @@ class BraveSearchApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: BraveSearchApi }
+export const credClass = BraveSearchApi

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ComposioApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class ComposioApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ComposioApi }
+export const credClass = ComposioApi

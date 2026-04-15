@@ -1,7 +1,7 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class ChatNvdiaNIM_ChatModels implements INode {
     label: string
@@ -170,4 +170,4 @@ class ChatNvdiaNIM_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatNvdiaNIM_ChatModels }
+export const nodeClass = ChatNvdiaNIM_ChatModels

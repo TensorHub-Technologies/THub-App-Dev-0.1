@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class MistralAICredential implements INodeCredential {
     label: string
@@ -22,4 +22,4 @@ class MistralAICredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: MistralAICredential }
+export const credClass = MistralAICredential

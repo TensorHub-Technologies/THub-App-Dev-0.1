@@ -3,9 +3,9 @@ import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { Document } from '@langchain/core/documents'
 import { Embeddings } from '@langchain/core/embeddings'
 import { ElasticClientArgs, ElasticVectorSearch } from '@langchain/community/vectorstores/elasticsearch'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { index } from '../../../src/indexing'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { index } from '../../../src/indexing.js'
 
 class Elasticsearch_VectorStores implements INode {
     label: string
@@ -334,4 +334,4 @@ const prepareClientArgs = (
     }
 }
 
-module.exports = { nodeClass: Elasticsearch_VectorStores }
+export const nodeClass = Elasticsearch_VectorStores

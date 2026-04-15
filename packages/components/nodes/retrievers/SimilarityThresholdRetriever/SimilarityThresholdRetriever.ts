@@ -1,7 +1,7 @@
 import { VectorStore } from '@langchain/core/vectorstores'
 import { ScoreThresholdRetriever } from 'langchain/retrievers/score_threshold'
-import { INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface'
-import { handleEscapeCharacters } from '../../../src'
+import { INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
+import { handleEscapeCharacters } from '../../../src.js'
 
 class SimilarityThresholdRetriever_Retrievers implements INode {
     label: string
@@ -118,4 +118,4 @@ class SimilarityThresholdRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: SimilarityThresholdRetriever_Retrievers }
+export const nodeClass = SimilarityThresholdRetriever_Retrievers

@@ -1,5 +1,5 @@
-import { FollowUpPromptConfig, FollowUpPromptProvider, ICommonObject } from './Interface'
-import { getCredentialData } from './utils'
+import { FollowUpPromptConfig, FollowUpPromptProvider, ICommonObject } from './Interface.js'
+import { getCredentialData } from './utils.js'
 import { ChatAnthropic } from '@langchain/anthropic'
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { ChatMistralAI } from '@langchain/mistralai'

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class UpstashVectorApi implements INodeCredential {
     label: string
@@ -26,4 +26,4 @@ class UpstashVectorApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: UpstashVectorApi }
+export const credClass = UpstashVectorApi

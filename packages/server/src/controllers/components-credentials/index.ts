@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import componentsCredentialsService from '../../services/components-credentials'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import componentsCredentialsService from '../../services/components-credentials.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 // Get all component credentials

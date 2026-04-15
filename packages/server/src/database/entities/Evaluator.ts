@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
-import { IEvaluator } from '../../Interface'
+import { IEvaluator } from '../../Interface.js'
 
 //1714808591644
 

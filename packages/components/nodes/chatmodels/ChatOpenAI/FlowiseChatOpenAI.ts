@@ -1,5 +1,5 @@
 import { ChatOpenAI as LangchainChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
-import { IMultiModalOption, IVisionChatModal } from '../../../src'
+import { IMultiModalOption, IVisionChatModal } from '../../../src.js'
 
 export class ChatOpenAI extends LangchainChatOpenAI implements IVisionChatModal {
     configuredModel: string

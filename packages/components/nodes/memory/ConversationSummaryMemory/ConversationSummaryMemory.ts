@@ -7,13 +7,13 @@ import {
     INodeParams,
     MemoryMethods,
     ICommonObject
-} from '../../../src/Interface'
-import { getBaseClasses, mapChatMessageToBaseMessage } from '../../../src/utils'
+} from '../../../src/Interface.js'
+import { getBaseClasses, mapChatMessageToBaseMessage } from '../../../src/utils.js'
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { ConversationSummaryMemory, ConversationSummaryMemoryInput } from 'langchain/memory'
 import { DataSource } from 'typeorm'
-import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/FlowiseChatAnthropic'
+import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/FlowiseChatAnthropic.js'
 
 class ConversationSummaryMemory_Memory implements INode {
     label: string
@@ -173,4 +173,4 @@ class ConversationSummaryMemoryExtended extends FlowiseSummaryMemory implements 
     }
 }
 
-module.exports = { nodeClass: ConversationSummaryMemory_Memory }
+export const nodeClass = ConversationSummaryMemory_Memory

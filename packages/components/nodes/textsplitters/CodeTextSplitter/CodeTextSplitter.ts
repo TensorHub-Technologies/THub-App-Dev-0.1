@@ -1,5 +1,5 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 import {
     RecursiveCharacterTextSplitter,
     RecursiveCharacterTextSplitterParams,
@@ -130,4 +130,4 @@ class CodeTextSplitter_TextSplitters implements INode {
         return splitter
     }
 }
-module.exports = { nodeClass: CodeTextSplitter_TextSplitters }
+export const nodeClass = CodeTextSplitter_TextSplitters

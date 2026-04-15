@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class LunaryApi implements INodeCredential {
     label: string
@@ -30,4 +30,4 @@ class LunaryApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: LunaryApi }
+export const credClass = LunaryApi

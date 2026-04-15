@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import openAIAssistantVectorStoreService from '../../services/openai-assistants-vector-store'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import openAIAssistantVectorStoreService from '../../services/openai-assistants-vector-store.js'
 
 const getAssistantVectorStore = async (req: Request, res: Response, next: NextFunction) => {
     try {

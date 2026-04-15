@@ -11,16 +11,16 @@ import {
     ITeamState,
     IVisionChatModal,
     MessageContentImageUrl
-} from '../../../src/Interface'
-import { Moderation } from '../../moderation/Moderation'
+} from '../../../src/Interface.js'
+import { Moderation } from '../../moderation/Moderation.js'
 import { z } from 'zod'
 import { StructuredTool } from '@langchain/core/tools'
-import { AgentExecutor, JsonOutputToolsParser, ToolCallingAgentOutputParser } from '../../../src/agents'
+import { AgentExecutor, JsonOutputToolsParser, ToolCallingAgentOutputParser } from '../../../src/agents.js'
 import { ChatMistralAI } from '@langchain/mistralai'
-import { ChatOpenAI } from '../../chatmodels/ChatOpenAI/FlowiseChatOpenAI'
-import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/FlowiseChatAnthropic'
-import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
-import { ChatGoogleGenerativeAI } from '../../chatmodels/ChatGoogleGenerativeAI/FlowiseChatGoogleGenerativeAI'
+import { ChatOpenAI } from '../../chatmodels/ChatOpenAI/FlowiseChatOpenAI.js'
+import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/FlowiseChatAnthropic.js'
+import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils.js'
+import { ChatGoogleGenerativeAI } from '../../chatmodels/ChatGoogleGenerativeAI/FlowiseChatGoogleGenerativeAI.js'
 
 const sysPrompt = `You are a supervisor tasked with managing a conversation between the following workers: {team_members}.
 Given the following user request, respond with the worker to act next.
@@ -748,4 +748,4 @@ class RouteTool extends StructuredTool {
     }
 }
 
-module.exports = { nodeClass: Supervisor_MultiAgents }
+export const nodeClass = Supervisor_MultiAgents

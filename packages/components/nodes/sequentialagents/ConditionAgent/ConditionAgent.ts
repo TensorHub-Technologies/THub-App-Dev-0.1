@@ -1,3 +1,4 @@
+import path from 'path'
 import { uniq } from 'lodash'
 import { DataSource } from 'typeorm'
 import { z } from 'zod'
@@ -15,9 +16,12 @@ import {
     INodeParams,
     ISeqAgentNode,
     ISeqAgentsState
-} from '../../../src/Interface'
-import { getInputVariables, getVars, handleEscapeCharacters, prepareSandboxVars, transformBracesWithColon } from '../../../src/utils'
+} from '../../../src/Interface.js'
+import { getInputVariables, getVars, handleEscapeCharacters, prepareSandboxVars, transformBracesWithColon } from '../../../src/utils.js'
 import {
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
     checkCondition,
     convertStructuredSchemaToZod,
     customGet,
@@ -25,7 +29,7 @@ import {
     transformObjectPropertyToFunction,
     filterConversationHistory,
     restructureMessages
-} from '../commonUtils'
+} from '../commonUtils.js'
 
 interface IConditionGridItem {
     variable: string
@@ -586,4 +590,4 @@ const runCondition = async (
     }
 }
 
-module.exports = { nodeClass: ConditionAgent_SeqAgents }
+export const nodeClass = ConditionAgent_SeqAgents

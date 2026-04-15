@@ -1,6 +1,6 @@
 import { DataSourceOptions } from 'typeorm'
-import { VectorStoreDriver } from './Base'
-import { FLOWISE_CHATID, ICommonObject } from '../../../../src'
+import { VectorStoreDriver } from './Base.js'
+import { FLOWISE_CHATID, ICommonObject } from '../../../../src.js'
 import { TypeORMVectorStore, TypeORMVectorStoreArgs, TypeORMVectorStoreDocument } from '@langchain/community/vectorstores/typeorm'
 import { VectorStore } from '@langchain/core/vectorstores'
 import { Document } from '@langchain/core/documents'

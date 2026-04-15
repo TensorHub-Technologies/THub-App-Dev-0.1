@@ -1,13 +1,13 @@
-import { AnalyticHandler } from '../../../src/handler'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { AnalyticHandler } from '../../../src/handler.js'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { AIMessageChunk, BaseMessageLike } from '@langchain/core/messages'
 import {
     getPastChatHistoryImageMessages,
     getUniqueImageMessages,
     processMessagesWithImages,
     replaceBase64ImagesWithFileReferences
-} from '../utils'
-import { CONDITION_AGENT_SYSTEM_PROMPT, DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt'
+} from '../utils.js'
+import { CONDITION_AGENT_SYSTEM_PROMPT, DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt.js'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 
 class ConditionAgent_Agentflow implements INode {
@@ -611,4 +611,4 @@ class ConditionAgent_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: ConditionAgent_Agentflow }
+export const nodeClass = ConditionAgent_Agentflow

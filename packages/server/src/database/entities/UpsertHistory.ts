@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Entity, Column, PrimaryGeneratedColumn, Index, CreateDateColumn } from 'typeorm'
-import { IUpsertHistory } from '../../Interface'
+import { IUpsertHistory } from '../../Interface.js'
 
 @Entity()
 export class UpsertHistory implements IUpsertHistory {

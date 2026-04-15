@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class E2BApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class E2BApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: E2BApi }
+export const credClass = E2BApi

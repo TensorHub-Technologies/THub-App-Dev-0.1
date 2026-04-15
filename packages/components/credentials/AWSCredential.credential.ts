@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class AWSApi implements INodeCredential {
     label: string
@@ -44,4 +44,4 @@ class AWSApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: AWSApi }
+export const credClass = AWSApi

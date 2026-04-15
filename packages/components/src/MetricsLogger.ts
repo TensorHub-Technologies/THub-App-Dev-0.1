@@ -1,6 +1,6 @@
 import { BaseTracer, Run } from '@langchain/core/tracers/base'
 import { Logger } from 'winston'
-import { AgentRun, elapsed, tryJsonStringify } from './handler'
+import { AgentRun, elapsed, tryJsonStringify } from './handler.js'
 
 export class MetricsLogger extends BaseTracer {
     name = 'console_callback_handler' as const

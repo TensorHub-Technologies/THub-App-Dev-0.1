@@ -1,6 +1,6 @@
 import { omit } from 'lodash'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src'
-import { ICommonObject, IDocument, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src.js'
+import { ICommonObject, IDocument, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
 import { FigmaFileLoader, FigmaLoaderParams } from '@langchain/community/document_loaders/web/figma'
 import { TextSplitter } from 'langchain/text_splitter'
 
@@ -174,4 +174,4 @@ class Figma_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Figma_DocumentLoaders }
+export const nodeClass = Figma_DocumentLoaders

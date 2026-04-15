@@ -9,9 +9,9 @@ import {
     INodeOutputsValue,
     INodeParams,
     IServerSideEventStreamer
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import { AIMessageChunk, BaseMessageLike } from '@langchain/core/messages'
-import { DEFAULT_HUMAN_INPUT_DESCRIPTION, DEFAULT_HUMAN_INPUT_DESCRIPTION_HTML } from '../prompt'
+import { DEFAULT_HUMAN_INPUT_DESCRIPTION, DEFAULT_HUMAN_INPUT_DESCRIPTION_HTML } from '../prompt.js'
 
 class HumanInput_Agentflow implements INode {
     label: string
@@ -268,4 +268,4 @@ class HumanInput_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: HumanInput_Agentflow }
+export const nodeClass = HumanInput_Agentflow

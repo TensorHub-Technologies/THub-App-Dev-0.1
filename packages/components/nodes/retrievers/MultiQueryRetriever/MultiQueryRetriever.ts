@@ -1,5 +1,5 @@
 import { PromptTemplate } from '@langchain/core/prompts'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { MultiQueryRetriever } from 'langchain/retrievers/multi_query'
 
 const defaultPrompt = `You are an AI language model assistant. Your task is
@@ -80,4 +80,4 @@ class MultiQueryRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: MultiQueryRetriever_Retrievers }
+export const nodeClass = MultiQueryRetriever_Retrievers

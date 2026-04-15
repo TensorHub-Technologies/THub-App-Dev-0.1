@@ -1,8 +1,8 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { GoogleGenerativeAIEmbeddings, GoogleGenerativeAIEmbeddingsParams } from '@langchain/google-genai'
 import { TaskType } from '@google/generative-ai'
-import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
+import { MODEL_TYPE, getModels } from '../../../src/modelLoader.js'
 
 class GoogleGenerativeAIEmbeddingsWithStripNewLines extends GoogleGenerativeAIEmbeddings {
     stripNewLines: boolean
@@ -133,4 +133,4 @@ class GoogleGenerativeAIEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleGenerativeAIEmbedding_Embeddings }
+export const nodeClass = GoogleGenerativeAIEmbedding_Embeddings

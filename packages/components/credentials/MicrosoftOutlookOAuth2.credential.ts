@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 const scopes = [
     'openid',
@@ -62,4 +62,4 @@ class MsoftOutlookOAuth2 implements INodeCredential {
     }
 }
 
-module.exports = { credClass: MsoftOutlookOAuth2 }
+export const credClass = MsoftOutlookOAuth2

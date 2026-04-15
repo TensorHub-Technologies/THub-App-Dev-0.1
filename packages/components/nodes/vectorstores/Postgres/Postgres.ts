@@ -1,14 +1,14 @@
 import { flatten } from 'lodash'
 import { Document } from '@langchain/core/documents'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { FLOWISE_CHATID, getBaseClasses } from '../../../src/utils'
-import { index } from '../../../src/indexing'
-import { howToUseFileUpload } from '../VectorStoreUtils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { FLOWISE_CHATID, getBaseClasses } from '../../../src/utils.js'
+import { index } from '../../../src/indexing.js'
+import { howToUseFileUpload } from '../VectorStoreUtils.js'
 import { VectorStore } from '@langchain/core/vectorstores'
-import { VectorStoreDriver } from './driver/Base'
-import { TypeORMDriver } from './driver/TypeORM'
-// import { PGVectorDriver } from './driver/PGVector'
-import { getContentColumnName, getDatabase, getHost, getPort, getTableName } from './utils'
+import { VectorStoreDriver } from './driver/Base.js'
+import { TypeORMDriver } from './driver/TypeORM.js'
+// import { PGVectorDriver } from './driver/PGVector.js'
+import { getContentColumnName, getDatabase, getHost, getPort, getTableName } from './utils.js'
 
 const serverCredentialsExists = !!process.env.POSTGRES_VECTORSTORE_USER && !!process.env.POSTGRES_VECTORSTORE_PASSWORD
 
@@ -344,4 +344,4 @@ class Postgres_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Postgres_VectorStores }
+export const nodeClass = Postgres_VectorStores

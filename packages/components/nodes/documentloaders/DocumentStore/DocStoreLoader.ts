@@ -1,7 +1,7 @@
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { DataSource } from 'typeorm'
 import { Document } from '@langchain/core/documents'
-import { handleEscapeCharacters } from '../../../src'
+import { handleEscapeCharacters } from '../../../src.js'
 
 class DocStore_DocumentLoaders implements INode {
     label: string
@@ -102,4 +102,4 @@ class DocStore_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: DocStore_DocumentLoaders }
+export const nodeClass = DocStore_DocumentLoaders

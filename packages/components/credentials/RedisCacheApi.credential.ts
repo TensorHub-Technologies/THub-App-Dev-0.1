@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class RedisCacheApi implements INodeCredential {
     label: string
@@ -45,4 +45,4 @@ class RedisCacheApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: RedisCacheApi }
+export const credClass = RedisCacheApi

@@ -2,10 +2,10 @@ import { flatten } from 'lodash'
 import { AmazonKendraRetriever } from '@langchain/aws'
 import { KendraClient, BatchPutDocumentCommand, BatchDeleteDocumentCommand } from '@aws-sdk/client-kendra'
 import { Document } from '@langchain/core/documents'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { FLOWISE_CHATID, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { howToUseFileUpload } from '../VectorStoreUtils'
-import { MODEL_TYPE, getRegions } from '../../../src/modelLoader'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { FLOWISE_CHATID, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { howToUseFileUpload } from '../VectorStoreUtils.js'
+import { MODEL_TYPE, getRegions } from '../../../src/modelLoader.js'
 
 class Kendra_VectorStores implements INode {
     label: string
@@ -290,4 +290,4 @@ class Kendra_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Kendra_VectorStores }
+export const nodeClass = Kendra_VectorStores

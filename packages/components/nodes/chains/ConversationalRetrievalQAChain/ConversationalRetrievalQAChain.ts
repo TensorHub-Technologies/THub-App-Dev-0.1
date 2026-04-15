@@ -6,14 +6,14 @@ import { PromptTemplate, ChatPromptTemplate, MessagesPlaceholder } from '@langch
 import { Runnable, RunnableSequence, RunnableMap, RunnableBranch, RunnableLambda } from '@langchain/core/runnables'
 import { BaseMessage, HumanMessage, AIMessage } from '@langchain/core/messages'
 import { ConsoleCallbackHandler as LCConsoleCallbackHandler } from '@langchain/core/tracers/console'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import type { Document } from '@langchain/core/documents'
 import { BufferMemoryInput } from 'langchain/memory'
 import { ConversationalRetrievalQAChain } from 'langchain/chains'
-import { getBaseClasses, mapChatMessageToBaseMessage } from '../../../src/utils'
-import { ConsoleCallbackHandler, additionalCallbacks } from '../../../src/handler'
+import { getBaseClasses, mapChatMessageToBaseMessage } from '../../../src/utils.js'
+import { ConsoleCallbackHandler, additionalCallbacks } from '../../../src/handler.js'
 import {
     FlowiseMemory,
     ICommonObject,
@@ -24,8 +24,8 @@ import {
     IDatabaseEntity,
     MemoryMethods,
     IServerSideEventStreamer
-} from '../../../src/Interface'
-import { QA_TEMPLATE, REPHRASE_TEMPLATE, RESPONSE_TEMPLATE } from './prompts'
+} from '../../../src/Interface.js'
+import { QA_TEMPLATE, REPHRASE_TEMPLATE, RESPONSE_TEMPLATE } from './prompts.js'
 
 type RetrievalChainInput = {
     chat_history: string
@@ -467,4 +467,4 @@ class BufferMemory extends FlowiseMemory implements MemoryMethods {
     }
 }
 
-module.exports = { nodeClass: ConversationalRetrievalQAChain_Chains }
+export const nodeClass = ConversationalRetrievalQAChain_Chains

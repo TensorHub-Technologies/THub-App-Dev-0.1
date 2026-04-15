@@ -1,9 +1,9 @@
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { convertSchemaToZod, getBaseClasses, getVars } from '../../../src/utils'
-import { DynamicStructuredTool } from './core'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { convertSchemaToZod, getBaseClasses, getVars } from '../../../src/utils.js'
+import { DynamicStructuredTool } from './core.js'
 import { z } from 'zod'
 import { DataSource } from 'typeorm'
-import { SecureZodSchemaParser } from '../../../src/secureZodParser'
+import { SecureZodSchemaParser } from '../../../src/secureZodParser.js'
 
 class CustomTool_Tools implements INode {
     label: string
@@ -156,4 +156,4 @@ class CustomTool_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: CustomTool_Tools }
+export const nodeClass = CustomTool_Tools

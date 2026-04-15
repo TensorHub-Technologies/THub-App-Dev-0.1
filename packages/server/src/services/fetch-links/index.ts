@@ -1,7 +1,7 @@
 import { webCrawl, xmlScrape } from 'thub-components'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 const getAllLinks = async (requestUrl: string, relativeLinksMethod: string, queryLimit: string): Promise<any> => {
     try {

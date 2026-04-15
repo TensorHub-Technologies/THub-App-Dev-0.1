@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import documentStoreService from '../../services/documentstore'
-import { DocumentStore } from '../../database/entities/DocumentStore'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { DocumentStoreDTO } from '../../Interface'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { FLOWISE_COUNTER_STATUS, FLOWISE_METRIC_COUNTERS } from '../../Interface.Metrics'
-import { getPageAndLimitParams } from '../../utils/pagination'
+import documentStoreService from '../../services/documentstore.js'
+import { DocumentStore } from '../../database/entities/DocumentStore.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { DocumentStoreDTO } from '../../Interface.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { FLOWISE_COUNTER_STATUS, FLOWISE_METRIC_COUNTERS } from '../../Interface.Metrics.js'
+import { getPageAndLimitParams } from '../../utils/pagination.js'
 
 const createDocumentStore = async (req: Request, res: Response, next: NextFunction) => {
     try {

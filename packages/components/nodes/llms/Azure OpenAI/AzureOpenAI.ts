@@ -1,9 +1,9 @@
 import { AzureOpenAIInput, AzureOpenAI, OpenAIInput } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 const serverCredentialsExists =
     !!process.env.AZURE_OPENAI_API_KEY &&
@@ -170,4 +170,4 @@ class AzureOpenAI_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: AzureOpenAI_LLMs }
+export const nodeClass = AzureOpenAI_LLMs

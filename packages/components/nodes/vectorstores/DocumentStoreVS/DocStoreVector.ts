@@ -1,4 +1,4 @@
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { DataSource } from 'typeorm'
 
 class DocStore_VectorStores implements INode {
@@ -170,4 +170,4 @@ const _createVectorStoreObject = async (componentNodes: ICommonObject, data: ICo
     return vStoreNodeInstance
 }
 
-module.exports = { nodeClass: DocStore_VectorStores }
+export const nodeClass = DocStore_VectorStores

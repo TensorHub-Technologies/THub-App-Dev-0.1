@@ -3,10 +3,10 @@ import weaviate, { WeaviateClient, ApiKey } from 'weaviate-ts-client'
 import { WeaviateLibArgs, WeaviateStore } from '@langchain/weaviate'
 import { Document } from '@langchain/core/documents'
 import { Embeddings } from '@langchain/core/embeddings'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam, normalizeKeysRecursively } from '../../../src/utils'
-import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
-import { index } from '../../../src/indexing'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam, normalizeKeysRecursively } from '../../../src/utils.js'
+import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils.js'
+import { index } from '../../../src/indexing.js'
 import { VectorStore } from '@langchain/core/vectorstores'
 
 class Weaviate_VectorStores implements INode {
@@ -302,4 +302,4 @@ class Weaviate_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Weaviate_VectorStores }
+export const nodeClass = Weaviate_VectorStores

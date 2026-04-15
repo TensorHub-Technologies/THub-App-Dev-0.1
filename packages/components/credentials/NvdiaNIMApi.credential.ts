@@ -1,4 +1,4 @@
-import { INodeCredential, INodeParams } from '../src/Interface'
+import { INodeCredential, INodeParams } from '../src/Interface.js'
 
 class NvidiaNIMApi implements INodeCredential {
     label: string
@@ -21,4 +21,4 @@ class NvidiaNIMApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: NvidiaNIMApi }
+export const credClass = NvidiaNIMApi

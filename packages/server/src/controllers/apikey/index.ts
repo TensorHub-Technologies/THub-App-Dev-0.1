@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import apikeyService from '../../services/apikey'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import apikeyService from '../../services/apikey.js'
 
 // Get api keys
 const getAllApiKeys = async (req: Request, res: Response, next: NextFunction) => {

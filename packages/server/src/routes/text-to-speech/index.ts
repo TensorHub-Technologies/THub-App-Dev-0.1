@@ -1,5 +1,5 @@
 import express from 'express'
-import textToSpeechController from '../../controllers/text-to-speech'
+import textToSpeechController from '../../controllers/text-to-speech.js'
 
 const router = express.Router()
 

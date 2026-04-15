@@ -1,5 +1,5 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 import { CharacterTextSplitter, CharacterTextSplitterParams } from 'langchain/text_splitter'
 
 class CharacterTextSplitter_TextSplitters implements INode {
@@ -67,4 +67,4 @@ class CharacterTextSplitter_TextSplitters implements INode {
     }
 }
 
-module.exports = { nodeClass: CharacterTextSplitter_TextSplitters }
+export const nodeClass = CharacterTextSplitter_TextSplitters

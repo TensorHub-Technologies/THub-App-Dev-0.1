@@ -4,10 +4,10 @@ import { createClient } from '@supabase/supabase-js'
 import { Document } from '@langchain/core/documents'
 import { Embeddings } from '@langchain/core/embeddings'
 import { SupabaseVectorStore, SupabaseLibArgs, SupabaseFilterRPCCall } from '@langchain/community/vectorstores/supabase'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
-import { index } from '../../../src/indexing'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils.js'
+import { index } from '../../../src/indexing.js'
 
 class Supabase_VectorStores implements INode {
     label: string
@@ -296,4 +296,4 @@ class SupabaseUpsertVectorStore extends SupabaseVectorStore {
     }
 }
 
-module.exports = { nodeClass: Supabase_VectorStores }
+export const nodeClass = Supabase_VectorStores

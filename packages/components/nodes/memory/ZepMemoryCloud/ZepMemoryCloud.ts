@@ -1,15 +1,15 @@
 import { ZepMemory, ZepMemoryInput } from '@getzep/zep-cloud/langchain'
 import { BaseMessage } from '@langchain/core/messages'
 import { InputValues, MemoryVariables, OutputValues } from 'langchain/memory'
-import { ICommonObject } from '../../../src'
-import { IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
+import { ICommonObject } from '../../../src.js'
+import { IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface.js'
 import {
     convertBaseMessagetoIMessage,
     getBaseClasses,
     getCredentialData,
     getCredentialParam,
     mapChatMessageToBaseMessage
-} from '../../../src/utils'
+} from '../../../src/utils.js'
 
 class ZepMemoryCloud_Memory implements INode {
     label: string
@@ -189,4 +189,4 @@ class ZepMemoryExtended extends ZepMemory implements MemoryMethods {
     }
 }
 
-module.exports = { nodeClass: ZepMemoryCloud_Memory }
+export const nodeClass = ZepMemoryCloud_Memory

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class AnthropicApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class AnthropicApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: AnthropicApi }
+export const credClass = AnthropicApi

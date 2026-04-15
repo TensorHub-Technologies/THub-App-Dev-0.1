@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import executionsService from '../../services/executions'
-import { ExecutionState } from '../../Interface'
+import executionsService from '../../services/executions.js'
+import { ExecutionState } from '../../Interface.js'
 
 const getExecutionById = async (req: Request, res: Response, next: NextFunction) => {
     try {

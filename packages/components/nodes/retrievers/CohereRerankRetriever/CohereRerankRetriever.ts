@@ -1,9 +1,9 @@
 import { BaseRetriever } from '@langchain/core/retrievers'
 import { VectorStoreRetriever } from '@langchain/core/vectorstores'
 import { ContextualCompressionRetriever } from 'langchain/retrievers/contextual_compression'
-import { CohereRerank } from './CohereRerank'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { CohereRerank } from './CohereRerank.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src.js'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class CohereRerankRetriever_Retrievers implements INode {
     label: string
@@ -144,4 +144,4 @@ class CohereRerankRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: CohereRerankRetriever_Retrievers }
+export const nodeClass = CohereRerankRetriever_Retrievers

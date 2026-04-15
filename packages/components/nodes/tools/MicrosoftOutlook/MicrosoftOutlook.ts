@@ -1,6 +1,6 @@
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils'
-import { createOutlookTools } from './core'
-import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils.js'
+import { createOutlookTools } from './core.js'
+import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class MicrosoftOutlook_Tools implements INode {
     label: string
@@ -819,4 +819,4 @@ class MicrosoftOutlook_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: MicrosoftOutlook_Tools }
+export const nodeClass = MicrosoftOutlook_Tools

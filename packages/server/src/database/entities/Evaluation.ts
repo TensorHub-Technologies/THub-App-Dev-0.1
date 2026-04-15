@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
-import { IEvaluation } from '../../Interface'
+import { IEvaluation } from '../../Interface.js'
 
 @Entity()
 export class Evaluation implements IEvaluation {

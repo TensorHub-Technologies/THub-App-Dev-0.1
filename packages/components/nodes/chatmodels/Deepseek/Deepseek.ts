@@ -1,8 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class Deepseek_ChatModels implements INode {
     readonly baseURL: string = 'https://api.deepseek.com'
@@ -193,4 +193,4 @@ class Deepseek_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: Deepseek_ChatModels }
+export const nodeClass = Deepseek_ChatModels

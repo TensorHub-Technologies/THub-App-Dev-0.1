@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, Index, JoinColumn, OneToOne } from 'typeorm'
-import { IChatMessage, MessageType } from '../../Interface'
-import { Execution } from './Execution'
+import { IChatMessage, MessageType } from '../../Interface.js'
+import { Execution } from './Execution.js'
 
 @Entity()
 @Index('IDX_CHATMESSAGE_SESSION_CHATFLOW', ['sessionId', 'chatflowid', 'createdDate'])

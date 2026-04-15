@@ -1,9 +1,9 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { AxiosRequestConfig, Method, ResponseType } from 'axios'
 import FormData from 'form-data'
 import * as querystring from 'querystring'
-import { getCredentialData, getCredentialParam } from '../../../src/utils'
-import { secureAxiosRequest } from '../../../src/httpSecurity'
+import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { secureAxiosRequest } from '../../../src/httpSecurity.js'
 
 class HTTP_Agentflow implements INode {
     label: string
@@ -407,4 +407,4 @@ class HTTP_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: HTTP_Agentflow }
+export const nodeClass = HTTP_Agentflow

@@ -1,6 +1,6 @@
 import { ClientOptions, OpenAIEmbeddings, OpenAIEmbeddingsParams } from '@langchain/openai'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class LocalAIEmbedding_Embeddings implements INode {
     label: string
@@ -68,4 +68,4 @@ class LocalAIEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: LocalAIEmbedding_Embeddings }
+export const nodeClass = LocalAIEmbedding_Embeddings

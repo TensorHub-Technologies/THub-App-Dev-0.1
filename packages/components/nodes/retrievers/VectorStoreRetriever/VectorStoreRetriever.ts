@@ -1,5 +1,5 @@
 import { VectorStore } from '@langchain/core/vectorstores'
-import { INode, INodeData, INodeParams, VectorStoreRetriever, VectorStoreRetrieverInput } from '../../../src/Interface'
+import { INode, INodeData, INodeParams, VectorStoreRetriever, VectorStoreRetrieverInput } from '../../../src/Interface.js'
 
 class VectorStoreRetriever_Retrievers implements INode {
     label: string
@@ -60,4 +60,4 @@ class VectorStoreRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: VectorStoreRetriever_Retrievers }
+export const nodeClass = VectorStoreRetriever_Retrievers

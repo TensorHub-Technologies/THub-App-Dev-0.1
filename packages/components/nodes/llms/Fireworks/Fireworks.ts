@@ -1,4 +1,4 @@
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
 import { Fireworks } from '@langchain/community/llms/fireworks'
 import { BaseCache } from '@langchain/core/caches'
 
@@ -65,4 +65,4 @@ class Fireworks_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: Fireworks_LLMs }
+export const nodeClass = Fireworks_LLMs

@@ -1,9 +1,9 @@
 import { ChatOllamaInput } from '@langchain/ollama'
 import { BaseChatModelParams } from '@langchain/core/language_models/chat_models'
 import { BaseCache } from '@langchain/core/caches'
-import { IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { ChatOllama } from './FlowiseChatOllama'
+import { IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { ChatOllama } from './FlowiseChatOllama.js'
 
 class ChatOllama_ChatModels implements INode {
     label: string
@@ -268,4 +268,4 @@ class ChatOllama_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatOllama_ChatModels }
+export const nodeClass = ChatOllama_ChatModels

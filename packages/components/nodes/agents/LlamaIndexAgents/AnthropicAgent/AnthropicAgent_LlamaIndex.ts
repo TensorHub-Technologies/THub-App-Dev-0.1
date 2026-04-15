@@ -1,8 +1,8 @@
 import { flatten } from 'lodash'
 import { MessageContentTextDetail, ChatMessage, AnthropicAgent, Anthropic } from 'llamaindex'
-import { getBaseClasses } from '../../../../src/utils'
-import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, IUsedTool } from '../../../../src/Interface'
-import { EvaluationRunTracerLlama } from '../../../../evaluation/EvaluationRunTracerLlama'
+import { getBaseClasses } from '../../../../src/utils.js'
+import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, IUsedTool } from '../../../../src/Interface.js'
+import { EvaluationRunTracerLlama } from '../../../../evaluation/EvaluationRunTracerLlama.js'
 
 class AnthropicAgent_LlamaIndex_Agents implements INode {
     label: string
@@ -142,4 +142,4 @@ class AnthropicAgent_LlamaIndex_Agents implements INode {
     }
 }
 
-module.exports = { nodeClass: AnthropicAgent_LlamaIndex_Agents }
+export const nodeClass = AnthropicAgent_LlamaIndex_Agents

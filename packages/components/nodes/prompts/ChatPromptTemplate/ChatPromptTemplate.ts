@@ -1,8 +1,12 @@
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, transformBracesWithColon } from '../../../src/utils'
+import path from 'path'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, transformBracesWithColon } from '../../../src/utils.js'
 import { ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate } from '@langchain/core/prompts'
-import { getVM } from '../../sequentialagents/commonUtils'
+import { getVM } from '../../sequentialagents/commonUtils.js'
 import { DataSource } from 'typeorm'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 const defaultFunc = `const { AIMessage, HumanMessage, ToolMessage } = require('@langchain/core/messages');
 
 return [
@@ -149,4 +153,4 @@ class ChatPromptTemplate_Prompts implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatPromptTemplate_Prompts }
+export const nodeClass = ChatPromptTemplate_Prompts

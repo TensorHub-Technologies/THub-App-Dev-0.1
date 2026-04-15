@@ -10,11 +10,11 @@ import {
     isValidUUID,
     isPathTraversal
 } from 'thub-components'
-import { getRunningExpressApp } from './getRunningExpressApp'
-import { getErrorMessage } from '../errors/utils'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { getRunningExpressApp } from './getRunningExpressApp.js'
+import { getErrorMessage } from '../errors/utils.js'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
-import { ChatFlow } from '../database/entities/ChatFlow'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
 
 /**
  * Create attachment

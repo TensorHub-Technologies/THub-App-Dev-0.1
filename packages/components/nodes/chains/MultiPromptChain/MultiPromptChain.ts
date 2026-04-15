@@ -1,10 +1,10 @@
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { MultiPromptChain } from 'langchain/chains'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, PromptRetriever } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, PromptRetriever } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 class MultiPromptChain_Chains implements INode {
     label: string
@@ -111,4 +111,4 @@ class MultiPromptChain_Chains implements INode {
     }
 }
 
-module.exports = { nodeClass: MultiPromptChain_Chains }
+export const nodeClass = MultiPromptChain_Chains

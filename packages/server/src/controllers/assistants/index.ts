@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import assistantsService from '../../services/assistants'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import assistantsService from '../../services/assistants.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
-import { AssistantType } from '../../Interface'
+import { AssistantType } from '../../Interface.js'
 
 const createAssistant = async (req: Request, res: Response, next: NextFunction) => {
     try {

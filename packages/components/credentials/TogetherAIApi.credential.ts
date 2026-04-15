@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class TogetherAIApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class TogetherAIApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: TogetherAIApi }
+export const credClass = TogetherAIApi

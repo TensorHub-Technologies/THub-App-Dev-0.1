@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class TavilyApi implements INodeCredential {
     label: string
@@ -22,4 +22,4 @@ class TavilyApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: TavilyApi }
+export const credClass = TavilyApi

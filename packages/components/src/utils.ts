@@ -7,20 +7,23 @@ import { z } from 'zod'
 import { cloneDeep, omit, get } from 'lodash'
 import TurndownService from 'turndown'
 import { DataSource, Equal } from 'typeorm'
-import { ICommonObject, IDatabaseEntity, IFileUpload, IMessage, INodeData, IVariable, MessageContentImageUrl } from './Interface'
+import { ICommonObject, IDatabaseEntity, IFileUpload, IMessage, INodeData, IVariable, MessageContentImageUrl } from './Interface.js'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { AES, enc } from 'crypto-js'
 import { AIMessage, HumanMessage, BaseMessage } from '@langchain/core/messages'
 import { Document } from '@langchain/core/documents'
-import { getFileFromStorage } from './storageUtils'
+import { getFileFromStorage } from './storageUtils.js'
 import { GetSecretValueCommand, SecretsManagerClient, SecretsManagerClientConfig } from '@aws-sdk/client-secrets-manager'
-import { customGet } from '../nodes/sequentialagents/commonUtils'
+import { customGet } from '../nodes/sequentialagents/commonUtils.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { DocumentLoader } from 'langchain/document_loaders/base'
 import { NodeVM } from '@flowiseai/nodevm'
 import { Sandbox } from '@e2b/code-interpreter'
-import { secureFetch, checkDenyList, secureAxiosRequest } from './httpSecurity'
+import { secureFetch, checkDenyList, secureAxiosRequest } from './httpSecurity.js'
 import JSON5 from 'json5'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 export const numberOrExpressionRegex = '^(\\d+\\.?\\d*|{{.*}})$' //return true if string consists only numbers OR expression {{}}
 export const notEmptyRegex = '(.|\\s)*\\S(.|\\s)*' //return true if string is not empty or blank

@@ -1,5 +1,5 @@
 import { ChatOllama as LCChatOllama, ChatOllamaInput } from '@langchain/ollama'
-import { IMultiModalOption, IVisionChatModal } from '../../../src'
+import { IMultiModalOption, IVisionChatModal } from '../../../src.js'
 
 export class ChatOllama extends LCChatOllama implements IVisionChatModal {
     configuredModel: string

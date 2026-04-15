@@ -3,9 +3,9 @@ import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
 import { CouchbaseVectorStore, CouchbaseVectorStoreArgs } from '@langchain/community/vectorstores/couchbase'
 import { Cluster } from 'couchbase'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { resolveVectorStoreOrRetriever } from '../VectorStoreUtils.js'
 
 class Couchbase_VectorStores implements INode {
     label: string
@@ -226,4 +226,4 @@ class Couchbase_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Couchbase_VectorStores }
+export const nodeClass = Couchbase_VectorStores

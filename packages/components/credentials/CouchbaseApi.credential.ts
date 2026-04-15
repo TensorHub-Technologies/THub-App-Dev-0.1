@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class CouchbaseApi implements INodeCredential {
     label: string
@@ -31,4 +31,4 @@ class CouchbaseApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: CouchbaseApi }
+export const credClass = CouchbaseApi

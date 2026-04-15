@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import credentialsService from '../../services/credentials'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import credentialsService from '../../services/credentials.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const createCredential = async (req: Request, res: Response, next: NextFunction) => {

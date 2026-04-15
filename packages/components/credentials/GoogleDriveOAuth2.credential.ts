@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 const scopes = [
     'https://www.googleapis.com/auth/drive',
     'https://www.googleapis.com/auth/drive.appdata',
@@ -58,4 +58,4 @@ class GoogleDriveOAuth2 implements INodeCredential {
     }
 }
 
-module.exports = { credClass: GoogleDriveOAuth2 }
+export const credClass = GoogleDriveOAuth2

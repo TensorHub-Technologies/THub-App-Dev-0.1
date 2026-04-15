@@ -1,4 +1,4 @@
-import { IServerSideEventStreamer } from '../../src'
+import { IServerSideEventStreamer } from '../../src.js'
 
 export abstract class Moderation {
     abstract checkForViolations(input: string): Promise<string>

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import validationService from '../../services/validation'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import validationService from '../../services/validation.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const checkFlowValidation = async (req: Request, res: Response, next: NextFunction) => {

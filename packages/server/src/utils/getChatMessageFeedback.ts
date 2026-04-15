@@ -1,6 +1,6 @@
 import { Between } from 'typeorm'
-import { ChatMessageFeedback } from '../database/entities/ChatMessageFeedback'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
+import { ChatMessageFeedback } from '../database/entities/ChatMessageFeedback.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
 
 /**
  * Method that get chat messages.

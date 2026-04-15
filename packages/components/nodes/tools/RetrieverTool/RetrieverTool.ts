@@ -2,9 +2,9 @@ import { z } from 'zod'
 import { CallbackManager, CallbackManagerForToolRun, Callbacks, parseCallbackConfigArg } from '@langchain/core/callbacks/manager'
 import { BaseDynamicToolInput, DynamicTool, StructuredTool, ToolInputParsingException } from '@langchain/core/tools'
 import { BaseRetriever } from '@langchain/core/retrievers'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, resolveFlowObjValue } from '../../../src/utils'
-import { SOURCE_DOCUMENTS_PREFIX } from '../../../src/agents'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, resolveFlowObjValue } from '../../../src/utils.js'
+import { SOURCE_DOCUMENTS_PREFIX } from '../../../src/agents.js'
 import { RunnableConfig } from '@langchain/core/runnables'
 import { VectorStoreRetriever } from '@langchain/core/vectorstores'
 
@@ -219,4 +219,4 @@ class Retriever_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: Retriever_Tools }
+export const nodeClass = Retriever_Tools

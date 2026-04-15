@@ -1,5 +1,5 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 import { TokenTextSplitter, TokenTextSplitterParams } from 'langchain/text_splitter'
 import { TiktokenEncoding } from '@dqbd/tiktoken'
 
@@ -88,4 +88,4 @@ class TokenTextSplitter_TextSplitters implements INode {
     }
 }
 
-module.exports = { nodeClass: TokenTextSplitter_TextSplitters }
+export const nodeClass = TokenTextSplitter_TextSplitters

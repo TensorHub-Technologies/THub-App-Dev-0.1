@@ -1,4 +1,4 @@
-import { INode, INodeParams } from '../../../src/Interface'
+import { INode, INodeParams } from '../../../src/Interface.js'
 
 class Lunary_Analytic implements INode {
     label: string
@@ -30,4 +30,4 @@ class Lunary_Analytic implements INode {
     }
 }
 
-module.exports = { nodeClass: Lunary_Analytic }
+export const nodeClass = Lunary_Analytic

@@ -1,4 +1,4 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
 
 class Loop_Agentflow implements INode {
     label: string
@@ -91,4 +91,4 @@ class Loop_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: Loop_Agentflow }
+export const nodeClass = Loop_Agentflow

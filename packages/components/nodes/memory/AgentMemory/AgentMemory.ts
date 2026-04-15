@@ -1,11 +1,11 @@
 import path from 'path'
-import { getBaseClasses, getCredentialData, getCredentialParam, getUserHome } from '../../../src/utils'
-import { SaverOptions } from './interface'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { SqliteSaver } from './SQLiteAgentMemory/sqliteSaver'
+import { getBaseClasses, getCredentialData, getCredentialParam, getUserHome } from '../../../src/utils.js'
+import { SaverOptions } from './interface.js'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { SqliteSaver } from './SQLiteAgentMemory/sqliteSaver.js'
 import { DataSource } from 'typeorm'
-import { PostgresSaver } from './PostgresAgentMemory/pgSaver'
-import { MySQLSaver } from './MySQLAgentMemory/mysqlSaver'
+import { PostgresSaver } from './PostgresAgentMemory/pgSaver.js'
+import { MySQLSaver } from './MySQLAgentMemory/mysqlSaver.js'
 
 class AgentMemory_Memory implements INode {
     label: string
@@ -194,4 +194,4 @@ class AgentMemory_Memory implements INode {
     }
 }
 
-module.exports = { nodeClass: AgentMemory_Memory }
+export const nodeClass = AgentMemory_Memory

@@ -1,5 +1,5 @@
 import { TextSplitter } from '@langchain/textsplitters'
-import { JsonArray, JsonObject, RecursiveJsonTextSplitterParams, JsonValue } from './types'
+import { JsonArray, JsonObject, RecursiveJsonTextSplitterParams, JsonValue } from './types.js'
 
 class RecursiveJsonTextSplitter extends TextSplitter {
     private convertLists: boolean

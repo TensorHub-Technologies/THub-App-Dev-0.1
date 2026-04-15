@@ -8,8 +8,8 @@ import {
     getCredentialParam,
     getVersion,
     mapChatMessageToBaseMessage
-} from '../../../src/utils'
-import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
+} from '../../../src/utils.js'
+import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface.js'
 
 // TODO: Add ability to specify env variable and use singleton pattern (i.e initialize MongoDB on server and pass to component)
 
@@ -197,4 +197,4 @@ class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
     }
 }
 
-module.exports = { nodeClass: MongoDB_Memory }
+export const nodeClass = MongoDB_Memory

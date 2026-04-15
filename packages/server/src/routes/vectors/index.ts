@@ -1,6 +1,6 @@
 import express from 'express'
-import vectorsController from '../../controllers/vectors'
-import { getMulterStorage } from '../../utils'
+import vectorsController from '../../controllers/vectors.js'
+import { getMulterStorage } from '../../utils.js'
 
 const router = express.Router()
 

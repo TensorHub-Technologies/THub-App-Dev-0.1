@@ -2,9 +2,9 @@ import { flatten } from 'lodash'
 import { ZepClient } from '@getzep/zep-cloud'
 import { IZepConfig, ZepVectorStore } from '@getzep/zep-cloud/langchain'
 import { Document } from 'langchain/document'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils.js'
 import { FakeEmbeddings } from 'langchain/embeddings/fake'
 import { Embeddings } from '@langchain/core/embeddings'
 
@@ -157,4 +157,4 @@ class ZepExistingVS extends ZepVectorStore {
     }
 }
 
-module.exports = { nodeClass: Zep_CloudVectorStores }
+export const nodeClass = Zep_CloudVectorStores

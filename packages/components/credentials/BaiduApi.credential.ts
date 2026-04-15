@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class BaiduQianfanApi implements INodeCredential {
     label: string
@@ -25,4 +25,4 @@ class BaiduQianfanApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: BaiduQianfanApi }
+export const credClass = BaiduQianfanApi

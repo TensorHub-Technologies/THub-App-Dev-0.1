@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { StructuredTool } from '@langchain/core/tools'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 import { get } from 'lodash'
 
 /**
@@ -122,4 +122,4 @@ class JSONPathExtractor_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: JSONPathExtractor_Tools }
+export const nodeClass = JSONPathExtractor_Tools

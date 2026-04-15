@@ -1,5 +1,5 @@
 import express from 'express'
-import nodeConfigsController from '../../controllers/node-configs'
+import nodeConfigsController from '../../controllers/node-configs.js'
 const router = express.Router()
 
 // CREATE

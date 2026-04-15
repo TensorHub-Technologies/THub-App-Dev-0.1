@@ -1,7 +1,10 @@
 import axios from 'axios'
 import * as fs from 'fs'
 import * as path from 'path'
-import { INodeOptionsValue } from './Interface'
+import { INodeOptionsValue } from './Interface.js'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 export enum MODEL_TYPE {
     CHAT = 'chat',

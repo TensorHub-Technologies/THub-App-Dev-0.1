@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { INode } from '../../../src/Interface'
-import { DynamicStructuredTool } from '../CustomTool/core'
+import { INode } from '../../../src/Interface.js'
+import { DynamicStructuredTool } from '../CustomTool/core.js'
 
 const code = `
 const now = new Date();
@@ -71,4 +71,4 @@ class CurrentDateTime_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: CurrentDateTime_Tools }
+export const nodeClass = CurrentDateTime_Tools

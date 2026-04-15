@@ -1,7 +1,7 @@
 import { WatsonxEmbeddings, WatsonxInputEmbeddings } from '@langchain/community/embeddings/ibm'
 import { WatsonxAuth } from '@langchain/community/dist/types/ibm'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class IBMWatsonx_Embeddings implements INode {
     label: string
@@ -104,4 +104,4 @@ class IBMWatsonx_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: IBMWatsonx_Embeddings }
+export const nodeClass = IBMWatsonx_Embeddings

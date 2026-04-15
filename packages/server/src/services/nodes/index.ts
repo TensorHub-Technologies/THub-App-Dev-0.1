@@ -1,14 +1,14 @@
 import { cloneDeep, omit } from 'lodash'
 import { StatusCodes } from 'http-status-codes'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { INodeData, MODE } from '../../Interface'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { INodeData, MODE } from '../../Interface.js'
 import { INodeOptionsValue } from 'thub-components'
-import { databaseEntities } from '../../utils'
-import logger from '../../utils/logger'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
-import { OMIT_QUEUE_JOB_DATA } from '../../utils/constants'
-import { executeCustomNodeFunction } from '../../utils/executeCustomNodeFunction'
+import { databaseEntities } from '../../utils.js'
+import logger from '../../utils/logger.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { OMIT_QUEUE_JOB_DATA } from '../../utils/constants.js'
+import { executeCustomNodeFunction } from '../../utils/executeCustomNodeFunction.js'
 
 // Get all component nodes
 const getAllNodes = async () => {

@@ -1,6 +1,6 @@
 import { SearchApi } from '@langchain/community/tools/searchapi'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class SearchAPI_Tools implements INode {
     label: string
@@ -39,4 +39,4 @@ class SearchAPI_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: SearchAPI_Tools }
+export const nodeClass = SearchAPI_Tools

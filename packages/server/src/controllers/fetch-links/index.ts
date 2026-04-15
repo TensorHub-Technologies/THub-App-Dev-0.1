@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import fetchLinksService from '../../services/fetch-links'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import fetchLinksService from '../../services/fetch-links.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const getAllLinks = async (req: Request, res: Response, next: NextFunction) => {

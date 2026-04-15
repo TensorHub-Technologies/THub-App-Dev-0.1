@@ -1,11 +1,11 @@
 import { omit } from 'lodash'
 import { StatusCodes } from 'http-status-codes'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { Credential } from '../../database/entities/Credential'
-import { transformToCredentialEntity, decryptCredentialData } from '../../utils'
-import { ICredentialReturnResponse } from '../../Interface'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { Credential } from '../../database/entities/Credential.js'
+import { transformToCredentialEntity, decryptCredentialData } from '../../utils.js'
+import { ICredentialReturnResponse } from '../../Interface.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 const createCredential = async (requestBody: any) => {
     try {

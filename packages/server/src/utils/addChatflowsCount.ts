@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes'
-import { ChatFlow } from '../database/entities/ChatFlow'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
-import { getErrorMessage } from '../errors/utils'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
+import { getErrorMessage } from '../errors/utils.js'
 
 export const addChatflowsCount = async (keys: any) => {
     try {

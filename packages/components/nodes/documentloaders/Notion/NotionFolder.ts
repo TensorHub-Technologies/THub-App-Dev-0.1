@@ -1,8 +1,8 @@
 import { omit } from 'lodash'
-import { IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { NotionLoader } from '@langchain/community/document_loaders/fs/notion'
-import { handleEscapeCharacters } from '../../../src/utils'
+import { handleEscapeCharacters } from '../../../src/utils.js'
 
 class NotionFolder_DocumentLoaders implements INode {
     label: string
@@ -141,4 +141,4 @@ class NotionFolder_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: NotionFolder_DocumentLoaders }
+export const nodeClass = NotionFolder_DocumentLoaders

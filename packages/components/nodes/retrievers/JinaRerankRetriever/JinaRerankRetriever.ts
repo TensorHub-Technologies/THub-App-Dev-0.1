@@ -1,8 +1,8 @@
 import { BaseRetriever } from '@langchain/core/retrievers'
 import { ContextualCompressionRetriever } from 'langchain/retrievers/contextual_compression'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { JinaRerank } from './JinaRerank'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src.js'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { JinaRerank } from './JinaRerank.js'
 
 class JinaRerankRetriever_Retrievers implements INode {
     label: string
@@ -126,4 +126,4 @@ class JinaRerankRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: JinaRerankRetriever_Retrievers }
+export const nodeClass = JinaRerankRetriever_Retrievers

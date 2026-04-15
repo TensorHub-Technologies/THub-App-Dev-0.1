@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class GoogleGenerativeAICredential implements INodeCredential {
     label: string
@@ -23,4 +23,4 @@ class GoogleGenerativeAICredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: GoogleGenerativeAICredential }
+export const credClass = GoogleGenerativeAICredential

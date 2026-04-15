@@ -2,9 +2,9 @@ import { omit } from 'lodash'
 import { TextSplitter } from 'langchain/text_splitter'
 import { Document, DocumentInterface } from '@langchain/core/documents'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
-import { INode, INodeData, INodeParams, ICommonObject, INodeOutputsValue } from '../../../src/Interface'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils'
-import SpiderApp from './SpiderApp'
+import { INode, INodeData, INodeParams, ICommonObject, INodeOutputsValue } from '../../../src/Interface.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils.js'
+import SpiderApp from './SpiderApp.js'
 
 interface SpiderLoaderParameters {
     url: string
@@ -272,4 +272,4 @@ class Spider_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Spider_DocumentLoaders }
+export const nodeClass = Spider_DocumentLoaders

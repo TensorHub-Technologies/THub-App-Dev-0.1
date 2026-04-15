@@ -1,4 +1,4 @@
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 import { Request } from 'express'
 

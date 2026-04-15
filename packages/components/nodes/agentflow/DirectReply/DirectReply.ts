@@ -1,4 +1,4 @@
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
 
 class DirectReply_Agentflow implements INode {
     label: string
@@ -64,4 +64,4 @@ class DirectReply_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: DirectReply_Agentflow }
+export const nodeClass = DirectReply_Agentflow

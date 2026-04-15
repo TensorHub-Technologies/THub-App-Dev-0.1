@@ -7,8 +7,8 @@ import { AgentStep } from '@langchain/core/agents'
 import { renderTemplate, MessagesPlaceholder, HumanMessagePromptTemplate, PromptTemplate } from '@langchain/core/prompts'
 import { RunnableSequence } from '@langchain/core/runnables'
 import { ChatConversationalAgent } from 'langchain/agents'
-import { getBaseClasses, transformBracesWithColon } from '../../../src/utils'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
+import { getBaseClasses, transformBracesWithColon } from '../../../src/utils.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
 import {
     IVisionChatModal,
     FlowiseMemory,
@@ -18,11 +18,11 @@ import {
     INodeParams,
     IUsedTool,
     IServerSideEventStreamer
-} from '../../../src/Interface'
-import { AgentExecutor } from '../../../src/agents'
-import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+} from '../../../src/Interface.js'
+import { AgentExecutor } from '../../../src/agents.js'
+import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils.js'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 const DEFAULT_PREFIX = `Assistant is a large language model trained by OpenAI.
 
@@ -310,4 +310,4 @@ const constructScratchPad = async (steps: AgentStep[]): Promise<BaseMessage[]> =
     return thoughts
 }
 
-module.exports = { nodeClass: ConversationalAgent_Agents }
+export const nodeClass = ConversationalAgent_Agents

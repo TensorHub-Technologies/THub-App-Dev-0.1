@@ -1,7 +1,7 @@
 import { flatten } from 'lodash'
 import { ChatMessage, OpenAI, OpenAIAgent } from 'llamaindex'
-import { getBaseClasses } from '../../../../src/utils'
-import { EvaluationRunTracerLlama } from '../../../../evaluation/EvaluationRunTracerLlama'
+import { getBaseClasses } from '../../../../src/utils.js'
+import { EvaluationRunTracerLlama } from '../../../../evaluation/EvaluationRunTracerLlama.js'
 import {
     FlowiseMemory,
     ICommonObject,
@@ -11,7 +11,7 @@ import {
     INodeParams,
     IServerSideEventStreamer,
     IUsedTool
-} from '../../../../src/Interface'
+} from '../../../../src/Interface.js'
 
 class OpenAIFunctionAgent_LlamaIndex_Agents implements INode {
     label: string
@@ -182,4 +182,4 @@ class OpenAIFunctionAgent_LlamaIndex_Agents implements INode {
     }
 }
 
-module.exports = { nodeClass: OpenAIFunctionAgent_LlamaIndex_Agents }
+export const nodeClass = OpenAIFunctionAgent_LlamaIndex_Agents

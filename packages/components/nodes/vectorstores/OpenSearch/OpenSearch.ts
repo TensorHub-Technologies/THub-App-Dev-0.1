@@ -3,8 +3,8 @@ import { Client } from '@opensearch-project/opensearch'
 import { Document } from '@langchain/core/documents'
 import { OpenSearchVectorStore } from '@langchain/community/vectorstores/opensearch'
 import { Embeddings } from '@langchain/core/embeddings'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class OpenSearch_VectorStores implements INode {
     label: string
@@ -154,4 +154,4 @@ const getOpenSearchClient = (url: string, user?: string, password?: string): Cli
     })
 }
 
-module.exports = { nodeClass: OpenSearch_VectorStores }
+export const nodeClass = OpenSearch_VectorStores

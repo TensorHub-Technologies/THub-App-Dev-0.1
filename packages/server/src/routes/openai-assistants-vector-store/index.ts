@@ -1,6 +1,6 @@
 import express from 'express'
-import openaiAssistantsVectorStoreController from '../../controllers/openai-assistants-vector-store'
-import { getMulterStorage } from '../../utils'
+import openaiAssistantsVectorStoreController from '../../controllers/openai-assistants-vector-store.js'
+import { getMulterStorage } from '../../utils.js'
 
 const router = express.Router()
 

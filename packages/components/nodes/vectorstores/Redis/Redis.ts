@@ -3,9 +3,9 @@ import { createClient, SearchOptions } from 'redis'
 import { Embeddings } from '@langchain/core/embeddings'
 import { RedisVectorStore, RedisVectorStoreConfig } from '@langchain/community/vectorstores/redis'
 import { Document } from '@langchain/core/documents'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { escapeSpecialChars, unEscapeSpecialChars } from './utils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { escapeSpecialChars, unEscapeSpecialChars } from './utils.js'
 
 class Redis_VectorStores implements INode {
     label: string
@@ -361,4 +361,4 @@ const similaritySearchVectorWithScore = async (
     return result
 }
 
-module.exports = { nodeClass: Redis_VectorStores }
+export const nodeClass = Redis_VectorStores

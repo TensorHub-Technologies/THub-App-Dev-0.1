@@ -37,13 +37,13 @@ import {
     INodeOverrides,
     IVariableOverride,
     MODE
-} from '../Interface'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+} from '../Interface.js'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 import { databaseEntities } from '.'
-import { ChatFlow } from '../database/entities/ChatFlow'
-import { ChatMessage } from '../database/entities/ChatMessage'
-import { Variable } from '../database/entities/Variable'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
+import { ChatMessage } from '../database/entities/ChatMessage.js'
+import { Variable } from '../database/entities/Variable.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
 import {
     isFlowValidForStream,
     buildFlow,
@@ -58,15 +58,15 @@ import {
     getEndingNodes,
     constructGraphs,
     getAPIOverrideConfig
-} from '../utils'
-import { validateChatflowAPIKey } from './validateKey'
-import logger from './logger'
-import { utilAddChatMessage } from './addChatMesage'
-import { buildAgentGraph } from './buildAgentGraph'
-import { getErrorMessage } from '../errors/utils'
-import { FLOWISE_METRIC_COUNTERS, FLOWISE_COUNTER_STATUS, IMetricsProvider } from '../Interface.Metrics'
-import { OMIT_QUEUE_JOB_DATA } from './constants'
-import { executeAgentFlow } from './buildAgentflow'
+} from '../utils.js'
+import { validateChatflowAPIKey } from './validateKey.js'
+import logger from './logger.js'
+import { utilAddChatMessage } from './addChatMesage.js'
+import { buildAgentGraph } from './buildAgentGraph.js'
+import { getErrorMessage } from '../errors/utils.js'
+import { FLOWISE_METRIC_COUNTERS, FLOWISE_COUNTER_STATUS, IMetricsProvider } from '../Interface.Metrics.js'
+import { OMIT_QUEUE_JOB_DATA } from './constants.js'
+import { executeAgentFlow } from './buildAgentflow.js'
 
 const shouldAutoPlayTTS = (textToSpeechConfig: string | undefined | null): boolean => {
     if (!textToSpeechConfig) return false

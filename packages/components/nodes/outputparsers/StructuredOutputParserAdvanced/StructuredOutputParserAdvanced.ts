@@ -1,7 +1,7 @@
-import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src.js'
 import { BaseOutputParser } from '@langchain/core/output_parsers'
 import { StructuredOutputParser as LangchainStructuredOutputParser } from 'langchain/output_parsers'
-import { CATEGORY } from '../OutputParserHelpers'
+import { CATEGORY } from '../OutputParserHelpers.js'
 import { z } from 'zod'
 import { jsonrepair } from 'jsonrepair'
 
@@ -85,4 +85,4 @@ class AdvancedStructuredOutputParser implements INode {
     }
 }
 
-module.exports = { nodeClass: AdvancedStructuredOutputParser }
+export const nodeClass = AdvancedStructuredOutputParser

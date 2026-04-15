@@ -1,6 +1,6 @@
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils'
-import { createGoogleSheetsTools } from './core'
-import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils.js'
+import { createGoogleSheetsTools } from './core.js'
+import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class GoogleSheets_Tools implements INode {
     label: string
@@ -365,4 +365,4 @@ class GoogleSheets_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleSheets_Tools }
+export const nodeClass = GoogleSheets_Tools

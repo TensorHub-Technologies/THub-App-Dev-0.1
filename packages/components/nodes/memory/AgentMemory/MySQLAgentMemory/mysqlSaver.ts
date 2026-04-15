@@ -2,9 +2,9 @@ import { BaseCheckpointSaver, Checkpoint, CheckpointMetadata } from '@langchain/
 import { RunnableConfig } from '@langchain/core/runnables'
 import { BaseMessage } from '@langchain/core/messages'
 import { DataSource } from 'typeorm'
-import { CheckpointTuple, SaverOptions, SerializerProtocol } from '../interface'
-import { IMessage, MemoryMethods } from '../../../../src/Interface'
-import { mapChatMessageToBaseMessage } from '../../../../src/utils'
+import { CheckpointTuple, SaverOptions, SerializerProtocol } from '../interface.js'
+import { IMessage, MemoryMethods } from '../../../../src/Interface.js'
+import { mapChatMessageToBaseMessage } from '../../../../src/utils.js'
 
 export class MySQLSaver extends BaseCheckpointSaver implements MemoryMethods {
     protected isSetup: boolean

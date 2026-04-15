@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class UnstructuredApi implements INodeCredential {
     label: string
@@ -23,4 +23,4 @@ class UnstructuredApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: UnstructuredApi }
+export const credClass = UnstructuredApi

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class JiraApi implements INodeCredential {
     label: string
@@ -30,4 +30,4 @@ class JiraApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: JiraApi }
+export const credClass = JiraApi

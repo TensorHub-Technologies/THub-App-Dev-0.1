@@ -1,5 +1,5 @@
 import express from 'express'
-import nodesController from '../../controllers/nodes'
+import nodesController from '../../controllers/nodes.js'
 const router = express.Router()
 
 // CREATE

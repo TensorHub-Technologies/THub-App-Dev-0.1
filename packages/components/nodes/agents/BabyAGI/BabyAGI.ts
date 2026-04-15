@@ -1,9 +1,9 @@
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { VectorStore } from '@langchain/core/vectorstores'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { BabyAGI } from './core'
-import { checkInputs, Moderation } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { BabyAGI } from './core.js'
+import { checkInputs, Moderation } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 class BabyAGI_Agents implements INode {
     label: string
@@ -87,4 +87,4 @@ class BabyAGI_Agents implements INode {
     }
 }
 
-module.exports = { nodeClass: BabyAGI_Agents }
+export const nodeClass = BabyAGI_Agents

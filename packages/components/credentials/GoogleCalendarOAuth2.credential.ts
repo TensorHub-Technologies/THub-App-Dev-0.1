@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 const scopes = ['https://www.googleapis.com/auth/calendar', 'https://www.googleapis.com/auth/calendar.events']
 
 class GoogleCalendarOAuth2 implements INodeCredential {
@@ -54,4 +54,4 @@ class GoogleCalendarOAuth2 implements INodeCredential {
     }
 }
 
-module.exports = { credClass: GoogleCalendarOAuth2 }
+export const credClass = GoogleCalendarOAuth2

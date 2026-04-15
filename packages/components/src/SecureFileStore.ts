@@ -1,6 +1,6 @@
 import { Serializable } from '@langchain/core/load/serializable'
 import { NodeFileStore } from 'langchain/stores/file/node'
-import { isUnsafeFilePath, isWithinWorkspace } from './validator'
+import { isUnsafeFilePath, isWithinWorkspace } from './validator.js'
 import * as path from 'path'
 import * as fs from 'fs'
 

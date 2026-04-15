@@ -1,4 +1,4 @@
-import { CommonType, ICommonObject, ICondition, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { CommonType, ICommonObject, ICondition, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import removeMarkdown from 'remove-markdown'
 
 class Condition_Agentflow implements INode {
@@ -348,4 +348,4 @@ class Condition_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: Condition_Agentflow }
+export const nodeClass = Condition_Agentflow

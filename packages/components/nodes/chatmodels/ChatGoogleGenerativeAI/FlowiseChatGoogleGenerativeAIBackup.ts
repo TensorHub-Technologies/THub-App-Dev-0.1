@@ -22,12 +22,12 @@ import type {
     FunctionDeclarationsTool as GoogleGenerativeAIFunctionDeclarationsTool,
     GenerateContentRequest
 } from '@google/generative-ai'
-import { ICommonObject, IMultiModalOption, IVisionChatModal } from '../../../src'
+import { ICommonObject, IMultiModalOption, IVisionChatModal } from '../../../src.js'
 import { StructuredToolInterface } from '@langchain/core/tools'
 import { isStructuredTool } from '@langchain/core/utils/function_calling'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 import { BaseLanguageModelCallOptions } from '@langchain/core/language_models/base'
-import type FlowiseGoogleAICacheManager from '../../cache/GoogleGenerativeAIContextCache/FlowiseGoogleAICacheManager'
+import type FlowiseGoogleAICacheManager from '../../cache/GoogleGenerativeAIContextCache/FlowiseGoogleAICacheManager.js'
 
 const DEFAULT_IMAGE_MAX_TOKEN = 8192
 const DEFAULT_IMAGE_MODEL = 'gemini-1.5-flash-latest'

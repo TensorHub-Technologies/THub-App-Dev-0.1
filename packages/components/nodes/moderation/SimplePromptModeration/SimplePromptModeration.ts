@@ -1,7 +1,7 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src'
-import { Moderation } from '../Moderation'
-import { SimplePromptModerationRunner } from './SimplePromptModerationRunner'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src.js'
+import { Moderation } from '../Moderation.js'
+import { SimplePromptModerationRunner } from './SimplePromptModerationRunner.js'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 
 class SimplePromptModeration implements INode {
@@ -60,4 +60,4 @@ class SimplePromptModeration implements INode {
     }
 }
 
-module.exports = { nodeClass: SimplePromptModeration }
+export const nodeClass = SimplePromptModeration

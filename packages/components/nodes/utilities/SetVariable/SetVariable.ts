@@ -1,4 +1,4 @@
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class SetVariable_Utilities implements INode {
     label: string
@@ -67,4 +67,4 @@ class SetVariable_Utilities implements INode {
     }
 }
 
-module.exports = { nodeClass: SetVariable_Utilities }
+export const nodeClass = SetVariable_Utilities

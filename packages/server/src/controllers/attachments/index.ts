@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import attachmentsService from '../../services/attachments'
+import attachmentsService from '../../services/attachments.js'
 
 const createAttachment = async (req: Request, res: Response, next: NextFunction) => {
     try {

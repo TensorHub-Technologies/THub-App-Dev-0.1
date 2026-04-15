@@ -1,6 +1,6 @@
 import { StripeAgentToolkit } from '@stripe/agent-toolkit/langchain'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class StripeTool_Tools implements INode {
     label: string
@@ -268,4 +268,4 @@ class StripeTool_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: StripeTool_Tools }
+export const nodeClass = StripeTool_Tools

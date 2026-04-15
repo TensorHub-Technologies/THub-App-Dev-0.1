@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
-import { ICommonObject } from '../src'
+import { ICommonObject } from '../src.js'
 
-import { getModelConfigByModelName, MODEL_TYPE } from '../src/modelLoader'
+import { getModelConfigByModelName, MODEL_TYPE } from '../src/modelLoader.js'
 
 export class EvaluationRunner {
     static metrics = new Map<string, string[]>()

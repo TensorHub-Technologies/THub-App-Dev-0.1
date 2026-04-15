@@ -5,7 +5,7 @@ import { RunnableSequence } from '@langchain/core/runnables'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { ChatPromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate, PromptTemplate } from '@langchain/core/prompts'
 import { formatToOpenAIToolMessages } from 'langchain/agents/format_scratchpad/openai_tools'
-import { getBaseClasses, transformBracesWithColon } from '../../../src/utils'
+import { getBaseClasses, transformBracesWithColon } from '../../../src/utils.js'
 import { type ToolsAgentStep } from 'langchain/agents/openai/output_parser'
 import {
     FlowiseMemory,
@@ -16,15 +16,15 @@ import {
     IServerSideEventStreamer,
     IUsedTool,
     IVisionChatModal
-} from '../../../src/Interface'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { AgentExecutor, ToolCallingAgentOutputParser } from '../../../src/agents'
-import { Moderation, checkInputs, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+} from '../../../src/Interface.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { AgentExecutor, ToolCallingAgentOutputParser } from '../../../src/agents.js'
+import { Moderation, checkInputs, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 import type { Document } from '@langchain/core/documents'
 import { BaseRetriever } from '@langchain/core/retrievers'
-import { RESPONSE_TEMPLATE } from '../../chains/ConversationalRetrievalQAChain/prompts'
-import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
+import { RESPONSE_TEMPLATE } from '../../chains/ConversationalRetrievalQAChain/prompts.js'
+import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils.js'
 
 class ConversationalRetrievalToolAgent_Agents implements INode {
     label: string
@@ -295,4 +295,4 @@ const prepareAgent = async (
     return executor
 }
 
-module.exports = { nodeClass: ConversationalRetrievalToolAgent_Agents }
+export const nodeClass = ConversationalRetrievalToolAgent_Agents

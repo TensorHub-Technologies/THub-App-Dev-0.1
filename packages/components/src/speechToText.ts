@@ -1,8 +1,8 @@
-import { ICommonObject, IFileUpload } from './Interface'
-import { getCredentialData } from './utils'
+import { ICommonObject, IFileUpload } from './Interface.js'
+import { getCredentialData } from './utils.js'
 import { type ClientOptions, OpenAIClient, toFile } from '@langchain/openai'
 import { AssemblyAI } from 'assemblyai'
-import { getFileFromStorage } from './storageUtils'
+import { getFileFromStorage } from './storageUtils.js'
 import axios from 'axios'
 import Groq from 'groq-sdk'
 

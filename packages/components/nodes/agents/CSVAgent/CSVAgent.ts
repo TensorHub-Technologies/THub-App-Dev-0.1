@@ -1,13 +1,13 @@
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { AgentExecutor } from 'langchain/agents'
 import { LLMChain } from 'langchain/chains'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, PromptTemplate } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { LoadPyodide, finalSystemPrompt, systemPrompt } from './core'
-import { checkInputs, Moderation } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
-import { getFileFromStorage } from '../../../src'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, PromptTemplate } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { LoadPyodide, finalSystemPrompt, systemPrompt } from './core.js'
+import { checkInputs, Moderation } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
+import { getFileFromStorage } from '../../../src.js'
 
 class CSV_Agents implements INode {
     label: string
@@ -222,4 +222,4 @@ json.dumps(my_dict)`
     }
 }
 
-module.exports = { nodeClass: CSV_Agents }
+export const nodeClass = CSV_Agents

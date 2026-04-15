@@ -1,6 +1,6 @@
 import { VectorStore } from '@langchain/core/vectorstores'
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { handleEscapeCharacters } from '../../../src/utils'
+import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { handleEscapeCharacters } from '../../../src/utils.js'
 
 class VectorStoreToDocument_DocumentLoaders implements INode {
     label: string
@@ -102,4 +102,4 @@ class VectorStoreToDocument_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: VectorStoreToDocument_DocumentLoaders }
+export const nodeClass = VectorStoreToDocument_DocumentLoaders

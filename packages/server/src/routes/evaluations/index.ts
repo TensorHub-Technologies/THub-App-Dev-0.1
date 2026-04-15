@@ -1,8 +1,8 @@
 import express from 'express'
-import evaluationsController from '../../controllers/evaluations'
-import authorizeResource from '../../middlewares/authorizeResource'
-import { Evaluation } from '../../database/entities/Evaluation'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import evaluationsController from '../../controllers/evaluations.js'
+import authorizeResource from '../../middlewares/authorizeResource.js'
+import { Evaluation } from '../../database/entities/Evaluation.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 const router = express.Router()
 
 const getEvaluationByIdFromDB = async (id?: string) => {

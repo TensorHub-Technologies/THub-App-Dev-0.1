@@ -1,8 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { Replicate, ReplicateInput } from './core'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { Replicate, ReplicateInput } from './core.js'
 
 class Replicate_LLMs implements INode {
     label: string
@@ -133,4 +133,4 @@ class Replicate_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: Replicate_LLMs }
+export const nodeClass = Replicate_LLMs

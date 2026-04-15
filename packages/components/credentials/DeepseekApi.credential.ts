@@ -1,4 +1,4 @@
-import { INodeCredential, INodeParams } from '../src/Interface'
+import { INodeCredential, INodeParams } from '../src/Interface.js'
 
 class DeepseekApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class DeepseekApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: DeepseekApi }
+export const credClass = DeepseekApi

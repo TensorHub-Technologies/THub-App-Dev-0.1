@@ -1,11 +1,11 @@
-import { ICommonObject, INode, INodeData, INodeParams, INodeOutputsValue, IServerSideEventStreamer } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeParams, INodeOutputsValue, IServerSideEventStreamer } from '../../../src/Interface.js'
 import { FromLLMInput, GraphCypherQAChain } from '@langchain/community/chains/graph_qa/cypher'
-import { getBaseClasses } from '../../../src/utils'
+import { getBaseClasses } from '../../../src/utils.js'
 import { BasePromptTemplate, PromptTemplate, FewShotPromptTemplate } from '@langchain/core/prompts'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
 import { ConsoleCallbackHandler as LCConsoleCallbackHandler } from '@langchain/core/tracers/console'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 class GraphCypherQA_Chain implements INode {
     label: string
@@ -255,4 +255,4 @@ class GraphCypherQA_Chain implements INode {
     }
 }
 
-module.exports = { nodeClass: GraphCypherQA_Chain }
+export const nodeClass = GraphCypherQA_Chain

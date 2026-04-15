@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 import { DirectoryLoader } from 'langchain/document_loaders/fs/directory'
@@ -7,9 +7,9 @@ import { JSONLinesLoader, JSONLoader } from 'langchain/document_loaders/fs/json'
 import { CSVLoader } from '@langchain/community/document_loaders/fs/csv'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx'
-import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader'
-import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader'
-import { handleEscapeCharacters } from '../../../src/utils'
+import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader.js'
+import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader.js'
+import { handleEscapeCharacters } from '../../../src/utils.js'
 
 class Folder_DocumentLoaders implements INode {
     label: string
@@ -241,4 +241,4 @@ class Folder_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Folder_DocumentLoaders }
+export const nodeClass = Folder_DocumentLoaders

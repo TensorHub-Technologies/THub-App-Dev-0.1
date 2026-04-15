@@ -7,18 +7,18 @@ import {
     INodeParams,
     IServerSideEventStreamer,
     IUsedTool
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import OpenAI from 'openai'
 import { DataSource } from 'typeorm'
-import { getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import fetch from 'node-fetch'
 import { flatten, uniqWith, isEqual } from 'lodash'
 import { zodToJsonSchema } from 'zod-to-json-schema'
-import { AnalyticHandler } from '../../../src/handler'
-import { Moderation, checkInputs, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
-import { addSingleFileToStorage } from '../../../src/storageUtils'
-import { DynamicStructuredTool } from '../../tools/OpenAPIToolkit/core'
+import { AnalyticHandler } from '../../../src/handler.js'
+import { Moderation, checkInputs, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
+import { addSingleFileToStorage } from '../../../src/storageUtils.js'
+import { DynamicStructuredTool } from '../../tools/OpenAPIToolkit/core.js'
 
 const lenticularBracketRegex = /【[^】]*】/g
 const imageRegex = /<img[^>]*\/>/g
@@ -1095,4 +1095,4 @@ const formatToOpenAIAssistantTool = (tool: any): OpenAI.Beta.FunctionTool => {
     return functionTool
 }
 
-module.exports = { nodeClass: OpenAIAssistant_Agents }
+export const nodeClass = OpenAIAssistant_Agents

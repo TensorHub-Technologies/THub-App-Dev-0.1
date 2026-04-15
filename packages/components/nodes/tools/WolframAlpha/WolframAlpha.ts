@@ -1,6 +1,6 @@
 import { WolframAlphaTool } from '@langchain/community/tools/wolframalpha'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class WolframAlpha_Tools implements INode {
     label: string
@@ -41,4 +41,4 @@ class WolframAlpha_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: WolframAlpha_Tools }
+export const nodeClass = WolframAlpha_Tools

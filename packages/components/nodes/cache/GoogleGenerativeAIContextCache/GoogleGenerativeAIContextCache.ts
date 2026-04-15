@@ -1,5 +1,5 @@
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
-import FlowiseGoogleAICacheManager from './FlowiseGoogleAICacheManager'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
+import FlowiseGoogleAICacheManager from './FlowiseGoogleAICacheManager.js'
 
 class GoogleGenerativeAIContextCache implements INode {
     label: string
@@ -50,4 +50,4 @@ class GoogleGenerativeAIContextCache implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleGenerativeAIContextCache }
+export const nodeClass = GoogleGenerativeAIContextCache

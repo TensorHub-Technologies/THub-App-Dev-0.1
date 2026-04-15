@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class GithubApi implements INodeCredential {
     label: string
@@ -24,4 +24,4 @@ class GithubApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: GithubApi }
+export const credClass = GithubApi

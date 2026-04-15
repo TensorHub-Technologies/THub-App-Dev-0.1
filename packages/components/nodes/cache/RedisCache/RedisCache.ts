@@ -3,7 +3,7 @@ import hash from 'object-hash'
 import { RedisCache as LangchainRedisCache } from '@langchain/community/caches/ioredis'
 import { StoredGeneration, mapStoredMessageToChatMessage } from '@langchain/core/messages'
 import { Generation, ChatGeneration } from '@langchain/core/outputs'
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
 
 class RedisCache implements INode {
     label: string
@@ -164,4 +164,4 @@ const serializeGeneration = (generation: Generation) => {
     return serializedValue
 }
 
-module.exports = { nodeClass: RedisCache }
+export const nodeClass = RedisCache

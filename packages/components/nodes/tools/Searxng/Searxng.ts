@@ -1,6 +1,6 @@
 import { Tool } from '@langchain/core/tools'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 const defaultDesc =
     'A meta search engine. Useful for when you need to answer questions about current events. Input should be a search query. Output is a JSON array of the query results'
@@ -337,4 +337,4 @@ class SearxngSearch extends Tool {
     }
 }
 
-module.exports = { nodeClass: Searxng_Tools }
+export const nodeClass = Searxng_Tools

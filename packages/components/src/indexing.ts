@@ -4,7 +4,7 @@ import { RecordManagerInterface, UUIDV5_NAMESPACE } from '@langchain/community/i
 import { insecureHash } from '@langchain/core/utils/hash'
 import { Document, DocumentInterface } from '@langchain/core/documents'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base.js'
-import { IndexingResult } from './Interface'
+import { IndexingResult } from './Interface.js'
 
 type Metadata = Record<string, unknown>
 

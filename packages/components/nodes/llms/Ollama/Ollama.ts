@@ -1,8 +1,8 @@
 import { Ollama, OllamaInput } from '@langchain/community/llms/ollama'
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 class Ollama_LLMs implements INode {
     label: string
@@ -237,4 +237,4 @@ class Ollama_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: Ollama_LLMs }
+export const nodeClass = Ollama_LLMs

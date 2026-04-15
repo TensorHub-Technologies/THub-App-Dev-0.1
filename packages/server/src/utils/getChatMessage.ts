@@ -1,8 +1,8 @@
 import { MoreThanOrEqual, LessThanOrEqual, Between, In } from 'typeorm'
-import { ChatMessageRatingType, ChatType } from '../Interface'
-import { ChatMessage } from '../database/entities/ChatMessage'
-import { ChatMessageFeedback } from '../database/entities/ChatMessageFeedback'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
+import { ChatMessageRatingType, ChatType } from '../Interface.js'
+import { ChatMessage } from '../database/entities/ChatMessage.js'
+import { ChatMessageFeedback } from '../database/entities/ChatMessageFeedback.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
 import { aMonthAgo } from '.'
 
 /**

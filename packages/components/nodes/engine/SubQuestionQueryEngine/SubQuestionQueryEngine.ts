@@ -1,5 +1,5 @@
 import { flatten } from 'lodash'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
 import {
     TreeSummarize,
     SimpleResponseBuilder,
@@ -14,8 +14,8 @@ import {
     serviceContextFromDefaults,
     NodeWithScore
 } from 'llamaindex'
-import { reformatSourceDocuments } from '../EngineUtils'
-import { EvaluationRunTracerLlama } from '../../../evaluation/EvaluationRunTracerLlama'
+import { reformatSourceDocuments } from '../EngineUtils.js'
+import { EvaluationRunTracerLlama } from '../../../evaluation/EvaluationRunTracerLlama.js'
 
 class SubQuestionQueryEngine_LlamaIndex implements INode {
     label: string
@@ -207,4 +207,4 @@ const prepareEngine = (nodeData: INodeData) => {
     return queryEngine
 }
 
-module.exports = { nodeClass: SubQuestionQueryEngine_LlamaIndex }
+export const nodeClass = SubQuestionQueryEngine_LlamaIndex

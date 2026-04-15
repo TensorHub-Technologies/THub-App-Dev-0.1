@@ -1,4 +1,4 @@
-import { ICommonObject } from './Interface'
+import { ICommonObject } from './Interface.js'
 import { z } from 'zod'
 import { StructuredOutputParser } from '@langchain/core/output_parsers'
 import { isEqual, get, cloneDeep } from 'lodash'

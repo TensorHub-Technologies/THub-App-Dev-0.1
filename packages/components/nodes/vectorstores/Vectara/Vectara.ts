@@ -9,9 +9,9 @@ import {
 } from '@langchain/community/vectorstores/vectara'
 import { Document } from '@langchain/core/documents'
 import { Embeddings } from '@langchain/core/embeddings'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getFileFromStorage } from '../../../src'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { getFileFromStorage } from '../../../src.js'
 
 class Vectara_VectorStores implements INode {
     label: string
@@ -300,4 +300,4 @@ const getFileName = (fileBase64: string) => {
     }
 }
 
-module.exports = { nodeClass: Vectara_VectorStores }
+export const nodeClass = Vectara_VectorStores

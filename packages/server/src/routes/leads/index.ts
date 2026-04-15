@@ -1,5 +1,5 @@
 import express from 'express'
-import leadsController from '../../controllers/leads'
+import leadsController from '../../controllers/leads.js'
 const router = express.Router()
 
 // CREATE

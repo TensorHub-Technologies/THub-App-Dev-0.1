@@ -6,12 +6,12 @@ import {
     INodeOptionsValue,
     INodeParams,
     IServerSideEventStreamer
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import axios, { AxiosRequestConfig } from 'axios'
-import { getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { DataSource } from 'typeorm'
 import { BaseMessageLike } from '@langchain/core/messages'
-import { updateFlowState } from '../utils'
+import { updateFlowState } from '../utils.js'
 
 class ExecuteFlow_Agentflow implements INode {
     label: string
@@ -330,4 +330,4 @@ class ExecuteFlow_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: ExecuteFlow_Agentflow }
+export const nodeClass = ExecuteFlow_Agentflow

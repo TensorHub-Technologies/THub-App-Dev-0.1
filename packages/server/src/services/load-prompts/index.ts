@@ -1,8 +1,8 @@
 import { Client } from 'langchainhub'
 import { StatusCodes } from 'http-status-codes'
-import { parsePrompt } from '../../utils/hub'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { parsePrompt } from '../../utils/hub.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 const createPrompt = async (promptName: string): Promise<any> => {
     try {

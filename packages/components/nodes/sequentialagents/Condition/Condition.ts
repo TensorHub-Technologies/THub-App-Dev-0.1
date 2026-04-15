@@ -1,3 +1,4 @@
+import path from 'path'
 import { DataSource } from 'typeorm'
 import { BaseMessage } from '@langchain/core/messages'
 import {
@@ -9,9 +10,12 @@ import {
     INodeParams,
     ISeqAgentNode,
     ISeqAgentsState
-} from '../../../src/Interface'
-import { checkCondition, customGet, getVM } from '../commonUtils'
-import { getVars, prepareSandboxVars } from '../../../src/utils'
+} from '../../../src/Interface.js'
+import { checkCondition, customGet, getVM } from '../commonUtils.js'
+import { getVars, prepareSandboxVars } from '../../../src/utils.js'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 const howToUseCode = `
 1. Must return a string value at the end of function. For example:
@@ -326,4 +330,4 @@ const runCondition = async (nodeData: INodeData, input: string, options: ICommon
     }
 }
 
-module.exports = { nodeClass: Condition_SeqAgents }
+export const nodeClass = Condition_SeqAgents

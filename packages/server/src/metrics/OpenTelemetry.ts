@@ -1,4 +1,4 @@
-import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
+import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics.js'
 import { Resource } from '@opentelemetry/resources'
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions'
 import { MeterProvider, PeriodicExportingMetricReader, Histogram } from '@opentelemetry/sdk-metrics'

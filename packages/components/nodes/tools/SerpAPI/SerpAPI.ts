@@ -1,6 +1,6 @@
 import { SerpAPI } from '@langchain/community/tools/serpapi'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class SerpAPI_Tools implements INode {
     label: string
@@ -39,4 +39,4 @@ class SerpAPI_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: SerpAPI_Tools }
+export const nodeClass = SerpAPI_Tools

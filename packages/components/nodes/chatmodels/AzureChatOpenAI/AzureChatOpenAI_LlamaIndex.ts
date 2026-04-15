@@ -1,7 +1,7 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { OpenAI } from 'llamaindex'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 interface AzureOpenAIConfig {
     apiKey?: string
@@ -144,4 +144,4 @@ class AzureChatOpenAI_LlamaIndex_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: AzureChatOpenAI_LlamaIndex_ChatModels }
+export const nodeClass = AzureChatOpenAI_LlamaIndex_ChatModels

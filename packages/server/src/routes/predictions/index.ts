@@ -1,6 +1,6 @@
 import express from 'express'
-import predictionsController from '../../controllers/predictions'
-import { getMulterStorage } from '../../utils'
+import predictionsController from '../../controllers/predictions.js'
+import { getMulterStorage } from '../../utils.js'
 
 const router = express.Router()
 

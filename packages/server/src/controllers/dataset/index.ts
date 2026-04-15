@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import datasetService from '../../services/dataset'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import datasetService from '../../services/dataset.js'
 import { StatusCodes } from 'http-status-codes'
-import { getPageAndLimitParams } from '../../utils/pagination'
+import { getPageAndLimitParams } from '../../utils/pagination.js'
 
 const getAllDatasets = async (req: Request, res: Response, next: NextFunction) => {
     try {

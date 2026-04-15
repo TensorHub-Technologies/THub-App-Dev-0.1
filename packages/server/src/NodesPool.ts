@@ -1,11 +1,11 @@
-import { IComponentNodes, IComponentCredentials } from './Interface'
+import { IComponentNodes, IComponentCredentials } from './Interface.js'
 import path from 'path'
 import { Dirent } from 'fs'
-import { getNodeModulesPackagePath } from './utils'
+import { getNodeModulesPackagePath } from './utils.js'
 import { promises } from 'fs'
 import { ICommonObject } from 'thub-components'
-import logger from './utils/logger'
-import { appConfig } from './AppConfig'
+import logger from './utils/logger.js'
+import { appConfig } from './AppConfig.js'
 
 export class NodesPool {
     componentNodes: IComponentNodes = {}
@@ -32,7 +32,7 @@ export class NodesPool {
             nodeFiles.map(async (file) => {
                 if (file.endsWith('.js')) {
                     try {
-                        const nodeModule = await require(file)
+                        const nodeModule = await import(file)
 
                         if (nodeModule.nodeClass) {
                             const newNodeInstance = new nodeModule.nodeClass()
@@ -90,7 +90,7 @@ export class NodesPool {
         return Promise.all(
             nodeFiles.map(async (file) => {
                 if (file.endsWith('.credential.js')) {
-                    const credentialModule = await require(file)
+                    const credentialModule = await import(file)
                     if (credentialModule.credClass) {
                         const newCredInstance = new credentialModule.credClass()
                         newCredInstance.icon = this.credentialIconPath[newCredInstance.name] ?? ''

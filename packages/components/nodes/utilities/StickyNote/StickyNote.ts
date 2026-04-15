@@ -1,4 +1,4 @@
-import { INode, INodeParams } from '../../../src/Interface'
+import { INode, INodeParams } from '../../../src/Interface.js'
 
 class StickyNote implements INode {
     label: string
@@ -39,4 +39,4 @@ class StickyNote implements INode {
     }
 }
 
-module.exports = { nodeClass: StickyNote }
+export const nodeClass = StickyNote

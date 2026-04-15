@@ -1,7 +1,7 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { OpenAI, OpenAISession, ALL_AVAILABLE_OPENAI_MODELS } from 'llamaindex'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 class ChatOpenAI_LlamaIndex_LLMs implements INode {
     label: string
@@ -122,4 +122,4 @@ class ChatOpenAI_LlamaIndex_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatOpenAI_LlamaIndex_LLMs }
+export const nodeClass = ChatOpenAI_LlamaIndex_LLMs

@@ -1,9 +1,9 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { ListKeyOptions, RecordManagerInterface, UpdateOptions } from '@langchain/community/indexes/base'
 import { DataSource } from 'typeorm'
-import { getHost, getSSL } from '../../vectorstores/Postgres/utils'
-import { getDatabase, getPort, getTableName } from './utils'
+import { getHost, getSSL } from '../../vectorstores/Postgres/utils.js'
+import { getDatabase, getPort, getTableName } from './utils.js'
 
 const serverCredentialsExists = !!process.env.POSTGRES_RECORDMANAGER_USER && !!process.env.POSTGRES_RECORDMANAGER_PASSWORD
 
@@ -420,4 +420,4 @@ class PostgresRecordManager implements RecordManagerInterface {
     }
 }
 
-module.exports = { nodeClass: PostgresRecordManager_RecordManager }
+export const nodeClass = PostgresRecordManager_RecordManager

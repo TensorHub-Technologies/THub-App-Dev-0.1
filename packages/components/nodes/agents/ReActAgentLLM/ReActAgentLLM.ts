@@ -4,12 +4,12 @@ import { pull } from 'langchain/hub'
 import { Tool } from '@langchain/core/tools'
 import type { PromptTemplate } from '@langchain/core/prompts'
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
-import { additionalCallbacks } from '../../../src/handler'
-import { getBaseClasses } from '../../../src/utils'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { createReactAgent } from '../../../src/agents'
-import { checkInputs, Moderation } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { additionalCallbacks } from '../../../src/handler.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { createReactAgent } from '../../../src/agents.js'
+import { checkInputs, Moderation } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 class ReActAgentLLM_Agents implements INode {
     label: string
@@ -109,4 +109,4 @@ class ReActAgentLLM_Agents implements INode {
     }
 }
 
-module.exports = { nodeClass: ReActAgentLLM_Agents }
+export const nodeClass = ReActAgentLLM_Agents

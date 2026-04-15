@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class MongoDBUrlApi implements INodeCredential {
     label: string
@@ -22,4 +22,4 @@ class MongoDBUrlApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: MongoDBUrlApi }
+export const credClass = MongoDBUrlApi

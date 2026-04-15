@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class QdrantApi implements INodeCredential {
     label: string
@@ -21,4 +21,4 @@ class QdrantApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: QdrantApi }
+export const credClass = QdrantApi

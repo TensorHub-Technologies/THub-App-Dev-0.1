@@ -1,9 +1,9 @@
 import { load } from 'js-yaml'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getFileFromStorage, getVars, IDatabaseEntity, IVariable } from '../../../src'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getFileFromStorage, getVars, IDatabaseEntity, IVariable } from '../../../src.js'
 import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { z, ZodSchema, ZodTypeAny } from 'zod'
-import { defaultCode, DynamicStructuredTool, howToUseCode } from './core'
+import { defaultCode, DynamicStructuredTool, howToUseCode } from './core.js'
 import { DataSource } from 'typeorm'
 
 class OpenAPIToolkit_Tools implements INode {
@@ -327,4 +327,4 @@ const getTools = (
     return tools
 }
 
-module.exports = { nodeClass: OpenAPIToolkit_Tools }
+export const nodeClass = OpenAPIToolkit_Tools

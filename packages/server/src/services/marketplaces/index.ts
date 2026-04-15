@@ -1,15 +1,17 @@
 import path from 'path'
 import * as fs from 'fs'
+import { fileURLToPath } from 'url'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
-import { IReactFlowEdge, IReactFlowNode } from '../../Interface'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { IReactFlowEdge, IReactFlowNode } from '../../Interface.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 import { DeleteResult } from 'typeorm'
-import { CustomTemplate } from '../../database/entities/CustomTemplate'
+import { CustomTemplate } from '../../database/entities/CustomTemplate.js'
 import { v4 as uuidv4 } from 'uuid'
 
-import chatflowsService from '../chatflows'
+import chatflowsService from '../chatflows.js'
 
 type ITemplate = {
     badge: string

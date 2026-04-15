@@ -2,12 +2,12 @@ import axios from 'axios'
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { AgentExecutor } from 'langchain/agents'
 import { LLMChain } from 'langchain/chains'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, PromptTemplate } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { LoadPyodide, finalSystemPrompt, systemPrompt } from './core'
-import { checkInputs, Moderation } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, PromptTemplate } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { LoadPyodide, finalSystemPrompt, systemPrompt } from './core.js'
+import { checkInputs, Moderation } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 class Airtable_Agents implements INode {
     label: string
@@ -261,4 +261,4 @@ const loadLimit = async (limit: number, baseId: string, tableId: string, accessT
     return data.records.map((page) => page.fields)
 }
 
-module.exports = { nodeClass: Airtable_Agents }
+export const nodeClass = Airtable_Agents

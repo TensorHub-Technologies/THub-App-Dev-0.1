@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class CohereApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class CohereApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: CohereApi }
+export const credClass = CohereApi

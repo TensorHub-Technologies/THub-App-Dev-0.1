@@ -1,8 +1,8 @@
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../../src/utils'
-import { SaverOptions } from '../interface'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../../src/Interface'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../../src/utils.js'
+import { SaverOptions } from '../interface.js'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../../src/Interface.js'
 import { DataSource } from 'typeorm'
-import { MySQLSaver } from './mysqlSaver'
+import { MySQLSaver } from './mysqlSaver.js'
 
 class MySQLAgentMemory_Memory implements INode {
     label: string
@@ -109,4 +109,4 @@ class MySQLAgentMemory_Memory implements INode {
     }
 }
 
-module.exports = { nodeClass: MySQLAgentMemory_Memory }
+export const nodeClass = MySQLAgentMemory_Memory

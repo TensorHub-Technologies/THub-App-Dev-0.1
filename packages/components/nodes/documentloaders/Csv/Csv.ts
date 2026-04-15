@@ -1,7 +1,7 @@
 import { TextSplitter } from 'langchain/text_splitter'
-import { CSVLoader } from './CsvLoader'
-import { getFileFromStorage, handleDocumentLoaderDocuments, handleDocumentLoaderMetadata, handleDocumentLoaderOutput } from '../../../src'
-import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { CSVLoader } from './CsvLoader.js'
+import { getFileFromStorage, handleDocumentLoaderDocuments, handleDocumentLoaderMetadata, handleDocumentLoaderOutput } from '../../../src.js'
+import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class Csv_DocumentLoaders implements INode {
     label: string
@@ -148,4 +148,4 @@ class Csv_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Csv_DocumentLoaders }
+export const nodeClass = Csv_DocumentLoaders

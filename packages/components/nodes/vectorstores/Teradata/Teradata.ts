@@ -1,8 +1,8 @@
 import { Document } from '@langchain/core/documents'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
 import { Embeddings } from '@langchain/core/embeddings'
 import * as teradatasql from 'teradatasql'
-import { getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class Teradata_VectorStores implements INode {
     label: string
@@ -813,4 +813,4 @@ class Teradata_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Teradata_VectorStores }
+export const nodeClass = Teradata_VectorStores

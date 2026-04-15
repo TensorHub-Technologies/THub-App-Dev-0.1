@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, Index, Unique } from 'typeorm'
-import { IChatMessageFeedback, ChatMessageRatingType } from '../../Interface'
+import { IChatMessageFeedback, ChatMessageRatingType } from '../../Interface.js'
 
 @Entity()
 @Unique(['messageId'])

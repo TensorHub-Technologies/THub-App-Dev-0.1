@@ -4,8 +4,8 @@ import { CheerioWebBaseLoader, WebBaseLoaderParams } from '@langchain/community/
 import { test } from 'linkifyjs'
 import { parse } from 'css-what'
 import { SelectorType } from 'cheerio'
-import { ICommonObject, INodeOutputsValue, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { handleEscapeCharacters, webCrawl, xmlScrape } from '../../../src/utils'
+import { ICommonObject, INodeOutputsValue, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { handleEscapeCharacters, webCrawl, xmlScrape } from '../../../src/utils.js'
 
 class Cheerio_DocumentLoaders implements INode {
     label: string
@@ -240,4 +240,4 @@ class Cheerio_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Cheerio_DocumentLoaders }
+export const nodeClass = Cheerio_DocumentLoaders

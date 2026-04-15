@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class WeaviateApi implements INodeCredential {
     label: string
@@ -21,4 +21,4 @@ class WeaviateApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: WeaviateApi }
+export const credClass = WeaviateApi

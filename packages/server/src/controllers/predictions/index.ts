@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
-import { RateLimiterManager } from '../../utils/rateLimit'
-import chatflowsService from '../../services/chatflows'
-import logger from '../../utils/logger'
-import predictionsServices from '../../services/predictions'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { RateLimiterManager } from '../../utils/rateLimit.js'
+import chatflowsService from '../../services/chatflows.js'
+import logger from '../../utils/logger.js'
+import predictionsServices from '../../services/predictions.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 import { v4 as uuidv4 } from 'uuid'
-import { getErrorMessage } from '../../errors/utils'
-import { MODE } from '../../Interface'
+import { getErrorMessage } from '../../errors/utils.js'
+import { MODE } from '../../Interface.js'
 
 // Send input message and get prediction result (External)
 const createPrediction = async (req: Request, res: Response, next: NextFunction) => {

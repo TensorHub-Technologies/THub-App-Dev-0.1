@@ -1,11 +1,11 @@
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { VectorStore } from '@langchain/core/vectorstores'
 import { VectorDBQAChain } from 'langchain/chains'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { checkInputs, Moderation } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { checkInputs, Moderation } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 class VectorDBQAChain_Chains implements INode {
     label: string
@@ -100,4 +100,4 @@ class VectorDBQAChain_Chains implements INode {
     }
 }
 
-module.exports = { nodeClass: VectorDBQAChain_Chains }
+export const nodeClass = VectorDBQAChain_Chains

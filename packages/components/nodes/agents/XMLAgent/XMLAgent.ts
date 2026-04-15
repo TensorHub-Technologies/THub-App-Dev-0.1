@@ -6,7 +6,7 @@ import { RunnableSequence } from '@langchain/core/runnables'
 import { Tool } from '@langchain/core/tools'
 import { ChatPromptTemplate, HumanMessagePromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
 import { formatLogToMessage } from 'langchain/agents/format_scratchpad/log_to_message'
-import { getBaseClasses, transformBracesWithColon } from '../../../src/utils'
+import { getBaseClasses, transformBracesWithColon } from '../../../src/utils.js'
 import {
     FlowiseMemory,
     ICommonObject,
@@ -16,11 +16,11 @@ import {
     INodeParams,
     IServerSideEventStreamer,
     IUsedTool
-} from '../../../src/Interface'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { AgentExecutor, XMLAgentOutputParser } from '../../../src/agents'
-import { Moderation, checkInputs } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+} from '../../../src/Interface.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { AgentExecutor, XMLAgentOutputParser } from '../../../src/agents.js'
+import { Moderation, checkInputs } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 const defaultSystemMessage = `You are a helpful assistant. Help the user answer any questions.
 
@@ -285,4 +285,4 @@ const prepareAgent = async (
     return executor
 }
 
-module.exports = { nodeClass: XMLAgent_Agents }
+export const nodeClass = XMLAgent_Agents

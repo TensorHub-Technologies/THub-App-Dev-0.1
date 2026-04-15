@@ -6,8 +6,8 @@ import {
     INodeOptionsValue,
     INodeParams,
     IServerSideEventStreamer
-} from '../../../src/Interface'
-import { updateFlowState } from '../utils'
+} from '../../../src/Interface.js'
+import { updateFlowState } from '../utils.js'
 import { DataSource } from 'typeorm'
 import { BaseRetriever } from '@langchain/core/retrievers'
 import { Document } from '@langchain/core/documents'
@@ -225,4 +225,4 @@ class Retriever_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: Retriever_Agentflow }
+export const nodeClass = Retriever_Agentflow

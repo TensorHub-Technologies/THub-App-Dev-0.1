@@ -2,12 +2,12 @@
 * Temporary disabled due to increasing open connections without releasing them
 * Use TypeORM instead
 
-import { VectorStoreDriver } from './Base'
-import { FLOWISE_CHATID } from '../../../../src'
+import { VectorStoreDriver } from './Base.js'
+import { FLOWISE_CHATID } from '../../../../src.js'
 import { DistanceStrategy, PGVectorStore, PGVectorStoreArgs } from '@langchain/community/vectorstores/pgvector'
 import { Document } from '@langchain/core/documents'
 import { PoolConfig } from 'pg'
-import { getContentColumnName } from '../utils'
+import { getContentColumnName } from '../utils.js'
 
 export class PGVectorDriver extends VectorStoreDriver {
     static CONTENT_COLUMN_NAME_DEFAULT: string = 'pageContent'

@@ -1,8 +1,8 @@
 import express from 'express'
-import executionController from '../../controllers/executions'
-import authorizeResource from '../../middlewares/authorizeResource'
-import { Execution } from '../../database/entities/Execution'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import executionController from '../../controllers/executions.js'
+import authorizeResource from '../../middlewares/authorizeResource.js'
+import { Execution } from '../../database/entities/Execution.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 const router = express.Router()
 
 const getExecutionByIdFromDB = async (id?: string) => {

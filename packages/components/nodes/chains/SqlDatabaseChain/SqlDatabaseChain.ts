@@ -4,11 +4,11 @@ import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { PromptTemplate, PromptTemplateInput } from '@langchain/core/prompts'
 import { SqlDatabaseChain, SqlDatabaseChainInput, DEFAULT_SQL_DATABASE_PROMPT } from 'langchain/chains/sql_db'
 import { SqlDatabase } from 'langchain/sql_db'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { getBaseClasses, getInputVariables, transformBracesWithColon } from '../../../src/utils'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { getBaseClasses, getInputVariables, transformBracesWithColon } from '../../../src/utils.js'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 type DatabaseType = 'sqlite' | 'postgres' | 'mssql' | 'mysql'
 
@@ -258,4 +258,4 @@ const getSQLDBChain = async (
     return chain
 }
 
-module.exports = { nodeClass: SqlDatabaseChain_Chains }
+export const nodeClass = SqlDatabaseChain_Chains

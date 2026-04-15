@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
-import variablesService from '../../services/variables'
-import { Variable } from '../../database/entities/Variable'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import variablesService from '../../services/variables.js'
+import { Variable } from '../../database/entities/Variable.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const createVariable = async (req: Request, res: Response, next: NextFunction) => {

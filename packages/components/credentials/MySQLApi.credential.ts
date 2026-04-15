@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class MySQLApi implements INodeCredential {
     label: string
@@ -28,4 +28,4 @@ class MySQLApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: MySQLApi }
+export const credClass = MySQLApi

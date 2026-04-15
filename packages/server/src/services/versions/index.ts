@@ -1,8 +1,10 @@
 import path from 'path'
 import * as fs from 'fs'
+import { fileURLToPath } from 'url'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const getVersion = async () => {
     try {

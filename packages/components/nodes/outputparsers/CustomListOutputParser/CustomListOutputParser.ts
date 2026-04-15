@@ -1,6 +1,6 @@
 import { BaseOutputParser, CustomListOutputParser as LangchainCustomListOutputParser } from '@langchain/core/output_parsers'
-import { CATEGORY } from '../OutputParserHelpers'
-import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src'
+import { CATEGORY } from '../OutputParserHelpers.js'
+import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src.js'
 
 class CustomListOutputParser implements INode {
     label: string
@@ -69,4 +69,4 @@ class CustomListOutputParser implements INode {
     }
 }
 
-module.exports = { nodeClass: CustomListOutputParser }
+export const nodeClass = CustomListOutputParser

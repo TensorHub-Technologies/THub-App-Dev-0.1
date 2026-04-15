@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
-import { ChatflowType, IChatFlow } from '../../Interface'
+import { ChatflowType, IChatFlow } from '../../Interface.js'
 
 export enum EnumChatflowType {
     CHATFLOW = 'CHATFLOW',

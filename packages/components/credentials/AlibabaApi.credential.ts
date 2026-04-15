@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class AlibabaApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class AlibabaApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: AlibabaApi }
+export const credClass = AlibabaApi

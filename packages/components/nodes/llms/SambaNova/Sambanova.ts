@@ -1,4 +1,4 @@
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
 import { OpenAI } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
 
@@ -68,4 +68,4 @@ class Sambanova_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: Sambanova_LLMs }
+export const nodeClass = Sambanova_LLMs

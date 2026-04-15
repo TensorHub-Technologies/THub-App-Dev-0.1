@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 import { JSONLinesLoader, JSONLoader } from 'langchain/document_loaders/fs/json'
@@ -7,11 +7,11 @@ import { CSVLoader } from '@langchain/community/document_loaders/fs/csv'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
-import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader'
-import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader'
+import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader.js'
+import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader.js'
 import { Document } from '@langchain/core/documents'
-import { getFileFromStorage } from '../../../src/storageUtils'
-import { handleEscapeCharacters, mapMimeTypeToExt } from '../../../src/utils'
+import { getFileFromStorage } from '../../../src/storageUtils.js'
+import { handleEscapeCharacters, mapMimeTypeToExt } from '../../../src/utils.js'
 
 class File_DocumentLoaders implements INode {
     label: string
@@ -384,4 +384,4 @@ class MultiFileLoader extends BaseDocumentLoader {
     }
 }
 
-module.exports = { nodeClass: File_DocumentLoaders }
+export const nodeClass = File_DocumentLoaders

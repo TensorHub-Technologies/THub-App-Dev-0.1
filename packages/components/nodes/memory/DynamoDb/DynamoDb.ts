@@ -18,8 +18,8 @@ import {
     getCredentialData,
     getCredentialParam,
     mapChatMessageToBaseMessage
-} from '../../../src/utils'
-import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
+} from '../../../src/utils.js'
+import { FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface.js'
 
 class DynamoDb_Memory implements INode {
     label: string
@@ -302,4 +302,4 @@ class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
     }
 }
 
-module.exports = { nodeClass: DynamoDb_Memory }
+export const nodeClass = DynamoDb_Memory

@@ -1,7 +1,7 @@
 import { BaseChain } from 'langchain/chains'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { ChainTool } from './core'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { ChainTool } from './core.js'
 
 class ChainTool_Tools implements INode {
     label: string
@@ -72,4 +72,4 @@ class ChainTool_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: ChainTool_Tools }
+export const nodeClass = ChainTool_Tools

@@ -1,12 +1,16 @@
+import path from 'path'
 import { DataSource } from 'typeorm'
 import { z } from 'zod'
 import { NodeVM } from '@flowiseai/nodevm'
 import { RunnableConfig } from '@langchain/core/runnables'
 import { CallbackManagerForToolRun, Callbacks, CallbackManager, parseCallbackConfigArg } from '@langchain/core/callbacks/manager'
 import { StructuredTool } from '@langchain/core/tools'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { availableDependencies, defaultAllowBuiltInDep, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { availableDependencies, defaultAllowBuiltInDep, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { v4 as uuidv4 } from 'uuid'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 class ChatflowTool_Tools implements INode {
     label: string
@@ -415,4 +419,4 @@ try {
     }
 }
 
-module.exports = { nodeClass: ChatflowTool_Tools }
+export const nodeClass = ChatflowTool_Tools

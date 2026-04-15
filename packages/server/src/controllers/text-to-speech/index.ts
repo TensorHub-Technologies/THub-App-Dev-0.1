@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import { convertTextToSpeechStream } from 'thub-components'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import chatflowsService from '../../services/chatflows'
-import textToSpeechService from '../../services/text-to-speech'
-import { databaseEntities } from '../../utils'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import chatflowsService from '../../services/chatflows.js'
+import textToSpeechService from '../../services/text-to-speech.js'
+import { databaseEntities } from '../../utils.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 
 const generateTextToSpeech = async (req: Request, res: Response) => {
     try {

@@ -1,8 +1,8 @@
 import { GoogleVertexAIEmbeddingsInput, VertexAIEmbeddings } from '@langchain/google-vertexai'
-import { buildGoogleCredentials } from '../../../src/google-utils'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { MODEL_TYPE, getModels, getRegions } from '../../../src/modelLoader'
-import { getBaseClasses } from '../../../src/utils'
+import { buildGoogleCredentials } from '../../../src/google-utils.js'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { MODEL_TYPE, getModels, getRegions } from '../../../src/modelLoader.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 class VertexAIEmbeddingsWithStripNewLines extends VertexAIEmbeddings {
     stripNewLines: boolean
@@ -110,4 +110,4 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleVertexAIEmbedding_Embeddings }
+export const nodeClass = GoogleVertexAIEmbedding_Embeddings

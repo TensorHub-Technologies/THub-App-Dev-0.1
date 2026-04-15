@@ -1,9 +1,9 @@
 import { BaseRetriever } from '@langchain/core/retrievers'
 import { VectorStoreRetriever } from '@langchain/core/vectorstores'
 import { ContextualCompressionRetriever } from 'langchain/retrievers/contextual_compression'
-import { VoyageAIRerank } from './VoyageAIRerank'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { VoyageAIRerank } from './VoyageAIRerank.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src.js'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class VoyageAIRerankRetriever_Retrievers implements INode {
     label: string
@@ -137,4 +137,4 @@ class VoyageAIRerankRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: VoyageAIRerankRetriever_Retrievers }
+export const nodeClass = VoyageAIRerankRetriever_Retrievers

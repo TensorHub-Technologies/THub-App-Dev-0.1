@@ -1,6 +1,6 @@
 import express from 'express'
-import attachmentsController from '../../controllers/attachments'
-import { getMulterStorage } from '../../utils'
+import attachmentsController from '../../controllers/attachments.js'
+import { getMulterStorage } from '../../utils.js'
 
 const router = express.Router()
 

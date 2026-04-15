@@ -1,7 +1,7 @@
 import { ExaSearchResults } from '@langchain/exa'
 import Exa from 'exa-js'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 const DESC = `A wrapper around Exa Search. Input should be an Exa-optimized query. Output is a JSON array of the query results`
 
@@ -235,4 +235,4 @@ class ExaSearch_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: ExaSearch_Tools }
+export const nodeClass = ExaSearch_Tools

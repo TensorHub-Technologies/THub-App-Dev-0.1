@@ -1,8 +1,8 @@
 import { omit } from 'lodash'
-import { IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { Document } from '@langchain/core/documents'
-import { handleEscapeCharacters } from '../../../src'
+import { handleEscapeCharacters } from '../../../src.js'
 
 class PlainText_DocumentLoaders implements INode {
     label: string
@@ -144,4 +144,4 @@ class PlainText_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: PlainText_DocumentLoaders }
+export const nodeClass = PlainText_DocumentLoaders

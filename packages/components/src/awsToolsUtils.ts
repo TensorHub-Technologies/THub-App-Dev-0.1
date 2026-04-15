@@ -1,5 +1,5 @@
-import { ICommonObject, INodeData } from './Interface'
-import { getCredentialData, getCredentialParam } from './utils'
+import { ICommonObject, INodeData } from './Interface.js'
+import { getCredentialData, getCredentialParam } from './utils.js'
 
 // AWS Regions constant
 export const AWS_REGIONS = [

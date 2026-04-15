@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import { utilBuildChatflow } from '../../utils/buildChatflow'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { getErrorMessage } from '../../errors/utils'
-import { MODE } from '../../Interface'
+import { utilBuildChatflow } from '../../utils/buildChatflow.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { MODE } from '../../Interface.js'
 
 // Send input message and get prediction result (Internal)
 const createInternalPrediction = async (req: Request, res: Response, next: NextFunction) => {

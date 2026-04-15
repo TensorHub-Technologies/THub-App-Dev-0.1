@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { BaseOutputParser } from '@langchain/core/output_parsers'
 import { StructuredOutputParser as LangchainStructuredOutputParser } from 'langchain/output_parsers'
-import { CATEGORY } from '../OutputParserHelpers'
-import { convertSchemaToZod, getBaseClasses, INode, INodeData, INodeParams } from '../../../src'
+import { CATEGORY } from '../OutputParserHelpers.js'
+import { convertSchemaToZod, getBaseClasses, INode, INodeData, INodeParams } from '../../../src.js'
 import { jsonrepair } from 'jsonrepair'
 
 class StructuredOutputParser implements INode {
@@ -97,4 +97,4 @@ class StructuredOutputParser implements INode {
     }
 }
 
-module.exports = { nodeClass: StructuredOutputParser }
+export const nodeClass = StructuredOutputParser

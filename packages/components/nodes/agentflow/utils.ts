@@ -1,10 +1,10 @@
 import { BaseMessage, MessageContentImageUrl } from '@langchain/core/messages'
-import { getImageUploads } from '../../src/multiModalUtils'
-import { getFileFromStorage } from '../../src/storageUtils'
-import { ICommonObject, IFileUpload } from '../../src/Interface'
+import { getImageUploads } from '../../src/multiModalUtils.js'
+import { getFileFromStorage } from '../../src/storageUtils.js'
+import { ICommonObject, IFileUpload } from '../../src/Interface.js'
 import { BaseMessageLike } from '@langchain/core/messages'
-import { IFlowState } from './Interface.Agentflow'
-import { handleEscapeCharacters, mapMimeTypeToInputField } from '../../src/utils'
+import { IFlowState } from './Interface.Agentflow.js'
+import { handleEscapeCharacters, mapMimeTypeToInputField } from '../../src/utils.js'
 
 export const addImagesToMessages = async (
     options: ICommonObject,

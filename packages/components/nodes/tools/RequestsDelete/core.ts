@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { DynamicStructuredTool } from '../OpenAPIToolkit/core'
-import { secureFetch } from '../../../src/httpSecurity'
+import { DynamicStructuredTool } from '../OpenAPIToolkit/core.js'
+import { secureFetch } from '../../../src/httpSecurity.js'
 
 export const desc = `Use this when you need to execute a DELETE request to remove data from a website.`
 

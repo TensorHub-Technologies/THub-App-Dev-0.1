@@ -3,9 +3,9 @@ import { DataType, ErrorCode, MetricType, IndexType } from '@zilliz/milvus2-sdk-
 import { Document } from '@langchain/core/documents'
 import { MilvusLibArgs, Milvus } from '@langchain/community/vectorstores/milvus'
 import { Embeddings } from '@langchain/core/embeddings'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { howToUseFileUpload } from '../VectorStoreUtils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { howToUseFileUpload } from '../VectorStoreUtils.js'
 
 interface InsertRow {
     [x: string]: string | number[]
@@ -490,4 +490,4 @@ class MilvusUpsert extends Milvus {
     }
 }
 
-module.exports = { nodeClass: Milvus_VectorStores }
+export const nodeClass = Milvus_VectorStores

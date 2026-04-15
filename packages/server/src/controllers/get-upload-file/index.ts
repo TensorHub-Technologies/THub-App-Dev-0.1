@@ -3,7 +3,7 @@ import fs from 'fs'
 import contentDisposition from 'content-disposition'
 import { streamStorageFile } from 'thub-components'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 
 const streamUploadedFile = async (req: Request, res: Response, next: NextFunction) => {
     try {

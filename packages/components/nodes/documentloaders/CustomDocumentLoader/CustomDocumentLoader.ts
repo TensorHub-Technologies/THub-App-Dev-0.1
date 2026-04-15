@@ -1,7 +1,11 @@
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import path from 'path'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { NodeVM } from '@flowiseai/nodevm'
 import { DataSource } from 'typeorm'
-import { availableDependencies, defaultAllowBuiltInDep, getVars, handleEscapeCharacters, prepareSandboxVars } from '../../../src/utils'
+import { availableDependencies, defaultAllowBuiltInDep, getVars, handleEscapeCharacters, prepareSandboxVars } from '../../../src/utils.js'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 class CustomDocumentLoader_DocumentLoaders implements INode {
     label: string
@@ -168,4 +172,4 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: CustomDocumentLoader_DocumentLoaders }
+export const nodeClass = CustomDocumentLoader_DocumentLoaders

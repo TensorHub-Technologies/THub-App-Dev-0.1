@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class TeradataBearerTokenCredential implements INodeCredential {
     label: string
@@ -23,4 +23,4 @@ class TeradataBearerTokenCredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: TeradataBearerTokenCredential }
+export const credClass = TeradataBearerTokenCredential

@@ -23,8 +23,8 @@ import {
     StoppingMethod
 } from 'langchain/agents'
 import { formatLogToString } from 'langchain/agents/format_scratchpad/log'
-import { IUsedTool } from './Interface'
-import { getErrorMessage } from './error'
+import { IUsedTool } from './Interface.js'
+import { getErrorMessage } from './error.js'
 
 export const SOURCE_DOCUMENTS_PREFIX = '\n\n----FLOWISE_SOURCE_DOCUMENTS----\n\n'
 export const ARTIFACTS_PREFIX = '\n\n----FLOWISE_ARTIFACTS----\n\n'

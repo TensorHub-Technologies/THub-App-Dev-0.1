@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import fetch from 'node-fetch'
-import { DynamicStructuredTool } from '../OpenAPIToolkit/core'
-import { TOOL_ARGS_PREFIX } from '../../../src/agents'
+import { DynamicStructuredTool } from '../OpenAPIToolkit/core.js'
+import { TOOL_ARGS_PREFIX } from '../../../src/agents.js'
 
 export const desc = `Use this when you want to access Jira API for managing issues, comments, and users`
 

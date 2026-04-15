@@ -1,9 +1,9 @@
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { PromptTemplate } from '@langchain/core/prompts'
-import { API_RESPONSE_RAW_PROMPT_TEMPLATE, API_URL_RAW_PROMPT_TEMPLATE, APIChain } from './postCore'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { API_RESPONSE_RAW_PROMPT_TEMPLATE, API_URL_RAW_PROMPT_TEMPLATE, APIChain } from './postCore.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 class POSTApiChain_Chains implements INode {
     label: string
@@ -127,4 +127,4 @@ const getAPIChain = async (documents: string, llm: BaseLanguageModel, headers: s
     return chain
 }
 
-module.exports = { nodeClass: POSTApiChain_Chains }
+export const nodeClass = POSTApiChain_Chains

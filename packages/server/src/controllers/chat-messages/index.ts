@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
-import { ChatMessageRatingType, ChatType, IReactFlowObject } from '../../Interface'
-import chatflowsService from '../../services/chatflows'
-import chatMessagesService from '../../services/chat-messages'
-import { aMonthAgo, clearSessionMemory } from '../../utils'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import { ChatMessageRatingType, ChatType, IReactFlowObject } from '../../Interface.js'
+import chatflowsService from '../../services/chatflows.js'
+import chatMessagesService from '../../services/chat-messages.js'
+import { aMonthAgo, clearSessionMemory } from '../../utils.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 import { Between, DeleteResult, FindOptionsWhere, In } from 'typeorm'
-import { ChatMessage } from '../../database/entities/ChatMessage'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { ChatMessage } from '../../database/entities/ChatMessage.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
-import { utilGetChatMessage } from '../../utils/getChatMessage'
+import { utilGetChatMessage } from '../../utils/getChatMessage.js'
 
 const getFeedbackTypeFilters = (_feedbackTypeFilters: ChatMessageRatingType[]): ChatMessageRatingType[] | undefined => {
     try {

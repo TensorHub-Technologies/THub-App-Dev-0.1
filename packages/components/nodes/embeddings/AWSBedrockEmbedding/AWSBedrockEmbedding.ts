@@ -1,8 +1,8 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { BedrockEmbeddings, BedrockEmbeddingsParams } from '@langchain/community/embeddings/bedrock'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { MODEL_TYPE, getModels, getRegions } from '../../../src/modelLoader'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { MODEL_TYPE, getModels, getRegions } from '../../../src/modelLoader.js'
 
 class AWSBedrockEmbedding_Embeddings implements INode {
     label: string
@@ -249,4 +249,4 @@ const processInBatches = async (
     return result
 }
 
-module.exports = { nodeClass: AWSBedrockEmbedding_Embeddings }
+export const nodeClass = AWSBedrockEmbedding_Embeddings

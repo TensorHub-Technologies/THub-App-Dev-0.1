@@ -1,8 +1,8 @@
 import { get } from 'lodash'
 import { Document } from '@langchain/core/documents'
 import { VectorStore, VectorStoreRetriever, VectorStoreRetrieverInput } from '@langchain/core/vectorstores'
-import { INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface'
-import { handleEscapeCharacters } from '../../../src'
+import { INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
+import { handleEscapeCharacters } from '../../../src.js'
 
 const defaultReturnFormat = '{{context}}\nSource: {{metadata.source}}'
 
@@ -156,4 +156,4 @@ function replaceMetadata(template: string, metadata: Record<string, any>): strin
     })
 }
 
-module.exports = { nodeClass: CustomRetriever_Retrievers }
+export const nodeClass = CustomRetriever_Retrievers

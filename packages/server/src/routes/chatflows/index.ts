@@ -1,8 +1,8 @@
 import express from 'express'
-import chatflowsController from '../../controllers/chatflows'
-import authorizeResource from '../../middlewares/authorizeResource'
-import { ChatFlow } from '../../database/entities/ChatFlow'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import chatflowsController from '../../controllers/chatflows.js'
+import authorizeResource from '../../middlewares/authorizeResource.js'
+import { ChatFlow } from '../../database/entities/ChatFlow.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 const router = express.Router()
 
 const getChatflowByIdFromDB = async (id?: string) => {

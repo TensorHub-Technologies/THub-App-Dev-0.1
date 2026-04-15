@@ -1,5 +1,5 @@
 import express from 'express'
-import exportImportController from '../../controllers/export-import'
+import exportImportController from '../../controllers/export-import.js'
 const router = express.Router()
 
 router.post('/export', exportImportController.exportData)

@@ -2,8 +2,8 @@ import { flatten } from 'lodash'
 import { Document } from '@langchain/core/documents'
 import { FaissStore } from '@langchain/community/vectorstores/faiss'
 import { Embeddings } from '@langchain/core/embeddings'
-import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 class Faiss_VectorStores implements INode {
     label: string
@@ -143,4 +143,4 @@ const similaritySearchVectorWithScore = async (query: number[], k: number, vecto
     })
 }
 
-module.exports = { nodeClass: Faiss_VectorStores }
+export const nodeClass = Faiss_VectorStores

@@ -3,9 +3,9 @@ import { omit } from 'lodash'
 import { Document } from '@langchain/core/documents'
 import { TextSplitter } from 'langchain/text_splitter'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
-import { getCredentialData, getCredentialParam } from '../../../src/utils'
-import { IDocument, ICommonObject, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface'
-import { handleEscapeCharacters } from '../../../src'
+import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { IDocument, ICommonObject, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
+import { handleEscapeCharacters } from '../../../src.js'
 
 class Airtable_DocumentLoaders implements INode {
     label: string
@@ -399,6 +399,4 @@ class AirtableLoader extends BaseDocumentLoader {
     }
 }
 
-module.exports = {
-    nodeClass: Airtable_DocumentLoaders
-}
+export const nodeClass = Airtable_DocumentLoaders

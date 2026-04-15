@@ -1,6 +1,6 @@
 import { ChatMessage, LLMEndEvent, LLMStartEvent, LLMStreamEvent, MessageContentTextDetail, RetrievalEndEvent, Settings } from 'llamaindex'
-import { EvaluationRunner } from './EvaluationRunner'
-import { additionalCallbacks, ICommonObject, INodeData } from '../src'
+import { EvaluationRunner } from './EvaluationRunner.js'
+import { additionalCallbacks, ICommonObject, INodeData } from '../src.js'
 import { RetrievalStartEvent } from 'llamaindex/dist/type/llm/types'
 import { AgentEndEvent, AgentStartEvent } from 'llamaindex/dist/type/agent/types'
 import { encoding_for_model } from '@dqbd/tiktoken'

@@ -1,9 +1,9 @@
 import { BaseCache } from '@langchain/core/caches'
-import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getModels, getRegions, MODEL_TYPE } from '../../../src/modelLoader'
+import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { getModels, getRegions, MODEL_TYPE } from '../../../src/modelLoader.js'
 import { ChatBedrockConverseInput, ChatBedrockConverse } from '@langchain/aws'
-import { BedrockChat } from './FlowiseAWSChatBedrock'
+import { BedrockChat } from './FlowiseAWSChatBedrock.js'
 
 /**
  * @author Michael Connor <mlconnor@yahoo.com>
@@ -184,4 +184,4 @@ class AWSChatBedrock_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: AWSChatBedrock_ChatModels }
+export const nodeClass = AWSChatBedrock_ChatModels

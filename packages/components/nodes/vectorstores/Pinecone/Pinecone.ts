@@ -4,10 +4,10 @@ import { PineconeStoreParams, PineconeStore } from '@langchain/pinecone'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
 import { VectorStore } from '@langchain/core/vectorstores'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { addMMRInputParams, howToUseFileUpload, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
-import { index } from '../../../src/indexing'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { addMMRInputParams, howToUseFileUpload, resolveVectorStoreOrRetriever } from '../VectorStoreUtils.js'
+import { index } from '../../../src/indexing.js'
 
 class Pinecone_VectorStores implements INode {
     label: string
@@ -265,4 +265,4 @@ class Pinecone_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Pinecone_VectorStores }
+export const nodeClass = Pinecone_VectorStores

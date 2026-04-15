@@ -1,9 +1,9 @@
 import { ICommonObject } from 'thub-components'
-import { DocumentStore } from './database/entities/DocumentStore'
+import { DocumentStore } from './database/entities/DocumentStore.js'
 import { DataSource } from 'typeorm'
-import { IComponentNodes } from './Interface'
-import { Telemetry } from './utils/telemetry'
-import { CachePool } from './CachePool'
+import { IComponentNodes } from './Interface.js'
+import { Telemetry } from './utils/telemetry.js'
+import { CachePool } from './CachePool.js'
 
 export enum DocumentStoreStatus {
     EMPTY_SYNC = 'EMPTY',

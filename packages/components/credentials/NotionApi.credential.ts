@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class NotionApi implements INodeCredential {
     label: string
@@ -23,4 +23,4 @@ class NotionApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: NotionApi }
+export const credClass = NotionApi

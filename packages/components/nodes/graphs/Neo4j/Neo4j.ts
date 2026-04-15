@@ -1,5 +1,5 @@
-import { getBaseClasses, getCredentialData } from '../../../src/utils'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { getBaseClasses, getCredentialData } from '../../../src/utils.js'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { Neo4jGraph } from '@langchain/community/graphs/neo4j_graph'
 
 class Neo4j_Graphs implements INode {
@@ -77,4 +77,4 @@ class Neo4j_Graphs implements INode {
     }
 }
 
-module.exports = { nodeClass: Neo4j_Graphs }
+export const nodeClass = Neo4j_Graphs

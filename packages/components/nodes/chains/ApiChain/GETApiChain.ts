@@ -1,9 +1,9 @@
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { PromptTemplate } from '@langchain/core/prompts'
 import { APIChain } from 'langchain/chains'
-import { getBaseClasses } from '../../../src/utils'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
+import { getBaseClasses } from '../../../src/utils.js'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
 
 export const API_URL_RAW_PROMPT_TEMPLATE = `You are given the below API Documentation:
 {api_docs}
@@ -137,4 +137,4 @@ const getAPIChain = async (documents: string, llm: BaseLanguageModel, headers: s
     return chain
 }
 
-module.exports = { nodeClass: GETApiChain_Chains }
+export const nodeClass = GETApiChain_Chains

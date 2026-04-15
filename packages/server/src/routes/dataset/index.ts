@@ -1,9 +1,9 @@
 import express from 'express'
-import datasetController from '../../controllers/dataset'
-import authorizeResource from '../../middlewares/authorizeResource'
-import { Dataset } from '../../database/entities/Dataset'
-import { DatasetRow } from '../../database/entities/DatasetRow'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import datasetController from '../../controllers/dataset.js'
+import authorizeResource from '../../middlewares/authorizeResource.js'
+import { Dataset } from '../../database/entities/Dataset.js'
+import { DatasetRow } from '../../database/entities/DatasetRow.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 const router = express.Router()
 
 const getDatasetByIdFromDB = async (id?: string) => {

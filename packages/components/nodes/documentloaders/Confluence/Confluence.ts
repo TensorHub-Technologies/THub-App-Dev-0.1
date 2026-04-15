@@ -1,8 +1,8 @@
 import { omit } from 'lodash'
 import { TextSplitter } from 'langchain/text_splitter'
 import { ConfluencePagesLoader, ConfluencePagesLoaderParams } from '@langchain/community/document_loaders/web/confluence'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils'
-import { ICommonObject, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils.js'
+import { ICommonObject, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
 
 class Confluence_DocumentLoaders implements INode {
     label: string
@@ -185,4 +185,4 @@ class Confluence_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Confluence_DocumentLoaders }
+export const nodeClass = Confluence_DocumentLoaders

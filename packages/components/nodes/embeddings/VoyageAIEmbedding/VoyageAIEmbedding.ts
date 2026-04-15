@@ -1,6 +1,6 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { MODEL_TYPE, getModels } from '../../../src/modelLoader.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { VoyageEmbeddings, VoyageEmbeddingsParams } from '@langchain/community/embeddings/voyage'
 
 class VoyageAIEmbedding_Embeddings implements INode {
@@ -67,4 +67,4 @@ class VoyageAIEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: VoyageAIEmbedding_Embeddings }
+export const nodeClass = VoyageAIEmbedding_Embeddings

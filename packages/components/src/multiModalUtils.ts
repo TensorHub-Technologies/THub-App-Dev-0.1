@@ -1,5 +1,5 @@
-import { IVisionChatModal, ICommonObject, IFileUpload, IMultiModalOption, INodeData, MessageContentImageUrl } from './Interface'
-import { getFileFromStorage } from './storageUtils'
+import { IVisionChatModal, ICommonObject, IFileUpload, IMultiModalOption, INodeData, MessageContentImageUrl } from './Interface.js'
+import { getFileFromStorage } from './storageUtils.js'
 
 export const addImagesToMessages = async (
     nodeData: INodeData,

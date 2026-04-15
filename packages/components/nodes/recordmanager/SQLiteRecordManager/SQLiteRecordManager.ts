@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getUserHome } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getUserHome } from '../../../src/utils.js'
 import { ListKeyOptions, RecordManagerInterface, UpdateOptions } from '@langchain/community/indexes/base'
 import { DataSource } from 'typeorm'
 import path from 'path'
@@ -386,4 +386,4 @@ CREATE INDEX IF NOT EXISTS group_id_index ON "${tableName}" (group_id);`)
     }
 }
 
-module.exports = { nodeClass: SQLiteRecordManager_RecordManager }
+export const nodeClass = SQLiteRecordManager_RecordManager

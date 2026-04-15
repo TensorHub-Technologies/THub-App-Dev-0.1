@@ -1,10 +1,10 @@
 import OpenAI from 'openai'
 import { StatusCodes } from 'http-status-codes'
-import { decryptCredentialData } from '../../utils'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { Credential } from '../../database/entities/Credential'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { decryptCredentialData } from '../../utils.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { Credential } from '../../database/entities/Credential.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 import { getFileFromUpload, removeSpecificFileFromUpload } from 'thub-components'
 
 // ----------------------------------------

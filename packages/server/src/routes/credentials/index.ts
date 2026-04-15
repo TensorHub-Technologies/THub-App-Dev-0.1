@@ -1,8 +1,8 @@
 import express from 'express'
-import credentialsController from '../../controllers/credentials'
-import authorizeResource from '../../middlewares/authorizeResource'
-import { Credential } from '../../database/entities/Credential'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import credentialsController from '../../controllers/credentials.js'
+import authorizeResource from '../../middlewares/authorizeResource.js'
+import { Credential } from '../../database/entities/Credential.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 const router = express.Router()
 
 const getCredentialByIdFromDB = async (id?: string) => {

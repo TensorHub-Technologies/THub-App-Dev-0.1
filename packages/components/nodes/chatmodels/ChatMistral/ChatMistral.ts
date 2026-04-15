@@ -1,8 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatMistralAI, ChatMistralAIInput } from '@langchain/mistralai'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 class ChatMistral_ChatModels implements INode {
     label: string
@@ -151,4 +151,4 @@ class ChatMistral_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatMistral_ChatModels }
+export const nodeClass = ChatMistral_ChatModels

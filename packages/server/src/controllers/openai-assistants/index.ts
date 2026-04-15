@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import * as fs from 'fs'
-import openaiAssistantsService from '../../services/openai-assistants'
+import openaiAssistantsService from '../../services/openai-assistants.js'
 import contentDisposition from 'content-disposition'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 import { streamStorageFile } from 'thub-components'
 

@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { Assistant } from '../../entities/Assistant'
+import { Assistant } from '../../entities/Assistant.js'
 
 export class FixOpenSourceAssistantTable1743758056188 implements MigrationInterface {
     name = 'FixOpenSourceAssistantTable1743758056188'

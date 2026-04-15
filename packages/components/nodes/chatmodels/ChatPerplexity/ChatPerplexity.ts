@@ -1,9 +1,9 @@
 import { ChatPerplexity as LangchainChatPerplexity, PerplexityChatInput } from '@langchain/community/chat_models/perplexity'
 import { BaseCache } from '@langchain/core/caches'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { ChatPerplexity } from './FlowiseChatPerplexity'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { ChatPerplexity } from './FlowiseChatPerplexity.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 class ChatPerplexity_ChatModels implements INode {
     label: string
@@ -237,4 +237,4 @@ class ChatPerplexity_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatPerplexity_ChatModels }
+export const nodeClass = ChatPerplexity_ChatModels

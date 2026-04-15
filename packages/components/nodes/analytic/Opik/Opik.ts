@@ -1,4 +1,4 @@
-import { INode, INodeParams } from '../../../src/Interface'
+import { INode, INodeParams } from '../../../src/Interface.js'
 
 class Opik_Analytic implements INode {
     label: string
@@ -30,4 +30,4 @@ class Opik_Analytic implements INode {
     }
 }
 
-module.exports = { nodeClass: Opik_Analytic }
+export const nodeClass = Opik_Analytic

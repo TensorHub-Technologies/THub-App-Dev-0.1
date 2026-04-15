@@ -10,8 +10,8 @@ import {
     IServerSideEventStreamer
 } from 'thub-components'
 import { DataSource } from 'typeorm'
-import { CachePool } from './CachePool'
-import { Telemetry } from './utils/telemetry'
+import { CachePool } from './CachePool.js'
+import { Telemetry } from './utils/telemetry.js'
 
 export type MessageType = 'apiMessage' | 'userMessage'
 
@@ -426,7 +426,7 @@ export enum UserPlan {
 }
 
 // DocumentStore related
-export * from './Interface.DocumentStore'
+export * from './Interface.DocumentStore.js'
 
 // Evaluations related
-export * from './Interface.Evaluation'
+export * from './Interface.Evaluation.js'

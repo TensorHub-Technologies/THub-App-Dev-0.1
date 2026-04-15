@@ -1,14 +1,14 @@
 import { Redis, RedisOptions } from 'ioredis'
 import { BufferMemory, BufferMemoryInput } from 'langchain/memory'
 import { mapStoredMessageToChatMessage, BaseMessage, AIMessage, HumanMessage } from '@langchain/core/messages'
-import { INode, INodeData, INodeParams, ICommonObject, MessageType, IMessage, MemoryMethods, FlowiseMemory } from '../../../src/Interface'
+import { INode, INodeData, INodeParams, ICommonObject, MessageType, IMessage, MemoryMethods, FlowiseMemory } from '../../../src/Interface.js'
 import {
     convertBaseMessagetoIMessage,
     getBaseClasses,
     getCredentialData,
     getCredentialParam,
     mapChatMessageToBaseMessage
-} from '../../../src/utils'
+} from '../../../src/utils.js'
 
 class RedisBackedChatMemory_Memory implements INode {
     label: string
@@ -201,4 +201,4 @@ class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
     }
 }
 
-module.exports = { nodeClass: RedisBackedChatMemory_Memory }
+export const nodeClass = RedisBackedChatMemory_Memory

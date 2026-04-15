@@ -1,8 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
 import { VertexAI, VertexAIInput } from '@langchain/google-vertexai'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 class GoogleVertexAI_LLMs implements INode {
     label: string
@@ -126,4 +126,4 @@ class GoogleVertexAI_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleVertexAI_LLMs }
+export const nodeClass = GoogleVertexAI_LLMs

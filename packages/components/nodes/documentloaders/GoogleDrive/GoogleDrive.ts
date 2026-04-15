@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { ICommonObject, IDocument, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface'
+import { ICommonObject, IDocument, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import {
     convertMultiOptionsToStringArray,
@@ -8,15 +8,15 @@ import {
     handleEscapeCharacters,
     INodeOutputsValue,
     refreshOAuth2Token
-} from '../../../src'
+} from '../../../src.js'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx'
 import { CSVLoader } from '@langchain/community/document_loaders/fs/csv'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
-import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader'
-import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader'
+import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader.js'
+import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader.js'
 
 // Helper function to get human-readable MIME type labels
 const getMimeTypeLabel = (mimeType: string): string | undefined => {
@@ -826,4 +826,4 @@ class GoogleDrive_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleDrive_DocumentLoaders }
+export const nodeClass = GoogleDrive_DocumentLoaders

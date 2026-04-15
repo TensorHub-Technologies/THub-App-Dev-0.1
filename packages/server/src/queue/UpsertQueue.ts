@@ -6,14 +6,14 @@ import {
     IExecutePreviewLoader,
     IExecuteProcessLoader,
     IExecuteVectorStoreInsert
-} from '../Interface'
-import { Telemetry } from '../utils/telemetry'
-import { CachePool } from '../CachePool'
-import { BaseQueue } from './BaseQueue'
-import { executeUpsert } from '../utils/upsertVector'
-import { executeDocStoreUpsert, insertIntoVectorStore, previewChunks, processLoader } from '../services/documentstore'
+} from '../Interface.js'
+import { Telemetry } from '../utils/telemetry.js'
+import { CachePool } from '../CachePool.js'
+import { BaseQueue } from './BaseQueue.js'
+import { executeUpsert } from '../utils/upsertVector.js'
+import { executeDocStoreUpsert, insertIntoVectorStore, previewChunks, processLoader } from '../services/documentstore.js'
 import { RedisOptions } from 'bullmq'
-import logger from '../utils/logger'
+import logger from '../utils/logger.js'
 
 interface UpsertQueueOptions {
     appDataSource: DataSource

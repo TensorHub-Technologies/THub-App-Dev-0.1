@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class GoogleVertexAuth implements INodeCredential {
     label: string
@@ -52,4 +52,4 @@ class GoogleVertexAuth implements INodeCredential {
     }
 }
 
-module.exports = { credClass: GoogleVertexAuth }
+export const credClass = GoogleVertexAuth

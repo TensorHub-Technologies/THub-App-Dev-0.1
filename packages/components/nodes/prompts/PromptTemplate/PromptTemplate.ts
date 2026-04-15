@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams, PromptTemplate } from '../../../src/Interface'
-import { getBaseClasses, getInputVariables, transformBracesWithColon } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams, PromptTemplate } from '../../../src/Interface.js'
+import { getBaseClasses, getInputVariables, transformBracesWithColon } from '../../../src/utils.js'
 import { PromptTemplateInput } from '@langchain/core/prompts'
 
 class PromptTemplate_Prompts implements INode {
@@ -71,4 +71,4 @@ class PromptTemplate_Prompts implements INode {
     }
 }
 
-module.exports = { nodeClass: PromptTemplate_Prompts }
+export const nodeClass = PromptTemplate_Prompts

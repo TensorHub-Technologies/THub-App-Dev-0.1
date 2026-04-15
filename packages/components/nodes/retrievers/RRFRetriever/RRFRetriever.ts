@@ -2,9 +2,9 @@ import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { BaseRetriever } from '@langchain/core/retrievers'
 import { VectorStoreRetriever } from '@langchain/core/vectorstores'
 import { ContextualCompressionRetriever } from 'langchain/retrievers/contextual_compression'
-import { ReciprocalRankFusion } from './ReciprocalRankFusion'
-import { handleEscapeCharacters } from '../../../src/utils'
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ReciprocalRankFusion } from './ReciprocalRankFusion.js'
+import { handleEscapeCharacters } from '../../../src/utils.js'
+import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class RRFRetriever_Retrievers implements INode {
     label: string
@@ -134,4 +134,4 @@ class RRFRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: RRFRetriever_Retrievers }
+export const nodeClass = RRFRetriever_Retrievers

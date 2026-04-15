@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class FireCrawlApiCredential implements INodeCredential {
     label: string
@@ -29,4 +29,4 @@ class FireCrawlApiCredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: FireCrawlApiCredential }
+export const credClass = FireCrawlApiCredential

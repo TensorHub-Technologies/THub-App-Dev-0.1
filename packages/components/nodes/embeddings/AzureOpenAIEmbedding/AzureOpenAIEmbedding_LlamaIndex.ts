@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { OpenAIEmbedding } from 'llamaindex'
 
 interface AzureOpenAIConfig {
@@ -74,4 +74,4 @@ class AzureOpenAIEmbedding_LlamaIndex_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: AzureOpenAIEmbedding_LlamaIndex_Embeddings }
+export const nodeClass = AzureOpenAIEmbedding_LlamaIndex_Embeddings

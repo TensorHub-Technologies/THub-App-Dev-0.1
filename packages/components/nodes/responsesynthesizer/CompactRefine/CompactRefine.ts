@@ -1,5 +1,5 @@
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { ResponseSynthesizerClass } from '../base'
+import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { ResponseSynthesizerClass } from '../base.js'
 
 class CompactRefine_LlamaIndex implements INode {
     label: string
@@ -72,4 +72,4 @@ Answer:`,
     }
 }
 
-module.exports = { nodeClass: CompactRefine_LlamaIndex }
+export const nodeClass = CompactRefine_LlamaIndex

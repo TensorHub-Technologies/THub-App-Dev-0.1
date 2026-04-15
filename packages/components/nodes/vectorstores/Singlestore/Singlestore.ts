@@ -2,8 +2,8 @@ import { flatten } from 'lodash'
 import { Embeddings } from '@langchain/core/embeddings'
 import { SingleStoreVectorStore, SingleStoreVectorStoreConfig } from '@langchain/community/vectorstores/singlestore'
 import { Document } from '@langchain/core/documents'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class SingleStore_VectorStores implements INode {
     label: string
@@ -194,4 +194,4 @@ class SingleStore_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: SingleStore_VectorStores }
+export const nodeClass = SingleStore_VectorStores

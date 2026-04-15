@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import subscriptionService from '../../services/subscription'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import subscriptionService from '../../services/subscription.js'
 
 const createSubscription = async (req: Request, res: Response, next: NextFunction) => {
     try {

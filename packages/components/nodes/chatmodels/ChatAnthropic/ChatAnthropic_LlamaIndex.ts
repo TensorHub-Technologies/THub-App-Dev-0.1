@@ -1,6 +1,6 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { MODEL_TYPE, getModels } from '../../../src/modelLoader.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { Anthropic } from 'llamaindex'
 
 class ChatAnthropic_LlamaIndex_ChatModels implements INode {
@@ -101,4 +101,4 @@ class ChatAnthropic_LlamaIndex_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatAnthropic_LlamaIndex_ChatModels }
+export const nodeClass = ChatAnthropic_LlamaIndex_ChatModels

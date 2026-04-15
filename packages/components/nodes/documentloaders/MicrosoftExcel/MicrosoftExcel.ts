@@ -1,7 +1,7 @@
 import { TextSplitter } from 'langchain/text_splitter'
-import { LoadOfSheet } from './ExcelLoader'
-import { getFileFromStorage, handleDocumentLoaderDocuments, handleDocumentLoaderMetadata, handleDocumentLoaderOutput } from '../../../src'
-import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { LoadOfSheet } from './ExcelLoader.js'
+import { getFileFromStorage, handleDocumentLoaderDocuments, handleDocumentLoaderMetadata, handleDocumentLoaderOutput } from '../../../src.js'
+import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class MicrosoftExcel_DocumentLoaders implements INode {
     label: string
@@ -139,4 +139,4 @@ class MicrosoftExcel_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: MicrosoftExcel_DocumentLoaders }
+export const nodeClass = MicrosoftExcel_DocumentLoaders

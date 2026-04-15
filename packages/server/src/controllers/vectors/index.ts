@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import vectorsService from '../../services/vectors'
-import { RateLimiterManager } from '../../utils/rateLimit'
+import vectorsService from '../../services/vectors.js'
+import { RateLimiterManager } from '../../utils/rateLimit.js'
 
 const getRateLimiterMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {

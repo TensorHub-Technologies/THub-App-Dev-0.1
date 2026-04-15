@@ -15,8 +15,8 @@ import {
 import { FetchResponse, Index, Pinecone, ScoredPineconeRecord } from '@pinecone-database/pinecone'
 import { flatten } from 'lodash'
 import { Document as LCDocument } from 'langchain/document'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { flattenObject, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { flattenObject, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class PineconeLlamaIndex_VectorStores implements INode {
     label: string
@@ -389,4 +389,4 @@ const cleanupMetadata = (nodeMetadata: ICommonObject) => {
     return metadata
 }
 
-module.exports = { nodeClass: PineconeLlamaIndex_VectorStores }
+export const nodeClass = PineconeLlamaIndex_VectorStores

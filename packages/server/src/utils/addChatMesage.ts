@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm'
-import { ChatMessage } from '../database/entities/ChatMessage'
-import { IChatMessage } from '../Interface'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
+import { ChatMessage } from '../database/entities/ChatMessage.js'
+import { IChatMessage } from '../Interface.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
 
 /**
  * Method that add chat messages.

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class MomentoCacheApi implements INodeCredential {
     label: string
@@ -33,4 +33,4 @@ class MomentoCacheApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: MomentoCacheApi }
+export const credClass = MomentoCacheApi

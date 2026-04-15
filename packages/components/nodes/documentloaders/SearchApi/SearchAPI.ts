@@ -1,8 +1,8 @@
 import { omit } from 'lodash'
-import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { SearchApiLoader } from '@langchain/community/document_loaders/web/searchapi'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters, INodeOutputsValue } from '../../../src'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters, INodeOutputsValue } from '../../../src.js'
 
 // Provides access to multiple search engines using the SearchApi.
 // For available parameters & engines, refer to: https://www.searchapi.io/docs/google
@@ -174,4 +174,4 @@ class SearchAPI_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: SearchAPI_DocumentLoaders }
+export const nodeClass = SearchAPI_DocumentLoaders

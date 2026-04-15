@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import {
     UnstructuredLoaderOptions,
     UnstructuredLoaderStrategy,
@@ -7,9 +7,9 @@ import {
     HiResModelName,
     UnstructuredLoader as LCUnstructuredLoader
 } from '@langchain/community/document_loaders/fs/unstructured'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils'
-import { getFileFromStorage, INodeOutputsValue } from '../../../src'
-import { UnstructuredLoader } from './Unstructured'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils.js'
+import { getFileFromStorage, INodeOutputsValue } from '../../../src.js'
+import { UnstructuredLoader } from './Unstructured.js'
 
 class UnstructuredFile_DocumentLoaders implements INode {
     label: string
@@ -610,4 +610,4 @@ class UnstructuredFile_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: UnstructuredFile_DocumentLoaders }
+export const nodeClass = UnstructuredFile_DocumentLoaders

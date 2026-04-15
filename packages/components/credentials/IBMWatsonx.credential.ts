@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class IBMWatsonxCredential implements INodeCredential {
     label: string
@@ -66,4 +66,4 @@ class IBMWatsonxCredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: IBMWatsonxCredential }
+export const credClass = IBMWatsonxCredential

@@ -1,8 +1,8 @@
 import express from 'express'
-import assistantsController from '../../controllers/assistants'
-import authorizeResource from '../../middlewares/authorizeResource'
-import { Assistant } from '../../database/entities/Assistant'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import assistantsController from '../../controllers/assistants.js'
+import authorizeResource from '../../middlewares/authorizeResource.js'
+import { Assistant } from '../../database/entities/Assistant.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 
 const router = express.Router()
 

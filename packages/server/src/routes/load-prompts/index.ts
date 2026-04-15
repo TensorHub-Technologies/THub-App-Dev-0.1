@@ -1,5 +1,5 @@
 import express from 'express'
-import loadPromptsController from '../../controllers/load-prompts'
+import loadPromptsController from '../../controllers/load-prompts.js'
 const router = express.Router()
 
 // CREATE

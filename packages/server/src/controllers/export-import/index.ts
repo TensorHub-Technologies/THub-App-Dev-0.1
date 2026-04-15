@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import exportImportService from '../../services/export-import'
+import exportImportService from '../../services/export-import.js'
 
 const assignTenantOwnership = (payload: Record<string, any>, tenantId: string) => {
     const tenantScopedCollections = [

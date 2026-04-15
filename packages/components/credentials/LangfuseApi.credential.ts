@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class LangfuseApi implements INodeCredential {
     label: string
@@ -36,4 +36,4 @@ class LangfuseApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: LangfuseApi }
+export const credClass = LangfuseApi

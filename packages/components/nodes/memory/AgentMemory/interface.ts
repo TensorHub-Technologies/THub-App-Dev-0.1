@@ -1,6 +1,6 @@
 import { Checkpoint, CheckpointMetadata } from '@langchain/langgraph'
 import { RunnableConfig } from '@langchain/core/runnables'
-import { IDatabaseEntity } from '../../../src'
+import { IDatabaseEntity } from '../../../src.js'
 import { DataSource } from 'typeorm'
 
 export type SaverOptions = {

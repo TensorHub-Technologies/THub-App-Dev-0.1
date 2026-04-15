@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class AssemblyAIApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class AssemblyAIApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: AssemblyAIApi }
+export const credClass = AssemblyAIApi

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 // Returns specific component node icon via name

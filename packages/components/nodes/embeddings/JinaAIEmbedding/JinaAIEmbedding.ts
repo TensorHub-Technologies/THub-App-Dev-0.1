@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { JinaEmbeddings } from '@langchain/community/embeddings/jina'
 
 class ExtendedJinaEmbeddings extends JinaEmbeddings {
@@ -85,4 +85,4 @@ class JinaAIEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: JinaAIEmbedding_Embeddings }
+export const nodeClass = JinaAIEmbedding_Embeddings

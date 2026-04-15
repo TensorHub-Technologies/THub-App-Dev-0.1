@@ -1,4 +1,4 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { A2AClient } from '../../../src/a2a/client/index.js'
 import { Tool } from '@langchain/core/tools'
 import type {
@@ -159,4 +159,4 @@ class A2A implements INode {
     }
 }
 
-module.exports = { nodeClass: A2A }
+export const nodeClass = A2A

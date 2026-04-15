@@ -1,4 +1,4 @@
-import { defaultChain, INodeData } from '../../../src'
+import { defaultChain, INodeData } from '../../../src.js'
 
 export function getHost(nodeData?: INodeData) {
     return defaultChain(nodeData?.inputs?.host, process.env.POSTGRES_RECORDMANAGER_HOST)

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class JinaAICredential implements INodeCredential {
     label: string
@@ -22,4 +22,4 @@ class JinaAICredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: JinaAICredential }
+export const credClass = JinaAICredential

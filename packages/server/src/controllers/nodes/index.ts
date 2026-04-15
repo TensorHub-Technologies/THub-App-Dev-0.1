@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import _ from 'lodash'
-import nodesService from '../../services/nodes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import nodesService from '../../services/nodes.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const getAllNodes = async (req: Request, res: Response, next: NextFunction) => {

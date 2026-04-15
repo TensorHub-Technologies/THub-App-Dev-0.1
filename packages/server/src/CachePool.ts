@@ -1,4 +1,4 @@
-import { IActiveCache, MODE } from './Interface'
+import { IActiveCache, MODE } from './Interface.js'
 import Redis from 'ioredis'
 
 /**

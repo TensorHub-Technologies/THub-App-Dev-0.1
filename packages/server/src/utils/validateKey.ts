@@ -1,7 +1,7 @@
 import { Request } from 'express'
-import { ChatFlow } from '../database/entities/ChatFlow'
-import { compareKeys } from './apiKey'
-import apikeyService from '../services/apikey'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
+import { compareKeys } from './apiKey.js'
+import apikeyService from '../services/apikey.js'
 
 /**
  * Validate Workflow API Key

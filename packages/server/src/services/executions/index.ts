@@ -1,12 +1,12 @@
 import { StatusCodes } from 'http-status-codes'
 import { In } from 'typeorm'
-import { ChatMessage } from '../../database/entities/ChatMessage'
-import { Execution } from '../../database/entities/Execution'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
-import { ExecutionState, IAgentflowExecutedData } from '../../Interface'
-import { _removeCredentialId } from '../../utils'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import { ChatMessage } from '../../database/entities/ChatMessage.js'
+import { Execution } from '../../database/entities/Execution.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { ExecutionState, IAgentflowExecutedData } from '../../Interface.js'
+import { _removeCredentialId } from '../../utils.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 
 export interface ExecutionFilters {
     id?: string

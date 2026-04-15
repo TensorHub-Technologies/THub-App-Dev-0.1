@@ -1,5 +1,5 @@
 import { END } from '@langchain/langgraph'
-import { INode, INodeData, INodeParams, ISeqAgentNode } from '../../../src/Interface'
+import { INode, INodeData, INodeParams, ISeqAgentNode } from '../../../src/Interface.js'
 
 class End_SeqAgents implements INode {
     label: string
@@ -55,4 +55,4 @@ class End_SeqAgents implements INode {
     }
 }
 
-module.exports = { nodeClass: End_SeqAgents }
+export const nodeClass = End_SeqAgents

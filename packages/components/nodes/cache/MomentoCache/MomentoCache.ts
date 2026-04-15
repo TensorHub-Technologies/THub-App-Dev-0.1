@@ -1,6 +1,6 @@
 import { CacheClient, Configurations, CredentialProvider } from '@gomomento/sdk'
 import { MomentoCache as LangchainMomentoCache } from '@langchain/community/caches/momento'
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
 
 class MomentoCache implements INode {
     label: string
@@ -55,4 +55,4 @@ class MomentoCache implements INode {
     }
 }
 
-module.exports = { nodeClass: MomentoCache }
+export const nodeClass = MomentoCache

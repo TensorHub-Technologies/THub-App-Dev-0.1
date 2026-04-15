@@ -1,4 +1,4 @@
-import { INodeCredential, INodeParams } from '../src/Interface'
+import { INodeCredential, INodeParams } from '../src/Interface.js'
 
 class CometApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class CometApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: CometApi }
+export const credClass = CometApi

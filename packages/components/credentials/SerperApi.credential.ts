@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class SerperApi implements INodeCredential {
     label: string
@@ -21,4 +21,4 @@ class SerperApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: SerperApi }
+export const credClass = SerperApi

@@ -1,8 +1,8 @@
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../../src/utils'
-import { SaverOptions } from '../interface'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../../src/Interface'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../../src/utils.js'
+import { SaverOptions } from '../interface.js'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../../src/Interface.js'
 import { DataSource } from 'typeorm'
-import { PostgresSaver } from './pgSaver'
+import { PostgresSaver } from './pgSaver.js'
 
 class PostgresAgentMemory_Memory implements INode {
     label: string
@@ -108,4 +108,4 @@ class PostgresAgentMemory_Memory implements INode {
     }
 }
 
-module.exports = { nodeClass: PostgresAgentMemory_Memory }
+export const nodeClass = PostgresAgentMemory_Memory

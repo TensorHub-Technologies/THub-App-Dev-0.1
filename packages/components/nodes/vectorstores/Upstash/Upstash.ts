@@ -1,12 +1,12 @@
 import { flatten } from 'lodash'
-import { IndexingResult, INode, INodeOutputsValue, INodeParams, INodeData, ICommonObject } from '../../../src/Interface'
-import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { IndexingResult, INode, INodeOutputsValue, INodeParams, INodeData, ICommonObject } from '../../../src/Interface.js'
+import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
 import { UpstashVectorStore } from '@langchain/community/vectorstores/upstash'
 import { Index as UpstashIndex } from '@upstash/vector'
-import { index } from '../../../src/indexing'
-import { howToUseFileUpload, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
+import { index } from '../../../src/indexing.js'
+import { howToUseFileUpload, resolveVectorStoreOrRetriever } from '../VectorStoreUtils.js'
 
 type UpstashVectorStoreParams = {
     index: UpstashIndex
@@ -231,4 +231,4 @@ class Upstash_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Upstash_VectorStores }
+export const nodeClass = Upstash_VectorStores

@@ -1,7 +1,7 @@
 import { OllamaEmbeddings } from '@langchain/community/embeddings/ollama'
 import { OllamaInput } from '@langchain/community/llms/ollama'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 class OllamaEmbedding_Embeddings implements INode {
     label: string
@@ -95,4 +95,4 @@ class OllamaEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: OllamaEmbedding_Embeddings }
+export const nodeClass = OllamaEmbedding_Embeddings

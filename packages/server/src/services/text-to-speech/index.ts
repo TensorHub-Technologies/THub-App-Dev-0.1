@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 import { getVoices } from 'thub-components'
-import { databaseEntities } from '../../utils'
+import { databaseEntities } from '../../utils.js'
 
 export enum TextToSpeechProvider {
     OPENAI = 'openai',

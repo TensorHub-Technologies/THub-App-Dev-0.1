@@ -9,7 +9,7 @@ import {
     getFileFromUpload,
     removeSpecificFileFromUpload
 } from 'thub-components'
-import logger from '../utils/logger'
+import logger from '../utils/logger.js'
 import {
     buildFlow,
     constructGraphs,
@@ -20,19 +20,19 @@ import {
     getTelemetryFlowObj,
     getStartingNodes,
     getAPIOverrideConfig
-} from '../utils'
-import { validateChatflowAPIKey } from './validateKey'
-import { IncomingInput, INodeDirectedGraph, IReactFlowObject, ChatType, IExecuteFlowParams, MODE } from '../Interface'
-import { ChatFlow } from '../database/entities/ChatFlow'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
-import { UpsertHistory } from '../database/entities/UpsertHistory'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+} from '../utils.js'
+import { validateChatflowAPIKey } from './validateKey.js'
+import { IncomingInput, INodeDirectedGraph, IReactFlowObject, ChatType, IExecuteFlowParams, MODE } from '../Interface.js'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
+import { UpsertHistory } from '../database/entities/UpsertHistory.js'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
-import { getErrorMessage } from '../errors/utils'
+import { getErrorMessage } from '../errors/utils.js'
 import { v4 as uuidv4 } from 'uuid'
-import { FLOWISE_COUNTER_STATUS, FLOWISE_METRIC_COUNTERS } from '../Interface.Metrics'
-import { Variable } from '../database/entities/Variable'
-import { OMIT_QUEUE_JOB_DATA } from './constants'
+import { FLOWISE_COUNTER_STATUS, FLOWISE_METRIC_COUNTERS } from '../Interface.Metrics.js'
+import { Variable } from '../database/entities/Variable.js'
+import { OMIT_QUEUE_JOB_DATA } from './constants.js'
 
 export const executeUpsert = async ({
     componentNodes,

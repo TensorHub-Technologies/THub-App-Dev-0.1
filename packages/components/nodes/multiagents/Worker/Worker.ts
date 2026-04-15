@@ -5,10 +5,10 @@ import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { HumanMessage } from '@langchain/core/messages'
 import { formatToOpenAIToolMessages } from 'langchain/agents/format_scratchpad/openai_tools'
 import { type ToolsAgentStep } from 'langchain/agents/openai/output_parser'
-import { INode, INodeData, INodeParams, IMultiAgentNode, ITeamState, ICommonObject, MessageContentImageUrl } from '../../../src/Interface'
-import { ToolCallingAgentOutputParser, AgentExecutor } from '../../../src/agents'
+import { INode, INodeData, INodeParams, IMultiAgentNode, ITeamState, ICommonObject, MessageContentImageUrl } from '../../../src/Interface.js'
+import { ToolCallingAgentOutputParser, AgentExecutor } from '../../../src/agents.js'
 import { StringOutputParser } from '@langchain/core/output_parsers'
-import { getInputVariables, handleEscapeCharacters } from '../../../src/utils'
+import { getInputVariables, handleEscapeCharacters } from '../../../src/utils.js'
 
 const examplePrompt = 'You are a research assistant who can search for up-to-date info using search engine.'
 
@@ -314,4 +314,4 @@ const transformObjectPropertyToFunction = (obj: ICommonObject) => {
     return transformedObject
 }
 
-module.exports = { nodeClass: Worker_MultiAgents }
+export const nodeClass = Worker_MultiAgents

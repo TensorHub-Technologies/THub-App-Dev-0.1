@@ -1,6 +1,6 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, stripHTMLFromToolInput } from '../../../src/utils'
-import { RequestParameters, desc, RequestsPutTool } from './core'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, stripHTMLFromToolInput } from '../../../src/utils.js'
+import { RequestParameters, desc, RequestsPutTool } from './core.js'
 
 const codeExample = `{
     "name": {
@@ -152,4 +152,4 @@ class RequestsPut_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: RequestsPut_Tools }
+export const nodeClass = RequestsPut_Tools

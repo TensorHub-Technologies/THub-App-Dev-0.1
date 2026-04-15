@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class OpenAIApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class OpenAIApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: OpenAIApi }
+export const credClass = OpenAIApi

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ZepMemoryApi implements INodeCredential {
     label: string
@@ -23,4 +23,4 @@ class ZepMemoryApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ZepMemoryApi }
+export const credClass = ZepMemoryApi

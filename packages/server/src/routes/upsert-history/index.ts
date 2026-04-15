@@ -1,5 +1,5 @@
 import express from 'express'
-import upsertHistoryController from '../../controllers/upsert-history'
+import upsertHistoryController from '../../controllers/upsert-history.js'
 const router = express.Router()
 
 // CREATE

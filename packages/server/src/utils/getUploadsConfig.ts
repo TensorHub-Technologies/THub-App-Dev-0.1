@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
 import { INodeParams } from 'thub-components'
-import { ChatFlow } from '../database/entities/ChatFlow'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
-import { IUploadFileSizeAndTypes, IReactFlowNode, IReactFlowEdge } from '../Interface'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
+import { IUploadFileSizeAndTypes, IReactFlowNode, IReactFlowEdge } from '../Interface.js'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 
 type IUploadConfig = {
     isSpeechToTextEnabled: boolean

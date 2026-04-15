@@ -1,7 +1,9 @@
 // BEWARE: This file is an intereem solution until we have a proper config strategy
 
 import path from 'path'
+import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 dotenv.config({ path: path.join(__dirname, '..', '..', '.env'), override: true })
 

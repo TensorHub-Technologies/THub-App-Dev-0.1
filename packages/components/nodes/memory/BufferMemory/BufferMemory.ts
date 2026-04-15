@@ -7,8 +7,8 @@ import {
     INodeData,
     INodeParams,
     MemoryMethods
-} from '../../../src/Interface'
-import { getBaseClasses, mapChatMessageToBaseMessage } from '../../../src/utils'
+} from '../../../src/Interface.js'
+import { getBaseClasses, mapChatMessageToBaseMessage } from '../../../src/utils.js'
 import { BufferMemory, BufferMemoryInput } from 'langchain/memory'
 import { BaseMessage } from '@langchain/core/messages'
 import { DataSource } from 'typeorm'
@@ -141,4 +141,4 @@ class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
     }
 }
 
-module.exports = { nodeClass: BufferMemory_Memory }
+export const nodeClass = BufferMemory_Memory

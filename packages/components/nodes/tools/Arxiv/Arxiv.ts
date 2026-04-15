@@ -1,6 +1,6 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { ArxivParameters, desc, ArxivTool } from './core'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { ArxivParameters, desc, ArxivTool } from './core.js'
 
 class Arxiv_Tools implements INode {
     label: string
@@ -141,4 +141,4 @@ class Arxiv_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: Arxiv_Tools }
+export const nodeClass = Arxiv_Tools

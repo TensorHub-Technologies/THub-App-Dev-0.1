@@ -1,6 +1,6 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, stripHTMLFromToolInput } from '../../../src/utils'
-import { RequestParameters, desc, RequestsPostTool } from './core'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, stripHTMLFromToolInput } from '../../../src/utils.js'
+import { RequestParameters, desc, RequestsPostTool } from './core.js'
 
 const codeExample = `{
     "name": {
@@ -152,4 +152,4 @@ class RequestsPost_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: RequestsPost_Tools }
+export const nodeClass = RequestsPost_Tools

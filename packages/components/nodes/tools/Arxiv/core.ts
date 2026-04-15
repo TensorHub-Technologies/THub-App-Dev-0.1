@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import fetch from 'node-fetch'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
-import { DynamicStructuredTool } from '../OpenAPIToolkit/core'
+import { DynamicStructuredTool } from '../OpenAPIToolkit/core.js'
 
 export const desc = `Use this tool to search for academic papers on Arxiv. You can search by keywords, topics, authors, or specific Arxiv IDs. The tool can return either paper summaries or download and extract full paper content.`
 

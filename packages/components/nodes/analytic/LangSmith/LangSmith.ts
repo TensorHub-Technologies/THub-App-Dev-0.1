@@ -1,4 +1,4 @@
-import { INode, INodeParams } from '../../../src/Interface'
+import { INode, INodeParams } from '../../../src/Interface.js'
 
 class LangSmith_Analytic implements INode {
     label: string
@@ -30,4 +30,4 @@ class LangSmith_Analytic implements INode {
     }
 }
 
-module.exports = { nodeClass: LangSmith_Analytic }
+export const nodeClass = LangSmith_Analytic

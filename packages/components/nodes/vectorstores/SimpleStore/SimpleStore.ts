@@ -2,8 +2,8 @@ import path from 'path'
 import { flatten } from 'lodash'
 import { storageContextFromDefaults, serviceContextFromDefaults, VectorStoreIndex, Document } from 'llamaindex'
 import { Document as LCDocument } from 'langchain/document'
-import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getUserHome } from '../../../src'
+import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getUserHome } from '../../../src.js'
 
 class SimpleStoreUpsert_LlamaIndex_VectorStores implements INode {
     label: string
@@ -143,4 +143,4 @@ class SimpleStoreUpsert_LlamaIndex_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: SimpleStoreUpsert_LlamaIndex_VectorStores }
+export const nodeClass = SimpleStoreUpsert_LlamaIndex_VectorStores

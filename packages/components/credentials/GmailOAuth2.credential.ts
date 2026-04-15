@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 const scopes = [
     'https://www.googleapis.com/auth/gmail.readonly',
     'https://www.googleapis.com/auth/gmail.compose',
@@ -59,4 +59,4 @@ class GmailOAuth2 implements INodeCredential {
     }
 }
 
-module.exports = { credClass: GmailOAuth2 }
+export const credClass = GmailOAuth2

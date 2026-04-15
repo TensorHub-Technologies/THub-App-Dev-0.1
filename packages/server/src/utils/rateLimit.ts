@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { rateLimit, RateLimitRequestHandler } from 'express-rate-limit'
-import { IChatFlow, MODE } from '../Interface'
+import { IChatFlow, MODE } from '../Interface.js'
 import { Mutex } from 'async-mutex'
 import { RedisStore } from 'rate-limit-redis'
 import Redis from 'ioredis'

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ChatflowApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class ChatflowApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ChatflowApi }
+export const credClass = ChatflowApi

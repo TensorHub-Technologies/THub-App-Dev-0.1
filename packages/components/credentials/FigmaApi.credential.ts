@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class FigmaApi implements INodeCredential {
     label: string
@@ -24,4 +24,4 @@ class FigmaApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: FigmaApi }
+export const credClass = FigmaApi

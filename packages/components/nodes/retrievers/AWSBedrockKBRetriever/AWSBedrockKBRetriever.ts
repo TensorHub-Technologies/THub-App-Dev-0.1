@@ -1,8 +1,8 @@
 import { AmazonKnowledgeBaseRetriever } from '@langchain/aws'
-import { ICommonObject, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface'
-import { getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface.js'
+import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { RetrievalFilter } from '@aws-sdk/client-bedrock-agent-runtime'
-import { MODEL_TYPE, getRegions } from '../../../src/modelLoader'
+import { MODEL_TYPE, getRegions } from '../../../src/modelLoader.js'
 
 class AWSBedrockKBRetriever_Retrievers implements INode {
     label: string
@@ -138,4 +138,4 @@ class AWSBedrockKBRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: AWSBedrockKBRetriever_Retrievers }
+export const nodeClass = AWSBedrockKBRetriever_Retrievers

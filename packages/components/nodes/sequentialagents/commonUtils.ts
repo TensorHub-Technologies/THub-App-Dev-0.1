@@ -1,3 +1,4 @@
+import path from 'path'
 import { get } from 'lodash'
 import { z } from 'zod'
 import { DataSource } from 'typeorm'
@@ -8,7 +9,7 @@ import { ChatAnthropic } from '@langchain/anthropic'
 import { Runnable, RunnableConfig, mergeConfigs } from '@langchain/core/runnables'
 import { AIMessage, BaseMessage, HumanMessage, MessageContentImageUrl, ToolMessage } from '@langchain/core/messages'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import { addImagesToMessages, llmSupportsVision } from '../../src/multiModalUtils'
+import { addImagesToMessages, llmSupportsVision } from '../../src/multiModalUtils.js'
 import {
     ICommonObject,
     IDatabaseEntity,
@@ -16,9 +17,12 @@ import {
     ISeqAgentsState,
     IVisionChatModal,
     ConversationHistorySelection
-} from '../../src/Interface'
-import { availableDependencies, defaultAllowBuiltInDep, getVars, prepareSandboxVars } from '../../src/utils'
+} from '../../src/Interface.js'
+import { availableDependencies, defaultAllowBuiltInDep, getVars, prepareSandboxVars } from '../../src/utils.js'
 import { ChatPromptTemplate, BaseMessagePromptTemplateLike } from '@langchain/core/prompts'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 export const checkCondition = (input: string | number | undefined, condition: string, value: string | number = ''): boolean => {
     if (!input && condition === 'Is Empty') return true

@@ -1,17 +1,17 @@
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import { ICommonObject, IMessage, INode, INodeData, INodeOptionsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
+import { ICommonObject, IMessage, INode, INodeData, INodeOptionsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
 import { AIMessageChunk, BaseMessageLike, MessageContentText } from '@langchain/core/messages'
-import { DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt'
+import { DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt.js'
 import { z } from 'zod'
-import { AnalyticHandler } from '../../../src/handler'
-import { ILLMMessage, IStructuredOutput } from '../Interface.Agentflow'
+import { AnalyticHandler } from '../../../src/handler.js'
+import { ILLMMessage, IStructuredOutput } from '../Interface.Agentflow.js'
 import {
     getPastChatHistoryImageMessages,
     getUniqueImageMessages,
     processMessagesWithImages,
     replaceBase64ImagesWithFileReferences,
     updateFlowState
-} from '../utils'
+} from '../utils.js'
 import { get } from 'lodash'
 
 class LLM_Agentflow implements INode {
@@ -1033,4 +1033,4 @@ class LLM_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: LLM_Agentflow }
+export const nodeClass = LLM_Agentflow

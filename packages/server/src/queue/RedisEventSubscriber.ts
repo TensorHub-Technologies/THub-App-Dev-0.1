@@ -1,5 +1,5 @@
 import { createClient } from 'redis'
-import { SSEStreamer } from '../utils/SSEStreamer'
+import { SSEStreamer } from '../utils/SSEStreamer.js'
 
 export class RedisEventSubscriber {
     private redisSubscriber: ReturnType<typeof createClient>

@@ -1,4 +1,4 @@
-import { Moderation } from '../Moderation'
+import { Moderation } from '../Moderation.js'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 
 export class SimplePromptModerationRunner implements Moderation {

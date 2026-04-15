@@ -1,8 +1,8 @@
 import express from 'express'
-import toolsController from '../../controllers/tools'
-import authorizeResource from '../../middlewares/authorizeResource'
-import { Tool } from '../../database/entities/Tool'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import toolsController from '../../controllers/tools.js'
+import authorizeResource from '../../middlewares/authorizeResource.js'
+import { Tool } from '../../database/entities/Tool.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 
 const router = express.Router()
 

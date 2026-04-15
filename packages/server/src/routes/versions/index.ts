@@ -1,5 +1,5 @@
 import express from 'express'
-import versionsController from '../../controllers/versions'
+import versionsController from '../../controllers/versions.js'
 const router = express.Router()
 
 // READ

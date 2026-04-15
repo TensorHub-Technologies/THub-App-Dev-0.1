@@ -1,8 +1,8 @@
 import { TextSplitter } from 'langchain/text_splitter'
 import { Document, DocumentInterface } from '@langchain/core/documents'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
-import { INode, INodeData, INodeParams, ICommonObject, INodeOutputsValue } from '../../../src/Interface'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils'
+import { INode, INodeData, INodeParams, ICommonObject, INodeOutputsValue } from '../../../src/Interface.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils.js'
 import axios, { AxiosResponse, AxiosRequestHeaders } from 'axios'
 import { z } from 'zod'
 
@@ -1039,7 +1039,6 @@ class FireCrawl_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: FireCrawl_DocumentLoaders }
-
+export const nodeClass = FireCrawl_DocumentLoaders
 // FOR TESTING PURPOSES
 // export { FireCrawl_DocumentLoaders }

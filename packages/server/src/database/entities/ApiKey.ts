@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
-import { IApiKey } from '../../Interface'
+import { IApiKey } from '../../Interface.js'
 
 @Entity('apikey')
 export class ApiKey implements IApiKey {

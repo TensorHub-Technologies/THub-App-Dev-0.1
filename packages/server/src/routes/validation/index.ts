@@ -1,5 +1,5 @@
 import express from 'express'
-import validationController from '../../controllers/validation'
+import validationController from '../../controllers/validation.js'
 const router = express.Router()
 
 // READ

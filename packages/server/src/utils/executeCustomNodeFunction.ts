@@ -1,10 +1,10 @@
 import { handleEscapeCharacters, ICommonObject } from 'thub-components'
 import { databaseEntities } from '.'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
-import { getErrorMessage } from '../errors/utils'
+import { getErrorMessage } from '../errors/utils.js'
 import { DataSource } from 'typeorm'
-import { IComponentNodes } from '../Interface'
+import { IComponentNodes } from '../Interface.js'
 
 export const executeCustomNodeFunction = async ({
     appDataSource,

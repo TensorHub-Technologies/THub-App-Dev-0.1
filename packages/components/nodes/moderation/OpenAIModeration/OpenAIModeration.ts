@@ -1,7 +1,7 @@
-import { Moderation } from '../Moderation'
-import { OpenAIModerationRunner } from './OpenAIModerationRunner'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src'
+import { Moderation } from '../Moderation.js'
+import { OpenAIModerationRunner } from './OpenAIModerationRunner.js'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src.js'
 
 class OpenAIModeration implements INode {
     label: string
@@ -53,4 +53,4 @@ class OpenAIModeration implements INode {
     }
 }
 
-module.exports = { nodeClass: OpenAIModeration }
+export const nodeClass = OpenAIModeration

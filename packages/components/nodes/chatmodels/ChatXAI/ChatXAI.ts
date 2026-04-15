@@ -1,8 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatXAIInput } from '@langchain/xai'
-import { ICommonObject, IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { ChatXAI } from './FlowiseChatXAI'
+import { ICommonObject, IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { ChatXAI } from './FlowiseChatXAI.js'
 
 class ChatXAI_ChatModels implements INode {
     label: string
@@ -124,4 +124,4 @@ class ChatXAI_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatXAI_ChatModels }
+export const nodeClass = ChatXAI_ChatModels

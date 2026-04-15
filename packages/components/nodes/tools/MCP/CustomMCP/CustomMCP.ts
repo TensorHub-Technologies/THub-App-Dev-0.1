@@ -1,7 +1,7 @@
 import { Tool } from '@langchain/core/tools'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface'
-import { MCPToolkit } from '../core'
-import { getVars, prepareSandboxVars } from '../../../../src/utils'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface.js'
+import { MCPToolkit } from '../core.js'
+import { getVars, prepareSandboxVars } from '../../../../src/utils.js'
 import { DataSource } from 'typeorm'
 
 const mcpServerConfig = `{
@@ -240,4 +240,4 @@ function convertToValidJSONString(inputString: string) {
     }
 }
 
-module.exports = { nodeClass: Custom_MCP }
+export const nodeClass = Custom_MCP

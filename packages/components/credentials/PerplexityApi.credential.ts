@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class PerplexityApi implements INodeCredential {
     label: string
@@ -24,4 +24,4 @@ class PerplexityApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: PerplexityApi }
+export const credClass = PerplexityApi

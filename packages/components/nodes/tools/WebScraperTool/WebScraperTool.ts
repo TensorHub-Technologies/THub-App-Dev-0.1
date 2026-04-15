@@ -1,10 +1,10 @@
-import { INode, INodeParams, INodeData, ICommonObject } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeParams, INodeData, ICommonObject } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 import { Tool } from '@langchain/core/tools'
 import fetch from 'node-fetch'
 import * as cheerio from 'cheerio'
 import { URL } from 'url'
-import { xmlScrape } from '../../../src/utils'
+import { xmlScrape } from '../../../src/utils.js'
 
 interface ScrapedPageData {
     url: string
@@ -431,4 +431,4 @@ class WebScraperRecursive_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: WebScraperRecursive_Tools }
+export const nodeClass = WebScraperRecursive_Tools

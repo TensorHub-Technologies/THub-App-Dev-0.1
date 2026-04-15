@@ -1,5 +1,5 @@
 import { UpstashRedisCache as LangchainUpstashRedisCache } from '@langchain/community/caches/upstash_redis'
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
 
 class UpstashRedisCache implements INode {
     label: string
@@ -47,4 +47,4 @@ class UpstashRedisCache implements INode {
     }
 }
 
-module.exports = { nodeClass: UpstashRedisCache }
+export const nodeClass = UpstashRedisCache

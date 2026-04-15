@@ -1,6 +1,6 @@
 import { BaseOutputParser, CommaSeparatedListOutputParser } from '@langchain/core/output_parsers'
-import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src'
-import { CATEGORY } from '../OutputParserHelpers'
+import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src.js'
+import { CATEGORY } from '../OutputParserHelpers.js'
 
 class CSVListOutputParser implements INode {
     label: string
@@ -48,4 +48,4 @@ class CSVListOutputParser implements INode {
     }
 }
 
-module.exports = { nodeClass: CSVListOutputParser }
+export const nodeClass = CSVListOutputParser

@@ -1,11 +1,11 @@
 import { StatusCodes } from 'http-status-codes'
 import { Readable } from 'stream'
 import { In } from 'typeorm'
-import { Dataset } from '../../database/entities/Dataset'
-import { DatasetRow } from '../../database/entities/DatasetRow'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import { Dataset } from '../../database/entities/Dataset.js'
+import { DatasetRow } from '../../database/entities/DatasetRow.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 import csv from 'csv-parser'
 
 // ─── getAllDatasets ────────────────────────────────────────────────────────────

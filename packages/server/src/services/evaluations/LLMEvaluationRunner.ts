@@ -2,9 +2,9 @@ import { convertSchemaToZod, ICommonObject } from 'thub-components'
 import { z } from 'zod'
 import { RunnableSequence } from '@langchain/core/runnables'
 import { PromptTemplate } from '@langchain/core/prompts'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { databaseEntities } from '../../utils'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { databaseEntities } from '../../utils.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 export class LLMEvaluationRunner {

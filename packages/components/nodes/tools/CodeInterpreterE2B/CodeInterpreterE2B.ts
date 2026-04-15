@@ -1,12 +1,12 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { StructuredTool, ToolInputParsingException, ToolParams } from '@langchain/core/tools'
 import { Sandbox } from '@e2b/code-interpreter'
 import { z } from 'zod'
-import { addSingleFileToStorage } from '../../../src/storageUtils'
+import { addSingleFileToStorage } from '../../../src/storageUtils.js'
 import { CallbackManager, CallbackManagerForToolRun, Callbacks, parseCallbackConfigArg } from '@langchain/core/callbacks/manager'
 import { RunnableConfig } from '@langchain/core/runnables'
-import { ARTIFACTS_PREFIX } from '../../../src/agents'
+import { ARTIFACTS_PREFIX } from '../../../src/agents.js'
 
 const DESC = `Evaluates python code in a sandbox environment. \
 The environment is long running and exists across multiple executions. \
@@ -267,4 +267,4 @@ export class E2BTool extends StructuredTool {
     }
 }
 
-module.exports = { nodeClass: Code_Interpreter_Tools }
+export const nodeClass = Code_Interpreter_Tools

@@ -1,9 +1,9 @@
 import { Document } from '@langchain/core/documents'
 import { VectorStore, VectorStoreRetriever, VectorStoreRetrieverInput } from '@langchain/core/vectorstores'
-import { INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface'
-import { handleEscapeCharacters } from '../../../src'
+import { INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
+import { handleEscapeCharacters } from '../../../src.js'
 import { z } from 'zod'
-import { convertStructuredSchemaToZod } from '../../sequentialagents/commonUtils'
+import { convertStructuredSchemaToZod } from '../../sequentialagents/commonUtils.js'
 
 const queryPrefix = 'query'
 const defaultPrompt = `Extract keywords from the query: {{${queryPrefix}}}`
@@ -201,4 +201,4 @@ class DynamicMetadataRetriever<V extends VectorStore> extends VectorStoreRetriev
     }
 }
 
-module.exports = { nodeClass: ExtractMetadataRetriever_Retrievers }
+export const nodeClass = ExtractMetadataRetriever_Retrievers

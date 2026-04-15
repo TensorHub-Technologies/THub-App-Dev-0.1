@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import {
     UnstructuredDirectoryLoader,
     UnstructuredLoaderOptions,
@@ -7,7 +7,7 @@ import {
     SkipInferTableTypes,
     HiResModelName
 } from '@langchain/community/document_loaders/fs/unstructured'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils.js'
 
 class UnstructuredFolder_DocumentLoaders implements INode {
     label: string
@@ -515,4 +515,4 @@ class UnstructuredFolder_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: UnstructuredFolder_DocumentLoaders }
+export const nodeClass = UnstructuredFolder_DocumentLoaders

@@ -1,8 +1,8 @@
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { Embeddings } from '@langchain/core/embeddings'
 import { WebBrowser } from 'langchain/tools/webbrowser'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 class WebBrowser_Tools implements INode {
     label: string
@@ -46,4 +46,4 @@ class WebBrowser_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: WebBrowser_Tools }
+export const nodeClass = WebBrowser_Tools

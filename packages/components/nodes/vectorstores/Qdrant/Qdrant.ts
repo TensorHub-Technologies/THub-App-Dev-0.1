@@ -5,10 +5,10 @@ import { VectorStoreRetrieverInput } from '@langchain/core/vectorstores'
 import { Document } from '@langchain/core/documents'
 import { QdrantVectorStore, QdrantLibArgs } from '@langchain/qdrant'
 import { Embeddings } from '@langchain/core/embeddings'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { index } from '../../../src/indexing'
-import { howToUseFileUpload } from '../VectorStoreUtils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { index } from '../../../src/indexing.js'
+import { howToUseFileUpload } from '../VectorStoreUtils.js'
 
 type RetrieverConfig = Partial<VectorStoreRetrieverInput<QdrantVectorStore>>
 type QdrantAddDocumentOptions = {
@@ -510,4 +510,4 @@ class Qdrant_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Qdrant_VectorStores }
+export const nodeClass = Qdrant_VectorStores

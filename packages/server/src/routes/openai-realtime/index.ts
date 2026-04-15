@@ -1,5 +1,5 @@
 import express from 'express'
-import openaiRealTimeController from '../../controllers/openai-realtime'
+import openaiRealTimeController from '../../controllers/openai-realtime.js'
 
 const router = express.Router()
 

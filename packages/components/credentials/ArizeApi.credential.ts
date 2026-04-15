@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ArizeApi implements INodeCredential {
     label: string
@@ -36,4 +36,4 @@ class ArizeApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ArizeApi }
+export const credClass = ArizeApi

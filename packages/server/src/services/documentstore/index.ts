@@ -37,20 +37,20 @@ import {
     INodeData,
     IOverrideConfig,
     MODE
-} from '../../Interface'
-import { ChatFlow } from '../../database/entities/ChatFlow'
-import { DocumentStore } from '../../database/entities/DocumentStore'
-import { DocumentStoreFileChunk } from '../../database/entities/DocumentStoreFileChunk'
-import { UpsertHistory } from '../../database/entities/UpsertHistory'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
-import { databaseEntities, getAppVersion, saveUpsertFlowData } from '../../utils'
-import { DOCUMENT_STORE_BASE_FOLDER, INPUT_PARAMS_TYPE, OMIT_QUEUE_JOB_DATA } from '../../utils/constants'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import logger from '../../utils/logger'
-import { DOCUMENTSTORE_TOOL_DESCRIPTION_PROMPT_GENERATOR } from '../../utils/prompt'
-import { Telemetry } from '../../utils/telemetry'
-import nodesService from '../nodes'
+} from '../../Interface.js'
+import { ChatFlow } from '../../database/entities/ChatFlow.js'
+import { DocumentStore } from '../../database/entities/DocumentStore.js'
+import { DocumentStoreFileChunk } from '../../database/entities/DocumentStoreFileChunk.js'
+import { UpsertHistory } from '../../database/entities/UpsertHistory.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { databaseEntities, getAppVersion, saveUpsertFlowData } from '../../utils.js'
+import { DOCUMENT_STORE_BASE_FOLDER, INPUT_PARAMS_TYPE, OMIT_QUEUE_JOB_DATA } from '../../utils/constants.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import logger from '../../utils/logger.js'
+import { DOCUMENTSTORE_TOOL_DESCRIPTION_PROMPT_GENERATOR } from '../../utils/prompt.js'
+import { Telemetry } from '../../utils/telemetry.js'
+import nodesService from '../nodes.js'
 
 const createDocumentStore = async (newDocumentStore: DocumentStore) => {
     try {

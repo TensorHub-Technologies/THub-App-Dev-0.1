@@ -1,5 +1,5 @@
 import { ChatXAI as LCChatXAI, ChatXAIInput } from '@langchain/xai'
-import { IMultiModalOption, IVisionChatModal } from '../../../src'
+import { IMultiModalOption, IVisionChatModal } from '../../../src.js'
 
 export class ChatXAI extends LCChatXAI implements IVisionChatModal {
     configuredModel: string

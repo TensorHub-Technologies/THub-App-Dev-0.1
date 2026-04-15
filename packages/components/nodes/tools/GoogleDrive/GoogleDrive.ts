@@ -1,6 +1,6 @@
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils'
-import { createGoogleDriveTools } from './core'
-import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils.js'
+import { createGoogleDriveTools } from './core.js'
+import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class GoogleDrive_Tools implements INode {
     label: string
@@ -660,4 +660,4 @@ class GoogleDrive_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleDrive_Tools }
+export const nodeClass = GoogleDrive_Tools

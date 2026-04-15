@@ -2,8 +2,8 @@ import { VectorStore } from '@langchain/core/vectorstores'
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { PromptTemplate } from '@langchain/core/prompts'
 import { HydeRetriever, HydeRetrieverOptions, PromptKey } from 'langchain/retrievers/hyde'
-import { handleEscapeCharacters } from '../../../src/utils'
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { handleEscapeCharacters } from '../../../src/utils.js'
+import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class HydeRetriever_Retrievers implements INode {
     label: string
@@ -190,4 +190,4 @@ Passage:`
     }
 }
 
-module.exports = { nodeClass: HydeRetriever_Retrievers }
+export const nodeClass = HydeRetriever_Retrievers

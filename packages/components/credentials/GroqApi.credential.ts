@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class GroqApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class GroqApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: GroqApi }
+export const credClass = GroqApi

@@ -1,6 +1,6 @@
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils'
-import { createGmailTools } from './core'
-import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils.js'
+import { createGmailTools } from './core.js'
+import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class Gmail_Tools implements INode {
     label: string
@@ -627,4 +627,4 @@ class Gmail_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: Gmail_Tools }
+export const nodeClass = Gmail_Tools

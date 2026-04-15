@@ -1,7 +1,7 @@
-import * as Server from '../index'
-import * as DataSource from '../DataSource'
-import logger from '../utils/logger'
-import { BaseCommand } from './base'
+import * as Server from '../index.js'
+import * as DataSource from '../DataSource.js'
+import logger from '../utils/logger.js'
+import { BaseCommand } from './base.js'
 
 export default class Start extends BaseCommand {
     async run(): Promise<void> {

@@ -1,7 +1,7 @@
 import { Tool } from '@langchain/core/tools'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface'
-import { getCredentialData, getCredentialParam, getNodeModulesPackagePath } from '../../../../src/utils'
-import { MCPToolkit } from '../core'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface.js'
+import { getCredentialData, getCredentialParam, getNodeModulesPackagePath } from '../../../../src/utils.js'
+import { MCPToolkit } from '../core.js'
 
 class PostgreSQL_MCP implements INode {
     label: string
@@ -108,4 +108,4 @@ class PostgreSQL_MCP implements INode {
     }
 }
 
-module.exports = { nodeClass: PostgreSQL_MCP }
+export const nodeClass = PostgreSQL_MCP

@@ -1,6 +1,6 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils'
-import { createTeamsTools } from './core'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils.js'
+import { createTeamsTools } from './core.js'
 
 class MicrosoftTeams_Tools implements INode {
     label: string
@@ -1009,4 +1009,4 @@ class MicrosoftTeams_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: MicrosoftTeams_Tools }
+export const nodeClass = MicrosoftTeams_Tools

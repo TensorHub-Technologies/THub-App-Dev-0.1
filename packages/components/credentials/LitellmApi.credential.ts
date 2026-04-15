@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class LitellmApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class LitellmApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: LitellmApi }
+export const credClass = LitellmApi

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class HTTPBearerTokenCredential implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class HTTPBearerTokenCredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: HTTPBearerTokenCredential }
+export const credClass = HTTPBearerTokenCredential

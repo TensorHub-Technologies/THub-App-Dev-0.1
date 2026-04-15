@@ -1,7 +1,7 @@
 import { Tool } from '@langchain/core/tools'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface'
-import { getCredentialData, getCredentialParam, getNodeModulesPackagePath } from '../../../../src/utils'
-import { MCPToolkit } from '../core'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface.js'
+import { getCredentialData, getCredentialParam, getNodeModulesPackagePath } from '../../../../src/utils.js'
+import { MCPToolkit } from '../core.js'
 
 class Slack_MCP implements INode {
     label: string
@@ -113,4 +113,4 @@ class Slack_MCP implements INode {
     }
 }
 
-module.exports = { nodeClass: Slack_MCP }
+export const nodeClass = Slack_MCP

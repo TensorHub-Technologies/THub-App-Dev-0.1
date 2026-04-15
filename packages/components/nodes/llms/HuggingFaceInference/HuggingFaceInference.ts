@@ -1,7 +1,7 @@
 import { BaseCache } from '@langchain/core/caches'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { HFInput, HuggingFaceInference } from './core'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { HFInput, HuggingFaceInference } from './core.js'
 
 class HuggingFaceInference_LLMs implements INode {
     label: string
@@ -134,4 +134,4 @@ class HuggingFaceInference_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: HuggingFaceInference_LLMs }
+export const nodeClass = HuggingFaceInference_LLMs

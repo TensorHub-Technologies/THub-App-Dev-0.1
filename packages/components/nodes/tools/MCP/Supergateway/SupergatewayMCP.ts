@@ -1,7 +1,7 @@
 import { Tool } from '@langchain/core/tools'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface'
-import { getNodeModulesPackagePath } from '../../../../src/utils'
-import { MCPToolkit, validateArgsForLocalFileAccess } from '../core'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface.js'
+import { getNodeModulesPackagePath } from '../../../../src/utils.js'
+import { MCPToolkit, validateArgsForLocalFileAccess } from '../core.js'
 
 class Supergateway_MCP implements INode {
     label: string
@@ -123,4 +123,4 @@ class Supergateway_MCP implements INode {
     }
 }
 
-module.exports = { nodeClass: Supergateway_MCP }
+export const nodeClass = Supergateway_MCP

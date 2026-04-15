@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import marketplacesService from '../../services/marketplaces'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import marketplacesService from '../../services/marketplaces.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 // Get all templates for marketplaces

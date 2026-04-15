@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
-import { ILead } from '../../Interface'
+import { ILead } from '../../Interface.js'
 
 @Entity()
 export class Lead implements ILead {

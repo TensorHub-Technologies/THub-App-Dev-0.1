@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import { IChatMessageFeedback } from '../../Interface'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { ChatMessage } from '../../database/entities/ChatMessage'
-import { ChatMessageFeedback } from '../../database/entities/ChatMessageFeedback'
+import { IChatMessageFeedback } from '../../Interface.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { ChatMessage } from '../../database/entities/ChatMessage.js'
+import { ChatMessageFeedback } from '../../database/entities/ChatMessageFeedback.js'
 
 /**
  * Validates that the message ID exists

@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
-import { IVariable } from '../../Interface'
+import { IVariable } from '../../Interface.js'
 
 @Entity()
 export class Variable implements IVariable {

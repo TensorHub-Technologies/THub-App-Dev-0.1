@@ -1,5 +1,5 @@
 import express from 'express'
-import componentsCredentialsController from '../../controllers/components-credentials'
+import componentsCredentialsController from '../../controllers/components-credentials.js'
 const router = express.Router()
 
 // READ

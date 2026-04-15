@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ElasticSearchUserPassword implements INodeCredential {
     label: string
@@ -33,4 +33,4 @@ class ElasticSearchUserPassword implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ElasticSearchUserPassword }
+export const credClass = ElasticSearchUserPassword

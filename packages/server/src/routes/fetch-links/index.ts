@@ -1,5 +1,5 @@
 import express from 'express'
-import fetchLinksController from '../../controllers/fetch-links'
+import fetchLinksController from '../../controllers/fetch-links.js'
 const router = express.Router()
 
 // READ

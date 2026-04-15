@@ -1,7 +1,7 @@
 import { Embeddings } from '@langchain/core/embeddings'
 import { BaseStore } from '@langchain/core/stores'
 import { CacheBackedEmbeddings } from 'langchain/embeddings/cache_backed'
-import { getBaseClasses, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
 
 class InMemoryEmbeddingCache implements INode {
     label: string
@@ -128,4 +128,4 @@ class InMemoryEmbeddingCacheExtended<T = any> extends BaseStore<string, T> {
     }
 }
 
-module.exports = { nodeClass: InMemoryEmbeddingCache }
+export const nodeClass = InMemoryEmbeddingCache

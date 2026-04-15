@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class SingleStoreApi implements INodeCredential {
     label: string
@@ -28,4 +28,4 @@ class SingleStoreApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: SingleStoreApi }
+export const credClass = SingleStoreApi

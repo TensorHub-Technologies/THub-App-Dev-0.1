@@ -1,5 +1,5 @@
-import { INode } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 import { Calculator } from '@langchain/community/tools/calculator'
 
 class Calculator_Tools implements INode {
@@ -28,4 +28,4 @@ class Calculator_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: Calculator_Tools }
+export const nodeClass = Calculator_Tools

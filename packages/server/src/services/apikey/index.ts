@@ -9,13 +9,13 @@ import {
     updateAPIKey as updateAPIKey_json,
     replaceAllAPIKeys as replaceAllAPIKeys_json,
     importKeys as importKeys_json
-} from '../../utils/apiKey'
-import { addChatflowsCount } from '../../utils/addChatflowsCount'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { ApiKey } from '../../database/entities/ApiKey'
-import { appConfig } from '../../AppConfig'
+} from '../../utils/apiKey.js'
+import { addChatflowsCount } from '../../utils/addChatflowsCount.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { ApiKey } from '../../database/entities/ApiKey.js'
+import { appConfig } from '../../AppConfig.js'
 import { randomBytes } from 'crypto'
 import { Not, IsNull } from 'typeorm'
 

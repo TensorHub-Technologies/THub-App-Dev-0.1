@@ -8,8 +8,8 @@ import { Document } from '@langchain/core/documents'
 import { TextSplitter } from 'langchain/text_splitter'
 import { test } from 'linkifyjs'
 import { omit } from 'lodash'
-import { handleEscapeCharacters, INodeOutputsValue, webCrawl, xmlScrape } from '../../../src'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { handleEscapeCharacters, INodeOutputsValue, webCrawl, xmlScrape } from '../../../src.js'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class Playwright_DocumentLoaders implements INode {
     label: string
@@ -316,4 +316,4 @@ class Playwright_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Playwright_DocumentLoaders }
+export const nodeClass = Playwright_DocumentLoaders

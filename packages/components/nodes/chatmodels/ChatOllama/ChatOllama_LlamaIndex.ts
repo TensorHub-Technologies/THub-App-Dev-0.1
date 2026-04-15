@@ -1,5 +1,5 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 import { OllamaParams, Ollama } from 'llamaindex'
 
 class ChatOllama_LlamaIndex_ChatModels implements INode {
@@ -218,4 +218,4 @@ class ChatOllama_LlamaIndex_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatOllama_LlamaIndex_ChatModels }
+export const nodeClass = ChatOllama_LlamaIndex_ChatModels

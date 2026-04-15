@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class OxylabsApiCredential implements INodeCredential {
     label: string
@@ -27,4 +27,4 @@ class OxylabsApiCredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: OxylabsApiCredential }
+export const credClass = OxylabsApiCredential

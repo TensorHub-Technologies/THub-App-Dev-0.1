@@ -1,7 +1,7 @@
 import { Tool } from '@langchain/core/tools'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface'
-import { getCredentialData, getCredentialParam, getNodeModulesPackagePath } from '../../../../src/utils'
-import { MCPToolkit } from '../core'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface.js'
+import { getCredentialData, getCredentialParam, getNodeModulesPackagePath } from '../../../../src/utils.js'
+import { MCPToolkit } from '../core.js'
 
 class Github_MCP implements INode {
     label: string
@@ -111,4 +111,4 @@ class Github_MCP implements INode {
     }
 }
 
-module.exports = { nodeClass: Github_MCP }
+export const nodeClass = Github_MCP

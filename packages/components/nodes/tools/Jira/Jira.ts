@@ -1,6 +1,6 @@
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { createJiraTools } from './core'
-import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { createJiraTools } from './core.js'
+import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class Jira_Tools implements INode {
     label: string
@@ -446,4 +446,4 @@ class Jira_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: Jira_Tools }
+export const nodeClass = Jira_Tools

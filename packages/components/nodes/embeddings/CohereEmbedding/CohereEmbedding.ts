@@ -1,7 +1,7 @@
 import { CohereEmbeddings, CohereEmbeddingsParams } from '@langchain/cohere'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { MODEL_TYPE, getModels } from '../../../src/modelLoader.js'
 
 class CohereEmbedding_Embeddings implements INode {
     label: string
@@ -98,4 +98,4 @@ class CohereEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: CohereEmbedding_Embeddings }
+export const nodeClass = CohereEmbedding_Embeddings

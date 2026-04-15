@@ -1,5 +1,5 @@
 const { nodeClass: JSONPathExtractor_Tools } = require('./JSONPathExtractor')
-import { INodeData } from '../../../src/Interface'
+import { INodeData } from '../../../src/Interface.js'
 
 // Mock the getBaseClasses function
 jest.mock('../../../src/utils', () => ({

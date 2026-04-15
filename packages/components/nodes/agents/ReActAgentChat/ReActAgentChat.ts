@@ -5,13 +5,13 @@ import { Tool } from '@langchain/core/tools'
 import type { PromptTemplate } from '@langchain/core/prompts'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { pull } from 'langchain/hub'
-import { additionalCallbacks } from '../../../src/handler'
-import { IVisionChatModal, FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { createReactAgent } from '../../../src/agents'
-import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
-import { checkInputs, Moderation } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { additionalCallbacks } from '../../../src/handler.js'
+import { IVisionChatModal, FlowiseMemory, ICommonObject, IMessage, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { createReactAgent } from '../../../src/agents.js'
+import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils.js'
+import { checkInputs, Moderation } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 class ReActAgentChat_Agents implements INode {
     label: string
@@ -160,4 +160,4 @@ class ReActAgentChat_Agents implements INode {
     }
 }
 
-module.exports = { nodeClass: ReActAgentChat_Agents }
+export const nodeClass = ReActAgentChat_Agents

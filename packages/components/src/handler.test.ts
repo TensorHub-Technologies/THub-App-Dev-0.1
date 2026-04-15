@@ -1,4 +1,4 @@
-import { getPhoenixTracer } from './handler'
+import { getPhoenixTracer } from './handler.js'
 
 jest.mock('@opentelemetry/exporter-trace-otlp-proto', () => {
     return {

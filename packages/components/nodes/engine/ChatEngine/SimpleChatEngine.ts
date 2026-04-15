@@ -7,9 +7,9 @@ import {
     INodeOutputsValue,
     INodeParams,
     IServerSideEventStreamer
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import { LLM, ChatMessage, SimpleChatEngine } from 'llamaindex'
-import { EvaluationRunTracerLlama } from '../../../evaluation/EvaluationRunTracerLlama'
+import { EvaluationRunTracerLlama } from '../../../evaluation/EvaluationRunTracerLlama.js'
 
 class SimpleChatEngine_LlamaIndex implements INode {
     label: string
@@ -141,4 +141,4 @@ class SimpleChatEngine_LlamaIndex implements INode {
     }
 }
 
-module.exports = { nodeClass: SimpleChatEngine_LlamaIndex }
+export const nodeClass = SimpleChatEngine_LlamaIndex

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import flowConfigsService from '../../services/flow-configs'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import flowConfigsService from '../../services/flow-configs.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const getSingleFlowConfig = async (req: Request, res: Response, next: NextFunction) => {

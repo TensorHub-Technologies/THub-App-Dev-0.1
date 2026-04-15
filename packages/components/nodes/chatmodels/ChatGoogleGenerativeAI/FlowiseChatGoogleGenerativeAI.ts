@@ -1,5 +1,5 @@
 import { ChatGoogleGenerativeAI as LangchainChatGoogleGenerativeAI, GoogleGenerativeAIChatInput } from '@langchain/google-genai'
-import { IMultiModalOption, IVisionChatModal } from '../../../src'
+import { IMultiModalOption, IVisionChatModal } from '../../../src.js'
 
 export class ChatGoogleGenerativeAI extends LangchainChatGoogleGenerativeAI implements IVisionChatModal {
     configuredModel: string

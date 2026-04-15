@@ -1,9 +1,9 @@
 import { ChatOpenAI as LangchainChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
-import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { ChatOpenAI } from './FlowiseChatOpenAI'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { ChatOpenAI } from './FlowiseChatOpenAI.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { OpenAI as OpenAIClient } from 'openai'
 
@@ -342,4 +342,4 @@ class ChatOpenAI_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatOpenAI_ChatModels }
+export const nodeClass = ChatOpenAI_ChatModels

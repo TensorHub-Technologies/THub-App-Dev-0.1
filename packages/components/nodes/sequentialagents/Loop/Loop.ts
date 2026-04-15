@@ -1,4 +1,4 @@
-import { INode, INodeData, INodeParams, ISeqAgentNode } from '../../../src/Interface'
+import { INode, INodeData, INodeParams, ISeqAgentNode } from '../../../src/Interface.js'
 
 class Loop_SeqAgents implements INode {
     label: string
@@ -67,4 +67,4 @@ class Loop_SeqAgents implements INode {
     }
 }
 
-module.exports = { nodeClass: Loop_SeqAgents }
+export const nodeClass = Loop_SeqAgents

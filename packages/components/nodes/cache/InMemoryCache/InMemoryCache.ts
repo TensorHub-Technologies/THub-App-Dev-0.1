@@ -1,6 +1,6 @@
 import { BaseCache } from '@langchain/core/caches'
 import hash from 'object-hash'
-import { getBaseClasses, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
 
 class InMemoryCache implements INode {
     label: string
@@ -62,4 +62,4 @@ class InMemoryCacheExtended extends BaseCache {
     }
 }
 
-module.exports = { nodeClass: InMemoryCache }
+export const nodeClass = InMemoryCache

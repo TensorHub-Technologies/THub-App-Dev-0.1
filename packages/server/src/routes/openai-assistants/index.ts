@@ -1,5 +1,5 @@
 import express from 'express'
-import openaiAssistantsController from '../../controllers/openai-assistants'
+import openaiAssistantsController from '../../controllers/openai-assistants.js'
 const router = express.Router()
 
 // CREATE

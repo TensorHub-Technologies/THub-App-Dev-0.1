@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ElectricsearchAPI implements INodeCredential {
     label: string
@@ -28,4 +28,4 @@ class ElectricsearchAPI implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ElectricsearchAPI }
+export const credClass = ElectricsearchAPI

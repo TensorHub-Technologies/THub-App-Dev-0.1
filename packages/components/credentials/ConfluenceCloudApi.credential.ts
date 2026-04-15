@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ConfluenceCloudApi implements INodeCredential {
     label: string
@@ -30,4 +30,4 @@ class ConfluenceCloudApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ConfluenceCloudApi }
+export const credClass = ConfluenceCloudApi

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class LangsmithApi implements INodeCredential {
     label: string
@@ -30,4 +30,4 @@ class LangsmithApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: LangsmithApi }
+export const credClass = LangsmithApi

@@ -1,5 +1,5 @@
-import { ICommonObject } from './Interface'
-import { getCredentialData } from './utils'
+import { ICommonObject } from './Interface.js'
+import { getCredentialData } from './utils.js'
 import OpenAI from 'openai'
 import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js'
 import { Readable } from 'node:stream'

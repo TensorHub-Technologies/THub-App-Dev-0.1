@@ -1,3 +1,4 @@
+import path from 'path'
 import { flatten } from 'lodash'
 import {
     ICommonObject,
@@ -8,16 +9,19 @@ import {
     ISeqAgentNode,
     IUsedTool,
     IStateWithMessages
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import { AIMessage, AIMessageChunk, BaseMessage, ToolMessage } from '@langchain/core/messages'
 import { StructuredTool } from '@langchain/core/tools'
 import { RunnableConfig } from '@langchain/core/runnables'
-import { ARTIFACTS_PREFIX, SOURCE_DOCUMENTS_PREFIX, TOOL_ARGS_PREFIX } from '../../../src/agents'
+import { ARTIFACTS_PREFIX, SOURCE_DOCUMENTS_PREFIX, TOOL_ARGS_PREFIX } from '../../../src/agents.js'
 import { Document } from '@langchain/core/documents'
 import { DataSource } from 'typeorm'
-import { MessagesState, RunnableCallable, customGet, getVM } from '../commonUtils'
-import { getVars, prepareSandboxVars } from '../../../src/utils'
+import { MessagesState, RunnableCallable, customGet, getVM } from '../commonUtils.js'
+import { getVars, prepareSandboxVars } from '../../../src/utils.js'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 const defaultApprovalPrompt = `You are about to execute tool: {tools}. Ask if user want to proceed`
 
@@ -583,4 +587,4 @@ const getReturnOutput = async (
     }
 }
 
-module.exports = { nodeClass: ToolNode_SeqAgents }
+export const nodeClass = ToolNode_SeqAgents

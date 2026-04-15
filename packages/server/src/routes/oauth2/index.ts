@@ -59,12 +59,12 @@
 import express from 'express'
 import axios from 'axios'
 import { Request, Response, NextFunction } from 'express'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { Credential } from '../../database/entities/Credential'
-import { decryptCredentialData, encryptCredentialData } from '../../utils'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { Credential } from '../../database/entities/Credential.js'
+import { decryptCredentialData, encryptCredentialData } from '../../utils.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
-import { generateSuccessPage, generateErrorPage } from './templates'
+import { generateSuccessPage, generateErrorPage } from './templates.js'
 
 const router = express.Router()
 

@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { EnumChatflowType } from '../../entities/ChatFlow'
+import { EnumChatflowType } from '../../entities/ChatFlow.js'
 
 export class ModifyChatflowType1755066758601 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {

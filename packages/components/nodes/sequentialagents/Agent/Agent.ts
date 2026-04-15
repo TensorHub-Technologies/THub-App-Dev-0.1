@@ -1,3 +1,4 @@
+import path from 'path'
 import { flatten, uniq } from 'lodash'
 import { DataSource } from 'typeorm'
 import { RunnableSequence, RunnablePassthrough, RunnableConfig } from '@langchain/core/runnables'
@@ -21,14 +22,14 @@ import {
     IDocument,
     IStateWithMessages,
     ConversationHistorySelection
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import {
     ToolCallingAgentOutputParser,
     AgentExecutor,
     SOURCE_DOCUMENTS_PREFIX,
     ARTIFACTS_PREFIX,
     TOOL_ARGS_PREFIX
-} from '../../../src/agents'
+} from '../../../src/agents.js'
 import {
     extractOutputFromArray,
     getInputVariables,
@@ -37,7 +38,7 @@ import {
     prepareSandboxVars,
     removeInvalidImageMarkdown,
     transformBracesWithColon
-} from '../../../src/utils'
+} from '../../../src/utils.js'
 import {
     customGet,
     getVM,
@@ -48,9 +49,12 @@ import {
     MessagesState,
     RunnableCallable,
     checkMessageHistory
-} from '../commonUtils'
+} from '../commonUtils.js'
 import { END, StateGraph } from '@langchain/langgraph'
 import { StructuredTool } from '@langchain/core/tools'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 const defaultApprovalPrompt = `You are about to execute tool: {tools}. Ask if user want to proceed`
 const examplePrompt = 'You are a research assistant who can search for up-to-date info using search engine.'
@@ -1084,4 +1088,4 @@ class ToolNode<T extends BaseMessage[] | MessagesState> extends RunnableCallable
     }
 }
 
-module.exports = { nodeClass: Agent_SeqAgents }
+export const nodeClass = Agent_SeqAgents

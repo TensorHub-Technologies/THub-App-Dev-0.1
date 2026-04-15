@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm'
-import logger from '../../utils/logger'
+import logger from '../../utils/logger.js'
 
 type DBType = 'mysql' | 'mariadb' | 'postgres' | 'sqlite' | 'better-sqlite3'
 

@@ -1,8 +1,8 @@
 import { Request } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { createFileAttachment } from '../../utils/createAttachment'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { createFileAttachment } from '../../utils/createAttachment.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 const createAttachment = async (req: Request) => {
     try {

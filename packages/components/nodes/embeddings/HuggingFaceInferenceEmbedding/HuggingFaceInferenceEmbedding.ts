@@ -1,6 +1,6 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { HuggingFaceInferenceEmbeddings, HuggingFaceInferenceEmbeddingsParams } from './core'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { HuggingFaceInferenceEmbeddings, HuggingFaceInferenceEmbeddingsParams } from './core.js'
 
 class HuggingFaceInferenceEmbedding_Embeddings implements INode {
     label: string
@@ -68,4 +68,4 @@ class HuggingFaceInferenceEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: HuggingFaceInferenceEmbedding_Embeddings }
+export const nodeClass = HuggingFaceInferenceEmbedding_Embeddings

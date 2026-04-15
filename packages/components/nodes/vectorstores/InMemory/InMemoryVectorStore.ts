@@ -2,8 +2,8 @@ import { flatten } from 'lodash'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
-import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 class InMemoryVectorStore_VectorStores implements INode {
     label: string
@@ -113,4 +113,4 @@ class InMemoryVectorStore_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: InMemoryVectorStore_VectorStores }
+export const nodeClass = InMemoryVectorStore_VectorStores

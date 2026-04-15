@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import { hostname } from 'node:os'
-import config from './config' // should be replaced by node-config or similar
+import config from './config.js' // should be replaced by node-config or similar
 import { createLogger, transports, format } from 'winston'
 import { NextFunction, Request, Response } from 'express'
 import { S3ClientConfig } from '@aws-sdk/client-s3'

@@ -1,4 +1,4 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { QueryEngineTool } from 'llamaindex'
 
 class QueryEngine_Tools implements INode {
@@ -60,4 +60,4 @@ class QueryEngine_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: QueryEngine_Tools }
+export const nodeClass = QueryEngine_Tools

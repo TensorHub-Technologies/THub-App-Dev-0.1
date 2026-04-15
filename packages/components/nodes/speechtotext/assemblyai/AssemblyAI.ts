@@ -1,4 +1,4 @@
-import { INode, INodeParams } from '../../../src/Interface'
+import { INode, INodeParams } from '../../../src/Interface.js'
 
 class AssemblyAI_SpeechToText implements INode {
     label: string
@@ -30,4 +30,4 @@ class AssemblyAI_SpeechToText implements INode {
     }
 }
 
-module.exports = { nodeClass: AssemblyAI_SpeechToText }
+export const nodeClass = AssemblyAI_SpeechToText

@@ -2,9 +2,9 @@ import { flatten } from 'lodash'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
 import { AstraDBVectorStore, AstraLibArgs } from '@langchain/community/vectorstores/astradb'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData } from '../../../src/utils'
-import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData } from '../../../src/utils.js'
+import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils.js'
 
 class Astra_VectorStores implements INode {
     label: string
@@ -187,4 +187,4 @@ class Astra_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Astra_VectorStores }
+export const nodeClass = Astra_VectorStores

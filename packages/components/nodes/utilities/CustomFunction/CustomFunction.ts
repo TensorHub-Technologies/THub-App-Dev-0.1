@@ -1,9 +1,13 @@
+import path from 'path'
 import { flatten } from 'lodash'
 import { type StructuredTool } from '@langchain/core/tools'
 import { NodeVM } from '@flowiseai/nodevm'
 import { DataSource } from 'typeorm'
-import { availableDependencies, defaultAllowBuiltInDep, getVars, handleEscapeCharacters, prepareSandboxVars } from '../../../src/utils'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { availableDependencies, defaultAllowBuiltInDep, getVars, handleEscapeCharacters, prepareSandboxVars } from '../../../src/utils.js'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 class CustomFunction_Utilities implements INode {
     label: string
@@ -172,4 +176,4 @@ class CustomFunction_Utilities implements INode {
     }
 }
 
-module.exports = { nodeClass: CustomFunction_Utilities }
+export const nodeClass = CustomFunction_Utilities

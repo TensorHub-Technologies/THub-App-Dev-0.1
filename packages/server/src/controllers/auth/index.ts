@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import authService from '../../services/auth'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import authService from '../../services/auth.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const getAuthenticatedUser = (req: Request) => {

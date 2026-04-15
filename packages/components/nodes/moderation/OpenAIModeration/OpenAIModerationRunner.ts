@@ -1,4 +1,4 @@
-import { Moderation } from '../Moderation'
+import { Moderation } from '../Moderation.js'
 import { OpenAIModerationChain } from 'langchain/chains'
 
 export class OpenAIModerationRunner implements Moderation {

@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { Assistant } from '../../entities/Assistant'
+import { Assistant } from '../../entities/Assistant.js'
 
 export async function fixOpenSourceAssistantTable(queryRunner: QueryRunner): Promise<void> {
     const columnExists = await queryRunner.hasColumn('assistant', 'type')

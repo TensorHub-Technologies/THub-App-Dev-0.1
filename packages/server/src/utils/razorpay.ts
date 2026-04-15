@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { StatusCodes } from 'http-status-codes'
 import Razorpay from 'razorpay'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 
 const getRequiredEnv = (envKey: 'RAZORPAY_KEY_ID' | 'RAZORPAY_SECRET') => {
     const value = String(process.env[envKey] || '').trim()

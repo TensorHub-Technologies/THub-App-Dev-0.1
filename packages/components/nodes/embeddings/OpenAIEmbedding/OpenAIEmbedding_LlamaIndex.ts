@@ -1,6 +1,6 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { MODEL_TYPE, getModels } from '../../../src/modelLoader.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { OpenAIEmbedding } from 'llamaindex'
 
 class OpenAIEmbedding_LlamaIndex_Embeddings implements INode {
@@ -87,4 +87,4 @@ class OpenAIEmbedding_LlamaIndex_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: OpenAIEmbedding_LlamaIndex_Embeddings }
+export const nodeClass = OpenAIEmbedding_LlamaIndex_Embeddings

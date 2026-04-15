@@ -1,5 +1,5 @@
 import express from 'express'
-import chatMessagesController from '../../controllers/chat-messages'
+import chatMessagesController from '../../controllers/chat-messages.js'
 const router = express.Router()
 
 // CREATE

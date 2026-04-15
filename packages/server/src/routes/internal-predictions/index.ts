@@ -1,5 +1,5 @@
 import express from 'express'
-import internalPredictionsController from '../../controllers/internal-predictions'
+import internalPredictionsController from '../../controllers/internal-predictions.js'
 const router = express.Router()
 
 // CREATE

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import promptsListsService from '../../services/prompts-lists'
+import promptsListsService from '../../services/prompts-lists.js'
 
 // Prompt from Hub
 const createPromptsList = async (req: Request, res: Response, next: NextFunction) => {

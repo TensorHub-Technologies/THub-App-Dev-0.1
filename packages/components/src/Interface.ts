@@ -1,6 +1,6 @@
 import { BaseMessage } from '@langchain/core/messages'
 import { BufferMemory, BufferWindowMemory, ConversationSummaryMemory, ConversationSummaryBufferMemory } from 'langchain/memory'
-import { Moderation } from '../nodes/moderation/Moderation'
+import { Moderation } from '../nodes/moderation/Moderation.js'
 
 /**
  * Types
@@ -421,7 +421,7 @@ export interface IStateWithMessages extends ICommonObject {
     [key: string]: any
 }
 
-export * from './Interface.Evaluation'
+export * from './Interface.Evaluation.js'
 
 export interface IServerSideEventStreamer {
     streamStartEvent(chatId: string, data: any): void

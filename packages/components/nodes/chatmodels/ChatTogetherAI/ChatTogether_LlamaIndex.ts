@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { TogetherLLM, OpenAI } from 'llamaindex'
 
 class ChatTogetherAI_LlamaIndex_ChatModels implements INode {
@@ -68,4 +68,4 @@ class ChatTogetherAI_LlamaIndex_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatTogetherAI_LlamaIndex_ChatModels }
+export const nodeClass = ChatTogetherAI_LlamaIndex_ChatModels

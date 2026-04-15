@@ -1,7 +1,7 @@
 import { VectaraStore, VectaraLibArgs, VectaraFilter, VectaraContextConfig, VectaraFile } from '@langchain/community/vectorstores/vectara'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getFileFromStorage } from '../../../src'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { getFileFromStorage } from '../../../src.js'
 
 class VectaraUpload_VectorStores implements INode {
     label: string
@@ -194,4 +194,4 @@ const getFileName = (fileBase64: string) => {
     }
 }
 
-module.exports = { nodeClass: VectaraUpload_VectorStores }
+export const nodeClass = VectaraUpload_VectorStores

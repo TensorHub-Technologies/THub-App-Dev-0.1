@@ -1,12 +1,12 @@
-import logger from '../utils/logger'
-import { QueueManager } from '../queue/QueueManager'
-import { BaseCommand } from './base'
-import { getDataSource } from '../DataSource'
-import { Telemetry } from '../utils/telemetry'
-import { NodesPool } from '../NodesPool'
-import { CachePool } from '../CachePool'
+import logger from '../utils/logger.js'
+import { QueueManager } from '../queue/QueueManager.js'
+import { BaseCommand } from './base.js'
+import { getDataSource } from '../DataSource.js'
+import { Telemetry } from '../utils/telemetry.js'
+import { NodesPool } from '../NodesPool.js'
+import { CachePool } from '../CachePool.js'
 import { QueueEvents, QueueEventsListener } from 'bullmq'
-import { AbortControllerPool } from '../AbortControllerPool'
+import { AbortControllerPool } from '../AbortControllerPool.js'
 
 interface CustomListener extends QueueEventsListener {
     abort: (args: { id: string }, id: string) => void

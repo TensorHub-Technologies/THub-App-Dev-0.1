@@ -1,10 +1,10 @@
 import { AnthropicInput, ChatAnthropic as LangchainChatAnthropic } from '@langchain/anthropic'
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
-import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { ChatAnthropic } from './FlowiseChatAnthropic'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { ChatAnthropic } from './FlowiseChatAnthropic.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 class ChatAnthropic_ChatModels implements INode {
     label: string
@@ -176,4 +176,4 @@ class ChatAnthropic_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatAnthropic_ChatModels }
+export const nodeClass = ChatAnthropic_ChatModels

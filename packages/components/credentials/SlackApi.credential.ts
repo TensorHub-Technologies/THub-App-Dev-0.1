@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class SlackApi implements INodeCredential {
     label: string
@@ -29,4 +29,4 @@ class SlackApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: SlackApi }
+export const credClass = SlackApi

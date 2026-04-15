@@ -1,8 +1,8 @@
 import { omit } from 'lodash'
-import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
-import { getFileFromStorage, handleEscapeCharacters } from '../../../src'
+import { getFileFromStorage, handleEscapeCharacters } from '../../../src.js'
 
 class Text_DocumentLoaders implements INode {
     label: string
@@ -184,4 +184,4 @@ class Text_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Text_DocumentLoaders }
+export const nodeClass = Text_DocumentLoaders

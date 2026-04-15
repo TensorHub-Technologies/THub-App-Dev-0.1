@@ -1,6 +1,6 @@
 import { Serper } from '@langchain/community/tools/serper'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class Serper_Tools implements INode {
     label: string
@@ -39,4 +39,4 @@ class Serper_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: Serper_Tools }
+export const nodeClass = Serper_Tools

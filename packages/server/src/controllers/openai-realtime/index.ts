@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import openaiRealTimeService from '../../services/openai-realtime'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import openaiRealTimeService from '../../services/openai-realtime.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const getAgentTools = async (req: Request, res: Response, next: NextFunction) => {

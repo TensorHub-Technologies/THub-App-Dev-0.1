@@ -1,8 +1,8 @@
 import { Request } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { utilBuildChatflow } from '../../utils/buildChatflow'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { utilBuildChatflow } from '../../utils/buildChatflow.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 const buildChatflow = async (fullRequest: Request) => {
     try {

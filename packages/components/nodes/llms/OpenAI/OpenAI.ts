@@ -1,9 +1,9 @@
 import { ClientOptions, OpenAI, OpenAIInput } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 class OpenAI_LLMs implements INode {
     label: string
@@ -191,4 +191,4 @@ class OpenAI_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: OpenAI_LLMs }
+export const nodeClass = OpenAI_LLMs

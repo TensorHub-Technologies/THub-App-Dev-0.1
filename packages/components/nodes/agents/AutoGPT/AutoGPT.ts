@@ -6,9 +6,9 @@ import { VectorStoreRetriever } from '@langchain/core/vectorstores'
 import { PromptTemplate } from '@langchain/core/prompts'
 import { AutoGPT } from 'langchain/experimental/autogpt'
 import { LLMChain } from 'langchain/chains'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { checkInputs, Moderation } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { checkInputs, Moderation } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 type ObjectTool = StructuredTool
 const FINISH_NAME = 'finish'
@@ -223,4 +223,4 @@ const rephraseString = async (sentence: string, model: BaseChatModel) => {
     return res?.text
 }
 
-module.exports = { nodeClass: AutoGPT_Agents }
+export const nodeClass = AutoGPT_Agents

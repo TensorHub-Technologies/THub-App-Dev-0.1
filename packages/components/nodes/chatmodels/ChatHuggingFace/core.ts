@@ -1,5 +1,5 @@
 import { LLM, BaseLLMParams } from '@langchain/core/language_models/llms'
-import { getEnvironmentVariable } from '../../../src/utils'
+import { getEnvironmentVariable } from '../../../src/utils.js'
 import { GenerationChunk } from '@langchain/core/outputs'
 import { CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager'
 

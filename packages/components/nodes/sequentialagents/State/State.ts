@@ -1,8 +1,12 @@
+import path from 'path'
 import { START } from '@langchain/langgraph'
 import { NodeVM } from '@flowiseai/nodevm'
 import { DataSource } from 'typeorm'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams, ISeqAgentNode } from '../../../src/Interface'
-import { availableDependencies, defaultAllowBuiltInDep, getVars, prepareSandboxVars } from '../../../src/utils'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams, ISeqAgentNode } from '../../../src/Interface.js'
+import { availableDependencies, defaultAllowBuiltInDep, getVars, prepareSandboxVars } from '../../../src/utils.js'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 const defaultFunc = `{
     aggregate: {
@@ -246,4 +250,4 @@ class State_SeqAgents implements INode {
     }
 }
 
-module.exports = { nodeClass: State_SeqAgents }
+export const nodeClass = State_SeqAgents

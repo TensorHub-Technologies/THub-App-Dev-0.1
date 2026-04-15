@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import nodeConfigsService from '../../services/node-configs'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import nodeConfigsService from '../../services/node-configs.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const getAllNodeConfigs = async (req: Request, res: Response, next: NextFunction) => {

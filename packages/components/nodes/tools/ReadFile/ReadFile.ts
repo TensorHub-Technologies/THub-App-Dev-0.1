@@ -2,8 +2,8 @@ import { z } from 'zod'
 import { StructuredTool, ToolParams } from '@langchain/core/tools'
 import { Serializable } from '@langchain/core/load/serializable'
 import { NodeFileStore } from 'langchain/stores/file/node'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 abstract class BaseFileStore extends Serializable {
     abstract readFile(path: string): Promise<string>
@@ -82,4 +82,4 @@ export class ReadFileTool extends StructuredTool {
     }
 }
 
-module.exports = { nodeClass: ReadFile_Tools }
+export const nodeClass = ReadFile_Tools

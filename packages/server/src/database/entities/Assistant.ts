@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
-import { AssistantType, IAssistant } from '../../Interface'
+import { AssistantType, IAssistant } from '../../Interface.js'
 
 @Entity()
 export class Assistant implements IAssistant {

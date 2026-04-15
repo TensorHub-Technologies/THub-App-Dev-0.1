@@ -1,7 +1,7 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import RecursiveJsonTextSplitter from './RecursiveJsonTextSplitter'
-import { RecursiveJsonTextSplitterParams } from './types'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import RecursiveJsonTextSplitter from './RecursiveJsonTextSplitter.js'
+import { RecursiveJsonTextSplitterParams } from './types.js'
 
 class RecursiveJsonTextSplitter_TextSplitters implements INode {
     label: string
@@ -70,4 +70,4 @@ class RecursiveJsonTextSplitter_TextSplitters implements INode {
     }
 }
 
-module.exports = { nodeClass: RecursiveJsonTextSplitter_TextSplitters }
+export const nodeClass = RecursiveJsonTextSplitter_TextSplitters

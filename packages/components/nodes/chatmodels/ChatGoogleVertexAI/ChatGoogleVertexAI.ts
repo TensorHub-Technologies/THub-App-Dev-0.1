@@ -1,6 +1,6 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatVertexAIInput, ChatVertexAI as LcChatVertexAI } from '@langchain/google-vertexai'
-import { buildGoogleCredentials } from '../../../src/google-utils'
+import { buildGoogleCredentials } from '../../../src/google-utils.js'
 import {
     ICommonObject,
     IMultiModalOption,
@@ -9,9 +9,9 @@ import {
     INodeOptionsValue,
     INodeParams,
     IVisionChatModal
-} from '../../../src/Interface'
-import { getModels, getRegions, MODEL_TYPE } from '../../../src/modelLoader'
-import { getBaseClasses } from '../../../src/utils'
+} from '../../../src/Interface.js'
+import { getModels, getRegions, MODEL_TYPE } from '../../../src/modelLoader.js'
+import { getBaseClasses } from '../../../src/utils.js'
 
 const DEFAULT_IMAGE_MAX_TOKEN = 8192
 const DEFAULT_IMAGE_MODEL = 'gemini-1.5-flash-latest'
@@ -227,4 +227,4 @@ class GoogleVertexAI_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleVertexAI_ChatModels }
+export const nodeClass = GoogleVertexAI_ChatModels

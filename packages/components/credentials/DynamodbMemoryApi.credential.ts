@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class DynamodbMemoryApi implements INodeCredential {
     label: string
@@ -26,4 +26,4 @@ class DynamodbMemoryApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: DynamodbMemoryApi }
+export const credClass = DynamodbMemoryApi

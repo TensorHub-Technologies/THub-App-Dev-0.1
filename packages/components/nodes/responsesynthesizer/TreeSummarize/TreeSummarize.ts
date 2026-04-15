@@ -1,5 +1,5 @@
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { ResponseSynthesizerClass } from '../base'
+import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { ResponseSynthesizerClass } from '../base.js'
 
 class TreeSummarize_LlamaIndex implements INode {
     label: string
@@ -53,4 +53,4 @@ Answer:`,
     }
 }
 
-module.exports = { nodeClass: TreeSummarize_LlamaIndex }
+export const nodeClass = TreeSummarize_LlamaIndex

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { CallbackManagerForToolRun } from '@langchain/core/callbacks/manager'
-import { DynamicStructuredTool, DynamicStructuredToolInput } from '../OpenAPIToolkit/core'
-import { TOOL_ARGS_PREFIX } from '../../../src/agents'
+import { DynamicStructuredTool, DynamicStructuredToolInput } from '../OpenAPIToolkit/core.js'
+import { TOOL_ARGS_PREFIX } from '../../../src/agents.js'
 
 interface TeamsToolOptions {
     accessToken: string

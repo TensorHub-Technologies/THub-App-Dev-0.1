@@ -1,7 +1,7 @@
 import { ChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class ChatOpenRouter_ChatModels implements INode {
     label: string
@@ -171,4 +171,4 @@ class ChatOpenRouter_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: ChatOpenRouter_ChatModels }
+export const nodeClass = ChatOpenRouter_ChatModels

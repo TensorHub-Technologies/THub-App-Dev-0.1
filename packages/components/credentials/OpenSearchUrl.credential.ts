@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class OpenSearchUrl implements INodeCredential {
     label: string
@@ -35,4 +35,4 @@ class OpenSearchUrl implements INodeCredential {
     }
 }
 
-module.exports = { credClass: OpenSearchUrl }
+export const credClass = OpenSearchUrl

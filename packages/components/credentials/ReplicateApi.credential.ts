@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ReplicateApi implements INodeCredential {
     label: string
@@ -20,4 +20,4 @@ class ReplicateApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ReplicateApi }
+export const credClass = ReplicateApi

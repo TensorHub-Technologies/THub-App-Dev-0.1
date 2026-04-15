@@ -1,9 +1,9 @@
 import express from 'express'
-import documentStoreController from '../../controllers/documentstore'
-import { getMulterStorage } from '../../utils'
-import authorizeResource from '../../middlewares/authorizeResource'
-import { DocumentStore } from '../../database/entities/DocumentStore'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import documentStoreController from '../../controllers/documentstore.js'
+import { getMulterStorage } from '../../utils.js'
+import authorizeResource from '../../middlewares/authorizeResource.js'
+import { DocumentStore } from '../../database/entities/DocumentStore.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 
 const router = express.Router()
 

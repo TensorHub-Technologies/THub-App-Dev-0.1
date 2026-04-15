@@ -1,6 +1,6 @@
-import { ChatMessageFeedback } from '../database/entities/ChatMessageFeedback'
-import { IChatMessageFeedback } from '../Interface'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
+import { ChatMessageFeedback } from '../database/entities/ChatMessageFeedback.js'
+import { IChatMessageFeedback } from '../Interface.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
 
 /**
  * Method that add chat message feedback.

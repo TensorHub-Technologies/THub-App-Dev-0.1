@@ -1,6 +1,6 @@
 import { TogetherAIEmbeddings, TogetherAIEmbeddingsParams } from '@langchain/community/embeddings/togetherai'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class TogetherAIEmbedding_Embeddings implements INode {
     label: string
@@ -63,4 +63,4 @@ class TogetherAIEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: TogetherAIEmbedding_Embeddings }
+export const nodeClass = TogetherAIEmbedding_Embeddings

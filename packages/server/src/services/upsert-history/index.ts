@@ -1,9 +1,9 @@
 import { MoreThanOrEqual, LessThanOrEqual, Between } from 'typeorm'
 import { StatusCodes } from 'http-status-codes'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { UpsertHistory } from '../../database/entities/UpsertHistory'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { UpsertHistory } from '../../database/entities/UpsertHistory.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 const getAllUpsertHistory = async (
     sortOrder: string | undefined,

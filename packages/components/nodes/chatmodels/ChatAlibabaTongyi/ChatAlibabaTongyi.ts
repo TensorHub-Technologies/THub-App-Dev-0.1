@@ -1,7 +1,7 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatAlibabaTongyi } from '@langchain/community/chat_models/alibaba_tongyi'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { BaseChatModelParams } from '@langchain/core/language_models/chat_models'
 
 class ChatAlibabaTongyi_ChatModels implements INode {
@@ -87,4 +87,4 @@ class ChatAlibabaTongyi_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatAlibabaTongyi_ChatModels }
+export const nodeClass = ChatAlibabaTongyi_ChatModels

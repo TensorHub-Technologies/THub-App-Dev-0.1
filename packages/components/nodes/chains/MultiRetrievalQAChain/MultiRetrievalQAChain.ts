@@ -1,10 +1,10 @@
 import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { MultiRetrievalQAChain } from 'langchain/chains'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, VectorStoreRetriever } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, VectorStoreRetriever } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 class MultiRetrievalQAChain_Chains implements INode {
     label: string
@@ -119,4 +119,4 @@ class MultiRetrievalQAChain_Chains implements INode {
     }
 }
 
-module.exports = { nodeClass: MultiRetrievalQAChain_Chains }
+export const nodeClass = MultiRetrievalQAChain_Chains

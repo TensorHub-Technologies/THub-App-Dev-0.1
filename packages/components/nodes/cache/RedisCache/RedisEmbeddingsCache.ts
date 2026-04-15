@@ -2,7 +2,7 @@ import { Redis } from 'ioredis'
 import { RedisByteStore } from '@langchain/community/storage/ioredis'
 import { Embeddings, EmbeddingsInterface } from '@langchain/core/embeddings'
 import { CacheBackedEmbeddingsFields } from 'langchain/embeddings/cache_backed'
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
 import { BaseStore } from '@langchain/core/stores'
 import { insecureHash } from '@langchain/core/utils/hash'
 import { Document } from '@langchain/core/documents'
@@ -244,4 +244,4 @@ export function createDocumentStoreFromByteStore(store: BaseStore<string, Uint8A
     })
 }
 
-module.exports = { nodeClass: RedisEmbeddingsCache }
+export const nodeClass = RedisEmbeddingsCache

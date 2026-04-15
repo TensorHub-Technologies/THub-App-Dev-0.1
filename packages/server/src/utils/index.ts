@@ -4,7 +4,9 @@
 
 import path from 'path'
 import fs from 'fs'
-import logger from './logger'
+import { fileURLToPath } from 'url'
+import logger from './logger.js'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 import { v4 as uuidv4 } from 'uuid'
 import {
     IChatFlow,
@@ -26,7 +28,7 @@ import {
     IVariableDict,
     IVariableOverride,
     IncomingInput
-} from '../Interface'
+} from '../Interface.js'
 import { cloneDeep, get, isEqual } from 'lodash'
 import {
     convertChatHistoryToText,
@@ -45,18 +47,18 @@ import { AES, enc } from 'crypto-js'
 import multer from 'multer'
 import multerS3 from 'multer-s3'
 import MulterGoogleCloudStorage from 'multer-cloud-storage'
-import { ChatFlow } from '../database/entities/ChatFlow'
-import { ChatMessage } from '../database/entities/ChatMessage'
-import { Credential } from '../database/entities/Credential'
-import { Tool } from '../database/entities/Tool'
-import { Assistant } from '../database/entities/Assistant'
-import { Lead } from '../database/entities/Lead'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
+import { ChatMessage } from '../database/entities/ChatMessage.js'
+import { Credential } from '../database/entities/Credential.js'
+import { Tool } from '../database/entities/Tool.js'
+import { Assistant } from '../database/entities/Assistant.js'
+import { Lead } from '../database/entities/Lead.js'
 import { DataSource } from 'typeorm'
-import { CachePool } from '../CachePool'
-import { Variable } from '../database/entities/Variable'
-import { DocumentStore } from '../database/entities/DocumentStore'
-import { DocumentStoreFileChunk } from '../database/entities/DocumentStoreFileChunk'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { CachePool } from '../CachePool.js'
+import { Variable } from '../database/entities/Variable.js'
+import { DocumentStore } from '../database/entities/DocumentStore.js'
+import { DocumentStoreFileChunk } from '../database/entities/DocumentStoreFileChunk.js'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 import {
     CreateSecretCommand,

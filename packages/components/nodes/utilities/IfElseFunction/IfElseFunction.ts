@@ -1,7 +1,11 @@
+import path from 'path'
 import { NodeVM } from '@flowiseai/nodevm'
 import { DataSource } from 'typeorm'
-import { availableDependencies, defaultAllowBuiltInDep, getVars, handleEscapeCharacters, prepareSandboxVars } from '../../../src/utils'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { availableDependencies, defaultAllowBuiltInDep, getVars, handleEscapeCharacters, prepareSandboxVars } from '../../../src/utils.js'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 class IfElseFunction_Utilities implements INode {
     label: string
@@ -168,4 +172,4 @@ class IfElseFunction_Utilities implements INode {
     }
 }
 
-module.exports = { nodeClass: IfElseFunction_Utilities }
+export const nodeClass = IfElseFunction_Utilities

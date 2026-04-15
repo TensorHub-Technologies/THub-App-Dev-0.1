@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import apiKeyService from '../../services/apikey'
-import { ChatFlow } from '../../database/entities/ChatFlow'
-import { RateLimiterManager } from '../../utils/rateLimit'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { ChatflowType } from '../../Interface'
-import chatflowsService from '../../services/chatflows'
+import apiKeyService from '../../services/apikey.js'
+import { ChatFlow } from '../../database/entities/ChatFlow.js'
+import { RateLimiterManager } from '../../utils/rateLimit.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { ChatflowType } from '../../Interface.js'
+import chatflowsService from '../../services/chatflows.js'
 
 const checkIfChatflowIsValidForStreaming = async (req: Request, res: Response, next: NextFunction) => {
     try {

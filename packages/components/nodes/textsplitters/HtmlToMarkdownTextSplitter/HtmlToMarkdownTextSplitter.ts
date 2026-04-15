@@ -1,5 +1,5 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
 import { MarkdownTextSplitter, MarkdownTextSplitterParams } from 'langchain/text_splitter'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 
@@ -72,4 +72,4 @@ class HtmlToMarkdownTextSplitter extends MarkdownTextSplitter implements Markdow
         })
     }
 }
-module.exports = { nodeClass: HtmlToMarkdownTextSplitter_TextSplitters }
+export const nodeClass = HtmlToMarkdownTextSplitter_TextSplitters

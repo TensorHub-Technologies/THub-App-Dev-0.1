@@ -1,7 +1,7 @@
-import { getCredentialData, getCredentialParam } from '../../../src'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { getCredentialData, getCredentialParam } from '../../../src.js'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { Meilisearch } from 'meilisearch'
-import { MeilisearchRetriever } from './core'
+import { MeilisearchRetriever } from './core.js'
 import { flatten } from 'lodash'
 import { Document } from '@langchain/core/documents'
 import { v4 as uuidv4 } from 'uuid'
@@ -268,4 +268,4 @@ class MeilisearchRetriever_node implements INode {
         return hybridsearchretriever
     }
 }
-module.exports = { nodeClass: MeilisearchRetriever_node }
+export const nodeClass = MeilisearchRetriever_node

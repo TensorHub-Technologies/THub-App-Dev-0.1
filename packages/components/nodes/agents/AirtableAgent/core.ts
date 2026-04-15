@@ -1,6 +1,6 @@
 import type { PyodideInterface } from 'pyodide'
 import * as path from 'path'
-import { getUserHome } from '../../../src/utils'
+import { getUserHome } from '../../../src/utils.js'
 
 let pyodideInstance: PyodideInterface | undefined
 

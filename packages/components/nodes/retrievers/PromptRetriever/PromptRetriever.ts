@@ -1,5 +1,5 @@
-import { transformBracesWithColon } from '../../../src'
-import { INode, INodeData, INodeParams, PromptRetriever, PromptRetrieverInput } from '../../../src/Interface'
+import { transformBracesWithColon } from '../../../src.js'
+import { INode, INodeData, INodeParams, PromptRetriever, PromptRetrieverInput } from '../../../src/Interface.js'
 
 class PromptRetriever_Retrievers implements INode {
     label: string
@@ -63,4 +63,4 @@ class PromptRetriever_Retrievers implements INode {
     }
 }
 
-module.exports = { nodeClass: PromptRetriever_Retrievers }
+export const nodeClass = PromptRetriever_Retrievers

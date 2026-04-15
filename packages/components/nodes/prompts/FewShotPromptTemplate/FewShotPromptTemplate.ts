@@ -1,5 +1,5 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getInputVariables } from '../../../src/utils'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getInputVariables } from '../../../src/utils.js'
 import { FewShotPromptTemplate, FewShotPromptTemplateInput, PromptTemplate, TemplateFormat } from '@langchain/core/prompts'
 import type { Example } from '@langchain/core/prompts'
 
@@ -115,4 +115,4 @@ class FewShotPromptTemplate_Prompts implements INode {
     }
 }
 
-module.exports = { nodeClass: FewShotPromptTemplate_Prompts }
+export const nodeClass = FewShotPromptTemplate_Prompts

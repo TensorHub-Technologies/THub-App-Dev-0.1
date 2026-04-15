@@ -1,4 +1,4 @@
-import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
+import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics.js'
 import express from 'express'
 import promClient, { Counter, Histogram, Registry } from 'prom-client'
 import { getVersion } from 'thub-components'

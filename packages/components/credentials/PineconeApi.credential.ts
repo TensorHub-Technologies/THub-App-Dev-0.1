@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class PineconeApi implements INodeCredential {
     label: string
@@ -21,4 +21,4 @@ class PineconeApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: PineconeApi }
+export const credClass = PineconeApi

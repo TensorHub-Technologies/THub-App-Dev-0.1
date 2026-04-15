@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class VectaraAPI implements INodeCredential {
     label: string
@@ -31,4 +31,4 @@ class VectaraAPI implements INodeCredential {
     }
 }
 
-module.exports = { credClass: VectaraAPI }
+export const credClass = VectaraAPI

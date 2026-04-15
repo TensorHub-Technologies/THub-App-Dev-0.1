@@ -1,7 +1,7 @@
 import { Tool } from '@langchain/core/tools'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface'
-import { getNodeModulesPackagePath } from '../../../../src/utils'
-import { MCPToolkit } from '../core'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface.js'
+import { getNodeModulesPackagePath } from '../../../../src/utils.js'
+import { MCPToolkit } from '../core.js'
 
 class SequentialThinking_MCP implements INode {
     label: string
@@ -95,4 +95,4 @@ class SequentialThinking_MCP implements INode {
     }
 }
 
-module.exports = { nodeClass: SequentialThinking_MCP }
+export const nodeClass = SequentialThinking_MCP

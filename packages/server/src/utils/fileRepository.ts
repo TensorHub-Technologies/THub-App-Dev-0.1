@@ -1,5 +1,5 @@
-import { ChatFlow } from '../database/entities/ChatFlow'
-import { IReactFlowObject } from '../Interface'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
+import { IReactFlowObject } from '../Interface.js'
 import { addBase64FilesToStorage } from 'thub-components'
 
 export const containsBase64File = (chatflow: ChatFlow) => {

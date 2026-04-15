@@ -1,10 +1,10 @@
 import { StatusCodes } from 'http-status-codes'
-import { ChatMessageRatingType, ChatType } from '../../Interface'
-import { ChatMessage } from '../../database/entities/ChatMessage'
-import { utilGetChatMessage } from '../../utils/getChatMessage'
-import { ChatMessageFeedback } from '../../database/entities/ChatMessageFeedback'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { ChatMessageRatingType, ChatType } from '../../Interface.js'
+import { ChatMessage } from '../../database/entities/ChatMessage.js'
+import { utilGetChatMessage } from '../../utils/getChatMessage.js'
+import { ChatMessageFeedback } from '../../database/entities/ChatMessageFeedback.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 // get stats for showing in chatflow
 const getChatflowStats = async (

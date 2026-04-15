@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
 import { StatusCodes } from 'http-status-codes'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { Lead } from '../../database/entities/Lead'
-import { ILead } from '../../Interface'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { Lead } from '../../database/entities/Lead.js'
+import { ILead } from '../../Interface.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 const getAllLeads = async (chatflowid: string) => {
     try {

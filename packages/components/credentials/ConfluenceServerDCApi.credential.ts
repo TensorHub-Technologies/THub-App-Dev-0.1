@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ConfluenceServerDCApi implements INodeCredential {
     label: string
@@ -24,4 +24,4 @@ class ConfluenceServerDCApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ConfluenceServerDCApi }
+export const credClass = ConfluenceServerDCApi

@@ -1,6 +1,6 @@
 import { Tool } from '@langchain/core/tools'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { SNSClient, ListTopicsCommand, PublishCommand } from '@aws-sdk/client-sns'
 
 class AWSSNSTool extends Tool {
@@ -206,4 +206,4 @@ class AWSSNS_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: AWSSNS_Tools }
+export const nodeClass = AWSSNS_Tools

@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { ListKeyOptions, RecordManagerInterface, UpdateOptions } from '@langchain/community/indexes/base'
 import { DataSource } from 'typeorm'
 
@@ -420,4 +420,4 @@ class MySQLRecordManager implements RecordManagerInterface {
     }
 }
 
-module.exports = { nodeClass: MySQLRecordManager_RecordManager }
+export const nodeClass = MySQLRecordManager_RecordManager

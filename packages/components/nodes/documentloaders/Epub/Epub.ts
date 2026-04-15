@@ -1,7 +1,7 @@
 import { omit } from 'lodash'
-import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
-import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src'
+import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src.js'
 import { EPubLoader } from '@langchain/community/document_loaders/fs/epub'
 
 import * as fs from 'fs'
@@ -199,4 +199,4 @@ class Epub_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Epub_DocumentLoaders }
+export const nodeClass = Epub_DocumentLoaders

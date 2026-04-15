@@ -1,4 +1,4 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { S3Loader } from '@langchain/community/document_loaders/web/s3'
 import {
     UnstructuredLoader,
@@ -13,9 +13,9 @@ import {
     handleDocumentLoaderDocuments,
     handleDocumentLoaderMetadata,
     handleDocumentLoaderOutput
-} from '../../../src/utils'
+} from '../../../src/utils.js'
 import { S3Client, GetObjectCommand, HeadObjectCommand, S3ClientConfig } from '@aws-sdk/client-s3'
-import { getRegions, MODEL_TYPE } from '../../../src/modelLoader'
+import { getRegions, MODEL_TYPE } from '../../../src/modelLoader.js'
 import { Readable } from 'node:stream'
 import * as fsDefault from 'node:fs'
 import * as path from 'node:path'
@@ -23,12 +23,12 @@ import * as os from 'node:os'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx'
 import { CSVLoader } from '@langchain/community/document_loaders/fs/csv'
-import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader'
-import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader'
+import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader.js'
+import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader.js'
 import { TextSplitter } from 'langchain/text_splitter'
-import { IDocument } from '../../../src/Interface'
+import { IDocument } from '../../../src/Interface.js'
 import { omit } from 'lodash'
-import { handleEscapeCharacters } from '../../../src'
+import { handleEscapeCharacters } from '../../../src.js'
 
 class S3_DocumentLoaders implements INode {
     label: string
@@ -1032,4 +1032,4 @@ class S3_DocumentLoaders implements INode {
         return tempFilePath
     }
 }
-module.exports = { nodeClass: S3_DocumentLoaders }
+export const nodeClass = S3_DocumentLoaders

@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class HttpBasicAuthCredential implements INodeCredential {
     label: string
@@ -25,4 +25,4 @@ class HttpBasicAuthCredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: HttpBasicAuthCredential }
+export const credClass = HttpBasicAuthCredential

@@ -1,11 +1,15 @@
+import path from 'path'
 import { z } from 'zod'
 import { RequestInit } from 'node-fetch'
 import { NodeVM } from '@flowiseai/nodevm'
 import { RunnableConfig } from '@langchain/core/runnables'
 import { StructuredTool, ToolParams } from '@langchain/core/tools'
 import { CallbackManagerForToolRun, Callbacks, CallbackManager, parseCallbackConfigArg } from '@langchain/core/callbacks/manager'
-import { availableDependencies, defaultAllowBuiltInDep, prepareSandboxVars } from '../../../src/utils'
-import { ICommonObject } from '../../../src/Interface'
+import { availableDependencies, defaultAllowBuiltInDep, prepareSandboxVars } from '../../../src/utils.js'
+import { ICommonObject } from '../../../src/Interface.js'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 const removeNulls = (obj: Record<string, any>) => {
     Object.keys(obj).forEach((key) => {

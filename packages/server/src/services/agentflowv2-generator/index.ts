@@ -1,15 +1,17 @@
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
 import path from 'path'
 import * as fs from 'fs'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 import { generateAgentflowv2 as generateAgentflowv2_json } from 'thub-components'
 import { z } from 'zod'
-import { sysPrompt } from './prompt'
-import { databaseEntities } from '../../utils'
-import logger from '../../utils/logger'
-import { MODE } from '../../Interface'
+import { sysPrompt } from './prompt.js'
+import { databaseEntities } from '../../utils.js'
+import logger from '../../utils/logger.js'
+import { MODE } from '../../Interface.js'
 
 // Define the Zod schema for Agentflowv2 data structure
 const NodeType = z.object({

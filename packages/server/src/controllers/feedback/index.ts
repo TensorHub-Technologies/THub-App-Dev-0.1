@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
-import feedbackService from '../../services/feedback'
-import { validateFeedbackForCreation, validateFeedbackForUpdate } from '../../services/feedback/validation'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import feedbackService from '../../services/feedback.js'
+import { validateFeedbackForCreation, validateFeedbackForUpdate } from '../../services/feedback/validation.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const getAllChatMessageFeedback = async (req: Request, res: Response, next: NextFunction) => {

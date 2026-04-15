@@ -1,13 +1,13 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import {
     getCredentialData,
     getCredentialParam,
     handleDocumentLoaderDocuments,
     handleDocumentLoaderMetadata,
     handleDocumentLoaderOutput
-} from '../../../src/utils'
+} from '../../../src/utils.js'
 import { S3Client, GetObjectCommand, S3ClientConfig, ListObjectsV2Command, ListObjectsV2Output } from '@aws-sdk/client-s3'
-import { getRegions, MODEL_TYPE } from '../../../src/modelLoader'
+import { getRegions, MODEL_TYPE } from '../../../src/modelLoader.js'
 import { Readable } from 'node:stream'
 import * as fsDefault from 'node:fs'
 import * as path from 'node:path'
@@ -19,9 +19,9 @@ import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 import { TextSplitter } from 'langchain/text_splitter'
-import { CSVLoader } from '../Csv/CsvLoader'
-import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader'
-import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader'
+import { CSVLoader } from '../Csv/CsvLoader.js'
+import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader.js'
+import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader.js'
 class S3_DocumentLoaders implements INode {
     label: string
     name: string
@@ -304,4 +304,4 @@ class S3_DocumentLoaders implements INode {
         }
     }
 }
-module.exports = { nodeClass: S3_DocumentLoaders }
+export const nodeClass = S3_DocumentLoaders

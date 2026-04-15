@@ -2,10 +2,10 @@ import { flatten } from 'lodash'
 import { Chroma } from '@langchain/community/vectorstores/chroma'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { ChromaExtended } from './core'
-import { index } from '../../../src/indexing'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { ChromaExtended } from './core.js'
+import { index } from '../../../src/indexing.js'
 
 class Chroma_VectorStores implements INode {
     label: string
@@ -249,4 +249,4 @@ class Chroma_VectorStores implements INode {
     }
 }
 
-module.exports = { nodeClass: Chroma_VectorStores }
+export const nodeClass = Chroma_VectorStores

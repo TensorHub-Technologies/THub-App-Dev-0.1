@@ -1,9 +1,9 @@
 import { AzureOpenAIInput, AzureChatOpenAI as LangchainAzureChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
-import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
-import { AzureChatOpenAI } from './FlowiseAzureChatOpenAI'
+import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
+import { AzureChatOpenAI } from './FlowiseAzureChatOpenAI.js'
 import { OpenAI as OpenAIClient } from 'openai'
 
 const serverCredentialsExists =
@@ -300,4 +300,4 @@ class AzureChatOpenAI_ChatModels implements INode {
     }
 }
 
-module.exports = { nodeClass: AzureChatOpenAI_ChatModels }
+export const nodeClass = AzureChatOpenAI_ChatModels

@@ -5,7 +5,7 @@ import { chunkArray } from '@langchain/core/utils/chunk_array'
 import { Document } from '@langchain/core/documents'
 import { maximalMarginalRelevance } from '@langchain/core/utils/math'
 import { AsyncCaller, AsyncCallerParams } from '@langchain/core/utils/async_caller'
-import { getVersion } from '../../../src/utils'
+import { getVersion } from '../../../src/utils.js'
 
 export interface MongoDBAtlasVectorSearchLibArgs extends AsyncCallerParams {
     readonly connectionDetails: {

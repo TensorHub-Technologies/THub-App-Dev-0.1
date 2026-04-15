@@ -1,11 +1,11 @@
 import { BaseChatModel, type BaseChatModelParams } from '@langchain/core/language_models/chat_models'
 import { AIMessageChunk, BaseMessage } from '@langchain/core/messages'
 import { BaseChatModelCallOptions } from '@langchain/core/language_models/chat_models'
-import { NemoClient } from './NemoClient'
+import { NemoClient } from './NemoClient.js'
 import { CallbackManager, CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager'
 import { ChatResult } from '@langchain/core/outputs'
 import { FailedAttemptHandler } from '@langchain/core/utils/async_caller'
-import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src'
+import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src.js'
 
 export interface ChatNemoGuardrailsCallOptions extends BaseChatModelCallOptions {
     /**
@@ -119,4 +119,4 @@ class ChatNemoGuardrailsChatModel implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatNemoGuardrailsChatModel }
+export const nodeClass = ChatNemoGuardrailsChatModel

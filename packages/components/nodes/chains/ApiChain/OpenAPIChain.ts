@@ -1,10 +1,10 @@
 import { APIChain, createOpenAPIChain } from 'langchain/chains'
-import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
-import { getFileFromStorage } from '../../../src'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
+import { getFileFromStorage } from '../../../src.js'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 
 class OpenApiChain_Chains implements INode {
@@ -134,4 +134,4 @@ const initChain = async (nodeData: INodeData, options: ICommonObject) => {
     })
 }
 
-module.exports = { nodeClass: OpenApiChain_Chains }
+export const nodeClass = OpenApiChain_Chains

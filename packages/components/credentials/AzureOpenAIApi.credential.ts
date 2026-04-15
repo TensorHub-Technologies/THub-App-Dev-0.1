@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class AzureOpenAIApi implements INodeCredential {
     label: string
@@ -44,4 +44,4 @@ class AzureOpenAIApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: AzureOpenAIApi }
+export const credClass = AzureOpenAIApi

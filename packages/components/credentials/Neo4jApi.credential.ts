@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class Neo4jApi implements INodeCredential {
     label: string
@@ -36,4 +36,4 @@ class Neo4jApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: Neo4jApi }
+export const credClass = Neo4jApi

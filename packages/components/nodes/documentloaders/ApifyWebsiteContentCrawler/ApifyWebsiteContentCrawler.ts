@@ -1,6 +1,6 @@
 import { omit } from 'lodash'
-import { INode, INodeData, INodeParams, ICommonObject, INodeOutputsValue } from '../../../src/Interface'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils'
+import { INode, INodeData, INodeParams, ICommonObject, INodeOutputsValue } from '../../../src/Interface.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { ApifyDatasetLoader } from '@langchain/community/document_loaders/web/apify_dataset'
 import { Document } from '@langchain/core/documents'
@@ -231,4 +231,4 @@ class ApifyWebsiteContentCrawler_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: ApifyWebsiteContentCrawler_DocumentLoaders }
+export const nodeClass = ApifyWebsiteContentCrawler_DocumentLoaders

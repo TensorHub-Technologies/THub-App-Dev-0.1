@@ -1,6 +1,6 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, stripHTMLFromToolInput } from '../../../src/utils'
-import { desc, RequestParameters, RequestsDeleteTool } from './core'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, stripHTMLFromToolInput } from '../../../src/utils.js'
+import { desc, RequestParameters, RequestsDeleteTool } from './core.js'
 
 const codeExample = `{
     "id": {
@@ -138,4 +138,4 @@ class RequestsDelete_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: RequestsDelete_Tools }
+export const nodeClass = RequestsDelete_Tools

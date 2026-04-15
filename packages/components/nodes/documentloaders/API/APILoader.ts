@@ -4,9 +4,9 @@ import * as https from 'https'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
 import { TextSplitter } from 'langchain/text_splitter'
 import { omit } from 'lodash'
-import { getFileFromStorage } from '../../../src'
-import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { handleEscapeCharacters } from '../../../src/utils'
+import { getFileFromStorage } from '../../../src.js'
+import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { handleEscapeCharacters } from '../../../src/utils.js'
 
 class API_DocumentLoaders implements INode {
     label: string
@@ -305,6 +305,4 @@ class ApiLoader extends BaseDocumentLoader {
     }
 }
 
-module.exports = {
-    nodeClass: API_DocumentLoaders
-}
+export const nodeClass = API_DocumentLoaders

@@ -1,5 +1,5 @@
-import { INode, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { ResponseSynthesizerClass } from '../base'
+import { INode, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import { ResponseSynthesizerClass } from '../base.js'
 
 class SimpleResponseBuilder_LlamaIndex implements INode {
     label: string
@@ -32,4 +32,4 @@ class SimpleResponseBuilder_LlamaIndex implements INode {
     }
 }
 
-module.exports = { nodeClass: SimpleResponseBuilder_LlamaIndex }
+export const nodeClass = SimpleResponseBuilder_LlamaIndex

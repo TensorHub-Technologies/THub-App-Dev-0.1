@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ApifyApiCredential implements INodeCredential {
     label: string
@@ -23,4 +23,4 @@ class ApifyApiCredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ApifyApiCredential }
+export const credClass = ApifyApiCredential

@@ -1,6 +1,6 @@
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils'
-import { createGoogleCalendarTools } from './core'
-import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam, refreshOAuth2Token } from '../../../src/utils.js'
+import { createGoogleCalendarTools } from './core.js'
+import type { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class GoogleCalendar_Tools implements INode {
     label: string
@@ -618,4 +618,4 @@ class GoogleCalendar_Tools implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleCalendar_Tools }
+export const nodeClass = GoogleCalendar_Tools

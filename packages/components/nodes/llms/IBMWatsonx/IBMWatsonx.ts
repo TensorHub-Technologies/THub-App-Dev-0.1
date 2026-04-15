@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src.js'
 import { WatsonxLLM, WatsonxInputLLM } from '@langchain/community/llms/ibm'
 import { WatsonxAuth } from '@langchain/community/dist/types/ibm'
 import { BaseCache } from '@langchain/core/caches'
@@ -228,4 +228,4 @@ class IBMWatsonx_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: IBMWatsonx_LLMs }
+export const nodeClass = IBMWatsonx_LLMs

@@ -1,6 +1,6 @@
 import { Entity, Column, Index, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
-import { IExecution, ExecutionState } from '../../Interface'
-import { ChatFlow } from './ChatFlow'
+import { IExecution, ExecutionState } from '../../Interface.js'
+import { ChatFlow } from './ChatFlow.js'
 
 @Entity()
 @Index('IDX_EXECUTION_SESSION_AGENTFLOW', ['sessionId', 'agentflowId', 'createdDate'])

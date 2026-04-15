@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class AstraDBApi implements INodeCredential {
     label: string
@@ -26,4 +26,4 @@ class AstraDBApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: AstraDBApi }
+export const credClass = AstraDBApi

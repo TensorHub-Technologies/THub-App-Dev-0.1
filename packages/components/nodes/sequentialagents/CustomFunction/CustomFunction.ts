@@ -1,9 +1,13 @@
+import path from 'path'
 import { NodeVM } from '@flowiseai/nodevm'
 import { DataSource } from 'typeorm'
-import { availableDependencies, defaultAllowBuiltInDep, getVars, handleEscapeCharacters, prepareSandboxVars } from '../../../src/utils'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams, ISeqAgentNode, ISeqAgentsState } from '../../../src/Interface'
+import { availableDependencies, defaultAllowBuiltInDep, getVars, handleEscapeCharacters, prepareSandboxVars } from '../../../src/utils.js'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams, ISeqAgentNode, ISeqAgentsState } from '../../../src/Interface.js'
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages'
-import { customGet } from '../commonUtils'
+import { customGet } from '../commonUtils.js'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 const howToUseCode = `
 1. Must return a string value at the end of function.
@@ -254,4 +258,4 @@ class CustomFunction_SeqAgents implements INode {
     }
 }
 
-module.exports = { nodeClass: CustomFunction_SeqAgents }
+export const nodeClass = CustomFunction_SeqAgents

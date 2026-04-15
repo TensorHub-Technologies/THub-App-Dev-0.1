@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class AirtableApi implements INodeCredential {
     label: string
@@ -24,4 +24,4 @@ class AirtableApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: AirtableApi }
+export const credClass = AirtableApi

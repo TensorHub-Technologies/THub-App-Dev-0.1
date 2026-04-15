@@ -1,6 +1,6 @@
 import { AzureOpenAIInput, ClientOptions, AzureOpenAIEmbeddings, OpenAIEmbeddingsParams } from '@langchain/openai'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 const serverCredentialsExists =
     !!process.env.AZURE_OPENAI_API_KEY &&
@@ -107,4 +107,4 @@ class AzureOpenAIEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: AzureOpenAIEmbedding_Embeddings }
+export const nodeClass = AzureOpenAIEmbedding_Embeddings

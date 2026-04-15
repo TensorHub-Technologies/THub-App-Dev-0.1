@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class CerebrasAPIAuth implements INodeCredential {
     label: string
@@ -22,4 +22,4 @@ class CerebrasAPIAuth implements INodeCredential {
     }
 }
 
-module.exports = { credClass: CerebrasAPIAuth }
+export const credClass = CerebrasAPIAuth

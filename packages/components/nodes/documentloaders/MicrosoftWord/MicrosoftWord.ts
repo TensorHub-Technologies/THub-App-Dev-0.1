@@ -1,7 +1,7 @@
 import { TextSplitter } from 'langchain/text_splitter'
-import { WordLoader } from './WordLoader'
-import { getFileFromStorage, handleDocumentLoaderDocuments, handleDocumentLoaderMetadata, handleDocumentLoaderOutput } from '../../../src'
-import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { WordLoader } from './WordLoader.js'
+import { getFileFromStorage, handleDocumentLoaderDocuments, handleDocumentLoaderMetadata, handleDocumentLoaderOutput } from '../../../src.js'
+import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class MicrosoftWord_DocumentLoaders implements INode {
     label: string
@@ -139,4 +139,4 @@ class MicrosoftWord_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: MicrosoftWord_DocumentLoaders }
+export const nodeClass = MicrosoftWord_DocumentLoaders

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
-import evaluationsService from '../../services/evaluations'
-import { getPageAndLimitParams } from '../../utils/pagination'
+import evaluationsService from '../../services/evaluations.js'
+import { getPageAndLimitParams } from '../../utils/pagination.js'
 
 const createEvaluation = async (req: Request, res: Response, next: NextFunction) => {
     try {

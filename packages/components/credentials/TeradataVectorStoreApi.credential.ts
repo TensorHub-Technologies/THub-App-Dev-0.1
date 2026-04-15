@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class TeradataVectorStoreApiCredentials implements INodeCredential {
     label: string
@@ -44,4 +44,4 @@ class TeradataVectorStoreApiCredentials implements INodeCredential {
     }
 }
 
-module.exports = { credClass: TeradataVectorStoreApiCredentials }
+export const credClass = TeradataVectorStoreApiCredentials

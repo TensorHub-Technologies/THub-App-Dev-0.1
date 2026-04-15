@@ -1,7 +1,7 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatWatsonx, ChatWatsonxInput } from '@langchain/community/chat_models/ibm'
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 interface WatsonxAuth {
     watsonxAIApikey?: string
@@ -184,4 +184,4 @@ class ChatIBMWatsonx_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatIBMWatsonx_ChatModels }
+export const nodeClass = ChatIBMWatsonx_ChatModels

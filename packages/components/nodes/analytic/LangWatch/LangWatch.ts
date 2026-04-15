@@ -1,4 +1,4 @@
-import { INode, INodeParams } from '../../../src/Interface'
+import { INode, INodeParams } from '../../../src/Interface.js'
 
 class LangWatch_Analytic implements INode {
     label: string
@@ -30,4 +30,4 @@ class LangWatch_Analytic implements INode {
     }
 }
 
-module.exports = { nodeClass: LangWatch_Analytic }
+export const nodeClass = LangWatch_Analytic

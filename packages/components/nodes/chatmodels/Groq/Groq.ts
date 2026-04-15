@@ -1,8 +1,8 @@
 import { BaseCache } from '@langchain/core/caches'
 import { ChatGroq, ChatGroqInput } from '@langchain/groq'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 
 class Groq_ChatModels implements INode {
     label: string
@@ -106,4 +106,4 @@ class Groq_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: Groq_ChatModels }
+export const nodeClass = Groq_ChatModels

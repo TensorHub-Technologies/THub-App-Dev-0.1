@@ -1,7 +1,7 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
-import { updateFlowState } from '../utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
+import { updateFlowState } from '../utils.js'
 import { Tool } from '@langchain/core/tools'
-import { ARTIFACTS_PREFIX, TOOL_ARGS_PREFIX } from '../../../src/agents'
+import { ARTIFACTS_PREFIX, TOOL_ARGS_PREFIX } from '../../../src/agents.js'
 import zodToJsonSchema from 'zod-to-json-schema'
 
 interface IToolInputArgs {
@@ -360,4 +360,4 @@ class Tool_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: Tool_Agentflow }
+export const nodeClass = Tool_Agentflow

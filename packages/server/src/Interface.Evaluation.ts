@@ -1,5 +1,5 @@
 // Evaluation Related Interfaces
-import { Evaluator } from './database/entities/Evaluator'
+import { Evaluator } from './database/entities/Evaluator.js'
 
 export interface IDataset {
     id: string

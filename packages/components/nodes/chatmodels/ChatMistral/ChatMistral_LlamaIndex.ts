@@ -1,6 +1,6 @@
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { MODEL_TYPE, getModels } from '../../../src/modelLoader.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { ALL_AVAILABLE_MISTRAL_MODELS, MistralAI } from 'llamaindex'
 
 class ChatMistral_LlamaIndex_ChatModels implements INode {
@@ -100,7 +100,7 @@ class ChatMistral_LlamaIndex_ChatModels implements INode {
 }
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatMistral_LlamaIndex_ChatModels }
+export const nodeClass = ChatMistral_LlamaIndex_ChatModels
 
 // DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatMistral_LlamaIndex_ChatModels }
+// duplicate removed: // module.exports = { nodeClass: ChatMistral_LlamaIndex_ChatModels }

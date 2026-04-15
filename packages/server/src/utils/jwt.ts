@@ -1,6 +1,6 @@
 import jwt, { type SignOptions } from 'jsonwebtoken'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
 
 export interface AuthTokenPayload {
     uid: string

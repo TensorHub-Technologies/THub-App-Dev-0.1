@@ -1,7 +1,7 @@
 import { START } from '@langchain/langgraph'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import { INode, INodeData, INodeParams, ISeqAgentNode } from '../../../src/Interface'
-import { Moderation } from '../../moderation/Moderation'
+import { INode, INodeData, INodeParams, ISeqAgentNode } from '../../../src/Interface.js'
+import { Moderation } from '../../moderation/Moderation.js'
 
 class Start_SeqAgents implements INode {
     label: string
@@ -80,4 +80,4 @@ class Start_SeqAgents implements INode {
     }
 }
 
-module.exports = { nodeClass: Start_SeqAgents }
+export const nodeClass = Start_SeqAgents

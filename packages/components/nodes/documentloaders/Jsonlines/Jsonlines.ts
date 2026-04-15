@@ -1,8 +1,8 @@
 import { omit } from 'lodash'
-import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import jsonpointer from 'jsonpointer'
-import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src'
+import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src.js'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
 import { Document } from '@langchain/core/documents'
 import type { readFile as ReadFileT } from 'node:fs/promises'
@@ -340,4 +340,4 @@ class JSONLinesLoader extends TextLoader {
     }
 }
 
-module.exports = { nodeClass: Jsonlines_DocumentLoaders }
+export const nodeClass = Jsonlines_DocumentLoaders

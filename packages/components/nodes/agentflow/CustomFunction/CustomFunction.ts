@@ -7,9 +7,9 @@ import {
     INodeOptionsValue,
     INodeParams,
     IServerSideEventStreamer
-} from '../../../src/Interface'
-import { getVars, executeJavaScriptCode, createCodeExecutionSandbox } from '../../../src/utils'
-import { updateFlowState } from '../utils'
+} from '../../../src/Interface.js'
+import { getVars, executeJavaScriptCode, createCodeExecutionSandbox } from '../../../src/utils.js'
+import { updateFlowState } from '../utils.js'
 
 interface ICustomFunctionInputVariables {
     variableName: string
@@ -219,4 +219,4 @@ class CustomFunction_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: CustomFunction_Agentflow }
+export const nodeClass = CustomFunction_Agentflow

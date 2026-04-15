@@ -9,7 +9,7 @@ import {
     S3ClientConfig
 } from '@aws-sdk/client-s3'
 import { Readable } from 'node:stream'
-import { getUserHome } from './utils'
+import { getUserHome } from './utils.js'
 import sanitize from 'sanitize-filename'
 import { Storage } from '@google-cloud/storage'
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'

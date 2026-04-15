@@ -1,3 +1,4 @@
+import path from 'path'
 import { difference, flatten, uniq } from 'lodash'
 import { DataSource } from 'typeorm'
 import { z } from 'zod'
@@ -16,8 +17,8 @@ import {
     ISeqAgentNode,
     IDatabaseEntity,
     ConversationHistorySelection
-} from '../../../src/Interface'
-import { AgentExecutor } from '../../../src/agents'
+} from '../../../src/Interface.js'
+import { AgentExecutor } from '../../../src/agents.js'
 import {
     extractOutputFromArray,
     getInputVariables,
@@ -25,8 +26,11 @@ import {
     handleEscapeCharacters,
     prepareSandboxVars,
     transformBracesWithColon
-} from '../../../src/utils'
+} from '../../../src/utils.js'
 import {
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
     convertStructuredSchemaToZod,
     customGet,
     getVM,
@@ -35,7 +39,7 @@ import {
     filterConversationHistory,
     restructureMessages,
     checkMessageHistory
-} from '../commonUtils'
+} from '../commonUtils.js'
 
 const TAB_IDENTIFIER = 'selectedUpdateStateMemoryTab'
 const customOutputFuncDesc = `This is only applicable when you have a custom State at the START node. After agent execution, you might want to update the State values`
@@ -719,4 +723,4 @@ const getReturnOutput = async (nodeData: INodeData, input: string, options: ICom
     }
 }
 
-module.exports = { nodeClass: LLMNode_SeqAgents }
+export const nodeClass = LLMNode_SeqAgents

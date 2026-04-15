@@ -30,7 +30,7 @@ import {
     INodeOverrides,
     IVariableOverride,
     INodeDirectedGraph
-} from '../Interface'
+} from '../Interface.js'
 import {
     RUNTIME_MESSAGES_LENGTH_VAR_PREFIX,
     CHAT_HISTORY_VAR_PREFIX,
@@ -45,17 +45,17 @@ import {
     _removeCredentialId,
     validateHistorySchema
 } from '.'
-import { ChatFlow } from '../database/entities/ChatFlow'
-import { Variable } from '../database/entities/Variable'
-import { replaceInputsWithConfig, constructGraphs, getAPIOverrideConfig } from '../utils'
-import logger from './logger'
-import { getErrorMessage } from '../errors/utils'
-import { Execution } from '../database/entities/Execution'
-import { utilAddChatMessage } from './addChatMesage'
-import { CachePool } from '../CachePool'
-import { ChatMessage } from '../database/entities/ChatMessage'
-import { Telemetry } from './telemetry'
-import { generateTTSForResponseStream, shouldAutoPlayTTS } from './buildChatflow'
+import { ChatFlow } from '../database/entities/ChatFlow.js'
+import { Variable } from '../database/entities/Variable.js'
+import { replaceInputsWithConfig, constructGraphs, getAPIOverrideConfig } from '../utils.js'
+import logger from './logger.js'
+import { getErrorMessage } from '../errors/utils.js'
+import { Execution } from '../database/entities/Execution.js'
+import { utilAddChatMessage } from './addChatMesage.js'
+import { CachePool } from '../CachePool.js'
+import { ChatMessage } from '../database/entities/ChatMessage.js'
+import { Telemetry } from './telemetry.js'
+import { generateTTSForResponseStream, shouldAutoPlayTTS } from './buildChatflow.js'
 
 interface IWaitingNode {
     nodeId: string

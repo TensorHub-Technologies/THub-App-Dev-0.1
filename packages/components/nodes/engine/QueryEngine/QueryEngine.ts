@@ -1,4 +1,4 @@
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface.js'
 import {
     RetrieverQueryEngine,
     ResponseSynthesizer,
@@ -9,8 +9,8 @@ import {
     Metadata,
     NodeWithScore
 } from 'llamaindex'
-import { reformatSourceDocuments } from '../EngineUtils'
-import { EvaluationRunTracerLlama } from '../../../evaluation/EvaluationRunTracerLlama'
+import { reformatSourceDocuments } from '../EngineUtils.js'
+import { EvaluationRunTracerLlama } from '../../../evaluation/EvaluationRunTracerLlama.js'
 
 class QueryEngine_LlamaIndex implements INode {
     label: string
@@ -157,4 +157,4 @@ const prepareEngine = (nodeData: INodeData) => {
     return queryEngine
 }
 
-module.exports = { nodeClass: QueryEngine_LlamaIndex }
+export const nodeClass = QueryEngine_LlamaIndex

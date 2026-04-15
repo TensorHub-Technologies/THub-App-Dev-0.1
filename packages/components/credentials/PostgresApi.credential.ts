@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class PostgresApi implements INodeCredential {
     label: string
@@ -28,4 +28,4 @@ class PostgresApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: PostgresApi }
+export const credClass = PostgresApi

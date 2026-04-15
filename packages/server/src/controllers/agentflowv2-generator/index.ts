@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import agentflowv2Service from '../../services/agentflowv2-generator'
+import agentflowv2Service from '../../services/agentflowv2-generator.js'
 
 const generateAgentflowv2 = async (req: Request, res: Response, next: NextFunction) => {
     try {

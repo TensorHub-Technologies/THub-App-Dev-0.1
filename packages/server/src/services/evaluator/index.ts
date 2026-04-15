@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
-import { Evaluator } from '../../database/entities/Evaluator'
-import { EvaluatorDTO } from '../../Interface.Evaluation'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
+import { Evaluator } from '../../database/entities/Evaluator.js'
+import { EvaluatorDTO } from '../../Interface.Evaluation.js'
 
 const getAllEvaluators = async (page: number = -1, limit: number = -1, tenantId?: string) => {
     try {

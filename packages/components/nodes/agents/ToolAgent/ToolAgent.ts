@@ -13,7 +13,7 @@ import {
     handleEscapeCharacters,
     removeInvalidImageMarkdown,
     transformBracesWithColon
-} from '../../../src/utils'
+} from '../../../src/utils.js'
 import {
     FlowiseMemory,
     ICommonObject,
@@ -23,12 +23,12 @@ import {
     IServerSideEventStreamer,
     IUsedTool,
     IVisionChatModal
-} from '../../../src/Interface'
-import { ConsoleCallbackHandler, CustomChainHandler, CustomStreamingHandler, additionalCallbacks } from '../../../src/handler'
-import { AgentExecutor, ToolCallingAgentOutputParser } from '../../../src/agents'
-import { Moderation, checkInputs, streamResponse } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
-import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
+} from '../../../src/Interface.js'
+import { ConsoleCallbackHandler, CustomChainHandler, CustomStreamingHandler, additionalCallbacks } from '../../../src/handler.js'
+import { AgentExecutor, ToolCallingAgentOutputParser } from '../../../src/agents.js'
+import { Moderation, checkInputs, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
+import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils.js'
 
 class ToolAgent_Agents implements INode {
     label: string
@@ -377,4 +377,4 @@ const prepareAgent = async (
     return executor
 }
 
-module.exports = { nodeClass: ToolAgent_Agents }
+export const nodeClass = ToolAgent_Agents

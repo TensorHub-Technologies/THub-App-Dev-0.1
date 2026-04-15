@@ -1,5 +1,5 @@
 import { LLM, BaseLLMParams } from '@langchain/core/language_models/llms'
-import { getEnvironmentVariable } from '../../../src/utils'
+import { getEnvironmentVariable } from '../../../src/utils.js'
 
 // Define constant for environment variable name
 const HF_API_KEY_ENV_NAME = 'HUGGINGFACEHUB_API_KEY'

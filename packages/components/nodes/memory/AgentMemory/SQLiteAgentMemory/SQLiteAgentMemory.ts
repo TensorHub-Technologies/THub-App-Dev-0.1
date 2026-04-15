@@ -1,8 +1,8 @@
 import path from 'path'
-import { getBaseClasses, getUserHome } from '../../../../src/utils'
-import { SaverOptions } from '../interface'
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../../src/Interface'
-import { SqliteSaver } from './sqliteSaver'
+import { getBaseClasses, getUserHome } from '../../../../src/utils.js'
+import { SaverOptions } from '../interface.js'
+import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeParams } from '../../../../src/Interface.js'
+import { SqliteSaver } from './sqliteSaver.js'
 import { DataSource } from 'typeorm'
 
 class SQLiteAgentMemory_Memory implements INode {
@@ -84,4 +84,4 @@ class SQLiteAgentMemory_Memory implements INode {
     }
 }
 
-module.exports = { nodeClass: SQLiteAgentMemory_Memory }
+export const nodeClass = SQLiteAgentMemory_Memory

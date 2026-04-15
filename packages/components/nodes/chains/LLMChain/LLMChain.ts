@@ -12,12 +12,12 @@ import {
     INodeOutputsValue,
     INodeParams,
     IServerSideEventStreamer
-} from '../../../src/Interface'
-import { additionalCallbacks, ConsoleCallbackHandler, CustomChainHandler } from '../../../src/handler'
-import { getBaseClasses, handleEscapeCharacters } from '../../../src/utils'
-import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
-import { formatResponse, injectOutputParser } from '../../outputparsers/OutputParserHelpers'
-import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
+} from '../../../src/Interface.js'
+import { additionalCallbacks, ConsoleCallbackHandler, CustomChainHandler } from '../../../src/handler.js'
+import { getBaseClasses, handleEscapeCharacters } from '../../../src/utils.js'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
+import { formatResponse, injectOutputParser } from '../../outputparsers/OutputParserHelpers.js'
+import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils.js'
 
 class LLMChain_Chains implements INode {
     label: string
@@ -297,4 +297,4 @@ const runPrediction = async (
     }
 }
 
-module.exports = { nodeClass: LLMChain_Chains }
+export const nodeClass = LLMChain_Chains

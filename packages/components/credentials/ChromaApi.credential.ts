@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class ChromaApi implements INodeCredential {
     label: string
@@ -31,4 +31,4 @@ class ChromaApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: ChromaApi }
+export const credClass = ChromaApi

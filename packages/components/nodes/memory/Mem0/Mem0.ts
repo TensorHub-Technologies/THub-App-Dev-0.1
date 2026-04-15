@@ -2,9 +2,9 @@ import { Mem0Memory as BaseMem0Memory, Mem0MemoryInput, ClientOptions } from '@m
 import { MemoryOptions, SearchOptions } from 'mem0ai'
 import { BaseMessage } from '@langchain/core/messages'
 import { InputValues, MemoryVariables, OutputValues } from '@langchain/core/memory'
-import { ICommonObject, IDatabaseEntity } from '../../../src'
-import { IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam, mapChatMessageToBaseMessage } from '../../../src/utils'
+import { ICommonObject, IDatabaseEntity } from '../../../src.js'
+import { IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam, mapChatMessageToBaseMessage } from '../../../src/utils.js'
 import { DataSource } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -383,4 +383,4 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
     }
 }
 
-module.exports = { nodeClass: Mem0_Memory }
+export const nodeClass = Mem0_Memory

@@ -1,8 +1,8 @@
 import { omit } from 'lodash'
-import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { BraveSearch } from '@langchain/community/tools/brave_search'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils.js'
 import { Document } from '@langchain/core/documents'
 
 class BraveSearchAPI_DocumentLoaders implements INode {
@@ -162,4 +162,4 @@ class BraveSearchAPI_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: BraveSearchAPI_DocumentLoaders }
+export const nodeClass = BraveSearchAPI_DocumentLoaders

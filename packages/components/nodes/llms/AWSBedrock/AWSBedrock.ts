@@ -1,10 +1,10 @@
 import { Bedrock } from '@langchain/community/llms/bedrock'
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { BaseBedrockInput } from '@langchain/community/dist/utils/bedrock'
-import { getModels, getRegions, MODEL_TYPE } from '../../../src/modelLoader'
+import { getModels, getRegions, MODEL_TYPE } from '../../../src/modelLoader.js'
 
 /**
  * @author Michael Connor <mlconnor@yahoo.com>
@@ -137,4 +137,4 @@ class AWSBedrock_LLMs implements INode {
     }
 }
 
-module.exports = { nodeClass: AWSBedrock_LLMs }
+export const nodeClass = AWSBedrock_LLMs

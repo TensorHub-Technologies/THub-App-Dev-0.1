@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 import {
     buildFlow,
     constructGraphs,
@@ -9,14 +9,14 @@ import {
     getEndingNodes,
     getStartingNodes,
     resolveVariables
-} from '../../utils'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { ChatFlow } from '../../database/entities/ChatFlow'
-import { IDepthQueue, IReactFlowNode } from '../../Interface'
+} from '../../utils.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import { ChatFlow } from '../../database/entities/ChatFlow.js'
+import { IDepthQueue, IReactFlowNode } from '../../Interface.js'
 import { ICommonObject, INodeData } from 'thub-components'
 import { convertToOpenAIFunction } from '@langchain/core/utils/function_calling'
 import { v4 as uuidv4 } from 'uuid'
-import { Variable } from '../../database/entities/Variable'
+import { Variable } from '../../database/entities/Variable.js'
 
 const SOURCE_DOCUMENTS_PREFIX = '\n\n----THUB_SOURCE_DOCUMENTS----\n\n'
 const ARTIFACTS_PREFIX = '\n\n----THUB_ARTIFACTS----\n\n'

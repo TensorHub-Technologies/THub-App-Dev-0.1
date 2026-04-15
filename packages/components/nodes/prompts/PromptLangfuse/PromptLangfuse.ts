@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams, PromptTemplate } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam, getInputVariables, transformBracesWithColon } from '../../../src/utils'
+import { ICommonObject, INode, INodeData, INodeParams, PromptTemplate } from '../../../src/Interface.js'
+import { getBaseClasses, getCredentialData, getCredentialParam, getInputVariables, transformBracesWithColon } from '../../../src/utils.js'
 import { PromptTemplateInput } from '@langchain/core/prompts'
 import { Langfuse } from 'langfuse'
 
@@ -94,4 +94,4 @@ class PromptLangfuse_Prompts implements INode {
     }
 }
 
-module.exports = { nodeClass: PromptLangfuse_Prompts }
+export const nodeClass = PromptLangfuse_Prompts

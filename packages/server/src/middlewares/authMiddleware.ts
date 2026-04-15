@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { User } from '../database/entities/User'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
-import { getRunningExpressApp } from '../utils/getRunningExpressApp'
-import { verifyAuthToken } from '../utils/jwt'
+import { User } from '../database/entities/User.js'
+import { InternalFlowiseError } from '../errors/internalFlowiseError.js'
+import { getRunningExpressApp } from '../utils/getRunningExpressApp.js'
+import { verifyAuthToken } from '../utils/jwt.js'
 
 export interface AuthenticatedUser {
     uid: string

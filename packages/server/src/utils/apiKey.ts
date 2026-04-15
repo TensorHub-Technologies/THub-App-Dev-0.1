@@ -3,8 +3,10 @@ import { ICommonObject } from 'thub-components'
 import moment from 'moment'
 import fs from 'fs'
 import path from 'path'
-import logger from './logger'
-import { appConfig } from '../AppConfig'
+import { fileURLToPath } from 'url'
+import logger from './logger.js'
+import { appConfig } from '../AppConfig.js'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 /**
  * Returns the api key path

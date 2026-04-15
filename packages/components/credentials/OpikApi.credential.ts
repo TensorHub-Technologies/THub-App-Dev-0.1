@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class OpikApi implements INodeCredential {
     label: string
@@ -36,4 +36,4 @@ class OpikApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: OpikApi }
+export const credClass = OpikApi

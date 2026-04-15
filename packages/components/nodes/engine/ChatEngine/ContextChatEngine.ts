@@ -7,10 +7,10 @@ import {
     INodeOutputsValue,
     INodeParams,
     IServerSideEventStreamer
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import { Metadata, BaseRetriever, LLM, ContextChatEngine, ChatMessage, NodeWithScore } from 'llamaindex'
-import { reformatSourceDocuments } from '../EngineUtils'
-import { EvaluationRunTracerLlama } from '../../../evaluation/EvaluationRunTracerLlama'
+import { reformatSourceDocuments } from '../EngineUtils.js'
+import { EvaluationRunTracerLlama } from '../../../evaluation/EvaluationRunTracerLlama.js'
 
 class ContextChatEngine_LlamaIndex implements INode {
     label: string
@@ -169,4 +169,4 @@ class ContextChatEngine_LlamaIndex implements INode {
     }
 }
 
-module.exports = { nodeClass: ContextChatEngine_LlamaIndex }
+export const nodeClass = ContextChatEngine_LlamaIndex

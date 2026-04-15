@@ -2,10 +2,10 @@ import fetch from 'node-fetch'
 import { Document } from '@langchain/core/documents'
 import { VectaraStore } from '@langchain/community/vectorstores/vectara'
 import { VectorDBQAChain } from 'langchain/chains'
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { checkInputs, Moderation } from '../../moderation/Moderation'
-import { formatResponse } from '../../outputparsers/OutputParserHelpers'
+import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
+import { getBaseClasses } from '../../../src/utils.js'
+import { checkInputs, Moderation } from '../../moderation/Moderation.js'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
 
 // functionality based on https://github.com/vectara/vectara-answer
 const reorderCitations = (unorderedSummary: string) => {
@@ -383,4 +383,4 @@ class VectaraChain_Chains implements INode {
     }
 }
 
-module.exports = { nodeClass: VectaraChain_Chains }
+export const nodeClass = VectaraChain_Chains

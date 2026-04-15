@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes'
 import { Request, Response, NextFunction } from 'express'
-import statsService from '../../services/stats'
-import { ChatMessageRatingType, ChatType } from '../../Interface'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import statsService from '../../services/stats.js'
+import { ChatMessageRatingType, ChatType } from '../../Interface.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 
 const getChatflowStats = async (req: Request, res: Response, next: NextFunction) => {
     try {

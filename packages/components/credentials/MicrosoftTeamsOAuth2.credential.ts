@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 // Comprehensive scopes for Microsoft Teams operations
 const scopes = [
@@ -83,4 +83,4 @@ class MsoftTeamsOAuth2 implements INodeCredential {
     }
 }
 
-module.exports = { credClass: MsoftTeamsOAuth2 }
+export const credClass = MsoftTeamsOAuth2

@@ -1,10 +1,10 @@
 import { StatusCodes } from 'http-status-codes'
-import { findAvailableConfigs } from '../../utils'
-import { IReactFlowObject } from '../../Interface'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import chatflowsService from '../chatflows'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
-import { getErrorMessage } from '../../errors/utils'
+import { findAvailableConfigs } from '../../utils.js'
+import { IReactFlowObject } from '../../Interface.js'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp.js'
+import chatflowsService from '../chatflows.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
+import { getErrorMessage } from '../../errors/utils.js'
 
 const getSingleFlowConfig = async (chatflowId: string): Promise<any> => {
     try {

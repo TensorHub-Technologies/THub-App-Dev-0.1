@@ -10,16 +10,16 @@ import {
     INodeParams,
     IServerSideEventStreamer,
     IUsedTool
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import { AIMessageChunk, BaseMessageLike, MessageContentText } from '@langchain/core/messages'
-import { AnalyticHandler } from '../../../src/handler'
-import { DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt'
-import { ILLMMessage } from '../Interface.Agentflow'
+import { AnalyticHandler } from '../../../src/handler.js'
+import { DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt.js'
+import { ILLMMessage } from '../Interface.Agentflow.js'
 import { Tool } from '@langchain/core/tools'
-import { ARTIFACTS_PREFIX, SOURCE_DOCUMENTS_PREFIX, TOOL_ARGS_PREFIX } from '../../../src/agents'
+import { ARTIFACTS_PREFIX, SOURCE_DOCUMENTS_PREFIX, TOOL_ARGS_PREFIX } from '../../../src/agents.js'
 import { flatten } from 'lodash'
 import zodToJsonSchema from 'zod-to-json-schema'
-import { getErrorMessage } from '../../../src/error'
+import { getErrorMessage } from '../../../src/error.js'
 import { DataSource } from 'typeorm'
 import {
     getPastChatHistoryImageMessages,
@@ -27,9 +27,9 @@ import {
     processMessagesWithImages,
     replaceBase64ImagesWithFileReferences,
     updateFlowState
-} from '../utils'
-import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { addSingleFileToStorage } from '../../../src/storageUtils'
+} from '../utils.js'
+import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam } from '../../../src/utils.js'
+import { addSingleFileToStorage } from '../../../src/storageUtils.js'
 import fetch from 'node-fetch'
 
 interface ITool {
@@ -2309,4 +2309,4 @@ class Agent_Agentflow implements INode {
     }
 }
 
-module.exports = { nodeClass: Agent_Agentflow }
+export const nodeClass = Agent_Agentflow

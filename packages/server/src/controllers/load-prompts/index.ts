@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import loadPromptsService from '../../services/load-prompts'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import loadPromptsService from '../../services/load-prompts.js'
+import { InternalFlowiseError } from '../../errors/internalFlowiseError.js'
 import { StatusCodes } from 'http-status-codes'
 
 const createPrompt = async (req: Request, res: Response, next: NextFunction) => {

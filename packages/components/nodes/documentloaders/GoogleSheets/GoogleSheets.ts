@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { ICommonObject, IDocument, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface'
+import { ICommonObject, IDocument, INode, INodeData, INodeParams, INodeOptionsValue } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import {
     convertMultiOptionsToStringArray,
@@ -8,7 +8,7 @@ import {
     handleEscapeCharacters,
     INodeOutputsValue,
     refreshOAuth2Token
-} from '../../../src'
+} from '../../../src.js'
 
 class GoogleSheets_DocumentLoaders implements INode {
     label: string
@@ -426,4 +426,4 @@ class GoogleSheets_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: GoogleSheets_DocumentLoaders }
+export const nodeClass = GoogleSheets_DocumentLoaders

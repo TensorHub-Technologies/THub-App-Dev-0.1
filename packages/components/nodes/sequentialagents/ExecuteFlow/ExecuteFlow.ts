@@ -1,3 +1,4 @@
+import path from 'path'
 import { NodeVM } from '@flowiseai/nodevm'
 import { DataSource } from 'typeorm'
 import {
@@ -7,7 +8,7 @@ import {
     getCredentialParam,
     getVars,
     prepareSandboxVars
-} from '../../../src/utils'
+} from '../../../src/utils.js'
 import {
     ICommonObject,
     IDatabaseEntity,
@@ -17,9 +18,12 @@ import {
     INodeParams,
     ISeqAgentNode,
     ISeqAgentsState
-} from '../../../src/Interface'
+} from '../../../src/Interface.js'
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages'
 import { v4 as uuidv4 } from 'uuid'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 
 class ExecuteFlow_SeqAgents implements INode {
     label: string
@@ -337,4 +341,4 @@ class ExecuteFlow_SeqAgents implements INode {
     }
 }
 
-module.exports = { nodeClass: ExecuteFlow_SeqAgents }
+export const nodeClass = ExecuteFlow_SeqAgents

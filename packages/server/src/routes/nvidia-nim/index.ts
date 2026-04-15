@@ -1,5 +1,5 @@
 import express from 'express'
-import nimController from '../../controllers/nvidia-nim'
+import nimController from '../../controllers/nvidia-nim.js'
 const router = express.Router()
 
 // READ

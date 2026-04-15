@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import upsertHistoryService from '../../services/upsert-history'
+import upsertHistoryService from '../../services/upsert-history.js'
 
 const getAllUpsertHistory = async (req: Request, res: Response, next: NextFunction) => {
     try {

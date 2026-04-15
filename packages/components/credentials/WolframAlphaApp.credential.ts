@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class WolframAlphaApp implements INodeCredential {
     label: string
@@ -22,4 +22,4 @@ class WolframAlphaApp implements INodeCredential {
     }
 }
 
-module.exports = { credClass: WolframAlphaApp }
+export const credClass = WolframAlphaApp

@@ -1,5 +1,5 @@
 import express from 'express'
-import flowConfigsController from '../../controllers/flow-configs'
+import flowConfigsController from '../../controllers/flow-configs.js'
 const router = express.Router()
 
 // CREATE

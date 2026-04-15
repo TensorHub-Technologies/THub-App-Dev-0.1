@@ -1,4 +1,4 @@
-import { INode, INodeParams } from '../../../src/Interface'
+import { INode, INodeParams } from '../../../src/Interface.js'
 
 class Phoenix_Analytic implements INode {
     label: string
@@ -30,4 +30,4 @@ class Phoenix_Analytic implements INode {
     }
 }
 
-module.exports = { nodeClass: Phoenix_Analytic }
+export const nodeClass = Phoenix_Analytic

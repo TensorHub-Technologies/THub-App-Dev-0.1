@@ -1,6 +1,6 @@
-import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
-import { INodeOutputsValue } from '../../../src'
+import { INodeOutputsValue } from '../../../src.js'
 import { exec } from 'child_process'
 import sanitize from 'sanitize-filename'
 import path from 'path'
@@ -8,7 +8,7 @@ import fs from 'fs'
 import { Storage } from '@google-cloud/storage'
 import { promisify } from 'util'
 import Tesseract from 'tesseract.js'
-import { handleEscapeCharacters } from '../../../src'
+import { handleEscapeCharacters } from '../../../src.js'
 
 const execAsync = promisify(exec)
 
@@ -146,4 +146,4 @@ class Image_DocumentLoaders implements INode {
     }
 }
 
-module.exports = { nodeClass: Image_DocumentLoaders }
+export const nodeClass = Image_DocumentLoaders

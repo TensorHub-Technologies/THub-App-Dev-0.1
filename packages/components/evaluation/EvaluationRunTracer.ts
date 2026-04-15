@@ -1,6 +1,6 @@
 import { RunCollectorCallbackHandler } from '@langchain/core/tracers/run_collector'
 import { Run } from '@langchain/core/tracers/base'
-import { EvaluationRunner } from './EvaluationRunner'
+import { EvaluationRunner } from './EvaluationRunner.js'
 import { encoding_for_model, get_encoding } from '@dqbd/tiktoken'
 
 export class EvaluationRunTracer extends RunCollectorCallbackHandler {

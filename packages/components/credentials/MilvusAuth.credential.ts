@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class MilvusCredential implements INodeCredential {
     label: string
@@ -28,4 +28,4 @@ class MilvusCredential implements INodeCredential {
     }
 }
 
-module.exports = { credClass: MilvusCredential }
+export const credClass = MilvusCredential

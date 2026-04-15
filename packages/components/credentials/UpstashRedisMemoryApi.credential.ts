@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class UpstashRedisMemoryApi implements INodeCredential {
     label: string
@@ -23,4 +23,4 @@ class UpstashRedisMemoryApi implements INodeCredential {
     }
 }
 
-module.exports = { credClass: UpstashRedisMemoryApi }
+export const credClass = UpstashRedisMemoryApi

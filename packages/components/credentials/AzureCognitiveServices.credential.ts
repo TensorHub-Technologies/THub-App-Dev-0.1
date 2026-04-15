@@ -1,4 +1,4 @@
-import { INodeParams, INodeCredential } from '../src/Interface'
+import { INodeParams, INodeCredential } from '../src/Interface.js'
 
 class AzureCognitiveServices implements INodeCredential {
     label: string
@@ -36,4 +36,4 @@ class AzureCognitiveServices implements INodeCredential {
     }
 }
 
-module.exports = { credClass: AzureCognitiveServices }
+export const credClass = AzureCognitiveServices
