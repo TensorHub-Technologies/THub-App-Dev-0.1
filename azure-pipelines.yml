@@ -2,8 +2,8 @@ trigger:
     - qa
 
 variables:
-    azureSubscription: ARMSC
-    dockerRegistryServiceConnection: DockerSCQA
+    azureSubscription: ARM-SC-QA
+    dockerRegistryServiceConnection: DR-SC-QA
 
     resourceGroup: thub-qa
     acrName: thubqa
