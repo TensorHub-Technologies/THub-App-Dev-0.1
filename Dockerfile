@@ -1,12 +1,12 @@
-FROM node:22-alpine
+FROM node:20-alpine
 
 RUN apk add --update libc6-compat python3 make g++
 RUN apk add --no-cache build-base cairo-dev pango-dev
 RUN apk add --no-cache chromium
 RUN apk add --no-cache curl
 
-# install pnpm globally
-RUN npm install -g pnpm
+# install pnpm globally (pinned for deterministic CI builds)
+RUN npm install -g pnpm@10.28.2
 
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
@@ -23,7 +23,7 @@ COPY . .
 # IMPORTANT FIX:
 # Do NOT reinstall node_modules separately in production.
 # Keep the monorepo structure exactly as local.
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 # Set environment variables
 ARG VITE_GOOGLE_CLIENT_ID
@@ -42,7 +42,7 @@ ENV VITE_THUB_WEB_SERVER_LOCAL_URL=${VITE_THUB_WEB_SERVER_LOCAL_URL}
 ENV VITE_THUB_WEB_SERVER_QA_URL=${VITE_THUB_WEB_SERVER_QA_URL}
 ENV VITE_TEST_ENV=${VITE_TEST_ENV}
 
-RUN pnpm build
+RUN pnpm build --concurrency=1
 
 EXPOSE 3000
 
