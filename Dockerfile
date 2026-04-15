@@ -1,16 +1,26 @@
-FROM node:20-alpine
+FROM node:20-bookworm-slim
 
-RUN apk add --update libc6-compat python3 make g++
-RUN apk add --no-cache build-base cairo-dev pango-dev
-RUN apk add --no-cache chromium
-RUN apk add --no-cache curl
+# Native/build dependencies needed by workspace packages and headless browser features.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    chromium \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # install pnpm globally (pinned for deterministic CI builds)
 RUN npm install -g pnpm@10.28.2
 
 ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV NODE_OPTIONS=--max-old-space-size=8192
+# Disable Husky install inside container build context.
+ENV HUSKY=0
 
 WORKDIR /usr/src
 
