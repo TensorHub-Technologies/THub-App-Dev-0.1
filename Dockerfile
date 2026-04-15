@@ -42,7 +42,9 @@ ENV VITE_THUB_WEB_SERVER_LOCAL_URL=${VITE_THUB_WEB_SERVER_LOCAL_URL}
 ENV VITE_THUB_WEB_SERVER_QA_URL=${VITE_THUB_WEB_SERVER_QA_URL}
 ENV VITE_TEST_ENV=${VITE_TEST_ENV}
 
-RUN pnpm build --concurrency=1
+RUN pnpm --filter ./packages/components... run build \
+    && pnpm --filter ./packages/ui... run build \
+    && pnpm --filter ./packages/server... run build
 
 EXPOSE 3000
 
