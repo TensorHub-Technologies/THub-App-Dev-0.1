@@ -1,5 +1,5 @@
 import {
-    FlowiseSummaryMemory,
+    THubSummaryMemory,
     IMessage,
     IDatabaseEntity,
     INode,
@@ -13,7 +13,7 @@ import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { ConversationSummaryMemory, ConversationSummaryMemoryInput } from 'langchain/memory'
 import { DataSource } from 'typeorm'
-import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/FlowiseChatAnthropic'
+import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/THubChatAnthropic'
 
 class ConversationSummaryMemory_Memory implements INode {
     label: string
@@ -90,7 +90,7 @@ interface BufferMemoryExtendedInput {
     chatflowid: string
 }
 
-class ConversationSummaryMemoryExtended extends FlowiseSummaryMemory implements MemoryMethods {
+class ConversationSummaryMemoryExtended extends THubSummaryMemory implements MemoryMethods {
     appDataSource: DataSource
     databaseEntities: IDatabaseEntity
     chatflowid: string

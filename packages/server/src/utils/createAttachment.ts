@@ -12,7 +12,7 @@ import {
 } from 'thub-components'
 import { getRunningExpressApp } from './getRunningExpressApp'
 import { getErrorMessage } from '../errors/utils'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 import { StatusCodes } from 'http-status-codes'
 import { ChatFlow } from '../database/entities/ChatFlow'
 
@@ -25,17 +25,17 @@ export const createFileAttachment = async (req: Request) => {
 
     const chatflowid = req.params.chatflowId
     if (!chatflowid || !isValidUUID(chatflowid)) {
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid chatflowId format - must be a valid UUID')
+        throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid chatflowId format - must be a valid UUID')
     }
 
     const chatId = req.params.chatId
     if (!chatId || !isValidUUID(chatId)) {
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid chatId format - must be a valid UUID')
+        throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid chatId format - must be a valid UUID')
     }
 
     // Check for path traversal attempts
     if (isPathTraversal(chatflowid) || isPathTraversal(chatId)) {
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid path characters detected')
+        throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid path characters detected')
     }
 
     // Validate chatflow exists and check API key
@@ -43,7 +43,7 @@ export const createFileAttachment = async (req: Request) => {
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
+        throw new InternalTHubError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
     }
 
     // Parse chatbot configuration to get file upload settings

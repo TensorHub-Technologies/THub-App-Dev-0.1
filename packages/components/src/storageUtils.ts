@@ -138,7 +138,7 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         const mime = splitDataURI[0].split(':')[1].split(';')[0]
 
         const sanitizedFilename = _sanitizeFilename(filename)
-        const blobName = `.flowise/storage/${chatflowid}/${sanitizedFilename}`
+        const blobName = `.thub/storage/${chatflowid}/${sanitizedFilename}`
 
         const blockBlobClient = containerClient.getBlockBlobClient(blobName)
 
@@ -163,7 +163,7 @@ export const addBase64FilesToStorage = async (fileBase64: string, chatflowid: st
         const mime = splitDataURI[0].split(':')[1].split(';')[0]
 
         const bucket = storage!.bucket(bucketName)
-        const file = bucket.file(`.flowise/storage/${chatflowid}/${filename}`)
+        const file = bucket.file(`.thub/storage/${chatflowid}/${filename}`)
 
         try {
             await file.save(bf, {
@@ -228,7 +228,7 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
         if (filePath.startsWith('/')) {
             filePath = filePath.substring(1)
         }
-        const blobName = `.flowise/storage/${filePath}`
+        const blobName = `.thub/storage/${filePath}`
 
         const blockBlobClient = containerClient.getBlockBlobClient(blobName)
 
@@ -251,7 +251,7 @@ export const addArrayFilesToStorage = async (mime: string, bf: Buffer, fileName:
         if (filePath.startsWith('/')) {
             filePath = filePath.substring(1)
         }
-        const gcsFilePath = `.flowise/storage/${filePath}`
+        const gcsFilePath = `.thub/storage/${filePath}`
         const bucket = storage!.bucket(bucketName)
         const file = bucket.file(gcsFilePath)
 
@@ -311,7 +311,7 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
             filePath = filePath.substring(1)
         }
 
-        const blobName = `.flowise/storage/${filePath}`
+        const blobName = `.thub/storage/${filePath}`
         const blockBlobClient = containerClient.getBlockBlobClient(blobName)
 
         try {
@@ -333,7 +333,7 @@ export const addSingleFileToStorage = async (mime: string, bf: Buffer, fileName:
             filePath = filePath.substring(1)
         }
 
-        const gcsFilePath = `.flowise/storage/${filePath}`
+        const gcsFilePath = `.thub/storage/${filePath}`
         const bucket = storage!.bucket(bucketName)
         const file = bucket.file(gcsFilePath)
 
@@ -470,13 +470,13 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
         const buffer = Buffer.concat(response.Body.toArray())
         return buffer
     } else if (storageType === 'azure') {
-        const filePath = path.join('.flowise/storage', ...paths, file)
+        const filePath = path.join('.thub/storage', ...paths, file)
         const blobName = filePath.replace(/\\/g, '/')
         const fileBuffer = await getFileFromAzure(blobName)
         return fileBuffer
     } else if (process.env.NODE_ENV === 'production') {
         console.log(process.env.NODE_ENV, 'process.env.NODE_ENV')
-        const filePath = path.join('.flowise/storage', ...paths, file)
+        const filePath = path.join('.thub/storage', ...paths, file)
         const filePaths = filePath.replace(/\\/g, '/')
         const fileBuffer = await getFileFromGCS(filePaths)
         return fileBuffer
@@ -492,9 +492,9 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
 export const getStoragePath = (): string => {
     console.log(
         'getStoragePath: ',
-        process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.flowise', 'storage')
+        process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.thub', 'storage')
     )
-    return process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.flowise', 'storage')
+    return process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.thub', 'storage')
 }
 
 export const removeFilesFromStorage = async (...paths: string[]) => {
@@ -513,7 +513,7 @@ export const removeFilesFromStorage = async (...paths: string[]) => {
         }
 
         const { containerClient } = getAzureConfig()
-        const blobName = `.flowise/storage/${blobPath}`
+        const blobName = `.thub/storage/${blobPath}`
         const blockBlobClient = containerClient.getBlockBlobClient(blobName)
 
         try {
@@ -529,7 +529,7 @@ export const removeFilesFromStorage = async (...paths: string[]) => {
         }
 
         const bucket = storage!.bucket(bucketName)
-        const file = bucket.file(`.flowise/storage/${gcsFilePath}`)
+        const file = bucket.file(`.thub/storage/${gcsFilePath}`)
 
         try {
             await file.delete()
@@ -588,7 +588,7 @@ export const removeSpecificFileFromStorage = async (...paths: string[]) => {
         }
 
         const { containerClient } = getAzureConfig()
-        const blobName = `.flowise/storage/${blobPath}`
+        const blobName = `.thub/storage/${blobPath}`
         const blockBlobClient = containerClient.getBlockBlobClient(blobName)
 
         try {
@@ -604,7 +604,7 @@ export const removeSpecificFileFromStorage = async (...paths: string[]) => {
         }
 
         const bucket = storage!.bucket(bucketName)
-        const file = bucket.file(`.flowise/storage/${gcsFilePath}`)
+        const file = bucket.file(`.thub/storage/${gcsFilePath}`)
 
         try {
             await file.delete()
@@ -639,7 +639,7 @@ export const removeFolderFromStorage = async (...paths: string[]) => {
         }
 
         const { containerClient } = getAzureConfig()
-        const prefix = `.flowise/storage/${azureFolderPath}`
+        const prefix = `.thub/storage/${azureFolderPath}`
 
         // List all blobs with the prefix
         const blobs = containerClient.listBlobsFlat({ prefix })
@@ -661,7 +661,7 @@ export const removeFolderFromStorage = async (...paths: string[]) => {
         }
 
         const bucket = storage!.bucket(bucketName)
-        const [files] = await bucket.getFiles({ prefix: `.flowise/storage/${gcsFolderPath}` })
+        const [files] = await bucket.getFiles({ prefix: `.thub/storage/${gcsFolderPath}` })
 
         if (files.length > 0) {
             await Promise.all(
@@ -770,11 +770,11 @@ export const streamStorageFile = async (
             return Buffer.from(blob)
         }
     } else if (storageType === 'azure') {
-        const blobName = `.flowise/storage/${chatflowId}/${chatId}/${sanitizedFilename}`
+        const blobName = `.thub/storage/${chatflowId}/${chatId}/${sanitizedFilename}`
         const fileBuffer = await getFileFromAzure(blobName)
         return fileBuffer
     } else if (process.env.NODE_ENV === 'production') {
-        const filePath = `.flowise/storage/${chatflowId}/${chatId}/${sanitizedFilename}`
+        const filePath = `.thub/storage/${chatflowId}/${chatId}/${sanitizedFilename}`
         const fileBuffer = await getFileFromGCS(filePath)
         return fileBuffer
     } else {

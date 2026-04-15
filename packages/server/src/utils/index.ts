@@ -36,7 +36,7 @@ import {
     ICommonObject,
     IDatabaseEntity,
     IMessage,
-    FlowiseMemory,
+    THubMemory,
     IFileUpload,
     getS3Config
 } from 'thub-components'
@@ -56,7 +56,7 @@ import { CachePool } from '../CachePool'
 import { Variable } from '../database/entities/Variable'
 import { DocumentStore } from '../database/entities/DocumentStore'
 import { DocumentStoreFileChunk } from '../database/entities/DocumentStoreFileChunk'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 import { StatusCodes } from 'http-status-codes'
 import {
     CreateSecretCommand,
@@ -70,7 +70,7 @@ export const FILE_ATTACHMENT_PREFIX = 'file_attachment'
 export const CHAT_HISTORY_VAR_PREFIX = 'chat_history'
 export const RUNTIME_MESSAGES_LENGTH_VAR_PREFIX = 'runtime_messages_length'
 export const CURRENT_DATE_TIME_VAR_PREFIX = 'current_date_time'
-export const REDACTED_CREDENTIAL_VALUE = '_FLOWISE_BLANK_07167752-1a71-43b1-bf8f-4f32252165db'
+export const REDACTED_CREDENTIAL_VALUE = '_THUB_BLANK_07167752-1a71-43b1-bf8f-4f32252165db'
 
 let secretsManagerClient: SecretsManagerClient | null = null
 const USE_AWS_SECRETS_MANAGER = process.env.SECRETKEY_STORAGE_TYPE === 'aws'
@@ -310,11 +310,11 @@ export const getEndingNodes = (
     // If there are multiple endingnodes, the failed ones will be automatically ignored.
     // And only ensure that at least one can pass the verification.
     const verifiedEndingNodes: typeof endingNodes = []
-    let error: InternalFlowiseError | null = null
+    let error: InternalTHubError | null = null
     for (const endingNode of endingNodes) {
         const endingNodeData = endingNode.data
         if (!endingNodeData) {
-            error = new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node ${endingNode.id} data not found`)
+            error = new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node ${endingNode.id} data not found`)
 
             continue
         }
@@ -330,7 +330,7 @@ export const getEndingNodes = (
                 endingNodeData.category !== 'Multi Agents' &&
                 endingNodeData.category !== 'Sequential Agents'
             ) {
-                error = new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain or Agent or Engine`)
+                error = new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain or Agent or Engine`)
                 continue
             }
         }
@@ -342,7 +342,7 @@ export const getEndingNodes = (
     }
 
     if (endingNodes.length === 0 || error === null) {
-        error = new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending nodes not found`)
+        error = new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending nodes not found`)
     }
 
     throw error
@@ -773,7 +773,7 @@ export const clearSessionMemory = async (
                 await newNodeInstance.clearChatMessages(node.data, options, { type: 'threadId', id: sessionId })
             } else {
                 node.data.inputs.sessionId = sessionId
-                const initializedInstance: FlowiseMemory = await newNodeInstance.init(node.data, '', options)
+                const initializedInstance: THubMemory = await newNodeInstance.init(node.data, '', options)
                 await initializedInstance.clearChatMessages(sessionId)
             }
         } else if (chatId && node.data.inputs) {
@@ -781,7 +781,7 @@ export const clearSessionMemory = async (
                 await newNodeInstance.clearChatMessages(node.data, options, { type: 'chatId', id: chatId })
             } else {
                 node.data.inputs.sessionId = chatId
-                const initializedInstance: FlowiseMemory = await newNodeInstance.init(node.data, '', options)
+                const initializedInstance: THubMemory = await newNodeInstance.init(node.data, '', options)
                 await initializedInstance.clearChatMessages(chatId)
             }
         }
@@ -888,7 +888,7 @@ export const getVariableValue = async (
             /**
              * Apply string transformation to convert special chars:
              * FROM: hello i am ben\n\n\thow are you?
-             * TO: hello i am benFLOWISE_NEWLINEFLOWISE_NEWLINEFLOWISE_TABhow are you?
+             * TO: hello i am benTHUB_NEWLINETHUB_NEWLINETHUB_TABhow are you?
              */
             if (isAcceptVariable && variableFullPath === QUESTION_VAR_PREFIX) {
                 variableDict[`{{${variableFullPath}}}`] = handleEscapeCharacters(question, false)
@@ -1534,11 +1534,11 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
  * @returns {Promise<string>}
  */
 export const getEncryptionKey = async (): Promise<string> => {
-    if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
-        return process.env.FLOWISE_SECRETKEY_OVERWRITE
+    if (process.env.THUB_SECRETKEY_OVERWRITE !== undefined && process.env.THUB_SECRETKEY_OVERWRITE !== '') {
+        return process.env.THUB_SECRETKEY_OVERWRITE
     }
     if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
-        const secretId = process.env.SECRETKEY_AWS_NAME || 'FlowiseEncryptionKey'
+        const secretId = process.env.SECRETKEY_AWS_NAME || 'THubEncryptionKey'
         try {
             const command = new GetSecretValueCommand({ SecretId: secretId })
             const response = await secretsManagerClient.send(command)
@@ -1566,7 +1566,7 @@ export const getEncryptionKey = async (): Promise<string> => {
         const encryptKey = generateEncryptKey()
         const defaultLocation = process.env.SECRETKEY_PATH
             ? path.join(process.env.SECRETKEY_PATH, 'encryption.key')
-            : path.join(getUserHome(), '.flowise', 'encryption.key')
+            : path.join(getUserHome(), '.thub', 'encryption.key')
         await fs.promises.writeFile(defaultLocation, encryptKey)
         return encryptKey
     }
@@ -1598,7 +1598,7 @@ export const decryptCredentialData = async (
 
     if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
         try {
-            if (encryptedData.startsWith('FlowiseCredential_')) {
+            if (encryptedData.startsWith('THubCredential_')) {
                 const command = new GetSecretValueCommand({ SecretId: encryptedData })
                 const response = await secretsManagerClient.send(command)
 
@@ -1762,7 +1762,7 @@ export const getSessionChatHistory = async (
         memoryNode.data.inputs.sessionId = sessionId
     }
 
-    const initializedInstance: FlowiseMemory = await newNodeInstance.init(memoryNode.data, '', {
+    const initializedInstance: THubMemory = await newNodeInstance.init(memoryNode.data, '', {
         chatflowid,
         appDataSource,
         databaseEntities,
@@ -1838,7 +1838,7 @@ export const getTelemetryFlowObj = (nodes: IReactFlowNode[], edges: IReactFlowEd
  */
 export const getUserSettingsFilePath = () => {
     if (process.env.SECRETKEY_PATH) return path.join(process.env.SECRETKEY_PATH, 'settings.json')
-    const checkPaths = [path.join(getUserHome(), '.flowise', 'settings.json')]
+    const checkPaths = [path.join(getUserHome(), '.thub', 'settings.json')]
     for (const checkPath of checkPaths) {
         if (fs.existsSync(checkPath)) {
             return checkPath
@@ -1910,7 +1910,7 @@ export const getAPIOverrideConfig = (chatflow: IChatFlow) => {
 export const getUploadPath = (): string => {
     return process.env.BLOB_STORAGE_PATH
         ? path.join(process.env.BLOB_STORAGE_PATH, 'uploads')
-        : path.join(getUserHome(), '.flowise', 'uploads')
+        : path.join(getUserHome(), '.thub', 'uploads')
 }
 
 export function generateId() {
@@ -2028,7 +2028,7 @@ export const _removeCredentialId = (obj: any): any => {
 
     const newObj: Record<string, any> = {}
     for (const [key, value] of Object.entries(obj)) {
-        if (key === 'FLOWISE_CREDENTIAL_ID') continue
+        if (key === 'THUB_CREDENTIAL_ID') continue
         newObj[key] = _removeCredentialId(value)
     }
     return newObj

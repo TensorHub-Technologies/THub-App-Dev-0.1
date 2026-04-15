@@ -24,7 +24,7 @@ import JSON5 from 'json5'
 
 export const numberOrExpressionRegex = '^(\\d+\\.?\\d*|{{.*}})$' //return true if string consists only numbers OR expression {{}}
 export const notEmptyRegex = '(.|\\s)*\\S(.|\\s)*' //return true if string is not empty or blank
-export const FLOWISE_CHATID = 'flowise_chatId'
+export const THUB_CHATID = 'thub_chatId'
 
 let secretsManagerClient: SecretsManagerClient | null = null
 const USE_AWS_SECRETS_MANAGER = process.env.SECRETKEY_STORAGE_TYPE === 'aws'
@@ -527,7 +527,7 @@ const getEncryptionKeyFilePath = (): string => {
         path.join(__dirname, '..', '..', '..', '..', 'server', 'encryption.key'),
         path.join(__dirname, '..', '..', '..', '..', '..', 'encryption.key'),
         path.join(__dirname, '..', '..', '..', '..', '..', 'server', 'encryption.key'),
-        path.join(getUserHome(), '.flowise', 'encryption.key')
+        path.join(getUserHome(), '.thub', 'encryption.key')
     ]
     for (const checkPath of checkPaths) {
         if (fs.existsSync(checkPath)) {
@@ -546,12 +546,12 @@ export const getEncryptionKeyPath = (): string => {
  * @returns {Promise<string>}
  */
 const getEncryptionKey = async (): Promise<string> => {
-    if (process.env.FLOWISE_SECRETKEY_OVERWRITE !== undefined && process.env.FLOWISE_SECRETKEY_OVERWRITE !== '') {
-        return process.env.FLOWISE_SECRETKEY_OVERWRITE
+    if (process.env.THUB_SECRETKEY_OVERWRITE !== undefined && process.env.THUB_SECRETKEY_OVERWRITE !== '') {
+        return process.env.THUB_SECRETKEY_OVERWRITE
     }
     try {
         if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
-            const secretId = process.env.SECRETKEY_AWS_NAME || 'FlowiseEncryptionKey'
+            const secretId = process.env.SECRETKEY_AWS_NAME || 'THubEncryptionKey'
             const command = new GetSecretValueCommand({ SecretId: secretId })
             const response = await secretsManagerClient.send(command)
 
@@ -577,7 +577,7 @@ const decryptCredentialData = async (encryptedData: string): Promise<ICommonObje
 
     if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
         try {
-            if (encryptedData.startsWith('FlowiseCredential_')) {
+            if (encryptedData.startsWith('THubCredential_')) {
                 const command = new GetSecretValueCommand({ SecretId: encryptedData })
                 const response = await secretsManagerClient.send(command)
 
@@ -659,13 +659,13 @@ export const getCredentialParam = (paramName: string, credentialData: ICommonObj
 
 // reference https://www.freeformatter.com/json-escape.html
 const jsonEscapeCharacters = [
-    { escape: '"', value: 'FLOWISE_DOUBLE_QUOTE' },
-    { escape: '\n', value: 'FLOWISE_NEWLINE' },
-    { escape: '\b', value: 'FLOWISE_BACKSPACE' },
-    { escape: '\f', value: 'FLOWISE_FORM_FEED' },
-    { escape: '\r', value: 'FLOWISE_CARRIAGE_RETURN' },
-    { escape: '\t', value: 'FLOWISE_TAB' },
-    { escape: '\\', value: 'FLOWISE_BACKSLASH' }
+    { escape: '"', value: 'THUB_DOUBLE_QUOTE' },
+    { escape: '\n', value: 'THUB_NEWLINE' },
+    { escape: '\b', value: 'THUB_BACKSPACE' },
+    { escape: '\f', value: 'THUB_FORM_FEED' },
+    { escape: '\r', value: 'THUB_CARRIAGE_RETURN' },
+    { escape: '\t', value: 'THUB_TAB' },
+    { escape: '\\', value: 'THUB_BACKSLASH' }
 ]
 
 function handleEscapesJSONParse(input: string, reverse: Boolean): string {

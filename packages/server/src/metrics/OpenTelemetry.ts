@@ -1,4 +1,4 @@
-import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
+import { THUB_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
 import { Resource } from '@opentelemetry/resources'
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions'
 import { MeterProvider, PeriodicExportingMetricReader, Histogram } from '@opentelemetry/sdk-metrics'
@@ -38,11 +38,11 @@ export class OpenTelemetry implements IMetricsProvider {
 
     async initializeCounters(): Promise<void> {
         // Define the resource with the service name for trace grouping
-        const flowiseVersion = await getVersion()
+        const thubVersion = await getVersion()
 
         this.resource = new Resource({
             [ATTR_SERVICE_NAME]: process.env.METRICS_SERVICE_NAME || 'THub',
-            [ATTR_SERVICE_VERSION]: flowiseVersion.version // Version as a label
+            [ATTR_SERVICE_VERSION]: thubVersion.version // Version as a label
         })
 
         const metricProtocol = process.env.METRICS_OPEN_TELEMETRY_PROTOCOL || 'http' // Default to 'http'
@@ -69,10 +69,10 @@ export class OpenTelemetry implements IMetricsProvider {
         })
         this.meterProvider = new MeterProvider({ resource: this.resource, readers: [this.metricReader] })
 
-        const meter = this.meterProvider.getMeter('flowise-metrics')
-        // look at the FLOWISE_COUNTER enum in Interface.Metrics.ts and get all values
+        const meter = this.meterProvider.getMeter('thub-metrics')
+        // look at the THUB_COUNTER enum in Interface.Metrics.ts and get all values
         // for each counter in the enum, create a new promClient.Counter and add it to the registry
-        const enumEntries = Object.entries(FLOWISE_METRIC_COUNTERS)
+        const enumEntries = Object.entries(THUB_METRIC_COUNTERS)
         enumEntries.forEach(([name, value]) => {
             // derive proper counter name from the enum value (chatflow_created = Chatflow Created)
             const properCounterName: string = name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
@@ -86,11 +86,11 @@ export class OpenTelemetry implements IMetricsProvider {
 
         // in addition to the enum counters, add a few more custom counters
 
-        const versionGuage = meter.createGauge('flowise_version', {
-            description: 'Flowise version'
+        const versionGuage = meter.createGauge('thub_version', {
+            description: 'THub version'
         })
         // remove the last dot from the version string, e.g. 2.1.3 -> 2.13 (guage needs a number - float)
-        const formattedVersion = flowiseVersion.version.replace(/\.(\d+)$/, '$1')
+        const formattedVersion = thubVersion.version.replace(/\.(\d+)$/, '$1')
         versionGuage.record(parseFloat(formattedVersion))
 
         // Counter for HTTP requests with method, path, and status as labels

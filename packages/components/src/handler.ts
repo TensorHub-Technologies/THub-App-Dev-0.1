@@ -428,12 +428,12 @@ class ExtendedLunaryHandler extends LunaryHandler {
     thread: any
     apiMessageId: string
 
-    constructor({ flowiseOptions, ...options }: any) {
+    constructor({ thubOptions, ...options }: any) {
         super(options)
-        this.appDataSource = flowiseOptions.appDataSource
-        this.databaseEntities = flowiseOptions.databaseEntities
-        this.chatId = flowiseOptions.chatId
-        this.apiMessageId = flowiseOptions.apiMessageId
+        this.appDataSource = thubOptions.appDataSource
+        this.databaseEntities = thubOptions.databaseEntities
+        this.chatId = thubOptions.chatId
+        this.apiMessageId = thubOptions.apiMessageId
     }
 
     async initThread() {
@@ -563,8 +563,8 @@ export const additionalCallbacks = async (nodeData: INodeData, options: ICommonO
                     let lunaryFields = {
                         publicKey: lunaryPublicKey,
                         apiUrl: lunaryEndpoint ?? 'https://api.lunary.ai',
-                        runtime: 'flowise',
-                        flowiseOptions: options
+                        runtime: 'thub',
+                        thubOptions: options
                     }
 
                     if (nodeData?.inputs?.analytics?.lunary) {
@@ -781,7 +781,7 @@ export class AnalyticHandler {
             lunary.init({
                 publicKey: lunaryPublicKey,
                 apiUrl: lunaryEndpoint,
-                runtime: 'flowise'
+                runtime: 'thub'
             })
 
             this.handlers['lunary'] = { client: lunary }

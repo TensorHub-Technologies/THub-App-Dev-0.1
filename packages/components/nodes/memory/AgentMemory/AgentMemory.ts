@@ -62,7 +62,7 @@ class AgentMemory_Memory implements INode {
                 label: 'Database File Path',
                 name: 'databaseFilePath',
                 type: 'string',
-                placeholder: 'C:\\Users\\User\\.flowise\\database.sqlite',
+                placeholder: 'C:\\Users\\User\\.thub\\database.sqlite',
                 description:
                     'If SQLite is selected, provide the path to the SQLite database file. Leave empty to use default application database',
                 additionalParams: true,
@@ -129,7 +129,7 @@ class AgentMemory_Memory implements INode {
         if (databaseType === 'sqlite') {
             datasourceOptions.database = databaseFilePath
                 ? path.resolve(databaseFilePath)
-                : path.join(process.env.DATABASE_PATH ?? path.join(getUserHome(), '.flowise'), 'database.sqlite')
+                : path.join(process.env.DATABASE_PATH ?? path.join(getUserHome(), '.thub'), 'database.sqlite')
             const args: SaverOptions = {
                 datasourceOptions,
                 threadId,

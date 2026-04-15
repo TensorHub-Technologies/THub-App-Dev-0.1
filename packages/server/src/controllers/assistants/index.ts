@@ -1,16 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 import assistantsService from '../../services/assistants'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { StatusCodes } from 'http-status-codes'
 import { AssistantType } from '../../Interface'
 
 const createAssistant = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: assistantsController.createAssistant - body not provided!`
-            )
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: assistantsController.createAssistant - body not provided!`)
         }
         const apiResponse = await assistantsService.createAssistant(req.body)
         return res.json(apiResponse)
@@ -22,10 +19,7 @@ const createAssistant = async (req: Request, res: Response, next: NextFunction) 
 const deleteAssistant = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: assistantsController.deleteAssistant - id not provided!`
-            )
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: assistantsController.deleteAssistant - id not provided!`)
         }
         const apiResponse = await assistantsService.deleteAssistant(req.params.id, req.query.isDeleteBoth)
         return res.json(apiResponse)
@@ -39,10 +33,10 @@ const getAllAssistants = async (req: Request, res: Response, next: NextFunction)
         const type = req.query.type as AssistantType
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         if (req.params.id && req.params.id !== tenantId) {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Forbidden')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Forbidden')
         }
         const apiResponse = await assistantsService.getAllAssistants(type, tenantId)
         return res.json(apiResponse)
@@ -54,10 +48,7 @@ const getAllAssistants = async (req: Request, res: Response, next: NextFunction)
 const getAssistantById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: assistantsController.getAssistantById - id not provided!`
-            )
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: assistantsController.getAssistantById - id not provided!`)
         }
         const apiResponse = await assistantsService.getAssistantById(req.params.id)
         return res.json(apiResponse)
@@ -69,16 +60,10 @@ const getAssistantById = async (req: Request, res: Response, next: NextFunction)
 const updateAssistant = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: assistantsController.updateAssistant - id not provided!`
-            )
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: assistantsController.updateAssistant - id not provided!`)
         }
         if (!req.body) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: assistantsController.updateAssistant - body not provided!`
-            )
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: assistantsController.updateAssistant - body not provided!`)
         }
         const apiResponse = await assistantsService.updateAssistant(req.params.id, req.body)
         return res.json(apiResponse)
@@ -100,7 +85,7 @@ const getDocumentStores = async (req: Request, res: Response, next: NextFunction
     try {
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         const apiResponse = await assistantsService.getDocumentStores(tenantId)
         return res.json(apiResponse)
@@ -121,7 +106,7 @@ const getTools = async (req: Request, res: Response, next: NextFunction) => {
 const generateAssistantInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: assistantsController.generateAssistantInstruction - body not provided!`
             )

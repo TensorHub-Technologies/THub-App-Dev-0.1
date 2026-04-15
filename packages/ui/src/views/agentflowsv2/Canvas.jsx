@@ -57,7 +57,7 @@ import {
 import useNotifier from '@/utils/useNotifier'
 
 // const
-import { FLOWISE_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
+import { THUB_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
 import { usePrompt } from '@/utils/usePrompt'
 
 const nodeTypes = { agentFlow: CanvasNode, stickyNote: StickyNote, iteration: IterationNode }
@@ -226,9 +226,9 @@ const AgentflowCanvas = () => {
                 const nodeData = cloneDeep(node.data)
 
                 // Handle credentials
-                if (Object.prototype.hasOwnProperty.call(nodeData.inputs, FLOWISE_CREDENTIAL_ID)) {
-                    nodeData.credential = nodeData.inputs[FLOWISE_CREDENTIAL_ID]
-                    nodeData.inputs = omit(nodeData.inputs, [FLOWISE_CREDENTIAL_ID])
+                if (Object.prototype.hasOwnProperty.call(nodeData.inputs, THUB_CREDENTIAL_ID)) {
+                    nodeData.credential = nodeData.inputs[THUB_CREDENTIAL_ID]
+                    nodeData.inputs = omit(nodeData.inputs, [THUB_CREDENTIAL_ID])
                 }
 
                 // Clean up node data

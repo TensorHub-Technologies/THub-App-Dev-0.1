@@ -15,7 +15,7 @@ import { ConversationalRetrievalQAChain } from 'langchain/chains'
 import { getBaseClasses, mapChatMessageToBaseMessage } from '../../../src/utils'
 import { ConsoleCallbackHandler, additionalCallbacks } from '../../../src/handler'
 import {
-    FlowiseMemory,
+    THubMemory,
     ICommonObject,
     IMessage,
     INode,
@@ -192,7 +192,7 @@ class ConversationalRetrievalQAChain_Chains implements INode {
             customResponsePrompt = `${systemMessagePrompt}\n${QA_TEMPLATE}`
         }
 
-        let memory: FlowiseMemory | undefined = externalMemory
+        let memory: THubMemory | undefined = externalMemory
         const moderations = nodeData.inputs?.inputModeration as Moderation[]
         if (!memory) {
             memory = new BufferMemory({
@@ -409,7 +409,7 @@ interface BufferMemoryExtendedInput {
     chatflowid: string
 }
 
-class BufferMemory extends FlowiseMemory implements MemoryMethods {
+class BufferMemory extends THubMemory implements MemoryMethods {
     appDataSource: DataSource
     databaseEntities: IDatabaseEntity
     chatflowid: string

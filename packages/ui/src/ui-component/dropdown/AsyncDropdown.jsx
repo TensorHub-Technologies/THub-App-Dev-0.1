@@ -33,8 +33,8 @@ const fetchList = async ({ tenantId, name, nodeData, previousNodes, currentNode 
     const loadMethod = selectedParam?.loadMethod
 
     let credentialId = nodeData.credential
-    if (!credentialId && (nodeData.inputs?.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID'])) {
-        credentialId = nodeData.inputs.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID']
+    if (!credentialId && (nodeData.inputs?.credential || nodeData.inputs?.['THUB_CREDENTIAL_ID'])) {
+        credentialId = nodeData.inputs.credential || nodeData.inputs?.['THUB_CREDENTIAL_ID']
     }
 
     let config = {

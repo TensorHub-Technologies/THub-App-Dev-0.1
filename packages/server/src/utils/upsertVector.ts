@@ -26,11 +26,11 @@ import { IncomingInput, INodeDirectedGraph, IReactFlowObject, ChatType, IExecute
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { getRunningExpressApp } from '../utils/getRunningExpressApp'
 import { UpsertHistory } from '../database/entities/UpsertHistory'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 import { StatusCodes } from 'http-status-codes'
 import { getErrorMessage } from '../errors/utils'
 import { v4 as uuidv4 } from 'uuid'
-import { FLOWISE_COUNTER_STATUS, FLOWISE_METRIC_COUNTERS } from '../Interface.Metrics'
+import { THUB_COUNTER_STATUS, THUB_METRIC_COUNTERS } from '../Interface.Metrics'
 import { Variable } from '../database/entities/Variable'
 import { OMIT_QUEUE_JOB_DATA } from './constants'
 
@@ -118,21 +118,21 @@ export const executeUpsert = async ({
     const vsNodes = nodes.filter((node) => node.data.category === 'Vector Stores')
     const vsNodesWithFileUpload = vsNodes.filter((node) => node.data.inputs?.fileUpload)
     if (vsNodesWithFileUpload.length > 1) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, 'Multiple vector store nodes with fileUpload enabled')
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, 'Multiple vector store nodes with fileUpload enabled')
     } else if (vsNodesWithFileUpload.length === 1 && !stopNodeId) {
         stopNodeId = vsNodesWithFileUpload[0].data.id
     }
 
     /*** Check if multiple vector store nodes exist, and if stopNodeId is specified ***/
     if (vsNodes.length > 1 && !stopNodeId) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             'There are multiple vector nodes, please provide stopNodeId in body request'
         )
     } else if (vsNodes.length === 1 && !stopNodeId) {
         stopNodeId = vsNodes[0].data.id
     } else if (!vsNodes.length && !stopNodeId) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'No vector node found')
+        throw new InternalTHubError(StatusCodes.NOT_FOUND, 'No vector node found')
     }
 
     /*** Get Starting Nodes with Reversed Graph ***/
@@ -212,7 +212,7 @@ export const upsertVector = async (req: Request, isInternal: boolean = false) =>
             id: chatflowid
         })
         if (!chatflow) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Workflow ${chatflowid} not found`)
         }
 
         const httpProtocol = req.get('x-forwarded-proto') || req.protocol
@@ -224,7 +224,7 @@ export const upsertVector = async (req: Request, isInternal: boolean = false) =>
         if (!isInternal) {
             const isKeyValidated = await validateChatflowAPIKey(req, chatflow)
             if (!isKeyValidated) {
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
+                throw new InternalTHubError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
             }
         }
 
@@ -256,26 +256,26 @@ export const upsertVector = async (req: Request, isInternal: boolean = false) =>
                 throw new Error('Job execution failed')
             }
 
-            appServer.metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.VECTORSTORE_UPSERT, {
-                status: FLOWISE_COUNTER_STATUS.SUCCESS
+            appServer.metricsProvider?.incrementCounter(THUB_METRIC_COUNTERS.VECTORSTORE_UPSERT, {
+                status: THUB_COUNTER_STATUS.SUCCESS
             })
             return result
         } else {
             const result = await executeUpsert(executeData)
 
-            appServer.metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.VECTORSTORE_UPSERT, {
-                status: FLOWISE_COUNTER_STATUS.SUCCESS
+            appServer.metricsProvider?.incrementCounter(THUB_METRIC_COUNTERS.VECTORSTORE_UPSERT, {
+                status: THUB_COUNTER_STATUS.SUCCESS
             })
             return result
         }
     } catch (e) {
         logger.error('[server]: Error:', e)
-        appServer.metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.VECTORSTORE_UPSERT, { status: FLOWISE_COUNTER_STATUS.FAILURE })
+        appServer.metricsProvider?.incrementCounter(THUB_METRIC_COUNTERS.VECTORSTORE_UPSERT, { status: THUB_COUNTER_STATUS.FAILURE })
 
-        if (e instanceof InternalFlowiseError && e.statusCode === StatusCodes.UNAUTHORIZED) {
+        if (e instanceof InternalTHubError && e.statusCode === StatusCodes.UNAUTHORIZED) {
             throw e
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, getErrorMessage(e))
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, getErrorMessage(e))
         }
     }
 }

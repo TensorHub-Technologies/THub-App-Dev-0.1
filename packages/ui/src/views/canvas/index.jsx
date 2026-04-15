@@ -63,7 +63,7 @@ import {
 import useNotifier from '@/utils/useNotifier'
 
 // const
-import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
+import { THUB_CREDENTIAL_ID } from '@/store/constant'
 import { IconArrowBackUp } from '@tabler/icons-react'
 
 import { IconArrowForwardUp } from '@tabler/icons-react'
@@ -353,9 +353,9 @@ const Canvas = () => {
         if (reactFlowInstance) {
             const nodes = reactFlowInstance.getNodes().map((node) => {
                 const nodeData = cloneDeep(node.data)
-                if (Object.prototype.hasOwnProperty.call(nodeData.inputs, FLOWISE_CREDENTIAL_ID)) {
-                    nodeData.credential = nodeData.inputs[FLOWISE_CREDENTIAL_ID]
-                    nodeData.inputs = omit(nodeData.inputs, [FLOWISE_CREDENTIAL_ID])
+                if (Object.prototype.hasOwnProperty.call(nodeData.inputs, THUB_CREDENTIAL_ID)) {
+                    nodeData.credential = nodeData.inputs[THUB_CREDENTIAL_ID]
+                    nodeData.inputs = omit(nodeData.inputs, [THUB_CREDENTIAL_ID])
                 }
                 node.data = {
                     ...nodeData,

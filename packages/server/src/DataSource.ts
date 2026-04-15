@@ -78,7 +78,7 @@ async function createFolderInGCS(folderPath: string): Promise<void> {
 const getAzureConfig = () => {
     const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME
     const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY
-    const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'flowise-storage'
+    const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'thub-storage'
     const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING
 
     if (!accountName || (!accountKey && !connectionString)) {
@@ -137,35 +137,35 @@ function createLocalFolder(folderPath: string): void {
 
 export const init = async (): Promise<void> => {
     let homePath
-    const flowisePath = path.join(getUserHome(), '.flowise')
+    const thubPath = path.join(getUserHome(), '.thub')
     const storageType = getStorageType()
 
-    // Create local .flowise directory
-    if (!fs.existsSync(flowisePath)) {
-        fs.mkdirSync(flowisePath)
-        console.log(`.flowise directory created at ${flowisePath}`)
+    // Create local .thub directory
+    if (!fs.existsSync(thubPath)) {
+        fs.mkdirSync(thubPath)
+        console.log(`.thub directory created at ${thubPath}`)
     } else {
-        console.log(`.flowise directory already exists at ${flowisePath}`)
+        console.log(`.thub directory already exists at ${thubPath}`)
     }
 
     // Initialize storage based on type
     try {
         if (storageType === 'azure') {
             console.log('Initializing Azure Blob Storage...')
-            await createFolderInAzure('.flowise')
-            await createFolderInAzure('.flowise/storage')
+            await createFolderInAzure('.thub')
+            await createFolderInAzure('.thub/storage')
             console.log('Azure Blob Storage initialized successfully')
         } else if (storageType === 'gcs' || (process.env.NODE_ENV === 'production' && storageType !== 's3')) {
             console.log('Initializing Google Cloud Storage...')
-            await createFolderInGCS('.flowise')
-            await createFolderInGCS('.flowise/storage')
+            await createFolderInGCS('.thub')
+            await createFolderInGCS('.thub/storage')
             console.log('Google Cloud Storage initialized successfully')
         } else if (storageType === 's3') {
             console.log('Using S3 storage (no folder initialization needed)')
             // S3 doesn't require folder creation - folders are virtual based on key prefixes
         } else {
             console.log('Using local storage')
-            const localStoragePath = path.join(flowisePath, 'storage')
+            const localStoragePath = path.join(thubPath, 'storage')
             createLocalFolder(localStoragePath)
         }
     } catch (error: any) {
@@ -176,7 +176,7 @@ export const init = async (): Promise<void> => {
     // Initialize database
     switch (process.env.DATABASE_TYPE) {
         case 'sqlite':
-            homePath = process.env.DATABASE_PATH ?? flowisePath
+            homePath = process.env.DATABASE_PATH ?? thubPath
             appDataSource = new DataSource({
                 type: 'sqlite',
                 database: path.resolve(homePath, 'database.sqlite'),
@@ -242,7 +242,7 @@ export const init = async (): Promise<void> => {
             })
             break
         default:
-            homePath = process.env.DATABASE_PATH ?? flowisePath
+            homePath = process.env.DATABASE_PATH ?? thubPath
             appDataSource = new DataSource({
                 type: 'sqlite',
                 database: path.resolve(homePath, 'database.sqlite'),

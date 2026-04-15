@@ -17,7 +17,7 @@ interface BufferMemoryExtendedInput {
 
 interface NodeFields extends Mem0MemoryInput, Mem0MemoryExtendedInput, BufferMemoryExtendedInput {
     searchOnly: boolean
-    useFlowiseChatId: boolean
+    useTHubChatId: boolean
     input: string
 }
 
@@ -56,13 +56,13 @@ class Mem0_Memory implements INode {
                 name: 'user_id',
                 type: 'string',
                 description: 'Unique identifier for the user. Required only if "Use THub Chat ID" is OFF.',
-                default: 'flowise-default-user',
+                default: 'thub-default-user',
                 optional: true
             },
             // Added toggle to use THub chat ID
             {
                 label: 'Use THub Chat ID',
-                name: 'useFlowiseChatId',
+                name: 'useTHubChatId',
                 type: 'boolean',
                 description: 'Use the THub internal Chat ID as the Mem0 User ID, overriding the "User ID" field above.',
                 default: false,
@@ -156,9 +156,9 @@ class Mem0_Memory implements INode {
 
 const initializeMem0 = async (nodeData: INodeData, input: string, options: ICommonObject): Promise<BaseMem0Memory> => {
     const initialUserId = nodeData.inputs?.user_id as string
-    const useFlowiseChatId = nodeData.inputs?.useFlowiseChatId as boolean
+    const useTHubChatId = nodeData.inputs?.useTHubChatId as boolean
 
-    if (!useFlowiseChatId && !initialUserId) {
+    if (!useTHubChatId && !initialUserId) {
         throw new Error('User ID field cannot be empty when "Use THub Chat ID" is OFF.')
     }
 
@@ -174,7 +174,7 @@ const initializeMem0 = async (nodeData: INodeData, input: string, options: IComm
 
     const memOptionsUserId = initialUserId
 
-    const constructorSessionId = initialUserId || (useFlowiseChatId ? 'flowise-chat-id-placeholder' : '')
+    const constructorSessionId = initialUserId || (useTHubChatId ? 'thub-chat-id-placeholder' : '')
 
     const memoryOptions: MemoryOptions & SearchOptions = {
         user_id: memOptionsUserId,
@@ -203,7 +203,7 @@ const initializeMem0 = async (nodeData: INodeData, input: string, options: IComm
         databaseEntities: options.databaseEntities as IDatabaseEntity,
         chatflowid: options.chatflowid as string,
         searchOnly: (nodeData.inputs?.searchOnly as boolean) || false,
-        useFlowiseChatId: useFlowiseChatId,
+        useTHubChatId: useTHubChatId,
         input: input
     }
 
@@ -212,7 +212,7 @@ const initializeMem0 = async (nodeData: INodeData, input: string, options: IComm
 
 interface Mem0MemoryExtendedInput extends Mem0MemoryInput {
     memoryOptions?: MemoryOptions | SearchOptions
-    useFlowiseChatId: boolean
+    useTHubChatId: boolean
 }
 
 class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
@@ -224,7 +224,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
     databaseEntities: IDatabaseEntity
     chatflowid: string
     searchOnly: boolean
-    useFlowiseChatId: boolean
+    useTHubChatId: boolean
     input: string
 
     constructor(fields: NodeFields) {
@@ -237,7 +237,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
         this.databaseEntities = fields.databaseEntities
         this.chatflowid = fields.chatflowid
         this.searchOnly = fields.searchOnly
-        this.useFlowiseChatId = fields.useFlowiseChatId
+        this.useTHubChatId = fields.useTHubChatId
         this.input = fields.input
     }
 
@@ -245,7 +245,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
     private getEffectiveUserId(overrideUserId?: string): string {
         let effectiveUserId: string | undefined
 
-        if (this.useFlowiseChatId) {
+        if (this.useTHubChatId) {
             if (overrideUserId) {
                 effectiveUserId = overrideUserId
             } else {
@@ -298,15 +298,15 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
         returnBaseMessages = false,
         prependMessages?: IMessage[]
     ): Promise<IMessage[] | BaseMessage[]> {
-        const flowiseSessionId = overrideUserId
-        if (!flowiseSessionId) {
+        const thubSessionId = overrideUserId
+        if (!thubSessionId) {
             console.warn('Mem0: getChatMessages called without overrideUserId (THub Session ID). Cannot fetch DB messages.')
             return []
         }
 
         let chatMessage = await this.appDataSource.getRepository(this.databaseEntities['ChatMessage']).find({
             where: {
-                sessionId: flowiseSessionId,
+                sessionId: thubSessionId,
                 chatflowid: this.chatflowid
             },
             order: {
@@ -372,11 +372,11 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
         const effectiveUserId = this.getEffectiveUserId(overrideUserId)
         await this.clear(effectiveUserId)
 
-        const flowiseSessionId = overrideUserId
-        if (flowiseSessionId) {
+        const thubSessionId = overrideUserId
+        if (thubSessionId) {
             await this.appDataSource
                 .getRepository(this.databaseEntities['ChatMessage'])
-                .delete({ sessionId: flowiseSessionId, chatflowid: this.chatflowid })
+                .delete({ sessionId: thubSessionId, chatflowid: this.chatflowid })
         } else {
             console.warn('Mem0: clearChatMessages called without overrideUserId (THub Session ID). Cannot clear DB messages.')
         }

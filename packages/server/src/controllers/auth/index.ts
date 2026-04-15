@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
 import authService from '../../services/auth'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { StatusCodes } from 'http-status-codes'
 
 const getAuthenticatedUser = (req: Request) => {
     if (!req.authUser) {
-        throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
     }
 
     return req.authUser
@@ -15,7 +15,7 @@ const getAuthenticatedUser = (req: Request) => {
 const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.register - body not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.register - body not provided!`)
         }
         const apiResponse = await authService.register(req.body)
         return res.json(apiResponse)
@@ -27,7 +27,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.login - body not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.login - body not provided!`)
         }
         const apiResponse = await authService.login(req.body)
         return res.json(apiResponse)
@@ -40,7 +40,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body?.code) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.googleLogin - code not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.googleLogin - code not provided!`)
         }
         const apiResponse = await authService.googleLogin(req.body)
         return res.json(apiResponse)
@@ -52,7 +52,7 @@ const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
 const microsoftLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.microsoftLogin - body not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.microsoftLogin - body not provided!`)
         }
         const apiResponse = await authService.microsoftLogin(req.body)
         return res.json(apiResponse)
@@ -65,7 +65,7 @@ const microsoftLogin = async (req: Request, res: Response, next: NextFunction) =
 const sendOtp = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body?.email) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.sendOtp - email not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.sendOtp - email not provided!`)
         }
         const apiResponse = await authService.sendOtp(req.body)
         return res.json(apiResponse)
@@ -77,7 +77,7 @@ const sendOtp = async (req: Request, res: Response, next: NextFunction) => {
 const verifyOtp = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body?.email || !req.body?.otp) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.verifyOtp - missing fields!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.verifyOtp - missing fields!`)
         }
         const apiResponse = await authService.verifyOtp(req.body)
         return res.json(apiResponse)
@@ -93,7 +93,7 @@ const getUserData = async (req: Request, res: Response, next: NextFunction) => {
         const requestedUserId = typeof req.query?.userId === 'string' ? req.query.userId : authUser.uid
 
         if (requestedUserId !== authUser.uid && authUser.role !== 'superadmin') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'You can only access your own user data')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'You can only access your own user data')
         }
 
         const apiResponse = await authService.getUserData(requestedUserId)
@@ -106,7 +106,7 @@ const getUserData = async (req: Request, res: Response, next: NextFunction) => {
 const checkEmail = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body?.email) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.checkEmail - email not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.checkEmail - email not provided!`)
         }
         const apiResponse = await authService.checkEmail(req.body)
         return res.json(apiResponse)
@@ -122,7 +122,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
         const requestedUid = typeof req.body?.uid === 'string' ? req.body.uid : authUser.uid
 
         if (requestedUid !== authUser.uid && authUser.role !== 'superadmin') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'You can only update your own profile')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'You can only update your own profile')
         }
 
         const apiResponse = await authService.updateUser({
@@ -139,7 +139,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body?.email) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.forgotPassword - email not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.forgotPassword - email not provided!`)
         }
         const apiResponse = await authService.forgotPassword(req.body)
         return res.json(apiResponse)
@@ -151,7 +151,7 @@ const forgotPassword = async (req: Request, res: Response, next: NextFunction) =
 const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.params?.token) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.resetPassword - token not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.resetPassword - token not provided!`)
         }
         const apiResponse = await authService.resetPassword(req.params.token, req.body)
         return res.json(apiResponse)
@@ -166,7 +166,7 @@ const inviteUser = async (req: Request, res: Response, next: NextFunction) => {
         const authUser = getAuthenticatedUser(req)
 
         if (!req.body?.email || !req.body?.workspace) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.inviteUser - missing fields!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.inviteUser - missing fields!`)
         }
 
         const apiResponse = await authService.inviteUser({
@@ -182,7 +182,7 @@ const inviteUser = async (req: Request, res: Response, next: NextFunction) => {
 const validateInvite = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.query?.token) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.validateInvite - token not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.validateInvite - token not provided!`)
         }
         const apiResponse = await authService.validateInvite(req.query.token as string)
         return res.json(apiResponse)
@@ -196,7 +196,7 @@ const acceptInvite = async (req: Request, res: Response, next: NextFunction) => 
         const authUser = getAuthenticatedUser(req)
 
         if (!req.body?.token) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.acceptInvite - missing fields!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.acceptInvite - missing fields!`)
         }
 
         const apiResponse = await authService.acceptInvite({
@@ -215,7 +215,7 @@ const getWorkspaceUsers = async (req: Request, res: Response, next: NextFunction
         const authUser = getAuthenticatedUser(req)
 
         if (!req.query?.workspace) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: authController.getWorkspaceUsers - workspace not provided!`
             )
@@ -232,7 +232,7 @@ const deleteWorkspaceUser = async (req: Request, res: Response, next: NextFuncti
         const authUser = getAuthenticatedUser(req)
 
         if (!req.body?.userId || !req.body?.workspace) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: authController.deleteWorkspaceUser - missing fields!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.deleteWorkspaceUser - missing fields!`)
         }
         const apiResponse = await authService.deleteWorkspaceUser({
             ...req.body,
@@ -249,10 +249,7 @@ const updateWorkspaceUserRole = async (req: Request, res: Response, next: NextFu
         const authUser = getAuthenticatedUser(req)
 
         if (!req.body?.userId || !req.body?.role || !req.body?.workspace) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: authController.updateWorkspaceUserRole - missing fields!`
-            )
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.updateWorkspaceUserRole - missing fields!`)
         }
         const apiResponse = await authService.updateWorkspaceUserRole({
             ...req.body,
@@ -269,10 +266,7 @@ const transferWorkspaceAdmin = async (req: Request, res: Response, next: NextFun
         const authUser = getAuthenticatedUser(req)
 
         if (!req.body?.toUserId || !req.body?.workspace) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: authController.transferWorkspaceAdmin - missing fields!`
-            )
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.transferWorkspaceAdmin - missing fields!`)
         }
 
         const apiResponse = await authService.transferWorkspaceAdmin({
@@ -300,7 +294,7 @@ const deleteSuperadminWorkspace = async (req: Request, res: Response, next: Next
         const authUser = getAuthenticatedUser(req)
 
         if (!req.body?.workspaceId) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: authController.deleteSuperadminWorkspace - missing fields!`
             )

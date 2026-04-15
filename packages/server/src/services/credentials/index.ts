@@ -4,7 +4,7 @@ import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Credential } from '../../database/entities/Credential'
 import { transformToCredentialEntity, decryptCredentialData } from '../../utils'
 import { ICredentialReturnResponse } from '../../Interface'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { getErrorMessage } from '../../errors/utils'
 
 const createCredential = async (requestBody: any) => {
@@ -15,7 +15,7 @@ const createCredential = async (requestBody: any) => {
         const dbResponse = await appServer.AppDataSource.getRepository(Credential).save(credential)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.createCredential - ${getErrorMessage(error)}`
         )
@@ -28,11 +28,11 @@ const deleteCredentials = async (credentialId: string): Promise<any> => {
         const appServer = getRunningExpressApp()
         const dbResponse = await appServer.AppDataSource.getRepository(Credential).delete({ id: credentialId })
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.deleteCredential - ${getErrorMessage(error)}`
         )
@@ -68,7 +68,7 @@ const getAllCredentials = async (paramCredentialName: any, tenantId: any) => {
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.getAllCredentials - ${getErrorMessage(error)}`
         )
@@ -82,7 +82,7 @@ const getCredentialById = async (credentialId: string): Promise<any> => {
             id: credentialId
         })
         if (!credential) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
         }
         // Decrpyt credentialData
         const decryptedCredentialData = await decryptCredentialData(
@@ -97,7 +97,7 @@ const getCredentialById = async (credentialId: string): Promise<any> => {
         const dbResponse = omit(returnCredential, ['encryptedData'])
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.createCredential - ${getErrorMessage(error)}`
         )
@@ -111,7 +111,7 @@ const updateCredential = async (credentialId: string, requestBody: any): Promise
             id: credentialId
         })
         if (!credential) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
         }
         const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
         requestBody.plainDataObj = { ...decryptedCredentialData, ...requestBody.plainDataObj }
@@ -120,7 +120,7 @@ const updateCredential = async (credentialId: string, requestBody: any): Promise
         const dbResponse = await appServer.AppDataSource.getRepository(Credential).save(credential)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.updateCredential - ${getErrorMessage(error)}`
         )

@@ -1,4 +1,4 @@
-import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
+import { THUB_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
 import express from 'express'
 import promClient, { Counter, Histogram, Registry } from 'prom-client'
 import { getVersion } from 'thub-components'
@@ -25,10 +25,10 @@ export class Prometheus implements IMetricsProvider {
             app: serviceName
         })
 
-        // look at the FLOWISE_COUNTER enum in Interface.Metrics.ts and get all values
+        // look at the THUB_COUNTER enum in Interface.Metrics.ts and get all values
         // for each counter in the enum, create a new promClient.Counter and add it to the registry
         this.counters = new Map<string, promClient.Counter<string>>()
-        const enumEntries = Object.entries(FLOWISE_METRIC_COUNTERS)
+        const enumEntries = Object.entries(THUB_METRIC_COUNTERS)
         enumEntries.forEach(([name, value]) => {
             // derive proper counter name from the enum value (chatflow_created = Chatflow Created)
             const properCounterName: string = name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
@@ -45,14 +45,14 @@ export class Prometheus implements IMetricsProvider {
         // in addition to the enum counters, add a few more custom counters
         // version, http_request_duration_ms, http_requests_total
         const versionGaugeCounter = new promClient.Gauge({
-            name: 'flowise_version_info',
-            help: 'Flowise version info.',
+            name: 'thub_version_info',
+            help: 'THub version info.',
             labelNames: ['version']
         })
 
         const { version } = await getVersion()
         versionGaugeCounter.set({ version: 'v' + version }, 1)
-        this.counters.set('flowise_version', versionGaugeCounter)
+        this.counters.set('thub_version', versionGaugeCounter)
 
         this.httpRequestDurationMicroseconds = new promClient.Histogram({
             name: 'http_request_duration_ms',
@@ -102,7 +102,7 @@ export class Prometheus implements IMetricsProvider {
         })
     }
 
-    public incrementCounter(counter: FLOWISE_METRIC_COUNTERS, payload: any) {
+    public incrementCounter(counter: THUB_METRIC_COUNTERS, payload: any) {
         // increment the counter with the payload
         if (this.counters.has(counter)) {
             ;(this.counters.get(counter) as Counter<string>).labels(payload).inc()

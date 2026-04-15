@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { StatusCodes } from 'http-status-codes'
 import evaluationsService from '../../services/evaluations'
 import { getPageAndLimitParams } from '../../utils/pagination'
@@ -7,16 +7,13 @@ import { getPageAndLimitParams } from '../../utils/pagination'
 const createEvaluation = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: evaluationsService.createEvaluation - body not provided!`
-            )
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.createEvaluation - body not provided!`)
         }
 
         const body = req.body
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         body.tenantId = tenantId
 
@@ -32,12 +29,12 @@ const createEvaluation = async (req: Request, res: Response, next: NextFunction)
 const runAgain = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.runAgain - id not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.runAgain - id not provided!`)
         }
 
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         const httpProtocol = req.get('x-forwarded-proto') || req.get('X-Forwarded-Proto') || req.protocol
         const baseURL = `${httpProtocol}://${req.get('host')}`
@@ -51,12 +48,12 @@ const runAgain = async (req: Request, res: Response, next: NextFunction) => {
 const getEvaluation = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.getEvaluation - id not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.getEvaluation - id not provided!`)
         }
 
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         const apiResponse = await evaluationsService.getEvaluation(req.params.id, tenantId)
         return res.json(apiResponse)
@@ -68,12 +65,12 @@ const getEvaluation = async (req: Request, res: Response, next: NextFunction) =>
 const deleteEvaluation = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.deleteEvaluation - id not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.deleteEvaluation - id not provided!`)
         }
 
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         const apiResponse = await evaluationsService.deleteEvaluation(req.params.id, tenantId)
         return res.json(apiResponse)
@@ -87,7 +84,7 @@ const getAllEvaluations = async (req: Request, res: Response, next: NextFunction
         const { page, limit } = getPageAndLimitParams(req)
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
 
         const apiResponse = await evaluationsService.getAllEvaluations(page, limit, tenantId)
@@ -100,12 +97,12 @@ const getAllEvaluations = async (req: Request, res: Response, next: NextFunction
 const isOutdated = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.isOutdated - id not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.isOutdated - id not provided!`)
         }
 
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         const apiResponse = await evaluationsService.isOutdated(req.params.id, tenantId)
         return res.json(apiResponse)
@@ -117,12 +114,12 @@ const isOutdated = async (req: Request, res: Response, next: NextFunction) => {
 const getVersions = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.getVersions - id not provided!`)
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.getVersions - id not provided!`)
         }
 
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         const apiResponse = await evaluationsService.getVersions(req.params.id, tenantId)
         return res.json(apiResponse)
@@ -137,7 +134,7 @@ const patchDeleteEvaluations = async (req: Request, res: Response, next: NextFun
         const isDeleteAllVersion = req.body.isDeleteAllVersion ?? false
         const tenantId = req.user?.id
         if (!tenantId) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
         }
         const apiResponse = await evaluationsService.patchDeleteEvaluations(ids, isDeleteAllVersion, tenantId)
         return res.json(apiResponse)

@@ -3,27 +3,27 @@ version: '3.1'
 services:
     redis:
         image: redis:alpine
-        container_name: flowise-redis
+        container_name: thub-redis
         ports:
             - '6379:6379'
         volumes:
             - redis_data:/data
         networks:
-            - flowise-net
+            - thub-net
         restart: always
 
-    flowise:
-        image: flowiseai/flowise:latest
-        container_name: flowise-main
+    thub:
+        image: thubai/thub:latest
+        container_name: thub-main
         restart: always
         ports:
             - '${PORT:-3000}:${PORT:-3000}'
         volumes:
-            - ~/.flowise:/root/.flowise
+            - ~/.thub:/root/.thub
         environment:
-            # --- Essential Flowise Vars ---
+            # --- Essential THub Vars ---
             - PORT=${PORT:-3000}
-            - DATABASE_PATH=${DATABASE_PATH:-/root/.flowise}
+            - DATABASE_PATH=${DATABASE_PATH:-/root/.thub}
             - DATABASE_TYPE=${DATABASE_TYPE}
             - DATABASE_PORT=${DATABASE_PORT}
             - DATABASE_HOST=${DATABASE_HOST}
@@ -36,7 +36,7 @@ services:
             # SECRET KEYS
             - SECRETKEY_STORAGE_TYPE=${SECRETKEY_STORAGE_TYPE}
             - SECRETKEY_PATH=${SECRETKEY_PATH}
-            - FLOWISE_SECRETKEY_OVERWRITE=${FLOWISE_SECRETKEY_OVERWRITE}
+            - THUB_SECRETKEY_OVERWRITE=${THUB_SECRETKEY_OVERWRITE}
             - SECRETKEY_AWS_ACCESS_KEY=${SECRETKEY_AWS_ACCESS_KEY}
             - SECRETKEY_AWS_SECRET_KEY=${SECRETKEY_AWS_SECRET_KEY}
             - SECRETKEY_AWS_REGION=${SECRETKEY_AWS_REGION}
@@ -70,9 +70,9 @@ services:
             - NUMBER_OF_PROXIES=${NUMBER_OF_PROXIES}
             - CORS_ORIGINS=${CORS_ORIGINS}
             - IFRAME_ORIGINS=${IFRAME_ORIGINS}
-            - FLOWISE_FILE_SIZE_LIMIT=${FLOWISE_FILE_SIZE_LIMIT}
+            - THUB_FILE_SIZE_LIMIT=${THUB_FILE_SIZE_LIMIT}
             - SHOW_COMMUNITY_NODES=${SHOW_COMMUNITY_NODES}
-            - DISABLE_FLOWISE_TELEMETRY=${DISABLE_FLOWISE_TELEMETRY}
+            - DISABLE_THUB_TELEMETRY=${DISABLE_THUB_TELEMETRY}
             - DISABLED_NODES=${DISABLED_NODES}
             - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
 
@@ -101,7 +101,7 @@ services:
 
             # ENTERPRISE
             - LICENSE_URL=${LICENSE_URL}
-            - FLOWISE_EE_LICENSE_KEY=${FLOWISE_EE_LICENSE_KEY}
+            - THUB_EE_LICENSE_KEY=${THUB_EE_LICENSE_KEY}
             - OFFLINE=${OFFLINE}
             - INVITE_TOKEN_EXPIRY_IN_HOURS=${INVITE_TOKEN_EXPIRY_IN_HOURS}
             - WORKSPACE_INVITE_TEMPLATE_PATH=${WORKSPACE_INVITE_TEMPLATE_PATH}
@@ -123,7 +123,7 @@ services:
 
             # --- Queue Configuration (Main Instance) ---
             - MODE=${MODE:-queue}
-            - QUEUE_NAME=${QUEUE_NAME:-flowise-queue}
+            - QUEUE_NAME=${QUEUE_NAME:-thub-queue}
             - QUEUE_REDIS_EVENT_STREAM_MAX_LEN=${QUEUE_REDIS_EVENT_STREAM_MAX_LEN}
             - WORKER_CONCURRENCY=${WORKER_CONCURRENCY}
             - REMOVE_ON_AGE=${REMOVE_ON_AGE}
@@ -151,22 +151,22 @@ services:
             timeout: 5s
             retries: 5
             start_period: 30s
-        entrypoint: /bin/sh -c "sleep 3; flowise start"
+        entrypoint: /bin/sh -c "sleep 3; thub start"
         depends_on:
             - redis
         networks:
-            - flowise-net
+            - thub-net
 
-    flowise-worker:
-        image: flowiseai/flowise-worker:latest
-        container_name: flowise-worker
+    thub-worker:
+        image: thubai/thub-worker:latest
+        container_name: thub-worker
         restart: always
         volumes:
-            - ~/.flowise:/root/.flowise
+            - ~/.thub:/root/.thub
         environment:
-            # --- Essential Flowise Vars ---
+            # --- Essential THub Vars ---
             - WORKER_PORT=${WORKER_PORT:-5566}
-            - DATABASE_PATH=${DATABASE_PATH:-/root/.flowise}
+            - DATABASE_PATH=${DATABASE_PATH:-/root/.thub}
             - DATABASE_TYPE=${DATABASE_TYPE}
             - DATABASE_PORT=${DATABASE_PORT}
             - DATABASE_HOST=${DATABASE_HOST}
@@ -179,7 +179,7 @@ services:
             # SECRET KEYS
             - SECRETKEY_STORAGE_TYPE=${SECRETKEY_STORAGE_TYPE}
             - SECRETKEY_PATH=${SECRETKEY_PATH}
-            - FLOWISE_SECRETKEY_OVERWRITE=${FLOWISE_SECRETKEY_OVERWRITE}
+            - THUB_SECRETKEY_OVERWRITE=${THUB_SECRETKEY_OVERWRITE}
             - SECRETKEY_AWS_ACCESS_KEY=${SECRETKEY_AWS_ACCESS_KEY}
             - SECRETKEY_AWS_SECRET_KEY=${SECRETKEY_AWS_SECRET_KEY}
             - SECRETKEY_AWS_REGION=${SECRETKEY_AWS_REGION}
@@ -213,9 +213,9 @@ services:
             - NUMBER_OF_PROXIES=${NUMBER_OF_PROXIES}
             - CORS_ORIGINS=${CORS_ORIGINS}
             - IFRAME_ORIGINS=${IFRAME_ORIGINS}
-            - FLOWISE_FILE_SIZE_LIMIT=${FLOWISE_FILE_SIZE_LIMIT}
+            - THUB_FILE_SIZE_LIMIT=${THUB_FILE_SIZE_LIMIT}
             - SHOW_COMMUNITY_NODES=${SHOW_COMMUNITY_NODES}
-            - DISABLE_FLOWISE_TELEMETRY=${DISABLE_FLOWISE_TELEMETRY}
+            - DISABLE_THUB_TELEMETRY=${DISABLE_THUB_TELEMETRY}
             - DISABLED_NODES=${DISABLED_NODES}
             - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
 
@@ -244,7 +244,7 @@ services:
 
             # ENTERPRISE
             - LICENSE_URL=${LICENSE_URL}
-            - FLOWISE_EE_LICENSE_KEY=${FLOWISE_EE_LICENSE_KEY}
+            - THUB_EE_LICENSE_KEY=${THUB_EE_LICENSE_KEY}
             - OFFLINE=${OFFLINE}
             - INVITE_TOKEN_EXPIRY_IN_HOURS=${INVITE_TOKEN_EXPIRY_IN_HOURS}
             - WORKSPACE_INVITE_TEMPLATE_PATH=${WORKSPACE_INVITE_TEMPLATE_PATH}
@@ -266,7 +266,7 @@ services:
 
             # --- Queue Configuration (Worker Instance) ---
             - MODE=${MODE:-queue}
-            - QUEUE_NAME=${QUEUE_NAME:-flowise-queue}
+            - QUEUE_NAME=${QUEUE_NAME:-thub-queue}
             - QUEUE_REDIS_EVENT_STREAM_MAX_LEN=${QUEUE_REDIS_EVENT_STREAM_MAX_LEN}
             - WORKER_CONCURRENCY=${WORKER_CONCURRENCY}
             - REMOVE_ON_AGE=${REMOVE_ON_AGE}
@@ -297,14 +297,14 @@ services:
         entrypoint: /bin/sh -c "node /app/healthcheck/healthcheck.js & sleep 5 && pnpm run start-worker"
         depends_on:
             - redis
-            - flowise
+            - thub
         networks:
-            - flowise-net
+            - thub-net
 
 volumes:
     redis_data:
         driver: local
 
 networks:
-    flowise-net:
+    thub-net:
         driver: bridge
