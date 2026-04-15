@@ -1,5 +1,5 @@
-import logo from '@/assets/images/THub_logo.png'
-import logoDark from '@/assets/images/THub_logo_dark.png'
+import logo from '@/assets/images/thub_logo.png'
+import logoDark from '@/assets/images/thub_logo_dark.png'
 
 import { useSelector } from 'react-redux'
 
