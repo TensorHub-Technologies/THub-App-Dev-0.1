@@ -3,7 +3,7 @@ import { flatten } from 'lodash'
 import { storageContextFromDefaults, serviceContextFromDefaults, VectorStoreIndex, Document } from 'llamaindex'
 import { Document as LCDocument } from 'langchain/document'
 import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
-import { getUserHome } from '../../../src.js'
+import { getUserHome } from '../../../src/index.js'
 
 class SimpleStoreUpsert_LlamaIndex_VectorStores implements INode {
     label: string

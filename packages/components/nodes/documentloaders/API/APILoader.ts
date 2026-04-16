@@ -4,7 +4,7 @@ import * as https from 'https'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
 import { TextSplitter } from 'langchain/text_splitter'
 import { omit } from 'lodash'
-import { getFileFromStorage } from '../../../src.js'
+import { getFileFromStorage } from '../../../src/index.js'
 import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { handleEscapeCharacters } from '../../../src/utils.js'
 

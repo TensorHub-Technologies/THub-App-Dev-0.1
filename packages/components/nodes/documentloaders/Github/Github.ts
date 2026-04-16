@@ -2,7 +2,7 @@ import { omit } from 'lodash'
 import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { GithubRepoLoader, GithubRepoLoaderParams } from '@langchain/community/document_loaders/web/github'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters, INodeOutputsValue } from '../../../src.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters, INodeOutputsValue } from '../../../src/index.js'
 
 class Github_DocumentLoaders implements INode {
     label: string

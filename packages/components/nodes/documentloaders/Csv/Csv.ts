@@ -1,6 +1,11 @@
 import { TextSplitter } from 'langchain/text_splitter'
 import { CSVLoader } from './CsvLoader.js'
-import { getFileFromStorage, handleDocumentLoaderDocuments, handleDocumentLoaderMetadata, handleDocumentLoaderOutput } from '../../../src.js'
+import {
+    getFileFromStorage,
+    handleDocumentLoaderDocuments,
+    handleDocumentLoaderMetadata,
+    handleDocumentLoaderOutput
+} from '../../../src/index.js'
 import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class Csv_DocumentLoaders implements INode {

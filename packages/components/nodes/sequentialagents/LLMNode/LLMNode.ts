@@ -27,10 +27,10 @@ import {
     prepareSandboxVars,
     transformBracesWithColon
 } from '../../../src/utils.js'
-import {
 import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+import {
     convertStructuredSchemaToZod,
     customGet,
     getVM,

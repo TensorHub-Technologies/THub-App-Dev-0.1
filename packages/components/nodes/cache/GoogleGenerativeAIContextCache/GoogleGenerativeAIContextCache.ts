@@ -1,4 +1,4 @@
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src/index.js'
 import FlowiseGoogleAICacheManager from './FlowiseGoogleAICacheManager.js'
 
 class GoogleGenerativeAIContextCache implements INode {

@@ -1,4 +1,4 @@
-import { getCredentialData, getCredentialParam } from '../../../src.js'
+import { getCredentialData, getCredentialParam } from '../../../src/index.js'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { Meilisearch } from 'meilisearch'
 import { MeilisearchRetriever } from './core.js'

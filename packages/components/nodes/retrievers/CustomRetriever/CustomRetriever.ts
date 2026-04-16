@@ -2,7 +2,7 @@ import { get } from 'lodash'
 import { Document } from '@langchain/core/documents'
 import { VectorStore, VectorStoreRetriever, VectorStoreRetrieverInput } from '@langchain/core/vectorstores'
 import { INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
-import { handleEscapeCharacters } from '../../../src.js'
+import { handleEscapeCharacters } from '../../../src/index.js'
 
 const defaultReturnFormat = '{{context}}\nSource: {{metadata.source}}'
 

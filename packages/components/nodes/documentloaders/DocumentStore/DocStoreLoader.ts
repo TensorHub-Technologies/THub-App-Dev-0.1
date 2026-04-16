@@ -1,7 +1,15 @@
-import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
+import {
+    ICommonObject,
+    IDatabaseEntity,
+    INode,
+    INodeData,
+    INodeOptionsValue,
+    INodeOutputsValue,
+    INodeParams
+} from '../../../src/Interface.js'
 import { DataSource } from 'typeorm'
 import { Document } from '@langchain/core/documents'
-import { handleEscapeCharacters } from '../../../src.js'
+import { handleEscapeCharacters } from '../../../src/index.js'
 
 class DocStore_DocumentLoaders implements INode {
     label: string

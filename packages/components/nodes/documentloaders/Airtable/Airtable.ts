@@ -5,7 +5,7 @@ import { TextSplitter } from 'langchain/text_splitter'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
 import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { IDocument, ICommonObject, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
-import { handleEscapeCharacters } from '../../../src.js'
+import { handleEscapeCharacters } from '../../../src/index.js'
 
 class Airtable_DocumentLoaders implements INode {
     label: string

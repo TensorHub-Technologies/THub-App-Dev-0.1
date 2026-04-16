@@ -1,4 +1,4 @@
-import { INodeData } from '../../src.js'
+import { INodeData } from '../../src/index.js'
 import { VectorStore } from '@langchain/core/vectorstores'
 
 export const resolveVectorStoreOrRetriever = (

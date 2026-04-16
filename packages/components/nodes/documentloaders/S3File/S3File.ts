@@ -28,7 +28,7 @@ import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { IDocument } from '../../../src/Interface.js'
 import { omit } from 'lodash'
-import { handleEscapeCharacters } from '../../../src.js'
+import { handleEscapeCharacters } from '../../../src/index.js'
 
 class S3_DocumentLoaders implements INode {
     label: string

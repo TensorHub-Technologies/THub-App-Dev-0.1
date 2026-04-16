@@ -2,7 +2,7 @@ import { Mem0Memory as BaseMem0Memory, Mem0MemoryInput, ClientOptions } from '@m
 import { MemoryOptions, SearchOptions } from 'mem0ai'
 import { BaseMessage } from '@langchain/core/messages'
 import { InputValues, MemoryVariables, OutputValues } from '@langchain/core/memory'
-import { ICommonObject, IDatabaseEntity } from '../../../src.js'
+import { ICommonObject, IDatabaseEntity } from '../../../src/index.js'
 import { IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface.js'
 import { getBaseClasses, getCredentialData, getCredentialParam, mapChatMessageToBaseMessage } from '../../../src/utils.js'
 import { DataSource } from 'typeorm'

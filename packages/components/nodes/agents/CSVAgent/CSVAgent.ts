@@ -7,7 +7,7 @@ import { getBaseClasses } from '../../../src/utils.js'
 import { LoadPyodide, finalSystemPrompt, systemPrompt } from './core.js'
 import { checkInputs, Moderation } from '../../moderation/Moderation.js'
 import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
-import { getFileFromStorage } from '../../../src.js'
+import { getFileFromStorage } from '../../../src/index.js'
 
 class CSV_Agents implements INode {
     label: string

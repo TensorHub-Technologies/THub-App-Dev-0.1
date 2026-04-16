@@ -1,6 +1,11 @@
 import { TextSplitter } from 'langchain/text_splitter'
 import { WordLoader } from './WordLoader.js'
-import { getFileFromStorage, handleDocumentLoaderDocuments, handleDocumentLoaderMetadata, handleDocumentLoaderOutput } from '../../../src.js'
+import {
+    getFileFromStorage,
+    handleDocumentLoaderDocuments,
+    handleDocumentLoaderMetadata,
+    handleDocumentLoaderOutput
+} from '../../../src/index.js'
 import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class MicrosoftWord_DocumentLoaders implements INode {

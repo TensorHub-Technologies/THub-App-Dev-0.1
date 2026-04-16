@@ -1,4 +1,4 @@
-import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src.js'
+import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src/index.js'
 import { BaseOutputParser } from '@langchain/core/output_parsers'
 import { StructuredOutputParser as LangchainStructuredOutputParser } from 'langchain/output_parsers'
 import { CATEGORY } from '../OutputParserHelpers.js'

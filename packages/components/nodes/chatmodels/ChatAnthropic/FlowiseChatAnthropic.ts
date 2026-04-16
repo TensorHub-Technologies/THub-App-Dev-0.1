@@ -1,6 +1,6 @@
 import { AnthropicInput, ChatAnthropic as LangchainChatAnthropic } from '@langchain/anthropic'
 import { type BaseChatModelParams } from '@langchain/core/language_models/chat_models'
-import { IVisionChatModal, IMultiModalOption } from '../../../src.js'
+import { IVisionChatModal, IMultiModalOption } from '../../../src/index.js'
 
 const DEFAULT_IMAGE_MODEL = 'claude-3-5-haiku-latest'
 const DEFAULT_IMAGE_MAX_TOKEN = 2048

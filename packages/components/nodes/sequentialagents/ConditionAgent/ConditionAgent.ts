@@ -18,10 +18,10 @@ import {
     ISeqAgentsState
 } from '../../../src/Interface.js'
 import { getInputVariables, getVars, handleEscapeCharacters, prepareSandboxVars, transformBracesWithColon } from '../../../src/utils.js'
-import {
 import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+import {
     checkCondition,
     convertStructuredSchemaToZod,
     customGet,

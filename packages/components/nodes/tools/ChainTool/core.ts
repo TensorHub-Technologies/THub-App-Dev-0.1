@@ -1,7 +1,7 @@
 import { DynamicTool, DynamicToolInput } from '@langchain/core/tools'
 import { BaseChain } from 'langchain/chains'
 import { handleEscapeCharacters } from '../../../src/utils.js'
-import { CustomChainHandler } from '../../../src.js'
+import { CustomChainHandler } from '../../../src/index.js'
 
 export interface ChainToolInput extends Omit<DynamicToolInput, 'func'> {
     chain: BaseChain

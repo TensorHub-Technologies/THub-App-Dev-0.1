@@ -1,4 +1,4 @@
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src/index.js'
 import { Fireworks } from '@langchain/community/llms/fireworks'
 import { BaseCache } from '@langchain/core/caches'
 

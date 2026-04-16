@@ -1,5 +1,5 @@
 import { AzureChatOpenAI as LangchainAzureChatOpenAI, OpenAIChatInput, AzureOpenAIInput, ClientOptions } from '@langchain/openai'
-import { IMultiModalOption, IVisionChatModal } from '../../../src.js'
+import { IMultiModalOption, IVisionChatModal } from '../../../src/index.js'
 import { BaseChatModelParams } from '@langchain/core/language_models/chat_models'
 
 export class AzureChatOpenAI extends LangchainAzureChatOpenAI implements IVisionChatModal {

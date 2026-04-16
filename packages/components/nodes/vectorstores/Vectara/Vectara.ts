@@ -11,7 +11,7 @@ import { Document } from '@langchain/core/documents'
 import { Embeddings } from '@langchain/core/embeddings'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface.js'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils.js'
-import { getFileFromStorage } from '../../../src.js'
+import { getFileFromStorage } from '../../../src/index.js'
 
 class Vectara_VectorStores implements INode {
     label: string

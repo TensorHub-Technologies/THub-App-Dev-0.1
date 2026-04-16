@@ -8,7 +8,7 @@ import { Document } from '@langchain/core/documents'
 import { TextSplitter } from 'langchain/text_splitter'
 import { test } from 'linkifyjs'
 import { omit } from 'lodash'
-import { handleEscapeCharacters, INodeOutputsValue, webCrawl, xmlScrape } from '../../../src.js'
+import { handleEscapeCharacters, INodeOutputsValue, webCrawl, xmlScrape } from '../../../src/index.js'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class Playwright_DocumentLoaders implements INode {

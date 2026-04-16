@@ -1,5 +1,5 @@
 import { VectorStore } from '@langchain/core/vectorstores'
-import { getCredentialData, getCredentialParam, ICommonObject, INodeData } from '../../../../src.js'
+import { getCredentialData, getCredentialParam, ICommonObject, INodeData } from '../../../../src/index.js'
 import { Document } from '@langchain/core/documents'
 import { Embeddings } from '@langchain/core/embeddings'
 import { getDatabase, getHost, getPort, getSSL, getTableName } from '../utils.js'

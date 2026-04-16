@@ -1,5 +1,5 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src.js'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/index.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/index.js'
 import { WatsonxLLM, WatsonxInputLLM } from '@langchain/community/llms/ibm'
 import { WatsonxAuth } from '@langchain/community/dist/types/ibm'
 import { BaseCache } from '@langchain/core/caches'

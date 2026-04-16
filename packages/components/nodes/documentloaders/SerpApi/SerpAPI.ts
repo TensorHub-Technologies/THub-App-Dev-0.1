@@ -1,7 +1,7 @@
 import { omit } from 'lodash'
 import { TextSplitter } from 'langchain/text_splitter'
 import { SerpAPILoader } from '@langchain/community/document_loaders/web/serpapi'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/index.js'
 import { ICommonObject, IDocument, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
 
 class SerpAPI_DocumentLoaders implements INode {

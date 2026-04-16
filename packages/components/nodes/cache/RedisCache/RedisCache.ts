@@ -3,7 +3,7 @@ import hash from 'object-hash'
 import { RedisCache as LangchainRedisCache } from '@langchain/community/caches/ioredis'
 import { StoredGeneration, mapStoredMessageToChatMessage } from '@langchain/core/messages'
 import { Generation, ChatGeneration } from '@langchain/core/outputs'
-import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
+import { getBaseClasses, getCredentialData, getCredentialParam, ICommonObject, INode, INodeData, INodeParams } from '../../../src/index.js'
 
 class RedisCache implements INode {
     label: string

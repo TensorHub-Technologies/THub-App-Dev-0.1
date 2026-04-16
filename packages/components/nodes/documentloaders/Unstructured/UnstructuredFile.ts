@@ -8,7 +8,7 @@ import {
     UnstructuredLoader as LCUnstructuredLoader
 } from '@langchain/community/document_loaders/fs/unstructured'
 import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/utils.js'
-import { getFileFromStorage, INodeOutputsValue } from '../../../src.js'
+import { getFileFromStorage, INodeOutputsValue } from '../../../src/index.js'
 import { UnstructuredLoader } from './Unstructured.js'
 
 class UnstructuredFile_DocumentLoaders implements INode {

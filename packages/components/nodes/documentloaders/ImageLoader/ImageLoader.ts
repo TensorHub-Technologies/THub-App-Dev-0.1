@@ -1,6 +1,6 @@
 import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
-import { INodeOutputsValue } from '../../../src.js'
+import { INodeOutputsValue } from '../../../src/index.js'
 import { exec } from 'child_process'
 import sanitize from 'sanitize-filename'
 import path from 'path'
@@ -8,7 +8,7 @@ import fs from 'fs'
 import { Storage } from '@google-cloud/storage'
 import { promisify } from 'util'
 import Tesseract from 'tesseract.js'
-import { handleEscapeCharacters } from '../../../src.js'
+import { handleEscapeCharacters } from '../../../src/index.js'
 
 const execAsync = promisify(exec)
 

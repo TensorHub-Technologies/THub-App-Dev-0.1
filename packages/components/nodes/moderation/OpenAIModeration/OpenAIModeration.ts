@@ -1,7 +1,7 @@
 import { Moderation } from '../Moderation.js'
 import { OpenAIModerationRunner } from './OpenAIModerationRunner.js'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src.js'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/index.js'
 
 class OpenAIModeration implements INode {
     label: string

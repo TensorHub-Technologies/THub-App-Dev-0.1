@@ -2,7 +2,7 @@ import { omit } from 'lodash'
 import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
-import { getFileFromStorage, handleEscapeCharacters } from '../../../src.js'
+import { getFileFromStorage, handleEscapeCharacters } from '../../../src/index.js'
 
 class Text_DocumentLoaders implements INode {
     label: string

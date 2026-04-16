@@ -1,7 +1,7 @@
 import { Embeddings } from '@langchain/core/embeddings'
 import { BaseStore } from '@langchain/core/stores'
 import { CacheBackedEmbeddings } from 'langchain/embeddings/cache_backed'
-import { getBaseClasses, ICommonObject, INode, INodeData, INodeParams } from '../../../src.js'
+import { getBaseClasses, ICommonObject, INode, INodeData, INodeParams } from '../../../src/index.js'
 
 class InMemoryEmbeddingCache implements INode {
     label: string

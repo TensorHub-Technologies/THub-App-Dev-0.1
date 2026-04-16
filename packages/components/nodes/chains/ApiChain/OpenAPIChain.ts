@@ -4,7 +4,7 @@ import { getBaseClasses } from '../../../src/utils.js'
 import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler.js'
 import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation.js'
 import { formatResponse } from '../../outputparsers/OutputParserHelpers.js'
-import { getFileFromStorage } from '../../../src.js'
+import { getFileFromStorage } from '../../../src/index.js'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 
 class OpenApiChain_Chains implements INode {

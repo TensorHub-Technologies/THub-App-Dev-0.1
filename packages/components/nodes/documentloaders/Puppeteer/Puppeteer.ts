@@ -4,7 +4,7 @@ import { TextSplitter } from 'langchain/text_splitter'
 import { test } from 'linkifyjs'
 import { omit } from 'lodash'
 import { PuppeteerLifeCycleEvent } from 'puppeteer'
-import { handleEscapeCharacters, INodeOutputsValue, webCrawl, xmlScrape } from '../../../src.js'
+import { handleEscapeCharacters, INodeOutputsValue, webCrawl, xmlScrape } from '../../../src/index.js'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 
 class Puppeteer_DocumentLoaders implements INode {

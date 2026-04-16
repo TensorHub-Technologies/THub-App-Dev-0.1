@@ -1,4 +1,4 @@
-import { IVisionChatModal, IMultiModalOption } from '../../../src.js'
+import { IVisionChatModal, IMultiModalOption } from '../../../src/index.js'
 import { ChatBedrockConverse as LCBedrockChat, ChatBedrockConverseInput } from '@langchain/aws'
 
 const DEFAULT_IMAGE_MODEL = 'anthropic.claude-3-haiku-20240307-v1:0'

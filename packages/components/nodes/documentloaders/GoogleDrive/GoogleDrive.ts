@@ -8,7 +8,7 @@ import {
     handleEscapeCharacters,
     INodeOutputsValue,
     refreshOAuth2Token
-} from '../../../src.js'
+} from '../../../src/index.js'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx'
 import { CSVLoader } from '@langchain/community/document_loaders/fs/csv'

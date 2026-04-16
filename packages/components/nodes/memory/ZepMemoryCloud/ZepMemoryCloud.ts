@@ -1,7 +1,7 @@
 import { ZepMemory, ZepMemoryInput } from '@getzep/zep-cloud/langchain'
 import { BaseMessage } from '@langchain/core/messages'
 import { InputValues, MemoryVariables, OutputValues } from 'langchain/memory'
-import { ICommonObject } from '../../../src.js'
+import { ICommonObject } from '../../../src/index.js'
 import { IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface.js'
 import {
     convertBaseMessagetoIMessage,

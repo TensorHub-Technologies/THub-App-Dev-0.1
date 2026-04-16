@@ -1,5 +1,5 @@
 import { INode, INodeData, INodeParams } from '../../../src/Interface.js'
-import { getBaseClasses } from '../../../src.js'
+import { getBaseClasses } from '../../../src/index.js'
 import { Moderation } from '../Moderation.js'
 import { SimplePromptModerationRunner } from './SimplePromptModerationRunner.js'
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'

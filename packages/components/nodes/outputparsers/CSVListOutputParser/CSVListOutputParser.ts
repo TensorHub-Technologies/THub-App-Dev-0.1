@@ -1,5 +1,5 @@
 import { BaseOutputParser, CommaSeparatedListOutputParser } from '@langchain/core/output_parsers'
-import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src.js'
+import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src/index.js'
 import { CATEGORY } from '../OutputParserHelpers.js'
 
 class CSVListOutputParser implements INode {

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
-import { ICommonObject } from '../src.js'
+import { ICommonObject } from '../src/index.js'
 
 import { getModelConfigByModelName, MODEL_TYPE } from '../src/modelLoader.js'
 

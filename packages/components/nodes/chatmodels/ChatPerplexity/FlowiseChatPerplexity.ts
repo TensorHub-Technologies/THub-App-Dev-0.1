@@ -1,5 +1,5 @@
 import { ChatPerplexity as LangchainChatPerplexity, type PerplexityChatInput } from '@langchain/community/chat_models/perplexity'
-import { IMultiModalOption, IVisionChatModal } from '../../../src.js'
+import { IMultiModalOption, IVisionChatModal } from '../../../src/index.js'
 
 // Extend the Langchain ChatPerplexity class to include THub-specific properties and methods
 export class ChatPerplexity extends LangchainChatPerplexity implements IVisionChatModal {

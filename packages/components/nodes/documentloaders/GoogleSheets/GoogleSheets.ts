@@ -8,7 +8,7 @@ import {
     handleEscapeCharacters,
     INodeOutputsValue,
     refreshOAuth2Token
-} from '../../../src.js'
+} from '../../../src/index.js'
 
 class GoogleSheets_DocumentLoaders implements INode {
     label: string

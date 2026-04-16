@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/index.js'
 import { ICommonObject, IDocument, INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface.js'
 import { FigmaFileLoader, FigmaLoaderParams } from '@langchain/community/document_loaders/web/figma'
 import { TextSplitter } from 'langchain/text_splitter'

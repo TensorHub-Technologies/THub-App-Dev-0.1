@@ -1,7 +1,7 @@
 import { omit } from 'lodash'
 import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
-import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src.js'
+import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src/index.js'
 import { Document } from '@langchain/core/documents'
 import jsonpointer from 'jsonpointer'
 import type { readFile as ReadFileT } from 'node:fs/promises'

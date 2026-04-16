@@ -2,7 +2,7 @@ import { omit } from 'lodash'
 import { IDocument, ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
 import { TextSplitter } from 'langchain/text_splitter'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
-import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src.js'
+import { getFileFromStorage, handleEscapeCharacters, INodeOutputsValue } from '../../../src/index.js'
 
 class Pdf_DocumentLoaders implements INode {
     label: string

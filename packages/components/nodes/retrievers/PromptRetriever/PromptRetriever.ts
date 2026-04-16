@@ -1,4 +1,4 @@
-import { transformBracesWithColon } from '../../../src.js'
+import { transformBracesWithColon } from '../../../src/index.js'
 import { INode, INodeData, INodeParams, PromptRetriever, PromptRetrieverInput } from '../../../src/Interface.js'
 
 class PromptRetriever_Retrievers implements INode {

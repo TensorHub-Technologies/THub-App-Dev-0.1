@@ -2,7 +2,7 @@ import { BaseRetriever } from '@langchain/core/retrievers'
 import { VectorStoreRetriever } from '@langchain/core/vectorstores'
 import { ContextualCompressionRetriever } from 'langchain/retrievers/contextual_compression'
 import { CohereRerank } from './CohereRerank.js'
-import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src.js'
+import { getCredentialData, getCredentialParam, handleEscapeCharacters } from '../../../src/index.js'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface.js'
 
 class CohereRerankRetriever_Retrievers implements INode {

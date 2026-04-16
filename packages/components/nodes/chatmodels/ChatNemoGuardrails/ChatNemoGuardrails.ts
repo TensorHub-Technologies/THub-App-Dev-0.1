@@ -5,7 +5,7 @@ import { NemoClient } from './NemoClient.js'
 import { CallbackManager, CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager'
 import { ChatResult } from '@langchain/core/outputs'
 import { FailedAttemptHandler } from '@langchain/core/utils/async_caller'
-import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src.js'
+import { getBaseClasses, INode, INodeData, INodeParams } from '../../../src/index.js'
 
 export interface ChatNemoGuardrailsCallOptions extends BaseChatModelCallOptions {
     /**
