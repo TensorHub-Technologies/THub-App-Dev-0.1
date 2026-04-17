@@ -1,13 +1,4 @@
-import {
-    FlowiseMemory,
-    IDatabaseEntity,
-    ICommonObject,
-    IMessage,
-    INode,
-    INodeData,
-    INodeParams,
-    MemoryMethods
-} from '../../../src/Interface'
+import { THubMemory, IDatabaseEntity, ICommonObject, IMessage, INode, INodeData, INodeParams, MemoryMethods } from '../../../src/Interface'
 import { getBaseClasses, mapChatMessageToBaseMessage } from '../../../src/utils'
 import { BufferMemory, BufferMemoryInput } from 'langchain/memory'
 import { BaseMessage } from '@langchain/core/messages'
@@ -79,7 +70,7 @@ interface BufferMemoryExtendedInput {
     chatflowid: string
 }
 
-class BufferMemoryExtended extends FlowiseMemory implements MemoryMethods {
+class BufferMemoryExtended extends THubMemory implements MemoryMethods {
     appDataSource: DataSource
     databaseEntities: IDatabaseEntity
     chatflowid: string

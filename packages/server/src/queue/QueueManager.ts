@@ -12,7 +12,7 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
 import { Express } from 'express'
 import { ExpressAdapter } from '@bull-board/express'
 
-const QUEUE_NAME = process.env.QUEUE_NAME || 'flowise-queue'
+const QUEUE_NAME = process.env.QUEUE_NAME || 'thub-queue'
 
 type QUEUE_TYPE = 'prediction' | 'upsert'
 

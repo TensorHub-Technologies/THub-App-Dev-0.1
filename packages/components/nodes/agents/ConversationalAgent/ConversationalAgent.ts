@@ -11,7 +11,7 @@ import { getBaseClasses, transformBracesWithColon } from '../../../src/utils'
 import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
 import {
     IVisionChatModal,
-    FlowiseMemory,
+    THubMemory,
     ICommonObject,
     INode,
     INodeData,
@@ -112,7 +112,7 @@ class ConversationalAgent_Agents implements INode {
     }
 
     async run(nodeData: INodeData, input: string, options: ICommonObject): Promise<string | object> {
-        const memory = nodeData.inputs?.memory as FlowiseMemory
+        const memory = nodeData.inputs?.memory as THubMemory
         const moderations = nodeData.inputs?.inputModeration as Moderation[]
 
         const shouldStreamResponse = options.shouldStreamResponse
@@ -216,7 +216,7 @@ const prepareAgent = async (
     const maxIterations = nodeData.inputs?.maxIterations as string
     let tools = nodeData.inputs?.tools as Tool[]
     tools = flatten(tools)
-    const memory = nodeData.inputs?.memory as FlowiseMemory
+    const memory = nodeData.inputs?.memory as THubMemory
     let systemMessage = nodeData.inputs?.systemMessage as string
     const memoryKey = memory.memoryKey ? memory.memoryKey : 'chat_history'
     const inputKey = memory.inputKey ? memory.inputKey : 'input'

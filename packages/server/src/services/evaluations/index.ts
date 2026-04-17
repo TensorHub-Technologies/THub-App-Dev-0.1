@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { EvaluationRunner, ICommonObject } from 'thub-components'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { getErrorMessage } from '../../errors/utils'
 import { Dataset } from '../../database/entities/Dataset'
 import { DatasetRow } from '../../database/entities/DatasetRow'
@@ -65,7 +65,7 @@ const runAgain = async (id: string, baseURL: string, tenantId?: string) => {
             queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
         }
         const evaluation = await queryBuilder.getOne()
-        if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+        if (!evaluation) throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
         const additionalConfig = evaluation.additionalConfig ? JSON.parse(evaluation.additionalConfig) : {}
         const data: ICommonObject = {
             chatflowId: evaluation.chatflowId,
@@ -97,7 +97,7 @@ const runAgain = async (id: string, baseURL: string, tenantId?: string) => {
         data.version = true
         return await createEvaluation(data, baseURL)
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.runAgain - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.runAgain - ${getErrorMessage(error)}`)
     }
 }
 
@@ -145,7 +145,7 @@ const createEvaluation = async (body: ICommonObject, baseURL: string) => {
             datasetQueryBuilder.andWhere('ds.tenantId = :tenantId', { tenantId })
         }
         const dataset = await datasetQueryBuilder.getOne()
-        if (!dataset) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Dataset ${body.datasetId} not found`)
+        if (!dataset) throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Dataset ${body.datasetId} not found`)
 
         const items = await appServer.AppDataSource.getRepository(DatasetRow).find({
             where: { datasetId: dataset.id },
@@ -197,7 +197,7 @@ const createEvaluation = async (body: ICommonObject, baseURL: string) => {
                 ...(tenantId ? { tenantId } : {})
             })
 
-            if (!credential) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Credential ${body.credentialId} not found`)
+            if (!credential) throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Credential ${body.credentialId} not found`)
         }
 
         const evaluationRunTimeoutMs = getTimeoutMs(process.env.EVALUATION_RUN_TIMEOUT_MS, DEFAULT_EVALUATION_RUN_TIMEOUT_MS)
@@ -374,10 +374,7 @@ const createEvaluation = async (body: ICommonObject, baseURL: string) => {
 
         return getAllEvaluations(-1, -1, tenantId)
     } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: EvalsService.createEvaluation - ${getErrorMessage(error)}`
-        )
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.createEvaluation - ${getErrorMessage(error)}`)
     }
 }
 
@@ -462,10 +459,7 @@ const getAllEvaluations = async (page: number = -1, limit: number = -1, tenantId
             return returnResults
         }
     } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: EvalsService.getAllEvaluations - ${getErrorMessage(error)}`
-        )
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getAllEvaluations - ${getErrorMessage(error)}`)
     }
 }
 
@@ -479,16 +473,13 @@ const deleteEvaluation = async (id: string, tenantId?: string) => {
                 .where('ev.id = :id', { id })
                 .andWhere('ev.tenantId = :tenantId', { tenantId })
                 .getOne()
-            if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+            if (!evaluation) throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
         }
         await appServer.AppDataSource.getRepository(Evaluation).delete({ id: id })
         await appServer.AppDataSource.getRepository(EvaluationRun).delete({ evaluationId: id })
         return { id, deleted: true }
     } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: EvalsService.deleteEvaluation - ${getErrorMessage(error)}`
-        )
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.deleteEvaluation - ${getErrorMessage(error)}`)
     }
 }
 
@@ -501,7 +492,7 @@ const isOutdated = async (id: string, tenantId?: string) => {
             queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
         }
         const evaluation = await queryBuilder.getOne()
-        if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+        if (!evaluation) throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
         const evaluationRunDate = evaluation.runDate.getTime()
         let isOutdated = false
         const returnObj: ICommonObject = {
@@ -596,7 +587,7 @@ const isOutdated = async (id: string, tenantId?: string) => {
         returnObj.isOutdated = isOutdated
         return returnObj
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.isOutdated - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.isOutdated - ${getErrorMessage(error)}`)
     }
 }
 
@@ -608,7 +599,7 @@ const getEvaluation = async (id: string, tenantId?: string) => {
             queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
         }
         const evaluation = await queryBuilder.getOne()
-        if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+        if (!evaluation) throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
         const versionCount = await appServer.AppDataSource.getRepository(Evaluation).countBy({
             name: evaluation.name,
             ...(tenantId ? { tenantId } : {})
@@ -625,7 +616,7 @@ const getEvaluation = async (id: string, tenantId?: string) => {
             rows: items
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getEvaluation - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getEvaluation - ${getErrorMessage(error)}`)
     }
 }
 
@@ -637,7 +628,7 @@ const getVersions = async (id: string, tenantId?: string) => {
             queryBuilder.andWhere('ev.tenantId = :tenantId', { tenantId })
         }
         const evaluation = await queryBuilder.getOne()
-        if (!evaluation) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
+        if (!evaluation) throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Evaluation ${id} not found`)
         const versions = await appServer.AppDataSource.getRepository(Evaluation).find({
             where: {
                 name: evaluation.name,
@@ -659,7 +650,7 @@ const getVersions = async (id: string, tenantId?: string) => {
             versions: returnResults
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getEvaluation - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getEvaluation - ${getErrorMessage(error)}`)
     }
 }
 
@@ -707,7 +698,7 @@ const patchDeleteEvaluations = async (ids: string[] = [], isDeleteAllVersion?: b
 
         return { deleted: true, count: idsToDelete.length }
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: EvalsService.patchDeleteEvaluations - ${getErrorMessage(error)}`
         )

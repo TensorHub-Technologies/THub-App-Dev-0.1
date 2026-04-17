@@ -3,7 +3,7 @@ import { BaseChatModelParams } from '@langchain/core/language_models/chat_models
 import { BaseCache } from '@langchain/core/caches'
 import { IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
-import { ChatOllama } from './FlowiseChatOllama'
+import { ChatOllama } from './THubChatOllama'
 
 class ChatOllama_ChatModels implements INode {
     label: string
@@ -16,10 +16,7 @@ class ChatOllama_ChatModels implements INode {
     baseClasses: string[]
     credential: INodeParams
     inputs: INodeParams[]
-    badge: string
-
     constructor() {
-        this.badge = 'DEPRECATING'
         this.label = 'ChatOllama'
         this.name = 'chatOllama'
         this.version = 5.0
@@ -271,5 +268,4 @@ class ChatOllama_ChatModels implements INode {
     }
 }
 
-// DISABLED - hidden from UI node palette
-// module.exports = { nodeClass: ChatOllama_ChatModels }
+module.exports = { nodeClass: ChatOllama_ChatModels }

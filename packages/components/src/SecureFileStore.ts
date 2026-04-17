@@ -24,7 +24,7 @@ export interface FileSecurityConfig {
  * Secure file store that enforces workspace boundaries and validates file operations
  */
 export class SecureFileStore extends Serializable {
-    lc_namespace = ['flowise', 'components', 'stores', 'file']
+    lc_namespace = ['thub', 'components', 'stores', 'file']
 
     private config: Required<FileSecurityConfig>
     private nodeFileStore: NodeFileStore

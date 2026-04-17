@@ -33,16 +33,15 @@ const fetchList = async ({ tenantId, name, nodeData, previousNodes, currentNode 
     const loadMethod = selectedParam?.loadMethod
 
     let credentialId = nodeData.credential
-    if (!credentialId && (nodeData.inputs?.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID'])) {
-        credentialId = nodeData.inputs.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID']
+    if (!credentialId && (nodeData.inputs?.credential || nodeData.inputs?.['THUB_CREDENTIAL_ID'])) {
+        credentialId = nodeData.inputs.credential || nodeData.inputs?.['THUB_CREDENTIAL_ID']
     }
 
     let config = {
         headers: {
             'x-request-from': 'internal',
             'Content-type': 'application/json'
-        },
-        withCredentials: true
+        }
     }
 
     let lists = await axios
@@ -56,6 +55,7 @@ const fetchList = async ({ tenantId, name, nodeData, previousNodes, currentNode 
         })
         .catch(function (error) {
             console.error(error)
+            return []
         })
     return lists
 }
@@ -163,32 +163,34 @@ export const AsyncDropdown = ({
 
                     response = await fetchList(body)
                 }
-                for (let j = 0; j < response.length; j += 1) {
-                    if (response[j].imageSrc) {
-                        const imageSrc = `${baseURL}/api/v1/node-icon/${response[j].name}`
-                        response[j].imageSrc = imageSrc
+                const safeResponse = Array.isArray(response) ? response : []
+
+                for (let j = 0; j < safeResponse.length; j += 1) {
+                    if (safeResponse[j].imageSrc) {
+                        const imageSrc = `${baseURL}/api/v1/node-icon/${safeResponse[j].name}`
+                        safeResponse[j].imageSrc = imageSrc
                     }
                 }
 
                 let finalOptions = []
                 if (isCreateNewOption) {
-                    finalOptions = [...response, ...addNewOption]
+                    finalOptions = [...safeResponse, ...addNewOption]
                 } else {
-                    finalOptions = [...response]
+                    finalOptions = [...safeResponse]
                 }
 
                 setOptions(finalOptions)
 
                 // Auto-select first option if no value is set and options are available
-                if ((!value || value === 'choose an option') && response.length > 0) {
+                if ((!value || value === 'choose an option') && safeResponse.length > 0) {
                     if (multiple) {
                         // For multiple selection, select the first option as an array
-                        const firstOptionValue = JSON.stringify([response[0].name])
+                        const firstOptionValue = JSON.stringify([safeResponse[0].name])
                         setInternalValue(firstOptionValue)
                         onSelect(firstOptionValue)
                     } else {
                         // For single selection, select the first option
-                        const firstOptionValue = response[0].name
+                        const firstOptionValue = safeResponse[0].name
                         setInternalValue(firstOptionValue)
                         onSelect(firstOptionValue)
                     }

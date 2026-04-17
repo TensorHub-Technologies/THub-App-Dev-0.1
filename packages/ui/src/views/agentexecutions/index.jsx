@@ -46,6 +46,31 @@ import { omit } from 'lodash'
 
 const ITEMS_PER_PAGE = 10
 
+const getExecutionTimestamp = (value) => {
+    const parsed = new Date(value).getTime()
+    return Number.isNaN(parsed) ? 0 : parsed
+}
+
+const sortExecutionsByDate = (items = []) => {
+    return [...items].sort((a, b) => {
+        const updatedDiff = getExecutionTimestamp(b?.updatedDate) - getExecutionTimestamp(a?.updatedDate)
+        if (updatedDiff !== 0) return updatedDiff
+
+        const createdDiff = getExecutionTimestamp(b?.createdDate) - getExecutionTimestamp(a?.createdDate)
+        if (createdDiff !== 0) return createdDiff
+
+        return (b?.id || '').localeCompare(a?.id || '')
+    })
+}
+
+const mergeExecutionsById = (previous = [], incoming = []) => {
+    const mergedById = new Map()
+    ;[...previous, ...incoming].forEach((execution) => {
+        if (execution?.id) mergedById.set(execution.id, execution)
+    })
+    return sortExecutionsByDate(Array.from(mergedById.values()))
+}
+
 const AgentExecutions = () => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
@@ -210,24 +235,22 @@ const AgentExecutions = () => {
                 const { data, total: totalCount } = getAllExecutions.data
                 if (!Array.isArray(data)) return
 
-                // If it's the first page, replace the data
                 if (currentPage === 1) {
-                    setExecutions(data)
+                    setExecutions(mergeExecutionsById([], data))
                 } else {
-                    // Append new data for infinite scroll
-                    setExecutions((prevExecutions) => [...prevExecutions, ...data])
+                    setExecutions((prevExecutions) => mergeExecutionsById(prevExecutions, data))
                 }
 
                 setTotal(totalCount)
-
-                // Check if there are more items to load
-                const loadedItems = currentPage === 1 ? data.length : executions.length + data.length
-                setHasMore(loadedItems < totalCount)
             } catch (e) {
                 console.error(e)
             }
         }
     }, [getAllExecutions.data, currentPage])
+
+    useEffect(() => {
+        setHasMore(executions.length < total)
+    }, [executions.length, total])
 
     useEffect(() => {
         if (currentPage === 1) {
@@ -466,10 +489,10 @@ const AgentExecutions = () => {
                         onSelectionChange={handleExecutionSelectionChange}
                         onExecutionRowClick={(execution) => {
                             setOpenDrawer(true)
-                            const executionDetails =
-                                typeof execution.executionData === 'string' ? JSON.parse(execution.executionData) : execution.executionData
-                            setSelectedExecutionData(executionDetails)
+                            // Clear previous execution data while loading the new one
+                            setSelectedExecutionData(null)
                             setSelectedMetadata(omit(execution, ['executionData']))
+                            getExecutionByIdApi.request(execution.id)
                         }}
                     />
 
@@ -494,6 +517,7 @@ const AgentExecutions = () => {
 
                     <ExecutionDetails
                         open={openDrawer}
+                        isLoading={getExecutionByIdApi.loading}
                         execution={selectedExecutionData}
                         metadata={selectedMetadata}
                         onClose={() => setOpenDrawer(false)}

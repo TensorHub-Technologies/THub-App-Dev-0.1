@@ -746,7 +746,7 @@ class Teradata_VectorStores implements INode {
             }
         }
 
-        // Create vector store object following Flowise pattern
+        // Create vector store object following THub pattern
         const vectorStore = {
             async similaritySearch(query: string): Promise<Document[]> {
                 return performSimilaritySearch(query)

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { User } from '../database/entities/User'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 import { getRunningExpressApp } from '../utils/getRunningExpressApp'
 import { verifyAuthToken } from '../utils/jwt'
 
@@ -38,7 +38,7 @@ const authMiddleware = async (req: Request, _res: Response, next: NextFunction) 
     try {
         const token = getBearerToken(req)
         if (!token) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authentication token is required')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication token is required')
         }
 
         const payload = verifyAuthToken(token)
@@ -47,7 +47,7 @@ const authMiddleware = async (req: Request, _res: Response, next: NextFunction) 
         const user = await userRepo.findOneBy({ uid: payload.uid })
 
         if (!user) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Authenticated user not found')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authenticated user not found')
         }
 
         req.user = {

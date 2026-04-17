@@ -124,7 +124,7 @@ class Astra_VectorStores implements INode {
                 ...clientConfig,
                 // @ts-ignore
                 namespace: astraNamespace ?? 'default_keyspace',
-                collection: astraCollection ?? credentialData.collectionName ?? 'flowise_test',
+                collection: astraCollection ?? credentialData.collectionName ?? 'thub_test',
                 collectionOptions: {
                     vector: {
                         dimension: vectorDimension ?? 1536,
@@ -172,7 +172,7 @@ class Astra_VectorStores implements INode {
             ...clientConfig,
             // @ts-ignore
             namespace: astraNamespace ?? 'default_keyspace',
-            collection: astraCollection ?? credentialData.collectionName ?? 'flowise_test',
+            collection: astraCollection ?? credentialData.collectionName ?? 'thub_test',
             collectionOptions: {
                 vector: {
                     dimension: vectorDimension ?? 1536,

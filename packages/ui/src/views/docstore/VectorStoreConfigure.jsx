@@ -249,7 +249,7 @@ const VectorStoreConfigure = () => {
             data.embeddingConfig = {}
             data.embeddingName = selectedEmbeddingsProvider.name
             Object.keys(selectedEmbeddingsProvider.inputs).map((key) => {
-                if (key === 'FLOWISE_CREDENTIAL_ID') {
+                if (key === 'THUB_CREDENTIAL_ID') {
                     data.embeddingConfig['credential'] = selectedEmbeddingsProvider.inputs[key]
                 } else {
                     data.embeddingConfig[key] = selectedEmbeddingsProvider.inputs[key]
@@ -265,7 +265,7 @@ const VectorStoreConfigure = () => {
             data.vectorStoreConfig = {}
             data.vectorStoreName = selectedVectorStoreProvider.name
             Object.keys(selectedVectorStoreProvider.inputs).map((key) => {
-                if (key === 'FLOWISE_CREDENTIAL_ID') {
+                if (key === 'THUB_CREDENTIAL_ID') {
                     data.vectorStoreConfig['credential'] = selectedVectorStoreProvider.inputs[key]
                 } else {
                     data.vectorStoreConfig[key] = selectedVectorStoreProvider.inputs[key]
@@ -281,7 +281,7 @@ const VectorStoreConfigure = () => {
             data.recordManagerConfig = {}
             data.recordManagerName = selectedRecordManagerProvider.name
             Object.keys(selectedRecordManagerProvider.inputs).map((key) => {
-                if (key === 'FLOWISE_CREDENTIAL_ID') {
+                if (key === 'THUB_CREDENTIAL_ID') {
                     data.recordManagerConfig['credential'] = selectedRecordManagerProvider.inputs[key]
                 } else {
                     data.recordManagerConfig[key] = selectedRecordManagerProvider.inputs[key]

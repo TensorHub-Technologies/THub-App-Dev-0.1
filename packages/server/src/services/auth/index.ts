@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { User } from '../../database/entities/User'
 import { Workspace } from '../../database/entities/Workspace'
@@ -30,12 +30,12 @@ const RETRYABLE_HTTP_ERROR_CODES = new Set(['ECONNRESET', 'ETIMEDOUT', 'ECONNREF
 const isDebugSecretMode = () => process.env.AUTH_DEBUG_EXPOSE_SECRETS === 'true'
 
 const handleAuthError = (error: unknown, context: string): never => {
-    if (error instanceof InternalFlowiseError) {
+    if (error instanceof InternalTHubError) {
         throw error
     }
 
     const message = error instanceof Error ? error.message : 'Unknown error'
-    throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: authService.${context} - ${message}`)
+    throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: authService.${context} - ${message}`)
 }
 
 const BCRYPT_SALT_ROUNDS = 10
@@ -56,23 +56,24 @@ const formatOptionalDate = (value?: Date | string | null) => {
     return date.toISOString().split('T')[0]
 }
 
-const buildUiBaseUrl = () => {
+const buildUiBaseUrl = (requestUiBaseUrl?: string) => {
     return (
         process.env.RESET_PASSWORD_URL ||
         process.env.INVITE_BASE_URL ||
         process.env.APP_URL ||
         process.env.UI_BASE_URL ||
         process.env.VITE_UI_BASE_URL ||
+        requestUiBaseUrl ||
         'http://localhost:3000'
     ).replace(/\/+$/, '')
 }
 
-const buildResetPasswordLink = (token: string) => `${buildUiBaseUrl()}/reset-password/${token}`
-const buildInviteLink = (token: string) => `${buildUiBaseUrl()}/accept-invite?token=${token}`
+const buildResetPasswordLink = (token: string, requestUiBaseUrl?: string) => `${buildUiBaseUrl(requestUiBaseUrl)}/reset-password/${token}`
+const buildInviteLink = (token: string, requestUiBaseUrl?: string) => `${buildUiBaseUrl(requestUiBaseUrl)}/accept-invite?token=${token}`
 
 const ensureMailDeliveryConfigured = (action: string) => {
     if (!transporter.isConfigured()) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.SERVICE_UNAVAILABLE,
             `Unable to ${action} because email delivery is not configured on the server`
         )
@@ -81,7 +82,7 @@ const ensureMailDeliveryConfigured = (action: string) => {
 
 const ensureAllowedWorkspaceRole = (role: string) => {
     if (!['admin', 'member'].includes(role)) {
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid workspace role')
+        throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid workspace role')
     }
 }
 
@@ -222,7 +223,7 @@ const ensureWorkspacePermission = async (
     })
 
     if (!membership || !allowedRoles.includes(membership.role)) {
-        throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'You are not allowed to access this workspace')
+        throw new InternalTHubError(StatusCodes.FORBIDDEN, 'You are not allowed to access this workspace')
     }
 }
 
@@ -241,16 +242,16 @@ const register = async (body: any) => {
         const fullName = `${firstName} ${lastName}`.trim() || email.split('@')[0]
 
         if (!email || !password) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Email and password are required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Email and password are required')
         }
 
         if (password.length < 6) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Password must be at least 6 characters')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Password must be at least 6 characters')
         }
 
         const existingUser = await userRepo.findOneBy({ email })
         if (existingUser) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, `Email already registered using ${existingUser.login_type}`)
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, `Email already registered using ${existingUser.login_type}`)
         }
 
         const uid = crypto.randomUUID()
@@ -290,22 +291,22 @@ const login = async (body: any) => {
         const password = body.password
 
         if (!email || !password) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Email and password are required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Email and password are required')
         }
 
         const user = await withRetry(() => userRepo.findOneBy({ email }), isRetryableDbError, 1)
 
         if (!user) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Invalid credentials')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Invalid credentials')
         }
 
         if (user.login_type !== 'email') {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, `Use ${user.login_type} login`)
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, `Use ${user.login_type} login`)
         }
 
         const storedPassword = String(user.password_hash || '').trim()
         if (!storedPassword) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.BAD_REQUEST,
                 'Password not set for this account. Please use forgot password to set a new password.'
             )
@@ -323,7 +324,7 @@ const login = async (body: any) => {
         }
 
         if (!match) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'Invalid credentials')
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Invalid credentials')
         }
 
         if (needsHashUpgrade) {
@@ -351,11 +352,11 @@ const googleLogin = async (body: any) => {
 
         const code = body.code
         if (!code) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Google authorization code is required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Google authorization code is required')
         }
         const { clientId, clientSecret } = resolveGoogleOAuthConfig()
         if (!clientId || !clientSecret) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.BAD_REQUEST,
                 'Google auth is not configured on the server. Set GOOGLE_CLIENT_ID or AZURE_GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET or AZURE_GOOGLE_CLIENT_SECRET.'
             )
@@ -384,7 +385,7 @@ const googleLogin = async (body: any) => {
                 const googleError = (error.response?.data as { error?: string; error_description?: string } | undefined) || {}
                 const status = error.response?.status || StatusCodes.BAD_REQUEST
                 const description = googleError.error_description || googleError.error || 'Google token exchange failed'
-                throw new InternalFlowiseError(
+                throw new InternalTHubError(
                     status >= 400 && status < 500 ? status : StatusCodes.BAD_REQUEST,
                     `Google login failed: ${description}`
                 )
@@ -396,7 +397,7 @@ const googleLogin = async (body: any) => {
         const accessToken: string | undefined = response.data?.access_token
 
         if (!idToken) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid Google token response')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid Google token response')
         }
 
         const oauthClient = new OAuth2Client(clientId)
@@ -412,13 +413,13 @@ const googleLogin = async (body: any) => {
         const providerUserId = payload?.sub || crypto.randomUUID()
 
         if (!email) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Google account email is required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Google account email is required')
         }
 
         let user = await withRetry(() => userRepo.findOneBy({ email }), isRetryableDbError, 1)
 
         if (user && user.login_type !== 'google') {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, `Already registered using ${user.login_type}`)
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, `Already registered using ${user.login_type}`)
         }
 
         if (!user) {
@@ -468,7 +469,7 @@ const sendOtp = async (body: any) => {
         const email = normalizeEmail(body.email)
 
         if (!email) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Email is required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Email is required')
         }
 
         ensureMailDeliveryConfigured('send OTP email')
@@ -497,21 +498,21 @@ const verifyOtp = async (body: any) => {
         const otp = String(body.otp || '').trim()
 
         if (!email || !otp) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Email and OTP are required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Email and OTP are required')
         }
 
         const record = otpStore.get(email)
         if (!record) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'OTP not found. Please request a new OTP')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'OTP not found. Please request a new OTP')
         }
 
         if (record.expiresAt < Date.now()) {
             otpStore.delete(email)
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'OTP expired. Please request a new OTP')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'OTP expired. Please request a new OTP')
         }
 
         if (record.otp !== otp) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid OTP')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid OTP')
         }
 
         otpStore.delete(email)
@@ -532,7 +533,7 @@ const getUserData = async (userId: string) => {
         const user = await userRepo.findOneBy({ uid: userId })
 
         if (!user) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'User not found')
         }
 
         return sanitizeUser(user)
@@ -552,7 +553,7 @@ const updateUser = async (body: any) => {
 
         const user = await userRepo.findOneBy({ uid })
         if (!user) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'User not found')
         }
 
         if (typeof body.company === 'string') user.company = body.company
@@ -567,14 +568,14 @@ const updateUser = async (body: any) => {
 
         if (requestedWorkspace) {
             if (user.workspaceUid && normalizeWorkspaceName(user.workspace || '') !== requestedWorkspace) {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Workspace cannot be changed from profile update')
+                throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Workspace cannot be changed from profile update')
             }
 
             if (!user.workspaceUid) {
                 const existingWorkspace = await workspaceRepo.findOneBy({ name: requestedWorkspace })
 
                 if (existingWorkspace) {
-                    throw new InternalFlowiseError(StatusCodes.CONFLICT, 'Workspace already exists')
+                    throw new InternalTHubError(StatusCodes.CONFLICT, 'Workspace already exists')
                 }
 
                 const workspace = workspaceRepo.create({
@@ -627,7 +628,7 @@ const checkEmail = async (body: any) => {
         const email = normalizeEmail(body.email)
 
         if (!email) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Email is required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Email is required')
         }
 
         const user = await userRepo.findOneBy({ email })
@@ -655,13 +656,13 @@ const microsoftLogin = async (body: any) => {
         const loginType = body.login_type || 'azure_ad'
 
         if (!uid || !email) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'uid and email are required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'uid and email are required')
         }
 
         let user = await withRetry(() => userRepo.findOneBy({ email }), isRetryableDbError, 1)
 
         if (user && user.login_type !== 'azure_ad' && user.login_type !== 'microsoft') {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, `Already registered using ${user.login_type}`)
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, `Already registered using ${user.login_type}`)
         }
 
         if (!user) {
@@ -704,14 +705,14 @@ const microsoftLogin = async (body: any) => {
 // ==========================
 // FORGOT PASSWORD
 // ==========================
-const forgotPassword = async (body: any) => {
+const forgotPassword = async (body: any, requestUiBaseUrl?: string) => {
     try {
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
 
         const email = normalizeEmail(body.email)
         if (!email) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Email is required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Email is required')
         }
 
         const genericResponse = { message: 'If that email exists, a reset link has been sent.' }
@@ -728,7 +729,7 @@ const forgotPassword = async (body: any) => {
         user.reset_token_expires_at = new Date(Date.now() + RESET_TOKEN_TTL_MS)
         await userRepo.save(user)
 
-        const resetLink = buildResetPasswordLink(token)
+        const resetLink = buildResetPasswordLink(token, requestUiBaseUrl)
 
         await transporter.sendMail({
             to: email,
@@ -764,24 +765,24 @@ const resetPassword = async (token: string, body: any) => {
         const password = String(body.password || '')
 
         if (!password) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'New password is required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'New password is required')
         }
         if (password.length < 6) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Password must be at least 6 characters')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Password must be at least 6 characters')
         }
 
         const hashedToken = hashToken(token)
         const user = await userRepo.findOneBy({ reset_token: hashedToken })
 
         if (!user) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid or expired reset token')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid or expired reset token')
         }
 
         if (!user.reset_token_expires_at || new Date(user.reset_token_expires_at).getTime() < Date.now()) {
             user.reset_token = null as any
             user.reset_token_expires_at = null as any
             await userRepo.save(user)
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid or expired reset token')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid or expired reset token')
         }
 
         const hash = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
@@ -796,7 +797,7 @@ const resetPassword = async (token: string, body: any) => {
     }
 }
 
-const inviteUser = async (body: any) => {
+const inviteUser = async (body: any, requestUiBaseUrl?: string) => {
     try {
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
@@ -812,7 +813,7 @@ const inviteUser = async (body: any) => {
             .toLowerCase()
 
         if (!email || !workspaceName || !invitedBy) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Missing required fields')
         }
 
         ensureAllowedWorkspaceRole(role)
@@ -820,7 +821,7 @@ const inviteUser = async (body: any) => {
 
         const workspace = await workspaceRepo.findOneBy({ name: workspaceName })
         if (!workspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
 
         const inviterMembership = await workspaceUserRepo.findOneBy({
@@ -830,7 +831,7 @@ const inviteUser = async (body: any) => {
         const inviter = await userRepo.findOneBy({ uid: invitedBy })
 
         if (inviter?.role !== 'superadmin' && inviterMembership?.role !== 'admin') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Only admin can invite users')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Only admin can invite users')
         }
 
         const existingInvite = await workspaceInviteRepo.findOneBy({
@@ -839,12 +840,12 @@ const inviteUser = async (body: any) => {
             used: false
         })
         if (existingInvite && new Date(existingInvite.expires_at).getTime() > Date.now()) {
-            throw new InternalFlowiseError(StatusCodes.CONFLICT, 'Invite already sent')
+            throw new InternalTHubError(StatusCodes.CONFLICT, 'Invite already sent')
         }
 
         const existingUser = await userRepo.findOneBy({ email })
         if (existingUser?.workspaceUid === workspace.id) {
-            throw new InternalFlowiseError(StatusCodes.CONFLICT, 'User already in workspace')
+            throw new InternalTHubError(StatusCodes.CONFLICT, 'User already in workspace')
         }
 
         const token = crypto.randomBytes(32).toString('hex')
@@ -866,12 +867,12 @@ const inviteUser = async (body: any) => {
             await transporter.sendMail({
                 to: email,
                 subject: `You're invited to join ${workspace.name} on THub`,
-                text: `Accept your THub invite here: ${buildInviteLink(token)}`,
+                text: `Accept your THub invite here: ${buildInviteLink(token, requestUiBaseUrl)}`,
                 html: `
                     <div style="font-family: Arial, sans-serif; color: #111827;">
                         <p>You have been invited to join <strong>${workspace.name}</strong> on THub.</p>
                         <p>Role: <strong>${role}</strong></p>
-                        <p><a href="${buildInviteLink(token)}">Accept invite</a></p>
+                        <p><a href="${buildInviteLink(token, requestUiBaseUrl)}">Accept invite</a></p>
                         <p>This invite will expire in 24 hours.</p>
                     </div>
                 `
@@ -895,11 +896,11 @@ const validateInvite = async (token: string) => {
 
         const invite = await workspaceInviteRepo.findOneBy({ token: String(token || '').trim() })
         if (!invite) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Invite not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'Invite not found')
         }
 
         if (invite.used || new Date(invite.expires_at).getTime() < Date.now()) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invite is invalid or expired')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invite is invalid or expired')
         }
 
         const inviter = await userRepo.findOneBy({ uid: invite.invited_by })
@@ -928,12 +929,12 @@ const acceptInvite = async (body: any) => {
         const email = normalizeEmail(body.email || '')
 
         if (!token || !uid || !email) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Missing required fields')
         }
 
         const invite = await workspaceInviteRepo.findOneBy({ token })
         if (!invite || new Date(invite.expires_at).getTime() < Date.now()) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid invite')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid invite')
         }
 
         if (invite.used) {
@@ -941,12 +942,12 @@ const acceptInvite = async (body: any) => {
         }
 
         if (invite.email !== email) {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Email mismatch')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Email mismatch')
         }
 
         const user = await userRepo.findOneBy({ uid })
         if (!user || normalizeEmail(user.email) !== email) {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Email mismatch')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Email mismatch')
         }
 
         const existingMembership = await workspaceUserRepo.findOneBy({
@@ -988,12 +989,12 @@ const getWorkspaceUsers = async (workspace: string, requestedBy: string) => {
 
         const workspaceName = normalizeWorkspaceName(workspace || '')
         if (!workspaceName) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Workspace required')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Workspace required')
         }
 
         const existingWorkspace = await workspaceRepo.findOneBy({ name: workspaceName })
         if (!existingWorkspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
 
         await ensureWorkspacePermission(userRepo, workspaceUserRepo, existingWorkspace.id, requestedBy, ['admin', 'member'])
@@ -1038,12 +1039,12 @@ const deleteWorkspaceUser = async (body: any) => {
         const requestedBy = String(body.requestedBy || '').trim()
 
         if (!userId || !workspaceName || !requestedBy) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid request')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid request')
         }
 
         const workspace = await workspaceRepo.findOneBy({ name: workspaceName })
         if (!workspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
 
         await ensureWorkspacePermission(userRepo, workspaceUserRepo, workspace.id, requestedBy, ['admin'])
@@ -1053,11 +1054,11 @@ const deleteWorkspaceUser = async (body: any) => {
             user_id: userId
         })
         if (!membership) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not in workspace')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'User not in workspace')
         }
 
         if (membership.role === 'admin') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Admin cannot be removed')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Admin cannot be removed')
         }
 
         await workspaceUserRepo.delete({ id: membership.id })
@@ -1096,14 +1097,14 @@ const updateWorkspaceUserRole = async (body: any) => {
         const workspaceName = normalizeWorkspaceName(body.workspace || '')
 
         if (!userId || !role || !workspaceName || !requestedBy) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Missing required fields')
         }
 
         ensureAllowedWorkspaceRole(role)
 
         const workspace = await workspaceRepo.findOneBy({ name: workspaceName })
         if (!workspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
 
         await ensureWorkspacePermission(userRepo, workspaceUserRepo, workspace.id, requestedBy, ['admin'])
@@ -1113,7 +1114,7 @@ const updateWorkspaceUserRole = async (body: any) => {
             role: 'admin'
         })
         if (currentAdmin?.user_id === userId && role !== 'admin') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Admin cannot change his own role')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Admin cannot change his own role')
         }
 
         const membership = await workspaceUserRepo.findOneBy({
@@ -1121,7 +1122,7 @@ const updateWorkspaceUserRole = async (body: any) => {
             user_id: userId
         })
         if (!membership) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'User not in workspace')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'User not in workspace')
         }
 
         membership.role = role
@@ -1151,12 +1152,12 @@ const transferWorkspaceAdmin = async (body: any) => {
         const workspaceName = normalizeWorkspaceName(body.workspace || '')
 
         if (!fromUserId || !toUserId || !workspaceName) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing fields')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Missing fields')
         }
 
         const workspace = await workspaceRepo.findOneBy({ name: workspaceName })
         if (!workspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
 
         const fromMembership = await workspaceUserRepo.findOneBy({
@@ -1169,11 +1170,11 @@ const transferWorkspaceAdmin = async (body: any) => {
         })
 
         if (!fromMembership || fromMembership.role !== 'admin') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Only admin can transfer ownership')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Only admin can transfer ownership')
         }
 
         if (!toMembership) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Target user not found in workspace')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'Target user not found in workspace')
         }
 
         fromMembership.role = 'member'
@@ -1207,7 +1208,7 @@ const getSuperadminWorkspaces = async (uid: string) => {
 
         const user = await userRepo.findOneBy({ uid })
         if (!user || user.role !== 'superadmin') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Not allowed')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Not allowed')
         }
 
         const workspaces = await workspaceRepo.find()
@@ -1247,17 +1248,17 @@ const deleteSuperadminWorkspace = async (body: any) => {
         const workspaceId = String(body.workspaceId || '').trim()
 
         if (!uid || !workspaceId) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Missing required fields')
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Missing required fields')
         }
 
         const user = await userRepo.findOneBy({ uid })
         if (!user || user.role !== 'superadmin') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Not allowed')
+            throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Not allowed')
         }
 
         const workspace = await workspaceRepo.findOneBy({ id: workspaceId })
         if (!workspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Workspace not found')
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, 'Workspace not found')
         }
 
         const memberships = await workspaceUserRepo.findBy({ workspace_id: workspaceId })

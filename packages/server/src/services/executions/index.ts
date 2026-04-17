@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import { In } from 'typeorm'
 import { ChatMessage } from '../../database/entities/ChatMessage'
 import { Execution } from '../../database/entities/Execution'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { getErrorMessage } from '../../errors/utils'
 import { ExecutionState, IAgentflowExecutedData } from '../../Interface'
 import { _removeCredentialId } from '../../utils'
@@ -49,12 +49,12 @@ const getExecutionById = async (executionId: string, tenantId?: string): Promise
             }
         })
         if (!res) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Execution ${executionId} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Execution ${executionId} not found`)
         }
         return res
     } catch (error) {
-        if (error instanceof InternalFlowiseError) throw error
-        throw new InternalFlowiseError(
+        if (error instanceof InternalTHubError) throw error
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: executionsService.getExecutionById - ${getErrorMessage(error)}`
         )
@@ -85,15 +85,15 @@ const getPublicExecutionById = async (executionId: string): Promise<Execution | 
             }
         })
         if (!res) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Execution ${executionId} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Execution ${executionId} not found`)
         }
         const executionData = typeof res?.executionData === 'string' ? JSON.parse(res?.executionData) : res?.executionData
         const executionDataWithoutCredentialId = executionData.map((data: IAgentflowExecutedData) => _removeCredentialId(data))
         const stringifiedExecutionData = JSON.stringify(executionDataWithoutCredentialId)
         return { ...res, executionData: stringifiedExecutionData }
     } catch (error) {
-        if (error instanceof InternalFlowiseError) throw error
-        throw new InternalFlowiseError(
+        if (error instanceof InternalTHubError) throw error
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: executionsService.getPublicExecutionById - ${getErrorMessage(error)}`
         )
@@ -111,6 +111,8 @@ const getAllExecutions = async (filters: ExecutionFilters = {}): Promise<{ data:
             .createQueryBuilder('execution')
             .leftJoinAndSelect('execution.agentflow', 'agentflow')
             .orderBy('execution.updatedDate', 'DESC')
+            .addOrderBy('execution.createdDate', 'DESC')
+            .addOrderBy('execution.id', 'DESC')
             .skip((page - 1) * limit)
             .take(limit)
 
@@ -136,7 +138,7 @@ const getAllExecutions = async (filters: ExecutionFilters = {}): Promise<{ data:
 
         return { data, total }
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: executionsService.getAllExecutions - ${getErrorMessage(error)}`
         )
@@ -152,7 +154,7 @@ const updateExecution = async (executionId: string, data: Partial<Execution>, te
 
         const execution = await appServer.AppDataSource.getRepository(Execution).findOneBy(query)
         if (!execution) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Execution ${executionId} not found`)
+            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Execution ${executionId} not found`)
         }
         const updateExecution = new Execution()
         Object.assign(updateExecution, { ...data, tenantId: execution.tenantId })
@@ -160,8 +162,8 @@ const updateExecution = async (executionId: string, data: Partial<Execution>, te
         const dbResponse = await appServer.AppDataSource.getRepository(Execution).save(execution)
         return dbResponse
     } catch (error) {
-        if (error instanceof InternalFlowiseError) throw error
-        throw new InternalFlowiseError(
+        if (error instanceof InternalTHubError) throw error
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: executionsService.updateExecution - ${getErrorMessage(error)}`
         )
@@ -191,8 +193,8 @@ const deleteExecutions = async (executionIds: string[], tenantId?: string): Prom
             deletedCount: result.affected || 0
         }
     } catch (error) {
-        if (error instanceof InternalFlowiseError) throw error
-        throw new InternalFlowiseError(
+        if (error instanceof InternalTHubError) throw error
+        throw new InternalTHubError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: executionsService.deleteExecutions - ${getErrorMessage(error)}`
         )

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 // MUI
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView'
-import { Typography, Box, Drawer, Chip, Button, Tooltip } from '@mui/material'
+import { Typography, Box, Drawer, Chip, Button, Tooltip, CircularProgress } from '@mui/material'
 import { styled, alpha } from '@mui/material/styles'
 import { useTreeItem2 } from '@mui/x-tree-view/useTreeItem2'
 import {
@@ -38,7 +38,7 @@ import {
 
 // Project imports
 import { useTheme } from '@mui/material/styles'
-import { FLOWISE_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
+import { THUB_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
 import { NodeExecutionDetails } from '@/views/agentexecutions/NodeExecutionDetails'
 import ShareExecutionDialog from './ShareExecutionDialog'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
@@ -290,7 +290,17 @@ const MIN_DRAWER_WIDTH = 400
 const DEFAULT_DRAWER_WIDTH = window.innerWidth - 400
 const MAX_DRAWER_WIDTH = window.innerWidth
 
-export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose, onProceedSuccess, onUpdateSharing, onRefresh }) => {
+export const ExecutionDetails = ({
+    open,
+    isPublic,
+    isLoading,
+    execution,
+    metadata,
+    onClose,
+    onProceedSuccess,
+    onUpdateSharing,
+    onRefresh
+}) => {
     const [drawerWidth, setDrawerWidth] = useState(Math.min(DEFAULT_DRAWER_WIDTH, MAX_DRAWER_WIDTH))
     const [executionTree, setExecution] = useState([])
     const [expandedItems, setExpandedItems] = useState([])
@@ -310,6 +320,13 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
             setLocalMetadata(metadata)
         }
     }, [metadata])
+
+    const agentflowId = localMetadata?.agentflow?.id || localMetadata?.agentflowId
+
+    const openAgentflow = () => {
+        const agentflowPath = agentflowId ? `/v2/agentcanvas/${agentflowId}` : '/v2/agentcanvas'
+        window.open(agentflowPath, '_blank')
+    }
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(localMetadata?.id)
@@ -367,19 +384,19 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
 
     // Transform the execution data into a tree structure
     const buildTreeData = (nodes) => {
-        // for each node, loop through each and every nested key of node.data, and remove the key if it is equal to FLOWISE_CREDENTIAL_ID
+        // for each node, loop through each and every nested key of node.data, and remove the key if it is equal to THUB_CREDENTIAL_ID
         nodes.forEach((node) => {
-            const removeFlowiseCredentialId = (data) => {
+            const removeTHubCredentialId = (data) => {
                 for (const key in data) {
-                    if (key === FLOWISE_CREDENTIAL_ID) {
+                    if (key === THUB_CREDENTIAL_ID) {
                         delete data[key]
                     }
                     if (typeof data[key] === 'object') {
-                        removeFlowiseCredentialId(data[key])
+                        removeTHubCredentialId(data[key])
                     }
                 }
             }
-            removeFlowiseCredentialId(node.data)
+            removeTHubCredentialId(node.data)
         })
 
         // Create a map for quick node lookup
@@ -745,7 +762,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                                 variant='outlined'
                                 label={localMetadata?.agentflow?.name || localMetadata?.agentflow?.id || 'Go to AgentFlow'}
                                 className={'button'}
-                                onClick={() => window.open(`/v2/agentcanvas/${localMetadata?.agentflow?.id}`, '_blank')}
+                                onClick={openAgentflow}
                             />
                         )}
 
@@ -840,7 +857,11 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                     overflow: 'auto'
                 }}
             >
-                {selectedItem && selectedItem.data ? (
+                {isLoading ? (
+                    <Box display='flex' justifyContent='center' alignItems='center' height='100%'>
+                        <CircularProgress />
+                    </Box>
+                ) : selectedItem && selectedItem.data ? (
                     <NodeExecutionDetails
                         data={selectedItem.data}
                         label={selectedItem.label}
@@ -972,6 +993,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
 ExecutionDetails.propTypes = {
     open: PropTypes.bool,
     isPublic: PropTypes.bool,
+    isLoading: PropTypes.bool,
     execution: PropTypes.array,
     metadata: PropTypes.object,
     onClose: PropTypes.func,

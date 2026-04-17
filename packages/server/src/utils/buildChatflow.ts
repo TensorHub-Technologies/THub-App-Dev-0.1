@@ -38,7 +38,7 @@ import {
     IVariableOverride,
     MODE
 } from '../Interface'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalTHubError } from '../errors/internalTHubError'
 import { databaseEntities } from '.'
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { ChatMessage } from '../database/entities/ChatMessage'
@@ -64,7 +64,7 @@ import logger from './logger'
 import { utilAddChatMessage } from './addChatMesage'
 import { buildAgentGraph } from './buildAgentGraph'
 import { getErrorMessage } from '../errors/utils'
-import { FLOWISE_METRIC_COUNTERS, FLOWISE_COUNTER_STATUS, IMetricsProvider } from '../Interface.Metrics'
+import { THUB_METRIC_COUNTERS, THUB_COUNTER_STATUS, IMetricsProvider } from '../Interface.Metrics'
 import { OMIT_QUEUE_JOB_DATA } from './constants'
 import { executeAgentFlow } from './buildAgentflow'
 
@@ -172,7 +172,7 @@ const initEndingNode = async ({
             : reactFlowNodes[reactFlowNodes.length - 1]
 
     if (!nodeToExecute) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Node not found`)
+        throw new InternalTHubError(StatusCodes.NOT_FOUND, `Node not found`)
     }
 
     if (incomingInput.overrideConfig && apiOverrideStatus) {
@@ -900,7 +900,7 @@ const checkIfStreamValid = async (
             Object.keys(endingNodeData.outputs).length &&
             !Object.values(endingNodeData.outputs ?? {}).includes(endingNodeData.name)
         ) {
-            throw new InternalFlowiseError(
+            throw new InternalTHubError(
                 StatusCodes.INTERNAL_SERVER_ERROR,
                 `Output of ${endingNodeData.label} (${endingNodeData.id}) must be ${endingNodeData.label}, can't be an Output Prediction`
             )
@@ -929,7 +929,7 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+        throw new InternalTHubError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
     }
 
     const isAgentFlow = chatflow.type === 'MULTIAGENT'
@@ -939,8 +939,8 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
     const chatId = incomingInput.chatId ?? incomingInput.overrideConfig?.sessionId ?? uuidv4()
     const files = (req.files as Express.Multer.File[]) || []
     const abortControllerId = `${chatflow.id}_${chatId}`
-    const isTool = req.get('flowise-tool') === 'true'
-    const isEvaluation: boolean = req.headers['X-Flowise-Evaluation'] || req.body.evaluation
+    const isTool = req.get('thub-tool') === 'true'
+    const isEvaluation: boolean = req.headers['X-THub-Evaluation'] || req.body.evaluation
     let evaluationRunId = ''
     evaluationRunId = req.body.evaluationRunId
     if (isEvaluation && chatflow.type !== 'AGENTFLOW' && req.body.evaluationRunId) {
@@ -960,7 +960,7 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         if (!isInternal) {
             const isKeyValidated = await validateChatflowAPIKey(req, chatflow)
             if (!isKeyValidated) {
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
+                throw new InternalTHubError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
             }
         }
 
@@ -1011,10 +1011,10 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         logger.error('[server]: Error:', e)
         appServer.abortControllerPool.remove(`${chatflow.id}_${chatId}`)
         incrementFailedMetricCounter(appServer.metricsProvider, isInternal, isAgentFlow)
-        if (e instanceof InternalFlowiseError && e.statusCode === StatusCodes.UNAUTHORIZED) {
+        if (e instanceof InternalTHubError && e.statusCode === StatusCodes.UNAUTHORIZED) {
             throw e
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, getErrorMessage(e))
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, getErrorMessage(e))
         }
     }
 }
@@ -1028,13 +1028,13 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
 const incrementSuccessMetricCounter = (metricsProvider: IMetricsProvider, isInternal: boolean, isAgentFlow: boolean) => {
     if (isAgentFlow) {
         metricsProvider?.incrementCounter(
-            isInternal ? FLOWISE_METRIC_COUNTERS.AGENTFLOW_PREDICTION_INTERNAL : FLOWISE_METRIC_COUNTERS.AGENTFLOW_PREDICTION_EXTERNAL,
-            { status: FLOWISE_COUNTER_STATUS.SUCCESS }
+            isInternal ? THUB_METRIC_COUNTERS.AGENTFLOW_PREDICTION_INTERNAL : THUB_METRIC_COUNTERS.AGENTFLOW_PREDICTION_EXTERNAL,
+            { status: THUB_COUNTER_STATUS.SUCCESS }
         )
     } else {
         metricsProvider?.incrementCounter(
-            isInternal ? FLOWISE_METRIC_COUNTERS.CHATFLOW_PREDICTION_INTERNAL : FLOWISE_METRIC_COUNTERS.CHATFLOW_PREDICTION_EXTERNAL,
-            { status: FLOWISE_COUNTER_STATUS.SUCCESS }
+            isInternal ? THUB_METRIC_COUNTERS.CHATFLOW_PREDICTION_INTERNAL : THUB_METRIC_COUNTERS.CHATFLOW_PREDICTION_EXTERNAL,
+            { status: THUB_COUNTER_STATUS.SUCCESS }
         )
     }
 }
@@ -1048,13 +1048,13 @@ const incrementSuccessMetricCounter = (metricsProvider: IMetricsProvider, isInte
 const incrementFailedMetricCounter = (metricsProvider: IMetricsProvider, isInternal: boolean, isAgentFlow: boolean) => {
     if (isAgentFlow) {
         metricsProvider?.incrementCounter(
-            isInternal ? FLOWISE_METRIC_COUNTERS.AGENTFLOW_PREDICTION_INTERNAL : FLOWISE_METRIC_COUNTERS.AGENTFLOW_PREDICTION_EXTERNAL,
-            { status: FLOWISE_COUNTER_STATUS.FAILURE }
+            isInternal ? THUB_METRIC_COUNTERS.AGENTFLOW_PREDICTION_INTERNAL : THUB_METRIC_COUNTERS.AGENTFLOW_PREDICTION_EXTERNAL,
+            { status: THUB_COUNTER_STATUS.FAILURE }
         )
     } else {
         metricsProvider?.incrementCounter(
-            isInternal ? FLOWISE_METRIC_COUNTERS.CHATFLOW_PREDICTION_INTERNAL : FLOWISE_METRIC_COUNTERS.CHATFLOW_PREDICTION_EXTERNAL,
-            { status: FLOWISE_COUNTER_STATUS.FAILURE }
+            isInternal ? THUB_METRIC_COUNTERS.CHATFLOW_PREDICTION_INTERNAL : THUB_METRIC_COUNTERS.CHATFLOW_PREDICTION_EXTERNAL,
+            { status: THUB_COUNTER_STATUS.FAILURE }
         )
     }
 }

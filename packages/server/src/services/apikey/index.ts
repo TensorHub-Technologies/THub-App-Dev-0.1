@@ -11,7 +11,7 @@ import {
     importKeys as importKeys_json
 } from '../../utils/apiKey'
 import { addChatflowsCount } from '../../utils/addChatflowsCount'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import { getErrorMessage } from '../../errors/utils'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { ApiKey } from '../../database/entities/ApiKey'
@@ -47,10 +47,10 @@ const getAllApiKeys = async (tenantId?: string) => {
 
             return await addChatflowsCount(keys)
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.getAllApiKeys - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.getAllApiKeys - ${getErrorMessage(error)}`)
     }
 }
 
@@ -68,10 +68,10 @@ const getApiKey = async (apiKey: string) => {
             }
             return currentKey
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.createApiKey - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.createApiKey - ${getErrorMessage(error)}`)
     }
 }
 
@@ -95,10 +95,10 @@ const createApiKey = async (keyName: string, tenantId: string) => {
             await appServer.AppDataSource.getRepository(ApiKey).save(key)
             return getAllApiKeys(tenantId)
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.createApiKey - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.createApiKey - ${getErrorMessage(error)}`)
     }
 }
 
@@ -114,19 +114,19 @@ const updateApiKey = async (id: string, keyName: string, tenantId?: string) => {
                 id: id
             })
             if (!currentKey) {
-                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `ApiKey ${currentKey} not found`)
+                throw new InternalTHubError(StatusCodes.NOT_FOUND, `ApiKey ${currentKey} not found`)
             }
             if (tenantId && currentKey.tenantId !== tenantId) {
-                throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Forbidden')
+                throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Forbidden')
             }
             currentKey.keyName = keyName
             await appServer.AppDataSource.getRepository(ApiKey).save(currentKey)
             return getAllApiKeys(currentKey.tenantId)
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.updateApiKey - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.updateApiKey - ${getErrorMessage(error)}`)
     }
 }
 
@@ -139,21 +139,21 @@ const deleteApiKey = async (id: string, tenantId?: string) => {
             const appServer = getRunningExpressApp()
             const existingKey = await appServer.AppDataSource.getRepository(ApiKey).findOneBy({ id })
             if (!existingKey) {
-                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `ApiKey ${id} not found`)
+                throw new InternalTHubError(StatusCodes.NOT_FOUND, `ApiKey ${id} not found`)
             }
             if (tenantId && existingKey.tenantId !== tenantId) {
-                throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Forbidden')
+                throw new InternalTHubError(StatusCodes.FORBIDDEN, 'Forbidden')
             }
             const dbResponse = await appServer.AppDataSource.getRepository(ApiKey).delete({ id: id })
             if (!dbResponse) {
-                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `ApiKey ${id} not found`)
+                throw new InternalTHubError(StatusCodes.NOT_FOUND, `ApiKey ${id} not found`)
             }
             return getAllApiKeys(existingKey.tenantId)
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.deleteApiKey - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.deleteApiKey - ${getErrorMessage(error)}`)
     }
 }
 
@@ -162,7 +162,7 @@ const importKeys = async (body: any) => {
         const jsonFile = body.jsonFile
         const splitDataURI = jsonFile.split(',')
         if (splitDataURI[0] !== 'data:application/json;base64') {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Invalid dataURI`)
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Invalid dataURI`)
         }
         const bf = Buffer.from(splitDataURI[1] || '', 'base64')
         const plain = bf.toString('utf8')
@@ -191,7 +191,7 @@ const importKeys = async (body: any) => {
                 for (const key of keys) {
                     const keyNameExists = allApiKeys.find((k) => k.keyName === key.keyName)
                     if (keyNameExists) {
-                        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Key with name ${key.keyName} already exists`)
+                        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Key with name ${key.keyName} already exists`)
                     }
                 }
             }
@@ -234,10 +234,10 @@ const importKeys = async (body: any) => {
             }
             return getAllApiKeys(body.tenantId)
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.importKeys - ${getErrorMessage(error)}`)
+        throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.importKeys - ${getErrorMessage(error)}`)
     }
 }
 
@@ -246,7 +246,7 @@ const verifyApiKey = async (paramApiKey: string): Promise<string> => {
         if (_apikeysStoredInJson()) {
             const apiKey = await getApiKey_json(paramApiKey)
             if (!apiKey) {
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
+                throw new InternalTHubError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
             }
             return 'OK'
         } else if (_apikeysStoredInDb()) {
@@ -255,20 +255,17 @@ const verifyApiKey = async (paramApiKey: string): Promise<string> => {
                 apiKey: paramApiKey
             })
             if (!apiKey) {
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
+                throw new InternalTHubError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
             }
             return 'OK'
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `UNKNOWN APIKEY_STORAGE_TYPE`)
         }
     } catch (error) {
-        if (error instanceof InternalFlowiseError && error.statusCode === StatusCodes.UNAUTHORIZED) {
+        if (error instanceof InternalTHubError && error.statusCode === StatusCodes.UNAUTHORIZED) {
             throw error
         } else {
-            throw new InternalFlowiseError(
-                StatusCodes.INTERNAL_SERVER_ERROR,
-                `Error: apikeyService.verifyApiKey - ${getErrorMessage(error)}`
-            )
+            throw new InternalTHubError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: apikeyService.verifyApiKey - ${getErrorMessage(error)}`)
         }
     }
 }

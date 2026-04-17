@@ -1,5 +1,5 @@
 import {
-    FlowiseWindowMemory,
+    THubWindowMemory,
     ICommonObject,
     IDatabaseEntity,
     IMessage,
@@ -90,7 +90,7 @@ interface BufferMemoryExtendedInput {
     chatflowid: string
 }
 
-class BufferWindowMemoryExtended extends FlowiseWindowMemory implements MemoryMethods {
+class BufferWindowMemoryExtended extends THubWindowMemory implements MemoryMethods {
     appDataSource: DataSource
     databaseEntities: IDatabaseEntity
     chatflowid: string

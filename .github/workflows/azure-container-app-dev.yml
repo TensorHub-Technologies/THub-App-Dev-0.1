@@ -3,10 +3,10 @@ trigger:
  
 variables:
   # Azure Resource Manager service connection (used by AzureCLI@2)
-  azureSubscription: ARMSC   # <-- ARM service connection name
+  azureSubscription: ARM-SC-Dev   # <-- ARM service connection name
  
   # Docker Registry service connection (used by Docker@2)
-  dockerRegistryServiceConnection: DockerSC    # <-- Docker Registry service connection name
+  dockerRegistryServiceConnection: DR-SC-Dev    # <-- Docker Registry service connection name
  
   resourceGroup: thub-dev
   acrName: thubdev            # ACR name (not FQDN)
