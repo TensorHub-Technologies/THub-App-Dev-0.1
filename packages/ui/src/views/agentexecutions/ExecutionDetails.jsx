@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 // MUI
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView'
-import { Typography, Box, Drawer, Chip, Button, Tooltip } from '@mui/material'
+import { Typography, Box, Drawer, Chip, Button, Tooltip, CircularProgress } from '@mui/material'
 import { styled, alpha } from '@mui/material/styles'
 import { useTreeItem2 } from '@mui/x-tree-view/useTreeItem2'
 import {
@@ -290,7 +290,17 @@ const MIN_DRAWER_WIDTH = 400
 const DEFAULT_DRAWER_WIDTH = window.innerWidth - 400
 const MAX_DRAWER_WIDTH = window.innerWidth
 
-export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose, onProceedSuccess, onUpdateSharing, onRefresh }) => {
+export const ExecutionDetails = ({
+    open,
+    isPublic,
+    isLoading,
+    execution,
+    metadata,
+    onClose,
+    onProceedSuccess,
+    onUpdateSharing,
+    onRefresh
+}) => {
     const [drawerWidth, setDrawerWidth] = useState(Math.min(DEFAULT_DRAWER_WIDTH, MAX_DRAWER_WIDTH))
     const [executionTree, setExecution] = useState([])
     const [expandedItems, setExpandedItems] = useState([])
@@ -840,7 +850,11 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                     overflow: 'auto'
                 }}
             >
-                {selectedItem && selectedItem.data ? (
+                {isLoading ? (
+                    <Box display='flex' justifyContent='center' alignItems='center' height='100%'>
+                        <CircularProgress />
+                    </Box>
+                ) : selectedItem && selectedItem.data ? (
                     <NodeExecutionDetails
                         data={selectedItem.data}
                         label={selectedItem.label}
@@ -972,6 +986,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
 ExecutionDetails.propTypes = {
     open: PropTypes.bool,
     isPublic: PropTypes.bool,
+    isLoading: PropTypes.bool,
     execution: PropTypes.array,
     metadata: PropTypes.object,
     onClose: PropTypes.func,

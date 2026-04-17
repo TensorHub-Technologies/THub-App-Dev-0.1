@@ -466,10 +466,10 @@ const AgentExecutions = () => {
                         onSelectionChange={handleExecutionSelectionChange}
                         onExecutionRowClick={(execution) => {
                             setOpenDrawer(true)
-                            const executionDetails =
-                                typeof execution.executionData === 'string' ? JSON.parse(execution.executionData) : execution.executionData
-                            setSelectedExecutionData(executionDetails)
+                            // Clear previous execution data while loading the new one
+                            setSelectedExecutionData(null)
                             setSelectedMetadata(omit(execution, ['executionData']))
+                            getExecutionByIdApi.request(execution.id)
                         }}
                     />
 
@@ -494,6 +494,7 @@ const AgentExecutions = () => {
 
                     <ExecutionDetails
                         open={openDrawer}
+                        isLoading={getExecutionByIdApi.loading}
                         execution={selectedExecutionData}
                         metadata={selectedMetadata}
                         onClose={() => setOpenDrawer(false)}

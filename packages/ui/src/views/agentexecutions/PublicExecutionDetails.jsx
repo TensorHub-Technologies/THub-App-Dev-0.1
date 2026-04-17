@@ -89,6 +89,7 @@ const PublicExecutionDetails = () => {
                     ) : (
                         <ExecutionDetails
                             isPublic={true}
+                            isLoading={false}
                             execution={execution}
                             metadata={selectedMetadata}
                             onProceedSuccess={() => {

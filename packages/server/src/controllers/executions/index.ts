@@ -9,7 +9,7 @@ const getExecutionById = async (req: Request, res: Response, next: NextFunction)
         if (!tenantId) {
             return res.status(401).json({ message: 'Authentication required' })
         }
-        const execution = (req.authorizedResource as any) || (await executionsService.getExecutionById(executionId, tenantId))
+        const execution = await executionsService.getExecutionById(executionId, tenantId)
         return res.json(execution)
     } catch (error) {
         next(error)
