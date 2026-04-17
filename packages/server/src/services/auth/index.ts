@@ -56,19 +56,20 @@ const formatOptionalDate = (value?: Date | string | null) => {
     return date.toISOString().split('T')[0]
 }
 
-const buildUiBaseUrl = () => {
+const buildUiBaseUrl = (requestUiBaseUrl?: string) => {
     return (
         process.env.RESET_PASSWORD_URL ||
         process.env.INVITE_BASE_URL ||
         process.env.APP_URL ||
         process.env.UI_BASE_URL ||
         process.env.VITE_UI_BASE_URL ||
+        requestUiBaseUrl ||
         'http://localhost:3000'
     ).replace(/\/+$/, '')
 }
 
-const buildResetPasswordLink = (token: string) => `${buildUiBaseUrl()}/reset-password/${token}`
-const buildInviteLink = (token: string) => `${buildUiBaseUrl()}/accept-invite?token=${token}`
+const buildResetPasswordLink = (token: string, requestUiBaseUrl?: string) => `${buildUiBaseUrl(requestUiBaseUrl)}/reset-password/${token}`
+const buildInviteLink = (token: string, requestUiBaseUrl?: string) => `${buildUiBaseUrl(requestUiBaseUrl)}/accept-invite?token=${token}`
 
 const ensureMailDeliveryConfigured = (action: string) => {
     if (!transporter.isConfigured()) {
@@ -704,7 +705,7 @@ const microsoftLogin = async (body: any) => {
 // ==========================
 // FORGOT PASSWORD
 // ==========================
-const forgotPassword = async (body: any) => {
+const forgotPassword = async (body: any, requestUiBaseUrl?: string) => {
     try {
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
@@ -728,7 +729,7 @@ const forgotPassword = async (body: any) => {
         user.reset_token_expires_at = new Date(Date.now() + RESET_TOKEN_TTL_MS)
         await userRepo.save(user)
 
-        const resetLink = buildResetPasswordLink(token)
+        const resetLink = buildResetPasswordLink(token, requestUiBaseUrl)
 
         await transporter.sendMail({
             to: email,
@@ -796,7 +797,7 @@ const resetPassword = async (token: string, body: any) => {
     }
 }
 
-const inviteUser = async (body: any) => {
+const inviteUser = async (body: any, requestUiBaseUrl?: string) => {
     try {
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
@@ -866,12 +867,12 @@ const inviteUser = async (body: any) => {
             await transporter.sendMail({
                 to: email,
                 subject: `You're invited to join ${workspace.name} on THub`,
-                text: `Accept your THub invite here: ${buildInviteLink(token)}`,
+                text: `Accept your THub invite here: ${buildInviteLink(token, requestUiBaseUrl)}`,
                 html: `
                     <div style="font-family: Arial, sans-serif; color: #111827;">
                         <p>You have been invited to join <strong>${workspace.name}</strong> on THub.</p>
                         <p>Role: <strong>${role}</strong></p>
-                        <p><a href="${buildInviteLink(token)}">Accept invite</a></p>
+                        <p><a href="${buildInviteLink(token, requestUiBaseUrl)}">Accept invite</a></p>
                         <p>This invite will expire in 24 hours.</p>
                     </div>
                 `

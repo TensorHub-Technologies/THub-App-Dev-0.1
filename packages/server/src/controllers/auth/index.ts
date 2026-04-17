@@ -11,6 +11,27 @@ const getAuthenticatedUser = (req: Request) => {
     return req.authUser
 }
 
+const getFirstHeaderValue = (value?: string) =>
+    String(value || '')
+        .split(',')[0]
+        .trim()
+
+const getRequestUiBaseUrl = (req: Request) => {
+    const origin = getFirstHeaderValue(req.get('origin'))
+    if (origin) {
+        return origin.replace(/\/+$/, '')
+    }
+
+    const protocol = getFirstHeaderValue(req.get('x-forwarded-proto') || req.get('X-Forwarded-Proto') || req.protocol)
+    const host = getFirstHeaderValue(req.get('x-forwarded-host') || req.get('X-Forwarded-Host') || req.get('host'))
+
+    if (!protocol || !host) {
+        return undefined
+    }
+
+    return `${protocol}://${host}`.replace(/\/+$/, '')
+}
+
 // ================= CREATE =================
 const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -141,7 +162,7 @@ const forgotPassword = async (req: Request, res: Response, next: NextFunction) =
         if (!req.body?.email) {
             throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.forgotPassword - email not provided!`)
         }
-        const apiResponse = await authService.forgotPassword(req.body)
+        const apiResponse = await authService.forgotPassword(req.body, getRequestUiBaseUrl(req))
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -169,10 +190,13 @@ const inviteUser = async (req: Request, res: Response, next: NextFunction) => {
             throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: authController.inviteUser - missing fields!`)
         }
 
-        const apiResponse = await authService.inviteUser({
-            ...req.body,
-            invitedBy: authUser.uid
-        })
+        const apiResponse = await authService.inviteUser(
+            {
+                ...req.body,
+                invitedBy: authUser.uid
+            },
+            getRequestUiBaseUrl(req)
+        )
         return res.json(apiResponse)
     } catch (error) {
         next(error)
