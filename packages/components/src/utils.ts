@@ -24,7 +24,6 @@ import JSON5 from 'json5'
 import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-
 export const numberOrExpressionRegex = '^(\\d+\\.?\\d*|{{.*}})$' //return true if string consists only numbers OR expression {{}}
 export const notEmptyRegex = '(.|\\s)*\\S(.|\\s)*' //return true if string is not empty or blank
 export const FLOWISE_CHATID = 'flowise_chatId'
@@ -750,7 +749,7 @@ export const mapChatMessageToBaseMessage = async (chatmessages: any[] = []): Pro
                                 }
                             })
                         } else if (upload.type === 'stored-file:full') {
-                            const fileLoaderNodeModule = await import('../nodes/documentloaders/File/File')
+                            const fileLoaderNodeModule = await import('../nodes/documentloaders/File/File.js')
                             // @ts-ignore
                             const fileLoaderNodeInstance = new fileLoaderNodeModule.nodeClass()
                             const options = {
@@ -760,10 +759,21 @@ export const mapChatMessageToBaseMessage = async (chatmessages: any[] = []): Pro
                             }
                             let fileInputFieldFromMimeType = 'txtFile'
                             fileInputFieldFromMimeType = mapMimeTypeToInputField(upload.mime)
-                            const nodeData = {
+                            const nodeData: INodeData = {
+                                id: '',
+                                label: '',
+                                name: '',
+                                type: '',
+                                category: '',
+                                description: '',
+                                icon: '', // Add a default or appropriate icon value
+                                version: 1, // Add a default or appropriate version value
                                 inputs: {
                                     [fileInputFieldFromMimeType]: `FILE-STORAGE::${JSON.stringify([upload.name])}`
-                                }
+                                },
+                                outputs: {},
+                                credential: '',
+                                baseClasses: []
                             }
                             const documents: string = await fileLoaderNodeInstance.init(nodeData, '', options)
                             messageWithFileUploads += `<doc name='${upload.name}'>${handleEscapeCharacters(documents, true)}</doc>\n\n`
@@ -1373,9 +1383,6 @@ export const refreshOAuth2Token = async (
             }
 
             try {
-                // Import fetch dynamically to avoid issues
-                const fetch = (await import('node-fetch')).default
-
                 // Call the refresh API endpoint
                 const refreshResponse = await fetch(
                     `${options.baseURL || 'http://localhost:3000'}/api/v1/oauth2-credential/refresh/${credentialId}`,

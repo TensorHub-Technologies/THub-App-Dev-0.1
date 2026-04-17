@@ -1,4 +1,3 @@
-import fetch from 'node-fetch'
 import { Document } from '@langchain/core/documents'
 import { VectaraStore } from '@langchain/community/vectorstores/vectara'
 import { VectorDBQAChain } from 'langchain/chains'

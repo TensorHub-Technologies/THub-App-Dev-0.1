@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import fetch from 'node-fetch'
 import { DynamicStructuredTool } from '../OpenAPIToolkit/core.js'
 import { TOOL_ARGS_PREFIX } from '../../../src/agents.js'
 

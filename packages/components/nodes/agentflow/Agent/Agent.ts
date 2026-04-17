@@ -18,7 +18,7 @@ import { ILLMMessage } from '../Interface.Agentflow.js'
 import { Tool } from '@langchain/core/tools'
 import { ARTIFACTS_PREFIX, SOURCE_DOCUMENTS_PREFIX, TOOL_ARGS_PREFIX } from '../../../src/agents.js'
 import { flatten } from 'lodash'
-import zodToJsonSchema from 'zod-to-json-schema'
+import { zodToJsonSchema } from 'zod-to-json-schema'
 import { getErrorMessage } from '../../../src/error.js'
 import { DataSource } from 'typeorm'
 import {
@@ -30,7 +30,6 @@ import {
 } from '../utils.js'
 import { convertMultiOptionsToStringArray, getCredentialData, getCredentialParam } from '../../../src/utils.js'
 import { addSingleFileToStorage } from '../../../src/storageUtils.js'
-import fetch from 'node-fetch'
 
 interface ITool {
     agentSelectedTool: string

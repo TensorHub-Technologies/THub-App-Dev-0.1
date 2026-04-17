@@ -1,6 +1,6 @@
 import { load } from 'js-yaml'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface.js'
-import { getFileFromStorage, getVars, IDatabaseEntity, IVariable } from '../../../src.js'
+import { getFileFromStorage, getVars, IDatabaseEntity, IVariable } from '../../../src/index.js'
 import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { z, ZodSchema, ZodTypeAny } from 'zod'
 import { defaultCode, DynamicStructuredTool, howToUseCode } from './core.js'

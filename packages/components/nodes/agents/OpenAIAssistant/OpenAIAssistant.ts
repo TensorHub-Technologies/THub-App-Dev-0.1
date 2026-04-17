@@ -11,7 +11,6 @@ import {
 import OpenAI from 'openai'
 import { DataSource } from 'typeorm'
 import { getCredentialData, getCredentialParam } from '../../../src/utils.js'
-import fetch from 'node-fetch'
 import { flatten, uniqWith, isEqual } from 'lodash'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 import { AnalyticHandler } from '../../../src/handler.js'

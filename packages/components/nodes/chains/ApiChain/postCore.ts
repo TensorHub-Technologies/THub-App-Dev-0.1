@@ -3,7 +3,6 @@ import { CallbackManagerForChainRun } from '@langchain/core/callbacks/manager'
 import { BaseChain, ChainInputs, LLMChain, SerializedAPIChain } from 'langchain/chains'
 import { BasePromptTemplate, PromptTemplate } from '@langchain/core/prompts'
 import { ChainValues } from '@langchain/core/utils/types'
-import fetch from 'node-fetch'
 
 export const API_URL_RAW_PROMPT_TEMPLATE = `You are given the below API Documentation:
 {api_docs}

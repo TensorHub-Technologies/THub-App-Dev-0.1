@@ -1,7 +1,7 @@
 import { BaseMessage, MessageContentImageUrl } from '@langchain/core/messages'
 import { getImageUploads } from '../../src/multiModalUtils.js'
 import { getFileFromStorage } from '../../src/storageUtils.js'
-import { ICommonObject, IFileUpload } from '../../src/Interface.js'
+import { ICommonObject, IFileUpload, INodeData } from '../../src/Interface.js'
 import { BaseMessageLike } from '@langchain/core/messages'
 import { IFlowState } from './Interface.Agentflow.js'
 import { handleEscapeCharacters, mapMimeTypeToInputField } from '../../src/utils.js'
@@ -340,7 +340,7 @@ export const getPastChatHistoryImageMessages = async (
                             }
                         })
                     } else if (upload.type === 'stored-file:full') {
-                        const fileLoaderNodeModule = await import('../../nodes/documentloaders/File/File')
+                        const fileLoaderNodeModule = await import('../../nodes/documentloaders/File/File.js')
                         // @ts-ignore
                         const fileLoaderNodeInstance = new fileLoaderNodeModule.nodeClass()
                         const nodeOptions = {
@@ -351,10 +351,11 @@ export const getPastChatHistoryImageMessages = async (
                         let fileInputFieldFromMimeType = 'txtFile'
                         fileInputFieldFromMimeType = mapMimeTypeToInputField(upload.mime)
                         const nodeData = {
+                            id: '',
                             inputs: {
                                 [fileInputFieldFromMimeType]: `FILE-STORAGE::${JSON.stringify([upload.name])}`
                             }
-                        }
+                        } as unknown as INodeData
                         const documents: string = await fileLoaderNodeInstance.init(nodeData, '', nodeOptions)
                         messageWithFileUploads += `<doc name='${upload.name}'>${handleEscapeCharacters(documents, true)}</doc>\n\n`
                     }

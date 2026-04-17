@@ -2,7 +2,7 @@ import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams, IServe
 import { updateFlowState } from '../utils.js'
 import { Tool } from '@langchain/core/tools'
 import { ARTIFACTS_PREFIX, TOOL_ARGS_PREFIX } from '../../../src/agents.js'
-import zodToJsonSchema from 'zod-to-json-schema'
+import { zodToJsonSchema } from 'zod-to-json-schema'
 
 interface IToolInputArgs {
     inputArgName: string

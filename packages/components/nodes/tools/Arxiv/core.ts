@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import fetch from 'node-fetch'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DynamicStructuredTool } from '../OpenAPIToolkit/core.js'
 
@@ -174,7 +173,7 @@ export class ArxivTool extends DynamicStructuredTool {
         }
 
         // Get PDF buffer and create blob
-        const buffer = await response.buffer()
+        const buffer = Buffer.from(await response.arrayBuffer())
         // @ts-ignore
         const blob = new Blob([buffer])
 

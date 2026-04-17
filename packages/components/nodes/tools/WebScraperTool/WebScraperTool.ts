@@ -1,7 +1,6 @@
 import { INode, INodeParams, INodeData, ICommonObject } from '../../../src/Interface.js'
 import { getBaseClasses } from '../../../src/utils.js'
 import { Tool } from '@langchain/core/tools'
-import fetch from 'node-fetch'
 import * as cheerio from 'cheerio'
 import { URL } from 'url'
 import { xmlScrape } from '../../../src/utils.js'
@@ -59,8 +58,10 @@ class WebScraperRecursiveTool extends Tool {
     }
 
     private async scrapeSingleUrl(url: string): Promise<Omit<ScrapedPageData, 'url'> & { foundLinks: string[] }> {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs)
         try {
-            const response = await fetch(url, { timeout: this.timeoutMs, redirect: 'follow', follow: 5 })
+            const response = await fetch(url, { signal: controller.signal, redirect: 'follow' })
             if (!response.ok) {
                 const errorText = await response.text()
                 return {
@@ -144,6 +145,7 @@ class WebScraperRecursiveTool extends Tool {
                 foundLinks: [...new Set(foundLinks)]
             }
         } catch (error: any) {
+            clearTimeout(timeoutId)
             if (error.type === 'request-timeout') {
                 return {
                     title: '',
