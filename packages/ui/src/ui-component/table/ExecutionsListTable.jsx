@@ -2,11 +2,11 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
-import { Box, Skeleton, Typography, Chip, Checkbox, useTheme, Tooltip } from '@mui/material'
+import { Box, Skeleton, Typography, Chip, Checkbox, useTheme, Tooltip, IconButton } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import StopCircleIcon from '@mui/icons-material/StopCircle'
 import ErrorIcon from '@mui/icons-material/Error'
-import { IconLoader, IconCircleXFilled } from '@tabler/icons-react'
+import { IconLoader, IconCircleXFilled, IconCopy, IconCheck } from '@tabler/icons-react'
 
 const getIconFromStatus = (state, theme) => {
     const transparentStyle = { background: 'transparent' }
@@ -87,6 +87,7 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
     const isDark = customization.isDarkMode
 
     const [selected, setSelected] = useState([])
+    const [copiedSessionId, setCopiedSessionId] = useState('')
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -127,6 +128,22 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
 
     const isSelected = (id) => selected.indexOf(id) !== -1
 
+    const handleCopySessionId = async (event, sessionId) => {
+        event.stopPropagation()
+
+        if (!sessionId || !navigator?.clipboard?.writeText) return
+
+        try {
+            await navigator.clipboard.writeText(sessionId)
+            setCopiedSessionId(sessionId)
+            setTimeout(() => {
+                setCopiedSessionId((currentSessionId) => (currentSessionId === sessionId ? '' : currentSessionId))
+            }, 1500)
+        } catch (error) {
+            console.error('Failed to copy session ID:', error)
+        }
+    }
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {/* Header Card */}
@@ -146,7 +163,7 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                     <Box
                         sx={{
                             display: 'grid',
-                            gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
+                            gridTemplateColumns: '56px 140px 170px minmax(220px, 0.9fr) 130px 110px 150px minmax(180px, 1fr)',
                             gap: 3,
                             alignItems: 'center'
                         }}
@@ -226,19 +243,6 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                             Total Time
                         </Typography>
 
-                        {/* <Typography
-                            variant='h6'
-                            sx={{
-                                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                fontFamily: 'Cambria Math',
-                                textAlign: 'left'
-                            }}
-                        >
-                            Session
-                        </Typography> */}
-
                         <Typography
                             variant='h6'
                             sx={{
@@ -250,6 +254,19 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                             }}
                         >
                             Created
+                        </Typography>
+
+                        <Typography
+                            variant='h6'
+                            sx={{
+                                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                fontFamily: 'Cambria Math',
+                                textAlign: 'left'
+                            }}
+                        >
+                            Session ID
                         </Typography>
                     </Box>
                 </Box>
@@ -289,7 +306,8 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                     <Box
                                         sx={{
                                             display: 'grid',
-                                            gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
+                                            gridTemplateColumns:
+                                                '56px 140px 170px minmax(220px, 0.9fr) 130px 110px 150px minmax(180px, 1fr)',
                                             gap: 3,
                                             alignItems: 'center'
                                         }}
@@ -298,10 +316,10 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                         <Skeleton variant='rectangular' width={80} height={24} sx={{ borderRadius: '12px' }} />
                                         <Skeleton variant='text' width={140} />
                                         <Skeleton variant='text' width={180} />
-                                        <Skeleton variant='text' width={120} />
-                                        {/* Empty spacer */}
-                                        <Box></Box>
+                                        <Skeleton variant='text' width={80} />
+                                        <Skeleton variant='text' width={80} />
                                         <Skeleton variant='text' width={140} />
+                                        <Skeleton variant='text' width={150} />
                                     </Box>
                                 </Box>
                             </Box>
@@ -375,7 +393,8 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                         <Box
                                             sx={{
                                                 display: 'grid',
-                                                gridTemplateColumns: '60px 120px 180px 1.2fr 180px 40px 160px',
+                                                gridTemplateColumns:
+                                                    '56px 140px 170px minmax(220px, 0.9fr) 130px 110px 150px minmax(180px, 1fr)',
                                                 gap: 3,
                                                 alignItems: 'center'
                                             }}
@@ -443,7 +462,7 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                             </Box>
 
                                             {/* Agentflow */}
-                                            <Box>
+                                            <Box sx={{ minWidth: 0 }}>
                                                 <Tooltip title={row.agentflow?.name || 'No agentflow specified'} placement='top' arrow>
                                                     <Typography
                                                         variant='h6'
@@ -453,7 +472,7 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                                             color: isDark ? 'white' : 'black',
                                                             fontSize: '1rem',
                                                             lineHeight: 1.2,
-                                                            maxWidth: '100%',
+                                                            display: 'block',
                                                             whiteSpace: 'nowrap',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis'
@@ -474,7 +493,7 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                                             fontWeight: 500
                                                         }}
                                                     >
-                                                        {row?.total_tokens}
+                                                        {row?.total_tokens ?? 0}
                                                     </Typography>
                                                 </Tooltip>
                                             </Box>
@@ -542,6 +561,67 @@ export const ExecutionsListTable = ({ data, isLoading, onExecutionRowClick, onSe
                                                         {moment(row.createdDate).format('h:mm A')}
                                                     </Typography>
                                                 </Tooltip>
+                                            </Box>
+
+                                            {/* Session ID */}
+                                            <Box
+                                                sx={{
+                                                    minWidth: 0,
+                                                    display: 'flex',
+                                                    justifyContent: 'flex-start',
+                                                    alignItems: 'center',
+                                                    gap: 0.5,
+                                                    '& .copy-session-id-btn': {
+                                                        opacity: 0,
+                                                        visibility: 'hidden',
+                                                        transition: 'opacity 0.2s ease'
+                                                    },
+                                                    '&:hover .copy-session-id-btn': {
+                                                        opacity: 1,
+                                                        visibility: 'visible'
+                                                    }
+                                                }}
+                                            >
+                                                <Tooltip title={row.sessionId || 'N/A'} placement='top' arrow>
+                                                    <Typography
+                                                        variant='body2'
+                                                        sx={{
+                                                            color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)',
+                                                            fontSize: '0.85rem',
+                                                            fontFamily: 'monospace',
+                                                            display: 'block',
+                                                            flex: 1,
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}
+                                                    >
+                                                        {row.sessionId || 'N/A'}
+                                                    </Typography>
+                                                </Tooltip>
+                                                {row.sessionId && (
+                                                    <Tooltip
+                                                        title={copiedSessionId === row.sessionId ? 'Copied!' : 'Copy Session ID'}
+                                                        placement='top'
+                                                        arrow
+                                                    >
+                                                        <IconButton
+                                                            className='copy-session-id-btn'
+                                                            size='small'
+                                                            onClick={(event) => handleCopySessionId(event, row.sessionId)}
+                                                            aria-label='copy session id'
+                                                            sx={{
+                                                                color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)'
+                                                            }}
+                                                        >
+                                                            {copiedSessionId === row.sessionId ? (
+                                                                <IconCheck size={15} />
+                                                            ) : (
+                                                                <IconCopy size={15} />
+                                                            )}
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )}
                                             </Box>
                                         </Box>
                                     </Box>
