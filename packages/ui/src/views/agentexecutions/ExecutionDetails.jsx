@@ -311,6 +311,13 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
         }
     }, [metadata])
 
+    const agentflowId = localMetadata?.agentflow?.id || localMetadata?.agentflowId
+
+    const openAgentflow = () => {
+        const agentflowPath = agentflowId ? `/v2/agentcanvas/${agentflowId}` : '/v2/agentcanvas'
+        window.open(agentflowPath, '_blank')
+    }
+
     const copyToClipboard = () => {
         navigator.clipboard.writeText(localMetadata?.id)
         setCopied(true)
@@ -745,7 +752,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                                 variant='outlined'
                                 label={localMetadata?.agentflow?.name || localMetadata?.agentflow?.id || 'Go to AgentFlow'}
                                 className={'button'}
-                                onClick={() => window.open(`/v2/agentcanvas/${localMetadata?.agentflow?.id}`, '_blank')}
+                                onClick={openAgentflow}
                             />
                         )}
 
