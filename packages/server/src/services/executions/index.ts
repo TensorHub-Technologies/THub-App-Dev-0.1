@@ -111,6 +111,8 @@ const getAllExecutions = async (filters: ExecutionFilters = {}): Promise<{ data:
             .createQueryBuilder('execution')
             .leftJoinAndSelect('execution.agentflow', 'agentflow')
             .orderBy('execution.updatedDate', 'DESC')
+            .addOrderBy('execution.createdDate', 'DESC')
+            .addOrderBy('execution.id', 'DESC')
             .skip((page - 1) * limit)
             .take(limit)
 
