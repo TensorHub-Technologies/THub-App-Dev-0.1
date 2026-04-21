@@ -588,19 +588,29 @@ const decryptCredentialData = async (encryptedData: string): Promise<ICommonObje
                     throw new Error('Failed to retrieve secret value.')
                 }
             } else {
-                const encryptKey = await getEncryptionKey()
-                const decryptedData = AES.decrypt(encryptedData, encryptKey)
-                decryptedDataStr = decryptedData.toString(enc.Utf8)
+                try {
+                    const encryptKey = await getEncryptionKey()
+                    const decryptedData = AES.decrypt(encryptedData, encryptKey)
+                    decryptedDataStr = decryptedData.toString(enc.Utf8)
+                } catch (cryptoErr) {
+                    throw new Error(
+                        'API token or credential is mathematically invalid or corrupted. Please delete and recreate the credential.'
+                    )
+                }
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
-            throw new Error('Failed to decrypt credential data.')
+            throw new Error(error.message || 'Failed to decrypt credential data.')
         }
     } else {
         // Fallback to existing code
-        const encryptKey = await getEncryptionKey()
-        const decryptedData = AES.decrypt(encryptedData, encryptKey)
-        decryptedDataStr = decryptedData.toString(enc.Utf8)
+        try {
+            const encryptKey = await getEncryptionKey()
+            const decryptedData = AES.decrypt(encryptedData, encryptKey)
+            decryptedDataStr = decryptedData.toString(enc.Utf8)
+        } catch (cryptoErr) {
+            throw new Error('API token or credential is mathematically invalid or corrupted. Please delete and recreate the credential.')
+        }
     }
 
     if (!decryptedDataStr) return {}
@@ -637,8 +647,8 @@ export const getCredentialData = async (selectedCredentialId: string, options: I
         const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
 
         return decryptedCredentialData
-    } catch (e) {
-        throw new Error(e)
+    } catch (e: any) {
+        throw new Error(e.message || 'Credentials could not be decrypted/retrieved.')
     }
 }
 
@@ -2161,4 +2171,57 @@ export const createZodSchemaFromJSON = (jsonSchema: any): z.ZodTypeAny => {
 
     // Fallback to any for unknown types
     return z.any()
+}
+
+/**
+ * Handle Anthropic custom fetch to intercept and standardize API errors
+ */
+export const handleAnthropicFetch = async (url: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    try {
+        // @ts-ignore
+        const response = await fetch(url, init)
+
+        if (!response.ok) {
+            let errorMsg = 'Invalid response from Claude API (possible token issue)'
+
+            try {
+                const clonedResponse = response.clone()
+                const errorData = await clonedResponse.json()
+                if (errorData && errorData.error && errorData.error.message) {
+                    errorMsg = errorData.error.message
+                }
+            } catch (jsonError) {
+                // Ignore json parsing error
+            }
+
+            if (response.status === 401) {
+                errorMsg = 'Claude API token is expired or invalid'
+            } else if (response.status === 403) {
+                errorMsg = 'Access denied. Check Claude API permissions'
+            } else if (response.status === 429) {
+                errorMsg = 'Rate limit exceeded. Try again later'
+            } else if (response.status >= 500) {
+                errorMsg = 'Claude API server error'
+            }
+
+            throw new Error(
+                JSON.stringify({
+                    success: false,
+                    error: errorMsg
+                })
+            )
+        }
+
+        return response
+    } catch (e: any) {
+        if (e.message && e.message.startsWith('{"success":false,"error":')) {
+            throw e
+        }
+        throw new Error(
+            JSON.stringify({
+                success: false,
+                error: e.message || 'Unknown error occurred during Claude API call'
+            })
+        )
+    }
 }
