@@ -1,6 +1,6 @@
 import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
 import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getBaseClasses, getCredentialData, getCredentialParam, handleAnthropicFetch } from '../../../src/utils'
 import { Anthropic } from 'llamaindex'
 
 class ChatAnthropic_LlamaIndex_ChatModels implements INode {
@@ -83,9 +83,12 @@ class ChatAnthropic_LlamaIndex_ChatModels implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const anthropicApiKey = getCredentialParam('anthropicApiKey', credentialData, nodeData)
 
-        const obj: Partial<Anthropic> = {
+        const obj: any = {
             model: modelName as any,
-            apiKey: anthropicApiKey
+            apiKey: anthropicApiKey,
+            clientOptions: {
+                fetch: handleAnthropicFetch
+            }
         }
 
         const parsedTemperature = parseFloat(temperature)
