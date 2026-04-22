@@ -9,6 +9,7 @@ import userReducer from './reducers/userReducer'
 import minMaxReducer from './reducers/minMaxReducer'
 import NodeMinMaxReducer from './reducers/nodemMinMaxReducer'
 import modalReducer from './reducers/registerReducer'
+import coworkReducer from './slices/coworkSlice'
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -20,7 +21,8 @@ const reducer = combineReducers({
     user: userReducer,
     minMax: minMaxReducer,
     nodeMinMax: NodeMinMaxReducer,
-    modal: modalReducer
+    modal: modalReducer,
+    cowork: coworkReducer
 })
 
 export default reducer

@@ -43,6 +43,12 @@ const LoaderConfigPreviewChunks = Loadable(lazy(() => import('@/views/docstore/L
 const VectorStoreConfigure = Loadable(lazy(() => import('@/views/docstore/VectorStoreConfigure')))
 const VectorStoreQuery = Loadable(lazy(() => import('@/views/docstore/VectorStoreQuery')))
 
+// cowork routing
+const CoworkSessions = Loadable(lazy(() => import('@/views/cowork')))
+const CoworkDetail = Loadable(lazy(() => import('@/views/cowork/SessionDetail')))
+const PromptStudio = Loadable(lazy(() => import('@/views/cowork/PromptStudio')))
+const SkillMarketplace = Loadable(lazy(() => import('@/views/cowork/SkillMarketplace')))
+
 // Evaluations routing
 const EvalEvaluation = Loadable(lazy(() => import('@/views/evaluations/index')))
 const EvaluationResult = Loadable(lazy(() => import('@/views/evaluations/EvaluationResult')))
@@ -133,6 +139,22 @@ const MainRoutes = {
         {
             path: '/document-stores/query/:storeId',
             element: <VectorStoreQuery />
+        },
+        {
+            path: '/cowork',
+            element: <CoworkSessions />
+        },
+        {
+            path: '/cowork/:id',
+            element: <CoworkDetail />
+        },
+        {
+            path: '/cowork/prompts',
+            element: <PromptStudio />
+        },
+        {
+            path: '/cowork/skills',
+            element: <SkillMarketplace />
         },
         {
             path: '/subscription',
