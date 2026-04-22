@@ -547,7 +547,8 @@ export const getEncryptionKeyPath = (): string => {
  */
 const getEncryptionKey = async (): Promise<string> => {
     if (process.env.THUB_SECRETKEY_OVERWRITE !== undefined && process.env.THUB_SECRETKEY_OVERWRITE !== '') {
-        return process.env.THUB_SECRETKEY_OVERWRITE
+        // Guard against accidental quoting/whitespace from env file or container env interpolation.
+        return process.env.THUB_SECRETKEY_OVERWRITE.trim().replace(/^['"]|['"]$/g, '')
     }
     try {
         if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
@@ -561,7 +562,7 @@ const getEncryptionKey = async (): Promise<string> => {
         }
         return await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
     } catch (error) {
-        throw new Error(error)
+        throw new Error(error instanceof Error ? error.message : String(error))
     }
 }
 
@@ -597,18 +598,25 @@ const decryptCredentialData = async (encryptedData: string): Promise<ICommonObje
             throw new Error('Failed to decrypt credential data.')
         }
     } else {
-        // Fallback to existing code
-        const encryptKey = await getEncryptionKey()
-        const decryptedData = AES.decrypt(encryptedData, encryptKey)
-        decryptedDataStr = decryptedData.toString(enc.Utf8)
+        try {
+            // Fallback to existing code
+            const encryptKey = await getEncryptionKey()
+            const decryptedData = AES.decrypt(encryptedData, encryptKey)
+            decryptedDataStr = decryptedData.toString(enc.Utf8)
+        } catch (error) {
+            console.error(error)
+            throw new Error('Credentials could not be decrypted. Please verify THUB_SECRETKEY_OVERWRITE / encryption.key consistency.')
+        }
     }
 
-    if (!decryptedDataStr) return {}
+    if (!decryptedDataStr) {
+        throw new Error('Credentials could not be decrypted. Please verify THUB_SECRETKEY_OVERWRITE / encryption.key consistency.')
+    }
     try {
         return JSON.parse(decryptedDataStr)
     } catch (e) {
         console.error(e)
-        throw new Error('Credentials could not be decrypted.')
+        throw new Error('Credentials could not be decrypted. Please verify THUB_SECRETKEY_OVERWRITE / encryption.key consistency.')
     }
 }
 
@@ -638,7 +646,7 @@ export const getCredentialData = async (selectedCredentialId: string, options: I
 
         return decryptedCredentialData
     } catch (e) {
-        throw new Error(e)
+        throw new Error(e instanceof Error ? e.message : String(e))
     }
 }
 
@@ -865,7 +873,7 @@ export const convertSchemaToZod = (schema: string | object): ICommonObject => {
         }
         return zodObj
     } catch (e) {
-        throw new Error(e)
+        throw new Error(e instanceof Error ? e.message : String(e))
     }
 }
 

@@ -62,7 +62,8 @@ export const WHITELIST_URLS = [
     '/api/v1/subscription/create',
     '/api/v1/subscription/validate',
     '/api/v1/subscription/activate-free',
-    '/api/v1/subscription/enterprise-mail'
+    '/api/v1/subscription/enterprise-mail',
+    '/api/v1/subscription/webhook/razorpay'
 ]
 
 export const enum GeneralErrorMessage {
