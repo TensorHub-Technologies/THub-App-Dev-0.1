@@ -29,3 +29,22 @@ export const verifyRazorpaySubscriptionSignature = (subscriptionId: string, paym
     if (digestBuffer.length !== signatureBuffer.length) return false
     return crypto.timingSafeEqual(digestBuffer, signatureBuffer)
 }
+
+const getRazorpayWebhookSecret = () => {
+    const webhookSecret = String(process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_SECRET || '').trim()
+    if (!webhookSecret) {
+        throw new InternalTHubError(StatusCodes.SERVICE_UNAVAILABLE, 'RAZORPAY_WEBHOOK_SECRET or RAZORPAY_SECRET is not configured')
+    }
+    return webhookSecret
+}
+
+export const verifyRazorpayWebhookSignature = (rawBody: string, signature: string) => {
+    const secret = getRazorpayWebhookSecret()
+    const digest = crypto.createHmac('sha256', secret).update(rawBody).digest('hex')
+
+    const digestBuffer = Buffer.from(digest)
+    const signatureBuffer = Buffer.from(signature)
+
+    if (digestBuffer.length !== signatureBuffer.length) return false
+    return crypto.timingSafeEqual(digestBuffer, signatureBuffer)
+}

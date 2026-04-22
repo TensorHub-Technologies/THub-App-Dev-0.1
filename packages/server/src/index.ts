@@ -34,6 +34,10 @@ import 'global-agent/bootstrap'
 
 declare global {
     namespace Express {
+        interface Request {
+            rawBody?: string
+        }
+
         namespace Multer {
             interface File {
                 bucket: string
@@ -116,7 +120,7 @@ export class App {
             if (process.env.MODE === MODE.QUEUE) {
                 this.queueManager = QueueManager.getInstance()
                 const serverAdapter = new ExpressAdapter()
-                serverAdapter.setBasePath('/admin/queues')
+                serverAdapter.setBasePath('/api/v1/bull-board')
                 this.queueManager.setupAllQueues({
                     componentNodes: this.nodesPool.componentNodes,
                     telemetry: this.telemetry,
@@ -142,7 +146,17 @@ export class App {
     async config() {
         // Limit is needed to allow sending/receiving base64 encoded string
         const thub_file_size_limit = process.env.THUB_FILE_SIZE_LIMIT || '100mb'
-        this.app.use(express.json({ limit: thub_file_size_limit }))
+        this.app.use(
+            express.json({
+                limit: thub_file_size_limit,
+                verify: (req, _res, buffer) => {
+                    const request = req as express.Request
+                    if (request.originalUrl.startsWith('/api/v1/subscription/webhook/razorpay')) {
+                        request.rawBody = buffer.toString('utf8')
+                    }
+                }
+            })
+        )
         this.app.use(express.urlencoded({ limit: thub_file_size_limit, extended: true }))
 
         // Enhanced trust proxy settings for load balancer
@@ -282,7 +296,7 @@ export class App {
         })
 
         if (process.env.MODE === MODE.QUEUE && process.env.ENABLE_BULLMQ_DASHBOARD === 'true') {
-            this.app.use('/admin/queues', this.queueManager.getBullBoardRouter())
+            this.app.use('/api/v1/bull-board', this.queueManager.getBullBoardRouter())
         }
 
         // ----------------------------------------
