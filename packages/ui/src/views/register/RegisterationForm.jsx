@@ -112,7 +112,7 @@ const RegistrationForm = () => {
             const response = await axios.post(`${apiUrl}/api/v1/auth/register`, finalValues)
             if (response.status === 200 || response.statusText === 'OK') {
                 localStorage.setItem('userId', response.data.userId)
-                window.location.href = `https://${response.data.workspace}.thub.tech/?theme=lite&uid=${response.data.userId}`
+                window.location.href = `${window.location.origin}/?theme=lite&uid=${response.data.userId}`
             }
         } catch (error) {
             console.error('Error submitting form:', error)

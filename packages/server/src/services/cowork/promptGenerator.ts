@@ -160,6 +160,7 @@ export const buildSystemPrompt = async (
         return `You are a helpful AI assistant.\n\nTask: ${taskName}\n${taskDescription}\n\n${inputContext}`
     }
 }
+console.log('Hii')
 
 // Seed default prompts into DB (Ticket 2.5)
 export const seedDefaultPrompts = async (appDataSource: DataSource): Promise<void> => {
