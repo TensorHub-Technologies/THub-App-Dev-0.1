@@ -18,6 +18,7 @@ export const getPostAuthRedirectPath = () => {
 export const redirectAfterAuth = (fallbackPath = DEFAULT_AUTH_REDIRECT_PATH) => {
     const redirectPath = getPostAuthRedirectPath() || fallbackPath
     window.location.assign(`${window.location.origin}${redirectPath}`)
+    console.log('***', window.location.assign(`${window.location.origin}${redirectPath}`))
 }
 
 export const buildLoginRedirectPath = (redirectPath = DEFAULT_AUTH_REDIRECT_PATH) => {
