@@ -211,7 +211,7 @@ const SignUp = () => {
                 if (redirectTo) {
                     navigate(redirectTo, { replace: true })
                 } else {
-                    redirectAfterAuth()
+                    redirectAfterAuth({ navigate })
                 }
             } else {
                 toast.error('Registration failed', {
@@ -353,7 +353,7 @@ const SignUp = () => {
                                 src={thubLogo}
                                 alt='logo'
                                 sx={{ width: 160, mb: 2, cursor: 'pointer' }}
-                                onClick={() => window.location.reload()}
+                                onClick={() => navigate('/', { replace: true })}
                             />
                             <Top setLoading={setLoading} />
 

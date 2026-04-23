@@ -13,7 +13,7 @@ import {
     InputAdornment,
     Alert
 } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Top } from './Top'
@@ -35,6 +35,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [requiredLoginMethod, setRequiredLoginMethod] = useState(null)
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const customization = useSelector((state) => state.customization)
 
@@ -119,7 +120,7 @@ const Login = () => {
                 // 3️⃣ ✅ ACCEPT INVITE (if exists)
 
                 // 4️⃣ Navigate to workflows
-                redirectAfterAuth()
+                redirectAfterAuth({ navigate })
             } catch (error) {
                 console.error('Login Error:', error)
                 alert(error.response?.data?.message || 'Login failed')
@@ -214,7 +215,7 @@ const Login = () => {
                             src={thubLogo}
                             alt='Thub image'
                             sx={{ width: '180px', height: 'auto', padding: '30px 0px 10px 0px', cursor: 'pointer' }}
-                            onClick={() => window.location.reload()}
+                            onClick={() => navigate('/', { replace: true })}
                         />
 
                         {/* ✅ ALERT: Required login method from invite */}
