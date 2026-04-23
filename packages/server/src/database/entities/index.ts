@@ -21,8 +21,18 @@ import { User } from './User'
 import { Workspace } from './Workspace'
 import { WorkspaceUser } from './WorkspaceUser'
 import { WorkspaceInvite } from './WorkspaceInvite'
+import { CoworkSession } from './CoworkSession'
+import { CoworkTask } from './CoworkTask'
+import { CoworkSkill } from './CoworkSkill'
+import { CoworkPrompt } from './CoworkPrompt'
+import { AnalyticsEvent } from './AnalyticsEvent'
 
 export const entities = {
+    CoworkSession,
+    CoworkTask,
+    CoworkSkill,
+    CoworkPrompt,
+    AnalyticsEvent,
     ChatFlow,
     ChatMessage,
     ChatMessageFeedback,
