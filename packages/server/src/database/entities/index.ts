@@ -18,6 +18,7 @@ import { ApiKey } from './ApiKey'
 import { CustomTemplate } from './CustomTemplate'
 import { Execution } from './Execution'
 import { User } from './User'
+import { CoworkPrompt } from './CoworkPrompt'
 import { Workspace } from './Workspace'
 import { WorkspaceUser } from './WorkspaceUser'
 import { WorkspaceInvite } from './WorkspaceInvite'
@@ -46,5 +47,6 @@ export const entities = {
     WorkspaceInvite,
 
     CustomTemplate,
-    Execution
+    Execution,
+    CoworkPrompt
 }
