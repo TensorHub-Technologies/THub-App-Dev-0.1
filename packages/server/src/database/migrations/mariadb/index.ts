@@ -44,6 +44,8 @@ import { AddTenantIdToEvaluatorAndEvaluation1761000000000 } from './176100000000
 import { AddTenantIdToDataset1761100000000 } from './1761100000000-AddTenantIdToDataset'
 import { AddAuthUser1761312000000 } from './1761312000000-AddAuthUser'
 import { AddWorkspaceInviteSupport1761500000000 } from './1761500000000-AddWorkspaceInviteSupport'
+import { CreateCoworkPrompt1765300000000 } from './1765300000000-CreateCoworkPrompt'
+import { FixCoworkPromptColumns1765300000001 } from './1765300000001-FixCoworkPromptColumns'
 
 export const mariadbMigrations = [
     Init1693840429259,
@@ -93,5 +95,7 @@ export const mariadbMigrations = [
     AddTenantIdToEvaluatorAndEvaluation1761000000000,
     AddTenantIdToDataset1761100000000,
     AddAuthUser1761312000000,
-    AddWorkspaceInviteSupport1761500000000
+    AddWorkspaceInviteSupport1761500000000,
+    CreateCoworkPrompt1765300000000,
+    FixCoworkPromptColumns1765300000001
 ]
