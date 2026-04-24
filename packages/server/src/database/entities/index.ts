@@ -25,7 +25,6 @@ import { WorkspaceInvite } from './WorkspaceInvite'
 import { CoworkSession } from './CoworkSession'
 import { CoworkTask } from './CoworkTask'
 import { CoworkSkill } from './CoworkSkill'
-import { CoworkPrompt } from './CoworkPrompt'
 import { AnalyticsEvent } from './AnalyticsEvent'
 
 export const entities = {
@@ -57,6 +56,5 @@ export const entities = {
     WorkspaceInvite,
 
     CustomTemplate,
-    Execution,
-    CoworkPrompt
+    Execution
 }
