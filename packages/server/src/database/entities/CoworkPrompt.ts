@@ -1,4 +1,4 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export class CoworkPrompt {
@@ -7,30 +7,31 @@ export class CoworkPrompt {
 
     @Column()
     persona: string
+    // 'coder' | 'researcher' | 'analyst' | 'reviewer' | 'architect'
 
     @Column({ type: 'text' })
     templateContent: string
 
-    @Column({ nullable: true, type: 'text' })
-    variableMappings: string | null
+    @Column({ type: 'text', nullable: true })
+    variableMappings: string
+    // JSON: { [varName]: description }
 
-    @Column({ nullable: true, type: 'varchar' })
-    targetModel: string | null
-
-    @Column({ nullable: true, type: 'varchar' })
-    tenantId: string | null
+    @Column({ nullable: true })
+    targetModel: string
+    // 'claude' | 'openai' | 'gemini' | null (universal)
 
     @Column({ default: 1 })
     version: number
 
+    @Column({ type: 'float', default: 0 })
+    avgSuccessRate: number
+
     @Column({ default: false })
     isDefault: boolean
 
-    @Column({ type: 'timestamp' })
+    @Column({ nullable: true })
+    tenantId: string // null = built-in, set = custom
+
     @CreateDateColumn()
     createdDate: Date
-
-    @Column({ type: 'timestamp' })
-    @UpdateDateColumn()
-    updatedDate: Date
 }
