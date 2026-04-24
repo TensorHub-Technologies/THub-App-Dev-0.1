@@ -178,8 +178,6 @@ export const seedDefaultPrompts = async (appDataSource: DataSource): Promise<voi
                         task_description: 'Full task requirements',
                         input_context: 'Outputs from dependency tasks'
                     }),
-                    targetModel: null,
-                    tenantId: null,
                     version: 1,
                     isDefault: true
                 })
