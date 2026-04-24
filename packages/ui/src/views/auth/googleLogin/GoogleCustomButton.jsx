@@ -6,9 +6,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
 import PropTypes from 'prop-types'
 import { redirectAfterAuth } from '@/utils/authRedirect'
+import { useNavigate } from 'react-router-dom'
 
 const GoogleCustomButton = ({ setLoading }) => {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
 
     const login = useGoogleLogin({
@@ -21,7 +23,7 @@ const GoogleCustomButton = ({ setLoading }) => {
 
                 authApi.storeAuthSession(data)
                 dispatch({ type: SET_USER_DATA, payload: data.user })
-                redirectAfterAuth()
+                redirectAfterAuth({ navigate })
             } catch (error) {
                 alert('Login Failed')
                 console.error('Failed to exchange code:', error)

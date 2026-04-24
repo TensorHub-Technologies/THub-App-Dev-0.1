@@ -1,12 +1,12 @@
 trigger:
-    - main
+    - testing
 
 variables:
     # Azure Resource Manager service connection (used by AzureCLI@2)
     azureSubscription: ARMSC # <-- ARM service connection name
 
     # Docker Registry service connection (used by Docker@2)
-    dockerRegistryServiceConnection: DockerSCMain # <-- Docker Registry service connection name
+    dockerRegistryServiceConnection: DR-SC-Testing # <-- Docker Registry service connection name
 
     resourceGroup: gs_rg_0361
     acrName: ca7a4dd637e6acr # ACR name (not FQDN)
