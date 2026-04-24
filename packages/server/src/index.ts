@@ -30,6 +30,7 @@ import { WHITELIST_URLS } from './utils/constants'
 import { ExpressAdapter } from '@bull-board/express'
 import subscriptionLegacyRouter from './routes/subscription-legacy'
 import { ensureUserSubscriptionColumns } from './database/utils/ensureUserSubscriptionColumns'
+import { seedDefaultPrompts } from './services/cowork/promptGenerator'
 import 'global-agent/bootstrap'
 
 declare global {
@@ -78,6 +79,8 @@ export class App {
             await this.AppDataSource.runMigrations({ transaction: 'each' })
             await ensureUserSubscriptionColumns(this.AppDataSource)
             logger.info('🔄 [server]: Database migrations completed successfully')
+            await seedDefaultPrompts(this.AppDataSource)
+            logger.info('📝 [server]: Default CoWork prompts seeded')
 
             // Initialize nodes pool
             this.nodesPool = new NodesPool()

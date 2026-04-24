@@ -12,6 +12,7 @@ export const ForgotPassword = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const navigate = useNavigate()
+    const homeUrl = `${window.location.origin}/`
 
     const formik = useFormik({
         initialValues: {
@@ -97,7 +98,7 @@ export const ForgotPassword = () => {
                         flexDirection: 'column'
                     }}
                 >
-                    <a href='https://app.thub.tech/'>
+                    <a href={homeUrl}>
                         <Box
                             component='img'
                             src={thubLogo}

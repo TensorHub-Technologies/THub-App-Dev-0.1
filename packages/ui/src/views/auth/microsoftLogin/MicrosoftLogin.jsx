@@ -9,11 +9,13 @@ import { loginRequest } from './config/msalConfig'
 import { useDispatch, useSelector } from 'react-redux'
 import { SET_USER_DATA } from '@/store/actions'
 import { redirectAfterAuth } from '@/utils/authRedirect'
+import { useNavigate } from 'react-router-dom'
 
 export const MicrosoftLogin = () => {
     const { instance, accounts } = useMsal()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const handleLogin = async () => {
         try {
@@ -53,7 +55,7 @@ export const MicrosoftLogin = () => {
                                         type: SET_USER_DATA,
                                         payload: data.user
                                     })
-                                    redirectAfterAuth()
+                                    redirectAfterAuth({ navigate })
                                 })
                                 .catch((error) => {
                                     console.error('Error storing data:', error)
