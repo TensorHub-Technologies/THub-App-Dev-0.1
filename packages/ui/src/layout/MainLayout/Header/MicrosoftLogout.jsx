@@ -1,19 +1,18 @@
 import { useMsal } from '@azure/msal-react'
 import { Button } from '@mui/material'
 import { Logout } from '@mui/icons-material'
-import { useNavigate } from 'react-router'
 import { clearAuthSession } from '@/utils/authStorage'
 
 export const SignOutButton = () => {
     const { instance } = useMsal()
-    const navigate = useNavigate()
 
     const handleLogout = () => {
+        const redirectUri = `${window.location.origin}/`
         instance.logoutPopup({
-            postLogoutRedirectUri: '/' // optional
+            postLogoutRedirectUri: redirectUri // optional
         })
         clearAuthSession()
-        navigate('/')
+        window.location.assign(redirectUri)
     }
 
     return (

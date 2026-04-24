@@ -1,7 +1,6 @@
 import { BaseQueue } from './BaseQueue'
 import { PredictionQueue } from './PredictionQueue'
 import { UpsertQueue } from './UpsertQueue'
-import { CoworkQueue } from './CoworkQueue'
 import { IComponentNodes } from '../Interface'
 import { Telemetry } from '../utils/telemetry'
 import { CachePool } from '../CachePool'
@@ -15,7 +14,7 @@ import { ExpressAdapter } from '@bull-board/express'
 
 const QUEUE_NAME = process.env.QUEUE_NAME || 'thub-queue'
 
-type QUEUE_TYPE = 'prediction' | 'upsert' | 'cowork'
+type QUEUE_TYPE = 'prediction' | 'upsert'
 
 export class QueueManager {
     private static instance: QueueManager
@@ -150,17 +149,9 @@ export class QueueManager {
         })
         this.registerQueue('upsert', upsertionQueue)
 
-        const coworkQueueName = `${QUEUE_NAME}-cowork`
-        const coworkQueue = new CoworkQueue(coworkQueueName, this.connection)
-        this.registerQueue('cowork', coworkQueue)
-
         if (serverAdapter) {
             createBullBoard({
-                queues: [
-                    new BullMQAdapter(predictionQueue.getQueue()),
-                    new BullMQAdapter(upsertionQueue.getQueue()),
-                    new BullMQAdapter(coworkQueue.getQueue())
-                ],
+                queues: [new BullMQAdapter(predictionQueue.getQueue()), new BullMQAdapter(upsertionQueue.getQueue())],
                 serverAdapter: serverAdapter
             })
             this.bullBoardRouter = serverAdapter.getRouter()

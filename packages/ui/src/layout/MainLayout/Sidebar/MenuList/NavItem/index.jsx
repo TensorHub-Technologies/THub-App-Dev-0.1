@@ -112,6 +112,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                 itemHandler('chatflows')
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navType, item.id, dispatch])
 
     return (
@@ -153,6 +154,7 @@ const NavItem = ({ item, level, navType, onClick, onUploadFile }) => {
                     justifyContent: 'center',
                     backgroundColor: 'transparent',
                     color: customization?.isDarkMode ? '#fff' : '#000',
+                    pl: level > 1 ? `${level * 24}px` : '16px',
                     '&.Mui-selected': {
                         backgroundColor: customization.isDarkMode ? '#000000' : '#ffffff',
                         borderRadius: `10px`,
