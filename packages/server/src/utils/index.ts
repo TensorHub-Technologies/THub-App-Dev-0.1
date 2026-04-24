@@ -533,7 +533,10 @@ export const buildFlow = async ({
     isUpsert,
     stopNodeId,
     uploads,
-    baseURL
+    baseURL,
+    usageCacheManager,
+    updateStorageUsage,
+    checkStorage
 }: BuildFlowParams) => {
     const flowNodes = cloneDeep(reactFlowNodes)
 
@@ -686,7 +689,7 @@ export const buildFlow = async ({
             }
         } catch (e: any) {
             logger.error(e)
-            throw new Error(e instanceof Error ? e.message : String(e))
+            throw new Error(e)
         }
 
         let neighbourNodeIds = graph[nodeId]
@@ -1532,7 +1535,7 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
  */
 export const getEncryptionKey = async (): Promise<string> => {
     if (process.env.THUB_SECRETKEY_OVERWRITE !== undefined && process.env.THUB_SECRETKEY_OVERWRITE !== '') {
-        return process.env.THUB_SECRETKEY_OVERWRITE.trim().replace(/^['"]|['"]$/g, '')
+        return process.env.THUB_SECRETKEY_OVERWRITE
     }
     if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
         const secretId = process.env.SECRETKEY_AWS_NAME || 'THubEncryptionKey'

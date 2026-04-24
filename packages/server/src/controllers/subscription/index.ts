@@ -105,29 +105,10 @@ const enterpriseMailStatus = async (_req: Request, res: Response) => {
     })
 }
 
-const handleRazorpayWebhook = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const signatureHeader = req.headers['x-razorpay-signature']
-        const rawBody = req.rawBody || JSON.stringify(req.body || {})
-        const apiResponse = await subscriptionService.handleRazorpayWebhook(rawBody, signatureHeader)
-        return res.status(StatusCodes.OK).json(apiResponse)
-    } catch (error) {
-        if (
-            error instanceof InternalTHubError &&
-            error.statusCode === StatusCodes.BAD_REQUEST &&
-            error.message === 'Invalid webhook signature'
-        ) {
-            return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Invalid webhook signature' })
-        }
-        next(error)
-    }
-}
-
 export default {
     createSubscription,
     validateSubscription,
     activateFreeSubscription,
     submitEnterpriseMail,
-    enterpriseMailStatus,
-    handleRazorpayWebhook
+    enterpriseMailStatus
 }

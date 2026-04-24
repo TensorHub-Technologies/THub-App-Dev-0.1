@@ -1,0 +1,56 @@
+import { MigrationInterface, QueryRunner } from 'typeorm'
+
+export class CreateCoworkPrompt1765300000000 implements MigrationInterface {
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        if (!(await queryRunner.hasTable('cowork_prompt'))) {
+            await queryRunner.query(`
+                CREATE TABLE \`cowork_prompt\` (
+                    \`id\` varchar(36) NOT NULL,
+                    \`persona\` varchar(255) NOT NULL,
+                    \`templateContent\` longtext NOT NULL,
+                    \`variableMappings\` longtext,
+                    \`targetModel\` varchar(255),
+                    \`tenantId\` varchar(255),
+                    \`version\` int NOT NULL DEFAULT 1,
+                    \`isDefault\` tinyint NOT NULL DEFAULT 0,
+                    \`createdDate\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    \`updatedDate\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (\`id\`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            `)
+            await queryRunner.query('CREATE INDEX `IDX_cowork_prompt_persona` ON `cowork_prompt` (`persona`);')
+            await queryRunner.query('CREATE INDEX `IDX_cowork_prompt_persona_isDefault` ON `cowork_prompt` (`persona`, `isDefault`);')
+        } else {
+            // Table exists from a prior partial migration — ensure all columns are present
+            if (!(await queryRunner.hasColumn('cowork_prompt', 'variableMappings'))) {
+                await queryRunner.query('ALTER TABLE `cowork_prompt` ADD COLUMN `variableMappings` longtext;')
+            }
+            if (!(await queryRunner.hasColumn('cowork_prompt', 'targetModel'))) {
+                await queryRunner.query('ALTER TABLE `cowork_prompt` ADD COLUMN `targetModel` varchar(255);')
+            }
+            if (!(await queryRunner.hasColumn('cowork_prompt', 'tenantId'))) {
+                await queryRunner.query('ALTER TABLE `cowork_prompt` ADD COLUMN `tenantId` varchar(255);')
+            }
+            if (!(await queryRunner.hasColumn('cowork_prompt', 'version'))) {
+                await queryRunner.query('ALTER TABLE `cowork_prompt` ADD COLUMN `version` int NOT NULL DEFAULT 1;')
+            }
+            if (!(await queryRunner.hasColumn('cowork_prompt', 'isDefault'))) {
+                await queryRunner.query('ALTER TABLE `cowork_prompt` ADD COLUMN `isDefault` tinyint NOT NULL DEFAULT 0;')
+            }
+            if (!(await queryRunner.hasColumn('cowork_prompt', 'createdDate'))) {
+                await queryRunner.query('ALTER TABLE `cowork_prompt` ADD COLUMN `createdDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;')
+            }
+            if (!(await queryRunner.hasColumn('cowork_prompt', 'updatedDate'))) {
+                await queryRunner.query(
+                    'ALTER TABLE `cowork_prompt` ADD COLUMN `updatedDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;'
+                )
+            }
+        }
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        if (await queryRunner.hasTable('cowork_prompt')) {
+            await queryRunner.query('DROP TABLE `cowork_prompt`;')
+        }
+    }
+}

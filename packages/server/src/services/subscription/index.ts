@@ -3,8 +3,7 @@ import { User } from '../../database/entities/User'
 import { InternalTHubError } from '../../errors/internalTHubError'
 import { getErrorMessage } from '../../errors/utils'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import logger from '../../utils/logger'
-import { getRazorpayClient, verifyRazorpaySubscriptionSignature, verifyRazorpayWebhookSignature } from '../../utils/razorpay'
+import { getRazorpayClient, verifyRazorpaySubscriptionSignature } from '../../utils/razorpay'
 import transporter from '../../utils/transporter'
 
 type SubscriptionDuration = 'monthly' | 'yearly'
@@ -14,22 +13,6 @@ type PlanConfig = {
     duration: SubscriptionDuration
     subscriptionType: SubscriptionType
     totalCount: number
-}
-
-type RazorpayWebhookPayload = {
-    event?: string
-    payload?: {
-        subscription?: {
-            entity?: {
-                id?: string
-            }
-        }
-        payment?: {
-            entity?: {
-                subscription_id?: string
-            }
-        }
-    }
 }
 
 type CreateSubscriptionInput = {
@@ -123,28 +106,6 @@ const getSubscriptionDates = (duration: SubscriptionDuration) => {
         subscription_date: getDateOnly(subscriptionDate),
         expiry_date: getDateOnly(expiryDate)
     }
-}
-
-const addSubscriptionDuration = (baseDate: Date, duration?: string) => {
-    const date = new Date(baseDate)
-
-    if (duration === 'yearly') {
-        date.setUTCFullYear(date.getUTCFullYear() + 1)
-        return date
-    }
-
-    date.setUTCMonth(date.getUTCMonth() + 1)
-    return date
-}
-
-const getRenewalBaseDate = (expiryDate: Date | null) => {
-    const today = new Date()
-    if (!expiryDate) return today
-    return expiryDate > today ? expiryDate : today
-}
-
-const resolveWebhookSubscriptionId = (payload: RazorpayWebhookPayload) => {
-    return String(payload?.payload?.subscription?.entity?.id || payload?.payload?.payment?.entity?.subscription_id || '').trim()
 }
 
 const activateFreeSubscription = async (body: ActivateFreeSubscriptionInput) => {
@@ -392,68 +353,9 @@ const validateSubscription = async (body: ValidateSubscriptionInput) => {
     }
 }
 
-const handleRazorpayWebhook = async (rawBody: string, signatureHeader: string | string[] | undefined) => {
-    try {
-        const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader
-        const normalizedSignature = String(signature || '').trim()
-
-        if (!rawBody || !normalizedSignature || !verifyRazorpayWebhookSignature(rawBody, normalizedSignature)) {
-            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid webhook signature')
-        }
-
-        let webhookPayload: RazorpayWebhookPayload
-        try {
-            webhookPayload = JSON.parse(rawBody) as RazorpayWebhookPayload
-        } catch (error) {
-            throw new InternalTHubError(StatusCodes.BAD_REQUEST, `Invalid webhook payload: ${getErrorMessage(error)}`)
-        }
-
-        const eventType = String(webhookPayload.event || '').trim()
-        const razorpaySubscriptionId = resolveWebhookSubscriptionId(webhookPayload)
-
-        if (!razorpaySubscriptionId) {
-            logger.warn(`[subscriptionService.handleRazorpayWebhook]: Missing subscription ID for event ${eventType || 'unknown'}`)
-            return { received: true }
-        }
-
-        const appServer = getRunningExpressApp()
-        const userRepo = appServer.AppDataSource.getRepository(User)
-        const user = await userRepo.findOneBy({ razorpay_subscription_id: razorpaySubscriptionId })
-
-        if (!user) {
-            logger.warn(`[subscriptionService.handleRazorpayWebhook]: No user found for razorpay_subscription_id ${razorpaySubscriptionId}`)
-            return { received: true }
-        }
-
-        if (eventType === 'subscription.charged') {
-            const renewalBaseDate = getRenewalBaseDate(user.expiry_date || null)
-            user.expiry_date = addSubscriptionDuration(renewalBaseDate, user.subscription_duration)
-            user.subscription_status = 'active'
-            await userRepo.save(user)
-            return { received: true }
-        }
-
-        if (eventType === 'subscription.cancelled' || eventType === 'subscription.completed') {
-            user.subscription_status = 'inactive'
-            await userRepo.save(user)
-            return { received: true }
-        }
-
-        logger.info(`[subscriptionService.handleRazorpayWebhook]: Ignoring unsupported event ${eventType || 'unknown'}`)
-        return { received: true }
-    } catch (error) {
-        if (error instanceof InternalTHubError) throw error
-        throw new InternalTHubError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: subscriptionService.handleRazorpayWebhook - ${getErrorMessage(error)}`
-        )
-    }
-}
-
 export default {
     createSubscription,
     validateSubscription,
     activateFreeSubscription,
-    submitEnterpriseMail,
-    handleRazorpayWebhook
+    submitEnterpriseMail
 }
