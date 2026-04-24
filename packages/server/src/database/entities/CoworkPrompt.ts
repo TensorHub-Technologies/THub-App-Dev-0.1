@@ -13,11 +13,11 @@ export class CoworkPrompt {
     templateContent: string
 
     @Column({ type: 'text', nullable: true })
-    variableMappings: string
+    variableMappings: string | null
     // JSON: { [varName]: description }
 
-    @Column({ nullable: true })
-    targetModel: string
+    @Column({ type: 'varchar', nullable: true })
+    targetModel: string | null
     // 'claude' | 'openai' | 'gemini' | null (universal)
 
     @Column({ default: 1 })
@@ -29,8 +29,8 @@ export class CoworkPrompt {
     @Column({ default: false })
     isDefault: boolean
 
-    @Column({ nullable: true })
-    tenantId: string // null = built-in, set = custom
+    @Column({ type: 'varchar', nullable: true })
+    tenantId: string | null // null = built-in, set = custom
 
     @CreateDateColumn()
     createdDate: Date
