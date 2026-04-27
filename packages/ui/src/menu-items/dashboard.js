@@ -5,7 +5,7 @@ import ConstructionOutlinedIcon from '@/assets/custom-svg/ConstructionOutlinedIc
 import HttpsOutlinedIcon from '@/assets/custom-svg/HttpsOutlinedIcon'
 import VpnKeyOutlinedIcon from '@/assets/custom-svg/VpnKeyOutlinedIcon'
 import IconMathIntegral from '@/assets/custom-svg/IconMathIntegral'
-import { IconUsersGroup, IconListCheck, IconFiles, IconDatabase, IconTestPipe, IconChartHistogram } from '@tabler/icons-react'
+import { IconUsersGroup, IconListCheck, IconFiles, IconDatabase, IconTestPipe, IconChartHistogram, IconRobot } from '@tabler/icons-react'
 
 const icons = {
     AppsOutlinedIcon,
@@ -19,7 +19,8 @@ const icons = {
     IconFiles,
     IconDatabase,
     IconTestPipe,
-    IconChartHistogram
+    IconChartHistogram,
+    IconRobot
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -46,6 +47,35 @@ const dashboard = {
             breadcrumbs: true
         },
         {
+            id: 'cowork',
+            title: 'CoWork',
+            type: 'collapse',
+            icon: icons.IconRobot,
+            children: [
+                {
+                    id: 'cowork-sessions',
+                    title: 'Sessions',
+                    type: 'item',
+                    url: '/cowork',
+                    breadcrumbs: false
+                },
+                {
+                    id: 'cowork-prompts',
+                    title: 'Prompt Studio',
+                    type: 'item',
+                    url: '/cowork/prompts',
+                    breadcrumbs: false
+                },
+                {
+                    id: 'cowork-skills',
+                    title: 'Skills',
+                    type: 'item',
+                    url: '/cowork/skills',
+                    breadcrumbs: false
+                }
+            ]
+        },
+        {
             id: 'document-stores',
             title: 'Document Stores',
             type: 'item',
@@ -62,6 +92,7 @@ const dashboard = {
             icon: icons.IconListCheck,
             breadcrumbs: true
         },
+
         {
             id: 'marketplaces',
             title: 'Templates',

@@ -72,42 +72,35 @@ const NavCollapse = ({ menu, level }) => {
                 onClick={handleClick}
             >
                 <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>{menuIcon}</ListItemIcon>
-                <ListItemText
-                    primary={
-                        <Typography variant={selected === menu.id ? 'h5' : 'body1'} color='inherit' sx={{ my: 'auto' }}>
-                            {menu.title}
-                        </Typography>
-                    }
-                    secondary={
-                        menu.caption && (
-                            <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
-                                {menu.caption}
+                {customization.menu_open && (
+                    <ListItemText
+                        primary={
+                            <Typography variant={selected === menu.id ? 'h5' : 'body1'} color='inherit' sx={{ my: 'auto' }}>
+                                {menu.title}
                             </Typography>
-                        )
-                    }
-                />
-                {open ? (
-                    <IconChevronUp stroke={1.5} size='1rem' style={{ marginTop: 'auto', marginBottom: 'auto' }} />
-                ) : (
-                    <IconChevronDown stroke={1.5} size='1rem' style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+                        }
+                        secondary={
+                            menu.caption && (
+                                <Typography variant='caption' sx={{ ...theme.typography.subMenuCaption }} display='block' gutterBottom>
+                                    {menu.caption}
+                                </Typography>
+                            )
+                        }
+                    />
                 )}
+                {customization.menu_open &&
+                    (open ? (
+                        <IconChevronUp stroke={1.5} size='1rem' style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+                    ) : (
+                        <IconChevronDown stroke={1.5} size='1rem' style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+                    ))}
             </ListItemButton>
-            <Collapse in={open} timeout='auto' unmountOnExit>
+            <Collapse in={customization.menu_open && open} timeout='auto' unmountOnExit>
                 <List
                     component='div'
                     disablePadding
                     sx={{
-                        position: 'relative',
-                        '&:after': {
-                            content: "''",
-                            position: 'absolute',
-                            left: '32px',
-                            top: 0,
-                            height: '100%',
-                            width: '1px',
-                            opacity: 1,
-                            background: theme.palette.primary.light
-                        }
+                        position: 'relative'
                     }}
                 >
                     {menus}
