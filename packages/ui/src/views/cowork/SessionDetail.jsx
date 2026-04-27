@@ -22,7 +22,14 @@ const MOCK_SESSION = {
     totalCost: 0.05
 }
 const MOCK_TASKS = [
-    { id: 't1', name: 'Research Competitor A', agentPersona: 'researcher', status: 'completed', dependencies: [] },
+    {
+        id: 't1',
+        name: 'Research Competitor A',
+        agentPersona: 'researcher',
+        status: 'completed',
+        dependencies: [],
+        outputArtifact: JSON.stringify({ type: 'text', content: 'Competitor A analysis report...' })
+    },
     { id: 't2', name: 'Research Competitor B', agentPersona: 'researcher', status: 'running', dependencies: [] },
     { id: 't3', name: 'Research Competitor C', agentPersona: 'researcher', status: 'pending', dependencies: [] },
     { id: 't4', name: 'Write Comparison Report', agentPersona: 'writer', status: 'pending', dependencies: ['t1', 't2', 't3'] }
@@ -48,8 +55,23 @@ const SessionDetail = () => {
     useEffect(() => {
         // Sprint 1: load mock data
         // Sprint 2: dispatch(fetchSession(id)) and open SSE stream
-        dispatch(setCurrentSession(MOCK_SESSION))
-        dispatch(setCurrentTasks(MOCK_TASKS))
+        if (id === '1' || id === '2' || id === '3') {
+            dispatch(setCurrentSession({ ...MOCK_SESSION, id }))
+            dispatch(setCurrentTasks(MOCK_TASKS))
+        } else {
+            dispatch(
+                setCurrentSession({
+                    id,
+                    goal: 'New Session ' + id,
+                    status: 'pending',
+                    totalTokensUsed: 0,
+                    maxTokenBudget: 0,
+                    createdAt: new Date().toISOString(),
+                    totalCost: 0
+                })
+            )
+            dispatch(setCurrentTasks([]))
+        }
         return () => {
             dispatch(clearCurrentSession())
         }
