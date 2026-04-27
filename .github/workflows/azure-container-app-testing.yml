@@ -1,6 +1,8 @@
 trigger:
     - testing
 
+pr: none
+
 variables:
     # Azure Resource Manager service connection (used by AzureCLI@2)
     azureSubscription: ARMSC # <-- ARM service connection name
