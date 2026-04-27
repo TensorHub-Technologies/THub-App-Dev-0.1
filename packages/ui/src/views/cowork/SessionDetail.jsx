@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Stack, Typography, Chip, Button, IconButton, Divider } from '@mui/material'
+import { Box, Stack, Typography, Chip, Button, IconButton, Divider, Alert } from '@mui/material'
 import { IconArrowLeft, IconPlayerPlay, IconX } from '@tabler/icons-react'
 import MainCard from '@/ui-component/cards/MainCard'
 import { setCurrentSession, setCurrentTasks, clearCurrentSession } from '@/store/slices/coworkSlice'
@@ -10,6 +10,8 @@ import AgentMonitor from './AgentMonitor'
 import ArtifactsPanel from './ArtifactsPanel'
 import TaskList from './TaskList'
 import BudgetBar from './BudgetBar'
+import BudgetBanner from './BudgetBanner'
+import ApprovalModal from './ApprovalModal'
 
 // Sprint 1 — mock session data. Sprint 2 — replace with coworkApi.getSession(id)
 const MOCK_SESSION = {
@@ -22,8 +24,8 @@ const MOCK_SESSION = {
     totalCost: 0.05
 }
 const MOCK_TASKS = [
-    { id: 't1', name: 'Research Competitor A', agentPersona: 'researcher', status: 'completed', dependencies: [] },
-    { id: 't2', name: 'Research Competitor B', agentPersona: 'researcher', status: 'running', dependencies: [] },
+    { id: 't1', name: 'Research Competitor A', agentPersona: 'researcher', status: 'pending', dependencies: [] },
+    { id: 't2', name: 'Research Competitor B', agentPersona: 'researcher', status: 'pending', dependencies: [] },
     { id: 't3', name: 'Research Competitor C', agentPersona: 'researcher', status: 'pending', dependencies: [] },
     { id: 't4', name: 'Write Comparison Report', agentPersona: 'writer', status: 'pending', dependencies: ['t1', 't2', 't3'] }
 ]
@@ -44,6 +46,8 @@ const SessionDetail = () => {
     const { currentSession, currentTasks } = useSelector((s) => s.cowork)
     const [activeTab, setActiveTab] = useState('tasks')
     const [selectedTaskId, setSelectedTaskId] = useState(null)
+    const [approvalOpen, setApprovalOpen] = useState(false)
+    const [selectedTaskForApproval, setSelectedTaskForApproval] = useState(null)
 
     useEffect(() => {
         // Sprint 1: load mock data
@@ -55,11 +59,30 @@ const SessionDetail = () => {
         }
     }, [id, dispatch])
 
+    useEffect(() => {
+        // Check for tasks requiring approval (Sprint 2 will trigger this from SSE)
+        const pendingApprovalTask = currentTasks.find((t) => t.status === 'awaiting_approval')
+        if (pendingApprovalTask) {
+            setSelectedTaskForApproval(pendingApprovalTask)
+            setApprovalOpen(true)
+        }
+    }, [currentTasks])
+
     if (!currentSession) return null
 
     return (
         <MainCard>
             <Stack gap={2}>
+                {/* Budget Banner */}
+                <BudgetBanner show={currentSession.status === 'partial'} />
+
+                {/* Error Banner */}
+                {currentSession.status === 'failed' && (
+                    <Alert severity='error' sx={{ mb: 1 }}>
+                        {currentSession.errorMessage || 'Session failed due to an unexpected error.'}
+                    </Alert>
+                )}
+
                 {/* Header */}
                 <Stack direction='row' alignItems='center' gap={1}>
                     <IconButton onClick={() => navigate('/cowork')} size='small'>
@@ -147,6 +170,29 @@ const SessionDetail = () => {
                     </Box>
                 </Stack>
             </Stack>
+
+            <ApprovalModal
+                open={approvalOpen}
+                task={selectedTaskForApproval}
+                onClose={() => setApprovalOpen(false)}
+                onApprove={() => {
+                    setApprovalOpen(false)
+                    // Sprint 1 Mock: Update task to completed to resume flow
+                    dispatch(updateTaskStatus({ taskId: selectedTaskForApproval.id, status: 'completed' }))
+                }}
+                onReject={(reason) => {
+                    setApprovalOpen(false)
+                    // Sprint 1 Mock: Update task to failed
+                    dispatch(updateTaskStatus({ taskId: selectedTaskForApproval.id, status: 'failed' }))
+                    dispatch(
+                        updateSessionStatus({
+                            sessionId: currentSession.id,
+                            status: 'failed',
+                            errorMessage: 'Task rejected by user: ' + reason
+                        })
+                    )
+                }}
+            />
         </MainCard>
     )
 }

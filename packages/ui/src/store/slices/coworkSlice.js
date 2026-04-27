@@ -29,18 +29,25 @@ const coworkSlice = createSlice({
             state.error = action.payload
         },
         updateTaskStatus: (state, action) => {
-            const { taskId, status, output } = action.payload
+            const { taskId, status, output, pendingAction } = action.payload
             const task = state.currentTasks.find((t) => t.id === taskId)
             if (task) {
                 task.status = status
                 if (output) task.outputArtifact = output
+                if (pendingAction) task.pendingAction = pendingAction
             }
         },
         updateSessionStatus: (state, action) => {
-            const { sessionId, status } = action.payload
-            if (state.currentSession?.id === sessionId) state.currentSession.status = status
+            const { sessionId, status, errorMessage } = action.payload
+            if (state.currentSession?.id === sessionId) {
+                state.currentSession.status = status
+                if (errorMessage) state.currentSession.errorMessage = errorMessage
+            }
             const s = state.sessions.find((s) => s.id === sessionId)
-            if (s) s.status = status
+            if (s) {
+                s.status = status
+                if (errorMessage) s.errorMessage = errorMessage
+            }
         },
         addLiveEvent: (state, action) => {
             state.liveEvents = [action.payload, ...state.liveEvents].slice(0, 100)
