@@ -51,3 +51,7 @@ packages/server/.env
 ## graphify
 graphify-out/
 .graphify_*
+
+## claude code
+.claude/
+CLAUDE.md
