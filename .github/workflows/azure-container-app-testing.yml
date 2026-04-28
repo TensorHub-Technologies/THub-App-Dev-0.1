@@ -1,5 +1,4 @@
-trigger:
-    - testing
+trigger: none
 
 pr: none
 
