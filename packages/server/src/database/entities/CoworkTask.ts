@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { CoworkSession } from './CoworkSession'
-import { CoworkTaskStatus } from '../../Interface'
+import { CoworkTaskStatus } from '../../services/cowork/status'
 
 @Entity()
 export class CoworkTask {
