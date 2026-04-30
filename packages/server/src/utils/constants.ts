@@ -62,7 +62,10 @@ export const WHITELIST_URLS = [
     '/api/v1/subscription/create',
     '/api/v1/subscription/validate',
     '/api/v1/subscription/activate-free',
-    '/api/v1/subscription/enterprise-mail'
+    '/api/v1/subscription/enterprise-mail',
+    '/api/v1/notifications/otp/send',
+    '/api/v1/notifications/otp/verify',
+    '/api/v1/notifications/contact'
 ]
 
 export const enum GeneralErrorMessage {

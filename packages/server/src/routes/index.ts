@@ -54,6 +54,7 @@ import agentflowv2GeneratorRouter from './agentflowv2-generator'
 import textToSpeechRouter from './text-to-speech'
 import authRouter from './auth'
 import subscriptionRouter from './subscription'
+import notificationsRouter from './notifications'
 import authMiddleware from '../middlewares/authMiddleware'
 import { bindAuthenticatedTenant } from '../middlewares/tenantScope'
 import imageUploadRouter from './imageUpload'
@@ -119,5 +120,6 @@ router.use('/agentflowv2-generator', agentflowv2GeneratorRouter)
 router.use('/text-to-speech', textToSpeechRouter)
 router.use('/auth', authRouter)
 router.use('/subscription', subscriptionRouter)
+router.use('/notifications', notificationsRouter)
 
 export default router
