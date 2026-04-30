@@ -57,9 +57,13 @@ import subscriptionRouter from './subscription'
 import notificationsRouter from './notifications'
 import authMiddleware from '../middlewares/authMiddleware'
 import { bindAuthenticatedTenant } from '../middlewares/tenantScope'
+import imageUploadRouter from './imageUpload'
+import userUpdateRouter from './userUpdate'
 
 const router = express.Router()
 
+router.use('/image-upload', imageUploadRouter)
+router.use('/users/update', userUpdateRouter)
 router.use('/ping', pingRouter)
 router.use('/apikey', authMiddleware, bindAuthenticatedTenant, apikeyRouter)
 router.use('/assistants', authMiddleware, bindAuthenticatedTenant, assistantsRouter)
