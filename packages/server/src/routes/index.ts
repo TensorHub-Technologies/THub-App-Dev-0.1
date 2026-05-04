@@ -55,6 +55,7 @@ import textToSpeechRouter from './text-to-speech'
 import authRouter from './auth'
 import subscriptionRouter from './subscription'
 import notificationsRouter from './notifications'
+import coworkRouter from './cowork'
 import authMiddleware from '../middlewares/authMiddleware'
 import { bindAuthenticatedTenant } from '../middlewares/tenantScope'
 import imageUploadRouter from './imageUpload'
@@ -121,5 +122,6 @@ router.use('/text-to-speech', textToSpeechRouter)
 router.use('/auth', authRouter)
 router.use('/subscription', subscriptionRouter)
 router.use('/notifications', notificationsRouter)
+router.use('/cowork', authMiddleware, bindAuthenticatedTenant, coworkRouter)
 
 export default router
