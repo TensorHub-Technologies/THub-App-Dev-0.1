@@ -65,7 +65,30 @@ export const WHITELIST_URLS = [
     '/api/v1/subscription/enterprise-mail',
     '/api/v1/notifications/otp/send',
     '/api/v1/notifications/otp/verify',
-    '/api/v1/notifications/contact'
+    '/api/v1/notifications/contact',
+    // JWT-protected routes — global API-key check skipped, route-level authMiddleware handles auth
+    '/api/v1/auth/me',
+    '/api/v1/auth/protected',
+    '/api/v1/cowork/',
+    '/api/v1/apikey/',
+    '/api/v1/assistants/',
+    '/api/v1/credentials/',
+    '/api/v1/datasets/',
+    '/api/v1/document-store/',
+    '/api/v1/evaluations/',
+    '/api/v1/evaluators/',
+    '/api/v1/executions/',
+    '/api/v1/export-import/',
+    '/api/v1/tools/',
+    '/api/v1/variables/',
+    // Public routes missing from whitelist
+    '/api/v1/nodes',
+    '/api/v1/components-credentials',
+    '/api/v1/marketplaces',
+    '/api/v1/stats',
+    '/api/v1/validation/',
+    '/api/v1/image-upload',
+    '/api/v1/users/update'
 ]
 
 export const enum GeneralErrorMessage {
