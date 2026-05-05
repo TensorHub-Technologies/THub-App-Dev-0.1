@@ -232,8 +232,8 @@ describe('TC-1.9 DAG statuses and initial queueing', () => {
     })
 })
 
-describe('TC-1.10 queueUnblocked only queues next task', () => {
-    it('queues t2 after t1 completes and keeps t3 pending', async () => {
+describe('TC-1.10 queueUnblocked queues all unblocked tasks', () => {
+    it('queues both t2 and t3 after t1 completes', async () => {
         const state: InMemoryState = {
             users: [{ uid: 'u1', email: 'a@b.com', subscription_type: 'pro' } as User],
             sessions: [],
@@ -263,10 +263,11 @@ describe('TC-1.10 queueUnblocked only queues next task', () => {
 
         const queued = await service.queueUnblocked(created.session.id)
 
-        expect(queued).toHaveLength(1)
-        expect(queued[0].skillId).toBe('t2')
+        expect(queued).toHaveLength(2)
+        expect(queued.some((task) => task.skillId === 't2')).toBe(true)
+        expect(queued.some((task) => task.skillId === 't3')).toBe(true)
         expect(taskByPlanner.get('t2')!.status).toBe(CoworkTaskStatus.RUNNING)
-        expect(taskByPlanner.get('t3')!.status).toBe(CoworkTaskStatus.PENDING)
+        expect(taskByPlanner.get('t3')!.status).toBe(CoworkTaskStatus.RUNNING)
     })
 })
 
@@ -354,7 +355,7 @@ describe('TC-1.12 Context includes dependency outputs', () => {
 
         await service.executeCoworkTask(created.session.id, t2.id)
 
-        expect(t2.inputContext).toContain('## Output from t1')
+        expect(t2.inputContext).toContain('## Output from task')
         expect(t2.inputContext).toContain('output from t1')
         expect(buildPrompt).toHaveBeenCalled()
     })

@@ -2,16 +2,8 @@ import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { CoworkTask } from '../../database/entities/CoworkTask'
 import { InternalTHubError } from '../../errors/internalTHubError'
-import { CoworkTaskStatus } from '../../services/cowork/status'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import {
-    assertSessionAccess,
-    emitCoworkEvent,
-    getAuthenticatedTenantId,
-    getCoworkOrchestrator,
-    getCoworkQueueOrThrow,
-    parseJsonUnknown
-} from './utils'
+import { assertSessionAccess, getAuthenticatedTenantId, getCoworkOrchestrator, parseJsonUnknown } from './utils'
 
 /**
  * Approve a task waiting for human input and re-queue it for execution.
@@ -26,38 +18,8 @@ const approveTask = async (req: Request, res: Response, next: NextFunction) => {
         const tenantId = getAuthenticatedTenantId(req)
         const appServer = getRunningExpressApp()
         await assertSessionAccess(appServer, sessionId, tenantId)
-
-        const taskRepo = appServer.AppDataSource.getRepository(CoworkTask)
-        const task = await taskRepo.findOneBy({ id: taskId, sessionId })
-        if (!task) {
-            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Cowork task ${taskId} not found`)
-        }
-
-        if (!task.humanInputRequired) {
-            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Task is not awaiting human approval')
-        }
-
-        const coworkQueue = getCoworkQueueOrThrow(appServer)
-        const job = await coworkQueue.addJob({
-            jobType: 'cowork-task',
-            sessionId,
-            taskId,
-            tenantId
-        })
-
-        task.humanInputRequired = false
-        task.pendingAction = null as any
-        task.status = CoworkTaskStatus.RUNNING
-        task.errorMessage = null as any
-        task.startedDate = new Date()
-        task.completedDate = null as any
-        task.bullJobId = job?.id != null ? String(job.id) : task.bullJobId
-        await taskRepo.save(task)
-
-        emitCoworkEvent(appServer, sessionId, 'cowork.task.approved', {
-            taskId: task.id,
-            name: task.name
-        })
+        const orchestrator = getCoworkOrchestrator(appServer)
+        const task = await orchestrator.approveTask(sessionId, taskId, tenantId)
 
         return res.json({
             success: true,
@@ -82,28 +44,9 @@ const rejectTask = async (req: Request, res: Response, next: NextFunction) => {
         const appServer = getRunningExpressApp()
         await assertSessionAccess(appServer, sessionId, tenantId)
 
-        const taskRepo = appServer.AppDataSource.getRepository(CoworkTask)
-        const task = await taskRepo.findOneBy({ id: taskId, sessionId })
-        if (!task) {
-            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Cowork task ${taskId} not found`)
-        }
-
         const reason = String(req.body?.reason || 'No reason provided').trim()
-        task.status = CoworkTaskStatus.SKIPPED
-        task.humanInputRequired = false
-        task.pendingAction = null as any
-        task.errorMessage = `Rejected by user: ${reason}`
-        task.completedDate = new Date()
-        await taskRepo.save(task)
-
-        emitCoworkEvent(appServer, sessionId, 'cowork.task.rejected', {
-            taskId: task.id,
-            name: task.name,
-            reason
-        })
-
         const orchestrator = getCoworkOrchestrator(appServer)
-        await orchestrator.checkCompletion(sessionId)
+        const task = await orchestrator.rejectTask(sessionId, taskId, reason, tenantId)
 
         return res.json({
             success: true,
@@ -140,10 +83,6 @@ const getPendingApprovals = async (req: Request, res: Response, next: NextFuncti
             name: task.name,
             pendingAction: parseJsonUnknown(task.pendingAction)
         }))
-
-        pending.forEach((item) => {
-            emitCoworkEvent(appServer, sessionId, 'cowork.task.awaiting_approval', item)
-        })
 
         return res.json({ pending })
     } catch (error) {

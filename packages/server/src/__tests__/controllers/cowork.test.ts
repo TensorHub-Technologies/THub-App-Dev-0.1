@@ -4,6 +4,8 @@ import humanInputController from '../../controllers/cowork/humanInput'
 import { CoworkSessionStatus, CoworkTaskStatus } from '../../services/cowork/status'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { createCoworkOrchestrator } from '../../services/cowork/orchestrator'
+import { InternalTHubError } from '../../errors/internalTHubError'
+import { StatusCodes } from 'http-status-codes'
 
 jest.mock('../../utils/getRunningExpressApp', () => ({
     getRunningExpressApp: jest.fn()
@@ -181,22 +183,16 @@ describe('cowork controller', () => {
         const next = jest.fn() as NextFunction
         const sessionRepo = makeSessionRepo()
         const taskRepo = makeTaskRepo()
-        const addJob = jest.fn(async () => ({ id: 'job-9' }))
-        const appServer = makeAppServer(sessionRepo, taskRepo, addJob)
+        const appServer = makeAppServer(sessionRepo, taskRepo)
 
         sessionRepo.findOneBy.mockResolvedValue({ id: 's-1', tenantId: 'tenant-1' })
-        taskRepo.findOneBy.mockResolvedValue({ id: 't-1', sessionId: 's-1', name: 'Review', humanInputRequired: true } as any)
         mockedGetRunningExpressApp.mockReturnValue(appServer as any)
+        const approveTask = jest.fn(async () => ({ id: 't-1', name: 'Review' }))
+        mockedCreateCoworkOrchestrator.mockReturnValue({ approveTask } as any)
 
         await humanInputController.approveTask(req, res, next)
 
-        expect(addJob).toHaveBeenCalledWith(expect.objectContaining({ jobType: 'cowork-task', sessionId: 's-1', taskId: 't-1' }))
-        expect(taskRepo.save).toHaveBeenCalledWith(expect.objectContaining({ humanInputRequired: false, status: CoworkTaskStatus.RUNNING }))
-        expect(appServer.sseStreamer.streamCustomEvent).toHaveBeenCalledWith(
-            's-1',
-            'cowork.task.approved',
-            expect.objectContaining({ taskId: 't-1' })
-        )
+        expect(approveTask).toHaveBeenCalledWith('s-1', 't-1', 'tenant-1')
         expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }))
         expect(next).not.toHaveBeenCalled()
     })
@@ -212,27 +208,15 @@ describe('cowork controller', () => {
         const sessionRepo = makeSessionRepo()
         const taskRepo = makeTaskRepo()
         const appServer = makeAppServer(sessionRepo, taskRepo)
-        const checkCompletion = jest.fn(async () => ({ completed: false, partial: false, status: CoworkSessionStatus.RUNNING }))
+        const rejectTask = jest.fn(async () => ({ id: 't-1', status: CoworkTaskStatus.SKIPPED }))
 
         sessionRepo.findOneBy.mockResolvedValue({ id: 's-1', tenantId: 'tenant-1' })
-        taskRepo.findOneBy.mockResolvedValue({ id: 't-1', sessionId: 's-1', name: 'Review', humanInputRequired: true } as any)
         mockedGetRunningExpressApp.mockReturnValue(appServer as any)
-        mockedCreateCoworkOrchestrator.mockReturnValue({ checkCompletion } as any)
+        mockedCreateCoworkOrchestrator.mockReturnValue({ rejectTask } as any)
 
         await humanInputController.rejectTask(req, res, next)
 
-        expect(taskRepo.save).toHaveBeenCalledWith(
-            expect.objectContaining({
-                status: CoworkTaskStatus.SKIPPED,
-                errorMessage: 'Rejected by user: not needed'
-            })
-        )
-        expect(checkCompletion).toHaveBeenCalledWith('s-1')
-        expect(appServer.sseStreamer.streamCustomEvent).toHaveBeenCalledWith(
-            's-1',
-            'cowork.task.rejected',
-            expect.objectContaining({ taskId: 't-1' })
-        )
+        expect(rejectTask).toHaveBeenCalledWith('s-1', 't-1', 'not needed', 'tenant-1')
     })
 
     it('Retry re-queues only failed tasks', async () => {
@@ -244,23 +228,23 @@ describe('cowork controller', () => {
         const next = jest.fn() as NextFunction
         const sessionRepo = makeSessionRepo()
         const taskRepo = makeTaskRepo()
-        const addJob = jest.fn(async () => ({ id: 'job-r1' }))
-        const appServer = makeAppServer(sessionRepo, taskRepo, addJob)
-
-        sessionRepo.findOneBy.mockResolvedValue({ id: 's-1', tenantId: 'tenant-1' })
-        taskRepo.findOneBy.mockResolvedValue({
+        const appServer = makeAppServer(sessionRepo, taskRepo)
+        const retryCoworkTask = jest.fn(async () => ({
             id: 't-1',
             sessionId: 's-1',
             name: 'Task',
-            status: CoworkTaskStatus.FAILED,
-            retryCount: 1
-        } as any)
+            status: CoworkTaskStatus.RUNNING,
+            retryCount: 2,
+            dependencies: '[]'
+        }))
+
+        sessionRepo.findOneBy.mockResolvedValue({ id: 's-1', tenantId: 'tenant-1' })
         mockedGetRunningExpressApp.mockReturnValue(appServer as any)
+        mockedCreateCoworkOrchestrator.mockReturnValue({ retryCoworkTask } as any)
 
         await coworkController.retryTask(req, res, next)
 
-        expect(addJob).toHaveBeenCalled()
-        expect(taskRepo.save).toHaveBeenCalledWith(expect.objectContaining({ status: CoworkTaskStatus.RUNNING, retryCount: 2 }))
+        expect(retryCoworkTask).toHaveBeenCalledWith('s-1', 't-1', 'tenant-1')
         expect(next).not.toHaveBeenCalled()
     })
 
@@ -310,12 +294,16 @@ describe('cowork controller', () => {
         const sessionRepo = makeSessionRepo()
         const taskRepo = makeTaskRepo()
         const appServer = makeAppServer(sessionRepo, taskRepo)
+        const retryCoworkTask = jest.fn(async () => {
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Only failed tasks can be retried')
+        })
+        const approveTask = jest.fn(async () => {
+            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Task is not awaiting human approval')
+        })
 
         sessionRepo.findOneBy.mockResolvedValue({ id: 's-1', tenantId: 'tenant-1' })
-        taskRepo.findOneBy
-            .mockResolvedValueOnce({ id: 't-1', sessionId: 's-1', status: CoworkTaskStatus.COMPLETED } as any)
-            .mockResolvedValueOnce({ id: 't-2', sessionId: 's-1', humanInputRequired: false } as any)
         mockedGetRunningExpressApp.mockReturnValue(appServer as any)
+        mockedCreateCoworkOrchestrator.mockReturnValue({ retryCoworkTask, approveTask } as any)
 
         await coworkController.retryTask(retryReq, res, nextRetry)
         await humanInputController.approveTask(approveReq, res, nextApprove)
