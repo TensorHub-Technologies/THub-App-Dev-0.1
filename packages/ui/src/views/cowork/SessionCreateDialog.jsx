@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Stack, CircularProgress, Alert } from '@mui/material'
+import coworkApi from '@/api/cowork'
 
 const MODEL_OPTIONS = [
     { label: 'Claude 3.5 Sonnet', value: { provider: 'anthropic', modelName: 'claude-3-5-sonnet-20241022' } },
@@ -15,6 +16,8 @@ const SessionCreateDialog = ({ open, onClose, onCreated }) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
+    const [model, setModel] = useState(MODEL_OPTIONS[0].value)
+
     const handleCreate = async () => {
         if (!goal.trim()) {
             setError('Goal is required')
@@ -23,13 +26,22 @@ const SessionCreateDialog = ({ open, onClose, onCreated }) => {
         setLoading(true)
         setError('')
         try {
-            // Sprint 1: mock — Sprint 2 replace with: await coworkApi.createSession(...)
-            const mockSession = { id: Date.now().toString(), goal: goal.trim(), status: 'pending' }
-            onCreated(mockSession)
+            // Step 1: create session (decomposes goal into tasks)
+            const createRes = await coworkApi.createSession({
+                goal: goal.trim(),
+                selectedChatModel: model,
+                ...(budget ? { maxTokenBudget: parseInt(budget) } : {})
+            })
+            const session = createRes.data
+
+            // Step 2: start session (queues ready tasks into BullMQ)
+            await coworkApi.startSession(session.id)
+
+            onCreated(session)
             setGoal('')
             setBudget('')
         } catch (e) {
-            setError('Failed to create session. Please try again.')
+            setError(e?.response?.data?.message || 'Failed to create session. Please try again.')
         } finally {
             setLoading(false)
         }

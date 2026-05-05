@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Box, Stack, Typography, Divider } from '@mui/material'
+import coworkApi from '@/api/cowork'
 
 const PERSONA_COLOR = {
     coder: '#2563EB',
@@ -10,7 +13,18 @@ const PERSONA_COLOR = {
     writer: '#374151'
 }
 
-const ArtifactsPanel = ({ tasks = [], selectedTaskId }) => {
+const ArtifactsPanel = ({ selectedTaskId }) => {
+    const { id: sessionId } = useParams()
+    const [tasks, setTasks] = useState([])
+
+    useEffect(() => {
+        if (!sessionId) return
+        coworkApi
+            .getArtifacts(sessionId)
+            .then((res) => setTasks(res.data?.artifacts || res.data || []))
+            .catch((err) => console.error('[artifacts]: Failed to load', err))
+    }, [sessionId])
+
     let completed = tasks.filter((t) => t.status === 'completed' && t.outputArtifact)
 
     if (selectedTaskId) {
@@ -87,7 +101,6 @@ const ArtifactsPanel = ({ tasks = [], selectedTaskId }) => {
 }
 
 ArtifactsPanel.propTypes = {
-    tasks: PropTypes.array,
     selectedTaskId: PropTypes.string
 }
 

@@ -1,54 +1,85 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { Box, Stack, Typography, Divider } from '@mui/material'
-import { updateTaskStatus, addLiveEvent } from '@/store/slices/coworkSlice'
+import { updateTaskStatus, updateSessionStatus, addLiveEvent } from '@/store/slices/coworkSlice'
 
-// SSE event names — must match exactly what CoworkExecutor fires
 const EVENT_COLORS = {
     'cowork.task.started': '#2563EB',
     'cowork.task.completed': '#16A34A',
     'cowork.task.failed': '#DC2626',
+    'cowork.task.awaiting_approval': '#F59E0B',
     'cowork.session.started': '#7C3AED',
-    'cowork.session.done': '#0F766E'
+    'cowork.session.done': '#0F766E',
+    'cowork.session.budget_exceeded': '#DC2626'
 }
 
-// Sprint 1: mock SSE simulator — fires events on a timer to test the UI
-// Sprint 2: replace with real EventSource connection
-const useMockSSE = (dispatch, tasks) => {
-    const timerRef = useRef(null)
+// Real SSE connection — replaces the mock timer from Sprint 1
+const useSSE = (sessionId, dispatch) => {
+    const esRef = useRef(null)
+
     useEffect(() => {
-        if (!tasks.length) return
-        let step = 0
-        const events = [
-            { type: 'cowork.task.started', taskId: 't1', name: 'Research Competitor A' },
-            { type: 'cowork.task.completed', taskId: 't1', name: 'Research Competitor A', tokens: 800 },
-            { type: 'cowork.task.started', taskId: 't2', name: 'Research Competitor B' },
-            { type: 'cowork.task.completed', taskId: 't2', name: 'Research Competitor B', tokens: 720 },
-            { type: 'cowork.session.done', status: 'completed' }
-        ]
-        timerRef.current = setInterval(() => {
-            if (step >= events.length) {
-                clearInterval(timerRef.current)
-                return
+        if (!sessionId) return
+        const token = localStorage.getItem('authToken') || localStorage.getItem('userId')
+        const url = `${import.meta.env.VITE_API_URL || ''}/api/v1/cowork/sessions/${sessionId}/stream`
+
+        esRef.current = new EventSource(url)
+
+        esRef.current.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data)
+                const { type, taskId, status, output, sessionId: sid } = data
+
+                dispatch(addLiveEvent({ ...data, timestamp: new Date().toISOString() }))
+
+                switch (type) {
+                    case 'cowork.task.started':
+                        dispatch(updateTaskStatus({ taskId, status: 'running' }))
+                        break
+                    case 'cowork.task.completed':
+                        dispatch(updateTaskStatus({ taskId, status: 'completed', output }))
+                        break
+                    case 'cowork.task.failed':
+                        dispatch(updateTaskStatus({ taskId, status: 'failed' }))
+                        break
+                    case 'cowork.task.awaiting_approval':
+                        dispatch(updateTaskStatus({ taskId, status: 'awaiting_approval', pendingAction: data.pendingAction }))
+                        break
+                    case 'cowork.session.done':
+                        dispatch(updateSessionStatus({ sessionId: sid, status: data.status }))
+                        break
+                    case 'cowork.session.budget_exceeded':
+                        dispatch(updateSessionStatus({ sessionId: sid, status: 'partial' }))
+                        break
+                    default:
+                        break
+                }
+            } catch (e) {
+                console.error('[SSE]: Failed to parse event', e)
             }
-            const event = events[step++]
-            dispatch(addLiveEvent({ ...event, timestamp: new Date().toISOString() }))
-            if (event.taskId) {
-                const status =
-                    event.type === 'cowork.task.completed' ? 'completed' : event.type === 'cowork.task.failed' ? 'failed' : 'running'
-                dispatch(updateTaskStatus({ taskId: event.taskId, status }))
+        }
+
+        esRef.current.onerror = () => {
+            console.warn('[SSE]: Connection error — will auto-reconnect')
+        }
+
+        // Cleanup on unmount — prevents memory leak
+        return () => {
+            if (esRef.current) {
+                esRef.current.close()
+                esRef.current = null
             }
-        }, 2000)
-        return () => clearInterval(timerRef.current)
-    }, [tasks.length, dispatch])
+        }
+    }, [sessionId])
 }
 
 const AgentMonitor = () => {
+    const { id: sessionId } = useParams()
     const dispatch = useDispatch()
-    const { liveEvents, currentTasks } = useSelector((s) => s.cowork)
+    const { liveEvents } = useSelector((s) => s.cowork)
     const bottomRef = useRef(null)
 
-    useMockSSE(dispatch, currentTasks)
+    useSSE(sessionId, dispatch)
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -66,9 +97,9 @@ const AgentMonitor = () => {
                 </Typography>
             ) : (
                 <Stack gap={0.5}>
-                    {liveEvents.map((event, i) => (
+                    {[...liveEvents].reverse().map((event, i) => (
                         <Box key={i} sx={{ p: 1, borderRadius: 1, bgcolor: 'action.hover' }}>
-                            <Stack direction='row' justifyContent='space-between' alignItems='center'>
+                            <Stack direction='row' justifyContent='space-between'>
                                 <Typography
                                     variant='caption'
                                     sx={{
@@ -101,5 +132,4 @@ const AgentMonitor = () => {
         </Box>
     )
 }
-
 export default AgentMonitor
