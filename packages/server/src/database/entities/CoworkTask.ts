@@ -62,6 +62,12 @@ export class CoworkTask {
     @Column({ type: 'text', nullable: true })
     errorMessage: string
 
+    @Column({ default: false })
+    humanInputRequired: boolean
+
+    @Column({ type: 'text', nullable: true })
+    pendingAction: string // JSON: details for human approval/rejection UI
+
     @CreateDateColumn()
     createdDate: Date
 
