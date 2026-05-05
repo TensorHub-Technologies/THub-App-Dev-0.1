@@ -1,0 +1,1251 @@
+import { useEffect, useRef, useState, useCallback, useContext } from 'react'
+import ReactFlow, { addEdge, Controls, Background, useNodesState, useEdgesState, MiniMap } from 'reactflow'
+import 'reactflow/dist/style.css'
+import * as htmlToImage from 'html-to-image'
+import DownloadIcon from '@mui/icons-material/Download'
+import dagre from 'dagre'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate, useLocation } from 'react-router-dom'
+import {
+    REMOVE_DIRTY,
+    SET_DIRTY,
+    SET_CHATFLOW,
+    enqueueSnackbar as enqueueSnackbarAction,
+    closeSnackbar as closeSnackbarAction,
+    setMinMax,
+    setNodesMinMax
+} from '@/store/actions'
+import { omit, cloneDeep } from 'lodash'
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
+import CallMadeIcon from '@mui/icons-material/CallMade'
+import GridViewIcon from '@mui/icons-material/GridView'
+
+// material-ui
+import { Toolbar, Box, AppBar, Button, Switch, Link } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+
+// project imports
+import { styled } from '@mui/material/styles'
+import CanvasNode from './CanvasNode'
+import ButtonEdge from './ButtonEdge'
+import '../../ui-component/cards/card.css'
+// import StickyNote from './StickyNote'
+import StickyNote from '../canvas/StickyNote'
+import CanvasHeader from './CanvasHeader'
+import AddNodes from './AddNodes'
+import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
+import ChatPopUp from '@/views/chatmessage/ChatPopUp'
+import { flowContext } from '@/store/context/ReactFlowContext'
+
+// API
+import nodesApi from '@/api/nodes'
+import chatflowsApi from '@/api/chatflows'
+
+// Hooks
+import useApi from '@/hooks/useApi'
+import useConfirm from '@/hooks/useConfirm'
+
+// icons
+import { IconX } from '@tabler/icons-react'
+
+// utils
+import {
+    getUniqueNodeId,
+    initNode,
+    rearrangeToolsOrdering,
+    getUpsertDetails,
+    updateOutdatedNodeData,
+    updateOutdatedNodeEdge
+} from '@/utils/genericHelper'
+import useNotifier from '@/utils/useNotifier'
+
+// const
+import { THUB_CREDENTIAL_ID } from '@/store/constant'
+import { IconArrowBackUp } from '@tabler/icons-react'
+
+import { IconArrowForwardUp } from '@tabler/icons-react'
+
+import { IconFilePencil } from '@tabler/icons-react'
+import { IconMapPin2 } from '@tabler/icons-react'
+import { IconArrowsVertical } from '@tabler/icons-react'
+import { IconArrowsHorizontal } from '@tabler/icons-react'
+import { usePrompt } from '@/utils/usePrompt'
+
+const nodeTypes = { customNode: CanvasNode, stickyNote: StickyNote }
+
+const edgeTypes = { buttonedge: ButtonEdge }
+const nodeClassName = (node) => node.type
+
+// ==============================|| CANVAS ||============================== //
+
+const Canvas = () => {
+    const theme = useTheme()
+    const navigate = useNavigate()
+
+    const { state } = useLocation()
+    const templateFlowData = state ? state.templateFlowData : ''
+
+    const URLpath = document.location.pathname.toString().split('/')
+    const chatflowId =
+        URLpath[URLpath.length - 1] === 'canvas' || URLpath[URLpath.length - 1] === 'agentcanvas' ? '' : URLpath[URLpath.length - 1]
+    const isAgentCanvas = URLpath.includes('agentcanvas') ? true : false
+    const canvasTitle = URLpath.includes('agentcanvas') ? 'Agent' : 'Workflow'
+
+    const { confirm } = useConfirm()
+
+    const dispatch = useDispatch()
+    const canvas = useSelector((state) => state.canvas)
+    const customization = useSelector((state) => state.customization)
+    const userData = useSelector((state) => state.user.userData)
+    // const tenantId = userData['uid']
+    const tenantId = userData?.uid || localStorage.getItem('userId')
+    const workspaceId = userData?.workspaceUid || localStorage.getItem('userId')
+
+    const [canvasDataStore, setCanvasDataStore] = useState(canvas)
+    const [chatflow, setChatflow] = useState(null)
+    const { reactFlowInstance, setReactFlowInstance } = useContext(flowContext)
+
+    // ==============================|| Snackbar ||============================== //
+
+    useNotifier()
+    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
+
+    // ==============================|| ReactFlow ||============================== //
+
+    const [showMinimap, setShowMinimap] = useState(false)
+
+    const handleToggleMinimap = () => {
+        setShowMinimap((prev) => !prev)
+    }
+
+    const [nodes, setNodes, onNodesChange] = useNodesState()
+    const [edges, setEdges, onEdgesChange] = useEdgesState()
+
+    const [selectedNode, setSelectedNode] = useState(null)
+    const [isUpsertButtonEnabled, setIsUpsertButtonEnabled] = useState(false)
+    const [isSyncNodesButtonEnabled, setIsSyncNodesButtonEnabled] = useState(false)
+    const [deletedNode, setDeletedNodes] = useState([])
+    const [past, setPast] = useState([])
+    const [future, setFuture] = useState([])
+
+    const reactFlowWrapper = useRef(null)
+
+    // ==============================|| Workflow API ||============================== //
+
+    const getNodesApi = useApi(nodesApi.getAllNodes)
+    const createNewChatflowApi = useApi(chatflowsApi.createNewChatflow)
+    const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
+    const getSpecificChatflowApi = useApi(chatflowsApi.getSpecificChatflow)
+
+    //=======// Expand and Collapse All Node//===========//
+    const [menuPosition, setMenuPosition] = useState(null)
+    const { minMax, uniqueId } = useSelector((state) => state.minMax)
+
+    const nodeMinMax = useSelector((state) => state.nodeMinMax.nodeMinMax)
+
+    useEffect(() => {
+        dispatch(setNodesMinMax(minMax))
+    }, [minMax, uniqueId])
+
+    useEffect(() => {
+        handleMax()
+    }, [])
+
+    const handleMin = () => {
+        dispatch(setMinMax(true))
+    }
+    const handleMax = () => {
+        dispatch(setMinMax(false))
+    }
+
+    const handleContextMenu = (event) => {
+        event.preventDefault()
+        setMenuPosition({ mouseX: event.clientX - 2, mouseY: event.clientY - 4 })
+    }
+
+    const handleClose = () => {
+        setMenuPosition(null)
+    }
+
+    const handleClick = () => {
+        if (menuPosition) {
+            setMenuPosition(null)
+        }
+    }
+    const getLayoutedElements = (nodes, edges, direction = 'TB') => {
+        const dagreGraph = new dagre.graphlib.Graph()
+        dagreGraph.setDefaultEdgeLabel(() => ({}))
+
+        dagreGraph.setGraph({
+            rankdir: direction,
+            ranksep: 400, // Further increased vertical spacing
+            nodesep: 300, // Further increased horizontal spacing
+            marginx: 50, // Increased margin for extra spacing
+            marginy: 50
+        })
+
+        nodes.forEach((node) => dagreGraph.setNode(node.id, { width: 150, height: 50 }))
+        edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target))
+
+        dagre.layout(dagreGraph)
+
+        const minX = Math.min(...nodes.map((node) => dagreGraph.node(node.id).x))
+        const minY = Math.min(...nodes.map((node) => dagreGraph.node(node.id).y))
+
+        const upwardShift = 500
+        const leftwardShift = 700
+        return nodes.map((node) => {
+            const dagreNode = dagreGraph.node(node.id)
+            return {
+                ...node,
+                position: {
+                    x: dagreNode.x - minX - leftwardShift, // Normalize to center
+                    y: dagreNode.y - minY - upwardShift // Normalize to center
+                }
+            }
+        })
+    }
+
+    // Function to apply layout dynamically
+    const handleLayout = useCallback(
+        (direction) => {
+            const layoutedNodes = getLayoutedElements(nodes, edges, direction)
+            setNodes([...layoutedNodes]) // Update node positions dynamically
+        },
+        [nodes, edges, setNodes]
+    )
+
+    // =================// History (Undo/Redo) // =====================
+
+    const takeSnapshot = useCallback(() => {
+        setPast((p) => [...p, { nodes: cloneDeep(nodes), edges: cloneDeep(edges) }])
+        setFuture([])
+    }, [nodes, edges])
+
+    const handleUndo = useCallback(() => {
+        if (past.length === 0) return
+
+        const previousState = past[past.length - 1]
+        const newPast = past.slice(0, past.length - 1)
+
+        setPast(newPast)
+        setFuture((f) => [{ nodes: cloneDeep(nodes), edges: cloneDeep(edges) }, ...f])
+
+        setNodes(previousState.nodes)
+        setEdges(previousState.edges)
+        setTimeout(() => setDirty(), 0)
+    }, [past, nodes, edges, setNodes, setEdges])
+
+    const handleRedo = useCallback(() => {
+        if (future.length === 0) return
+
+        const nextState = future[0]
+        const newFuture = future.slice(1)
+
+        setFuture(newFuture)
+        setPast((p) => [...p, { nodes: cloneDeep(nodes), edges: cloneDeep(edges) }])
+
+        setNodes(nextState.nodes)
+        setEdges(nextState.edges)
+        setTimeout(() => setDirty(), 0)
+    }, [future, nodes, edges, setNodes, setEdges])
+
+    // ==============================|| Events & Actions ||============================== //
+
+    const onConnect = (params) => {
+        takeSnapshot()
+        const newEdge = {
+            ...params,
+            type: 'buttonedge',
+            id: `${params.source}-${params.sourceHandle}-${params.target}-${params.targetHandle}`
+        }
+
+        const targetNodeId = params.targetHandle.split('-')[0]
+        const sourceNodeId = params.sourceHandle.split('-')[0]
+        const targetInput = params.targetHandle.split('-')[2]
+
+        setNodes((nds) =>
+            nds.map((node) => {
+                if (node.id === targetNodeId) {
+                    setTimeout(() => setDirty(), 0)
+                    let value
+                    const inputAnchor = node.data.inputAnchors.find((ancr) => ancr.name === targetInput)
+                    const inputParam = node.data.inputParams.find((param) => param.name === targetInput)
+
+                    if (inputAnchor && inputAnchor.list) {
+                        const newValues = node.data.inputs[targetInput] || []
+                        if (targetInput === 'tools') {
+                            rearrangeToolsOrdering(newValues, sourceNodeId)
+                        } else {
+                            newValues.push(`{{${sourceNodeId}.data.instance}}`)
+                        }
+                        value = newValues
+                    } else if (inputParam && inputParam.acceptVariable) {
+                        value = node.data.inputs[targetInput] || ''
+                    } else {
+                        value = `{{${sourceNodeId}.data.instance}}`
+                    }
+                    node.data = {
+                        ...node.data,
+                        inputs: {
+                            ...node.data.inputs,
+                            [targetInput]: value
+                        }
+                    }
+                }
+                return node
+            })
+        )
+
+        setEdges((eds) => addEdge(newEdge, eds))
+    }
+
+    const handleLoadFlow = (file) => {
+        try {
+            const flowData = JSON.parse(file)
+            const nodes = flowData.nodes || []
+
+            setNodes(nodes)
+            setEdges(flowData.edges || [])
+            setTimeout(() => setDirty(), 0)
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const handleDeleteFlow = async () => {
+        const confirmPayload = {
+            title: `Delete`,
+            description: `Delete ${canvasTitle} ${chatflow.name}?`,
+            confirmButtonName: 'Delete',
+            cancelButtonName: 'Cancel'
+        }
+        const isConfirmed = await confirm(confirmPayload)
+
+        if (isConfirmed) {
+            try {
+                await chatflowsApi.deleteChatflow(chatflow.id)
+                localStorage.removeItem(`${chatflow.id}_INTERNAL`)
+                navigate('/workflows')
+            } catch (error) {
+                enqueueSnackbar({
+                    message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        persist: true,
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+            }
+        }
+    }
+
+    const handleSaveFlow = (chatflowName, chatflowDescription) => {
+        if (reactFlowInstance) {
+            const nodes = reactFlowInstance.getNodes().map((node) => {
+                const nodeData = cloneDeep(node.data)
+                if (Object.prototype.hasOwnProperty.call(nodeData.inputs, THUB_CREDENTIAL_ID)) {
+                    nodeData.credential = nodeData.inputs[THUB_CREDENTIAL_ID]
+                    nodeData.inputs = omit(nodeData.inputs, [THUB_CREDENTIAL_ID])
+                }
+                node.data = {
+                    ...nodeData,
+                    selected: false
+                }
+                return node
+            })
+
+            const rfInstanceObject = reactFlowInstance.toObject()
+            rfInstanceObject.nodes = nodes
+            const flowData = JSON.stringify(rfInstanceObject)
+
+            if (!chatflow.id) {
+                const newChatflowBody = {
+                    name: chatflowName,
+                    description: chatflowDescription,
+                    deployed: false,
+                    isPublic: false,
+                    tenantId: tenantId,
+                    workspaceUid: workspaceId,
+                    flowData,
+                    type: isAgentCanvas ? 'MULTIAGENT' : 'CHATFLOW'
+                }
+                createNewChatflowApi.request(newChatflowBody)
+            } else {
+                const updateBody = {
+                    name: chatflowName,
+                    description: chatflowDescription,
+                    flowData
+                }
+                updateChatflowApi.request(chatflow.id, updateBody)
+            }
+        }
+    }
+
+    // eslint-disable-next-line
+    const onNodeClick = useCallback((event, clickedNode) => {
+        setSelectedNode(clickedNode)
+        setNodes((nds) =>
+            nds.map((node) => {
+                if (node.id === clickedNode.id) {
+                    node.data = {
+                        ...node.data,
+                        selected: true
+                    }
+                } else {
+                    node.data = {
+                        ...node.data,
+                        selected: false
+                    }
+                }
+
+                return node
+            })
+        )
+    })
+
+    const onDragOver = useCallback((event) => {
+        event.preventDefault()
+        event.dataTransfer.dropEffect = 'move'
+    }, [])
+
+    const onDrop = useCallback(
+        (event) => {
+            event.preventDefault()
+            takeSnapshot()
+            const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
+            let nodeData = event.dataTransfer.getData('application/reactflow')
+
+            if (typeof nodeData === 'undefined' || !nodeData) {
+                return
+            }
+
+            nodeData = JSON.parse(nodeData)
+
+            const position = reactFlowInstance.project({
+                x: event.clientX - reactFlowBounds.left - 100,
+                y: event.clientY - reactFlowBounds.top - 50
+            })
+
+            const newNodeId = getUniqueNodeId(nodeData, reactFlowInstance.getNodes())
+
+            const newNode = {
+                id: newNodeId,
+                position,
+                type: nodeData.type !== 'StickyNote' ? 'customNode' : 'stickyNote',
+                data: initNode(nodeData, newNodeId)
+            }
+
+            setSelectedNode(newNode)
+            setNodes((nds) =>
+                nds.concat(newNode).map((node) => {
+                    if (node.id === newNode.id) {
+                        node.data = {
+                            ...node.data,
+                            selected: true
+                        }
+                    } else {
+                        node.data = {
+                            ...node.data,
+                            selected: false
+                        }
+                    }
+
+                    return node
+                })
+            )
+            setTimeout(() => setDirty(), 0)
+        },
+
+        // eslint-disable-next-line
+        [reactFlowInstance]
+    )
+
+    const syncNodes = () => {
+        const componentNodes = canvas.componentNodes
+
+        const cloneNodes = cloneDeep(nodes)
+        const cloneEdges = cloneDeep(edges)
+        let toBeRemovedEdges = []
+
+        for (let i = 0; i < cloneNodes.length; i++) {
+            const node = cloneNodes[i]
+            const componentNode = componentNodes.find((cn) => cn.name === node.data.name)
+            if (componentNode && componentNode.version > node.data.version) {
+                const clonedComponentNode = cloneDeep(componentNode)
+                cloneNodes[i].data = updateOutdatedNodeData(clonedComponentNode, node.data)
+                toBeRemovedEdges.push(...updateOutdatedNodeEdge(cloneNodes[i].data, cloneEdges))
+            }
+        }
+
+        setNodes(cloneNodes)
+        setEdges(cloneEdges.filter((edge) => !toBeRemovedEdges.includes(edge)))
+        setDirty()
+        setIsSyncNodesButtonEnabled(false)
+    }
+
+    const saveChatflowSuccess = () => {
+        dispatch({ type: REMOVE_DIRTY })
+        enqueueSnackbar({
+            message: `${canvasTitle} saved`,
+            options: {
+                key: new Date().getTime() + Math.random(),
+                variant: 'success',
+                action: (key) => (
+                    <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                        <IconX />
+                    </Button>
+                )
+            }
+        })
+    }
+
+    const errorFailed = (message) => {
+        enqueueSnackbar({
+            message,
+            options: {
+                key: new Date().getTime() + Math.random(),
+                variant: 'error',
+                persist: true,
+                action: (key) => (
+                    <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                        <IconX />
+                    </Button>
+                )
+            }
+        })
+    }
+
+    const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+        width: 62,
+        height: 34,
+        padding: 7,
+        '& .MuiSwitch-switchBase': {
+            margin: 1,
+            padding: 0,
+            transform: 'translateX(6px)',
+            '&.Mui-checked': {
+                color: '#fff',
+                transform: 'translateX(22px)',
+                '& .MuiSwitch-thumb:before': {
+                    backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+                        '#fff'
+                    )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`
+                },
+                '& + .MuiSwitch-track': {
+                    opacity: 1,
+                    backgroundColor: theme.palette.mode === 'dark' ? '#3C5BA4' : '#E22A90'
+                }
+            }
+        },
+        '& .MuiSwitch-thumb': {
+            background: 'linear-gradient(to right, #3C5BA4, #E22A90)',
+            width: 32,
+            height: 32,
+            '&:before': {
+                content: "''",
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                left: 0,
+                top: 0,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+                    '#fff'
+                )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`
+            }
+        },
+        '& .MuiSwitch-track': {
+            opacity: 1,
+            backgroundColor: theme.palette.mode === 'dark' ? '#E22A90' : '#3C5BA4',
+            borderRadius: 20 / 2
+        }
+    }))
+    const StyledLink = styled(Link)(({ theme }) => ({
+        color: theme.palette.text.primary,
+        fontSize: '1.25rem', // Adjust font size as needed
+        fontWeight: 'bold',
+        fontFamily: 'Arial, sans-serif',
+        textDecoration: 'none',
+        '&:hover': {
+            //   color: theme.palette.red, // Adjust hover color as needed
+        }
+    }))
+
+    const setDirty = () => {
+        dispatch({ type: SET_DIRTY })
+    }
+
+    const checkIfUpsertAvailable = (nodes, edges) => {
+        const upsertNodeDetails = getUpsertDetails(nodes, edges)
+        if (upsertNodeDetails.length) setIsUpsertButtonEnabled(true)
+        else setIsUpsertButtonEnabled(false)
+    }
+
+    const checkIfSyncNodesAvailable = (nodes) => {
+        const componentNodes = canvas.componentNodes
+
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i]
+            const componentNode = componentNodes.find((cn) => cn.name === node.data.name)
+            if (componentNode && componentNode.version > node.data.version) {
+                setIsSyncNodesButtonEnabled(true)
+                return
+            }
+        }
+
+        setIsSyncNodesButtonEnabled(false)
+    }
+
+    // ==============================|| useEffect ||============================== //
+
+    // Get specific chatflow successful
+    useEffect(() => {
+        if (getSpecificChatflowApi.data) {
+            const chatflow = getSpecificChatflowApi.data
+            const initialFlow = chatflow.flowData ? JSON.parse(chatflow.flowData) : []
+            setNodes(initialFlow.nodes || [])
+            setEdges(initialFlow.edges || [])
+            dispatch({ type: SET_CHATFLOW, chatflow })
+        } else if (getSpecificChatflowApi.error) {
+            errorFailed(`Failed to retrieve ${canvasTitle}: ${getSpecificChatflowApi.error.response.data.message}`)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getSpecificChatflowApi.data, getSpecificChatflowApi.error])
+
+    // Create new chatflow successful
+    useEffect(() => {
+        if (createNewChatflowApi.data) {
+            const chatflow = createNewChatflowApi.data
+            dispatch({ type: SET_CHATFLOW, chatflow })
+            saveChatflowSuccess()
+            window.history.replaceState(null, null, `/canvas/${chatflow.id}`)
+        } else if (createNewChatflowApi.error) {
+            errorFailed(`Failed to save ${canvasTitle}: ${createNewChatflowApi.error.response.data.message}`)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [createNewChatflowApi.data, createNewChatflowApi.error])
+
+    // Update chatflow successful
+    useEffect(() => {
+        if (updateChatflowApi.data) {
+            dispatch({ type: SET_CHATFLOW, chatflow: updateChatflowApi.data })
+            saveChatflowSuccess()
+        } else if (updateChatflowApi.error) {
+            errorFailed(`Failed to save ${canvasTitle}: ${updateChatflowApi.error.response.data.message}`)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [updateChatflowApi.data, updateChatflowApi.error])
+
+    useEffect(() => {
+        setChatflow(canvasDataStore.chatflow)
+        if (canvasDataStore.chatflow) {
+            const flowData = canvasDataStore.chatflow.flowData ? JSON.parse(canvasDataStore.chatflow.flowData) : []
+            checkIfUpsertAvailable(flowData.nodes || [], flowData.edges || [])
+            checkIfSyncNodesAvailable(flowData.nodes || [])
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [canvasDataStore.chatflow])
+
+    // Initialization
+    useEffect(() => {
+        setIsSyncNodesButtonEnabled(false)
+        setIsUpsertButtonEnabled(false)
+        if (chatflowId) {
+            getSpecificChatflowApi.request(chatflowId)
+        } else {
+            if (localStorage.getItem('duplicatedFlowData')) {
+                handleLoadFlow(localStorage.getItem('duplicatedFlowData'))
+                setTimeout(() => localStorage.removeItem('duplicatedFlowData'), 0)
+            } else {
+                setNodes([])
+                setEdges([])
+            }
+            dispatch({
+                type: SET_CHATFLOW,
+                chatflow: {
+                    name: `Untitled ${canvasTitle}`
+                }
+            })
+        }
+
+        getNodesApi.request()
+
+        // Clear dirty state before leaving and remove any ongoing test triggers and webhooks
+        return () => {
+            setTimeout(() => dispatch({ type: REMOVE_DIRTY }), 0)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
+        setCanvasDataStore(canvas)
+    }, [canvas])
+
+    useEffect(() => {
+        function handlePaste(e) {
+            const pasteData = e.clipboardData.getData('text')
+            //TODO: prevent paste event when input focused, temporary fix: catch chatflow syntax
+            if (pasteData.includes('{"nodes":[') && pasteData.includes('],"edges":[')) {
+                handleLoadFlow(pasteData)
+            }
+        }
+
+        window.addEventListener('paste', handlePaste)
+
+        return () => {
+            window.removeEventListener('paste', handlePaste)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
+        if (templateFlowData && templateFlowData.includes('"nodes":[') && templateFlowData.includes('],"edges":[')) {
+            handleLoadFlow(templateFlowData)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [templateFlowData])
+
+    usePrompt('You have unsaved changes! Do you want to navigate away?', canvasDataStore.isDirty)
+    const [notesVisible, setNotesVisible] = useState(false)
+    const [noteContent, setNoteContent] = useState('')
+    const handleNotesToggle = () => setNotesVisible(!notesVisible)
+
+    useEffect(() => {
+        document.body.classList.toggle('dark-mode', customization.isDarkMode)
+        document.body.classList.toggle('light-mode', !customization.isDarkMode)
+    }, [customization.isDarkMode])
+
+    const handleOrganizeNodes = () => {
+        // Create a copy of nodes to modify their positions
+        const updatedNodes = nodes.map((node, index) => {
+            // Arrange nodes in a grid layout
+            const row = Math.floor(index / 5) // 5 nodes per row
+            const col = index % 5 // Column index
+            const x = col * 350 // Horizontal spacing
+            const y = row * 150 // Vertical spacing
+
+            return {
+                ...node,
+                position: { x, y }, // Update position
+                data: { ...node.data }
+            }
+        })
+
+        setNodes(updatedNodes) // Update nodes state
+    }
+
+    const downloadImage = () => {
+        if (reactFlowWrapper.current) {
+            htmlToImage
+                .toPng(reactFlowWrapper.current)
+                .then((dataUrl) => {
+                    const link = document.createElement('a')
+                    link.href = dataUrl
+                    link.download = 'reactflow-diagram.png'
+                    link.click()
+                })
+                .catch((error) => {
+                    console.error('Error generating the image:', error)
+                })
+        }
+    }
+    const addStickyNote = () => {
+        takeSnapshot()
+        const newNodeId = `node-${nodes.length + 1}`
+        const newNode = {
+            id: newNodeId,
+            type: 'stickyNote',
+            position: { x: Math.random() * 400, y: Math.random() * 400 },
+            data: {
+                id: newNodeId,
+                selected: false,
+                inputParams: [
+                    {
+                        label: '',
+                        name: 'note',
+                        type: 'string',
+                        rows: 1,
+                        placeholder: 'Type something here',
+                        optional: true
+                    }
+                ],
+                inputs: {}
+            }
+        }
+        setNodes((nds) => [...nds, newNode])
+    }
+    return (
+        <>
+            <div>
+                <button className='react-flow__controls-button'>Control</button>
+            </div>
+            <Box>
+                <AppBar
+                    enableColorOnDark
+                    position='fixed'
+                    color='inherit'
+                    elevation={1}
+                    className={customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}
+                    sx={{
+                        height: '80px',
+                        zIndex: 1300
+                    }}
+                >
+                    <Toolbar>
+                        <CanvasHeader
+                            isUpsertButtonEnabled={isUpsertButtonEnabled}
+                            chatflow={chatflow}
+                            handleSaveFlow={handleSaveFlow}
+                            handleDeleteFlow={handleDeleteFlow}
+                            handleLoadFlow={handleLoadFlow}
+                            isAgentCanvas={isAgentCanvas}
+                        />
+                    </Toolbar>
+                </AppBar>
+
+                <Box
+                    sx={{
+                        display: 'flex',
+                        height: 'calc(100vh - 50px)',
+                        overflowX: 'hidden', // hides horizontal scroll
+                        overflowY: 'auto'
+                    }}
+                >
+                    <Box sx={{ width: customization.menu_open ? '86px' : '86px' }}>
+                        <AddNodes nodesData={getNodesApi.data} node={selectedNode} />
+                    </Box>
+
+                    <Box sx={{ width: '100%' }} onClick={handleClick}>
+                        <div className='reactflow-parent-wrapper'>
+                            <div
+                                className={`reactflow-wrapper ${
+                                    customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'
+                                }`}
+                                ref={reactFlowWrapper}
+                            >
+                                <ReactFlow
+                                    nodes={nodes}
+                                    edges={edges}
+                                    onNodesChange={(changes) => {
+                                        // Take snapshot on drag start or removal
+                                        const hasImportantChange = changes.some(
+                                            (c) => c.type === 'remove' || (c.type === 'position' && !c.dragging && c.position)
+                                        )
+                                        if (hasImportantChange) takeSnapshot()
+                                        onNodesChange(changes)
+                                    }}
+                                    onNodeClick={onNodeClick}
+                                    onEdgesChange={(changes) => {
+                                        const hasImportantChange = changes.some((c) => c.type === 'remove')
+                                        if (hasImportantChange) takeSnapshot()
+                                        onEdgesChange(changes)
+                                    }}
+                                    onDrop={onDrop}
+                                    onDragOver={onDragOver}
+                                    onNodeDragStart={takeSnapshot}
+                                    onNodeDragStop={setDirty}
+                                    nodeTypes={nodeTypes}
+                                    edgeTypes={edgeTypes}
+                                    onConnect={onConnect}
+                                    onInit={setReactFlowInstance}
+                                    fitView
+                                    deleteKeyCode={canvas.canvasDialogShow ? null : ['Delete']}
+                                    minZoom={0.1}
+                                >
+                                    <Controls
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%)',
+                                            position: 'absolute',
+                                            margin: '0',
+                                            boxShadow: 'none'
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', gap: '20px', padding: '5px' }}>
+                                            {/* First Rectangle: Undo and Redo */}
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    backgroundColor: '#fefefe',
+                                                    border: '1px solid #eee',
+                                                    padding: '5px',
+                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                    borderRadius: '14px',
+                                                    marginLeft: '17px'
+                                                }}
+                                            >
+                                                <MenuItem
+                                                    sx={{
+                                                        borderRight: '3px solid #eee',
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Undo'
+                                                    onClick={handleUndo}
+                                                >
+                                                    <IconArrowBackUp id='UndoIcon' size={19} color='#000000' />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Redo'
+                                                    onClick={handleRedo}
+                                                >
+                                                    <IconArrowForwardUp id='RedoIcon' size={19} color='#000000' />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        borderRight: '3px solid #eee',
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Sticky Notes'
+                                                    onClick={addStickyNote}
+                                                >
+                                                    <IconFilePencil id='NotesIcon' size={19} color='#000000' />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Minimap'
+                                                    onClick={handleToggleMinimap}
+                                                >
+                                                    <IconMapPin2 id='MapIcon' size={19} color='#000000' />
+                                                </MenuItem>
+                                            </Box>
+
+                                            {/* Second Rectangle: Expand and Collapse */}
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    backgroundColor: '#fefefe',
+                                                    border: '1px solid #eee',
+                                                    padding: '5px',
+                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                    borderRadius: '14px'
+                                                }}
+                                            >
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Expand All Nodes'
+                                                    onClick={handleMin}
+                                                >
+                                                    <CallMadeIcon
+                                                        id='ExpandIcon'
+                                                        sx={{
+                                                            fontSize: '16px',
+                                                            backgroundColor: 'transparent',
+                                                            color: theme.palette.mode === 'dark' ? '#fff' : '#000'
+                                                        }}
+                                                    />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Collapse All Nodes'
+                                                    onClick={handleMax}
+                                                >
+                                                    <HorizontalRuleIcon
+                                                        id='CollapseIcon'
+                                                        size={19}
+                                                        sx={{
+                                                            backgroundColor: 'transparent',
+                                                            color: theme.palette.mode === 'dark' ? '#fff' : '#000'
+                                                        }}
+                                                    />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                        }
+                                                    }}
+                                                    title='Organize Nodes'
+                                                    onClick={handleOrganizeNodes}
+                                                >
+                                                    <GridViewIcon
+                                                        style={{
+                                                            fontSize: 19,
+                                                            color: customization.isDarkMode ? '#000000' : '#000000',
+                                                            background: 'transparent'
+                                                        }}
+                                                    />
+                                                </MenuItem>
+                                                <button
+                                                    title='Download as Image'
+                                                    onClick={downloadImage}
+                                                    style={{
+                                                        background: 'transparent',
+                                                        border: '0px',
+                                                        '&:hover': {
+                                                            color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                        }
+                                                    }}
+                                                    onMouseEnter={(e) =>
+                                                        (e.currentTarget.style.backgroundColor = customization.isDarkMode
+                                                            ? '#e22a90'
+                                                            : '#3c5ba4')
+                                                    }
+                                                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fefefe')}
+                                                >
+                                                    <DownloadIcon
+                                                        style={{
+                                                            background: 'transparent',
+                                                            color: customization.isDarkMode ? '#000' : '#000', // Change color based on mode
+                                                            fontSize: '21px',
+                                                            marginTop: '5px'
+                                                        }}
+                                                    />
+                                                </button>
+                                            </Box>
+
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    backgroundColor: '#fefefe',
+                                                    border: '1px solid #eee',
+                                                    padding: '5px',
+                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                                    borderRadius: '14px',
+                                                    marginLeft: '0px'
+                                                }}
+                                            >
+                                                <MenuItem
+                                                    sx={{
+                                                        borderRight: '3px solid #eee',
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Vertical Layout'
+                                                    onClick={() => handleLayout('TB')}
+                                                >
+                                                    <IconArrowsHorizontal id='HorizontalIcon' size={19} color='#000000' />
+                                                </MenuItem>
+
+                                                <MenuItem
+                                                    sx={{
+                                                        backgroundColor: '#fefefe',
+                                                        // borderBottom: '1px solid #eee',
+                                                        boxSizing: 'content-box',
+                                                        height: '20px',
+                                                        padding: '5px 10px',
+                                                        cursor: 'pointer',
+
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '&:hover': {
+                                                            backgroundColor: customization.isDarkMode ? '#e22a90' : '#3c5ba4' // Change background to red on hover
+                                                        }
+                                                    }}
+                                                    title='Horizontal Layout'
+                                                    onClick={() => handleLayout('LR')}
+                                                >
+                                                    <IconArrowsVertical id='VerticalIcon' size={19} color='#000000' />
+                                                </MenuItem>
+                                            </Box>
+                                        </Box>
+                                    </Controls>
+                                    {showMinimap && <MiniMap zoomable pannable nodeClassName={nodeClassName} />}
+                                    <Background color='#aaa' gap={16} />
+
+                                    {/* {isUpsertButtonEnabled && <VectorStorePopUp chatflowid={chatflowId} />} */}
+                                    <ChatPopUp chatflowid={chatflowId} />
+                                    <Menu
+                                        open={menuPosition !== null}
+                                        onClose={handleClose}
+                                        anchorReference='anchorPosition'
+                                        anchorPosition={
+                                            menuPosition !== null ? { top: menuPosition.mouseY, left: menuPosition.mouseX } : undefined
+                                        }
+                                        sx={{
+                                            '& .MuiPaper-root': {
+                                                position: 'relative',
+                                                top: '65px',
+                                                width: '200px',
+                                                fontSize: '0.875rem',
+                                                padding: '12px',
+                                                overflow: 'hidden',
+                                                height: 'auto',
+                                                fontFamily: 'roboto sans-serif',
+                                                maxHeight: 'calc(-235px + 100vh)'
+                                            }
+                                        }}
+                                    >
+                                        <MenuItem
+                                            sx={{
+                                                color: customization.isDarkMode ? '#FFF' : '#616161',
+                                                lineHeight: '3em',
+                                                '&:hover': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                    '& .MuiSvgIcon-root': {
+                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                    }
+                                                }
+                                            }}
+                                            onClick={handleMin}
+                                            disabled={minMax && nodeMinMax}
+                                        >
+                                            <CallMadeIcon id='ExpandIcon' sx={{ mr: '12px' }} />
+                                            Expand All Node
+                                        </MenuItem>
+                                        <MenuItem
+                                            sx={{
+                                                color: customization.isDarkMode ? '#FFF' : '#616161',
+                                                lineHeight: '3em',
+                                                '&:hover': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                    '& .MuiSvgIcon-root': {
+                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                    }
+                                                }
+                                            }}
+                                            onClick={handleMax}
+                                            disabled={!minMax && !nodeMinMax}
+                                        >
+                                            <HorizontalRuleIcon id='MinimizeIcon' sx={{ mr: '12px' }} />
+                                            Collapse All Node
+                                        </MenuItem>
+
+                                        <MenuItem
+                                            sx={{
+                                                color: customization.isDarkMode ? '#FFF' : '#616161',
+                                                lineHeight: '3em',
+                                                '&:hover': {
+                                                    color: customization.isDarkMode ? '#e22a90' : '#3c5ba4',
+                                                    '& .MuiSvgIcon-root': {
+                                                        color: customization.isDarkMode ? '#e22a90' : '#3c5ba4'
+                                                    }
+                                                }
+                                            }}
+                                            onClick={handleUndo}
+                                        >
+                                            <IconArrowBackUp id='MinimizeIcon' sx={{ mr: '12px' }} />
+                                            Undo
+                                        </MenuItem>
+                                    </Menu>
+                                </ReactFlow>
+                            </div>
+                        </div>
+                    </Box>
+                </Box>
+                <ConfirmDialog />
+            </Box>
+        </>
+    )
+}
+
+export default Canvas

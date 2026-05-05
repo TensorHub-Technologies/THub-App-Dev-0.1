@@ -1,0 +1,57 @@
+/* #stack-icons:hover .icon-dark ,
+#stack-icons:hover .stack-text1 {
+    color:#e22a90 ;
+}
+
+
+#stack-icons:hover .icon-light,
+#stack-icons:hover .stack-text2{
+    color:#3869db ;
+}  */
+/* 
+#nodes-accordian-header-Agents{
+    border: 2px solid red;
+}
+
+#nodes-accordian-header-Agents:hover .icon-dark ,
+#nodes-accordian-header-Agents:hover .stack-text1 {
+    color:#e22a90 ;
+} */
+
+[id^='nodes-accordian-header-']:hover .icon-dark,
+[id^='nodes-accordian-header-']:hover .stack-text1 {
+    color: #e22a90;
+}
+
+[id^='nodes-accordian-header-']:hover .ExpandMoreIcon1 {
+    color: #e22a90;
+}
+
+[id^='nodes-accordian-header-']:hover .icon-light,
+[id^='nodes-accordian-header-']:hover .stack-text2 {
+    color: #3c5ba4;
+}
+
+[id^='nodes-accordian-header-']:hover .ExpandMoreIcon2 {
+    color: #3c5ba4;
+}
+.sideAvatar {
+    width: 17px;
+    height: 65px;
+
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 106px;
+    border-bottom-left-radius: 109px;
+    z-index: 999;
+    position: fixed;
+}
+.sideAvatar1 {
+    width: 17px;
+    height: 65px;
+
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 106px;
+    border-bottom-left-radius: 109px;
+    z-index: 999;
+    position: fixed;
+}

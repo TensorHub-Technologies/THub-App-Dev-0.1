@@ -1,0 +1,118 @@
+// action - customization reducer
+export const SET_MENU = '@customization/SET_MENU'
+export const MENU_TOGGLE = '@customization/MENU_TOGGLE'
+export const MENU_OPEN = '@customization/MENU_OPEN'
+export const SET_FONT_FAMILY = '@customization/SET_FONT_FAMILY'
+export const SET_BORDER_RADIUS = '@customization/SET_BORDER_RADIUS'
+export const SET_LAYOUT = '@customization/SET_LAYOUT '
+export const SET_DARKMODE = '@customization/SET_DARKMODE'
+
+// action - canvas reducer
+export const SET_DIRTY = '@canvas/SET_DIRTY'
+export const REMOVE_DIRTY = '@canvas/REMOVE_DIRTY'
+export const SET_CHATFLOW = '@canvas/SET_CHATFLOW'
+export const SHOW_CANVAS_DIALOG = '@canvas/SHOW_CANVAS_DIALOG'
+export const HIDE_CANVAS_DIALOG = '@canvas/HIDE_CANVAS_DIALOG'
+export const SET_COMPONENT_NODES = '@canvas/SET_COMPONENT_NODES'
+export const SET_COMPONENT_CREDENTIALS = '@canvas/SET_COMPONENT_CREDENTIALS'
+
+// action - notifier reducer
+export const ENQUEUE_SNACKBAR = 'ENQUEUE_SNACKBAR'
+export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR'
+export const REMOVE_SNACKBAR = 'REMOVE_SNACKBAR'
+
+// action - dialog reducer
+export const SHOW_CONFIRM = 'SHOW_CONFIRM'
+export const HIDE_CONFIRM = 'HIDE_CONFIRM'
+
+export const SHOW_MENU = 'SHOW_MENU'
+
+export const SET_USER_DATA = 'SET_USER_DATA'
+
+export const UPDATE_USER_FIELD = 'UPDATE_USER_FIELD'
+
+export const SHOW_REGISTER_MODAL = 'SHOW_REGISTER_MODAL'
+
+export const HIDE_REGISTER_MODAL = 'HIDE_REGISTER_MODAL'
+
+export const SHOW_LOGIN_MODAL = 'SHOW_LOGIN_MODAL'
+
+export const HIDE_LOGIN_MODAL = 'HIDE_LOGIN_MODAL'
+
+const createSnackbarKey = () => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID()
+    }
+
+    return `${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
+
+export const enqueueSnackbar = (notification) => {
+    const options = {
+        preventDuplicate: true,
+        ...(notification.options || {})
+    }
+    const key = options.key
+    const dedupeKey =
+        notification.dedupeKey || `${options.variant || 'default'}::${notification.message || ''}`.trim() || createSnackbarKey()
+
+    return {
+        type: ENQUEUE_SNACKBAR,
+        notification: {
+            ...notification,
+            options,
+            key: key || createSnackbarKey(),
+            dedupeKey
+        }
+    }
+}
+
+export const closeSnackbar = (key) => ({
+    type: CLOSE_SNACKBAR,
+    dismissAll: !key,
+    key
+})
+
+export const removeSnackbar = (key) => ({
+    type: REMOVE_SNACKBAR,
+    key
+})
+export const setUserData = (userData) => ({
+    type: SET_USER_DATA,
+    payload: userData
+})
+
+export const updateUserField = ({ field, value }) => ({
+    type: UPDATE_USER_FIELD,
+    payload: { field, value }
+})
+
+export const SET_MINMAX = 'SET_MINMAX'
+
+export const setMinMax = (minMax) => ({
+    type: SET_MINMAX,
+    payload: minMax
+})
+
+export const SET_NODEMINMAX = 'SET_NODEMINMAX'
+
+export const setNodesMinMax = (NodeMinMax) => ({
+    type: SET_NODEMINMAX,
+    payload: NodeMinMax
+})
+
+export const showRegisterModal = () => ({
+    type: SHOW_REGISTER_MODAL
+})
+
+export const hideRegisterModal = () => ({
+    type: HIDE_REGISTER_MODAL
+})
+
+export const showLoginModal = () => ({
+    type: SHOW_LOGIN_MODAL
+})
+
+export const hideLoginModal = () => ({
+    type: 'HIDE_LOGIN_MODAL'
+})

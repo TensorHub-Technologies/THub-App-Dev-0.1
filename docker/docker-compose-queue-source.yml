@@ -1,0 +1,71 @@
+version: '3.1'
+
+services:
+    redis:
+        image: redis:alpine
+        container_name: thub-redis
+        ports:
+            - '6379:6379'
+        volumes:
+            - redis_data:/data
+        networks:
+            - thub-net
+
+    thub:
+        container_name: thub-main
+        build:
+            context: .. # Build using the Dockerfile in the root directory
+            dockerfile: docker/Dockerfile
+        ports:
+            - '${PORT}:${PORT}'
+        volumes:
+            # Mount local .thub to container's default location
+            - ../.thub:/root/.thub
+        environment:
+            # --- Essential THub Vars ---
+            - PORT=${PORT:-3000}
+            - DATABASE_PATH=/root/.thub
+            - SECRETKEY_PATH=/root/.thub
+            - LOG_PATH=/root/.thub/logs
+            - BLOB_STORAGE_PATH=/root/.thub/storage
+            # --- Queue Vars (Main Instance) ---
+            - MODE=queue
+            - QUEUE_NAME=thub-queue # Ensure this matches worker
+            - REDIS_URL=redis://redis:6379 # Use service name 'redis'
+        depends_on:
+            - redis
+        networks:
+            - thub-net
+
+    thub-worker:
+        container_name: thub-worker
+        build:
+            context: .. # Build context is still the root
+            dockerfile: docker/worker/Dockerfile # Ensure this path is correct
+        volumes:
+            # Mount same local .thub to worker
+            - ../.thub:/root/.thub
+        environment:
+            # --- Essential THub Vars ---
+            - WORKER_PORT=${WORKER_PORT:-5566} # Port for worker healthcheck
+            - DATABASE_PATH=/root/.thub
+            - SECRETKEY_PATH=/root/.thub
+            - LOG_PATH=/root/.thub/logs
+            - BLOB_STORAGE_PATH=/root/.thub/storage
+            # --- Queue Vars (Main Instance) ---
+            - MODE=queue
+            - QUEUE_NAME=thub-queue # Ensure this matches worker
+            - REDIS_URL=redis://redis:6379 # Use service name 'redis'
+        depends_on:
+            - redis
+            - thub
+        networks:
+            - thub-net
+
+volumes:
+    redis_data:
+        driver: local
+
+networks:
+    thub-net:
+        driver: bridge
