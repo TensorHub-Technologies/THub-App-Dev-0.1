@@ -1,0 +1,27 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class BaiduQianfanApi {
+    label;
+    name;
+    version;
+    inputs;
+    constructor() {
+        this.label = 'Baidu Qianfan API';
+        this.name = 'baiduQianfanApi';
+        this.version = 2.0;
+        this.inputs = [
+            {
+                label: 'Qianfan Access Key',
+                name: 'qianfanAccessKey',
+                type: 'string'
+            },
+            {
+                label: 'Qianfan Secret Key',
+                name: 'qianfanSecretKey',
+                type: 'password'
+            }
+        ];
+    }
+}
+module.exports = { credClass: BaiduQianfanApi };
+//# sourceMappingURL=BaiduApi.credential.js.map

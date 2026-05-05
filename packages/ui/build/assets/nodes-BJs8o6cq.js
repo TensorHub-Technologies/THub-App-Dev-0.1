@@ -1,0 +1,1 @@
+import{bj as e}from"./index-Yom5Qwyo.js";const n=()=>e.get("/nodes"),s=o=>e.get(`/nodes/${o}`),d=o=>e.get(`/nodes/category/${o}`),c=o=>e.post("/node-custom-function",o),g=(o,t)=>e.post(`/node-load-method/${o}`,t),a={getAllNodes:n,getSpecificNode:s,executeCustomFunctionNode:c,getNodesByCategory:d,executeNodeLoadMethod:g};export{a as n};
