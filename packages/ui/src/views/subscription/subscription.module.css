@@ -1,0 +1,258 @@
+.switch_parent {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.switch_wrapper {
+    border: 1px solid rgb(141, 141, 138);
+    position: relative;
+    border-radius: 10px;
+    font-family: 'Cambria Math';
+}
+
+[type='radio'] {
+    position: absolute;
+    left: -9999px;
+}
+
+.switch_button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.switch_item {
+    padding-left: 12px;
+}
+
+label {
+    position: relative;
+    z-index: 2;
+    min-width: 100px;
+    cursor: pointer;
+    border-radius: 8px;
+    text-align: center;
+    display: inline-block;
+    padding: 1rem 2rem;
+    transition: 0.3s;
+    font-weight: 200;
+    font-size: large;
+    font-family: 'Cambria Math';
+}
+
+label:hover {
+    color: #e22a90;
+}
+
+.highlighter_dark {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: calc(50% - 8px);
+    height: calc(100% - 16px);
+    border-radius: 8px;
+    background: #e22a90;
+    transition: 0.3s;
+    z-index: 1;
+}
+
+.highlighter_light {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: calc(50% - 8px);
+    height: calc(100% - 16px);
+    border-radius: 8px;
+    background: #3c5ba4;
+    transition: 0.3s;
+    z-index: 1;
+}
+
+.grid_container {
+    margin-top: 20px;
+    color: white;
+}
+
+.button_click_dark {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #e22a90;
+    font-size: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid white;
+    border-radius: 10px;
+}
+
+.button_click_light {
+    color: #3c5ba4;
+    border: 1px solid white;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    font-size: 18px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.card_selection_dark:hover .button_click_dark:not(:disabled) {
+    background-color: #e22a90;
+    color: #191a28;
+}
+
+.card_selection_light:hover .button_click_light:not(:disabled) {
+    background-color: #3c5ba4;
+    color: #191a28;
+}
+
+.card_content_light {
+    height: 600px;
+    border: 0.5px solid;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.card_content_dark {
+    height: 600px;
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.card_selection_dark:hover .card_content_dark {
+    border: 0.5px solid #e22a90;
+    box-sizing: border-box;
+}
+
+.card_selection_light:hover .card_content_light {
+    border: 0.5px solid #3c5ba4;
+}
+
+.parent_pricing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.price_title_dark {
+    color: #e22a90;
+    font-size: 32px;
+    font-weight: lighter;
+}
+
+.price_title_light {
+    color: #3c5ba4;
+    font-size: 32px;
+    font-weight: lighter;
+}
+
+.price_amount_light {
+    font-size: 32px;
+    color: black;
+}
+.price_amount_dark {
+    font-size: 32px;
+    color: white;
+}
+
+.price_description_light {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: black;
+}
+
+.price_description_dark {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.list_features_dark {
+    list-style-type: none;
+    font-size: 18px;
+    margin: 18px 0px 0px -10px;
+    color: white;
+}
+
+.list_features_light {
+    list-style-type: none;
+    font-size: 18px;
+    margin: 18px 0px 0px -10px;
+    color: black;
+}
+
+.list_features_dark::before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="grey" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
+    position: absolute;
+    left: 20px;
+    margin-top: -4px;
+    transition: filter 0.3s ease;
+}
+
+.list_features_light::before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="grey" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
+    position: absolute;
+    left: 20px;
+    margin-top: -4px;
+    transition: filter 0.3s ease;
+}
+
+.card_selection_dark:hover .list_features_dark::before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23e22a90" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
+}
+
+.card_selection_light:hover .list_features_light::before {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="rgb(60,91,164)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.72 7.28l-6 6a.997.997 0 0 1-1.41 0l-3-3a.996.996 0 1 1 1.41-1.41l2.3 2.29 5.3-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>');
+}
+
+/* Badge for active plan */
+.activeBadge_light {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #3c5ba4;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+.activeBadge_dark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #e22a90;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+.subscriptionDetails div {
+    font-family: 'Cambria Math', serif;
+    margin-bottom: 5px;
+}
+
+.price_title_dark,
+.price_title_light,
+.price_amount_dark,
+.price_amount_light,
+.price_description_dark,
+.price_description_light,
+.button_click_dark,
+.button_click_light,
+ul li {
+    font-family: 'Cambria Math', serif;
+}

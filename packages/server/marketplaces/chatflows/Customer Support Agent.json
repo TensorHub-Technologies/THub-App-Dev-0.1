@@ -1,0 +1,1750 @@
+{
+    "description": "Assists customers with queries, resolves issues, and ensures a seamless customer experience.",
+    "usecases": ["Agent"],
+    "framework": ["Langchain"],
+    "nodes": [
+        {
+            "id": "cheerioWebScraper_0",
+            "position": {
+                "x": -316.146043292739,
+                "y": -587.5193894293178
+            },
+            "type": "customNode",
+            "data": {
+                "id": "cheerioWebScraper_0",
+                "label": "Cheerio Web Scraper",
+                "version": 1.1,
+                "name": "cheerioWebScraper",
+                "type": "Document",
+                "baseClasses": ["Document"],
+                "category": "Document Loaders",
+                "description": "Load data from webpages",
+                "inputParams": [
+                    {
+                        "label": "URL",
+                        "name": "url",
+                        "type": "string",
+                        "id": "cheerioWebScraper_0-input-url-string"
+                    },
+                    {
+                        "label": "Get Relative Links Method",
+                        "name": "relativeLinksMethod",
+                        "type": "options",
+                        "description": "Select a method to retrieve relative links",
+                        "options": [
+                            {
+                                "label": "Web Crawl",
+                                "name": "webCrawl",
+                                "description": "Crawl relative links from HTML URL"
+                            },
+                            {
+                                "label": "Scrape XML Sitemap",
+                                "name": "scrapeXMLSitemap",
+                                "description": "Scrape relative links from XML sitemap URL"
+                            }
+                        ],
+                        "default": "webCrawl",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "cheerioWebScraper_0-input-relativeLinksMethod-options"
+                    },
+                    {
+                        "label": "Get Relative Links Limit",
+                        "name": "limit",
+                        "type": "number",
+                        "optional": true,
+                        "default": "10",
+                        "additionalParams": true,
+                        "description": "Only used when \"Get Relative Links Method\" is selected. Set 0 to retrieve all relative links, default limit is 10.",
+                        "warning": "Retrieving all links might take long time, and all links will be upserted again if the flow's state changed (eg: different URL, chunk size, etc)",
+                        "id": "cheerioWebScraper_0-input-limit-number"
+                    },
+                    {
+                        "label": "Selector (CSS)",
+                        "name": "selector",
+                        "type": "string",
+                        "description": "Specify a CSS selector to select the content to be extracted",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "cheerioWebScraper_0-input-selector-string"
+                    },
+                    {
+                        "label": "Additional Metadata",
+                        "name": "metadata",
+                        "type": "json",
+                        "description": "Additional metadata to be added to the extracted documents",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "cheerioWebScraper_0-input-metadata-json"
+                    },
+                    {
+                        "label": "Omit Metadata Keys",
+                        "name": "omitMetadataKeys",
+                        "type": "string",
+                        "rows": 4,
+                        "description": "Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field",
+                        "placeholder": "key1, key2, key3.nestedKey1",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "cheerioWebScraper_0-input-omitMetadataKeys-string"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Text Splitter",
+                        "name": "textSplitter",
+                        "type": "TextSplitter",
+                        "optional": true,
+                        "id": "cheerioWebScraper_0-input-textSplitter-TextSplitter"
+                    }
+                ],
+                "inputs": {
+                    "url": "",
+                    "textSplitter": "{{recursiveCharacterTextSplitter_0.data.instance}}",
+                    "relativeLinksMethod": "webCrawl",
+                    "limit": "10",
+                    "selector": "",
+                    "metadata": "",
+                    "omitMetadataKeys": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "cheerioWebScraper_0-output-cheerioWebScraper-Document",
+                        "name": "cheerioWebScraper",
+                        "label": "Document",
+                        "description": "Load data from webpages",
+                        "type": "Document"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 158,
+            "selected": false,
+            "positionAbsolute": {
+                "x": -316.146043292739,
+                "y": -587.5193894293178
+            },
+            "dragging": false
+        },
+        {
+            "id": "recursiveCharacterTextSplitter_0",
+            "position": {
+                "x": -752.0298751843602,
+                "y": -311.6312972469875
+            },
+            "type": "customNode",
+            "data": {
+                "id": "recursiveCharacterTextSplitter_0",
+                "label": "Recursive Character Text Splitter",
+                "version": 2,
+                "name": "recursiveCharacterTextSplitter",
+                "type": "RecursiveCharacterTextSplitter",
+                "baseClasses": ["RecursiveCharacterTextSplitter", "TextSplitter", "BaseDocumentTransformer", "Runnable"],
+                "category": "Text Splitters",
+                "description": "Split documents recursively by different characters - starting with \"\\n\\n\", then \"\\n\", then \" \"",
+                "inputParams": [
+                    {
+                        "label": "Chunk Size",
+                        "name": "chunkSize",
+                        "type": "number",
+                        "description": "Number of characters in each chunk. Default is 1000.",
+                        "default": 1000,
+                        "optional": true,
+                        "id": "recursiveCharacterTextSplitter_0-input-chunkSize-number"
+                    },
+                    {
+                        "label": "Chunk Overlap",
+                        "name": "chunkOverlap",
+                        "type": "number",
+                        "description": "Number of characters to overlap between chunks. Default is 200.",
+                        "default": 200,
+                        "optional": true,
+                        "id": "recursiveCharacterTextSplitter_0-input-chunkOverlap-number"
+                    },
+                    {
+                        "label": "Custom Separators",
+                        "name": "separators",
+                        "type": "string",
+                        "rows": 4,
+                        "description": "Array of custom separators to determine when to split the text, will override the default separators",
+                        "placeholder": "[\"|\", \"##\", \">\", \"-\"]",
+                        "additionalParams": true,
+                        "optional": true,
+                        "id": "recursiveCharacterTextSplitter_0-input-separators-string"
+                    }
+                ],
+                "inputAnchors": [],
+                "inputs": {
+                    "chunkSize": "2000",
+                    "chunkOverlap": 200,
+                    "separators": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable",
+                        "name": "recursiveCharacterTextSplitter",
+                        "label": "RecursiveCharacterTextSplitter",
+                        "description": "Split documents recursively by different characters - starting with \"\\n\\n\", then \"\\n\", then \" \"",
+                        "type": "RecursiveCharacterTextSplitter | TextSplitter | BaseDocumentTransformer | Runnable"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 107,
+            "selected": false,
+            "positionAbsolute": {
+                "x": -752.0298751843602,
+                "y": -311.6312972469875
+            },
+            "dragging": false
+        },
+        {
+            "id": "pdfFile_0",
+            "position": {
+                "x": -314.53021999172313,
+                "y": -389.2559341470819
+            },
+            "type": "customNode",
+            "data": {
+                "id": "pdfFile_0",
+                "label": "Pdf File",
+                "version": 1,
+                "name": "pdfFile",
+                "type": "Document",
+                "baseClasses": ["Document"],
+                "category": "Document Loaders",
+                "description": "Load data from PDF files",
+                "inputParams": [
+                    {
+                        "label": "Pdf File",
+                        "name": "pdfFile",
+                        "type": "file",
+                        "fileType": ".pdf",
+                        "id": "pdfFile_0-input-pdfFile-file"
+                    },
+                    {
+                        "label": "Usage",
+                        "name": "usage",
+                        "type": "options",
+                        "options": [
+                            {
+                                "label": "One document per page",
+                                "name": "perPage"
+                            },
+                            {
+                                "label": "One document per file",
+                                "name": "perFile"
+                            }
+                        ],
+                        "default": "perPage",
+                        "id": "pdfFile_0-input-usage-options"
+                    },
+                    {
+                        "label": "Use Legacy Build",
+                        "name": "legacyBuild",
+                        "type": "boolean",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "pdfFile_0-input-legacyBuild-boolean"
+                    },
+                    {
+                        "label": "Additional Metadata",
+                        "name": "metadata",
+                        "type": "json",
+                        "description": "Additional metadata to be added to the extracted documents",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "pdfFile_0-input-metadata-json"
+                    },
+                    {
+                        "label": "Omit Metadata Keys",
+                        "name": "omitMetadataKeys",
+                        "type": "string",
+                        "rows": 4,
+                        "description": "Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field",
+                        "placeholder": "key1, key2, key3.nestedKey1",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "pdfFile_0-input-omitMetadataKeys-string"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Text Splitter",
+                        "name": "textSplitter",
+                        "type": "TextSplitter",
+                        "optional": true,
+                        "id": "pdfFile_0-input-textSplitter-TextSplitter"
+                    }
+                ],
+                "inputs": {
+                    "textSplitter": "{{recursiveCharacterTextSplitter_0.data.instance}}",
+                    "usage": "perPage",
+                    "legacyBuild": "",
+                    "metadata": "",
+                    "omitMetadataKeys": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "pdfFile_0-output-pdfFile-Document",
+                        "name": "pdfFile",
+                        "label": "Document",
+                        "description": "Load data from PDF files",
+                        "type": "Document"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 158,
+            "selected": false,
+            "positionAbsolute": {
+                "x": -314.53021999172313,
+                "y": -389.2559341470819
+            },
+            "dragging": false
+        },
+        {
+            "id": "qdrant_0",
+            "position": {
+                "x": 90.45325684924893,
+                "y": -641.5808781494023
+            },
+            "type": "customNode",
+            "data": {
+                "id": "qdrant_0",
+                "label": "Qdrant",
+                "version": 5,
+                "name": "qdrant",
+                "type": "Qdrant",
+                "baseClasses": ["Qdrant", "VectorStoreRetriever", "BaseRetriever"],
+                "category": "Vector Stores",
+                "description": "Upsert embedded data and perform similarity search upon query using Qdrant, a scalable open source vector database written in Rust",
+                "inputParams": [
+                    {
+                        "label": "Connect Credential",
+                        "name": "credential",
+                        "type": "credential",
+                        "description": "Only needed when using Qdrant cloud hosted",
+                        "optional": true,
+                        "credentialNames": ["qdrantApi"],
+                        "id": "qdrant_0-input-credential-credential"
+                    },
+                    {
+                        "label": "Qdrant Server URL",
+                        "name": "qdrantServerUrl",
+                        "type": "string",
+                        "placeholder": "http://localhost:6333",
+                        "id": "qdrant_0-input-qdrantServerUrl-string"
+                    },
+                    {
+                        "label": "Qdrant Collection Name",
+                        "name": "qdrantCollection",
+                        "type": "string",
+                        "id": "qdrant_0-input-qdrantCollection-string"
+                    },
+                    {
+                        "label": "File Upload",
+                        "name": "fileUpload",
+                        "description": "Allow file upload on the chat",
+                        "hint": {
+                            "label": "How to use",
+                            "value": "\n**File Upload**\n\nThis allows file upload on the chat. Uploaded files will be upserted on the fly to the vector store.\n\n**Note:**\n- You can only turn on file upload for one vector store at a time.\n- At least one Document Loader node should be connected to the document input.\n- Document Loader should be file types like PDF, DOCX, TXT, etc.\n\n**How it works**\n- Uploaded files will have the metadata updated with the chatId.\n- This will allow the file to be associated with the chatId.\n- When querying, metadata will be filtered by chatId to retrieve files associated with the chatId.\n"
+                        },
+                        "type": "boolean",
+                        "additionalParams": true,
+                        "optional": true,
+                        "id": "qdrant_0-input-fileUpload-boolean"
+                    },
+                    {
+                        "label": "Vector Dimension",
+                        "name": "qdrantVectorDimension",
+                        "type": "number",
+                        "default": 1536,
+                        "additionalParams": true,
+                        "id": "qdrant_0-input-qdrantVectorDimension-number"
+                    },
+                    {
+                        "label": "Content Key",
+                        "name": "contentPayloadKey",
+                        "description": "The key for storing text. Default to `content`",
+                        "type": "string",
+                        "default": "content",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "qdrant_0-input-contentPayloadKey-string"
+                    },
+                    {
+                        "label": "Metadata Key",
+                        "name": "metadataPayloadKey",
+                        "description": "The key for storing metadata. Default to `metadata`",
+                        "type": "string",
+                        "default": "metadata",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "qdrant_0-input-metadataPayloadKey-string"
+                    },
+                    {
+                        "label": "Upsert Batch Size",
+                        "name": "batchSize",
+                        "type": "number",
+                        "step": 1,
+                        "description": "Upsert in batches of size N",
+                        "additionalParams": true,
+                        "optional": true,
+                        "id": "qdrant_0-input-batchSize-number"
+                    },
+                    {
+                        "label": "Similarity",
+                        "name": "qdrantSimilarity",
+                        "description": "Similarity measure used in Qdrant.",
+                        "type": "options",
+                        "default": "Cosine",
+                        "options": [
+                            {
+                                "label": "Cosine",
+                                "name": "Cosine"
+                            },
+                            {
+                                "label": "Euclid",
+                                "name": "Euclid"
+                            },
+                            {
+                                "label": "Dot",
+                                "name": "Dot"
+                            }
+                        ],
+                        "additionalParams": true,
+                        "id": "qdrant_0-input-qdrantSimilarity-options"
+                    },
+                    {
+                        "label": "Additional Collection Cofiguration",
+                        "name": "qdrantCollectionConfiguration",
+                        "description": "Refer to <a target=\"_blank\" href=\"https://qdrant.tech/documentation/concepts/collections\">collection docs</a> for more reference",
+                        "type": "json",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "qdrant_0-input-qdrantCollectionConfiguration-json"
+                    },
+                    {
+                        "label": "Top K",
+                        "name": "topK",
+                        "description": "Number of top results to fetch. Default to 4",
+                        "placeholder": "4",
+                        "type": "number",
+                        "additionalParams": true,
+                        "optional": true,
+                        "id": "qdrant_0-input-topK-number"
+                    },
+                    {
+                        "label": "Qdrant Search Filter",
+                        "name": "qdrantFilter",
+                        "description": "Only return points which satisfy the conditions",
+                        "type": "json",
+                        "additionalParams": true,
+                        "optional": true,
+                        "id": "qdrant_0-input-qdrantFilter-json"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Document",
+                        "name": "document",
+                        "type": "Document",
+                        "list": true,
+                        "optional": true,
+                        "id": "qdrant_0-input-document-Document"
+                    },
+                    {
+                        "label": "Embeddings",
+                        "name": "embeddings",
+                        "type": "Embeddings",
+                        "id": "qdrant_0-input-embeddings-Embeddings"
+                    },
+                    {
+                        "label": "Record Manager",
+                        "name": "recordManager",
+                        "type": "RecordManager",
+                        "description": "Keep track of the record to prevent duplication",
+                        "optional": true,
+                        "id": "qdrant_0-input-recordManager-RecordManager"
+                    }
+                ],
+                "inputs": {
+                    "document": ["{{pdfFile_0.data.instance}}", "{{cheerioWebScraper_0.data.instance}}"],
+                    "embeddings": "{{openAIEmbeddings_0.data.instance}}",
+                    "recordManager": "",
+                    "qdrantServerUrl": "https://2f9e9463-be23-4571-b2af-853f3c816e24.europe-west3-0.gcp.cloud.qdrant.io",
+                    "qdrantCollection": "Buisness_Analysis",
+                    "fileUpload": "",
+                    "qdrantVectorDimension": 1536,
+                    "contentPayloadKey": "content",
+                    "metadataPayloadKey": "metadata",
+                    "batchSize": "",
+                    "qdrantSimilarity": "Cosine",
+                    "qdrantCollectionConfiguration": "",
+                    "topK": "",
+                    "qdrantFilter": ""
+                },
+                "outputAnchors": [
+                    {
+                        "name": "output",
+                        "label": "Output",
+                        "type": "options",
+                        "description": "",
+                        "options": [
+                            {
+                                "id": "qdrant_0-output-retriever-Qdrant|VectorStoreRetriever|BaseRetriever",
+                                "name": "retriever",
+                                "label": "Qdrant Retriever",
+                                "description": "",
+                                "type": "Qdrant | VectorStoreRetriever | BaseRetriever"
+                            },
+                            {
+                                "id": "qdrant_0-output-vectorStore-Qdrant|VectorStore",
+                                "name": "vectorStore",
+                                "label": "Qdrant Vector Store",
+                                "description": "",
+                                "type": "Qdrant | VectorStore"
+                            }
+                        ],
+                        "default": "retriever"
+                    }
+                ],
+                "outputs": {
+                    "output": "retriever"
+                },
+                "selected": false
+            },
+            "width": 300,
+            "height": 275,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 90.45325684924893,
+                "y": -641.5808781494023
+            },
+            "dragging": false
+        },
+        {
+            "id": "openAIEmbeddings_0",
+            "position": {
+                "x": 112.22359484876131,
+                "y": -154.3295189095102
+            },
+            "type": "customNode",
+            "data": {
+                "id": "openAIEmbeddings_0",
+                "label": "OpenAI Embeddings",
+                "version": 4,
+                "name": "openAIEmbeddings",
+                "type": "OpenAIEmbeddings",
+                "baseClasses": ["OpenAIEmbeddings", "Embeddings"],
+                "category": "Embeddings",
+                "description": "OpenAI API to generate embeddings for a given text",
+                "inputParams": [
+                    {
+                        "label": "Connect Credential",
+                        "name": "credential",
+                        "type": "credential",
+                        "credentialNames": ["openAIApi"],
+                        "id": "openAIEmbeddings_0-input-credential-credential"
+                    },
+                    {
+                        "label": "Model Name",
+                        "name": "modelName",
+                        "type": "asyncOptions",
+                        "loadMethod": "listModels",
+                        "default": "text-embedding-ada-002",
+                        "id": "openAIEmbeddings_0-input-modelName-asyncOptions"
+                    },
+                    {
+                        "label": "Strip New Lines",
+                        "name": "stripNewLines",
+                        "type": "boolean",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "openAIEmbeddings_0-input-stripNewLines-boolean"
+                    },
+                    {
+                        "label": "Batch Size",
+                        "name": "batchSize",
+                        "type": "number",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "openAIEmbeddings_0-input-batchSize-number"
+                    },
+                    {
+                        "label": "Timeout",
+                        "name": "timeout",
+                        "type": "number",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "openAIEmbeddings_0-input-timeout-number"
+                    },
+                    {
+                        "label": "BasePath",
+                        "name": "basepath",
+                        "type": "string",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "openAIEmbeddings_0-input-basepath-string"
+                    },
+                    {
+                        "label": "Dimensions",
+                        "name": "dimensions",
+                        "type": "number",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "openAIEmbeddings_0-input-dimensions-number"
+                    }
+                ],
+                "inputAnchors": [],
+                "inputs": {
+                    "modelName": "text-embedding-ada-002",
+                    "stripNewLines": "",
+                    "batchSize": "",
+                    "timeout": "",
+                    "basepath": "",
+                    "dimensions": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "openAIEmbeddings_0-output-openAIEmbeddings-OpenAIEmbeddings|Embeddings",
+                        "name": "openAIEmbeddings",
+                        "label": "OpenAIEmbeddings",
+                        "description": "OpenAI API to generate embeddings for a given text",
+                        "type": "OpenAIEmbeddings | Embeddings"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 107,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 112.22359484876131,
+                "y": -154.3295189095102
+            },
+            "dragging": false
+        },
+        {
+            "id": "retrieverTool_0",
+            "position": {
+                "x": 515.7034562113906,
+                "y": -657.6118497086818
+            },
+            "type": "customNode",
+            "data": {
+                "id": "retrieverTool_0",
+                "label": "Retriever Tool",
+                "version": 3,
+                "name": "retrieverTool",
+                "type": "RetrieverTool",
+                "baseClasses": ["RetrieverTool", "DynamicTool", "Tool", "StructuredTool", "Runnable"],
+                "category": "Tools",
+                "description": "Use a retriever as allowed tool for agent",
+                "inputParams": [
+                    {
+                        "label": "Retriever Name",
+                        "name": "name",
+                        "type": "string",
+                        "placeholder": "search_state_of_union",
+                        "id": "retrieverTool_0-input-name-string"
+                    },
+                    {
+                        "label": "Retriever Description",
+                        "name": "description",
+                        "type": "string",
+                        "description": "When should agent uses to retrieve documents",
+                        "rows": 3,
+                        "placeholder": "Searches and returns documents regarding the state-of-the-union.",
+                        "id": "retrieverTool_0-input-description-string"
+                    },
+                    {
+                        "label": "Return Source Documents",
+                        "name": "returnSourceDocuments",
+                        "type": "boolean",
+                        "optional": true,
+                        "id": "retrieverTool_0-input-returnSourceDocuments-boolean"
+                    },
+                    {
+                        "label": "Additional Metadata Filter",
+                        "name": "retrieverToolMetadataFilter",
+                        "type": "json",
+                        "description": "Add additional metadata filter on top of the existing filter from vector store",
+                        "optional": true,
+                        "additionalParams": true,
+                        "hint": {
+                            "label": "What can you filter?",
+                            "value": "Add additional filters to vector store. You can also filter with flow config, including the current \"state\":\n- `$flow.sessionId`\n- `$flow.chatId`\n- `$flow.chatflowId`\n- `$flow.input`\n- `$flow.state`\n"
+                        },
+                        "id": "retrieverTool_0-input-retrieverToolMetadataFilter-json"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Retriever",
+                        "name": "retriever",
+                        "type": "BaseRetriever",
+                        "id": "retrieverTool_0-input-retriever-BaseRetriever"
+                    }
+                ],
+                "inputs": {
+                    "name": "Buisness_Analysis_Search",
+                    "description": "You are the Retriever Tool, responsible for fetching relevant data from the knowledge base (KB) based on input queries from Worker Agents. Your goal is to provide accurate, concise, and structured data that directly addresses the query.\n\nResponsibilities:\nmake its short and accurate?\nParse input queries to understand the specific information required.\nRetrieve relevant data from the knowledge base, ensuring accuracy and context.\nReturn results in a structured and organized format.\nGuidelines:\n\nProvide detailed, specific data relevant to the query.\nIf no data is found, clearly indicate that and suggest refining the query.\nInclude references, timestamps, or sources where applicable.\nInput:\nQueries from Worker Agents specifying their data needs.\n\nOutput Structure:\n\nQuery Summary: A short recap of the query.\nRetrieved Data: A detailed response with structured data (e.g., tables, bullet points).\nNotes/References: Additional context or references for the retrieved data.",
+                    "retriever": "{{qdrant_0.data.instance}}",
+                    "returnSourceDocuments": "",
+                    "retrieverToolMetadataFilter": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable",
+                        "name": "retrieverTool",
+                        "label": "RetrieverTool",
+                        "description": "Use a retriever as allowed tool for agent",
+                        "type": "RetrieverTool | DynamicTool | Tool | StructuredTool | Runnable"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 159,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 515.7034562113906,
+                "y": -657.6118497086818
+            },
+            "dragging": false
+        },
+        {
+            "id": "supervisor_0",
+            "position": {
+                "x": 523.3636359869419,
+                "y": -259.6854858710583
+            },
+            "type": "customNode",
+            "data": {
+                "id": "supervisor_0",
+                "label": "Principal Agent",
+                "version": 3,
+                "name": "supervisor",
+                "type": "Supervisor",
+                "baseClasses": ["Supervisor"],
+                "category": "Multi Agents",
+                "inputParams": [
+                    {
+                        "label": "Supervisor Name",
+                        "name": "supervisorName",
+                        "type": "string",
+                        "placeholder": "Supervisor",
+                        "default": "Supervisor",
+                        "id": "supervisor_0-input-supervisorName-string"
+                    },
+                    {
+                        "label": "Supervisor Prompt",
+                        "name": "supervisorPrompt",
+                        "type": "string",
+                        "description": "Prompt must contains {team_members}",
+                        "rows": 4,
+                        "default": "You are a supervisor tasked with managing a conversation between the following workers: {team_members}.\nGiven the following user request, respond with the worker to act next.\nEach worker will perform a task and respond with their results and status.\nWhen finished, respond with FINISH.\nSelect strategically to minimize the number of steps taken.",
+                        "additionalParams": true,
+                        "id": "supervisor_0-input-supervisorPrompt-string"
+                    },
+                    {
+                        "label": "Summarization",
+                        "name": "summarization",
+                        "type": "boolean",
+                        "description": "Return final output as a summarization of the conversation",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "supervisor_0-input-summarization-boolean"
+                    },
+                    {
+                        "label": "Recursion Limit",
+                        "name": "recursionLimit",
+                        "type": "number",
+                        "description": "Maximum number of times a call can recurse. If not provided, defaults to 100.",
+                        "default": 100,
+                        "additionalParams": true,
+                        "id": "supervisor_0-input-recursionLimit-number"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Tool Calling Chat Model",
+                        "name": "model",
+                        "type": "BaseChatModel",
+                        "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, GroqChat. Best result with GPT-4 model",
+                        "id": "supervisor_0-input-model-BaseChatModel"
+                    },
+                    {
+                        "label": "Agent Memory",
+                        "name": "agentMemory",
+                        "type": "BaseCheckpointSaver",
+                        "description": "Save the state of the agent",
+                        "optional": true,
+                        "id": "supervisor_0-input-agentMemory-BaseCheckpointSaver"
+                    },
+                    {
+                        "label": "Input Moderation",
+                        "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+                        "name": "inputModeration",
+                        "type": "Moderation",
+                        "optional": true,
+                        "list": true,
+                        "id": "supervisor_0-input-inputModeration-Moderation"
+                    }
+                ],
+                "inputs": {
+                    "supervisorName": "Supervisor",
+                    "supervisorPrompt": "You are the Supervisor in a Customer Support System. Your responsibilities include:\n\n1. Reviewing escalated issues from Workers and providing guidance.\n2. Ensuring the resolution of complex or multi-domain problems by coordinating across Workers or directly using the Retriever Tool.\n3. Approving responses and relaying critical insights back to the Workers or the customer.\n\nWhen responding to escalations:\n- Understand the nature of the issue and which Worker escalated it.\n- Analyze the details provided and, if needed, interact with the Retriever Tool for additional data.\n- Provide a comprehensive solution or communicate the next steps clearly.\n\nRespond in the format:\n- Worker Escalation: [State which Worker escalated the issue]\n- Escalation Details: [Details of the problem]\n- Supervisor Action: [Resolution or Instructions for Workers]\n\nGuidelines:\n- Always validate facts before approving any resolutions.\n- Ensure prompt responses to maintain customer satisfaction.\n",
+                    "model": "{{chatOpenAI_0.data.instance}}",
+                    "agentMemory": "",
+                    "summarization": "",
+                    "recursionLimit": 100,
+                    "inputModeration": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "supervisor_0-output-supervisor-Supervisor",
+                        "name": "supervisor",
+                        "label": "Principal Agent",
+                        "description": "",
+                        "type": "Supervisor"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 260,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 523.3636359869419,
+                "y": -259.6854858710583
+            },
+            "dragging": false
+        },
+        {
+            "id": "chatOpenAI_0",
+            "position": {
+                "x": 107.69947016738206,
+                "y": -332.93517617791946
+            },
+            "type": "customNode",
+            "data": {
+                "id": "chatOpenAI_0",
+                "label": "ChatOpenAI",
+                "version": 7,
+                "name": "chatOpenAI",
+                "type": "ChatOpenAI",
+                "baseClasses": ["ChatOpenAI", "BaseChatModel", "BaseLanguageModel", "Runnable"],
+                "category": "Chat Models",
+                "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
+                "inputParams": [
+                    {
+                        "label": "Connect Credential",
+                        "name": "credential",
+                        "type": "credential",
+                        "credentialNames": ["openAIApi"],
+                        "id": "chatOpenAI_0-input-credential-credential"
+                    },
+                    {
+                        "label": "Model Name",
+                        "name": "modelName",
+                        "type": "asyncOptions",
+                        "loadMethod": "listModels",
+                        "default": "gpt-3.5-turbo",
+                        "id": "chatOpenAI_0-input-modelName-asyncOptions"
+                    },
+                    {
+                        "label": "Temperature",
+                        "name": "temperature",
+                        "type": "number",
+                        "step": 0.1,
+                        "default": 0.9,
+                        "optional": true,
+                        "id": "chatOpenAI_0-input-temperature-number"
+                    },
+                    {
+                        "label": "Max Tokens",
+                        "name": "maxTokens",
+                        "type": "number",
+                        "step": 1,
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-maxTokens-number"
+                    },
+                    {
+                        "label": "Top Probability",
+                        "name": "topP",
+                        "type": "number",
+                        "step": 0.1,
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-topP-number"
+                    },
+                    {
+                        "label": "Frequency Penalty",
+                        "name": "frequencyPenalty",
+                        "type": "number",
+                        "step": 0.1,
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-frequencyPenalty-number"
+                    },
+                    {
+                        "label": "Presence Penalty",
+                        "name": "presencePenalty",
+                        "type": "number",
+                        "step": 0.1,
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-presencePenalty-number"
+                    },
+                    {
+                        "label": "Timeout",
+                        "name": "timeout",
+                        "type": "number",
+                        "step": 1,
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-timeout-number"
+                    },
+                    {
+                        "label": "BasePath",
+                        "name": "basepath",
+                        "type": "string",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-basepath-string"
+                    },
+                    {
+                        "label": "Proxy Url",
+                        "name": "proxyUrl",
+                        "type": "string",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-proxyUrl-string"
+                    },
+                    {
+                        "label": "Stop Sequence",
+                        "name": "stopSequence",
+                        "type": "string",
+                        "rows": 4,
+                        "optional": true,
+                        "description": "List of stop words to use when generating. Use comma to separate multiple stop words.",
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-stopSequence-string"
+                    },
+                    {
+                        "label": "BaseOptions",
+                        "name": "baseOptions",
+                        "type": "json",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-baseOptions-json"
+                    },
+                    {
+                        "label": "Allow Image Uploads",
+                        "name": "allowImageUploads",
+                        "type": "boolean",
+                        "description": "Automatically uses gpt-4-vision-preview when image is being uploaded from chat. Only works with LLMChain, Conversation Chain, ReAct Agent, Conversational Agent, Tool Agent",
+                        "default": false,
+                        "optional": true,
+                        "id": "chatOpenAI_0-input-allowImageUploads-boolean"
+                    },
+                    {
+                        "label": "Image Resolution",
+                        "description": "This parameter controls the resolution in which the model views the image.",
+                        "name": "imageResolution",
+                        "type": "options",
+                        "options": [
+                            {
+                                "label": "Low",
+                                "name": "low"
+                            },
+                            {
+                                "label": "High",
+                                "name": "high"
+                            },
+                            {
+                                "label": "Auto",
+                                "name": "auto"
+                            }
+                        ],
+                        "default": "low",
+                        "optional": false,
+                        "additionalParams": true,
+                        "id": "chatOpenAI_0-input-imageResolution-options"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Cache",
+                        "name": "cache",
+                        "type": "BaseCache",
+                        "optional": true,
+                        "id": "chatOpenAI_0-input-cache-BaseCache"
+                    }
+                ],
+                "inputs": {
+                    "cache": "",
+                    "modelName": "gpt-3.5-turbo",
+                    "temperature": 0.9,
+                    "maxTokens": "",
+                    "topP": "",
+                    "frequencyPenalty": "",
+                    "presencePenalty": "",
+                    "timeout": "",
+                    "basepath": "",
+                    "proxyUrl": "",
+                    "stopSequence": "",
+                    "baseOptions": "",
+                    "allowImageUploads": "",
+                    "imageResolution": "low"
+                },
+                "outputAnchors": [
+                    {
+                        "id": "chatOpenAI_0-output-chatOpenAI-ChatOpenAI|BaseChatModel|BaseLanguageModel|Runnable",
+                        "name": "chatOpenAI",
+                        "label": "ChatOpenAI",
+                        "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
+                        "type": "ChatOpenAI | BaseChatModel | BaseLanguageModel | Runnable"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 158,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 107.69947016738206,
+                "y": -332.93517617791946
+            },
+            "dragging": false
+        },
+        {
+            "id": "worker_0",
+            "position": {
+                "x": 935.6561143426491,
+                "y": -1482.222513234948
+            },
+            "type": "customNode",
+            "data": {
+                "id": "worker_0",
+                "label": "Specialist Agent",
+                "version": 2,
+                "name": "worker",
+                "type": "Worker",
+                "baseClasses": ["Worker"],
+                "category": "Multi Agents",
+                "inputParams": [
+                    {
+                        "label": "Worker Name",
+                        "name": "workerName",
+                        "type": "string",
+                        "placeholder": "Worker",
+                        "id": "worker_0-input-workerName-string"
+                    },
+                    {
+                        "label": "Worker Prompt",
+                        "name": "workerPrompt",
+                        "type": "string",
+                        "rows": 4,
+                        "default": "You are a research assistant who can search for up-to-date info using search engine.",
+                        "id": "worker_0-input-workerPrompt-string"
+                    },
+                    {
+                        "label": "Format Prompt Values",
+                        "name": "promptValues",
+                        "type": "json",
+                        "optional": true,
+                        "acceptVariable": true,
+                        "list": true,
+                        "id": "worker_0-input-promptValues-json"
+                    },
+                    {
+                        "label": "Max Iterations",
+                        "name": "maxIterations",
+                        "type": "number",
+                        "optional": true,
+                        "id": "worker_0-input-maxIterations-number"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Tools",
+                        "name": "tools",
+                        "type": "Tool",
+                        "list": true,
+                        "optional": true,
+                        "id": "worker_0-input-tools-Tool"
+                    },
+                    {
+                        "label": "Principal Agent",
+                        "name": "supervisor",
+                        "type": "Supervisor",
+                        "id": "worker_0-input-supervisor-Supervisor"
+                    },
+                    {
+                        "label": "Tool Calling Chat Model",
+                        "name": "model",
+                        "type": "BaseChatModel",
+                        "optional": true,
+                        "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat. If not specified, supervisor's model will be used",
+                        "id": "worker_0-input-model-BaseChatModel"
+                    }
+                ],
+                "inputs": {
+                    "workerName": "Billing and Invoicing",
+                    "workerPrompt": "You are a Billing and Invoicing Worker in a Customer Support System. Your role is to handle queries related to billing, payments, and invoicing issues.\n\nResponsibilities:\n1. Address customer concerns about billing discrepancies, refunds, payment failures, or invoice generation.\n2. Use existing data or interact with the Retriever Tool to clarify issues.\n3. Escalate complex billing problems to the Supervisor if they require approval or multi-domain coordination.\n\nRespond in the format:\n- Query Received: [State the customer's query]\n- Core Problem: [Summarized problem]\n- Action Taken: [Resolution or Escalation to Supervisor]\n\nExample:\nQuery Received: \"I was charged twice for my last purchase.\"\nCore Problem: Duplicate charge for a purchase.\nAction Taken: Verified transaction history using Retriever Tool. Confirmed the duplicate charge and initiated the refund process.\n",
+                    "tools": ["{{retrieverTool_0.data.instance}}"],
+                    "supervisor": "{{supervisor_0.data.instance}}",
+                    "model": "",
+                    "promptValues": "",
+                    "maxIterations": ""
+                },
+                "outputAnchors": [],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 209,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 935.6561143426491,
+                "y": -1482.222513234948
+            },
+            "dragging": false
+        },
+        {
+            "id": "worker_1",
+            "position": {
+                "x": 940.7589313137255,
+                "y": -900.9979474072425
+            },
+            "type": "customNode",
+            "data": {
+                "id": "worker_1",
+                "label": "Specialist Agent",
+                "version": 2,
+                "name": "worker",
+                "type": "Worker",
+                "baseClasses": ["Worker"],
+                "category": "Multi Agents",
+                "inputParams": [
+                    {
+                        "label": "Worker Name",
+                        "name": "workerName",
+                        "type": "string",
+                        "placeholder": "Worker",
+                        "id": "worker_1-input-workerName-string"
+                    },
+                    {
+                        "label": "Worker Prompt",
+                        "name": "workerPrompt",
+                        "type": "string",
+                        "rows": 4,
+                        "default": "You are a research assistant who can search for up-to-date info using search engine.",
+                        "id": "worker_1-input-workerPrompt-string"
+                    },
+                    {
+                        "label": "Format Prompt Values",
+                        "name": "promptValues",
+                        "type": "json",
+                        "optional": true,
+                        "acceptVariable": true,
+                        "list": true,
+                        "id": "worker_1-input-promptValues-json"
+                    },
+                    {
+                        "label": "Max Iterations",
+                        "name": "maxIterations",
+                        "type": "number",
+                        "optional": true,
+                        "id": "worker_1-input-maxIterations-number"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Tools",
+                        "name": "tools",
+                        "type": "Tool",
+                        "list": true,
+                        "optional": true,
+                        "id": "worker_1-input-tools-Tool"
+                    },
+                    {
+                        "label": "Principal Agent",
+                        "name": "supervisor",
+                        "type": "Supervisor",
+                        "id": "worker_1-input-supervisor-Supervisor"
+                    },
+                    {
+                        "label": "Tool Calling Chat Model",
+                        "name": "model",
+                        "type": "BaseChatModel",
+                        "optional": true,
+                        "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat. If not specified, supervisor's model will be used",
+                        "id": "worker_1-input-model-BaseChatModel"
+                    }
+                ],
+                "inputs": {
+                    "workerName": "Technical Troubleshooting",
+                    "workerPrompt": "You are a Technical Troubleshooting Worker in a Customer Support System. Your role is to resolve technical issues customers face while using the product or service.\n\nResponsibilities:\n1. Analyze technical problems, such as login issues, website errors, or software malfunctions.\n2. Provide clear instructions to resolve common issues.\n3. Collaborate with the Retriever Tool for technical documentation or escalate unresolved issues to the Supervisor.\n\nRespond in the format:\n- Query Received: [State the customer's query]\n- Core Problem: [Summarized problem]\n- Action Taken: [Resolution or Escalation to Supervisor]\n\nExample:\nQuery Received: \"I can't log into my account.\"\nCore Problem: Login issue due to incorrect password.\nAction Taken: Verified the issue with Retriever Tool. Guided the customer to reset the password using the recovery link.\n",
+                    "tools": ["{{retrieverTool_0.data.instance}}"],
+                    "supervisor": "{{supervisor_0.data.instance}}",
+                    "model": "",
+                    "promptValues": "",
+                    "maxIterations": ""
+                },
+                "outputAnchors": [],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 209,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 940.7589313137255,
+                "y": -900.9979474072425
+            },
+            "dragging": false
+        },
+        {
+            "id": "worker_2",
+            "position": {
+                "x": 987.9974796966902,
+                "y": -21.392280673606933
+            },
+            "type": "customNode",
+            "data": {
+                "id": "worker_2",
+                "label": "Specialist Agent",
+                "version": 2,
+                "name": "worker",
+                "type": "Worker",
+                "baseClasses": ["Worker"],
+                "category": "Multi Agents",
+                "inputParams": [
+                    {
+                        "label": "Worker Name",
+                        "name": "workerName",
+                        "type": "string",
+                        "placeholder": "Worker",
+                        "id": "worker_2-input-workerName-string"
+                    },
+                    {
+                        "label": "Worker Prompt",
+                        "name": "workerPrompt",
+                        "type": "string",
+                        "rows": 4,
+                        "default": "You are a research assistant who can search for up-to-date info using search engine.",
+                        "id": "worker_2-input-workerPrompt-string"
+                    },
+                    {
+                        "label": "Format Prompt Values",
+                        "name": "promptValues",
+                        "type": "json",
+                        "optional": true,
+                        "acceptVariable": true,
+                        "list": true,
+                        "id": "worker_2-input-promptValues-json"
+                    },
+                    {
+                        "label": "Max Iterations",
+                        "name": "maxIterations",
+                        "type": "number",
+                        "optional": true,
+                        "id": "worker_2-input-maxIterations-number"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Tools",
+                        "name": "tools",
+                        "type": "Tool",
+                        "list": true,
+                        "optional": true,
+                        "id": "worker_2-input-tools-Tool"
+                    },
+                    {
+                        "label": "Principal Agent",
+                        "name": "supervisor",
+                        "type": "Supervisor",
+                        "id": "worker_2-input-supervisor-Supervisor"
+                    },
+                    {
+                        "label": "Tool Calling Chat Model",
+                        "name": "model",
+                        "type": "BaseChatModel",
+                        "optional": true,
+                        "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat. If not specified, supervisor's model will be used",
+                        "id": "worker_2-input-model-BaseChatModel"
+                    }
+                ],
+                "inputs": {
+                    "workerName": " Account Management",
+                    "workerPrompt": "You are an Account Management Worker in a Customer Support System. Your role is to handle queries related to customer accounts, such as updates, cancellations, or profile management.\n\nResponsibilities:\n1. Assist customers in managing account details, subscriptions, or cancellations.\n2. Use the Retriever Tool to fetch account-related policies or procedures.\n3. Escalate unusual or sensitive account-related issues to the Supervisor.\n\nRespond in the format:\n- Query Received: [State the customer's query]\n- Core Problem: [Summarized problem]\n- Action Taken: [Resolution or Escalation to Supervisor]\n\nExample:\nQuery Received: \"How can I update my email address?\"\nCore Problem: Update email address in the account.\nAction Taken: Provided step-by-step instructions to update the email via the account settings page. Confirmed successful update.\n",
+                    "tools": ["{{retrieverTool_0.data.instance}}"],
+                    "supervisor": "{{supervisor_0.data.instance}}",
+                    "model": "",
+                    "promptValues": "",
+                    "maxIterations": ""
+                },
+                "outputAnchors": [],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 209,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 987.9974796966902,
+                "y": -21.392280673606933
+            },
+            "dragging": false
+        },
+        {
+            "id": "csvFile_0",
+            "position": {
+                "x": -314.75996076047295,
+                "y": -208.7119653581229
+            },
+            "type": "customNode",
+            "data": {
+                "id": "csvFile_0",
+                "label": "Csv File",
+                "version": 2,
+                "name": "csvFile",
+                "type": "Document",
+                "baseClasses": ["Document"],
+                "category": "Document Loaders",
+                "description": "Load data from CSV files",
+                "inputParams": [
+                    {
+                        "label": "Csv File",
+                        "name": "csvFile",
+                        "type": "file",
+                        "fileType": ".csv",
+                        "id": "csvFile_0-input-csvFile-file"
+                    },
+                    {
+                        "label": "Single Column Extraction",
+                        "name": "columnName",
+                        "type": "string",
+                        "description": "Extracting a single column",
+                        "placeholder": "Enter column name",
+                        "optional": true,
+                        "id": "csvFile_0-input-columnName-string"
+                    },
+                    {
+                        "label": "Additional Metadata",
+                        "name": "metadata",
+                        "type": "json",
+                        "description": "Additional metadata to be added to the extracted documents",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "csvFile_0-input-metadata-json"
+                    },
+                    {
+                        "label": "Omit Metadata Keys",
+                        "name": "omitMetadataKeys",
+                        "type": "string",
+                        "rows": 4,
+                        "description": "Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field",
+                        "placeholder": "key1, key2, key3.nestedKey1",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "csvFile_0-input-omitMetadataKeys-string"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Text Splitter",
+                        "name": "textSplitter",
+                        "type": "TextSplitter",
+                        "optional": true,
+                        "id": "csvFile_0-input-textSplitter-TextSplitter"
+                    }
+                ],
+                "inputs": {
+                    "textSplitter": "{{recursiveCharacterTextSplitter_0.data.instance}}",
+                    "columnName": "",
+                    "metadata": "",
+                    "omitMetadataKeys": ""
+                },
+                "outputAnchors": [
+                    {
+                        "name": "output",
+                        "label": "Output",
+                        "type": "options",
+                        "description": "Array of document objects containing metadata and pageContent",
+                        "options": [
+                            {
+                                "id": "csvFile_0-output-document-Document|json",
+                                "name": "document",
+                                "label": "Document",
+                                "description": "Array of document objects containing metadata and pageContent",
+                                "type": "Document | json"
+                            },
+                            {
+                                "id": "csvFile_0-output-text-string|json",
+                                "name": "text",
+                                "label": "Text",
+                                "description": "Concatenated string from pageContent of documents",
+                                "type": "string | json"
+                            }
+                        ],
+                        "default": "document"
+                    }
+                ],
+                "outputs": {
+                    "output": "document"
+                },
+                "selected": false
+            },
+            "width": 300,
+            "height": 173,
+            "selected": false,
+            "positionAbsolute": {
+                "x": -314.75996076047295,
+                "y": -208.7119653581229
+            },
+            "dragging": false
+        },
+        {
+            "id": "worker_3",
+            "position": {
+                "x": 988.8290143397002,
+                "y": 724.3444917426843
+            },
+            "type": "customNode",
+            "data": {
+                "id": "worker_3",
+                "label": "Specialist Agent",
+                "version": 2,
+                "name": "worker",
+                "type": "Worker",
+                "baseClasses": ["Worker"],
+                "category": "Multi Agents",
+                "inputParams": [
+                    {
+                        "label": "Worker Name",
+                        "name": "workerName",
+                        "type": "string",
+                        "placeholder": "Worker",
+                        "id": "worker_3-input-workerName-string"
+                    },
+                    {
+                        "label": "Worker Prompt",
+                        "name": "workerPrompt",
+                        "type": "string",
+                        "rows": 4,
+                        "default": "You are a research assistant who can search for up-to-date info using search engine.",
+                        "id": "worker_3-input-workerPrompt-string"
+                    },
+                    {
+                        "label": "Format Prompt Values",
+                        "name": "promptValues",
+                        "type": "json",
+                        "optional": true,
+                        "acceptVariable": true,
+                        "list": true,
+                        "id": "worker_3-input-promptValues-json"
+                    },
+                    {
+                        "label": "Max Iterations",
+                        "name": "maxIterations",
+                        "type": "number",
+                        "optional": true,
+                        "id": "worker_3-input-maxIterations-number"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Tools",
+                        "name": "tools",
+                        "type": "Tool",
+                        "list": true,
+                        "optional": true,
+                        "id": "worker_3-input-tools-Tool"
+                    },
+                    {
+                        "label": "Principal Agent",
+                        "name": "supervisor",
+                        "type": "Supervisor",
+                        "id": "worker_3-input-supervisor-Supervisor"
+                    },
+                    {
+                        "label": "Tool Calling Chat Model",
+                        "name": "model",
+                        "type": "BaseChatModel",
+                        "optional": true,
+                        "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat. If not specified, supervisor's model will be used",
+                        "id": "worker_3-input-model-BaseChatModel"
+                    }
+                ],
+                "inputs": {
+                    "workerName": " General Support",
+                    "workerPrompt": "You are a General Support Worker in a Customer Support System. Your role is to address miscellaneous queries and provide overall assistance to customers.\n\nResponsibilities:\n1. Handle a variety of customer inquiries that don’t fit into other specific domains.\n2. Use the Retriever\n",
+                    "tools": ["{{retrieverTool_0.data.instance}}"],
+                    "supervisor": "{{supervisor_0.data.instance}}",
+                    "model": "",
+                    "promptValues": "",
+                    "maxIterations": ""
+                },
+                "outputAnchors": [],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 209,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 988.8290143397002,
+                "y": 724.3444917426843
+            },
+            "dragging": false
+        },
+        {
+            "id": "gitbook_0",
+            "position": {
+                "x": -325.8918436563395,
+                "y": -16.550532145221666
+            },
+            "type": "customNode",
+            "data": {
+                "id": "gitbook_0",
+                "label": "GitBook",
+                "version": 1,
+                "name": "gitbook",
+                "type": "Document",
+                "baseClasses": ["Document"],
+                "category": "Document Loaders",
+                "description": "Load data from GitBook",
+                "inputParams": [
+                    {
+                        "label": "Web Path",
+                        "name": "webPath",
+                        "type": "string",
+                        "placeholder": "https://docs.gitbook.com/product-tour/navigation",
+                        "description": "If want to load all paths from the GitBook provide only root path e.g.https://docs.gitbook.com/ ",
+                        "id": "gitbook_0-input-webPath-string"
+                    },
+                    {
+                        "label": "Should Load All Paths",
+                        "name": "shouldLoadAllPaths",
+                        "type": "boolean",
+                        "description": "Load from all paths in a given GitBook",
+                        "optional": true,
+                        "id": "gitbook_0-input-shouldLoadAllPaths-boolean"
+                    },
+                    {
+                        "label": "Additional Metadata",
+                        "name": "metadata",
+                        "type": "json",
+                        "description": "Additional metadata to be added to the extracted documents",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "gitbook_0-input-metadata-json"
+                    },
+                    {
+                        "label": "Omit Metadata Keys",
+                        "name": "omitMetadataKeys",
+                        "type": "string",
+                        "rows": 4,
+                        "description": "Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field",
+                        "placeholder": "key1, key2, key3.nestedKey1",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "gitbook_0-input-omitMetadataKeys-string"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Text Splitter",
+                        "name": "textSplitter",
+                        "type": "TextSplitter",
+                        "optional": true,
+                        "id": "gitbook_0-input-textSplitter-TextSplitter"
+                    }
+                ],
+                "inputs": {
+                    "webPath": "",
+                    "shouldLoadAllPaths": "",
+                    "textSplitter": "{{recursiveCharacterTextSplitter_0.data.instance}}",
+                    "metadata": "",
+                    "omitMetadataKeys": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "gitbook_0-output-gitbook-Document",
+                        "name": "gitbook",
+                        "label": "Document",
+                        "description": "Load data from GitBook",
+                        "type": "Document"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 158,
+            "selected": false,
+            "positionAbsolute": {
+                "x": -325.8918436563395,
+                "y": -16.550532145221666
+            },
+            "dragging": false
+        }
+    ],
+    "edges": [
+        {
+            "source": "recursiveCharacterTextSplitter_0",
+            "sourceHandle": "recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable",
+            "target": "pdfFile_0",
+            "targetHandle": "pdfFile_0-input-textSplitter-TextSplitter",
+            "type": "buttonedge",
+            "id": "recursiveCharacterTextSplitter_0-recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable-pdfFile_0-pdfFile_0-input-textSplitter-TextSplitter"
+        },
+        {
+            "source": "openAIEmbeddings_0",
+            "sourceHandle": "openAIEmbeddings_0-output-openAIEmbeddings-OpenAIEmbeddings|Embeddings",
+            "target": "qdrant_0",
+            "targetHandle": "qdrant_0-input-embeddings-Embeddings",
+            "type": "buttonedge",
+            "id": "openAIEmbeddings_0-openAIEmbeddings_0-output-openAIEmbeddings-OpenAIEmbeddings|Embeddings-qdrant_0-qdrant_0-input-embeddings-Embeddings",
+            "selected": false
+        },
+        {
+            "source": "qdrant_0",
+            "sourceHandle": "qdrant_0-output-retriever-Qdrant|VectorStoreRetriever|BaseRetriever",
+            "target": "retrieverTool_0",
+            "targetHandle": "retrieverTool_0-input-retriever-BaseRetriever",
+            "type": "buttonedge",
+            "id": "qdrant_0-qdrant_0-output-retriever-Qdrant|VectorStoreRetriever|BaseRetriever-retrieverTool_0-retrieverTool_0-input-retriever-BaseRetriever"
+        },
+        {
+            "source": "chatOpenAI_0",
+            "sourceHandle": "chatOpenAI_0-output-chatOpenAI-ChatOpenAI|BaseChatModel|BaseLanguageModel|Runnable",
+            "target": "supervisor_0",
+            "targetHandle": "supervisor_0-input-model-BaseChatModel",
+            "type": "buttonedge",
+            "id": "chatOpenAI_0-chatOpenAI_0-output-chatOpenAI-ChatOpenAI|BaseChatModel|BaseLanguageModel|Runnable-supervisor_0-supervisor_0-input-model-BaseChatModel"
+        },
+        {
+            "source": "supervisor_0",
+            "sourceHandle": "supervisor_0-output-supervisor-Supervisor",
+            "target": "worker_0",
+            "targetHandle": "worker_0-input-supervisor-Supervisor",
+            "type": "buttonedge",
+            "id": "supervisor_0-supervisor_0-output-supervisor-Supervisor-worker_0-worker_0-input-supervisor-Supervisor"
+        },
+        {
+            "source": "retrieverTool_0",
+            "sourceHandle": "retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable",
+            "target": "worker_0",
+            "targetHandle": "worker_0-input-tools-Tool",
+            "type": "buttonedge",
+            "id": "retrieverTool_0-retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable-worker_0-worker_0-input-tools-Tool"
+        },
+        {
+            "source": "supervisor_0",
+            "sourceHandle": "supervisor_0-output-supervisor-Supervisor",
+            "target": "worker_1",
+            "targetHandle": "worker_1-input-supervisor-Supervisor",
+            "type": "buttonedge",
+            "id": "supervisor_0-supervisor_0-output-supervisor-Supervisor-worker_1-worker_1-input-supervisor-Supervisor"
+        },
+        {
+            "source": "retrieverTool_0",
+            "sourceHandle": "retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable",
+            "target": "worker_1",
+            "targetHandle": "worker_1-input-tools-Tool",
+            "type": "buttonedge",
+            "id": "retrieverTool_0-retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable-worker_1-worker_1-input-tools-Tool"
+        },
+        {
+            "source": "supervisor_0",
+            "sourceHandle": "supervisor_0-output-supervisor-Supervisor",
+            "target": "worker_2",
+            "targetHandle": "worker_2-input-supervisor-Supervisor",
+            "type": "buttonedge",
+            "id": "supervisor_0-supervisor_0-output-supervisor-Supervisor-worker_2-worker_2-input-supervisor-Supervisor"
+        },
+        {
+            "source": "retrieverTool_0",
+            "sourceHandle": "retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable",
+            "target": "worker_2",
+            "targetHandle": "worker_2-input-tools-Tool",
+            "type": "buttonedge",
+            "id": "retrieverTool_0-retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable-worker_2-worker_2-input-tools-Tool"
+        },
+        {
+            "source": "pdfFile_0",
+            "sourceHandle": "pdfFile_0-output-pdfFile-Document",
+            "target": "qdrant_0",
+            "targetHandle": "qdrant_0-input-document-Document",
+            "type": "buttonedge",
+            "id": "pdfFile_0-pdfFile_0-output-pdfFile-Document-qdrant_0-qdrant_0-input-document-Document"
+        },
+        {
+            "source": "cheerioWebScraper_0",
+            "sourceHandle": "cheerioWebScraper_0-output-cheerioWebScraper-Document",
+            "target": "qdrant_0",
+            "targetHandle": "qdrant_0-input-document-Document",
+            "type": "buttonedge",
+            "id": "cheerioWebScraper_0-cheerioWebScraper_0-output-cheerioWebScraper-Document-qdrant_0-qdrant_0-input-document-Document"
+        },
+        {
+            "source": "recursiveCharacterTextSplitter_0",
+            "sourceHandle": "recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable",
+            "target": "cheerioWebScraper_0",
+            "targetHandle": "cheerioWebScraper_0-input-textSplitter-TextSplitter",
+            "type": "buttonedge",
+            "id": "recursiveCharacterTextSplitter_0-recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable-cheerioWebScraper_0-cheerioWebScraper_0-input-textSplitter-TextSplitter"
+        },
+        {
+            "source": "recursiveCharacterTextSplitter_0",
+            "sourceHandle": "recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable",
+            "target": "csvFile_0",
+            "targetHandle": "csvFile_0-input-textSplitter-TextSplitter",
+            "type": "buttonedge",
+            "id": "recursiveCharacterTextSplitter_0-recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable-csvFile_0-csvFile_0-input-textSplitter-TextSplitter"
+        },
+        {
+            "source": "supervisor_0",
+            "sourceHandle": "supervisor_0-output-supervisor-Supervisor",
+            "target": "worker_3",
+            "targetHandle": "worker_3-input-supervisor-Supervisor",
+            "type": "buttonedge",
+            "id": "supervisor_0-supervisor_0-output-supervisor-Supervisor-worker_3-worker_3-input-supervisor-Supervisor"
+        },
+        {
+            "source": "retrieverTool_0",
+            "sourceHandle": "retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable",
+            "target": "worker_3",
+            "targetHandle": "worker_3-input-tools-Tool",
+            "type": "buttonedge",
+            "id": "retrieverTool_0-retrieverTool_0-output-retrieverTool-RetrieverTool|DynamicTool|Tool|StructuredTool|Runnable-worker_3-worker_3-input-tools-Tool"
+        },
+        {
+            "source": "recursiveCharacterTextSplitter_0",
+            "sourceHandle": "recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable",
+            "target": "gitbook_0",
+            "targetHandle": "gitbook_0-input-textSplitter-TextSplitter",
+            "type": "buttonedge",
+            "id": "recursiveCharacterTextSplitter_0-recursiveCharacterTextSplitter_0-output-recursiveCharacterTextSplitter-RecursiveCharacterTextSplitter|TextSplitter|BaseDocumentTransformer|Runnable-gitbook_0-gitbook_0-input-textSplitter-TextSplitter"
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+.typography-font {
+    font-family: 'Cambria Math', serif;
+    font-weight: bolder;
+}
+
+.user-form-heading-dark {
+    color: white;
+}
+
+.user-form-heading-light {
+    color: black;
+}
+
+.user-button-light {
+    color: white;
+    background-color: #3c5ba4;
+}
+
+.user-button-dark {
+    color: white;
+    background-color: #e22a90;
+}

@@ -1,0 +1,34 @@
+.image-parent {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.typography-plan-dark {
+    color: white;
+    font-weight: bolder;
+    background-color: #e22a90;
+    border-radius: 20px;
+    padding: 2px 5px;
+}
+
+.typography-plan-light {
+    color: white;
+    padding: 2px 5px;
+    font-weight: bolder;
+    background-color: #3c5ba4;
+    border-radius: 20px;
+}
+
+.edit_image_icon {
+    position: absolute;
+    background-color: gray;
+    color: white;
+    margin: -24px 0px 0px 57px;
+    border: 1px solid white;
+    border-radius: 50%;
+    padding: 2px;
+    cursor: pointer;
+}

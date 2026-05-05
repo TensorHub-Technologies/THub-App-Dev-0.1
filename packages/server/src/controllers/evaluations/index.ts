@@ -1,0 +1,155 @@
+import { Request, Response, NextFunction } from 'express'
+import { InternalTHubError } from '../../errors/internalTHubError'
+import { StatusCodes } from 'http-status-codes'
+import evaluationsService from '../../services/evaluations'
+import { getPageAndLimitParams } from '../../utils/pagination'
+
+const createEvaluation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.body) {
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.createEvaluation - body not provided!`)
+        }
+
+        const body = req.body
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        body.tenantId = tenantId
+
+        const httpProtocol = req.get('x-forwarded-proto') || req.get('X-Forwarded-Proto') || req.protocol
+        const baseURL = `${httpProtocol}://${req.get('host')}`
+        const apiResponse = await evaluationsService.createEvaluation(body, baseURL)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const runAgain = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (typeof req.params === 'undefined' || !req.params.id) {
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.runAgain - id not provided!`)
+        }
+
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        const httpProtocol = req.get('x-forwarded-proto') || req.get('X-Forwarded-Proto') || req.protocol
+        const baseURL = `${httpProtocol}://${req.get('host')}`
+        const apiResponse = await evaluationsService.runAgain(req.params.id, baseURL, tenantId)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getEvaluation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (typeof req.params === 'undefined' || !req.params.id) {
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.getEvaluation - id not provided!`)
+        }
+
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        const apiResponse = await evaluationsService.getEvaluation(req.params.id, tenantId)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const deleteEvaluation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (typeof req.params === 'undefined' || !req.params.id) {
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.deleteEvaluation - id not provided!`)
+        }
+
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        const apiResponse = await evaluationsService.deleteEvaluation(req.params.id, tenantId)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getAllEvaluations = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { page, limit } = getPageAndLimitParams(req)
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+
+        const apiResponse = await evaluationsService.getAllEvaluations(page, limit, tenantId)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const isOutdated = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (typeof req.params === 'undefined' || !req.params.id) {
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.isOutdated - id not provided!`)
+        }
+
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        const apiResponse = await evaluationsService.isOutdated(req.params.id, tenantId)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getVersions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (typeof req.params === 'undefined' || !req.params.id) {
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, `Error: evaluationsService.getVersions - id not provided!`)
+        }
+
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        const apiResponse = await evaluationsService.getVersions(req.params.id, tenantId)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const patchDeleteEvaluations = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const ids = req.body.ids ?? []
+        const isDeleteAllVersion = req.body.isDeleteAllVersion ?? false
+        const tenantId = req.user?.id
+        if (!tenantId) {
+            throw new InternalTHubError(StatusCodes.UNAUTHORIZED, 'Authentication required')
+        }
+        const apiResponse = await evaluationsService.patchDeleteEvaluations(ids, isDeleteAllVersion, tenantId)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export default {
+    createEvaluation,
+    getEvaluation,
+    deleteEvaluation,
+    getAllEvaluations,
+    isOutdated,
+    runAgain,
+    getVersions,
+    patchDeleteEvaluations
+}

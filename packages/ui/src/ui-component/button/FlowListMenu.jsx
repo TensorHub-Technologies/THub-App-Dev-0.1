@@ -1,0 +1,508 @@
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import PropTypes from 'prop-types'
+
+import { styled, alpha } from '@mui/material/styles'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import EditIcon from '@mui/icons-material/Edit'
+import Divider from '@mui/material/Divider'
+import FileCopyIcon from '@mui/icons-material/FileCopy'
+import FileDownloadIcon from '@mui/icons-material/Downloading'
+import FileDeleteIcon from '@mui/icons-material/Delete'
+import FileCategoryIcon from '@mui/icons-material/Category'
+import PictureInPictureAltIcon from '@mui/icons-material/PictureInPictureAlt'
+import ThumbsUpDownOutlinedIcon from '@mui/icons-material/ThumbsUpDownOutlined'
+import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
+import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
+import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
+import Button from '@mui/material/Button'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import { IconX } from '@tabler/icons-react'
+
+import chatflowsApi from '@/api/chatflows'
+
+import useApi from '@/hooks/useApi'
+import useConfirm from '@/hooks/useConfirm'
+import { uiBaseURL } from '@/store/constant'
+import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction } from '@/store/actions'
+
+import SaveChatflowDialog from '@/ui-component/dialog/SaveChatflowDialog'
+import TagDialog from '@/ui-component/dialog/TagDialog'
+import StarterPromptsDialog from '@/ui-component/dialog/StarterPromptsDialog'
+
+import { generateExportFlowData } from '@/utils/genericHelper'
+import useNotifier from '@/utils/useNotifier'
+import ChatFeedbackDialog from '../dialog/ChatFeedbackDialog'
+import AllowedDomainsDialog from '../dialog/AllowedDomainsDialog'
+import SpeechToTextDialog from '../dialog/SpeechToTextDialog'
+import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
+import { IconDotsVertical } from '@tabler/icons-react'
+
+const StyledMenu = styled((props) => (
+    <Menu
+        elevation={0}
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+        }}
+        transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left'
+        }}
+        {...props}
+        // This ensures the menu stays within viewport bounds
+        disableAutoFocusItem={false}
+        disableRestoreFocus={false}
+        marginThreshold={16}
+    />
+))(({ theme }) => ({
+    '& .MuiPaper-root': {
+        borderRadius: 6,
+        marginTop: theme.spacing(1),
+        minWidth: 180,
+        maxWidth: '90vw', // Ensure it never exceeds viewport width
+        boxShadow:
+            'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+        '& .MuiMenu-list': {
+            padding: '0'
+        },
+        '& .MuiMenuItem-root': {
+            '& .MuiSvgIcon-root': {
+                fontSize: 18,
+                color: theme.palette.text.secondary,
+                marginRight: theme.spacing(1.5)
+            },
+            '&:active': {
+                backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
+            }
+        }
+    }
+}))
+
+export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, setError, updateFlowsApi }) {
+    const { confirm } = useConfirm()
+    const dispatch = useDispatch()
+    const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
+    const customization = useSelector((state) => state.customization)
+
+    useNotifier()
+    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
+
+    const [flowDialogOpen, setFlowDialogOpen] = useState(false)
+    const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
+    const [categoryDialogProps, setCategoryDialogProps] = useState({})
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+    const [conversationStartersDialogOpen, setConversationStartersDialogOpen] = useState(false)
+    const [conversationStartersDialogProps, setConversationStartersDialogProps] = useState({})
+    const [chatFeedbackDialogOpen, setChatFeedbackDialogOpen] = useState(false)
+    const [chatFeedbackDialogProps, setChatFeedbackDialogProps] = useState({})
+    const [allowedDomainsDialogOpen, setAllowedDomainsDialogOpen] = useState(false)
+    const [allowedDomainsDialogProps, setAllowedDomainsDialogProps] = useState({})
+    const [speechToTextDialogOpen, setSpeechToTextDialogOpen] = useState(false)
+    const [speechToTextDialogProps, setSpeechToTextDialogProps] = useState({})
+
+    const view = localStorage.getItem('flowDisplayStyle') || 'card'
+
+    const [exportTemplateDialogOpen, setExportTemplateDialogOpen] = useState(false)
+    const [exportTemplateDialogProps, setExportTemplateDialogProps] = useState({})
+
+    const title = isAgentCanvas ? 'Agents' : 'Workflow'
+    const userData = useSelector((state) => state.user.userData)
+
+    const tenantId = userData?.uid || localStorage.getItem('userId')
+
+    // Prevent event bubbling to parent card
+    const handleClick = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(event.currentTarget)
+    }
+
+    const handleClose = (event) => {
+        if (event) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+        setAnchorEl(null)
+    }
+
+    // Add stopPropagation to all menu item handlers
+    const handleFlowRename = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        setFlowDialogOpen(true)
+    }
+
+    const handleFlowStarterPrompts = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        setConversationStartersDialogProps({
+            title: 'Starter Prompts - ' + chatflow.name,
+            chatflow: chatflow
+        })
+        setConversationStartersDialogOpen(true)
+    }
+
+    const handleExportTemplate = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        setExportTemplateDialogProps({
+            chatflow: chatflow
+        })
+        setExportTemplateDialogOpen(true)
+    }
+
+    const handleFlowChatFeedback = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        setChatFeedbackDialogProps({
+            title: 'Chat Feedback - ' + chatflow.name,
+            chatflow: chatflow
+        })
+        setChatFeedbackDialogOpen(true)
+    }
+
+    const handleAllowedDomains = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        setAllowedDomainsDialogProps({
+            title: 'Allowed Domains - ' + chatflow.name,
+            chatflow: chatflow
+        })
+        setAllowedDomainsDialogOpen(true)
+    }
+
+    const handleSpeechToText = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        setSpeechToTextDialogProps({
+            title: 'Speech To Text - ' + chatflow.name,
+            chatflow: chatflow
+        })
+        setSpeechToTextDialogOpen(true)
+    }
+
+    const saveFlowRename = async (chatflowName, chatflowDescription) => {
+        setFlowDialogOpen(false)
+        const updateBody = {
+            name: chatflowName,
+            tenantId: tenantId,
+            description: chatflowDescription,
+            chatflow
+        }
+        try {
+            await updateChatflowApi.request(chatflow.id, updateBody)
+            if (isAgentCanvas && isAgentflowV2) {
+                await updateFlowsApi.request('AGENTFLOW', tenantId)
+            } else {
+                await updateFlowsApi.request(isAgentCanvas ? { type: 'MULTIAGENT', tenantId } : tenantId)
+            }
+        } catch (error) {
+            if (setError) setError(error)
+            enqueueSnackbar({
+                message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+        }
+    }
+
+    const handleFlowCategory = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        if (chatflow.category) {
+            setCategoryDialogProps({
+                category: chatflow.category.split(';')
+            })
+        }
+        setCategoryDialogOpen(true)
+    }
+
+    const saveFlowCategory = async (categories) => {
+        setCategoryDialogOpen(false)
+        // save categories as string
+        const categoryTags = categories.join(';')
+        const updateBody = {
+            category: categoryTags,
+            tenantId: tenantId,
+            chatflow
+        }
+        try {
+            await updateChatflowApi.request(chatflow.id, updateBody)
+            await updateFlowsApi.request(isAgentCanvas ? { type: 'AGENTFLOW', tenantId } : tenantId)
+        } catch (error) {
+            if (setError) setError(error)
+            enqueueSnackbar({
+                message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                options: {
+                    key: new Date().getTime() + Math.random(),
+                    variant: 'error',
+                    persist: true,
+                    action: (key) => (
+                        <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                            <IconX />
+                        </Button>
+                    )
+                }
+            })
+        }
+    }
+
+    const handleDelete = async (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        const confirmPayload = {
+            title: `Delete`,
+            description: `Delete ${title} ${chatflow.name}?`,
+            confirmButtonName: 'Delete',
+            cancelButtonName: 'Cancel'
+        }
+        const isConfirmed = await confirm(confirmPayload)
+
+        if (isConfirmed) {
+            try {
+                await chatflowsApi.deleteChatflow(chatflow.id)
+                if (isAgentCanvas && isAgentflowV2) {
+                    await updateFlowsApi.request({ type: 'AGENTFLOW', tenantId })
+                } else {
+                    await updateFlowsApi.request(isAgentCanvas ? { type: 'MULTIAGENT', tenantId } : tenantId)
+                }
+            } catch (error) {
+                if (setError) setError(error)
+                enqueueSnackbar({
+                    message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        persist: true,
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+            }
+        }
+    }
+
+    const handleDuplicate = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        try {
+            localStorage.setItem('duplicatedFlowData', chatflow.flowData)
+            if (isAgentflowV2) {
+                window.open(`${uiBaseURL}/v2/agentcanvas`, '_blank')
+            } else if (isAgentCanvas) {
+                window.open(`${uiBaseURL}/agentcanvas`, '_blank')
+            } else {
+                window.open(`${uiBaseURL}/canvas`, '_blank')
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const handleExport = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(null)
+        try {
+            const flowData = JSON.parse(chatflow.flowData)
+            let dataStr = JSON.stringify(generateExportFlowData(flowData), null, 2)
+            //let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+            const blob = new Blob([dataStr], { type: 'application/json' })
+            const dataUri = URL.createObjectURL(blob)
+
+            let exportFileDefaultName = `${chatflow.name} ${title}.json`
+
+            let linkElement = document.createElement('a')
+            linkElement.setAttribute('href', dataUri)
+            linkElement.setAttribute('download', exportFileDefaultName)
+            linkElement.click()
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    return (
+        <div
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation()
+                }
+            }}
+            role='button'
+            tabIndex={0}
+            aria-label='Menu container'
+        >
+            {view !== 'list' && (
+                <Button
+                    style={{
+                        marginRight: '-14px',
+                        marginTop: '4px'
+                    }}
+                    id='demo-customized-button'
+                    onClick={handleClick}
+                    onMouseEnter={(e) => {
+                        // e.target.style.background = 'rgba(255, 255, 255, 0.2)'
+                        e.target.style.transform = 'scale(1.05)'
+                    }}
+                    onMouseLeave={(e) => {
+                        // e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                        e.target.style.transform = 'scale(1)'
+                    }}
+                >
+                    <IconDotsVertical size={20} color={customization.isDarkMode ? 'white' : 'black'} />
+                </Button>
+            )}
+            {view !== 'card' && (
+                <Button
+                    id='demo-customized-button'
+                    aria-controls={open ? 'demo-customized-menu' : undefined}
+                    aria-haspopup='true'
+                    aria-expanded={open ? 'true' : undefined}
+                    disableElevation
+                    onClick={handleClick}
+                    endIcon={<MoreHorizIcon />}
+                ></Button>
+            )}
+
+            <StyledMenu
+                id='demo-customized-menu'
+                MenuListProps={{
+                    'aria-labelledby': 'demo-customized-button'
+                }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: anchorEl?.getAttribute('data-menu-position') === 'right' ? 'right' : 'left'
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: anchorEl?.getAttribute('data-menu-position') === 'right' ? 'right' : 'left'
+                }}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className={`${customization.isDarkMode ? 'gradient-card-global-subtle-dark' : 'gradient-card-global-subtle-light'}`}>
+                    <MenuItem onClick={handleFlowRename} disableRipple>
+                        <EditIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Rename
+                    </MenuItem>
+                    <MenuItem onClick={handleDuplicate} disableRipple>
+                        <FileCopyIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Duplicate
+                    </MenuItem>
+                    <MenuItem onClick={handleExport} disableRipple>
+                        <FileDownloadIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Export
+                    </MenuItem>
+                    <MenuItem onClick={handleExportTemplate} disableRipple>
+                        <ExportTemplateOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Save As Template
+                    </MenuItem>
+                    <Divider sx={{ my: 0.5 }} />
+                    <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
+                        <PictureInPictureAltIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Starter Prompts
+                    </MenuItem>
+                    <MenuItem onClick={handleFlowChatFeedback} disableRipple>
+                        <ThumbsUpDownOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Chat Feedback
+                    </MenuItem>
+                    <MenuItem onClick={handleAllowedDomains} disableRipple>
+                        <VpnLockOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Allowed Domains
+                    </MenuItem>
+                    <MenuItem onClick={handleSpeechToText} disableRipple>
+                        <MicNoneOutlinedIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Speech To Text
+                    </MenuItem>
+                    <MenuItem onClick={handleFlowCategory} disableRipple>
+                        <FileCategoryIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Update Category
+                    </MenuItem>
+                    <Divider sx={{ my: 0.5 }} />
+                    <MenuItem onClick={handleDelete} disableRipple>
+                        <FileDeleteIcon sx={{ backgroundColor: 'transparent !important' }} />
+                        Delete
+                    </MenuItem>
+                </div>
+            </StyledMenu>
+            <SaveChatflowDialog
+                show={flowDialogOpen}
+                dialogProps={{
+                    title: `Rename ${title}`,
+                    confirmButtonName: 'Rename',
+                    cancelButtonName: 'Cancel'
+                }}
+                onCancel={() => setFlowDialogOpen(false)}
+                onConfirm={saveFlowRename}
+            />
+            <TagDialog
+                isOpen={categoryDialogOpen}
+                dialogProps={categoryDialogProps}
+                onClose={() => setCategoryDialogOpen(false)}
+                onSubmit={saveFlowCategory}
+            />
+            <StarterPromptsDialog
+                show={conversationStartersDialogOpen}
+                dialogProps={conversationStartersDialogProps}
+                onCancel={() => setConversationStartersDialogOpen(false)}
+            />
+            <ChatFeedbackDialog
+                show={chatFeedbackDialogOpen}
+                dialogProps={chatFeedbackDialogProps}
+                onCancel={() => setChatFeedbackDialogOpen(false)}
+            />
+            <AllowedDomainsDialog
+                show={allowedDomainsDialogOpen}
+                dialogProps={allowedDomainsDialogProps}
+                onCancel={() => setAllowedDomainsDialogOpen(false)}
+            />
+            <SpeechToTextDialog
+                show={speechToTextDialogOpen}
+                dialogProps={speechToTextDialogProps}
+                onCancel={() => setSpeechToTextDialogOpen(false)}
+            />
+            {exportTemplateDialogOpen && (
+                <ExportAsTemplateDialog
+                    show={exportTemplateDialogOpen}
+                    dialogProps={exportTemplateDialogProps}
+                    onCancel={() => setExportTemplateDialogOpen(false)}
+                />
+            )}
+        </div>
+    )
+}
+
+FlowListMenu.propTypes = {
+    chatflow: PropTypes.object,
+    isAgentCanvas: PropTypes.bool,
+    isAgentflowV2: PropTypes.bool,
+    setError: PropTypes.func,
+    updateFlowsApi: PropTypes.object
+}

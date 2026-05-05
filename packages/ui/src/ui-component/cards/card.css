@@ -1,0 +1,23 @@
+.gradient-card-global-subtle-dark {
+    background: radial-gradient(circle at top left, black 0%, rgb(28, 43, 77) 50%, rgb(28, 43, 77) 72%, rgb(60, 91, 164) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.gradient-card-global-subtle-light {
+    background: radial-gradient(
+        circle at top left,
+        rgb(255, 255, 255) 0%,
+        rgb(242, 242, 242) 17%,
+        rgba(186, 198, 225, 1) 67%,
+        rgba(186, 198, 225, 1) 100%
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
