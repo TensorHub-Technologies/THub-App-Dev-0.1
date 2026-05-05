@@ -48,6 +48,7 @@ import { AddAuthUser1761312000000 } from './1761312000000-AddAuthUser'
 import { AddWorkspaceInviteSupport1761500000000 } from './1761500000000-AddWorkspaceInviteSupport'
 import { CreateCoworkPrompt1765300000000 } from './1765300000000-CreateCoworkPrompt'
 import { FixCoworkPromptColumns1765300000001 } from './1765300000001-FixCoworkPromptColumns'
+import { AddHumanInputToCoworkTask1765400000000 } from './1765400000000-AddHumanInputToCoworkTask'
 
 export const mysqlMigrations = [
     Init1693840429259,
@@ -101,5 +102,6 @@ export const mysqlMigrations = [
     AddAuthUser1761312000000,
     AddWorkspaceInviteSupport1761500000000,
     CreateCoworkPrompt1765300000000,
-    FixCoworkPromptColumns1765300000001
+    FixCoworkPromptColumns1765300000001,
+    AddHumanInputToCoworkTask1765400000000
 ]
