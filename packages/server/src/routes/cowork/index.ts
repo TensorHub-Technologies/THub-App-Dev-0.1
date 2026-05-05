@@ -1,36 +1,19 @@
-import express, { Request, Response, NextFunction } from 'express'
-import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { listModelProfiles, updateModelProfile } from '../../services/cowork/ModelRouter'
-import { StatusCodes } from 'http-status-codes'
+import express from 'express'
+import coworkController from '../../controllers/cowork'
+import humanInputController from '../../controllers/cowork/humanInput'
 
 const router = express.Router()
 
-router.get('/models', async (_req: Request, res: Response, next: NextFunction) => {
-    try {
-        const appServer = getRunningExpressApp()
-        const profiles = await listModelProfiles(appServer.AppDataSource)
-        return res.json(profiles)
-    } catch (error) {
-        next(error)
-    }
-})
+router.post('/sessions', coworkController.createSession)
+router.get('/sessions', coworkController.getSessions)
+router.get('/sessions/:id', coworkController.getSessionById)
+router.post('/sessions/:id/start', coworkController.startSession)
+router.delete('/sessions/:id', coworkController.deleteSession)
+router.get('/sessions/:id/stream', coworkController.streamSession)
 
-router.put('/models/:id', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.params
-        const appServer = getRunningExpressApp()
-        try {
-            const updated = await updateModelProfile(id, req.body, appServer.AppDataSource)
-            return res.json(updated)
-        } catch (err: unknown) {
-            if (err instanceof Error && err.message.includes('not found')) {
-                return res.status(StatusCodes.NOT_FOUND).json({ error: err.message })
-            }
-            throw err
-        }
-    } catch (error) {
-        next(error)
-    }
-})
+router.patch('/sessions/:sessionId/tasks/:taskId/retry', coworkController.retryTask)
+router.post('/sessions/:sessionId/tasks/:taskId/approve', humanInputController.approveTask)
+router.post('/sessions/:sessionId/tasks/:taskId/reject', humanInputController.rejectTask)
+router.get('/sessions/:sessionId/pending-approvals', humanInputController.getPendingApprovals)
 
 export default router
