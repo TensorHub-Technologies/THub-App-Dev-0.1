@@ -5,15 +5,69 @@ import logger from '../../utils/logger'
 
 export type RoutingStrategy = 'cost_optimized' | 'latency_optimized' | 'local_first' | 'balanced'
 
-export interface ModelSelection {
+export interface RoutedModelSelection {
     provider: string
     modelName: string
+    apiBase?: string
+    temperature?: number
+    maxTokens?: number
     isLocal: boolean
     estimatedCostUsd: number
-    fallbackChain: string[] // ordered list of model names to try if this one fails
 }
 
-// ── Built-in model catalogue (seeded on startup) ──────────────────────────────
+export type SelectModelInput = {
+    routingStrategy?: RoutingStrategy | string
+    sessionConfig?: Record<string, any>
+    appDataSource: DataSource
+    requirements?: {
+        needsVision?: boolean
+        needsFunctionCalling?: boolean
+        estimatedTokens?: number
+    }
+}
+
+export type SelectModelResult = {
+    selectedModel: RoutedModelSelection
+    fallbackChain: RoutedModelSelection[]
+}
+
+const toRoutingStrategy = (value: string | undefined): RoutingStrategy => {
+    switch (value) {
+        case 'cost_optimized':
+        case 'latency_optimized':
+        case 'local_first':
+        case 'balanced':
+            return value
+        default:
+            return 'balanced'
+    }
+}
+
+const estimateCostUsd = (model: CoworkModelProfile, estimatedTokens: number): number => {
+    return (model.inputCostPer1kTokens * estimatedTokens) / 1000 + (model.outputCostPer1kTokens * estimatedTokens) / 1000
+}
+
+const toRoutedModelSelection = (
+    model: CoworkModelProfile,
+    sessionConfig: Record<string, any>,
+    estimatedTokens: number
+): RoutedModelSelection => {
+    const apiBaseFromSession = typeof sessionConfig?.apiBase === 'string' ? sessionConfig.apiBase : undefined
+    const temperature = typeof sessionConfig?.temperature === 'number' ? sessionConfig.temperature : undefined
+    const maxTokens = typeof sessionConfig?.maxTokens === 'number' ? sessionConfig.maxTokens : undefined
+
+    return {
+        provider: model.provider,
+        modelName: model.modelName,
+        apiBase: model.isLocal ? model.ollamaEndpoint || apiBaseFromSession : apiBaseFromSession,
+        temperature,
+        maxTokens,
+        isLocal: model.isLocal,
+        estimatedCostUsd: estimateCostUsd(model, estimatedTokens)
+    }
+}
+
+// Built-in model catalogue (seeded on startup)
 const SEED_MODELS: Partial<CoworkModelProfile>[] = [
     {
         provider: 'anthropic',
@@ -94,7 +148,7 @@ const SEED_MODELS: Partial<CoworkModelProfile>[] = [
     }
 ]
 
-// ── Seed models into DB on first run ─────────────────────────────────────────
+// Seed models into DB on first run
 export const seedModelProfiles = async (appDataSource: DataSource): Promise<void> => {
     const repo = appDataSource.getRepository(CoworkModelProfile)
     for (const model of SEED_MODELS) {
@@ -106,7 +160,7 @@ export const seedModelProfiles = async (appDataSource: DataSource): Promise<void
     }
 }
 
-// ── Update model latency from analytics data ──────────────────────────────────
+// Update model latency from analytics data
 export const updateModelLatencyFromAnalytics = async (appDataSource: DataSource): Promise<void> => {
     const modelRepo = appDataSource.getRepository(CoworkModelProfile)
     const analyticsRepo = appDataSource.getRepository(AnalyticsEvent)
@@ -129,16 +183,13 @@ export const updateModelLatencyFromAnalytics = async (appDataSource: DataSource)
     }
 }
 
-// ──  Core routing function ─────────────────────────────────────────────────────
-export const selectModel = async (
-    strategy: RoutingStrategy,
-    appDataSource: DataSource,
-    requirements?: {
-        needsVision?: boolean
-        needsFunctionCalling?: boolean
-        estimatedTokens?: number
-    }
-): Promise<ModelSelection> => {
+// Core routing function
+export const selectModel = async (input: SelectModelInput): Promise<SelectModelResult> => {
+    const strategy = toRoutingStrategy(typeof input.routingStrategy === 'string' ? input.routingStrategy : undefined)
+    const sessionConfig = input.sessionConfig || {}
+    const requirements = input.requirements
+    const appDataSource = input.appDataSource
+
     const repo = appDataSource.getRepository(CoworkModelProfile)
     let candidates = await repo.find({ where: { isAvailable: true } })
 
@@ -148,14 +199,37 @@ export const selectModel = async (
     if (requirements?.needsFunctionCalling) {
         candidates = candidates.filter((m) => m.supportsFunctionCalling)
     }
-    if (requirements?.estimatedTokens) {
-        candidates = candidates.filter((m) => m.contextWindowTokens >= requirements.estimatedTokens!)
+    const estimatedTokensRequirement = requirements?.estimatedTokens
+    if (typeof estimatedTokensRequirement === 'number') {
+        candidates = candidates.filter((m) => m.contextWindowTokens >= estimatedTokensRequirement)
     }
 
     candidates = candidates.filter((m) => m.reliabilityScore > 0.8)
 
     if (!candidates.length) {
-        return { provider: 'openai', modelName: 'gpt-4o-mini', isLocal: false, estimatedCostUsd: 0, fallbackChain: ['gpt-4o'] }
+        const selectedModel: RoutedModelSelection = {
+            provider: 'openai',
+            modelName: 'gpt-4o-mini',
+            apiBase: typeof sessionConfig.apiBase === 'string' ? sessionConfig.apiBase : undefined,
+            temperature: typeof sessionConfig.temperature === 'number' ? sessionConfig.temperature : undefined,
+            maxTokens: typeof sessionConfig.maxTokens === 'number' ? sessionConfig.maxTokens : undefined,
+            isLocal: false,
+            estimatedCostUsd: 0
+        }
+        const fallbackChain: RoutedModelSelection[] = [
+            {
+                provider: 'openai',
+                modelName: 'gpt-4o',
+                apiBase: selectedModel.apiBase,
+                temperature: selectedModel.temperature,
+                maxTokens: selectedModel.maxTokens,
+                isLocal: false,
+                estimatedCostUsd: 0
+            }
+        ]
+
+        logger.info(`[model-router]: strategy=${strategy} selected=${selectedModel.modelName}`)
+        return { selectedModel, fallbackChain }
     }
 
     let selected: CoworkModelProfile
@@ -203,30 +277,20 @@ export const selectModel = async (
         }
     }
 
-    const fallbacks = candidates
+    const fallbackProfiles = candidates
         .filter((m) => m.modelName !== selected.modelName)
         .sort((a, b) => b.reliabilityScore - a.reliabilityScore)
         .slice(0, 2)
-        .map((m) => m.modelName)
 
     const estimatedTokens = requirements?.estimatedTokens || 1000
-    const estimatedCostUsd =
-        (selected.inputCostPer1kTokens * estimatedTokens) / 1000 + (selected.outputCostPer1kTokens * estimatedTokens) / 1000
+    const selectedModel = toRoutedModelSelection(selected, sessionConfig, estimatedTokens)
+    const fallbackChain = fallbackProfiles.map((model) => toRoutedModelSelection(model, sessionConfig, estimatedTokens))
 
-    logger.info(
-        `[model-router]: strategy=${strategy} selected=${selected.provider}/${selected.modelName} fallbacks=[${fallbacks.join(',')}]`
-    )
-
-    return {
-        provider: selected.provider,
-        modelName: selected.modelName,
-        isLocal: selected.isLocal,
-        estimatedCostUsd,
-        fallbackChain: fallbacks
-    }
+    logger.info(`[model-router]: strategy=${strategy} selected=${selectedModel.modelName}`)
+    return { selectedModel, fallbackChain }
 }
 
-// ── Called when a model fails — reduces reliability score ─────────────────────
+// Called when a model fails: reduce reliability score.
 export const recordModelFailure = async (modelName: string, appDataSource: DataSource): Promise<void> => {
     const repo = appDataSource.getRepository(CoworkModelProfile)
     const model = await repo.findOneBy({ modelName })
@@ -237,7 +301,7 @@ export const recordModelFailure = async (modelName: string, appDataSource: DataS
     }
 }
 
-// ── CRUD API handlers ─────────────────────────────────────────────────────────
+// CRUD API handlers
 export const listModelProfiles = async (appDataSource: DataSource): Promise<CoworkModelProfile[]> => {
     return appDataSource.getRepository(CoworkModelProfile).find({
         order: { provider: 'ASC', modelName: 'ASC' }
