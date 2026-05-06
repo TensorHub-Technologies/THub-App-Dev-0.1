@@ -4,6 +4,8 @@ import humanInputController from '../../controllers/cowork/humanInput'
 
 const router = express.Router()
 
+router.get('/models', coworkController.getModelProfiles)
+router.put('/models/:id', coworkController.updateModelProfileById)
 router.post('/sessions', coworkController.createSession)
 router.get('/sessions', coworkController.getSessions)
 router.get('/sessions/:id', coworkController.getSessionById)
