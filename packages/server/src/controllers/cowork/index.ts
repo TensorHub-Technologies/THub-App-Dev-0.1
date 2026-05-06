@@ -5,6 +5,7 @@ import { CoworkTask } from '../../database/entities/CoworkTask'
 import { InternalTHubError } from '../../errors/internalTHubError'
 import { CoworkSessionStatus, CoworkTaskStatus } from '../../services/cowork/status'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import { listModelProfiles, updateModelProfile } from '../../services/cowork/ModelRouter'
 import {
     assertSessionAccess,
     emitCoworkEvent,
@@ -270,7 +271,39 @@ const retryTask = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+/**
+ * List model profiles used by cowork model routing.
+ */
+const getModelProfiles = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+        const appServer = getRunningExpressApp()
+        const models = await listModelProfiles(appServer.AppDataSource)
+        return res.json(models)
+    } catch (error) {
+        next(error)
+    }
+}
+
+/**
+ * Update a cowork model profile.
+ */
+const updateModelProfileById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.params?.id) {
+            throw new InternalTHubError(StatusCodes.PRECONDITION_FAILED, 'model profile id is required')
+        }
+
+        const appServer = getRunningExpressApp()
+        const model = await updateModelProfile(req.params.id, req.body || {}, appServer.AppDataSource)
+        return res.json(model)
+    } catch (error) {
+        next(error)
+    }
+}
+
 export default {
+    getModelProfiles,
+    updateModelProfileById,
     createSession,
     getSessions,
     getSessionById,

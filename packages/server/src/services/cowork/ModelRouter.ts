@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm'
+import { StatusCodes } from 'http-status-codes'
 import { CoworkModelProfile } from '../../database/entities/CoworkModelProfile'
 import { AnalyticsEvent } from '../../database/entities/AnalyticsEvent'
+import { InternalTHubError } from '../../errors/internalTHubError'
 import logger from '../../utils/logger'
 
 export type RoutingStrategy = 'cost_optimized' | 'latency_optimized' | 'local_first' | 'balanced'
@@ -251,7 +253,7 @@ export const updateModelProfile = async (
 ): Promise<CoworkModelProfile> => {
     const repo = appDataSource.getRepository(CoworkModelProfile)
     const model = await repo.findOneBy({ id })
-    if (!model) throw new Error(`Model profile ${id} not found`)
+    if (!model) throw new InternalTHubError(StatusCodes.NOT_FOUND, `Model profile ${id} not found`)
     const updated = { ...model, ...updates }
     return repo.save(updated)
 }
