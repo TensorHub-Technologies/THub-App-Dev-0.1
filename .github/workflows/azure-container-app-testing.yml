@@ -1,7 +1,7 @@
 trigger:
-  branches:
-    include:
-      - testing
+    branches:
+        include:
+            - testing
 
 pr: none
 
