@@ -1,5 +1,7 @@
 trigger:
-    - main
+  branches:
+    include:
+      - main
 
 variables:
     # Azure Resource Manager service connection (used by AzureCLI@2)
