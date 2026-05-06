@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { CoworkSession } from '../../database/entities/CoworkSession'
-import { CoworkTask } from '../../database/entities/CoworkTask'
 import { InternalTHubError } from '../../errors/internalTHubError'
-import { CoworkSessionStatus, CoworkTaskStatus } from '../../services/cowork/status'
+import { CoworkSessionStatus } from '../../services/cowork/status'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { listModelProfiles, updateModelProfile } from '../../services/cowork/ModelRouter'
 import {
@@ -11,7 +10,6 @@ import {
     emitCoworkEvent,
     getAuthenticatedTenantId,
     getCoworkOrchestrator,
-    getCoworkQueueOrThrow,
     getSessionTasks,
     isSessionRunning,
     parsePositiveInt,
@@ -123,14 +121,12 @@ const startSession = async (req: Request, res: Response, next: NextFunction) => 
 
         const orchestrator = getCoworkOrchestrator(appServer)
         await orchestrator.startCoworkSession(session.id)
-
-        session.status = CoworkSessionStatus.RUNNING
-        await sessionRepo.save(session)
+        const updatedSession = await sessionRepo.findOneBy({ id: session.id })
 
         return res.status(StatusCodes.OK).json({
             success: true,
             sessionId: session.id,
-            status: session.status
+            status: updatedSession?.status || CoworkSessionStatus.RUNNING
         })
     } catch (error) {
         next(error)
@@ -199,16 +195,6 @@ const streamSession = async (req: Request, res: Response, next: NextFunction) =>
             tasks: serializedTasks
         })
 
-        serializedTasks
-            .filter((task) => task.humanInputRequired)
-            .forEach((task) => {
-                emitCoworkEvent(appServer, session.id, 'cowork.task.awaiting_approval', {
-                    taskId: task.id,
-                    name: task.name,
-                    pendingAction: task.pendingAction
-                })
-            })
-
         req.on('close', () => {
             appServer.sseStreamer.removeClient(session.id)
         })
@@ -231,36 +217,8 @@ const retryTask = async (req: Request, res: Response, next: NextFunction) => {
         const appServer = getRunningExpressApp()
         await assertSessionAccess(appServer, sessionId, tenantId)
 
-        const taskRepo = appServer.AppDataSource.getRepository(CoworkTask)
-        const task = await taskRepo.findOneBy({ id: taskId, sessionId })
-        if (!task) {
-            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Cowork task ${taskId} not found`)
-        }
-
-        if (task.status !== CoworkTaskStatus.FAILED) {
-            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Only failed tasks can be retried')
-        }
-
-        const coworkQueue = getCoworkQueueOrThrow(appServer)
-        const job = await coworkQueue.addJob({
-            jobType: 'cowork-task',
-            sessionId,
-            taskId,
-            tenantId
-        })
-
-        task.status = CoworkTaskStatus.RUNNING
-        task.errorMessage = null as any
-        task.completedDate = null as any
-        task.startedDate = new Date()
-        task.bullJobId = job?.id != null ? String(job.id) : task.bullJobId
-        task.retryCount = (task.retryCount || 0) + 1
-        await taskRepo.save(task)
-
-        emitCoworkEvent(appServer, sessionId, 'cowork.task.retrying', {
-            taskId: task.id,
-            name: task.name
-        })
+        const orchestrator = getCoworkOrchestrator(appServer)
+        const task = await orchestrator.retryCoworkTask(sessionId, taskId, tenantId)
 
         return res.json({
             success: true,
