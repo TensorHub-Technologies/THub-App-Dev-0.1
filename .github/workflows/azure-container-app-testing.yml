@@ -1,4 +1,7 @@
-trigger: testing
+trigger:
+  branches:
+    include:
+      - testing
 
 pr: none
 
