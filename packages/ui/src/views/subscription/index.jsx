@@ -32,7 +32,7 @@ const Subscription = () => {
     const [currency, setCurrency] = useState('USD')
     const [showForm, setShowForm] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
-    const [apiUrl, setApiUrl] = useState('')
+    const apiUrl = import.meta.env.VITE_THUB_API_URL || window.location.origin
     const [isProcessingPayment, setIsProcessingPayment] = useState(false)
     const [subscriptionDetails, setSubscriptionDetails] = useState({
         subscriptionType: user.subscription_type || '',
@@ -114,24 +114,6 @@ const Subscription = () => {
             isActive: user.subscription_status === 'active'
         })
     }, [user])
-
-    useEffect(() => {
-        let determinedUrl = ''
-
-        const hostname = window.location.hostname
-
-        if (hostname === 'localhost') {
-            determinedUrl = 'http://localhost:3000'
-        } else if (hostname === 'dev.thub.tech') {
-            determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-        } else if (hostname === 'qa.thub.tech') {
-            determinedUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-        } else {
-            determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-        }
-
-        setApiUrl(determinedUrl)
-    }, [])
 
     const paymentHandler = async (e, planTitle, planId, duration, message) => {
         if (e) e.preventDefault()

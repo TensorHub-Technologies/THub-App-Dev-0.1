@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import MainCard from '@/ui-component/cards/MainCard'
@@ -10,27 +10,9 @@ const JoinWorkspace = () => {
     const navigate = useNavigate()
     const customization = useSelector((state) => state.customization)
     const theme = useTheme()
-    const [apiUrl, setApiUrl] = useState('')
+    const apiUrl = import.meta.env.VITE_THUB_API_URL || window.location.origin
 
     const token = searchParams.get('token')
-
-    useEffect(() => {
-        let determinedUrl = ''
-
-        const hostname = window.location.hostname
-
-        if (hostname === 'dev.thub.tech') {
-            determinedUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-        } else if (hostname === 'thub-app.wittycoast-8619cdd6.westus2.azurecontainerapps.io') {
-            determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-        } else if (hostname === 'localhost') {
-            determinedUrl = 'http://localhost:3000'
-        } else {
-            determinedUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-        }
-
-        setApiUrl(determinedUrl)
-    }, [])
 
     useEffect(() => {
         const handleInvite = async () => {
