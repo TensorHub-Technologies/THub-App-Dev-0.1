@@ -15,7 +15,6 @@ interface CustomListener extends QueueEventsListener {
 export default class Worker extends BaseCommand {
     predictionWorkerId: string
     upsertionWorkerId: string
-    coworkWorkerId: string
 
     async run(): Promise<void> {
         logger.info('Starting THub Worker...')
@@ -49,12 +48,6 @@ export default class Worker extends BaseCommand {
         const upsertionWorker = upsertionQueue.createWorker()
         this.upsertionWorkerId = upsertionWorker.id
         logger.info(`Upsertion Worker ${this.upsertionWorkerId} created`)
-
-        /** Cowork */
-        const coworkQueue = queueManager.getQueue('cowork')
-        const coworkWorker = coworkQueue.createWorker()
-        this.coworkWorkerId = coworkWorker.id
-        logger.info(`Cowork Worker ${this.coworkWorkerId} created`)
 
         // Keep the process running
         process.stdin.resume()
@@ -100,10 +93,6 @@ export default class Worker extends BaseCommand {
             const upsertWorker = queueManager.getQueue('upsert').getWorker()
             logger.info(`Shutting down THub Upsertion Worker ${this.upsertionWorkerId}...`)
             await upsertWorker.close()
-
-            const coworkWorker = queueManager.getQueue('cowork').getWorker()
-            logger.info(`Shutting down THub Cowork Worker ${this.coworkWorkerId}...`)
-            await coworkWorker.close()
         } catch (error) {
             logger.error('There was an error shutting down THub Worker...', error)
             await this.failExit()

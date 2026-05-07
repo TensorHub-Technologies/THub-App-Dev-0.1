@@ -3,10 +3,10 @@ import Avatar from '@mui/material/Avatar'
 import { useDispatch, useSelector } from 'react-redux'
 import { Typography, Box } from '@mui/material'
 import './ImageUpload.css'
+import axios from 'axios'
 import CreateIcon from '@mui/icons-material/Create'
 import { updateUserField } from '@/store/actions'
 import toast, { Toaster } from 'react-hot-toast'
-import client from '@/api/client'
 
 function ImageUpload() {
     const user = useSelector((state) => state.user.userData)
@@ -27,6 +27,18 @@ function ImageUpload() {
         inputRef.current.click()
     }
     const handleImageChange = async (event) => {
+        let apiUrl
+
+        if (window.location.hostname === 'localhost') {
+            apiUrl = 'http://localhost:3000'
+        } else if (window.location.hostname === 'dev.thub.tech') {
+            apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
+        } else if (window.location.hostname === 'qa.thub.tech') {
+            apiUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
+        } else {
+            apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
+        }
+
         const file = event.target.files[0]
 
         if (file) {
@@ -34,7 +46,7 @@ function ImageUpload() {
             formData.append('file', file)
             formData.append('userId', user.uid)
 
-            const uploadPromise = client.post('/image-upload', formData, {
+            const uploadPromise = axios.post(`${apiUrl}/api/image-upload`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
 

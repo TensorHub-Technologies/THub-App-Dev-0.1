@@ -56,7 +56,6 @@ import { CachePool } from '../CachePool'
 import { ChatMessage } from '../database/entities/ChatMessage'
 import { Telemetry } from './telemetry'
 import { generateTTSForResponseStream, shouldAutoPlayTTS } from './buildChatflow'
-import { recordEvent } from '../services/analytics'
 
 interface IWaitingNode {
     nodeId: string
@@ -2128,12 +2127,6 @@ export const executeAgentFlow = async ({
         apiMessage.action = JSON.stringify(lastNodeOutput.humanInputAction)
 
     const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
-
-    void recordEvent({
-        eventType: 'workflow.executed',
-        tenantId: chatflow.tenantId,
-        metadata: { chatflowId: chatflowid, sessionId, chatId }
-    })
 
     logger.debug(`[server]: Finished running agentflow ${chatflowid}`)
 

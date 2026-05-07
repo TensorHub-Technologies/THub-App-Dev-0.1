@@ -83,9 +83,6 @@ export class RedisEventSubscriber {
             case 'usedTools':
                 this.sseStreamer.streamUsedToolsEvent(chatId, data)
                 break
-            case 'calledTools':
-                this.sseStreamer.streamCalledToolsEvent(chatId, data)
-                break
             case 'fileAnnotations':
                 this.sseStreamer.streamFileAnnotationsEvent(chatId, data)
                 break
@@ -118,12 +115,6 @@ export class RedisEventSubscriber {
                 break
             case 'metadata':
                 this.sseStreamer.streamMetadataEvent(chatId, data)
-                break
-            case 'usageMetadata':
-                this.sseStreamer.streamUsageMetadataEvent(chatId, data)
-                break
-            default:
-                this.sseStreamer.streamCustomEvent(chatId, eventType, data)
                 break
         }
     }

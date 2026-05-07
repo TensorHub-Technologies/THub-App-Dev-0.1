@@ -26,10 +26,8 @@ import { CoworkSession } from './CoworkSession'
 import { CoworkTask } from './CoworkTask'
 import { CoworkSkill } from './CoworkSkill'
 import { AnalyticsEvent } from './AnalyticsEvent'
-import { CoworkModelProfile } from './CoworkModelProfile'
 
 export const entities = {
-    CoworkModelProfile,
     CoworkSession,
     CoworkTask,
     CoworkSkill,

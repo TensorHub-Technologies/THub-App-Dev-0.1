@@ -31,7 +31,6 @@ import { ExpressAdapter } from '@bull-board/express'
 import subscriptionLegacyRouter from './routes/subscription-legacy'
 import { ensureUserSubscriptionColumns } from './database/utils/ensureUserSubscriptionColumns'
 import { seedDefaultPrompts } from './services/cowork/promptGenerator'
-import { seedModelProfiles, updateModelLatencyFromAnalytics } from './services/cowork/ModelRouter'
 import 'global-agent/bootstrap'
 
 declare global {
@@ -80,13 +79,8 @@ export class App {
             await this.AppDataSource.runMigrations({ transaction: 'each' })
             await ensureUserSubscriptionColumns(this.AppDataSource)
             logger.info('🔄 [server]: Database migrations completed successfully')
-            await seedModelProfiles(this.AppDataSource)
-            logger.info('  [server]: Model profiles seeded')
             await seedDefaultPrompts(this.AppDataSource)
             logger.info('📝 [server]: Default CoWork prompts seeded')
-            void updateModelLatencyFromAnalytics(this.AppDataSource).catch((err) =>
-                logger.warn(`[server]: Latency update failed (non-fatal): ${err}`)
-            )
 
             // Initialize nodes pool
             this.nodesPool = new NodesPool()

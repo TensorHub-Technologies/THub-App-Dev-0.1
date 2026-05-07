@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
-import { CoworkSessionStatus } from '../../services/cowork/status'
+import { CoworkSessionStatus } from '../../Interface'
 
 @Entity()
 export class CoworkSession {

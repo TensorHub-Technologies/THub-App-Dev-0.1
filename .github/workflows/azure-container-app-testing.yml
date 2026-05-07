@@ -1,9 +1,13 @@
 trigger:
+<<<<<<< HEAD
+    - testing
+=======
     branches:
         include:
             - testing
 
 pr: none
+>>>>>>> be422ca4e2f288814dda26e30b675595c9b877bc
 
 variables:
     # Azure Resource Manager service connection (used by AzureCLI@2)
