@@ -9,6 +9,7 @@ import { User } from '../../database/entities/User'
 import { InternalTHubError } from '../../errors/internalTHubError'
 import logger from '../../utils/logger'
 import { CoworkContextManager, RedisClientLike } from './CoworkContextManager'
+import { recordModelFailure, RoutingStrategy, RoutedModelSelection, selectModel } from './ModelRouter'
 
 type SelectedChatModel = Record<string, any>
 
@@ -82,6 +83,12 @@ type SessionCompletionResult = {
     status: CoworkSessionStatus
 }
 
+type ExecuteAttemptResult = {
+    execution: TaskExecutionResult
+    latencyMs: number
+    selectedModelName: string
+}
+
 const DEFAULT_MAX_CONTEXT_CHARS = process.env.COWORK_MAX_CONTEXT_CHARS ? Number.parseInt(process.env.COWORK_MAX_CONTEXT_CHARS, 10) : 20000
 
 const safeJsonParse = <T>(value: string | null | undefined, fallback: T): T => {
@@ -120,13 +127,46 @@ const coercePersona = (persona: string | null | undefined): string => {
     return persona
 }
 
-const getSelectedModelName = (selectedChatModelRaw: string | null | undefined): string | undefined => {
-    const parsed = safeJsonParse<Record<string, any>>(selectedChatModelRaw, {})
-    return typeof parsed?.modelName === 'string' ? parsed.modelName : undefined
-}
-
 const getSelectedChatModelObject = (selectedChatModelRaw: string | null | undefined): Record<string, any> => {
     return safeJsonParse<Record<string, any>>(selectedChatModelRaw, {})
+}
+
+const toRoutingStrategy = (value: unknown): RoutingStrategy => {
+    switch (value) {
+        case 'cost_optimized':
+        case 'latency_optimized':
+        case 'local_first':
+        case 'balanced':
+            return value
+        default:
+            return 'balanced'
+    }
+}
+
+const getRoutingStrategy = (sessionConfig: Record<string, any>): RoutingStrategy => {
+    const strategy =
+        (typeof sessionConfig?.routingStrategy === 'string' && sessionConfig.routingStrategy) ||
+        (typeof sessionConfig?.config?.routingStrategy === 'string' && sessionConfig.config.routingStrategy) ||
+        undefined
+    return toRoutingStrategy(strategy)
+}
+
+const applyRoutedModelToSessionConfig = (sessionConfig: Record<string, any>, routedModel: RoutedModelSelection): SelectedChatModel => {
+    const merged: SelectedChatModel = { ...sessionConfig }
+    merged.provider = routedModel.provider
+    merged.modelName = routedModel.modelName
+
+    if (typeof routedModel.apiBase === 'string') {
+        merged.apiBase = routedModel.apiBase
+    }
+    if (typeof routedModel.temperature === 'number') {
+        merged.temperature = routedModel.temperature
+    }
+    if (typeof routedModel.maxTokens === 'number') {
+        merged.maxTokens = routedModel.maxTokens
+    }
+
+    return merged
 }
 
 const parseDependencyIds = (task: CoworkTask): string[] => {
@@ -263,6 +303,79 @@ const limitDagTasks = (dag: TaskDAG, maxTasksPerSession: number): TaskNode[] => 
         ...task,
         dependencies: task.dependencies.filter((depId) => retainedIds.has(depId))
     }))
+}
+
+type CheckCompletionDeps = {
+    sessionRepo: Repository<CoworkSession>
+    taskRepo: Repository<CoworkTask>
+    eventStreamer: EventStreamerLike | null
+    now: () => Date
+}
+
+export const checkCompletion = async (
+    sessionId: string,
+    { sessionRepo, taskRepo, eventStreamer, now }: CheckCompletionDeps
+): Promise<SessionCompletionResult> => {
+    const session = await sessionRepo.findOneBy({ id: sessionId })
+    if (!session) {
+        throw new InternalTHubError(StatusCodes.NOT_FOUND, `Cowork session ${sessionId} not found`)
+    }
+
+    const tasks = await taskRepo.findBy({ sessionId })
+    if (tasks.length === 0) {
+        return {
+            completed: false,
+            partial: false,
+            status: session.status
+        }
+    }
+
+    const allCompleted = tasks.every((task) => task.status === CoworkTaskStatus.COMPLETED)
+    if (allCompleted) {
+        if (session.status !== CoworkSessionStatus.COMPLETED || !session.completedDate) {
+            session.status = CoworkSessionStatus.COMPLETED
+            session.completedDate = now()
+            await sessionRepo.save(session)
+            emitCoworkEvent(eventStreamer, sessionId, 'cowork.session.done', {
+                status: CoworkSessionStatus.COMPLETED,
+                completedDate: toISOStringSafe(session.completedDate)
+            })
+        }
+
+        return {
+            completed: true,
+            partial: false,
+            status: CoworkSessionStatus.COMPLETED
+        }
+    }
+
+    const hasFailures = tasks.some((task) => task.status === CoworkTaskStatus.FAILED)
+    const hasSkipped = tasks.some((task) => task.status === CoworkTaskStatus.SKIPPED)
+    const allTerminal = tasks.every((task) => isTerminalTaskStatus(task.status))
+
+    if (hasFailures || (hasSkipped && allTerminal) || session.status === CoworkSessionStatus.PARTIAL) {
+        if (session.status !== CoworkSessionStatus.PARTIAL || !session.completedDate) {
+            session.status = CoworkSessionStatus.PARTIAL
+            session.completedDate = now()
+            await sessionRepo.save(session)
+            emitCoworkEvent(eventStreamer, sessionId, 'cowork.session.done', {
+                status: CoworkSessionStatus.PARTIAL,
+                completedDate: toISOStringSafe(session.completedDate)
+            })
+        }
+
+        return {
+            completed: false,
+            partial: true,
+            status: CoworkSessionStatus.PARTIAL
+        }
+    }
+
+    return {
+        completed: false,
+        partial: false,
+        status: session.status
+    }
 }
 
 export class CoworkExecutor {
@@ -478,6 +591,61 @@ export class CoworkExecutor {
         }
     }
 
+    private async executeTaskWithModelFallback(
+        task: CoworkTask,
+        systemPrompt: string,
+        question: string,
+        sessionConfig: Record<string, any>,
+        selectedModel: RoutedModelSelection,
+        fallbackChain: RoutedModelSelection[]
+    ): Promise<ExecuteAttemptResult> {
+        const modelAttempts = [selectedModel, ...fallbackChain]
+
+        for (let index = 0; index < modelAttempts.length; index += 1) {
+            const candidate = modelAttempts[index]
+            const routedChatModel = applyRoutedModelToSessionConfig(sessionConfig, candidate)
+
+            try {
+                const startedAt = Date.now()
+                const execution = await this.executeWithAgentflow({
+                    task,
+                    systemPrompt,
+                    question,
+                    selectedChatModel: routedChatModel
+                })
+                const latencyMs = Date.now() - startedAt
+
+                if (index > 0) {
+                    logger.info(`[model-router]: fallback success model=${candidate.modelName}`)
+                }
+
+                return {
+                    execution,
+                    latencyMs,
+                    selectedModelName: candidate.modelName
+                }
+            } catch (error) {
+                try {
+                    await recordModelFailure(candidate.modelName, this.appDataSource)
+                } catch (recordError) {
+                    logger.warn(`[model-router]: failed to record failure model=${candidate.modelName} error=${String(recordError)}`)
+                }
+
+                const nextCandidate = modelAttempts[index + 1]
+                if (nextCandidate) {
+                    logger.warn(`[model-router]: model=${candidate.modelName} failed, trying fallback=${nextCandidate.modelName}`)
+                    continue
+                }
+
+                logger.error('[model-router]: all fallback models failed')
+                throw new Error('All models in fallback chain failed')
+            }
+        }
+
+        logger.error('[model-router]: all fallback models failed')
+        throw new Error('All models in fallback chain failed')
+    }
+
     async startCoworkSession(sessionId: string): Promise<void> {
         const sessionRepo = this.getSessionRepo()
         const taskRepo = this.getTaskRepo()
@@ -546,31 +714,39 @@ export class CoworkExecutor {
             const inputContext = await this.buildTaskContext(task, sessionId)
             task.inputContext = inputContext
 
-            const selectedChatModel = getSelectedChatModelObject(session.selectedChatModel)
+            const sessionConfig = getSelectedChatModelObject(session.selectedChatModel)
+            const routingStrategy = getRoutingStrategy(sessionConfig)
+            const { selectedModel, fallbackChain } = await selectModel({
+                routingStrategy,
+                sessionConfig,
+                appDataSource: this.appDataSource
+            })
+            logger.info(`[model-router]: strategy=${routingStrategy} selected=${selectedModel.modelName}`)
+
             const systemPrompt = await this.buildPromptFn(
                 coercePersona(task.agentPersona),
                 task.name,
                 task.description || '',
                 inputContext,
                 this.appDataSource,
-                getSelectedModelName(session.selectedChatModel)
+                selectedModel.modelName
             )
             task.systemPrompt = systemPrompt
 
-            const startMs = Date.now()
-            const execution = await this.executeWithAgentflow({
+            const { execution, latencyMs, selectedModelName } = await this.executeTaskWithModelFallback(
                 task,
                 systemPrompt,
-                question: task.description || task.name,
-                selectedChatModel
-            })
-            const latencyMs = Date.now() - startMs
+                task.description || task.name,
+                sessionConfig,
+                selectedModel,
+                fallbackChain
+            )
 
             const outputContent = typeof execution.content === 'string' ? execution.content : JSON.stringify(execution.content)
             const outputArtifact = {
                 type: execution.type || 'markdown',
                 content: outputContent,
-                model: execution.model || selectedChatModel?.modelName,
+                model: execution.model || selectedModelName,
                 plannerTaskId: resolvePlannerTaskId(task)
             }
 
@@ -579,7 +755,7 @@ export class CoworkExecutor {
             task.tokensUsed = execution.tokensUsed || 0
             task.costUsd = execution.costUsd || 0
             task.latencyMs = execution.latencyMs || latencyMs
-            task.model = execution.model || selectedChatModel?.modelName || task.model
+            task.model = execution.model || selectedModelName || task.model
             task.completedDate = this.now()
             task.errorMessage = null as any
 
@@ -703,69 +879,12 @@ export class CoworkExecutor {
     }
 
     async checkCompletion(sessionId: string): Promise<SessionCompletionResult> {
-        const sessionRepo = this.getSessionRepo()
-        const taskRepo = this.getTaskRepo()
-
-        const session = await sessionRepo.findOneBy({ id: sessionId })
-        if (!session) {
-            throw new InternalTHubError(StatusCodes.NOT_FOUND, `Cowork session ${sessionId} not found`)
-        }
-
-        const tasks = await taskRepo.findBy({ sessionId })
-        if (tasks.length === 0) {
-            return {
-                completed: false,
-                partial: false,
-                status: session.status
-            }
-        }
-
-        const allCompleted = tasks.every((task) => task.status === CoworkTaskStatus.COMPLETED)
-        if (allCompleted) {
-            if (session.status !== CoworkSessionStatus.COMPLETED || !session.completedDate) {
-                session.status = CoworkSessionStatus.COMPLETED
-                session.completedDate = this.now()
-                await sessionRepo.save(session)
-                emitCoworkEvent(this.eventStreamer, sessionId, 'cowork.session.done', {
-                    status: CoworkSessionStatus.COMPLETED,
-                    completedDate: toISOStringSafe(session.completedDate)
-                })
-            }
-
-            return {
-                completed: true,
-                partial: false,
-                status: CoworkSessionStatus.COMPLETED
-            }
-        }
-
-        const hasFailures = tasks.some((task) => task.status === CoworkTaskStatus.FAILED)
-        const hasSkipped = tasks.some((task) => task.status === CoworkTaskStatus.SKIPPED)
-        const allTerminal = tasks.every((task) => isTerminalTaskStatus(task.status))
-
-        if (hasFailures || (hasSkipped && allTerminal) || session.status === CoworkSessionStatus.PARTIAL) {
-            if (session.status !== CoworkSessionStatus.PARTIAL || !session.completedDate) {
-                session.status = CoworkSessionStatus.PARTIAL
-                session.completedDate = this.now()
-                await sessionRepo.save(session)
-                emitCoworkEvent(this.eventStreamer, sessionId, 'cowork.session.done', {
-                    status: CoworkSessionStatus.PARTIAL,
-                    completedDate: toISOStringSafe(session.completedDate)
-                })
-            }
-
-            return {
-                completed: false,
-                partial: true,
-                status: CoworkSessionStatus.PARTIAL
-            }
-        }
-
-        return {
-            completed: false,
-            partial: false,
-            status: session.status
-        }
+        return checkCompletion(sessionId, {
+            sessionRepo: this.getSessionRepo(),
+            taskRepo: this.getTaskRepo(),
+            eventStreamer: this.eventStreamer,
+            now: this.now
+        })
     }
 
     private async handleBudgetExceeded(session: CoworkSession): Promise<void> {
