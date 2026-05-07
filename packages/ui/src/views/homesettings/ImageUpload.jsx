@@ -27,17 +27,7 @@ function ImageUpload() {
         inputRef.current.click()
     }
     const handleImageChange = async (event) => {
-        let apiUrl
-
-        if (window.location.hostname === 'localhost') {
-            apiUrl = 'http://localhost:3000'
-        } else if (window.location.hostname === 'dev.thub.tech') {
-            apiUrl = 'https://thub-server.calmisland-c4dd80be.westus2.azurecontainerapps.io'
-        } else if (window.location.hostname === 'qa.thub.tech') {
-            apiUrl = 'https://thub-server.lemonpond-e68ea8b7.westus2.azurecontainerapps.io'
-        } else {
-            apiUrl = 'https://thub-server.wittycoast-8619cdd6.westus2.azurecontainerapps.io'
-        }
+        const apiUrl = import.meta.env.VITE_THUB_API_URL || window.location.origin
 
         const file = event.target.files[0]
 
