@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import PropTypes from 'prop-types'
 import { Box, Stack, Typography, Divider } from '@mui/material'
 import coworkApi from '@/api/cowork'
 
@@ -13,23 +12,19 @@ const PERSONA_COLOR = {
     writer: '#374151'
 }
 
-const ArtifactsPanel = ({ selectedTaskId }) => {
+const ArtifactsPanel = () => {
     const { id: sessionId } = useParams()
-    const [tasks, setTasks] = useState([])
+    const [artifacts, setArtifacts] = useState([])
 
     useEffect(() => {
         if (!sessionId) return
         coworkApi
             .getArtifacts(sessionId)
-            .then((res) => setTasks(res.data?.artifacts || res.data || []))
+            .then((res) => setArtifacts(res.data?.artifacts || res.data || []))
             .catch((err) => console.error('[artifacts]: Failed to load', err))
     }, [sessionId])
 
-    let completed = tasks.filter((t) => t.status === 'completed' && t.outputArtifact)
-
-    if (selectedTaskId) {
-        completed = completed.filter((t) => t.id === selectedTaskId)
-    }
+    let completed = artifacts.filter((t) => t.status === 'completed' && t.outputArtifact)
 
     if (!completed.length)
         return (
@@ -98,10 +93,6 @@ const ArtifactsPanel = ({ selectedTaskId }) => {
             </Stack>
         </Box>
     )
-}
-
-ArtifactsPanel.propTypes = {
-    selectedTaskId: PropTypes.string
 }
 
 export default ArtifactsPanel
