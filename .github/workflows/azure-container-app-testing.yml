@@ -1,84 +1,70 @@
+---
 trigger:
-<<<<<<< HEAD
-    - testing
-=======
-    branches:
-        include:
-            - testing
-
+  branches:
+    include:
+      - testing
 pr: none
->>>>>>> be422ca4e2f288814dda26e30b675595c9b877bc
-
 variables:
-    # Azure Resource Manager service connection (used by AzureCLI@2)
-    azureSubscription: ARMSC # <-- ARM service connection name
-
-    # Docker Registry service connection (used by Docker@2)
-    dockerRegistryServiceConnection: DR-SC-Testing # <-- Docker Registry service connection name
-
-    resourceGroup: gs_rg_0361
-    acrName: ca7a4dd637e6acr # ACR name (not FQDN)
-    containerAppName: thub-app
-    imageName: thub-app
-    tag: $(Build.BuildId)
-
+  azureSubscription: ARMSC
+  dockerRegistryServiceConnection: DR-SC-Testing
+  resourceGroup: gs_rg_0361
+  acrName: ca7a4dd637e6acr
+  containerAppName: thub-app
+  imageName: thub-app
+  tag: $(Build.BuildId)
 pool:
-    vmImage: ubuntu-latest
-
+  vmImage: ubuntu-latest
 stages:
-    - stage: BuildAndDeploy
-      displayName: Build and Deploy to Azure Container Apps (Dev)
-      jobs:
-          - job: Build
-            displayName: Build & Deploy
-            steps:
-                - checkout: self
+  - stage: BuildAndDeploy
+    displayName: Build and Deploy to Azure Container Apps (Dev)
+    jobs:
+      - job: Build
+        displayName: Build & Deploy
+        steps:
+          - checkout: self
+          - task: AzureCLI@2
+            displayName: Azure Login
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az account show
+          - task: Docker@2
+            displayName: Build and Push Image
+            inputs:
+              command: buildAndPush
+              repository: $(imageName)
+              dockerfile: Dockerfile
+              containerRegistry: $(dockerRegistryServiceConnection)
+              tags: |
+                $(tag)
+          - task: AzureCLI@2
+            displayName: Deploy to Container App
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: >
+                set -e
 
-                # Azure login (ARM service connection)
-                - task: AzureCLI@2
-                  displayName: Azure Login
-                  inputs:
-                      azureSubscription: $(azureSubscription)
-                      scriptType: bash
-                      scriptLocation: inlineScript
-                      inlineScript: |
-                          az account show
+                IMAGE="$(acrName).azurecr.io/$(imageName):$(tag)"
 
-                # Build & push via Docker task using Docker Registry service connection
-                - task: Docker@2
-                  displayName: Build and Push Image
-                  inputs:
-                      command: buildAndPush
-                      repository: $(imageName)
-                      dockerfile: Dockerfile
-                      containerRegistry: $(dockerRegistryServiceConnection) # <-- service connection NAME
-                      tags: |
-                          $(tag)
+                echo "Deploying image: ${IMAGE}"
 
-                # Deploy the newly pushed image to Container Apps using ARM service connection
-                - task: AzureCLI@2
-                  displayName: Deploy to Container App
-                  inputs:
-                      azureSubscription: $(azureSubscription)
-                      scriptType: bash
-                      scriptLocation: inlineScript
-                      inlineScript: |
-                          set -e
-                          IMAGE="$(acrName).azurecr.io/$(imageName):$(tag)"
-                          echo "Deploying image: ${IMAGE}"
 
-                          az containerapp update \
-                            --name $(containerAppName) \
-                            --resource-group $(resourceGroup) \
-                            --image "${IMAGE}" \
-                            --set-env-vars \
-                              AZURE_GOOGLE_CLIENT_ID=$(AZURE_GOOGLE_CLIENT_ID) \
-                              AZURE_GOOGLE_CLIENT_SECRET=$(AZURE_GOOGLE_CLIENT_SECRET) \
-                              AZURE_GITHUB_CLIENT_ID_APP=$(AZURE_GITHUB_CLIENT_ID_APP) \
-                              AZURE_GITHUB_CLIENT_SECRET_APP=$(AZURE_GITHUB_CLIENT_SECRET_APP) \
-                              AZURE_GITHUB_CLIENT_ID_DEMO=$(AZURE_GITHUB_CLIENT_ID_DEMO) \
-                              AZURE_GITHUB_CLIENT_SECRET_DEMO=$(AZURE_GITHUB_CLIENT_SECRET_DEMO) \
-                              AZURE_GITHUB_CLIENT_ID_LOCAL=$(AZURE_GITHUB_CLIENT_ID_LOCAL) \
-                              AZURE_GITHUB_CLIENT_SECRET_LOCAL=$(AZURE_GITHUB_CLIENT_SECRET_LOCAL) \
-                              AZURE_GITHUB_VITE_GOOGLE_CLIENT_ID=$(AZURE_GITHUB_VITE_GOOGLE_CLIENT_ID) \
-                              AZURE_VITE_GITHUB_CLIENT_ID=$(AZURE_VITE_GITHUB_CLIENT_ID)
+                az containerapp update \
+                  --name $(containerAppName) \
+                  --resource-group $(resourceGroup) \
+                  --image "${IMAGE}" \
+                  --set-env-vars \
+                    AZURE_GOOGLE_CLIENT_ID=$(AZURE_GOOGLE_CLIENT_ID) \
+                    AZURE_GOOGLE_CLIENT_SECRET=$(AZURE_GOOGLE_CLIENT_SECRET) \
+                    AZURE_GITHUB_CLIENT_ID_APP=$(AZURE_GITHUB_CLIENT_ID_APP) \
+                    AZURE_GITHUB_CLIENT_SECRET_APP=$(AZURE_GITHUB_CLIENT_SECRET_APP) \
+                    AZURE_GITHUB_CLIENT_ID_DEMO=$(AZURE_GITHUB_CLIENT_ID_DEMO) \
+                    AZURE_GITHUB_CLIENT_SECRET_DEMO=$(AZURE_GITHUB_CLIENT_SECRET_DEMO) \
+                    AZURE_GITHUB_CLIENT_ID_LOCAL=$(AZURE_GITHUB_CLIENT_ID_LOCAL) \
+                    AZURE_GITHUB_CLIENT_SECRET_LOCAL=$(AZURE_GITHUB_CLIENT_SECRET_LOCAL) \
+                    AZURE_GITHUB_VITE_GOOGLE_CLIENT_ID=$(AZURE_GITHUB_VITE_GOOGLE_CLIENT_ID) \
+                    AZURE_VITE_GITHUB_CLIENT_ID=$(AZURE_VITE_GITHUB_CLIENT_ID)
