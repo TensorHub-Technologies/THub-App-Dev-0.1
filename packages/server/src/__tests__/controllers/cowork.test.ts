@@ -19,6 +19,7 @@ type MockRepo<T> = {
     findOneBy: jest.Mock
     findBy: jest.Mock
     findAndCount: jest.Mock
+    find: jest.Mock
     save: jest.Mock
 }
 
@@ -63,6 +64,7 @@ const makeSessionRepo = (): MockRepo<any> => ({
     findOneBy: jest.fn(async () => null),
     findBy: jest.fn(async () => []),
     findAndCount: jest.fn(async () => [[], 0]),
+    find: jest.fn(async () => []),
     save: jest.fn(async (entity) => entity)
 })
 
@@ -70,14 +72,29 @@ const makeTaskRepo = (): MockRepo<any> => ({
     findOneBy: jest.fn(async () => null),
     findBy: jest.fn(async () => []),
     findAndCount: jest.fn(async () => [[], 0]),
+    find: jest.fn(async () => []),
     save: jest.fn(async (entity) => entity)
 })
 
-const makeAppServer = (sessionRepo: MockRepo<any>, taskRepo: MockRepo<any>, queueAddJob?: jest.Mock): MockAppServer => ({
+const makeModelRepo = (): MockRepo<any> => ({
+    findOneBy: jest.fn(async () => null),
+    findBy: jest.fn(async () => []),
+    findAndCount: jest.fn(async () => [[], 0]),
+    find: jest.fn(async () => []),
+    save: jest.fn(async (entity) => entity)
+})
+
+const makeAppServer = (
+    sessionRepo: MockRepo<any>,
+    taskRepo: MockRepo<any>,
+    queueAddJob?: jest.Mock,
+    modelRepo: MockRepo<any> = makeModelRepo()
+): MockAppServer => ({
     AppDataSource: {
         getRepository: jest.fn((entity) => {
             if (entity.name === 'CoworkSession') return sessionRepo
             if (entity.name === 'CoworkTask') return taskRepo
+            if (entity.name === 'CoworkModelProfile') return modelRepo
             throw new Error(`Unexpected repository: ${entity.name}`)
         })
     },
@@ -329,5 +346,67 @@ describe('cowork controller', () => {
         await coworkController.getSessionById(req, res, next)
 
         expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 404 }))
+    })
+
+    it('GET cowork models returns all model profiles', async () => {
+        const req = makeRequest()
+        const res = makeResponse()
+        const next = jest.fn() as NextFunction
+        const sessionRepo = makeSessionRepo()
+        const taskRepo = makeTaskRepo()
+        const modelRepo = makeModelRepo()
+        const models = [{ id: 'model-1', provider: 'openai', modelName: 'gpt-4o-mini' }]
+
+        modelRepo.find.mockResolvedValue(models)
+        mockedGetRunningExpressApp.mockReturnValue(makeAppServer(sessionRepo, taskRepo, undefined, modelRepo) as any)
+
+        await coworkController.getModelProfiles(req, res, next)
+
+        expect(modelRepo.find).toHaveBeenCalledWith({ order: { provider: 'ASC', modelName: 'ASC' } })
+        expect(res.json).toHaveBeenCalledWith(models)
+        expect(next).not.toHaveBeenCalled()
+    })
+
+    it('PUT cowork models updates a model profile', async () => {
+        const req = makeRequest({
+            params: { id: 'model-1' },
+            body: { isAvailable: false }
+        })
+        const res = makeResponse()
+        const next = jest.fn() as NextFunction
+        const sessionRepo = makeSessionRepo()
+        const taskRepo = makeTaskRepo()
+        const modelRepo = makeModelRepo()
+        const existing = { id: 'model-1', provider: 'openai', modelName: 'gpt-4o-mini', isAvailable: true }
+
+        modelRepo.findOneBy.mockResolvedValue(existing)
+        mockedGetRunningExpressApp.mockReturnValue(makeAppServer(sessionRepo, taskRepo, undefined, modelRepo) as any)
+
+        await coworkController.updateModelProfileById(req, res, next)
+
+        expect(modelRepo.findOneBy).toHaveBeenCalledWith({ id: 'model-1' })
+        expect(modelRepo.save).toHaveBeenCalledWith(expect.objectContaining({ id: 'model-1', isAvailable: false }))
+        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ id: 'model-1', isAvailable: false }))
+        expect(next).not.toHaveBeenCalled()
+    })
+
+    it('PUT cowork models returns 404 for a non-existent model profile', async () => {
+        const req = makeRequest({
+            params: { id: 'fake-uuid' },
+            body: { isAvailable: false }
+        })
+        const res = makeResponse()
+        const next = jest.fn() as NextFunction
+        const sessionRepo = makeSessionRepo()
+        const taskRepo = makeTaskRepo()
+        const modelRepo = makeModelRepo()
+
+        modelRepo.findOneBy.mockResolvedValue(null)
+        mockedGetRunningExpressApp.mockReturnValue(makeAppServer(sessionRepo, taskRepo, undefined, modelRepo) as any)
+
+        await coworkController.updateModelProfileById(req, res, next)
+
+        expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 404 }))
+        expect(modelRepo.save).not.toHaveBeenCalled()
     })
 })

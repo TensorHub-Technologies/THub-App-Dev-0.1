@@ -45,6 +45,7 @@ import { AddWorkspaceInviteSupport1761500000000 } from './1761500000000-AddWorks
 import { CreateCoworkPrompt1765300000000 } from './1765300000000-CreateCoworkPrompt'
 import { FixCoworkPromptColumns1765300000001 } from './1765300000001-FixCoworkPromptColumns'
 import { AddHumanInputToCoworkTask1765400000000 } from './1765400000000-AddHumanInputToCoworkTask'
+import { CreateCoworkModelProfile1765500000000 } from './1765500000000-CreateCoworkModelProfile'
 
 export const sqliteMigrations = [
     Init1693835579790,
@@ -95,5 +96,6 @@ export const sqliteMigrations = [
     AddWorkspaceInviteSupport1761500000000,
     CreateCoworkPrompt1765300000000,
     FixCoworkPromptColumns1765300000001,
-    AddHumanInputToCoworkTask1765400000000
+    AddHumanInputToCoworkTask1765400000000,
+    CreateCoworkModelProfile1765500000000
 ]

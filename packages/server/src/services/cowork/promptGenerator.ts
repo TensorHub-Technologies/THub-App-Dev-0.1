@@ -179,7 +179,9 @@ export const seedDefaultPrompts = async (appDataSource: DataSource): Promise<voi
                         input_context: 'Outputs from dependency tasks'
                     }),
                     version: 1,
-                    isDefault: true
+                    isDefault: true,
+                    targetModel: null,
+                    tenantId: null
                 })
             )
             logger.info(`[cowork-prompt]: Seeded default prompt for persona=${persona}`)
