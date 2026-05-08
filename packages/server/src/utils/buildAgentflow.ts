@@ -56,6 +56,7 @@ import { CachePool } from '../CachePool'
 import { ChatMessage } from '../database/entities/ChatMessage'
 import { Telemetry } from './telemetry'
 import { generateTTSForResponseStream, shouldAutoPlayTTS } from './buildChatflow'
+import { recordEvent } from '../services/analytics'
 
 interface IWaitingNode {
     nodeId: string
@@ -2138,6 +2139,8 @@ export const executeAgentFlow = async ({
         flowGraph: getTelemetryFlowObj(nodes, edges)
     })
 
+    const startTime = Date.now()
+
     /*** Prepare response ***/
     let result: ICommonObject = {}
     result.text = content
@@ -2148,6 +2151,14 @@ export const executeAgentFlow = async ({
     result.followUpPrompts = JSON.stringify(apiMessage.followUpPrompts)
     result.executionId = newExecution.id
     result.agentFlowExecutedData = agentFlowExecutedData
+
+    void recordEvent({
+        eventType: 'workflow.executed',
+        tenantId: chatflow.tenantId,
+        tokensUsed: typeof result?.total_tokens === 'number' ? result.total_tokens : undefined,
+        latencyMs: typeof startTime === 'number' ? Date.now() - startTime : undefined,
+        metadata: { chatflowId: chatflowid, sessionId, chatId }
+    })
 
     if (sessionId) result.sessionId = sessionId
 
