@@ -30,7 +30,9 @@ declare global {
 
 const getBearerToken = (req: Request) => {
     const authorizationHeader = String(req.headers['authorization'] || '').trim()
-    if (!authorizationHeader.toLowerCase().startsWith('bearer ')) return ''
+    if (!authorizationHeader.toLowerCase().startsWith('bearer ')) {
+        return (req.query.token as string) || ''
+    }
     return authorizationHeader.slice(7).trim()
 }
 

@@ -48,14 +48,24 @@ const TaskNode = ({ data }) => {
                 animation: data.status === 'running' ? 'pulse 1.5s infinite' : 'none'
             }}
         >
-            <Handle type='target' position={Position.Left} style={{ background: '#94A3B8', width: 8, height: 8 }} isConnectable={false} />
+            <Handle
+                type='target'
+                position={Position.Left}
+                style={{ background: '#64748B', width: 10, height: 10, border: '2px solid white' }}
+                isConnectable={false}
+            />
             <Typography variant='caption' sx={{ color: '#6B7280', fontWeight: 600, display: 'block', mb: 0.5 }}>
                 {PERSONA_ABBREV[data.persona] || 'TSK'}
             </Typography>
             <Typography variant='body2' sx={{ fontWeight: 500, lineHeight: 1.3 }}>
                 {data.label}
             </Typography>
-            <Handle type='source' position={Position.Right} style={{ background: '#94A3B8', width: 8, height: 8 }} isConnectable={false} />
+            <Handle
+                type='source'
+                position={Position.Right}
+                style={{ background: '#64748B', width: 10, height: 10, border: '2px solid white' }}
+                isConnectable={false}
+            />
         </Box>
     )
 }
