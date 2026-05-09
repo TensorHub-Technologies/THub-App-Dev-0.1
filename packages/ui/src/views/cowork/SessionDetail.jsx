@@ -4,36 +4,20 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Box, Stack, Typography, Chip, Button, IconButton, Divider } from '@mui/material'
 import { IconArrowLeft, IconPlayerPlay, IconX } from '@tabler/icons-react'
 import MainCard from '@/ui-component/cards/MainCard'
-import { setCurrentSession, setCurrentTasks, clearCurrentSession } from '@/store/slices/coworkSlice'
+import coworkApi from '@/api/cowork'
+import {
+    setCurrentSession,
+    setCurrentTasks,
+    clearCurrentSession,
+    updateTaskStatus,
+    updateSessionStatus,
+    addLiveEvent
+} from '@/store/slices/coworkSlice'
 import CoworkCanvas from './CoworkCanvas'
 import AgentMonitor from './AgentMonitor'
 import ArtifactsPanel from './ArtifactsPanel'
 import TaskList from './TaskList'
 import BudgetBar from './BudgetBar'
-
-// Sprint 1 — mock session data. Sprint 2 — replace with coworkApi.getSession(id)
-const MOCK_SESSION = {
-    id: '1',
-    goal: 'Research top 3 AI competitors and write a comparison report',
-    status: 'running',
-    totalTokensUsed: 1800,
-    maxTokenBudget: 5000,
-    createdAt: '2023-10-27T10:00:00Z',
-    totalCost: 0.05
-}
-const MOCK_TASKS = [
-    {
-        id: 't1',
-        name: 'Research Competitor A',
-        agentPersona: 'researcher',
-        status: 'completed',
-        dependencies: [],
-        outputArtifact: JSON.stringify({ type: 'text', content: 'Competitor A analysis report...' })
-    },
-    { id: 't2', name: 'Research Competitor B', agentPersona: 'researcher', status: 'running', dependencies: [] },
-    { id: 't3', name: 'Research Competitor C', agentPersona: 'researcher', status: 'pending', dependencies: [] },
-    { id: 't4', name: 'Write Comparison Report', agentPersona: 'writer', status: 'pending', dependencies: ['t1', 't2', 't3'] }
-]
 
 const STATUS_COLOR = {
     pending: 'default',
@@ -53,29 +37,83 @@ const SessionDetail = () => {
     const [selectedTaskId, setSelectedTaskId] = useState(null)
 
     useEffect(() => {
-        // Sprint 1: load mock data
-        // Sprint 2: dispatch(fetchSession(id)) and open SSE stream
-        if (id === '1' || id === '2' || id === '3') {
-            dispatch(setCurrentSession({ ...MOCK_SESSION, id }))
-            dispatch(setCurrentTasks(MOCK_TASKS))
-        } else {
-            dispatch(
-                setCurrentSession({
-                    id,
-                    goal: 'New Session ' + id,
-                    status: 'pending',
-                    totalTokensUsed: 0,
-                    maxTokenBudget: 0,
-                    createdAt: new Date().toISOString(),
-                    totalCost: 0
-                })
-            )
-            dispatch(setCurrentTasks([]))
+        let eventSource = null
+
+        const initStream = async () => {
+            try {
+                // Initial load
+                const res = await coworkApi.getSession(id)
+                dispatch(setCurrentSession(res.data.session))
+                dispatch(setCurrentTasks(res.data.tasks))
+
+                // Connect to SSE with Auth
+                const baseUrl = window.location.origin.replace('8080', '3000')
+                const token = localStorage.getItem('authToken') || localStorage.getItem('userId')
+                const streamUrl = `${baseUrl}/api/v1/cowork/sessions/${id}/stream?token=${token}`
+                eventSource = new EventSource(streamUrl)
+
+                eventSource.onmessage = (event) => {
+                    const data = JSON.parse(event.data)
+                    const { type, taskId, status, output } = data
+
+                    dispatch(addLiveEvent({ ...data, timestamp: new Date().toISOString() }))
+
+                    switch (type) {
+                        case 'cowork.task.started':
+                            dispatch(updateTaskStatus({ taskId, status: 'running' }))
+                            break
+                        case 'cowork.task.completed':
+                            dispatch(updateTaskStatus({ taskId, status: 'completed', output }))
+                            break
+                        case 'cowork.task.failed':
+                            dispatch(updateTaskStatus({ taskId, status: 'failed' }))
+                            break
+                        case 'cowork.session.done':
+                            dispatch(updateSessionStatus({ sessionId: id, status: data.status }))
+                            break
+                        case 'cowork.session.budget_exceeded':
+                            dispatch(updateSessionStatus({ sessionId: id, status: 'partial' }))
+                            break
+                    }
+                }
+
+                eventSource.onerror = (e) => {
+                    console.warn('[SSE]: Connection error — will auto-reconnect', e)
+                }
+            } catch (err) {
+                console.error('Failed to initialize session stream', err)
+            }
         }
+
+        initStream()
+
         return () => {
+            if (eventSource) eventSource.close()
             dispatch(clearCurrentSession())
         }
     }, [id, dispatch])
+
+    const handleStart = async () => {
+        try {
+            await coworkApi.startSession(id)
+            window.location.reload()
+        } catch (e) {
+            alert('Failed to start session: ' + (e?.response?.data?.message || e.message))
+            console.error('Failed to start session', e)
+        }
+    }
+
+    const handleCancel = async () => {
+        try {
+            if (window.confirm('Are you sure you want to cancel this session?')) {
+                await coworkApi.cancelSession(id)
+                navigate('/cowork')
+            }
+        } catch (e) {
+            alert('Failed to cancel session: ' + (e?.response?.data?.message || e.message))
+            console.error('Failed to cancel session', e)
+        }
+    }
 
     if (!currentSession) return null
 
@@ -118,14 +156,24 @@ const SessionDetail = () => {
                     )}
 
                     {currentSession.status === 'pending' && (
-                        <Button variant='contained' startIcon={<IconPlayerPlay />} size='small'>
+                        <Button variant='contained' startIcon={<IconPlayerPlay />} size='small' onClick={handleStart}>
                             Start
                         </Button>
                     )}
                     {['running', 'pending'].includes(currentSession.status) && (
-                        <Button variant='outlined' color='error' startIcon={<IconX />} size='small'>
+                        <Button variant='outlined' color='error' startIcon={<IconX />} size='small' onClick={handleCancel}>
                             Cancel
                         </Button>
+                    )}
+                    {currentSession.status === 'cancelled' && (
+                        <Typography variant='caption' sx={{ fontStyle: 'italic', color: 'text.secondary', mr: 2 }}>
+                            This session was cancelled and cannot be restarted.
+                        </Typography>
+                    )}
+                    {currentSession.status === 'completed' && (
+                        <Typography variant='caption' sx={{ fontStyle: 'italic', color: 'success.main', mr: 2 }}>
+                            Execution finished successfully.
+                        </Typography>
                     )}
                 </Stack>
 

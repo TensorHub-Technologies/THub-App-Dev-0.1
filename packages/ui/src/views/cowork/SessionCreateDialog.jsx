@@ -1,13 +1,28 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Stack, CircularProgress, Alert } from '@mui/material'
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Button,
+    Stack,
+    CircularProgress,
+    Alert,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
+} from '@mui/material'
 import coworkApi from '@/api/cowork'
 
 const MODEL_OPTIONS = [
     { label: 'Claude 3.5 Sonnet', value: { provider: 'anthropic', modelName: 'claude-3-5-sonnet-20241022' } },
     { label: 'GPT-4o', value: { provider: 'openai', modelName: 'gpt-4o' } },
     { label: 'GPT-4o Mini', value: { provider: 'openai', modelName: 'gpt-4o-mini' } },
-    { label: 'Gemini 1.5 Flash', value: { provider: 'google', modelName: 'gemini-1.5-flash' } }
+    { label: 'Gemini 2.5 Flash', value: { provider: 'google', modelName: 'gemini-2.5-flash' } },
+    { label: 'Azure GPT-4.1', value: { provider: 'azure', modelName: 'gpt-4.1' } }
 ]
 
 const SessionCreateDialog = ({ open, onClose, onCreated }) => {
@@ -32,10 +47,11 @@ const SessionCreateDialog = ({ open, onClose, onCreated }) => {
                 selectedChatModel: model,
                 ...(budget ? { maxTokenBudget: parseInt(budget) } : {})
             })
-            const session = createRes.data
+            const { session, tasks } = createRes.data
+            const sessionId = session?.id || session?.session?.id // defensive check
 
             // Step 2: start session (queues ready tasks into BullMQ)
-            await coworkApi.startSession(session.id)
+            await coworkApi.startSession(sessionId)
 
             onCreated(session)
             setGoal('')
@@ -53,6 +69,21 @@ const SessionCreateDialog = ({ open, onClose, onCreated }) => {
             <DialogContent>
                 <Stack gap={2} pt={1}>
                     {error && <Alert severity='error'>{error}</Alert>}
+                    <FormControl fullWidth>
+                        <InputLabel id='model-select-label'>Decomposer Model</InputLabel>
+                        <Select
+                            labelId='model-select-label'
+                            value={JSON.stringify(model)}
+                            label='Decomposer Model'
+                            onChange={(e) => setModel(JSON.parse(e.target.value))}
+                        >
+                            {MODEL_OPTIONS.map((option) => (
+                                <MenuItem key={option.label} value={JSON.stringify(option.value)}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <TextField
                         label='Goal'
                         placeholder='What do you want to accomplish?'
