@@ -53,7 +53,8 @@ const SessionDetail = () => {
                 eventSource = new EventSource(streamUrl)
 
                 eventSource.onmessage = (event) => {
-                    const data = JSON.parse(event.data)
+                    const parsed = JSON.parse(event.data)
+                    const data = parsed.data || parsed // Handle double-nested {event, data} from SSEStreamer
                     const { type, taskId, status, output } = data
 
                     dispatch(addLiveEvent({ ...data, timestamp: new Date().toISOString() }))
