@@ -1,22 +1,25 @@
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import ReactFlow, { Background, Controls, useNodesState, useEdgesState, MarkerType, Handle, Position } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { Box, Typography } from '@mui/material'
 
 // Node status → colour mapping — matches AgentMonitor event colours
 const STATUS_BG = {
-    pending: '#FEF3C7', // yellow
-    ready: '#FEF3C7', // yellow
-    running: '#DBEAFE', // blue
-    completed: '#DCFCE7', // green
-    failed: '#FEE2E2', // red
-    skipped: '#F3F4F6' // gray
+    pending: '#F3F4F6',
+    ready: '#FEF3C7',
+    running: '#DBEAFE',
+    awaiting_approval: '#FEF3C7',
+    completed: '#DCFCE7',
+    failed: '#FEE2E2',
+    skipped: '#F3F4F6'
 }
 const STATUS_BORDER = {
-    pending: '#F59E0B', // yellow border
+    pending: '#9CA3AF',
     ready: '#F59E0B',
     running: '#2563EB',
+    awaiting_approval: '#F59E0B',
     completed: '#16A34A',
     failed: '#DC2626',
     skipped: '#9CA3AF'
@@ -35,6 +38,9 @@ const PERSONA_ABBREV = {
 const TaskNode = ({ data }) => {
     const bg = STATUS_BG[data.status] || STATUS_BG.pending
     const border = STATUS_BORDER[data.status] || STATUS_BORDER.pending
+    const isPulsing = data.status === 'running' || data.status === 'awaiting_approval'
+    const isSkipped = data.status === 'skipped'
+
     return (
         <Box
             sx={{
@@ -44,8 +50,9 @@ const TaskNode = ({ data }) => {
                 padding: '10px 14px',
                 minWidth: 160,
                 maxWidth: 200,
-                boxShadow: data.status === 'running' ? `0 0 0 3px ${border}44` : 'none',
-                animation: data.status === 'running' ? 'pulse 1.5s infinite' : 'none'
+                boxShadow: isPulsing ? `0 0 0 3px ${border}44` : 'none',
+                animation: isPulsing ? 'pulse 1.5s infinite' : 'none',
+                opacity: isSkipped ? 0.5 : 1
             }}
         >
             <Handle
@@ -56,8 +63,10 @@ const TaskNode = ({ data }) => {
             />
             <Typography variant='caption' sx={{ color: '#6B7280', fontWeight: 600, display: 'block', mb: 0.5 }}>
                 {PERSONA_ABBREV[data.persona] || 'TSK'}
+                {data.status === 'awaiting_approval' && ' ⏸'}
+                {data.status === 'skipped' && ' ✕'}
             </Typography>
-            <Typography variant='body2' sx={{ fontWeight: 500, lineHeight: 1.3 }}>
+            <Typography variant='body2' sx={{ fontWeight: 500, lineHeight: 1.3, textDecoration: isSkipped ? 'line-through' : 'none' }}>
                 {data.label}
             </Typography>
             <Handle
@@ -80,13 +89,14 @@ TaskNode.propTypes = {
 
 const nodeTypes = { taskNode: TaskNode }
 
-const CoworkCanvas = ({ tasks = [] }) => {
+const CoworkCanvas = () => {
+    const { currentTasks: tasks } = useSelector((s) => s.cowork)
     const [nodes, setNodes, onNodesChange] = useNodesState([])
     const [edges, setEdges, onEdgesChange] = useEdgesState([])
 
     // Build nodes and edges from task array
     useEffect(() => {
-        if (!tasks.length) return
+        if (!tasks || !tasks.length) return
 
         // Simple left-to-right layout: group tasks by dependency depth
         const depth = {}
@@ -148,8 +158,6 @@ const CoworkCanvas = ({ tasks = [] }) => {
     )
 }
 
-CoworkCanvas.propTypes = {
-    tasks: PropTypes.array
-}
+CoworkCanvas.propTypes = {}
 
 export default CoworkCanvas

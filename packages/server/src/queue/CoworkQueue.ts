@@ -28,8 +28,21 @@ export class CoworkQueue extends BaseQueue {
         const jobType = String(data?.jobType || data?.type || '').trim()
 
         if (jobType === 'cowork-task') {
-            logger.info('Processing cowork-task job...')
-            return { processed: true, jobType: 'cowork-task' }
+            logger.info(`Processing cowork-task job for taskId: ${data.taskId}`)
+            try {
+                const { getRunningExpressApp } = require('../utils/getRunningExpressApp')
+                const { getCoworkOrchestrator } = require('../controllers/cowork/utils')
+
+                const app = getRunningExpressApp()
+                const orchestrator = getCoworkOrchestrator(app)
+
+                await orchestrator.executeCoworkTask(data.sessionId as string, data.taskId as string)
+
+                return { processed: true, jobType: 'cowork-task' }
+            } catch (error) {
+                logger.error(`Failed to process cowork-task: ${error}`)
+                throw error
+            }
         }
 
         if (jobType === 'legacy-scheduler') {

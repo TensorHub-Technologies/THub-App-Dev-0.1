@@ -55,11 +55,23 @@ const AgentMonitor = () => {
                                     {event.name}
                                 </Typography>
                             )}
-                            {event.tokens && (
-                                <Typography variant='caption' color='textSecondary'>
-                                    {event.tokens.toLocaleString()} tokens
-                                </Typography>
-                            )}
+                            <Stack direction='row' gap={1}>
+                                {(event.tokensUsed || event.output?.tokensUsed) && (
+                                    <Typography variant='caption' color='textSecondary'>
+                                        {(event.tokensUsed || event.output.tokensUsed).toLocaleString()} tokens
+                                    </Typography>
+                                )}
+                                {(event.costUsd || event.output?.costUsd) && (
+                                    <Typography variant='caption' color='textSecondary'>
+                                        · ${(event.costUsd || event.output.costUsd).toFixed(4)}
+                                    </Typography>
+                                )}
+                                {(event.latencyMs || event.output?.latencyMs) && (
+                                    <Typography variant='caption' color='textSecondary'>
+                                        · {((event.latencyMs || event.output.latencyMs) / 1000).toFixed(1)}s
+                                    </Typography>
+                                )}
+                            </Stack>
                         </Box>
                     ))}
                     <div ref={bottomRef} />

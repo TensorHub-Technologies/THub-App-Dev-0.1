@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Box, Stack, Typography, Divider } from '@mui/material'
 import coworkApi from '@/api/cowork'
@@ -15,14 +16,16 @@ const PERSONA_COLOR = {
 const ArtifactsPanel = () => {
     const { id: sessionId } = useParams()
     const [artifacts, setArtifacts] = useState([])
+    const { currentTasks } = useSelector((s) => s.cowork)
+    const completedCount = currentTasks?.filter((t) => t.status === 'completed').length || 0
 
     useEffect(() => {
-        if (!sessionId) return
+        if (!sessionId || completedCount === 0) return
         coworkApi
             .getArtifacts(sessionId)
             .then((res) => setArtifacts(res.data?.artifacts || res.data || []))
             .catch((err) => console.error('[artifacts]: Failed to load', err))
-    }, [sessionId])
+    }, [completedCount, sessionId])
 
     let completed = artifacts.filter((t) => t.status === 'completed' && t.outputArtifact)
 
