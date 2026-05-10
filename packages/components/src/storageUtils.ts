@@ -12,7 +12,7 @@ import { Readable } from 'node:stream'
 import { getUserHome } from './utils'
 import sanitize from 'sanitize-filename'
 import { Storage } from '@google-cloud/storage'
-import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob'
+import { BlobServiceClient, StorageSharedKeyCredential, type ContainerClient } from '@azure/storage-blob'
 
 // Validate required environment variables for GCS
 const requiredEnvVars = [
@@ -74,35 +74,21 @@ if (getStorageType() !== 'azure' && process.env.NODE_ENV === 'production') {
 
 const bucketName = 'thub-files'
 
-const normalizeEnvValue = (value?: string): string | undefined => {
-    if (typeof value !== 'string') return undefined
-    const trimmed = value.trim()
-    if (!trimmed) return undefined
-    if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
-        return trimmed.substring(1, trimmed.length - 1).trim()
-    }
-    return trimmed
-}
-
-const normalizeAzureAccountName = (value: string): string => {
-    return value
-        .replace(/^https?:\/\//i, '')
-        .replace(/\/.*$/, '')
-        .replace(/\.blob\.core\.windows\.net$/i, '')
-        .trim()
+type AzureConfig = {
+    containerClient: ContainerClient
+    containerName: string
 }
 
 /**
  * Get Azure Blob Storage configuration
  */
-export const getAzureConfig = () => {
-    const rawAccountName = normalizeEnvValue(process.env.AZURE_STORAGE_ACCOUNT_NAME)
-    const accountName = rawAccountName ? normalizeAzureAccountName(rawAccountName) : undefined
-    const accountKey = normalizeEnvValue(process.env.AZURE_STORAGE_ACCOUNT_KEY)
-    const containerName = normalizeEnvValue(process.env.AZURE_STORAGE_CONTAINER_NAME) || 'thub-storage'
-    const connectionString = normalizeEnvValue(process.env.AZURE_STORAGE_CONNECTION_STRING)
+export const getAzureConfig = (): AzureConfig => {
+    const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME
+    const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY
+    const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'thub-storage'
+    const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING
 
-    if (!connectionString && (!accountName || !accountKey)) {
+    if (!accountName || (!accountKey && !connectionString)) {
         throw new Error(
             'Azure storage configuration is missing. Provide either AZURE_STORAGE_ACCOUNT_NAME + AZURE_STORAGE_ACCOUNT_KEY or AZURE_STORAGE_CONNECTION_STRING'
         )
@@ -111,20 +97,7 @@ export const getAzureConfig = () => {
     let blobServiceClient: BlobServiceClient
 
     if (connectionString) {
-        try {
-            blobServiceClient = BlobServiceClient.fromConnectionString(connectionString)
-        } catch (error: any) {
-            if (!accountName || !accountKey) {
-                throw error
-            }
-            console.warn(
-                `[storageUtils] Failed to parse AZURE_STORAGE_CONNECTION_STRING. Falling back to account name/key auth. Reason: ${
-                    error?.message || 'unknown'
-                }`
-            )
-            const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey)
-            blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`, sharedKeyCredential)
-        }
+        blobServiceClient = BlobServiceClient.fromConnectionString(connectionString)
     } else {
         const sharedKeyCredential = new StorageSharedKeyCredential(accountName!, accountKey!)
         blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`, sharedKeyCredential)
@@ -462,6 +435,12 @@ export const getFileFromUpload = async (filePath: string): Promise<Buffer> => {
         const buffer = Buffer.concat(response.Body.toArray())
         return buffer
     } else if (storageType === 'azure') {
+        // Multer stores incoming uploads on local disk before we copy into Azure.
+        // Read local temp files directly when present.
+        if (fs.existsSync(filePath)) {
+            return fs.readFileSync(filePath)
+        }
+
         let blobName = filePath
         if (blobName.startsWith('/')) {
             blobName = blobName.substring(1)
@@ -585,6 +564,12 @@ export const removeSpecificFileFromUpload = async (filePath: string) => {
         }
         await _deleteS3Folder(Key)
     } else if (storageType === 'azure') {
+        // Multer temp uploads in Azure mode are local files.
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath)
+            return
+        }
+
         let blobName = filePath
         if (blobName.startsWith('/')) {
             blobName = blobName.substring(1)
