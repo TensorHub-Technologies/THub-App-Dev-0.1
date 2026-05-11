@@ -4,6 +4,7 @@ import { CoworkSession } from '../../database/entities/CoworkSession'
 import { InternalTHubError } from '../../errors/internalTHubError'
 import { CoworkSessionStatus } from '../../services/cowork/status'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
+import logger from '../../utils/logger'
 import { listModelProfiles, updateModelProfile } from '../../services/cowork/ModelRouter'
 import {
     assertSessionAccess,
@@ -151,8 +152,12 @@ const deleteSession = async (req: Request, res: Response, next: NextFunction) =>
         session.completedDate = new Date()
         await sessionRepo.save(session)
 
-        const orchestrator = getCoworkOrchestrator(appServer)
-        await orchestrator.cleanupSessionMemory(session.id)
+        try {
+            const orchestrator = getCoworkOrchestrator(appServer)
+            await orchestrator.cleanupSessionMemory(session.id)
+        } catch (redisError) {
+            logger.warn(`[cowork-controller]: Failed to cleanup session memory for ${session.id}: ${String(redisError)}`)
+        }
 
         emitCoworkEvent(appServer, session.id, 'cowork.session.cancelled', {
             status: session.status

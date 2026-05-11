@@ -117,22 +117,27 @@ export class App {
 
             // Init Queues
             if (process.env.MODE === MODE.QUEUE) {
-                this.queueManager = QueueManager.getInstance()
-                const serverAdapter = new ExpressAdapter()
-                serverAdapter.setBasePath('/admin/queues')
-                this.queueManager.setupAllQueues({
-                    componentNodes: this.nodesPool.componentNodes,
-                    telemetry: this.telemetry,
-                    cachePool: this.cachePool,
-                    appDataSource: this.AppDataSource,
-                    abortControllerPool: this.abortControllerPool,
-                    serverAdapter
-                })
-                logger.info('✅ [Queue]: All queues setup successfully')
+                try {
+                    this.queueManager = QueueManager.getInstance()
+                    const serverAdapter = new ExpressAdapter()
+                    serverAdapter.setBasePath('/admin/queues')
+                    this.queueManager.setupAllQueues({
+                        componentNodes: this.nodesPool.componentNodes,
+                        telemetry: this.telemetry,
+                        cachePool: this.cachePool,
+                        appDataSource: this.AppDataSource,
+                        abortControllerPool: this.abortControllerPool,
+                        serverAdapter
+                    })
+                    logger.info('✅ [Queue]: All queues setup successfully')
 
-                this.redisSubscriber = new RedisEventSubscriber(this.sseStreamer)
-                await this.redisSubscriber.connect()
-                logger.info('🔗 [server]: Redis event subscriber connected successfully')
+                    this.redisSubscriber = new RedisEventSubscriber(this.sseStreamer)
+                    await this.redisSubscriber.connect()
+                    logger.info('🔗 [server]: Redis event subscriber connected successfully')
+                } catch (e) {
+                    logger.warn('⚠️ [server]: Redis/Queue initialization failed. Continuing without background execution features.')
+                    logger.error(e)
+                }
             }
 
             logger.info('🎉 [server]: All initialization steps completed successfully!')
@@ -284,7 +289,7 @@ export class App {
             })
         })
 
-        if (process.env.MODE === MODE.QUEUE && process.env.ENABLE_BULLMQ_DASHBOARD === 'true') {
+        if (process.env.MODE === MODE.QUEUE && process.env.ENABLE_BULLMQ_DASHBOARD === 'true' && this.queueManager) {
             this.app.use('/admin/queues', this.queueManager.getBullBoardRouter())
         }
 

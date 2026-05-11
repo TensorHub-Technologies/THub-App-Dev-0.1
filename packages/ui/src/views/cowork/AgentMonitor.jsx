@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { Box, Stack, Typography, Divider } from '@mui/material'
-import { updateTaskStatus, updateSessionStatus, addLiveEvent } from '@/store/slices/coworkSlice'
 
 const EVENT_COLORS = {
     'cowork.task.started': '#2563EB',
@@ -15,71 +13,9 @@ const EVENT_COLORS = {
 }
 
 // Real SSE connection — replaces the mock timer from Sprint 1
-const useSSE = (sessionId, dispatch) => {
-    const esRef = useRef(null)
-
-    useEffect(() => {
-        if (!sessionId) return
-        const token = localStorage.getItem('authToken') || localStorage.getItem('userId')
-        const url = `${import.meta.env.VITE_API_URL || ''}/api/v1/cowork/sessions/${sessionId}/stream`
-
-        esRef.current = new EventSource(url)
-
-        esRef.current.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data)
-                const { type, taskId, status, output, sessionId: sid } = data
-
-                dispatch(addLiveEvent({ ...data, timestamp: new Date().toISOString() }))
-
-                switch (type) {
-                    case 'cowork.task.started':
-                        dispatch(updateTaskStatus({ taskId, status: 'running' }))
-                        break
-                    case 'cowork.task.completed':
-                        dispatch(updateTaskStatus({ taskId, status: 'completed', output }))
-                        break
-                    case 'cowork.task.failed':
-                        dispatch(updateTaskStatus({ taskId, status: 'failed' }))
-                        break
-                    case 'cowork.task.awaiting_approval':
-                        dispatch(updateTaskStatus({ taskId, status: 'awaiting_approval', pendingAction: data.pendingAction }))
-                        break
-                    case 'cowork.session.done':
-                        dispatch(updateSessionStatus({ sessionId: sid, status: data.status }))
-                        break
-                    case 'cowork.session.budget_exceeded':
-                        dispatch(updateSessionStatus({ sessionId: sid, status: 'partial' }))
-                        break
-                    default:
-                        break
-                }
-            } catch (e) {
-                console.error('[SSE]: Failed to parse event', e)
-            }
-        }
-
-        esRef.current.onerror = () => {
-            console.warn('[SSE]: Connection error — will auto-reconnect')
-        }
-
-        // Cleanup on unmount — prevents memory leak
-        return () => {
-            if (esRef.current) {
-                esRef.current.close()
-                esRef.current = null
-            }
-        }
-    }, [sessionId])
-}
-
 const AgentMonitor = () => {
-    const { id: sessionId } = useParams()
-    const dispatch = useDispatch()
     const { liveEvents } = useSelector((s) => s.cowork)
     const bottomRef = useRef(null)
-
-    useSSE(sessionId, dispatch)
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -119,11 +55,23 @@ const AgentMonitor = () => {
                                     {event.name}
                                 </Typography>
                             )}
-                            {event.tokens && (
-                                <Typography variant='caption' color='textSecondary'>
-                                    {event.tokens.toLocaleString()} tokens
-                                </Typography>
-                            )}
+                            <Stack direction='row' gap={1}>
+                                {(event.tokensUsed || event.output?.tokensUsed) && (
+                                    <Typography variant='caption' color='textSecondary'>
+                                        {(event.tokensUsed || event.output.tokensUsed).toLocaleString()} tokens
+                                    </Typography>
+                                )}
+                                {(event.costUsd || event.output?.costUsd) && (
+                                    <Typography variant='caption' color='textSecondary'>
+                                        · ${(event.costUsd || event.output.costUsd).toFixed(4)}
+                                    </Typography>
+                                )}
+                                {(event.latencyMs || event.output?.latencyMs) && (
+                                    <Typography variant='caption' color='textSecondary'>
+                                        · {((event.latencyMs || event.output.latencyMs) / 1000).toFixed(1)}s
+                                    </Typography>
+                                )}
+                            </Stack>
                         </Box>
                     ))}
                     <div ref={bottomRef} />

@@ -141,7 +141,12 @@
         "typeorm": "^0.3.6",
         "uuid": "^9.0.1",
         "winston": "^3.9.0",
-        "winston-daily-rotate-file": "^5.0.0"
+        "winston-daily-rotate-file": "^5.0.0",
+        "@langchain/openai": "0.6.3",
+        "@langchain/anthropic": "0.3.33",
+        "@langchain/google-genai": "0.2.3",
+        "@langchain/groq": "0.1.2",
+        "@langchain/core": "0.3.61"
     },
     "devDependencies": {
         "@types/content-disposition": "0.5.8",

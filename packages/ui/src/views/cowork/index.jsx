@@ -30,6 +30,7 @@ const CoworkSessions = () => {
 
     const fetchSessions = async () => {
         dispatch(setLoading(true))
+        dispatch(setError(''))
         try {
             const res = await coworkApi.listSessions()
             dispatch(setSessions(res.data?.sessions || res.data || []))
