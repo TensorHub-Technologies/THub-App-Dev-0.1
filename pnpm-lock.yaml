@@ -200,7 +200,7 @@ importers:
                 version: 0.0.7(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(encoding@0.1.13)(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4))
             '@langchain/community':
                 specifier: ^0.3.47
-                version: 0.3.56(32bda1488f8609e6a97d45604f0a19d7)
+                version: 0.3.56(dba5f578ee653803172bc32c74a19d4d)
             '@langchain/core':
                 specifier: 0.3.61
                 version: 0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4))
@@ -245,7 +245,7 @@ importers:
                 version: 0.0.1(@langchain/core@0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4)))(encoding@0.1.13)(ws@8.18.3)
             '@mem0/community':
                 specifier: ^0.0.1
-                version: 0.0.1(e29bc2517384a068635348b4bacbcab6)
+                version: 0.0.1(947fcb4c2a1327d5ca5497a9decaa0b4)
             '@mendable/firecrawl-js':
                 specifier: ^1.18.2
                 version: 1.29.3
@@ -363,6 +363,9 @@ importers:
             graphql:
                 specifier: ^16.6.0
                 version: 16.11.0
+            groq-sdk:
+                specifier: ^0.7.0
+                version: 0.7.0(encoding@0.1.13)
             html-to-text:
                 specifier: ^9.0.5
                 version: 9.0.5
@@ -10601,6 +10604,9 @@ packages:
 
     groq-sdk@0.5.0:
         resolution: { integrity: sha512-RVmhW7qZ+XZoy5fIuSdx/LGQJONpL8MHgZEW7dFwTdgkzStub2XQx6OKv28CHogijdwH41J+Npj/z2jBPu3vmw== }
+
+    groq-sdk@0.7.0:
+        resolution: { integrity: sha512-OgPqrRtti5MjEVclR8sgBHrhSkTLdFCmi47yrEF29uJZaiCkX3s7bXpnMhq8Lwoe1f4AwgC0qGOeHXpeSgu5lg== }
 
     gtoken@7.1.0:
         resolution: { integrity: sha512-pCcEwRi+TKpMlxAQObHDQ56KawURgyAf6jtIY046fJ5tIv3zDe/LEIubckAO8fj6JnAxLdmWkUfNyulQ2iKdEw== }
@@ -21688,7 +21694,7 @@ snapshots:
             - encoding
             - openai
 
-    '@langchain/community@0.3.56(32bda1488f8609e6a97d45604f0a19d7)':
+    '@langchain/community@0.3.56(dba5f578ee653803172bc32c74a19d4d)':
         dependencies:
             '@browserbasehq/stagehand': 1.14.0(@playwright/test@1.55.1)(deepmerge@4.3.1)(dotenv@16.6.1)(encoding@0.1.13)(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4))(zod@3.22.4)
             '@ibm-cloud/watsonx-ai': 1.6.13
@@ -21755,7 +21761,7 @@ snapshots:
             lodash: 4.17.21
             lunary: 0.7.15(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4))(react@18.3.1)
             mammoth: 1.11.0
-            mem0ai: 2.1.38(@anthropic-ai/sdk@0.65.0(zod@3.22.4))(@cloudflare/workers-types@4.20250927.0)(@google/genai@1.21.0(@modelcontextprotocol/sdk@1.18.2)(encoding@0.1.13))(@langchain/core@0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4)))(@mistralai/mistralai@0.1.3(encoding@0.1.13))(@qdrant/js-client-rest@1.15.1(typescript@5.9.2))(@supabase/supabase-js@2.58.0)(@types/jest@29.5.14)(@types/pg@8.15.5)(@types/sqlite3@3.1.11)(cloudflare@4.5.0(encoding@0.1.13))(encoding@0.1.13)(groq-sdk@0.5.0(encoding@0.1.13))(neo4j-driver@5.28.2)(ollama@0.5.18)(pg@8.16.3)(redis@4.7.1)(sqlite3@5.1.7)(ws@8.18.3)
+            mem0ai: 2.1.38(@anthropic-ai/sdk@0.65.0(zod@3.22.4))(@cloudflare/workers-types@4.20250927.0)(@google/genai@1.21.0(@modelcontextprotocol/sdk@1.18.2)(encoding@0.1.13))(@langchain/core@0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4)))(@mistralai/mistralai@0.1.3(encoding@0.1.13))(@qdrant/js-client-rest@1.15.1(typescript@5.9.2))(@supabase/supabase-js@2.58.0)(@types/jest@29.5.14)(@types/pg@8.15.5)(@types/sqlite3@3.1.11)(cloudflare@4.5.0(encoding@0.1.13))(encoding@0.1.13)(groq-sdk@0.7.0(encoding@0.1.13))(neo4j-driver@5.28.2)(ollama@0.5.18)(pg@8.16.3)(redis@4.7.1)(sqlite3@5.1.7)(ws@8.18.3)
             mongodb: 6.3.0(@aws-sdk/credential-providers@3.896.0)(socks@2.8.7)
             mysql2: 3.15.1
             neo4j-driver: 5.28.2
@@ -22057,12 +22063,12 @@ snapshots:
 
     '@marijn/find-cluster-break@1.0.2': {}
 
-    '@mem0/community@0.0.1(e29bc2517384a068635348b4bacbcab6)':
+    '@mem0/community@0.0.1(947fcb4c2a1327d5ca5497a9decaa0b4)':
         dependencies:
-            '@langchain/community': 0.3.56(32bda1488f8609e6a97d45604f0a19d7)
+            '@langchain/community': 0.3.56(dba5f578ee653803172bc32c74a19d4d)
             '@langchain/core': 0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4))
             axios: 1.12.0(debug@4.4.3)
-            mem0ai: 2.1.38(@anthropic-ai/sdk@0.65.0(zod@3.22.4))(@cloudflare/workers-types@4.20250927.0)(@google/genai@1.21.0(@modelcontextprotocol/sdk@1.18.2)(encoding@0.1.13))(@langchain/core@0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4)))(@mistralai/mistralai@0.1.3(encoding@0.1.13))(@qdrant/js-client-rest@1.15.1(typescript@5.9.2))(@supabase/supabase-js@2.58.0)(@types/jest@29.5.14)(@types/pg@8.15.5)(@types/sqlite3@3.1.11)(cloudflare@4.5.0(encoding@0.1.13))(encoding@0.1.13)(groq-sdk@0.5.0(encoding@0.1.13))(neo4j-driver@5.28.2)(ollama@0.5.18)(pg@8.16.3)(redis@4.7.1)(sqlite3@5.1.7)(ws@8.18.3)
+            mem0ai: 2.1.38(@anthropic-ai/sdk@0.65.0(zod@3.22.4))(@cloudflare/workers-types@4.20250927.0)(@google/genai@1.21.0(@modelcontextprotocol/sdk@1.18.2)(encoding@0.1.13))(@langchain/core@0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4)))(@mistralai/mistralai@0.1.3(encoding@0.1.13))(@qdrant/js-client-rest@1.15.1(typescript@5.9.2))(@supabase/supabase-js@2.58.0)(@types/jest@29.5.14)(@types/pg@8.15.5)(@types/sqlite3@3.1.11)(cloudflare@4.5.0(encoding@0.1.13))(encoding@0.1.13)(groq-sdk@0.7.0(encoding@0.1.13))(neo4j-driver@5.28.2)(ollama@0.5.18)(pg@8.16.3)(redis@4.7.1)(sqlite3@5.1.7)(ws@8.18.3)
             uuid: 9.0.1
             zod: 3.22.4
         transitivePeerDependencies:
@@ -25376,7 +25382,7 @@ snapshots:
 
     '@types/mute-stream@0.0.4':
         dependencies:
-            '@types/node': 22.18.6
+            '@types/node': 24.5.2
 
     '@types/mysql@2.15.26':
         dependencies:
@@ -25384,7 +25390,7 @@ snapshots:
 
     '@types/node-fetch@2.6.13':
         dependencies:
-            '@types/node': 22.18.6
+            '@types/node': 24.5.2
             form-data: 4.0.4
 
     '@types/node-fetch@2.6.2':
@@ -30156,6 +30162,18 @@ snapshots:
         transitivePeerDependencies:
             - encoding
 
+    groq-sdk@0.7.0(encoding@0.1.13):
+        dependencies:
+            '@types/node': 18.19.127
+            '@types/node-fetch': 2.6.13
+            abort-controller: 3.0.0
+            agentkeepalive: 4.6.0
+            form-data-encoder: 1.7.2
+            formdata-node: 4.4.1
+            node-fetch: 2.7.0(encoding@0.1.13)
+        transitivePeerDependencies:
+            - encoding
+
     gtoken@7.1.0(encoding@0.1.13):
         dependencies:
             gaxios: 6.7.1(encoding@0.1.13)
@@ -32892,7 +32910,7 @@ snapshots:
         transitivePeerDependencies:
             - encoding
 
-    mem0ai@2.1.38(@anthropic-ai/sdk@0.65.0(zod@3.22.4))(@cloudflare/workers-types@4.20250927.0)(@google/genai@1.21.0(@modelcontextprotocol/sdk@1.18.2)(encoding@0.1.13))(@langchain/core@0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4)))(@mistralai/mistralai@0.1.3(encoding@0.1.13))(@qdrant/js-client-rest@1.15.1(typescript@5.9.2))(@supabase/supabase-js@2.58.0)(@types/jest@29.5.14)(@types/pg@8.15.5)(@types/sqlite3@3.1.11)(cloudflare@4.5.0(encoding@0.1.13))(encoding@0.1.13)(groq-sdk@0.5.0(encoding@0.1.13))(neo4j-driver@5.28.2)(ollama@0.5.18)(pg@8.16.3)(redis@4.7.1)(sqlite3@5.1.7)(ws@8.18.3):
+    mem0ai@2.1.38(@anthropic-ai/sdk@0.65.0(zod@3.22.4))(@cloudflare/workers-types@4.20250927.0)(@google/genai@1.21.0(@modelcontextprotocol/sdk@1.18.2)(encoding@0.1.13))(@langchain/core@0.3.61(@opentelemetry/api@1.9.0)(@opentelemetry/exporter-trace-otlp-proto@0.54.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.22.4)))(@mistralai/mistralai@0.1.3(encoding@0.1.13))(@qdrant/js-client-rest@1.15.1(typescript@5.9.2))(@supabase/supabase-js@2.58.0)(@types/jest@29.5.14)(@types/pg@8.15.5)(@types/sqlite3@3.1.11)(cloudflare@4.5.0(encoding@0.1.13))(encoding@0.1.13)(groq-sdk@0.7.0(encoding@0.1.13))(neo4j-driver@5.28.2)(ollama@0.5.18)(pg@8.16.3)(redis@4.7.1)(sqlite3@5.1.7)(ws@8.18.3):
         dependencies:
             '@anthropic-ai/sdk': 0.65.0(zod@3.22.4)
             '@cloudflare/workers-types': 4.20250927.0
@@ -32906,7 +32924,7 @@ snapshots:
             '@types/sqlite3': 3.1.11
             axios: 1.12.0(debug@4.4.3)
             cloudflare: 4.5.0(encoding@0.1.13)
-            groq-sdk: 0.5.0(encoding@0.1.13)
+            groq-sdk: 0.7.0(encoding@0.1.13)
             neo4j-driver: 5.28.2
             ollama: 0.5.18
             openai: 4.96.0(encoding@0.1.13)(ws@8.18.3)(zod@3.25.76)

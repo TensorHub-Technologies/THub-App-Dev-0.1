@@ -9,40 +9,40 @@ export class CoworkSkill {
     name: string
 
     @Column({ type: 'text', nullable: true })
-    description: string
+    description: string | null
 
-    @Column({ nullable: true })
-    category: string // 'coding' | 'research' | 'analysis' | 'writing' | 'data'
+    @Column({ type: 'varchar', nullable: true })
+    category: string | null // 'coding' | 'research' | 'analysis' | 'writing' | 'data'
 
     @Column({ type: 'text' })
     systemPrompt: string // prompt template that worked
 
     @Column({ type: 'text', nullable: true })
-    requiredTools: string // JSON: string[]
+    requiredTools: string | null // JSON: string[]
 
-    @Column({ nullable: true })
-    preferredModel: string
+    @Column({ type: 'varchar', nullable: true })
+    preferredModel: string | null
 
     @Column({ type: 'float', default: 0 })
     historicSuccessRate: number // 0.0 - 1.0
 
     @Column({ type: 'float', nullable: true })
-    avgCost: number
+    avgCost: number | null
 
     @Column({ type: 'int', nullable: true })
-    avgLatencyMs: number
+    avgLatencyMs: number | null
 
     @Column({ default: 0 })
     usageCount: number
 
-    @Column({ nullable: true })
-    tenantId: string
+    @Column({ type: 'varchar', nullable: true })
+    tenantId: string | null
 
     @Column({ default: false })
     isPublic: boolean // available in marketplace
 
     @Column({ type: 'text', nullable: true })
-    tags: string // JSON: string[]
+    tags: string | null // JSON: string[]
 
     @CreateDateColumn()
     createdDate: Date
