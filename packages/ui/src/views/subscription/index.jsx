@@ -33,6 +33,8 @@ const Subscription = () => {
     const [showForm, setShowForm] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
     const apiUrl = import.meta.env.VITE_THUB_API_URL || window.location.origin
+    const normalizedApiUrl = apiUrl.replace(/\/+$/, '').replace(/\/api\/v1$/, '')
+    const subscriptionApiBase = `${normalizedApiUrl}/api/subscription`
     const [isProcessingPayment, setIsProcessingPayment] = useState(false)
     const [subscriptionDetails, setSubscriptionDetails] = useState({
         subscriptionType: user.subscription_type || '',
@@ -129,7 +131,7 @@ const Subscription = () => {
         const uid = user.uid
 
         if (planTitle === 'Free') {
-            const freePlanUrl = `${apiUrl}/activate-free-subscription`
+            const freePlanUrl = `${subscriptionApiBase}/activate-free`
             try {
                 const response = await fetch(freePlanUrl, {
                     method: 'POST',
@@ -159,7 +161,7 @@ const Subscription = () => {
             return
         }
 
-        const url = `${apiUrl}/create-subscription`
+        const url = `${subscriptionApiBase}/create`
 
         try {
             const response = await fetch(url, {
@@ -195,7 +197,7 @@ const Subscription = () => {
                 description: `${planTitle} Subscription`,
                 image: user.picture,
                 handler: async function (response) {
-                    const validateUrl = `${apiUrl}/validate-subscription`
+                    const validateUrl = `${subscriptionApiBase}/validate`
                     const validateResponse = await fetch(validateUrl, {
                         method: 'POST',
                         headers: {
