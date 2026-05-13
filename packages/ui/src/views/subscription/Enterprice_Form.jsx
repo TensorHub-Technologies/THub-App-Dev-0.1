@@ -53,8 +53,10 @@ const EnterpriceForm = ({ setShowForm, handleLoading, handleError }) => {
         console.log(values, 'submit clicked')
         try {
             const apiUrl = import.meta.env.VITE_THUB_API_URL || window.location.origin
+            const normalizedApiUrl = apiUrl.replace(/\/+$/, '').replace(/\/api\/v1$/, '')
+            const subscriptionApiBase = `${normalizedApiUrl}/api/subscription`
 
-            const response = await axios.post(`${apiUrl}/enterprice-mail`, values)
+            const response = await axios.post(`${subscriptionApiBase}/enterprise-mail`, values)
             if (response.status === 200 || response.status === 'ok') {
                 handleLoading("We'll reach out shortly!")
                 resetForm()
