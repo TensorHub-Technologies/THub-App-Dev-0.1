@@ -41,6 +41,8 @@ export const WHITELIST_URLS = [
     '/api/v1/auth/microsoft',
     '/api/v1/auth/send-otp',
     '/api/v1/auth/verify-otp',
+    '/api/v1/notifications/otp/send',
+    '/api/v1/notifications/otp/verify',
     '/api/v1/auth/check-email',
     '/api/v1/auth/forgot-password',
     '/api/v1/auth/reset-password',
