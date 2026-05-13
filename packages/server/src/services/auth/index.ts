@@ -11,10 +11,8 @@ import axios from 'axios'
 import { OAuth2Client } from 'google-auth-library'
 import transporter from '../../utils/transporter'
 import { signAuthToken } from '../../utils/jwt'
+import { sendOtp as redisOtpSend, verifyOtp as redisOtpVerify } from '../notifications'
 
-const otpStore = new Map<string, { otp: string; expiresAt: number }>()
-
-const OTP_TTL_MS = 10 * 60 * 1000
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000
 const INVITE_TTL_MS = 24 * 60 * 60 * 1000
 const RETRYABLE_DB_ERROR_CODES = new Set([
@@ -472,21 +470,9 @@ const sendOtp = async (body: any) => {
             throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Email is required')
         }
 
-        ensureMailDeliveryConfigured('send OTP email')
+        await redisOtpSend(email)
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString()
-        otpStore.set(email, { otp, expiresAt: Date.now() + OTP_TTL_MS })
-
-        await transporter.sendMail({
-            to: email,
-            subject: 'THub OTP Verification',
-            text: `Your OTP is ${otp}. It is valid for 10 minutes.`
-        })
-
-        return {
-            message: 'OTP sent successfully',
-            ...(isDebugSecretMode() ? { otp } : {})
-        }
+        return { message: 'OTP sent successfully' }
     } catch (error) {
         handleAuthError(error, 'sendOtp')
     }
@@ -501,21 +487,7 @@ const verifyOtp = async (body: any) => {
             throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Email and OTP are required')
         }
 
-        const record = otpStore.get(email)
-        if (!record) {
-            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'OTP not found. Please request a new OTP')
-        }
-
-        if (record.expiresAt < Date.now()) {
-            otpStore.delete(email)
-            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'OTP expired. Please request a new OTP')
-        }
-
-        if (record.otp !== otp) {
-            throw new InternalTHubError(StatusCodes.BAD_REQUEST, 'Invalid OTP')
-        }
-
-        otpStore.delete(email)
+        await redisOtpVerify(email, otp)
         return { message: 'OTP verified' }
     } catch (error) {
         handleAuthError(error, 'verifyOtp')
