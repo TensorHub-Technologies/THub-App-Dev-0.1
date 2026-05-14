@@ -1,8 +1,9 @@
 import { RedisOptions } from 'bullmq'
 import { BaseQueue } from './BaseQueue'
 import logger from '../utils/logger'
+import type { CoworkJobData } from '../services/cowork/CoworkTypes'
 
-type CoworkJobData = {
+type QueueCoworkJobData = Partial<CoworkJobData> & {
     jobType?: string
     type?: string
     [key: string]: unknown
@@ -24,32 +25,46 @@ export class CoworkQueue extends BaseQueue {
         return this.queue
     }
 
-    async processJob(data: CoworkJobData) {
+    async processJob(data: QueueCoworkJobData) {
         const jobType = String(data?.jobType || data?.type || '').trim()
 
         if (jobType === 'cowork-task') {
-            logger.info(`Processing cowork-task job for taskId: ${data.taskId}`)
-            try {
-                const { getRunningExpressApp } = require('../utils/getRunningExpressApp')
-                const { getCoworkOrchestrator } = require('../controllers/cowork/utils')
-
-                const app = getRunningExpressApp()
-                const orchestrator = getCoworkOrchestrator(app)
-
-                await orchestrator.executeCoworkTask(data.sessionId as string, data.taskId as string)
-
-                return { processed: true, jobType: 'cowork-task' }
-            } catch (error) {
-                logger.error(`Failed to process cowork-task: ${error}`)
-                throw error
-            }
+            return this.processCoworkTask(data)
         }
 
         if (jobType === 'legacy-scheduler') {
-            logger.info('Processing legacy-scheduler job...')
-            return { processed: true, jobType: 'legacy-scheduler' }
+            return this.processLegacySchedulerJob(data)
         }
 
         throw new Error(`Unsupported cowork job type: ${jobType || 'unknown'}`)
+    }
+
+    private async processCoworkTask(data: QueueCoworkJobData) {
+        const sessionId = String(data.sessionId || '').trim()
+        const taskId = String(data.taskId || '').trim()
+
+        if (!sessionId || !taskId) {
+            throw new Error('Invalid cowork-task payload: sessionId and taskId are required')
+        }
+
+        logger.info(`Processing cowork-task job for taskId: ${taskId}`)
+        try {
+            const { executeCoworkTask } = await import('../services/cowork/CoworkExecutor')
+            await executeCoworkTask(sessionId, taskId)
+            return { processed: true, jobType: 'cowork-task', sessionId, taskId }
+        } catch (error) {
+            logger.error(`Failed to process cowork-task: ${error}`)
+            throw error
+        }
+    }
+
+    private async processLegacySchedulerJob(data: QueueCoworkJobData) {
+        logger.info('Processing legacy-scheduler job...')
+        return {
+            processed: true,
+            jobType: 'legacy-scheduler',
+            sessionId: data.sessionId || null,
+            taskId: data.taskId || null
+        }
     }
 }
