@@ -50,6 +50,7 @@ import { CreateCoworkPrompt1765300000000 } from './1765300000000-CreateCoworkPro
 import { FixCoworkPromptColumns1765300000001 } from './1765300000001-FixCoworkPromptColumns'
 import { AddHumanInputToCoworkTask1765400000000 } from './1765400000000-AddHumanInputToCoworkTask'
 import { CreateCoworkModelProfile1765500000000 } from './1765500000000-CreateCoworkModelProfile'
+import { AddCoworkTables1765600000000 } from './1765600000000-AddCoworkTables'
 
 export const mysqlMigrations = [
     Init1693840429259,
@@ -105,5 +106,6 @@ export const mysqlMigrations = [
     CreateCoworkPrompt1765300000000,
     FixCoworkPromptColumns1765300000001,
     AddHumanInputToCoworkTask1765400000000,
-    CreateCoworkModelProfile1765500000000
+    CreateCoworkModelProfile1765500000000,
+    AddCoworkTables1765600000000
 ]
