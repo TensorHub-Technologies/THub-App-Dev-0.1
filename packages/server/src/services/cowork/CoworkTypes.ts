@@ -64,7 +64,7 @@ export interface CoworkSessionState {
 }
 
 export const SUBSCRIPTION_LIMITS: Record<string, { sessionsPerMonth: number; maxTasksPerSession: number }> = {
-    free: { sessionsPerMonth: 3, maxTasksPerSession: 5 },
+    free: { sessionsPerMonth: Infinity, maxTasksPerSession: 5 },
 
     pro: { sessionsPerMonth: Infinity, maxTasksPerSession: 20 },
 

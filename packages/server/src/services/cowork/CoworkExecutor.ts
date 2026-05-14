@@ -10,6 +10,7 @@ import { InternalTHubError } from '../../errors/internalTHubError'
 import logger from '../../utils/logger'
 import { CoworkContextManager, RedisClientLike } from './CoworkContextManager'
 import { recordModelFailure, RoutingStrategy, RoutedModelSelection, selectModel } from './ModelRouter'
+import { selectToolsForTask, SelectedTool } from './ToolSelector' // ← Sprint 2 T2W2
 
 type SelectedChatModel = Record<string, any>
 
@@ -37,6 +38,7 @@ type ExecuteWithAgentflowFn = (params: {
     systemPrompt: string
     question: string
     selectedChatModel: SelectedChatModel
+    tools?: string[]
 }) => Promise<TaskExecutionResult>
 
 type BuildPromptFn = (
@@ -195,7 +197,7 @@ const defaultDecomposeGoalFn: DecomposeGoalFn = async (goal, selectedChatModel) 
     return mod.decomposeGoal(goal, selectedChatModel)
 }
 
-const defaultExecuteWithAgentflow: ExecuteWithAgentflowFn = async ({ systemPrompt, question, selectedChatModel }) => {
+const defaultExecuteWithAgentflow: ExecuteWithAgentflowFn = async ({ systemPrompt, question, selectedChatModel, tools }) => {
     const { generateAgentflowv2 } = await import('thub-components')
     const { databaseEntities } = await import('../../utils')
     const appServer = getRunningApp()
@@ -204,7 +206,10 @@ const defaultExecuteWithAgentflow: ExecuteWithAgentflowFn = async ({ systemPromp
             prompt: systemPrompt,
             componentNodes: appServer.nodesPool.componentNodes,
             toolNodes: {},
-            selectedChatModel
+            selectedChatModel: {
+                ...selectedChatModel,
+                ...(tools && tools.length > 0 ? { tools } : {}) // ← Sprint 2 T2W2
+            }
         },
         question,
         {
@@ -597,7 +602,8 @@ export class CoworkExecutor {
         question: string,
         sessionConfig: Record<string, any>,
         selectedModel: RoutedModelSelection,
-        fallbackChain: RoutedModelSelection[]
+        fallbackChain: RoutedModelSelection[],
+        tools?: string[] // ← Sprint 2 T2W2
     ): Promise<ExecuteAttemptResult> {
         const modelAttempts = [selectedModel, ...fallbackChain]
 
@@ -611,7 +617,8 @@ export class CoworkExecutor {
                     task,
                     systemPrompt,
                     question,
-                    selectedChatModel: routedChatModel
+                    selectedChatModel: routedChatModel,
+                    tools // ← Sprint 2 T2W2
                 })
                 const latencyMs = Date.now() - startedAt
 
@@ -733,13 +740,24 @@ export class CoworkExecutor {
             )
             task.systemPrompt = systemPrompt
 
+            // ToolSelector — auto-select tools for this task (Sprint 2 T2W2)
+            const selectedTools: SelectedTool[] = await selectToolsForTask(
+                task.name,
+                task.description || '',
+                coercePersona(task.agentPersona),
+                session.tenantId,
+                this.appDataSource
+            )
+            logger.info(`[cowork]: Task "${task.name}" → ${selectedTools.length} tools: [${selectedTools.map((t) => t.name).join(', ')}]`)
+
             const { execution, latencyMs, selectedModelName } = await this.executeTaskWithModelFallback(
                 task,
                 systemPrompt,
                 task.description || task.name,
                 sessionConfig,
                 selectedModel,
-                fallbackChain
+                fallbackChain,
+                selectedTools.map((t) => t.name) // ← Sprint 2 T2W2
             )
 
             const outputContent = typeof execution.content === 'string' ? execution.content : JSON.stringify(execution.content)

@@ -1,10 +1,8 @@
 import { DataSource } from 'typeorm'
-import { StatusCodes } from 'http-status-codes'
 import { CoworkSessionStatus, CoworkTaskStatus } from '../../../services/cowork/status'
 import { CoworkSession } from '../../../database/entities/CoworkSession'
 import { CoworkTask } from '../../../database/entities/CoworkTask'
 import { User } from '../../../database/entities/User'
-import { InternalTHubError } from '../../../errors/internalTHubError'
 import { CoworkOrchestratorService } from '../../../services/cowork/orchestrator'
 import { TaskDAG } from '../../../services/cowork/CoworkTypes'
 
@@ -161,7 +159,7 @@ const makeDag = (): TaskDAG => ({
 })
 
 describe('TC-1.8 Free user monthly limit', () => {
-    it('throws 402 and creates no records when a free user attempts a 4th session in the same month', async () => {
+    it('allows creating a 4th session in the same month when free monthly cap is disabled', async () => {
         const state: InMemoryState = {
             users: [{ uid: 'u1', email: 'a@b.com', subscription_type: 'free' } as User],
             sessions: [
@@ -181,18 +179,17 @@ describe('TC-1.8 Free user monthly limit', () => {
             now: () => new Date('2026-04-25T00:00:00.000Z')
         })
 
-        await expect(
-            service.createCoworkSession({
-                tenantId: 'tenant-1',
-                userId: 'u1',
-                goal: 'Goal',
-                selectedChatModel: { provider: 'openai', modelName: 'gpt-4o' }
-            })
-        ).rejects.toMatchObject({ statusCode: StatusCodes.PAYMENT_REQUIRED } as Partial<InternalTHubError>)
+        const created = await service.createCoworkSession({
+            tenantId: 'tenant-1',
+            userId: 'u1',
+            goal: 'Goal',
+            selectedChatModel: { provider: 'openai', modelName: 'gpt-4o' }
+        })
 
-        expect(decomposeGoalFn).not.toHaveBeenCalled()
-        expect(state.sessions).toHaveLength(3)
-        expect(state.tasks).toHaveLength(0)
+        expect(created.session.id).toBeDefined()
+        expect(decomposeGoalFn).toHaveBeenCalledTimes(1)
+        expect(state.sessions).toHaveLength(4)
+        expect(state.tasks).toHaveLength(3)
     })
 })
 
