@@ -1032,3 +1032,8 @@ export class CoworkExecutor {
 }
 
 export const createCoworkExecutor = (deps: CoworkExecutorDeps = {}) => new CoworkExecutor(deps)
+
+export const executeCoworkTask = async (sessionId: string, taskId: string, deps: CoworkExecutorDeps = {}) => {
+    const executor = createCoworkExecutor(deps)
+    return executor.executeCoworkTask(sessionId, taskId)
+}

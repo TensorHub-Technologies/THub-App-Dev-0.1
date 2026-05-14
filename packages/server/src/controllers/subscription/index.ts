@@ -99,6 +99,17 @@ const submitEnterpriseMail = async (req: Request, res: Response, next: NextFunct
     }
 }
 
+const handleRazorpayWebhook = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const signature = String(req.headers['x-razorpay-signature'] || '').trim()
+        const rawBody = JSON.stringify(req.body || {})
+        const apiResponse = await subscriptionService.handleRazorpayWebhook(rawBody, signature)
+        return res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
 const enterpriseMailStatus = async (_req: Request, res: Response) => {
     return res.json({
         message: 'Enterprise mail endpoint is available. Use POST to submit inquiries.'
@@ -110,5 +121,6 @@ export default {
     validateSubscription,
     activateFreeSubscription,
     submitEnterpriseMail,
+    handleRazorpayWebhook,
     enterpriseMailStatus
 }

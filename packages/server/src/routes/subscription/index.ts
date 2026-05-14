@@ -6,6 +6,7 @@ const router = express.Router()
 router.post('/create', subscriptionController.createSubscription)
 router.post('/validate', subscriptionController.validateSubscription)
 router.post('/activate-free', subscriptionController.activateFreeSubscription)
+router.post('/webhook/razorpay', subscriptionController.handleRazorpayWebhook)
 router.post('/enterprise-mail', subscriptionController.submitEnterpriseMail)
 router.get('/enterprise-mail', subscriptionController.enterpriseMailStatus)
 
