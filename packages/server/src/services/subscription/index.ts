@@ -467,7 +467,7 @@ const handleRazorpayWebhook = async (rawBody: string, signature: string) => {
                 break
             }
             case 'subscription.cancelled': {
-                user.subscription_status = 'cancelled'
+                user.subscription_status = 'inactive'
                 user.subscription_date = user.subscription_date || now
                 user.expiry_date = user.expiry_date || now
                 break
