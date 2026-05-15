@@ -106,6 +106,13 @@ const handleRazorpayWebhook = async (req: Request, res: Response, next: NextFunc
         const apiResponse = await subscriptionService.handleRazorpayWebhook(rawBody, signature)
         return res.json(apiResponse)
     } catch (error) {
+        if (
+            error instanceof InternalTHubError &&
+            error.statusCode === StatusCodes.BAD_REQUEST &&
+            /signature/i.test(String(error.message || ''))
+        ) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Invalid webhook signature' })
+        }
         next(error)
     }
 }
